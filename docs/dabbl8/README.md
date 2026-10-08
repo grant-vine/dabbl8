@@ -1,6 +1,6 @@
 # Dabbl8 plan
 
-Status: source research and task planning; no target build or flash performed here. GitHub Issues will be authoritative for progress once enabled; issue creation is currently blocked by the repository setting. This folder records scope and source evidence, not completed implementation.
+Status: source research and task planning; no target build or flash performed here. GitHub Issues are authoritative for progress. All 19 implementation tasks and roadmap issue #2 have been created. Start with the unchanged baseline build in issue #3. This folder records scope and source evidence, not completed implementation.
 
 ## Reading order
 

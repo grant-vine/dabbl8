@@ -5,7 +5,7 @@ An open-source eight-track firmware project for the M-VAVE FM-1, based on Felucc
 - Firmware and releases: [grant-vine/dabbl8](https://github.com/grant-vine/dabbl8).
 - Public information: [dabbl.co.za](https://dabbl.co.za), maintained in grant-vine/dabbl.
 - Implementation plan: [docs/dabbl8](docs/dabbl8/README.md).
-- Work queue and dependencies: [issue index](docs/dabbl8/issue-index.md); GitHub Issues loading awaits enabling Issues on this fork.
+- Work queue: [roadmap issue #2](https://github.com/grant-vine/dabbl8/issues/2), [implementation issues](https://github.com/grant-vine/dabbl8/issues) and [issue index](docs/dabbl8/issue-index.md).
 
 The audit baseline is Felucca v1.1.5, commit `276f72a4e6ea8a12499a7a6819aadf3165126755`. Fork main was observed at `ac6bfcbd76ee3de79eb461719e8d123b5512aa3c` with a v1.1.5.1 README. Review that delta deliberately in the first build issue; do not call a new baseline tested simply because it is newer.
 
