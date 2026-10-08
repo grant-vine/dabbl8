@@ -1,0 +1,41 @@
+[
+    {
+        "Id": "sha256:d4c45f66efc59f89b0597d343a9bd72808493c0eacecde5285961743252cee23",
+        "RepoTags": [
+            "debian:bookworm-slim"
+        ],
+        "RepoDigests": [
+            "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+        ],
+        "Comment": "debuerreotype 0.17",
+        "Created": "2026-10-05T00:00:00Z",
+        "Config": {
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "bash"
+            ]
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 74870277,
+        "GraphDriver": {
+            "Data": {
+                "MergedDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/merged",
+                "UpperDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/diff",
+                "WorkDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:e58989146fcec76699871403b9897b5c014af1ccd85f5a9300a215e7975525d7"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "0001-01-01T00:00:00Z"
+        }
+    }
+]
