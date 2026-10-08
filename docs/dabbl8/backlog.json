@@ -1,0 +1,328 @@
+[
+  {
+    "id": "D8-001",
+    "title": "Reproduce pinned upstream build",
+    "milestone": "M0",
+    "depends_on": [],
+    "acceptance": "Record compiler and archive hash, SDK commit, container digest, map, binary hashes and full test results without flashing.",
+    "status": "planned",
+    "steps": [
+      "Confirm Mac model, macOS, Docker and compiler prerequisites.",
+      "Compare pinned v1.1.5 with fork main v1.1.5.1; record whether to retain or deliberately update the implementation baseline.",
+      "Record toolchain archive hash, compiler version, SDK commit and container digest.",
+      "Compile the unchanged selected baseline and run the upstream test suite.",
+      "Archive memory reports, test skips/failures, output hashes and build logs."
+    ]
+  },
+  {
+    "id": "D8-002",
+    "title": "Freeze historical project layouts",
+    "milestone": "M1",
+    "depends_on": [
+      "D8-001"
+    ],
+    "acceptance": "Replace legacy NTRK dependence with explicit four-track constants; all historical fixture sizes and imports unchanged.",
+    "status": "planned",
+    "steps": [
+      "Inventory every historical project struct and serialized size.",
+      "Replace historical track-count expressions with explicit legacy constants.",
+      "Preserve old checksums, offsets and engine conversions.",
+      "Add real legacy-format fixtures and round-trip/import checks."
+    ]
+  },
+  {
+    "id": "D8-003",
+    "title": "Version automation addresses",
+    "milestone": "M1",
+    "depends_on": [
+      "D8-002"
+    ],
+    "acceptance": "All 512 track/step addresses round-trip independently; locks and malformed records covered.",
+    "status": "planned",
+    "steps": [
+      "Inventory motion place/param encoding and all consumers.",
+      "Choose explicit track/step fields or a widened stable wire address.",
+      "Version save and transport encodings without reusing old format IDs.",
+      "Test all 512 addresses, boundary indices, locks and malformed inputs."
+    ]
+  },
+  {
+    "id": "D8-004",
+    "title": "Define capability and protocol handshake",
+    "milestone": "M1",
+    "depends_on": [
+      "D8-003"
+    ],
+    "acceptance": "Old editor/new firmware and new editor/old firmware fail safely or negotiate supported operations.",
+    "status": "planned",
+    "steps": [
+      "Define protocol family, schema version, track count and feature limits.",
+      "Keep stable parameter and engine IDs; define unsupported-feature errors.",
+      "Specify editor negotiation and read-only fallback.",
+      "Test both mismatched firmware/editor pairings and bounds."
+    ]
+  },
+  {
+    "id": "D8-005",
+    "title": "Model D8P1 maximum storage",
+    "milestone": "M1",
+    "depends_on": [
+      "D8-002"
+    ],
+    "acceptance": "Bound all chunks; calculate worst case and publish flash/RAM tradeoffs before map approval.",
+    "status": "planned",
+    "steps": [
+      "Calculate maximum project bytes for eight tracks, patches, motion, banks and scenes.",
+      "Specify bounded D8P1 chunks, checksums and unknown-chunk behavior.",
+      "Model flash areas, autosave and retained RAM separately.",
+      "Document two-versus-four project and sample-slot alternatives.",
+      "Record the selected map before implementation."
+    ]
+  },
+  {
+    "id": "D8-006",
+    "title": "Specify bounded voice allocation",
+    "milestone": "M2",
+    "depends_on": [
+      "D8-001"
+    ],
+    "acceptance": "Eight held protected notes plus ninth event cannot exceed pool or enter an undefined fallback; musical stealing documented.",
+    "status": "planned",
+    "steps": [
+      "Document current protected-voice invariant and every no-room path.",
+      "Choose bounded priorities for held notes, bass, drums, chords and unison.",
+      "Keep the initial sounding budget at eight.",
+      "Test eight held voices plus additional notes, sustain, release and cross-track stealing."
+    ]
+  },
+  {
+    "id": "D8-007",
+    "title": "Enable eight track sequencing and MIDI",
+    "milestone": "M2",
+    "depends_on": [
+      "D8-003",
+      "D8-004",
+      "D8-006",
+      "D8-005"
+    ],
+    "acceptance": "Tracks 1\u20138 record/play/mute independently; USB and TRS routes validated; non-track fours unchanged.",
+    "status": "planned",
+    "steps": [
+      "Audit track-index loops, arrays, masks and selected-track controls.",
+      "Expand recording/playback, mutes, engine switching and command bounds.",
+      "Route MIDI channels 1\u20138 consistently over USB and TRS input.",
+      "Test tracks 5\u20138 independently and concurrently with 1\u20134.",
+      "Preserve four knobs/project slots where they are unrelated to tracks."
+    ]
+  },
+  {
+    "id": "D8-008",
+    "title": "Build eight track mixer and selection",
+    "milestone": "M2",
+    "depends_on": [
+      "D8-007"
+    ],
+    "acceptance": "Bank indicator and record destination always clear; UI clipping tests and all quick-layer conflicts reviewed.",
+    "status": "planned",
+    "steps": [
+      "Prototype track selection and 1\u20134/5\u20138 knob banking.",
+      "Show selected track, record destination, engine and mute states clearly.",
+      "Resolve collisions with chord, drum and FX key layers.",
+      "Render all screens and palettes; test clipping and gesture behavior."
+    ]
+  },
+  {
+    "id": "D8-009",
+    "title": "Update editor and backup conversion",
+    "milestone": "M2",
+    "depends_on": [
+      "D8-004",
+      "D8-005",
+      "D8-007"
+    ],
+    "acceptance": "Track-count aware editing; lossless legacy import; original backup remains available.",
+    "status": "planned",
+    "steps": [
+      "Confirm whether to port the separate Felucca-WebApp or maintain a new companion editor.",
+      "Implement capability-driven track arrays and count limits.",
+      "Import legacy projects into tracks 1\u20134 with tracks 5\u20138 empty.",
+      "Preserve original files and emit a migration report.",
+      "Validate backup/restore without silently dropping unsupported data."
+    ]
+  },
+  {
+    "id": "D8-010",
+    "title": "Measure and bound engine state",
+    "milestone": "M3",
+    "depends_on": [
+      "D8-007"
+    ],
+    "acceptance": "Linker diff, pool/stack high-water report, active-state allocation and declared engine caps.",
+    "status": "planned",
+    "steps": [
+      "Capture baseline and eight-track linker/map differences.",
+      "Measure engine pool and stack high-water usage.",
+      "Pool expensive side-state by active engine where justified.",
+      "Publish per-engine caps and maximum supported combinations."
+    ]
+  },
+  {
+    "id": "D8-011",
+    "title": "Implement atomic multi-sector saves",
+    "milestone": "M3",
+    "depends_on": [
+      "D8-005",
+      "D8-010"
+    ],
+    "acceptance": "Power-cut tests at every program/erase boundary; last valid save recoverable; all writes within approved map.",
+    "status": "planned",
+    "steps": [
+      "Implement only the approved storage map and bounded encoders.",
+      "Preserve A/B validation and commit-last behavior across multiple sectors.",
+      "Inject cuts after every erase/program operation.",
+      "Test corrupt copies, length overflow, sequence wrap and full storage.",
+      "Save while stopped until live saving is separately proven."
+    ]
+  },
+  {
+    "id": "D8-012",
+    "title": "Prepare recovery and first target alpha",
+    "milestone": "M3",
+    "depends_on": [
+      "D8-009",
+      "D8-011",
+      "D8-008"
+    ],
+    "acceptance": "Verified backups and known-good rollback/recovery prepared; separate authorization before flashing; target timing and USB logs retained.",
+    "status": "planned",
+    "steps": [
+      "Prepare verified backups, known-good packages and documented recovery equipment.",
+      "Document device revision and host enumeration before changing hardware.",
+      "Use a separate install session after owner authorization.",
+      "Measure p95/p99/max render time and late blocks under MIDI/UI/USB stress.",
+      "Test reboot, project recall and both USB sample rates on the actual Mac."
+    ]
+  },
+  {
+    "id": "D8-013",
+    "title": "Add bounded performance arrangement",
+    "milestone": "M4",
+    "depends_on": [
+      "D8-012"
+    ],
+    "acceptance": "Quantized changes, scenes/fills/microtiming added incrementally; maximum size and timing tests pass.",
+    "status": "planned",
+    "steps": [
+      "Choose bounded pattern-change, scene and fill behavior.",
+      "Implement bar-quantized switching before increasing scene depth.",
+      "Store scene references rather than complete duplicated projects.",
+      "Measure memory and timing after each feature.",
+      "Run original performance songs and focused undo tests."
+    ]
+  },
+  {
+    "id": "D8-014",
+    "title": "Evaluate weighted FM voice budget",
+    "milestone": "M4",
+    "depends_on": [
+      "D8-012"
+    ],
+    "acceptance": "Hardware-calibrated cost units; no polyphony promise without max-block and stress-test evidence.",
+    "status": "planned",
+    "steps": [
+      "Study Melodee cost units without assuming its target numbers transfer.",
+      "Profile FM6 and other engine combinations on real hardware.",
+      "Define weighted costs and engine caps with measured headroom.",
+      "Accept expanded polyphony only when stressed maximum deadlines pass."
+    ]
+  },
+  {
+    "id": "D8-015",
+    "title": "Audit selected donor feature",
+    "milestone": "M4",
+    "depends_on": [
+      "D8-012"
+    ],
+    "acceptance": "Exact donor SHA/files/license/transitive dependencies recorded; test and profiling delta reviewed.",
+    "status": "planned",
+    "steps": [
+      "Choose one concrete musical gap that upstream does not already solve.",
+      "Record donor repository, commit, exact files and transitive licenses.",
+      "Port the smallest useful component and retain attribution.",
+      "Compare musical behavior and memory/CPU delta.",
+      "Defer candidates that threaten first-release reliability."
+    ]
+  },
+  {
+    "id": "D8-016",
+    "title": "Qualify and publish release",
+    "milestone": "M5",
+    "depends_on": [
+      "D8-008",
+      "D8-009",
+      "D8-011",
+      "D8-012",
+      "D8-013",
+      "D8-017",
+      "D8-018"
+    ],
+    "acceptance": "Second tester reproduces install/import/rollback; source matches binary; notices, hashes, limits and compatibility matrix published.",
+    "status": "planned",
+    "steps": [
+      "Verify source/binary correspondence, migration and recovery documentation.",
+      "Publish tested firmware/editor/host compatibility and engine limits.",
+      "Have a second tester reproduce install, import and rollback.",
+      "Package notices, build manifest, source snapshot and checksums.",
+      "Release only features whose required issue gates are complete."
+    ]
+  },
+  {
+    "id": "D8-017",
+    "title": "Establish CI and evidence reporting",
+    "milestone": "M0",
+    "depends_on": [
+      "D8-001"
+    ],
+    "acceptance": "Pinned host checks and package build produce explicit pass/fail/skip results; hardware tests remain a separate gate.",
+    "steps": [
+      "Inventory host/toolchain/generated-file dependencies.",
+      "Add narrow read-only CI jobs with pinned actions and dependency versions.",
+      "Capture serialization, audio and editor regressions with artifacts.",
+      "Separate simulator/host success from hardware qualification."
+    ],
+    "status": "planned"
+  },
+  {
+    "id": "D8-018",
+    "title": "Define fork identity and license provenance",
+    "milestone": "M3",
+    "depends_on": [
+      "D8-004",
+      "D8-012"
+    ],
+    "acceptance": "Package, USB strings, updater and editor identify Dabbl8 consistently; GPL and file-level notices are preserved; no unsupported VID/PID claim.",
+    "steps": [
+      "Inventory release identity overrides and updater checks.",
+      "Specify coordinated Dabbl8 package and protocol naming.",
+      "Retain compatible loader behavior and regression coverage.",
+      "Maintain a donor/file license ledger and exclude vendor firmware."
+    ],
+    "status": "planned"
+  },
+  {
+    "id": "D8-019",
+    "title": "Prepare Dabbl8 information for dabbl.co.za",
+    "milestone": "M5",
+    "depends_on": [
+      "D8-016"
+    ],
+    "acceptance": "Reviewed public information in grant-vine/dabbl links to the correct source/releases and states tested capabilities and limits.",
+    "steps": [
+      "Inspect grant-vine/dabbl conventions and deployment process before editing.",
+      "Choose a project page path; do not assume /dabbl8 already exists.",
+      "Prepare overview, requirements, install/recovery links and release status.",
+      "Review through a website-repository PR; publication is a separate requested action."
+    ],
+    "status": "planned"
+  }
+]

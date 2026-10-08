@@ -1,0 +1,141 @@
+{
+  "research_date": "2026-10-08",
+  "status": "Source audit only; no target build or flash",
+  "repositories": [
+    {
+      "repository": "hugelton/Felucca",
+      "url": "https://github.com/hugelton/Felucca",
+      "commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+      "commit_url": "https://github.com/hugelton/Felucca/tree/276f72a4e6ea8a12499a7a6819aadf3165126755",
+      "commit_date": "2026-10-08T11:11:01+09:00"
+    },
+    {
+      "repository": "hugelton/Felucca-WebApp",
+      "url": "https://github.com/hugelton/Felucca-WebApp",
+      "commit": "05c901d802d14832fd1aedb1a91f661b9d4a329a",
+      "commit_url": "https://github.com/hugelton/Felucca-WebApp/tree/05c901d802d14832fd1aedb1a91f661b9d4a329a",
+      "commit_date": "2026-10-08T09:47:25+09:00"
+    },
+    {
+      "repository": "isod89/sloop-fm1",
+      "url": "https://github.com/isod89/sloop-fm1",
+      "commit": "a1c5d68767ae10fafb6821dc63b9b1fc490342d2",
+      "commit_url": "https://github.com/isod89/sloop-fm1/tree/a1c5d68767ae10fafb6821dc63b9b1fc490342d2",
+      "commit_date": "2026-10-07T15:18:11-04:00"
+    },
+    {
+      "repository": "keremimo/melodee",
+      "url": "https://github.com/keremimo/melodee",
+      "commit": "822a7c1357db82c8c521a59620a876f0e6e00979",
+      "commit_url": "https://github.com/keremimo/melodee/tree/822a7c1357db82c8c521a59620a876f0e6e00979",
+      "commit_date": "2026-10-07T22:02:21+02:00"
+    },
+    {
+      "repository": "charlesvestal/fm1-x0x",
+      "url": "https://github.com/charlesvestal/fm1-x0x",
+      "commit": "9ae360b64af9782e309557d1a5e077209f8d30b8",
+      "commit_url": "https://github.com/charlesvestal/fm1-x0x/tree/9ae360b64af9782e309557d1a5e077209f8d30b8",
+      "commit_date": "2026-10-07T11:45:05+02:00"
+    },
+    {
+      "repository": "zednaked/jangada",
+      "url": "https://github.com/zednaked/jangada",
+      "commit": "8a34b4f249081afd3122c697b8deb29cfc7d6ab2",
+      "commit_url": "https://github.com/zednaked/jangada/tree/8a34b4f249081afd3122c697b8deb29cfc7d6ab2",
+      "commit_date": "2026-10-07T17:03:41-03:00"
+    },
+    {
+      "repository": "charlesvestal/fm1-fomni",
+      "url": "https://github.com/charlesvestal/fm1-fomni",
+      "commit": "378dfacbf476c8d7c181eed83c58c019667133d6",
+      "commit_url": "https://github.com/charlesvestal/fm1-fomni/tree/378dfacbf476c8d7c181eed83c58c019667133d6",
+      "commit_date": "2026-10-07T11:27:18+02:00"
+    },
+    {
+      "repository": "AL-255/FM-1-RE",
+      "url": "https://github.com/AL-255/FM-1-RE",
+      "commit": "ec832f281ca165a7d5e0722985f3acb1465046d5",
+      "commit_url": "https://github.com/AL-255/FM-1-RE/tree/ec832f281ca165a7d5e0722985f3acb1465046d5",
+      "commit_date": "2026-09-08T15:29:42-04:00"
+    },
+    {
+      "repository": "kurogedelic/FM-1-transporter",
+      "url": "https://github.com/kurogedelic/FM-1-transporter",
+      "commit": "a632d923203170e3a08565f4056dbb3fd3d65ca5",
+      "commit_url": "https://github.com/kurogedelic/FM-1-transporter/tree/a632d923203170e3a08565f4056dbb3fd3d65ca5",
+      "commit_date": "2026-10-01T21:45:17+09:00"
+    }
+  ],
+  "audited_felucca_files": [
+    {
+      "path": "firmware/src/core.h",
+      "sha256": "70ec9e97a0f80493fe57f84cf478052ff670dd47c9370b9dfc427a16744c57f6"
+    },
+    {
+      "path": "firmware/src/voice.c",
+      "sha256": "d58be394655cf0fc61df201d10a4283262625367a825bc07ba10349863baebd7"
+    },
+    {
+      "path": "firmware/src/project.c",
+      "sha256": "512bd2599661492322ebcaf45e12ca99e1cf73e9545864d813c2614e0c1311c7"
+    },
+    {
+      "path": "firmware/src/storage.c",
+      "sha256": "cd345479cacc11f56626cef83d01788f4fe431c3c501488d6ca5acb22d16164e"
+    },
+    {
+      "path": "firmware/src/audio.c",
+      "sha256": "68dc6024f1b790ce98c2a3c8c8fbdc18b3bf38b93213b56cc574ac74b35be249"
+    },
+    {
+      "path": "firmware/src/felucca.c",
+      "sha256": "d75e342d47fa0396027d3971a79260c1016b8a04361577d4a0fdd96e59e87582"
+    },
+    {
+      "path": "firmware/src/eng_fm6.c",
+      "sha256": "6f2ed36ef849036b1cbf0552a48b8b60f7c11aa286349536e3f32ae4333369f6"
+    },
+    {
+      "path": "firmware/src/eng_grain.c",
+      "sha256": "73d5ea1491e1cc06977da03da5bfc140654f99559201ed44ca3baadf384671e4"
+    },
+    {
+      "path": "firmware/src/eng_phys.c",
+      "sha256": "f0e36285d3e42f91a4dcc407726370e48680881084d487f89f8cf26bc4e78fac"
+    },
+    {
+      "path": "firmware/src/eng_slice.c",
+      "sha256": "1a298c9b61c2ce4d3d6dc242e2691ad8c963a47e0b02edc51828c8f3ff38eea4"
+    },
+    {
+      "path": "firmware/hal/fm1_flash.h",
+      "sha256": "38dd17eb48139f051f2f9eb0144cdc6172aa8f11a405949c413a10d5f2f9995d"
+    },
+    {
+      "path": "firmware/app.ld",
+      "sha256": "250b93c08ee74e64e17b5c3d43473aef02f20c59f0b917d8fd982e9bb72bae7f"
+    },
+    {
+      "path": "tools/build.py",
+      "sha256": "3c1586352029f209cef170fb5b3d77fe226edb8df31532e97a894849670bf8fd"
+    },
+    {
+      "path": "tools/get_toolchain.sh",
+      "sha256": "01c997cf377aa964eceaaaa05f6e75c0df92a863297ca7d3cc4a71472764f5f3"
+    },
+    {
+      "path": "BUILDING.md",
+      "sha256": "c3d503fec2fb43cb553249a9b96b2cba9b7896a36c2d9c0110c4d90c05415c72"
+    },
+    {
+      "path": "LICENSING.md",
+      "sha256": "89c487f3dc19218cc0d1ec0d73466092a5cbc5ab842a98b9a2f625a215cb0e5e"
+    }
+  ],
+  "benchmark_urls": [
+    "https://www.groove-os.com/",
+    "https://www.groove-os.com/features",
+    "https://www.groove-os.com/credits",
+    "https://www.groove-os.com/manual/firmware"
+  ]
+}
