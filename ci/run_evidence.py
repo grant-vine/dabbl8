@@ -26,6 +26,13 @@ def capture(args):
     except OSError as error:
         return {'exit_code': None, 'output': str(error)}
 
+def skipped_check(line):
+    """Check omissions, not expected behavior such as skipping retired presets."""
+    return (line.startswith('== skip ')
+            or 'no instruction counter on this host' in line
+            or line.startswith('official V15 restore: skipped')
+            or line.rstrip().endswith(' skip'))
+
 report['source'] = capture(['git', 'rev-parse', 'HEAD'])
 report['worktree_status'] = capture(['git', 'status', '--short'])
 report['versions'] = {'python': sys.version, 'node': capture(['node', '--version']),
@@ -41,6 +48,11 @@ if tc:
         report['versions']['target_compiler'] = capture(['docker', 'run', '--rm', '--platform', 'linux/amd64', '-v', f'{Path(tc).resolve()}:/opt/jieli:ro', LOCK['container'], '/opt/jieli/pi32v2/bin/clang', '--version'])
     else: report['versions']['target_compiler'] = capture([str(Path(tc) / 'pi32v2/bin/clang'), '--version'])
 report['container_inspect'] = capture(['docker', 'image', 'inspect', LOCK['container'], '--format', '{{json .RepoDigests}}'])
+try:
+    from PIL import features
+    report['graphics_library_versions'] = {name: features.version(name) for name in features.get_supported()}
+except ImportError:
+    report['graphics_library_versions'] = {'status': 'unavailable'}
 report['python_dependencies'] = capture([sys.executable, '-m', 'pip', 'freeze'])
 report['host_packages'] = capture(['dpkg-query', '-W']) if platform.system() == 'Linux' else {'exit_code': None, 'output': 'Not Debian/Ubuntu: package inventory unavailable'}
 
@@ -90,12 +102,12 @@ else:
 
 for log in OUT.glob('*.log'):
     for line in log.read_text(errors='replace').splitlines():
-        if line.startswith('== skip ') or 'CPU: no instruction counter' in line:
+        if skipped_check(line):
             report['skips'].append({'name': log.name, 'reason': line})
             if 'sanitizer runs' in line:
                 failed = True
                 report['checks'].append({'name': 'mandatory-sanitizers', 'status': 'FAIL', 'reason': line})
-for name in reference_files + ['build/felucca.bin', 'build/felucca.fwsc', 'build/loader/ota.bin']:
+for name in reference_files + ['build/felucca.bin', 'build/felucca.fwsc', 'build/loader/ota.bin', 'build/gen/ui_fonts.h', 'build/gen/ui_keycaps.h', 'build/gen/ui_icons.h']:
     p = ROOT / name
     if p.exists() and (built or name in reference_files): report['artifacts'][name] = {'bytes': p.stat().st_size, 'sha256': digest(p)}
 for name, before in references_before.items():

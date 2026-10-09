@@ -24,4 +24,4 @@ Hardware qualification is always recorded as SKIP/not performed. USB/TRS physica
 
 ## Current verification status
 
-The workflow is prepared for draft review. Local validation can check syntax, pins and failure-reporting paths; it does not prove that GitHub has executed the workflow or that hosted dependency downloads succeed. Issue #18 must remain open until a concrete hosted run demonstrates setup, package generation, regressions, artifact reporting and explicit skips. See the issue for live run evidence.
+Hosted run37991665831 passed dependency setup, package build, complete host regressions and artifact upload; downloaded raw results were inspected and preserved in evidence/2026-10-09-ci-hosted. Inspection also found omissions missing from the original structured skip list; the corrected reporter and graphics-library/asset provenance require verification in a subsequent hosted artifact. Issue #18 remains open until that verification. Linux and Mac package bytes differ, so no cross-platform bit-identity is claimed. See the issue for live run evidence.
