@@ -1,0 +1,8 @@
+size: 744 main-loop functions built for size (5 not in this build; 104 reached from an interrupt kept -Os)
+/opt/jieli/pi32v2/bin/ld: build/slice-eight-probe/felucca.elf section `.bss' will not fit in region `RAM'
+/opt/jieli/pi32v2/bin/ld: build/slice-eight-probe/felucca.elf section `.pool' will not fit in region `POOL'
+/opt/jieli/pi32v2/bin/ld: section .pool VMA [0000000001c20000,0000000001c7d54f] overlaps section .bss VMA [0000000001c08140,0000000001c23c73]
+/opt/jieli/pi32v2/bin/ld: section .noinit VMA [0000000001c7c000,0000000001c7f9cb] overlaps section .pool VMA [0000000001c20000,0000000001c7d54f]
+/opt/jieli/pi32v2/bin/ld: region `RAM' overflowed by 15476 bytes
+/opt/jieli/pi32v2/bin/ld: region `POOL' overflowed by 38224 bytes
+build: pi32v2/bin/ld failed

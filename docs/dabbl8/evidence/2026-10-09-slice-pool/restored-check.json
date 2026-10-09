@@ -1,0 +1,29 @@
+{
+  "checks": [
+    {
+      "name": "four-track equals original accessor/source",
+      "PASS": true,
+      "normalized_preprocessed_sha256": "7dd296a94eba2803dba80b2f601bb10cbc7ea280526dccd55c6e79241343322b"
+    },
+    {
+      "name": "expanded code unchanged by four-track restoration",
+      "PASS": true,
+      "normalized_preprocessed_sha256": "238cfaa7492d9449bab0fff4e48821f3c44415af1e4ee39446da844605dfd6e2"
+    }
+  ],
+  "four_track_artifacts": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    }
+  },
+  "firmware_source_sha256": "b1ab4a1b3d430157fd283ee999bf174e0ae2d7cc038f916bc18bd20e93fcc139"
+}
