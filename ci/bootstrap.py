@@ -14,8 +14,9 @@ DEST.mkdir(parents=True, exist_ok=True)
 archive = DEST / 'linux-toolchain.tar.xz'
 if not archive.exists():
     subprocess.run(['curl', '-fL', '--retry', '3', LOCK['toolchain_url'], '-o', str(archive)], check=True)
-if hashlib.sha256(archive.read_bytes()).hexdigest() != LOCK['toolchain_archive_sha256']:
-    raise SystemExit('Toolchain archive changed: refusing unreviewed upgrade')
+actual_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+if actual_hash != LOCK['toolchain_archive_sha256']:
+    raise SystemExit(f'Toolchain archive changed: refusing unreviewed upgrade; actual SHA-256 {actual_hash}')
 toolchain = DEST / LOCK['toolchain_directory']
 if not toolchain.exists():
     with tarfile.open(archive) as source:

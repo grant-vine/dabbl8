@@ -4,7 +4,7 @@
   "fonttools": "4.66.1",
   "node": "26.11.0",
   "host_clang_package": "1:18.1.3-1",
-  "toolchain_url": "https://pkgman.jieliapp.com/s/linux-toolchain",
+  "toolchain_url": "https://jl-update.oss-cn-shenzhen.aliyuncs.com/jieli-linux-toolchains-20250324.1.tar.xz",
   "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
   "toolchain_directory": "jieli-linux-toolchains-20250324.1",
   "sdk_url": "https://gitee.com/Jieli-Tech/fw-AC79_AIoT_SDK.git",
