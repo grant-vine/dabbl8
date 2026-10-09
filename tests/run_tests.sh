@@ -316,6 +316,10 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
+    for t in voice_budget_test phys_pool_test; do
+        $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
+        run "ASan/UBSan: actual eight parts $t" "$A/$t"
+    done
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm
