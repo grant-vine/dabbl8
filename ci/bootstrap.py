@@ -6,6 +6,9 @@ import json
 from pathlib import Path
 import subprocess
 import tarfile
+import shutil
+import tempfile
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / 'ci/dependencies.json').read_text())
@@ -24,8 +27,27 @@ if not toolchain.exists():
 if not (toolchain / 'pi32v2/bin/clang').is_file():
     raise SystemExit('Verified archive did not contain expected compiler')
 sdk = DEST / 'ac79-sdk'
+def fetch_sdk(destination):
+    # Only freshly-created staging directories are removed. Existing SDK work
+    # is never reset/deleted; every successful fetch still needs the exact commit.
+    for attempt in range(3):
+        staging = Path(tempfile.mkdtemp(prefix='sdk-fetch-', dir=DEST))
+        try:
+            subprocess.run(['git', 'clone', '--depth', '1', '--branch', LOCK['sdk_tag'], LOCK['sdk_url'], str(staging)], check=True, timeout=300)
+            fetched = subprocess.check_output(['git', '-C', str(staging), 'rev-parse', 'HEAD'], text=True).strip()
+            if fetched != LOCK['sdk_commit']:
+                raise SystemExit('SDK commit changed: refusing unreviewed upgrade')
+            staging.rename(destination)
+            return
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            shutil.rmtree(staging)
+            if attempt == 2:
+                raise
+            print(f'SDK network attempt {attempt + 1} failed; retrying unchanged commit', flush=True)
+            time.sleep(2 * (attempt + 1))
+
 if not sdk.exists():
-    subprocess.run(['git', 'clone', '--depth', '1', '--branch', LOCK['sdk_tag'], LOCK['sdk_url'], str(sdk)], check=True)
+    fetch_sdk(sdk)
 commit = subprocess.check_output(['git', '-C', str(sdk), 'rev-parse', 'HEAD'], text=True).strip()
 if commit != LOCK['sdk_commit']:
     raise SystemExit('SDK commit changed: refusing unreviewed upgrade')
