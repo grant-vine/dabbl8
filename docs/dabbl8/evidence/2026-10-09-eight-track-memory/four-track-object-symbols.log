@@ -1,0 +1,2720 @@
+
+build/felucca.o:	file format ELF32-pi32v2
+
+SYMBOL TABLE:
+00000000         *UND*		 00000000 
+00000000 l    df *ABS*		 00000000 build/felucca_size.ll
+00000064         .text.arp_pick		 00000000 .GJTIE100_0_0_
+00000014         .text.mod_tsrc		 00000000 .GJTIE104_0_0_
+00000012         .text.lfo_wave		 00000000 .GJTIE107_0_0_
+000000cc         .text.perf_block		 00000000 .GJTIE122_0_0_
+0000131a         .text.fm1_alnk0_irq		 00000000 .GJTIE130_0_0_
+0000000e         .text.ed_motion_args		 00000000 .GJTIE322_0_0_
+0000004e         .text.menu_get		 00000000 .GJTIE340_0_0_
+00000034         .text.menu_vname		 00000000 .GJTIE341_0_0_
+00000054         .text.menu_put		 00000000 .GJTIE344_0_0_
+000000c8         .text.ed_handle		 00000000 .GJTIE375_0_0_
+00000146         .text.ed_handle		 00000000 .GJTIE375_1_1_
+0000010a         .text.ed_handle		 00000000 .GJTIE375_2_2_
+0000021a         .text.ed_handle		 00000000 .GJTIE375_3_3_
+00000988         .text.ed_handle		 00000000 .GJTIE375_4_4_
+000004a2         .text.ed_handle		 00000000 .GJTIE375_5_5_
+00000742         .text.ed_handle		 00000000 .GJTIE375_6_6_
+00001706         .text.ed_handle		 00000000 .GJTIE375_7_7_
+00000030         .text.act_cols		 00000000 .GJTIE412_0_0_
+00000038         .text.edit_param		 00000000 .GJTIE494_0_0_
+00000240         .text.edit_param		 00000000 .GJTIE494_1_1_
+00000024         .text.nm_black		 00000000 .GJTIE514_0_0_
+0000001a         .text.nm_do		 00000000 .GJTIE515_0_0_
+00000048         .text.act_ready		 00000000 .GJTIE536_0_0_
+00000484         .text.ui_input		 00000000 .GJTIE542_0_0_
+000009fe         .text.ui_input		 00000000 .GJTIE542_1_1_
+00000c0c         .text.ui_input		 00000000 .GJTIE542_2_2_
+00001b04         .text.ui_input		 00000000 .GJTIE542_3_3_
+000021b8         .text.ui_input		 00000000 .GJTIE542_4_4_
+000024b0         .text.ui_input		 00000000 .GJTIE542_5_5_
+00000058         .text.param_format		 00000000 .GJTIE587_0_0_
+00000168         .text.draw_columns		 00000000 .GJTIE602_0_0_
+00000782         .text.draw_columns		 00000000 .GJTIE602_1_1_
+000000fe         .text.draw_graph		 00000000 .GJTIE635_0_0_
+00000a3c         .text.draw_graph		 00000000 .GJTIE635_1_1_
+0000001a         .text.page_icon		 00000000 .GJTIE636_0_0_
+00000056         .text.foot_hint		 00000000 .GJTIE637_0_0_
+0000029c         .text.ui_draw_page		 00000000 .GJTIE639_0_0_
+00000aea         .text.ui_draw_page		 00000000 .GJTIE639_1_1_
+00001e54         .text.ui_draw_page		 00000000 .GJTIE639_2_2_
+00002118         .text.ui_draw_page		 00000000 .GJTIE639_3_3_
+000022bc         .text.fm1_main		 00000000 .GJTIE640_0_0_
+000001a8         .text.analog_render		 00000000 .GJTIE643_0_0_
+00000010         .text.pd_setup		 00000000 .GJTIE647_0_0_
+00000018         .text.pd_wave		 00000000 .GJTIE648_0_0_
+0000024a         .text.lofi_render		 00000000 .GJTIE651_0_0_
+00000040         .text.trio_pass		 00000000 .GJTIE666_0_0_
+00000014         .text.trio_naive		 00000000 .GJTIE667_0_0_
+000000f0         .text.wheel_render		 00000000 .GJTIE670_0_0_
+00000488         .text.drum_render		 00000000 .GJTIE714_0_0_
+00000278         .text.drum_render		 00000000 .GJTIE714_1_1_
+00001916         .text.drum_render		 00000000 .GJTIE714_2_2_
+00000042         .text.fm6_block		 00000000 .GJTIE728_0_0_
+00000032         .text.ed_handle		 00000000 .GJTIL375_0_0_
+00000210         .text.ed_handle		 00000000 .GJTIL375_3_3_
+00000980         .text.ed_handle		 00000000 .GJTIL375_4_4_
+0000049a         .text.ed_handle		 00000000 .GJTIL375_5_5_
+000006ac         .text.ed_handle		 00000000 .GJTIL375_6_6_
+000016fa         .text.ed_handle		 00000000 .GJTIL375_7_7_
+00000238         .text.edit_param		 00000000 .GJTIL494_1_1_
+00000bfe         .text.ui_input		 00000000 .GJTIL542_2_2_
+000021a8         .text.ui_input		 00000000 .GJTIL542_4_4_
+00002498         .text.ui_input		 00000000 .GJTIL542_5_5_
+0000003e         .text.param_format		 00000000 .GJTIL587_0_0_
+0000015a         .text.draw_columns		 00000000 .GJTIL602_0_0_
+00000766         .text.draw_columns		 00000000 .GJTIL602_1_1_
+000000f6         .text.draw_graph		 00000000 .GJTIL635_0_0_
+00000a12         .text.draw_graph		 00000000 .GJTIL635_1_1_
+0000028a         .text.ui_draw_page		 00000000 .GJTIL639_0_0_
+00000ade         .text.ui_draw_page		 00000000 .GJTIL639_1_1_
+0000210e         .text.ui_draw_page		 00000000 .GJTIL639_3_3_
+00000034         .text.trio_pass		 00000000 .GJTIL666_0_0_
+00000470         .text.drum_render		 00000000 .GJTIL714_0_0_
+00000260         .text.drum_render		 00000000 .GJTIL714_1_1_
+00000058         .text.arp_pick		 00000000 .GJTIS100_0_0_
+0000000c         .text.mod_tsrc		 00000000 .GJTIS104_0_0_
+0000000e         .text.lfo_wave		 00000000 .GJTIS107_0_0_
+000000c8         .text.perf_block		 00000000 .GJTIS122_0_0_
+00001316         .text.fm1_alnk0_irq		 00000000 .GJTIS130_0_0_
+00000008         .text.ed_motion_args		 00000000 .GJTIS322_0_0_
+0000003e         .text.menu_get		 00000000 .GJTIS340_0_0_
+00000024         .text.menu_vname		 00000000 .GJTIS341_0_0_
+00000044         .text.menu_put		 00000000 .GJTIS344_0_0_
+00000140         .text.ed_handle		 00000000 .GJTIS375_1_1_
+00000104         .text.ed_handle		 00000000 .GJTIS375_2_2_
+00000024         .text.act_cols		 00000000 .GJTIS412_0_0_
+00000030         .text.edit_param		 00000000 .GJTIS494_0_0_
+0000001a         .text.nm_black		 00000000 .GJTIS514_0_0_
+00000014         .text.nm_do		 00000000 .GJTIS515_0_0_
+0000003c         .text.act_ready		 00000000 .GJTIS536_0_0_
+0000047e         .text.ui_input		 00000000 .GJTIS542_0_0_
+000009f8         .text.ui_input		 00000000 .GJTIS542_1_1_
+00001afc         .text.ui_input		 00000000 .GJTIS542_3_3_
+0000000e         .text.page_icon		 00000000 .GJTIS636_0_0_
+0000004a         .text.foot_hint		 00000000 .GJTIS637_0_0_
+00001e4e         .text.ui_draw_page		 00000000 .GJTIS639_2_2_
+000022b6         .text.fm1_main		 00000000 .GJTIS640_0_0_
+000001a4         .text.analog_render		 00000000 .GJTIS643_0_0_
+0000000a         .text.pd_setup		 00000000 .GJTIS647_0_0_
+00000012         .text.pd_wave		 00000000 .GJTIS648_0_0_
+00000246         .text.lofi_render		 00000000 .GJTIS651_0_0_
+0000000e         .text.trio_naive		 00000000 .GJTIS667_0_0_
+000000e8         .text.wheel_render		 00000000 .GJTIS670_0_0_
+0000190a         .text.drum_render		 00000000 .GJTIS714_2_2_
+0000003c         .text.fm6_block		 00000000 .GJTIS728_0_0_
+00000000 l       .rodata.str1.1		 00000007 .L.str
+00000007 l       .rodata.str1.1		 00000004 .L.str.1
+0000002c l       .rodata.str1.1		 00000004 .L.str.10
+000001fd l       .rodata.str1.1		 00000004 .L.str.100
+00001f6b l       .rodata.str1.1		 00000003 .L.str.1000
+00001f6e l       .rodata.str1.1		 00000002 .L.str.1001
+00001f70 l       .rodata.str1.1		 00000002 .L.str.1002
+00001f72 l       .rodata.str1.1		 00000002 .L.str.1003
+00001f74 l       .rodata.str1.1		 00000002 .L.str.1004
+00001f76 l       .rodata.str1.1		 00000002 .L.str.1005
+00001f78 l       .rodata.str1.1		 00000002 .L.str.1006
+00001f7a l       .rodata.str1.1		 00000002 .L.str.1007
+00001f7c l       .rodata.str1.1		 00000002 .L.str.1008
+00001f7e l       .rodata.str1.1		 00000004 .L.str.1009
+00000201 l       .rodata.str1.1		 00000004 .L.str.101
+00001f82 l       .rodata.str1.1		 00000004 .L.str.1010
+00001f86 l       .rodata.str1.1		 00000006 .L.str.1011
+00001f8c l       .rodata.str1.1		 00000005 .L.str.1012
+00001f91 l       .rodata.str1.1		 00000004 .L.str.1013
+00001f95 l       .rodata.str1.1		 00000004 .L.str.1014
+00001f99 l       .rodata.str1.1		 00000006 .L.str.1015
+00001f9f l       .rodata.str1.1		 00000008 .L.str.1016
+00001fa7 l       .rodata.str1.1		 00000007 .L.str.1017
+00001fae l       .rodata.str1.1		 00000005 .L.str.1018
+00001fb3 l       .rodata.str1.1		 00000004 .L.str.1019
+00000205 l       .rodata.str1.1		 00000004 .L.str.102
+00001fb7 l       .rodata.str1.1		 00000005 .L.str.1020
+00001fbc l       .rodata.str1.1		 00000003 .L.str.1021
+00001fbf l       .rodata.str1.1		 00000003 .L.str.1022
+00001fc2 l       .rodata.str1.1		 00000003 .L.str.1023
+00001fc5 l       .rodata.str1.1		 00000003 .L.str.1024
+00001fc8 l       .rodata.str1.1		 00000003 .L.str.1025
+00001fcb l       .rodata.str1.1		 00000003 .L.str.1026
+00001fce l       .rodata.str1.1		 00000003 .L.str.1027
+00001fd1 l       .rodata.str1.1		 00000003 .L.str.1028
+00001fd4 l       .rodata.str1.1		 00000003 .L.str.1029
+00000209 l       .rodata.str1.1		 00000004 .L.str.103
+00001fd7 l       .rodata.str1.1		 0000000a .L.str.1030
+00001fe1 l       .rodata.str1.1		 00000007 .L.str.1031
+00001fe8 l       .rodata.str1.1		 00000005 .L.str.1032
+00001fed l       .rodata.str1.1		 00000005 .L.str.1033
+00001ff2 l       .rodata.str1.1		 00000005 .L.str.1034
+00001ff7 l       .rodata.str1.1		 00000005 .L.str.1035
+00001ffc l       .rodata.str1.1		 00000009 .L.str.1036
+00002005 l       .rodata.str1.1		 00000008 .L.str.1037
+0000200d l       .rodata.str1.1		 00000005 .L.str.1038
+00002012 l       .rodata.str1.1		 00000006 .L.str.1039
+0000020d l       .rodata.str1.1		 00000004 .L.str.104
+00002018 l       .rodata.str1.1		 00000004 .L.str.1040
+0000201c l       .rodata.str1.1		 00000006 .L.str.1041
+00002022 l       .rodata.str1.1		 00000005 .L.str.1042
+00002027 l       .rodata.str1.1		 00000006 .L.str.1043
+0000202d l       .rodata.str1.1		 00000006 .L.str.1044
+00002033 l       .rodata.str1.1		 00000005 .L.str.1045
+00002038 l       .rodata.str1.1		 00000004 .L.str.1046
+0000203c l       .rodata.str1.1		 00000002 .L.str.1047
+0000203e l       .rodata.str1.1		 00000006 .L.str.1048
+00002044 l       .rodata.str1.1		 00000005 .L.str.1049
+00000211 l       .rodata.str1.1		 00000004 .L.str.105
+00002049 l       .rodata.str1.1		 00000003 .L.str.1050
+0000204c l       .rodata.str1.1		 00000004 .L.str.1051
+00002050 l       .rodata.str1.1		 00000004 .L.str.1052
+00002054 l       .rodata.str1.1		 00000005 .L.str.1053
+00002059 l       .rodata.str1.1		 00000004 .L.str.1054
+0000205d l       .rodata.str1.1		 00000005 .L.str.1055
+00002062 l       .rodata.str1.1		 00000004 .L.str.1056
+00002066 l       .rodata.str1.1		 00000005 .L.str.1057
+0000206b l       .rodata.str1.1		 00000005 .L.str.1058
+00002070 l       .rodata.str1.1		 00000005 .L.str.1059
+00000215 l       .rodata.str1.1		 00000003 .L.str.106
+00002075 l       .rodata.str1.1		 00000006 .L.str.1060
+0000207b l       .rodata.str1.1		 00000007 .L.str.1061
+00002082 l       .rodata.str1.1		 0000000d .L.str.1062
+0000208f l       .rodata.str1.1		 0000000f .L.str.1063
+0000209e l       .rodata.str1.1		 00000005 .L.str.1064
+000020a3 l       .rodata.str1.1		 0000000f .L.str.1065
+000020b2 l       .rodata.str1.1		 00000019 .L.str.1066
+000020cb l       .rodata.str1.1		 00000012 .L.str.1067
+000020dd l       .rodata.str1.1		 00000008 .L.str.1068
+000020e5 l       .rodata.str1.1		 0000000a .L.str.1069
+00000218 l       .rodata.str1.1		 00000003 .L.str.107
+000020ef l       .rodata.str1.1		 00000005 .L.str.1070
+000020f4 l       .rodata.str1.1		 00000005 .L.str.1071
+000020f9 l       .rodata.str1.1		 00000004 .L.str.1072
+000020fd l       .rodata.str1.1		 00000003 .L.str.1073
+00002100 l       .rodata.str1.1		 00000004 .L.str.1074
+00002104 l       .rodata.str1.1		 00000004 .L.str.1075
+00002108 l       .rodata.str1.1		 00000005 .L.str.1076
+0000210d l       .rodata.str1.1		 00000003 .L.str.1077
+00002110 l       .rodata.str1.1		 00000004 .L.str.1078
+00002114 l       .rodata.str1.1		 00000003 .L.str.1079
+0000021b l       .rodata.str1.1		 00000003 .L.str.108
+00002117 l       .rodata.str1.1		 00000002 .L.str.1080
+00002119 l       .rodata.str1.1		 00000005 .L.str.1081
+0000211e l       .rodata.str1.1		 00000005 .L.str.1082
+00002123 l       .rodata.str1.1		 00000017 .L.str.1083
+0000213a l       .rodata.str1.1		 00000005 .L.str.1084
+0000213f l       .rodata.str1.1		 00000010 .L.str.1085
+0000214f l       .rodata.str1.1		 00000011 .L.str.1086
+00002160 l       .rodata.str1.1		 00000013 .L.str.1087
+00002173 l       .rodata.str1.1		 0000000e .L.str.1088
+00002181 l       .rodata.str1.1		 00000002 .L.str.1089
+0000021e l       .rodata.str1.1		 00000003 .L.str.109
+00002183 l       .rodata.str1.1		 0000000a .L.str.1090
+0000218d l       .rodata.str1.1		 00000006 .L.str.1091
+00002193 l       .rodata.str1.1		 0000000b .L.str.1092
+0000219e l       .rodata.str1.1		 00000011 .L.str.1093
+000021af l       .rodata.str1.1		 00000005 .L.str.1094
+000021b4 l       .rodata.str1.1		 00000003 .L.str.1095
+000021b7 l       .rodata.str1.1		 00000004 .L.str.1096
+000021bb l       .rodata.str1.1		 00000004 .L.str.1097
+000021bf l       .rodata.str1.1		 00000004 .L.str.1098
+000021c3 l       .rodata.str1.1		 00000004 .L.str.1099
+00000030 l       .rodata.str1.1		 00000004 .L.str.11
+00000221 l       .rodata.str1.1		 00000003 .L.str.110
+000021c7 l       .rodata.str1.1		 00000007 .L.str.1100
+000021ce l       .rodata.str1.1		 00000006 .L.str.1101
+000021d4 l       .rodata.str1.1		 00000007 .L.str.1102
+000021db l       .rodata.str1.1		 00000006 .L.str.1103
+000021e1 l       .rodata.str1.1		 00000006 .L.str.1104
+000021e7 l       .rodata.str1.1		 0000000c .L.str.1105
+000021f3 l       .rodata.str1.1		 0000000a .L.str.1106
+00000224 l       .rodata.str1.1		 00000003 .L.str.111
+00000227 l       .rodata.str1.1		 00000003 .L.str.112
+0000022a l       .rodata.str1.1		 00000003 .L.str.113
+0000022d l       .rodata.str1.1		 00000003 .L.str.114
+00000230 l       .rodata.str1.1		 00000004 .L.str.115
+00000234 l       .rodata.str1.1		 00000004 .L.str.116
+00000238 l       .rodata.str1.1		 00000004 .L.str.117
+0000023c l       .rodata.str1.1		 00000004 .L.str.118
+00000240 l       .rodata.str1.1		 00000004 .L.str.119
+00000034 l       .rodata.str1.1		 00000004 .L.str.12
+00000244 l       .rodata.str1.1		 00000004 .L.str.120
+00000248 l       .rodata.str1.1		 00000007 .L.str.121
+0000024f l       .rodata.str1.1		 00000004 .L.str.122
+00000253 l       .rodata.str1.1		 00000005 .L.str.123
+00000258 l       .rodata.str1.1		 00000005 .L.str.124
+0000025d l       .rodata.str1.1		 00000005 .L.str.125
+00000262 l       .rodata.str1.1		 00000006 .L.str.126
+00000268 l       .rodata.str1.1		 00000006 .L.str.127
+0000026e l       .rodata.str1.1		 00000004 .L.str.128
+00000272 l       .rodata.str1.1		 00000005 .L.str.129
+00000038 l       .rodata.str1.1		 00000004 .L.str.13
+00000277 l       .rodata.str1.1		 00000005 .L.str.130
+0000027c l       .rodata.str1.1		 00000005 .L.str.131
+00000281 l       .rodata.str1.1		 00000003 .L.str.132
+00000284 l       .rodata.str1.1		 00000006 .L.str.133
+0000028a l       .rodata.str1.1		 00000005 .L.str.134
+0000028f l       .rodata.str1.1		 00000006 .L.str.135
+00000295 l       .rodata.str1.1		 00000005 .L.str.136
+0000029a l       .rodata.str1.1		 00000006 .L.str.137
+000002a0 l       .rodata.str1.1		 00000005 .L.str.138
+000002a5 l       .rodata.str1.1		 00000002 .L.str.139
+0000003c l       .rodata.str1.1		 00000004 .L.str.14
+000002a7 l       .rodata.str1.1		 00000005 .L.str.140
+000002ac l       .rodata.str1.1		 0000000a .L.str.141
+000002b6 l       .rodata.str1.1		 00000009 .L.str.142
+000002bf l       .rodata.str1.1		 00000009 .L.str.143
+000002c8 l       .rodata.str1.1		 00000008 .L.str.144
+000002d0 l       .rodata.str1.1		 00000005 .L.str.145
+000002d5 l       .rodata.str1.1		 00000005 .L.str.146
+000002da l       .rodata.str1.1		 00000005 .L.str.147
+000002df l       .rodata.str1.1		 00000005 .L.str.148
+000002e4 l       .rodata.str1.1		 00000003 .L.str.149
+00000040 l       .rodata.str1.1		 00000004 .L.str.15
+000002e7 l       .rodata.str1.1		 00000005 .L.str.150
+000002ec l       .rodata.str1.1		 00000005 .L.str.151
+000002f1 l       .rodata.str1.1		 00000004 .L.str.152
+000002f5 l       .rodata.str1.1		 00000004 .L.str.153
+000002f9 l       .rodata.str1.1		 00000005 .L.str.154
+000002fe l       .rodata.str1.1		 00000004 .L.str.155
+00000302 l       .rodata.str1.1		 00000004 .L.str.156
+00000306 l       .rodata.str1.1		 00000004 .L.str.157
+0000030a l       .rodata.str1.1		 00000005 .L.str.158
+0000030f l       .rodata.str1.1		 00000006 .L.str.159
+00000044 l       .rodata.str1.1		 00000004 .L.str.16
+00000315 l       .rodata.str1.1		 00000006 .L.str.160
+0000031b l       .rodata.str1.1		 00000006 .L.str.161
+00000321 l       .rodata.str1.1		 00000004 .L.str.162
+00000325 l       .rodata.str1.1		 00000005 .L.str.163
+0000032a l       .rodata.str1.1		 00000003 .L.str.164
+0000032d l       .rodata.str1.1		 00000003 .L.str.165
+00000330 l       .rodata.str1.1		 00000003 .L.str.166
+00000333 l       .rodata.str1.1		 00000004 .L.str.167
+00000337 l       .rodata.str1.1		 00000009 .L.str.168
+00000340 l       .rodata.str1.1		 00000009 .L.str.169
+00000048 l       .rodata.str1.1		 00000009 .L.str.17
+00000349 l       .rodata.str1.1		 0000000a .L.str.170
+00000353 l       .rodata.str1.1		 0000000a .L.str.171
+0000035d l       .rodata.str1.1		 0000000b .L.str.172
+00000368 l       .rodata.str1.1		 00000006 .L.str.173
+0000036e l       .rodata.str1.1		 00000005 .L.str.174
+00000373 l       .rodata.str1.1		 00000004 .L.str.175
+00000377 l       .rodata.str1.1		 00000005 .L.str.176
+0000037c l       .rodata.str1.1		 00000004 .L.str.177
+00000380 l       .rodata.str1.1		 00000005 .L.str.178
+00000385 l       .rodata.str1.1		 00000006 .L.str.179
+00000051 l       .rodata.str1.1		 00000009 .L.str.18
+0000038b l       .rodata.str1.1		 00000005 .L.str.180
+00000390 l       .rodata.str1.1		 00000006 .L.str.181
+00000396 l       .rodata.str1.1		 00000006 .L.str.182
+0000039c l       .rodata.str1.1		 00000006 .L.str.183
+000003a2 l       .rodata.str1.1		 00000005 .L.str.184
+000003a7 l       .rodata.str1.1		 00000006 .L.str.185
+000003ad l       .rodata.str1.1		 00000006 .L.str.186
+000003b3 l       .rodata.str1.1		 00000005 .L.str.187
+000003b8 l       .rodata.str1.1		 00000005 .L.str.188
+000003bd l       .rodata.str1.1		 00000006 .L.str.189
+0000005a l       .rodata.str1.1		 00000009 .L.str.19
+000003c3 l       .rodata.str1.1		 00000005 .L.str.190
+000003c8 l       .rodata.str1.1		 00000006 .L.str.191
+000003ce l       .rodata.str1.1		 00000006 .L.str.192
+000003d4 l       .rodata.str1.1		 00000006 .L.str.193
+000003da l       .rodata.str1.1		 00000005 .L.str.194
+000003df l       .rodata.str1.1		 00000005 .L.str.195
+000003e4 l       .rodata.str1.1		 00000004 .L.str.196
+000003e8 l       .rodata.str1.1		 00000004 .L.str.197
+000003ec l       .rodata.str1.1		 00000006 .L.str.198
+000003f2 l       .rodata.str1.1		 00000006 .L.str.199
+0000000b l       .rodata.str1.1		 00000004 .L.str.2
+00000063 l       .rodata.str1.1		 00000008 .L.str.20
+000003f8 l       .rodata.str1.1		 00000006 .L.str.200
+000003fe l       .rodata.str1.1		 00000006 .L.str.201
+00000404 l       .rodata.str1.1		 00000005 .L.str.202
+00000409 l       .rodata.str1.1		 00000005 .L.str.203
+0000040e l       .rodata.str1.1		 0000000b .L.str.204
+00000419 l       .rodata.str1.1		 0000000a .L.str.205
+00000423 l       .rodata.str1.1		 00000007 .L.str.206
+0000042a l       .rodata.str1.1		 0000000b .L.str.207
+00000435 l       .rodata.str1.1		 0000000b .L.str.208
+00000440 l       .rodata.str1.1		 00000006 .L.str.209
+0000006b l       .rodata.str1.1		 00000005 .L.str.21
+00000446 l       .rodata.str1.1		 00000005 .L.str.210
+0000044b l       .rodata.str1.1		 00000005 .L.str.211
+00000450 l       .rodata.str1.1		 00000004 .L.str.212
+00000454 l       .rodata.str1.1		 00000004 .L.str.213
+00000458 l       .rodata.str1.1		 00000005 .L.str.214
+0000045d l       .rodata.str1.1		 00000005 .L.str.215
+00000462 l       .rodata.str1.1		 00000005 .L.str.216
+00000467 l       .rodata.str1.1		 00000005 .L.str.217
+0000046c l       .rodata.str1.1		 0000000a .L.str.218
+00000476 l       .rodata.str1.1		 00000007 .L.str.219
+00000070 l       .rodata.str1.1		 00000009 .L.str.22
+0000047d l       .rodata.str1.1		 00000007 .L.str.220
+00000484 l       .rodata.str1.1		 00000008 .L.str.221
+0000048c l       .rodata.str1.1		 00000005 .L.str.222
+00000491 l       .rodata.str1.1		 00000005 .L.str.223
+00000496 l       .rodata.str1.1		 00000006 .L.str.224
+0000049c l       .rodata.str1.1		 00000005 .L.str.225
+000004a1 l       .rodata.str1.1		 00000005 .L.str.226
+000004a6 l       .rodata.str1.1		 00000005 .L.str.227
+000004ab l       .rodata.str1.1		 00000004 .L.str.228
+000004af l       .rodata.str1.1		 00000004 .L.str.229
+00000079 l       .rodata.str1.1		 00000005 .L.str.23
+000004b3 l       .rodata.str1.1		 00000004 .L.str.230
+000004b7 l       .rodata.str1.1		 00000006 .L.str.231
+000004bd l       .rodata.str1.1		 00000005 .L.str.232
+000004c2 l       .rodata.str1.1		 00000005 .L.str.233
+000004c7 l       .rodata.str1.1		 0000000a .L.str.234
+000004d1 l       .rodata.str1.1		 00000008 .L.str.235
+000004d9 l       .rodata.str1.1		 0000000c .L.str.236
+000004e5 l       .rodata.str1.1		 00000008 .L.str.237
+000004ed l       .rodata.str1.1		 0000000a .L.str.238
+000004f7 l       .rodata.str1.1		 00000005 .L.str.239
+0000007e l       .rodata.str1.1		 00000009 .L.str.24
+000004fc l       .rodata.str1.1		 0000000d .L.str.240
+00000509 l       .rodata.str1.1		 00000005 .L.str.241
+00000511 l       .rodata.str1.1		 00000005 .L.str.242
+00000516 l       .rodata.str1.1		 00000005 .L.str.243
+0000051b l       .rodata.str1.1		 00000005 .L.str.244
+00000520 l       .rodata.str1.1		 00000004 .L.str.245
+00000524 l       .rodata.str1.1		 00000004 .L.str.246
+00000528 l       .rodata.str1.1		 00000004 .L.str.247
+0000052c l       .rodata.str1.1		 00000004 .L.str.248
+00000530 l       .rodata.str1.1		 00000005 .L.str.249
+00000087 l       .rodata.str1.1		 00000006 .L.str.25
+00000535 l       .rodata.str1.1		 00000005 .L.str.250
+0000053a l       .rodata.str1.1		 00000004 .L.str.251
+0000053e l       .rodata.str1.1		 00000004 .L.str.252
+00000542 l       .rodata.str1.1		 00000005 .L.str.253
+00000547 l       .rodata.str1.1		 00000005 .L.str.254
+0000054c l       .rodata.str1.1		 00000005 .L.str.255
+00000551 l       .rodata.str1.1		 00000004 .L.str.256
+00000555 l       .rodata.str1.1		 00000003 .L.str.257
+00000558 l       .rodata.str1.1		 00000003 .L.str.258
+0000055b l       .rodata.str1.1		 00000003 .L.str.259
+0000008d l       .rodata.str1.1		 00000006 .L.str.26
+0000055e l       .rodata.str1.1		 00000003 .L.str.260
+00000561 l       .rodata.str1.1		 00000003 .L.str.261
+00000564 l       .rodata.str1.1		 00000006 .L.str.262
+0000056a l       .rodata.str1.1		 00000006 .L.str.263
+00000570 l       .rodata.str1.1		 00000009 .L.str.264
+00000579 l       .rodata.str1.1		 00000006 .L.str.265
+0000057f l       .rodata.str1.1		 00000005 .L.str.266
+00000584 l       .rodata.str1.1		 00000005 .L.str.267
+00000589 l       .rodata.str1.1		 00000005 .L.str.268
+0000058e l       .rodata.str1.1		 00000004 .L.str.269
+00000093 l       .rodata.str1.1		 00000005 .L.str.27
+00000592 l       .rodata.str1.1		 00000005 .L.str.270
+00000597 l       .rodata.str1.1		 00000005 .L.str.271
+0000059c l       .rodata.str1.1		 00000005 .L.str.272
+000005a1 l       .rodata.str1.1		 00000005 .L.str.273
+000005a6 l       .rodata.str1.1		 00000005 .L.str.274
+000005ab l       .rodata.str1.1		 00000005 .L.str.275
+000005b0 l       .rodata.str1.1		 00000007 .L.str.276
+000005b7 l       .rodata.str1.1		 00000006 .L.str.277
+000005bd l       .rodata.str1.1		 00000004 .L.str.278
+000005c1 l       .rodata.str1.1		 00000004 .L.str.279
+00000098 l       .rodata.str1.1		 00000008 .L.str.28
+000005c5 l       .rodata.str1.1		 00000004 .L.str.280
+000005c9 l       .rodata.str1.1		 00000004 .L.str.281
+000005cd l       .rodata.str1.1		 00000004 .L.str.282
+000005d1 l       .rodata.str1.1		 00000005 .L.str.283
+000005d6 l       .rodata.str1.1		 00000003 .L.str.284
+000005d9 l       .rodata.str1.1		 00000003 .L.str.285
+000005dc l       .rodata.str1.1		 00000004 .L.str.286
+000005e0 l       .rodata.str1.1		 00000003 .L.str.287
+000005e3 l       .rodata.str1.1		 00000003 .L.str.288
+000005e6 l       .rodata.str1.1		 00000002 .L.str.289
+000000a0 l       .rodata.str1.1		 00000002 .L.str.29
+000005e8 l       .rodata.str1.1		 00000004 .L.str.290
+000005ec l       .rodata.str1.1		 00000003 .L.str.291
+000005ef l       .rodata.str1.1		 00000004 .L.str.292
+000005f3 l       .rodata.str1.1		 00000004 .L.str.293
+000005f7 l       .rodata.str1.1		 00000006 .L.str.294
+000005fd l       .rodata.str1.1		 00000004 .L.str.295
+00000601 l       .rodata.str1.1		 00000003 .L.str.296
+00000604 l       .rodata.str1.1		 00000005 .L.str.297
+00000609 l       .rodata.str1.1		 00000005 .L.str.298
+0000060e l       .rodata.str1.1		 00000004 .L.str.299
+0000000f l       .rodata.str1.1		 00000005 .L.str.3
+000000a2 l       .rodata.str1.1		 00000006 .L.str.30
+00000612 l       .rodata.str1.1		 00000005 .L.str.300
+00000617 l       .rodata.str1.1		 00000005 .L.str.301
+0000061c l       .rodata.str1.1		 00000005 .L.str.302
+00000621 l       .rodata.str1.1		 00000004 .L.str.303
+00000625 l       .rodata.str1.1		 00000002 .L.str.304
+00000627 l       .rodata.str1.1		 00000002 .L.str.305
+00000629 l       .rodata.str1.1		 00000002 .L.str.306
+0000062b l       .rodata.str1.1		 00000002 .L.str.307
+0000062d l       .rodata.str1.1		 00000002 .L.str.308
+0000062f l       .rodata.str1.1		 00000002 .L.str.309
+000000a8 l       .rodata.str1.1		 00000004 .L.str.31
+00000631 l       .rodata.str1.1		 00000002 .L.str.310
+00000633 l       .rodata.str1.1		 00000002 .L.str.311
+00000635 l       .rodata.str1.1		 00000003 .L.str.312
+00000638 l       .rodata.str1.1		 00000003 .L.str.313
+0000063b l       .rodata.str1.1		 00000003 .L.str.314
+0000063e l       .rodata.str1.1		 00000003 .L.str.315
+00000641 l       .rodata.str1.1		 00000003 .L.str.316
+00000644 l       .rodata.str1.1		 00000003 .L.str.317
+00000647 l       .rodata.str1.1		 00000003 .L.str.318
+0000064a l       .rodata.str1.1		 00000003 .L.str.319
+000000ac l       .rodata.str1.1		 00000005 .L.str.32
+0000064d l       .rodata.str1.1		 00000003 .L.str.320
+00000650 l       .rodata.str1.1		 00000003 .L.str.321
+00000653 l       .rodata.str1.1		 00000003 .L.str.322
+00000656 l       .rodata.str1.1		 00000003 .L.str.323
+00000659 l       .rodata.str1.1		 00000003 .L.str.324
+0000065c l       .rodata.str1.1		 00000003 .L.str.325
+0000065f l       .rodata.str1.1		 00000003 .L.str.326
+00000662 l       .rodata.str1.1		 00000003 .L.str.327
+00000665 l       .rodata.str1.1		 00000003 .L.str.328
+00000668 l       .rodata.str1.1		 00000003 .L.str.329
+000000b1 l       .rodata.str1.1		 00000006 .L.str.33
+0000066b l       .rodata.str1.1		 00000003 .L.str.330
+0000066e l       .rodata.str1.1		 00000003 .L.str.331
+00000671 l       .rodata.str1.1		 00000003 .L.str.332
+00000674 l       .rodata.str1.1		 00000003 .L.str.333
+00000677 l       .rodata.str1.1		 00000003 .L.str.334
+0000067a l       .rodata.str1.1		 00000003 .L.str.335
+0000067d l       .rodata.str1.1		 00000003 .L.str.336
+00000680 l       .rodata.str1.1		 00000003 .L.str.337
+00000683 l       .rodata.str1.1		 00000003 .L.str.338
+00000686 l       .rodata.str1.1		 00000003 .L.str.339
+000000b7 l       .rodata.str1.1		 00000004 .L.str.34
+00000689 l       .rodata.str1.1		 00000004 .L.str.340
+0000068d l       .rodata.str1.1		 00000008 .L.str.341
+00000695 l       .rodata.str1.1		 00000008 .L.str.342
+0000069d l       .rodata.str1.1		 00000004 .L.str.343
+000006a1 l       .rodata.str1.1		 00000006 .L.str.344
+000006a7 l       .rodata.str1.1		 00000005 .L.str.345
+000006ac l       .rodata.str1.1		 00000005 .L.str.346
+000006b1 l       .rodata.str1.1		 00000004 .L.str.347
+000006b5 l       .rodata.str1.1		 00000006 .L.str.348
+000006bb l       .rodata.str1.1		 00000004 .L.str.349
+000000bb l       .rodata.str1.1		 00000004 .L.str.35
+000006bf l       .rodata.str1.1		 00000005 .L.str.350
+000006c4 l       .rodata.str1.1		 00000006 .L.str.351
+000006ca l       .rodata.str1.1		 00000005 .L.str.352
+000006cf l       .rodata.str1.1		 00000004 .L.str.353
+000006d3 l       .rodata.str1.1		 00000004 .L.str.354
+000006d7 l       .rodata.str1.1		 00000005 .L.str.355
+000006dc l       .rodata.str1.1		 00000005 .L.str.356
+000006e1 l       .rodata.str1.1		 00000008 .L.str.357
+000006e9 l       .rodata.str1.1		 00000004 .L.str.358
+000006ed l       .rodata.str1.1		 00000004 .L.str.359
+000000bf l       .rodata.str1.1		 00000004 .L.str.36
+000006f1 l       .rodata.str1.1		 00000004 .L.str.360
+000006f5 l       .rodata.str1.1		 00000004 .L.str.361
+000006f9 l       .rodata.str1.1		 00000004 .L.str.362
+000006fd l       .rodata.str1.1		 00000004 .L.str.363
+00000701 l       .rodata.str1.1		 00000003 .L.str.364
+00000704 l       .rodata.str1.1		 00000005 .L.str.365
+00000709 l       .rodata.str1.1		 00000005 .L.str.366
+0000070e l       .rodata.str1.1		 00000004 .L.str.367
+00000712 l       .rodata.str1.1		 00000004 .L.str.368
+00000716 l       .rodata.str1.1		 00000005 .L.str.369
+000000c3 l       .rodata.str1.1		 00000004 .L.str.37
+0000071b l       .rodata.str1.1		 00000005 .L.str.370
+00000720 l       .rodata.str1.1		 00000004 .L.str.371
+00000724 l       .rodata.str1.1		 00000004 .L.str.372
+00000728 l       .rodata.str1.1		 00000004 .L.str.373
+0000072c l       .rodata.str1.1		 00000004 .L.str.374
+00000730 l       .rodata.str1.1		 00000004 .L.str.375
+00000734 l       .rodata.str1.1		 00000004 .L.str.376
+00000738 l       .rodata.str1.1		 00000004 .L.str.377
+0000073c l       .rodata.str1.1		 00000004 .L.str.378
+00000740 l       .rodata.str1.1		 00000004 .L.str.379
+000000c7 l       .rodata.str1.1		 00000005 .L.str.38
+00000744 l       .rodata.str1.1		 00000004 .L.str.380
+00000748 l       .rodata.str1.1		 00000005 .L.str.381
+0000074d l       .rodata.str1.1		 00000006 .L.str.382
+00000753 l       .rodata.str1.1		 00000005 .L.str.383
+00000758 l       .rodata.str1.1		 00000006 .L.str.384
+0000075e l       .rodata.str1.1		 00000006 .L.str.385
+00000764 l       .rodata.str1.1		 00000005 .L.str.386
+00000769 l       .rodata.str1.1		 00000006 .L.str.387
+0000076f l       .rodata.str1.1		 00000005 .L.str.388
+00000774 l       .rodata.str1.1		 00000005 .L.str.389
+000000cc l       .rodata.str1.1		 00000005 .L.str.39
+00000779 l       .rodata.str1.1		 00000005 .L.str.390
+0000077e l       .rodata.str1.1		 00000005 .L.str.391
+00000783 l       .rodata.str1.1		 00000005 .L.str.392
+00000788 l       .rodata.str1.1		 00000005 .L.str.393
+0000078d l       .rodata.str1.1		 00000005 .L.str.394
+00000792 l       .rodata.str1.1		 00000005 .L.str.395
+00000797 l       .rodata.str1.1		 00000005 .L.str.396
+0000079c l       .rodata.str1.1		 00000005 .L.str.397
+000007a1 l       .rodata.str1.1		 00000005 .L.str.398
+000007a6 l       .rodata.str1.1		 00000005 .L.str.399
+00000014 l       .rodata.str1.1		 00000004 .L.str.4
+000000d1 l       .rodata.str1.1		 00000005 .L.str.40
+000007ab l       .rodata.str1.1		 00000005 .L.str.400
+000007b0 l       .rodata.str1.1		 00000006 .L.str.401
+000007b6 l       .rodata.str1.1		 00000005 .L.str.402
+000007bb l       .rodata.str1.1		 00000006 .L.str.403
+000007c1 l       .rodata.str1.1		 00000006 .L.str.404
+000007c7 l       .rodata.str1.1		 00000004 .L.str.405
+000007cb l       .rodata.str1.1		 00000004 .L.str.406
+000007cf l       .rodata.str1.1		 00000004 .L.str.407
+000007d3 l       .rodata.str1.1		 00000003 .L.str.408
+000007d6 l       .rodata.str1.1		 00000003 .L.str.409
+000000d6 l       .rodata.str1.1		 00000005 .L.str.41
+000007d9 l       .rodata.str1.1		 00000005 .L.str.410
+000007de l       .rodata.str1.1		 00000004 .L.str.411
+000007e2 l       .rodata.str1.1		 00000007 .L.str.412
+000007e9 l       .rodata.str1.1		 00000005 .L.str.413
+000007ee l       .rodata.str1.1		 00000005 .L.str.414
+000007f3 l       .rodata.str1.1		 00000005 .L.str.415
+000007f8 l       .rodata.str1.1		 00000005 .L.str.416
+000007fd l       .rodata.str1.1		 00000006 .L.str.417
+00000803 l       .rodata.str1.1		 00000006 .L.str.418
+00000809 l       .rodata.str1.1		 00000005 .L.str.419
+000000db l       .rodata.str1.1		 00000005 .L.str.42
+0000080e l       .rodata.str1.1		 00000006 .L.str.420
+00000814 l       .rodata.str1.1		 00000004 .L.str.421
+00000818 l       .rodata.str1.1		 00000004 .L.str.422
+0000081c l       .rodata.str1.1		 00000005 .L.str.423
+00000821 l       .rodata.str1.1		 00000005 .L.str.424
+00000826 l       .rodata.str1.1		 00000003 .L.str.425
+00000829 l       .rodata.str1.1		 00000004 .L.str.426
+0000082d l       .rodata.str1.1		 00000004 .L.str.427
+00000831 l       .rodata.str1.1		 00000004 .L.str.428
+00000835 l       .rodata.str1.1		 00000005 .L.str.429
+000000e0 l       .rodata.str1.1		 00000005 .L.str.43
+0000083a l       .rodata.str1.1		 00000005 .L.str.430
+0000083f l       .rodata.str1.1		 00000005 .L.str.431
+00000844 l       .rodata.str1.1		 00000004 .L.str.432
+00000848 l       .rodata.str1.1		 00000004 .L.str.433
+0000084c l       .rodata.str1.1		 00000004 .L.str.434
+00000850 l       .rodata.str1.1		 00000005 .L.str.435
+00000855 l       .rodata.str1.1		 00000005 .L.str.436
+0000085a l       .rodata.str1.1		 00000004 .L.str.437
+0000085e l       .rodata.str1.1		 00000004 .L.str.438
+00000862 l       .rodata.str1.1		 00000004 .L.str.439
+000000e5 l       .rodata.str1.1		 00000006 .L.str.44
+00000866 l       .rodata.str1.1		 00000006 .L.str.440
+0000086c l       .rodata.str1.1		 00000006 .L.str.441
+00000872 l       .rodata.str1.1		 00000006 .L.str.442
+00000878 l       .rodata.str1.1		 00000006 .L.str.443
+0000087e l       .rodata.str1.1		 00000004 .L.str.444
+00000882 l       .rodata.str1.1		 00000005 .L.str.445
+00000887 l       .rodata.str1.1		 00000005 .L.str.446
+0000088c l       .rodata.str1.1		 00000004 .L.str.447
+00000890 l       .rodata.str1.1		 00000004 .L.str.448
+00000894 l       .rodata.str1.1		 00000005 .L.str.449
+000000eb l       .rodata.str1.1		 00000007 .L.str.45
+00000899 l       .rodata.str1.1		 00000005 .L.str.450
+0000089e l       .rodata.str1.1		 00000004 .L.str.451
+000008a2 l       .rodata.str1.1		 00000005 .L.str.452
+000008a7 l       .rodata.str1.1		 00000004 .L.str.453
+000008ab l       .rodata.str1.1		 00000006 .L.str.454
+000008b1 l       .rodata.str1.1		 00000005 .L.str.455
+000008b6 l       .rodata.str1.1		 00000004 .L.str.456
+000008ba l       .rodata.str1.1		 00000004 .L.str.457
+000008be l       .rodata.str1.1		 00000004 .L.str.458
+000008c2 l       .rodata.str1.1		 00000004 .L.str.459
+000000f2 l       .rodata.str1.1		 00000005 .L.str.46
+000008c6 l       .rodata.str1.1		 00000005 .L.str.460
+000008cb l       .rodata.str1.1		 00000003 .L.str.461
+000008ce l       .rodata.str1.1		 00000005 .L.str.462
+000008d3 l       .rodata.str1.1		 00000006 .L.str.463
+000008d9 l       .rodata.str1.1		 00000005 .L.str.464
+000008de l       .rodata.str1.1		 00000003 .L.str.465
+000008e1 l       .rodata.str1.1		 00000003 .L.str.466
+000008e4 l       .rodata.str1.1		 00000003 .L.str.467
+000008e7 l       .rodata.str1.1		 00000003 .L.str.468
+000008ea l       .rodata.str1.1		 00000003 .L.str.469
+000000f7 l       .rodata.str1.1		 00000005 .L.str.47
+000008ed l       .rodata.str1.1		 00000003 .L.str.470
+000008f0 l       .rodata.str1.1		 00000003 .L.str.471
+000008f3 l       .rodata.str1.1		 00000003 .L.str.472
+000008f6 l       .rodata.str1.1		 00000005 .L.str.473
+000008fb l       .rodata.str1.1		 00000005 .L.str.474
+00000900 l       .rodata.str1.1		 00000005 .L.str.475
+00000905 l       .rodata.str1.1		 00000005 .L.str.476
+0000090a l       .rodata.str1.1		 00000005 .L.str.477
+0000090f l       .rodata.str1.1		 00000005 .L.str.478
+00000914 l       .rodata.str1.1		 00000004 .L.str.479
+000000fc l       .rodata.str1.1		 00000005 .L.str.48
+00000918 l       .rodata.str1.1		 00000006 .L.str.480
+0000091e l       .rodata.str1.1		 00000005 .L.str.481
+00000923 l       .rodata.str1.1		 00000005 .L.str.482
+00000928 l       .rodata.str1.1		 00000005 .L.str.483
+0000092d l       .rodata.str1.1		 00000005 .L.str.484
+00000932 l       .rodata.str1.1		 0000000e .L.str.485
+00000940 l       .rodata.str1.1		 00000011 .L.str.486
+00000961 l       .rodata.str1.1		 00000011 .L.str.487
+00000972 l       .rodata.str1.1		 00000006 .L.str.488
+00000978 l       .rodata.str1.1		 0000000c .L.str.489
+00000101 l       .rodata.str1.1		 00000005 .L.str.49
+00000984 l       .rodata.str1.1		 00000004 .L.str.490
+00000988 l       .rodata.str1.1		 00000005 .L.str.491
+0000098d l       .rodata.str1.1		 00000004 .L.str.492
+00000991 l       .rodata.str1.1		 00000004 .L.str.493
+00000995 l       .rodata.str1.1		 00000005 .L.str.494
+0000099a l       .rodata.str1.1		 00000005 .L.str.495
+0000099f l       .rodata.str1.1		 00000004 .L.str.496
+000009a3 l       .rodata.str1.1		 00000005 .L.str.497
+000009a8 l       .rodata.str1.1		 00000005 .L.str.498
+000009ad l       .rodata.str1.1		 00000005 .L.str.499
+00000018 l       .rodata.str1.1		 00000003 .L.str.5
+00000106 l       .rodata.str1.1		 00000005 .L.str.50
+000009b2 l       .rodata.str1.1		 00000004 .L.str.500
+000009b6 l       .rodata.str1.1		 00000006 .L.str.501
+000009bc l       .rodata.str1.1		 00000005 .L.str.502
+000009c1 l       .rodata.str1.1		 00000005 .L.str.503
+000009c6 l       .rodata.str1.1		 00000004 .L.str.504
+000009ca l       .rodata.str1.1		 00000004 .L.str.505
+000009ce l       .rodata.str1.1		 00000004 .L.str.506
+000009d2 l       .rodata.str1.1		 00000003 .L.str.507
+000009d5 l       .rodata.str1.1		 00000006 .L.str.508
+000009db l       .rodata.str1.1		 00000004 .L.str.509
+0000010b l       .rodata.str1.1		 00000005 .L.str.51
+000009df l       .rodata.str1.1		 00000003 .L.str.510
+000009e2 l       .rodata.str1.1		 00000005 .L.str.511
+000009e7 l       .rodata.str1.1		 00000007 .L.str.512
+000009ee l       .rodata.str1.1		 00000008 .L.str.513
+000009f6 l       .rodata.str1.1		 00000008 .L.str.514
+000009fe l       .rodata.str1.1		 00000009 .L.str.515
+00000a07 l       .rodata.str1.1		 00000005 .L.str.516
+00000a0c l       .rodata.str1.1		 00000006 .L.str.517
+00000a12 l       .rodata.str1.1		 00000006 .L.str.518
+00000a18 l       .rodata.str1.1		 00000004 .L.str.519
+00000110 l       .rodata.str1.1		 00000005 .L.str.52
+00000a1c l       .rodata.str1.1		 00000007 .L.str.520
+00000a23 l       .rodata.str1.1		 00000005 .L.str.521
+00000a28 l       .rodata.str1.1		 00000006 .L.str.522
+00000a2e l       .rodata.str1.1		 00000007 .L.str.523
+00000a35 l       .rodata.str1.1		 00000006 .L.str.524
+00000a3e l       .rodata.str1.1		 00000008 .L.str.527
+00000a46 l       .rodata.str1.1		 00000007 .L.str.528
+00000a4d l       .rodata.str1.1		 00000015 .L.str.529
+00000115 l       .rodata.str1.1		 00000005 .L.str.53
+00000a62 l       .rodata.str1.1		 0000000f .L.str.530
+00000a71 l       .rodata.str1.1		 00000008 .L.str.531
+00000a79 l       .rodata.str1.1		 00000007 .L.str.532
+00000a80 l       .rodata.str1.1		 00000005 .L.str.533
+00000a85 l       .rodata.str1.1		 00000005 .L.str.534
+00000a8a l       .rodata.str1.1		 00000007 .L.str.535
+00000a91 l       .rodata.str1.1		 00000005 .L.str.536
+00000a96 l       .rodata.str1.1		 00000006 .L.str.537
+00000a9c l       .rodata.str1.1		 0000000b .L.str.538
+00000aa7 l       .rodata.str1.1		 00000010 .L.str.539
+0000011a l       .rodata.str1.1		 00000004 .L.str.54
+00000ab7 l       .rodata.str1.1		 00000015 .L.str.540
+00000acc l       .rodata.str1.1		 0000001b .L.str.541
+00000ae7 l       .rodata.str1.1		 00000010 .L.str.542
+00000af7 l       .rodata.str1.1		 00000005 .L.str.543
+00000afc l       .rodata.str1.1		 00000004 .L.str.544
+00000b00 l       .rodata.str1.1		 00000005 .L.str.545
+00000b05 l       .rodata.str1.1		 00000004 .L.str.546
+00000b09 l       .rodata.str1.1		 00000005 .L.str.547
+00000b0e l       .rodata.str1.1		 00000005 .L.str.548
+00000b13 l       .rodata.str1.1		 00000007 .L.str.549
+0000011e l       .rodata.str1.1		 00000004 .L.str.55
+00000b1a l       .rodata.str1.1		 0000000a .L.str.550
+00000b24 l       .rodata.str1.1		 00000008 .L.str.551
+00000b2c l       .rodata.str1.1		 00000007 .L.str.552
+00000b33 l       .rodata.str1.1		 00000007 .L.str.553
+00000b3a l       .rodata.str1.1		 00000007 .L.str.554
+00000b41 l       .rodata.str1.1		 00000007 .L.str.555
+00000b48 l       .rodata.str1.1		 00000009 .L.str.556
+00000b51 l       .rodata.str1.1		 00000007 .L.str.557
+00000b58 l       .rodata.str1.1		 00000001 .L.str.558
+00000b59 l       .rodata.str1.1		 0000000f .L.str.559
+00000122 l       .rodata.str1.1		 00000004 .L.str.56
+00000b68 l       .rodata.str1.1		 00000007 .L.str.560
+00000b6f l       .rodata.str1.1		 00000006 .L.str.561
+00000b75 l       .rodata.str1.1		 00000006 .L.str.562
+00000b7b l       .rodata.str1.1		 00000006 .L.str.563
+00000b81 l       .rodata.str1.1		 00000006 .L.str.564
+00000b87 l       .rodata.str1.1		 00000005 .L.str.565
+00000b8c l       .rodata.str1.1		 00000005 .L.str.566
+00000b91 l       .rodata.str1.1		 0000000b .L.str.567
+00000b9c l       .rodata.str1.1		 0000000b .L.str.568
+00000ba7 l       .rodata.str1.1		 00000009 .L.str.569
+00000126 l       .rodata.str1.1		 00000005 .L.str.57
+00000bb0 l       .rodata.str1.1		 00000009 .L.str.570
+00000bb9 l       .rodata.str1.1		 0000000b .L.str.571
+00000bc4 l       .rodata.str1.1		 0000000b .L.str.572
+00000bcf l       .rodata.str1.1		 0000000a .L.str.573
+00000bd9 l       .rodata.str1.1		 0000000c .L.str.574
+00000be5 l       .rodata.str1.1		 00000009 .L.str.575
+00000bee l       .rodata.str1.1		 0000000b .L.str.576
+00000bf9 l       .rodata.str1.1		 0000000d .L.str.577
+00000c06 l       .rodata.str1.1		 0000000c .L.str.578
+00000c12 l       .rodata.str1.1		 00000006 .L.str.579
+0000012b l       .rodata.str1.1		 00000005 .L.str.58
+00000c18 l       .rodata.str1.1		 00000005 .L.str.580
+00000c1d l       .rodata.str1.1		 00000007 .L.str.581
+00000c24 l       .rodata.str1.1		 00000006 .L.str.582
+00000c2a l       .rodata.str1.1		 00000006 .L.str.583
+00000c30 l       .rodata.str1.1		 00000006 .L.str.584
+00000c36 l       .rodata.str1.1		 00000006 .L.str.585
+00000c3c l       .rodata.str1.1		 00000006 .L.str.586
+00000c42 l       .rodata.str1.1		 00000004 .L.str.587
+00000c46 l       .rodata.str1.1		 00000006 .L.str.588
+00000c4c l       .rodata.str1.1		 00000007 .L.str.589
+00000130 l       .rodata.str1.1		 00000005 .L.str.59
+00000c53 l       .rodata.str1.1		 00000006 .L.str.590
+00000c59 l       .rodata.str1.1		 00000006 .L.str.591
+00000c5f l       .rodata.str1.1		 00000007 .L.str.592
+00000c66 l       .rodata.str1.1		 00000007 .L.str.593
+00000c6d l       .rodata.str1.1		 00000007 .L.str.594
+00000c74 l       .rodata.str1.1		 00000007 .L.str.595
+00000c7b l       .rodata.str1.1		 00000004 .L.str.596
+00000c7f l       .rodata.str1.1		 00000007 .L.str.597
+00000c86 l       .rodata.str1.1		 00000008 .L.str.598
+00000c8e l       .rodata.str1.1		 00000008 .L.str.599
+0000001b l       .rodata.str1.1		 00000004 .L.str.6
+00000135 l       .rodata.str1.1		 00000005 .L.str.60
+00000c96 l       .rodata.str1.1		 00000006 .L.str.600
+00000c9c l       .rodata.str1.1		 00000007 .L.str.601
+00000ca3 l       .rodata.str1.1		 0000000d .L.str.602
+00000cb0 l       .rodata.str1.1		 00000012 .L.str.603
+00000cc2 l       .rodata.str1.1		 0000000b .L.str.604
+00000ccd l       .rodata.str1.1		 00000006 .L.str.605
+00000cd3 l       .rodata.str1.1		 0000000c .L.str.606
+00000cdf l       .rodata.str1.1		 0000000b .L.str.607
+00000cea l       .rodata.str1.1		 00000002 .L.str.608
+00000cf5 l       .rodata.str1.1		 0000000d .L.str.609
+0000013a l       .rodata.str1.1		 00000005 .L.str.61
+00000d02 l       .rodata.str1.1		 00000011 .L.str.610
+00000d13 l       .rodata.str1.1		 00000008 .L.str.611
+00000d1b l       .rodata.str1.1		 00000008 .L.str.612
+00000d23 l       .rodata.str1.1		 0000000b .L.str.613
+00000d2e l       .rodata.str1.1		 00000007 .L.str.614
+00000d35 l       .rodata.str1.1		 00000008 .L.str.615
+00000d3d l       .rodata.str1.1		 00000008 .L.str.616
+00000d45 l       .rodata.str1.1		 00000007 .L.str.617
+00000d4c l       .rodata.str1.1		 0000000b .L.str.618
+00000d57 l       .rodata.str1.1		 0000000a .L.str.619
+0000013f l       .rodata.str1.1		 00000005 .L.str.62
+00000d61 l       .rodata.str1.1		 0000000b .L.str.620
+00000d6c l       .rodata.str1.1		 00000016 .L.str.621
+00000d82 l       .rodata.str1.1		 00000003 .L.str.622
+00000d85 l       .rodata.str1.1		 00000003 .L.str.623
+00000d88 l       .rodata.str1.1		 00000004 .L.str.624
+00000d8c l       .rodata.str1.1		 00000005 .L.str.625
+00000d91 l       .rodata.str1.1		 00000002 .L.str.626
+00000d93 l       .rodata.str1.1		 0000004d .L.str.627
+00000de0 l       .rodata.str1.1		 00000007 .L.str.628
+00000de7 l       .rodata.str1.1		 00000004 .L.str.629
+00000144 l       .rodata.str1.1		 00000005 .L.str.63
+00000deb l       .rodata.str1.1		 00000006 .L.str.630
+00000df1 l       .rodata.str1.1		 00000004 .L.str.631
+00000df5 l       .rodata.str1.1		 00000007 .L.str.632
+00000dfc l       .rodata.str1.1		 00000005 .L.str.633
+00000e01 l       .rodata.str1.1		 00000004 .L.str.634
+00000e05 l       .rodata.str1.1		 00000006 .L.str.635
+00000e0b l       .rodata.str1.1		 00000004 .L.str.636
+00000e0f l       .rodata.str1.1		 00000011 .L.str.637
+00000e20 l       .rodata.str1.1		 00000013 .L.str.638
+00000e33 l       .rodata.str1.1		 0000000b .L.str.639
+00000149 l       .rodata.str1.1		 00000004 .L.str.64
+00000e3e l       .rodata.str1.1		 00000009 .L.str.640
+00000e47 l       .rodata.str1.1		 0000000a .L.str.641
+00000e51 l       .rodata.str1.1		 00000008 .L.str.642
+00000e59 l       .rodata.str1.1		 0000000d .L.str.643
+00000e66 l       .rodata.str1.1		 0000000b .L.str.644
+00000e71 l       .rodata.str1.1		 0000000c .L.str.645
+00000e7d l       .rodata.str1.1		 00000010 .L.str.646
+00000e8d l       .rodata.str1.1		 00000006 .L.str.647
+00000e93 l       .rodata.str1.1		 00000009 .L.str.648
+00000e9c l       .rodata.str1.1		 00000008 .L.str.649
+0000014d l       .rodata.str1.1		 00000004 .L.str.65
+00000ea4 l       .rodata.str1.1		 00000008 .L.str.650
+00000eac l       .rodata.str1.1		 00000004 .L.str.651
+00000eb0 l       .rodata.str1.1		 00000008 .L.str.652
+00000eb8 l       .rodata.str1.1		 00000006 .L.str.653
+00000ebe l       .rodata.str1.1		 0000000b .L.str.654
+00000ec9 l       .rodata.str1.1		 00000008 .L.str.655
+00000ed1 l       .rodata.str1.1		 0000000d .L.str.656
+00000ede l       .rodata.str1.1		 0000000c .L.str.657
+00000eea l       .rodata.str1.1		 0000000a .L.str.658
+00000ef4 l       .rodata.str1.1		 00000011 .L.str.659
+00000151 l       .rodata.str1.1		 00000004 .L.str.66
+00000f05 l       .rodata.str1.1		 00000012 .L.str.660
+00000f17 l       .rodata.str1.1		 0000000d .L.str.661
+00000f24 l       .rodata.str1.1		 0000000d .L.str.662
+00000f31 l       .rodata.str1.1		 0000000d .L.str.663
+00000f3e l       .rodata.str1.1		 0000000e .L.str.664
+00000f4c l       .rodata.str1.1		 0000000d .L.str.665
+00000f59 l       .rodata.str1.1		 0000000e .L.str.666
+00000f67 l       .rodata.str1.1		 00000006 .L.str.667
+00000f6d l       .rodata.str1.1		 00000008 .L.str.668
+00000f75 l       .rodata.str1.1		 00000007 .L.str.669
+00000155 l       .rodata.str1.1		 00000004 .L.str.67
+00000f7c l       .rodata.str1.1		 0000000e .L.str.670
+00000f8a l       .rodata.str1.1		 0000000b .L.str.671
+00000f95 l       .rodata.str1.1		 00000009 .L.str.672
+00000f9e l       .rodata.str1.1		 0000000c .L.str.673
+00000faa l       .rodata.str1.1		 0000000e .L.str.674
+00000fb8 l       .rodata.str1.1		 0000000d .L.str.675
+00000fc5 l       .rodata.str1.1		 0000000b .L.str.676
+00000fd0 l       .rodata.str1.1		 0000000b .L.str.677
+00000fdb l       .rodata.str1.1		 0000000b .L.str.678
+00000fe6 l       .rodata.str1.1		 0000000d .L.str.679
+00000159 l       .rodata.str1.1		 00000009 .L.str.68
+00000ff3 l       .rodata.str1.1		 00000009 .L.str.680
+00000ffc l       .rodata.str1.1		 0000000c .L.str.681
+00001008 l       .rodata.str1.1		 0000000c .L.str.682
+00001014 l       .rodata.str1.1		 00000006 .L.str.683
+0000101a l       .rodata.str1.1		 00000007 .L.str.684
+00001021 l       .rodata.str1.1		 00000007 .L.str.685
+00001028 l       .rodata.str1.1		 00000007 .L.str.686
+0000102f l       .rodata.str1.1		 00000009 .L.str.687
+00001038 l       .rodata.str1.1		 00000005 .L.str.688
+0000103d l       .rodata.str1.1		 0000000b .L.str.689
+00000162 l       .rodata.str1.1		 0000000a .L.str.69
+00001048 l       .rodata.str1.1		 0000000a .L.str.690
+00001052 l       .rodata.str1.1		 00000008 .L.str.691
+0000105a l       .rodata.str1.1		 00000007 .L.str.692
+00001061 l       .rodata.str1.1		 00000006 .L.str.693
+00001067 l       .rodata.str1.1		 00000005 .L.str.694
+0000106c l       .rodata.str1.1		 00000005 .L.str.695
+00001071 l       .rodata.str1.1		 0000000b .L.str.696
+0000107c l       .rodata.str1.1		 0000000a .L.str.697
+00001086 l       .rodata.str1.1		 0000000a .L.str.698
+00001090 l       .rodata.str1.1		 00000009 .L.str.699
+0000001f l       .rodata.str1.1		 00000005 .L.str.7
+0000016c l       .rodata.str1.1		 00000009 .L.str.70
+00001099 l       .rodata.str1.1		 0000000c .L.str.700
+000010a5 l       .rodata.str1.1		 00000004 .L.str.701
+000010a9 l       .rodata.str1.1		 00000012 .L.str.702
+000010bb l       .rodata.str1.1		 00000006 .L.str.703
+000010c1 l       .rodata.str1.1		 00000004 .L.str.704
+000010c5 l       .rodata.str1.1		 00000003 .L.str.705
+000010c8 l       .rodata.str1.1		 00000005 .L.str.706
+000010cd l       .rodata.str1.1		 00000004 .L.str.707
+000010d1 l       .rodata.str1.1		 00000003 .L.str.708
+000010d4 l       .rodata.str1.1		 00000004 .L.str.709
+00000175 l       .rodata.str1.1		 0000000a .L.str.71
+000010d8 l       .rodata.str1.1		 00000006 .L.str.710
+000010de l       .rodata.str1.1		 0000000a .L.str.711
+000010e8 l       .rodata.str1.1		 0000000c .L.str.712
+000010f4 l       .rodata.str1.1		 0000000b .L.str.713
+000010ff l       .rodata.str1.1		 0000002d .L.str.714
+0000112c l       .rodata.str1.1		 00000011 .L.str.715
+0000113d l       .rodata.str1.1		 00000011 .L.str.716
+0000114e l       .rodata.str1.1		 00000012 .L.str.717
+00001160 l       .rodata.str1.1		 0000000d .L.str.718
+0000116d l       .rodata.str1.1		 00000009 .L.str.719
+0000017f l       .rodata.str1.1		 0000000a .L.str.72
+00001176 l       .rodata.str1.1		 00000011 .L.str.720
+00001187 l       .rodata.str1.1		 00000011 .L.str.721
+00001198 l       .rodata.str1.1		 0000001f .L.str.722
+000011b7 l       .rodata.str1.1		 0000000c .L.str.723
+000011c3 l       .rodata.str1.1		 00000011 .L.str.724
+000011d4 l       .rodata.str1.1		 00000011 .L.str.725
+000011e5 l       .rodata.str1.1		 0000000a .L.str.726
+000011ef l       .rodata.str1.1		 00000012 .L.str.727
+00001201 l       .rodata.str1.1		 00000012 .L.str.728
+00001213 l       .rodata.str1.1		 0000000f .L.str.729
+00000189 l       .rodata.str1.1		 00000005 .L.str.73
+00001222 l       .rodata.str1.1		 0000000f .L.str.730
+00001231 l       .rodata.str1.1		 0000001e .L.str.731
+0000124f l       .rodata.str1.1		 00000037 .L.str.732
+00001286 l       .rodata.str1.1		 00000034 .L.str.733
+000012ba l       .rodata.str1.1		 00000016 .L.str.734
+000012d0 l       .rodata.str1.1		 0000000d .L.str.735
+000012dd l       .rodata.str1.1		 00000014 .L.str.736
+000012f1 l       .rodata.str1.1		 00000013 .L.str.737
+00001304 l       .rodata.str1.1		 0000000c .L.str.738
+00001310 l       .rodata.str1.1		 0000000d .L.str.739
+0000018e l       .rodata.str1.1		 00000005 .L.str.74
+0000131d l       .rodata.str1.1		 0000000b .L.str.740
+00001328 l       .rodata.str1.1		 00000007 .L.str.741
+0000132f l       .rodata.str1.1		 00000010 .L.str.742
+0000133f l       .rodata.str1.1		 0000000d .L.str.743
+0000134c l       .rodata.str1.1		 0000000b .L.str.744
+00001357 l       .rodata.str1.1		 0000000a .L.str.745
+00001361 l       .rodata.str1.1		 00000008 .L.str.746
+00001369 l       .rodata.str1.1		 00000007 .L.str.747
+00001370 l       .rodata.str1.1		 0000000a .L.str.748
+0000137a l       .rodata.str1.1		 00000005 .L.str.749
+00000193 l       .rodata.str1.1		 00000005 .L.str.75
+0000137f l       .rodata.str1.1		 00000005 .L.str.750
+00001384 l       .rodata.str1.1		 0000000a .L.str.751
+0000138e l       .rodata.str1.1		 0000000b .L.str.752
+00001399 l       .rodata.str1.1		 00000007 .L.str.753
+000013a0 l       .rodata.str1.1		 0000000c .L.str.754
+000013ac l       .rodata.str1.1		 00000006 .L.str.755
+000013b2 l       .rodata.str1.1		 0000000a .L.str.756
+000013bc l       .rodata.str1.1		 0000000a .L.str.757
+000013c6 l       .rodata.str1.1		 0000000b .L.str.758
+000013d1 l       .rodata.str1.1		 0000000d .L.str.759
+00000198 l       .rodata.str1.1		 00000005 .L.str.76
+000013de l       .rodata.str1.1		 00000012 .L.str.760
+000013f0 l       .rodata.str1.1		 0000000d .L.str.761
+000013fd l       .rodata.str1.1		 0000000f .L.str.762
+0000140c l       .rodata.str1.1		 00000010 .L.str.763
+0000141c l       .rodata.str1.1		 00000008 .L.str.764
+00001424 l       .rodata.str1.1		 0000000d .L.str.765
+00001431 l       .rodata.str1.1		 0000000a .L.str.766
+0000143b l       .rodata.str1.1		 00000007 .L.str.767
+00001442 l       .rodata.str1.1		 00000011 .L.str.768
+00001453 l       .rodata.str1.1		 00000011 .L.str.769
+0000019d l       .rodata.str1.1		 00000005 .L.str.77
+00001464 l       .rodata.str1.1		 00000008 .L.str.770
+0000146c l       .rodata.str1.1		 00000010 .L.str.771
+0000147c l       .rodata.str1.1		 00000009 .L.str.772
+00001485 l       .rodata.str1.1		 0000000d .L.str.773
+00001492 l       .rodata.str1.1		 0000000e .L.str.774
+000014a0 l       .rodata.str1.1		 0000000c .L.str.775
+000014ac l       .rodata.str1.1		 0000000d .L.str.776
+000014b9 l       .rodata.str1.1		 00000007 .L.str.777
+000014c0 l       .rodata.str1.1		 0000000b .L.str.778
+000014cb l       .rodata.str1.1		 00000009 .L.str.779
+000001a2 l       .rodata.str1.1		 00000005 .L.str.78
+000014d4 l       .rodata.str1.1		 0000000a .L.str.780
+000014de l       .rodata.str1.1		 0000000c .L.str.781
+000014ea l       .rodata.str1.1		 0000000b .L.str.782
+000014f5 l       .rodata.str1.1		 0000000b .L.str.783
+00001500 l       .rodata.str1.1		 00000008 .L.str.784
+00001508 l       .rodata.str1.1		 00000006 .L.str.785
+0000150e l       .rodata.str1.1		 00000006 .L.str.786
+00001514 l       .rodata.str1.1		 00000004 .L.str.787
+00001518 l       .rodata.str1.1		 00000008 .L.str.788
+00001520 l       .rodata.str1.1		 0000000f .L.str.789
+000001a7 l       .rodata.str1.1		 00000005 .L.str.79
+0000152f l       .rodata.str1.1		 00000010 .L.str.790
+0000153f l       .rodata.str1.1		 00000011 .L.str.791
+00001550 l       .rodata.str1.1		 00000011 .L.str.792
+00001561 l       .rodata.str1.1		 00000011 .L.str.793
+00001572 l       .rodata.str1.1		 00000008 .L.str.794
+0000157a l       .rodata.str1.1		 00000019 .L.str.795
+00001593 l       .rodata.str1.1		 0000000c .L.str.796
+0000159f l       .rodata.str1.1		 00000017 .L.str.797
+000015b6 l       .rodata.str1.1		 0000000d .L.str.798
+000015c3 l       .rodata.str1.1		 00000013 .L.str.799
+00000024 l       .rodata.str1.1		 00000004 .L.str.8
+000001ac l       .rodata.str1.1		 00000005 .L.str.80
+000015d6 l       .rodata.str1.1		 00000009 .L.str.800
+000015df l       .rodata.str1.1		 0000000d .L.str.801
+000015ec l       .rodata.str1.1		 00000008 .L.str.802
+000015f4 l       .rodata.str1.1		 00000009 .L.str.803
+000015fd l       .rodata.str1.1		 00000012 .L.str.804
+0000160f l       .rodata.str1.1		 00000021 .L.str.805
+00001630 l       .rodata.str1.1		 0000004e .L.str.806
+0000167e l       .rodata.str1.1		 0000000c .L.str.807
+0000168a l       .rodata.str1.1		 00000018 .L.str.808
+000016a2 l       .rodata.str1.1		 0000001c .L.str.809
+000001b1 l       .rodata.str1.1		 00000005 .L.str.81
+000016be l       .rodata.str1.1		 0000000e .L.str.810
+000016cc l       .rodata.str1.1		 00000049 .L.str.811
+00001715 l       .rodata.str1.1		 00000016 .L.str.812
+0000172b l       .rodata.str1.1		 0000001c .L.str.813
+00001747 l       .rodata.str1.1		 00000009 .L.str.814
+00001750 l       .rodata.str1.1		 00000010 .L.str.815
+00001760 l       .rodata.str1.1		 00000022 .L.str.816
+00001782 l       .rodata.str1.1		 00000008 .L.str.817
+0000178a l       .rodata.str1.1		 0000001c .L.str.818
+000017a6 l       .rodata.str1.1		 00000004 .L.str.819
+000001b6 l       .rodata.str1.1		 00000005 .L.str.82
+000017aa l       .rodata.str1.1		 00000029 .L.str.820
+000017d3 l       .rodata.str1.1		 0000000d .L.str.821
+000017e0 l       .rodata.str1.1		 0000001d .L.str.822
+000017fd l       .rodata.str1.1		 00000021 .L.str.823
+0000181e l       .rodata.str1.1		 00000021 .L.str.824
+0000183f l       .rodata.str1.1		 00000006 .L.str.825
+00001845 l       .rodata.str1.1		 00000014 .L.str.826
+00001859 l       .rodata.str1.1		 00000028 .L.str.827
+00001881 l       .rodata.str1.1		 0000000c .L.str.828
+0000188d l       .rodata.str1.1		 0000001a .L.str.829
+000001bb l       .rodata.str1.1		 00000005 .L.str.83
+000018a7 l       .rodata.str1.1		 0000001a .L.str.830
+000018c1 l       .rodata.str1.1		 00000024 .L.str.831
+000018e5 l       .rodata.str1.1		 00000011 .L.str.832
+000018f6 l       .rodata.str1.1		 0000001c .L.str.833
+00001912 l       .rodata.str1.1		 00000026 .L.str.834
+00001938 l       .rodata.str1.1		 00000021 .L.str.835
+00001959 l       .rodata.str1.1		 00000017 .L.str.836
+00001970 l       .rodata.str1.1		 00000021 .L.str.837
+00001991 l       .rodata.str1.1		 0000002d .L.str.838
+000019be l       .rodata.str1.1		 00000021 .L.str.839
+000001c0 l       .rodata.str1.1		 00000005 .L.str.84
+000019f0 l       .rodata.str1.1		 00000003 .L.str.840
+000019f3 l       .rodata.str1.1		 00000003 .L.str.841
+000019f6 l       .rodata.str1.1		 00000003 .L.str.842
+000019f9 l       .rodata.str1.1		 00000003 .L.str.843
+000019fc l       .rodata.str1.1		 00000004 .L.str.844
+00001a00 l       .rodata.str1.1		 00000003 .L.str.845
+00001a03 l       .rodata.str1.1		 00000003 .L.str.846
+00001a06 l       .rodata.str1.1		 00000003 .L.str.847
+00001a09 l       .rodata.str1.1		 00000003 .L.str.848
+00001a0c l       .rodata.str1.1		 00000003 .L.str.849
+000001c5 l       .rodata.str1.1		 00000005 .L.str.85
+00001a0f l       .rodata.str1.1		 00000003 .L.str.850
+00001a12 l       .rodata.str1.1		 00000004 .L.str.851
+00001a16 l       .rodata.str1.1		 00000004 .L.str.852
+00001a1a l       .rodata.str1.1		 00000004 .L.str.853
+00001a1e l       .rodata.str1.1		 00000004 .L.str.854
+00001a22 l       .rodata.str1.1		 00000004 .L.str.855
+00001a26 l       .rodata.str1.1		 0000000a .L.str.856
+00001a5c l       .rodata.str1.1		 00000008 .L.str.857
+00001a64 l       .rodata.str1.1		 0000000d .L.str.858
+00001a71 l       .rodata.str1.1		 0000000e .L.str.859
+000001ca l       .rodata.str1.1		 00000005 .L.str.86
+00001a7f l       .rodata.str1.1		 0000000c .L.str.860
+00001a8b l       .rodata.str1.1		 00000008 .L.str.861
+00001a93 l       .rodata.str1.1		 00000009 .L.str.862
+00001a9c l       .rodata.str1.1		 00000007 .L.str.863
+00001aa3 l       .rodata.str1.1		 00000008 .L.str.864
+00001aab l       .rodata.str1.1		 00000010 .L.str.865
+00001abb l       .rodata.str1.1		 00000010 .L.str.866
+00001acb l       .rodata.str1.1		 0000000b .L.str.867
+00001ad6 l       .rodata.str1.1		 0000000a .L.str.868
+00001ae0 l       .rodata.str1.1		 00000007 .L.str.869
+000001cf l       .rodata.str1.1		 00000006 .L.str.87
+00001ae7 l       .rodata.str1.1		 00000008 .L.str.870
+00001aef l       .rodata.str1.1		 00000005 .L.str.871
+00001af4 l       .rodata.str1.1		 00000003 .L.str.872
+00001af7 l       .rodata.str1.1		 00000003 .L.str.873
+00001afa l       .rodata.str1.1		 00000003 .L.str.874
+00001afd l       .rodata.str1.1		 00000003 .L.str.875
+00001b00 l       .rodata.str1.1		 00000004 .L.str.876
+00001b04 l       .rodata.str1.1		 00000005 .L.str.877
+00001b09 l       .rodata.str1.1		 00000007 .L.str.878
+00001b10 l       .rodata.str1.1		 00000009 .L.str.879
+000001d5 l       .rodata.str1.1		 00000004 .L.str.88
+00001b19 l       .rodata.str1.1		 00000009 .L.str.880
+00001b22 l       .rodata.str1.1		 00000004 .L.str.881
+00001b26 l       .rodata.str1.1		 00000007 .L.str.882
+00001b2d l       .rodata.str1.1		 00000007 .L.str.883
+00001b34 l       .rodata.str1.1		 00000007 .L.str.884
+00001b3b l       .rodata.str1.1		 00000007 .L.str.885
+00001b42 l       .rodata.str1.1		 00000007 .L.str.886
+00001b49 l       .rodata.str1.1		 00000006 .L.str.887
+00001b4f l       .rodata.str1.1		 00000008 .L.str.888
+00001b57 l       .rodata.str1.1		 00000008 .L.str.889
+000001d9 l       .rodata.str1.1		 00000006 .L.str.89
+00001b5f l       .rodata.str1.1		 00000008 .L.str.890
+00001b67 l       .rodata.str1.1		 00000008 .L.str.891
+00001b6f l       .rodata.str1.1		 00000008 .L.str.892
+00001b77 l       .rodata.str1.1		 00000009 .L.str.893
+00001b80 l       .rodata.str1.1		 00000008 .L.str.894
+00001b88 l       .rodata.str1.1		 00000007 .L.str.895
+00001b8f l       .rodata.str1.1		 00000005 .L.str.896
+00001b94 l       .rodata.str1.1		 00000008 .L.str.897
+00001b9c l       .rodata.str1.1		 00000006 .L.str.898
+00001ba2 l       .rodata.str1.1		 00000008 .L.str.899
+00000028 l       .rodata.str1.1		 00000004 .L.str.9
+000001df l       .rodata.str1.1		 00000003 .L.str.90
+00001baa l       .rodata.str1.1		 00000006 .L.str.900
+00001bb0 l       .rodata.str1.1		 00000005 .L.str.901
+00001bb5 l       .rodata.str1.1		 00000007 .L.str.902
+00001bbc l       .rodata.str1.1		 0000000b .L.str.903
+00001bc7 l       .rodata.str1.1		 0000000a .L.str.904
+00001bd1 l       .rodata.str1.1		 00000014 .L.str.905
+00001be5 l       .rodata.str1.1		 00000009 .L.str.906
+00001bee l       .rodata.str1.1		 0000000f .L.str.907
+00001bfd l       .rodata.str1.1		 0000000b .L.str.908
+00001c08 l       .rodata.str1.1		 0000000d .L.str.909
+000001e2 l       .rodata.str1.1		 00000003 .L.str.91
+00001c15 l       .rodata.str1.1		 00000009 .L.str.910
+00001c1e l       .rodata.str1.1		 0000000e .L.str.911
+00001c2c l       .rodata.str1.1		 00000012 .L.str.912
+00001c3e l       .rodata.str1.1		 00000008 .L.str.913
+00001c46 l       .rodata.str1.1		 0000000f .L.str.914
+00001c55 l       .rodata.str1.1		 0000000b .L.str.915
+00001c60 l       .rodata.str1.1		 0000000b .L.str.916
+00001c6b l       .rodata.str1.1		 0000000f .L.str.917
+00001c7a l       .rodata.str1.1		 0000000d .L.str.918
+00001c87 l       .rodata.str1.1		 0000000c .L.str.919
+000001e5 l       .rodata.str1.1		 00000003 .L.str.92
+00001c93 l       .rodata.str1.1		 00000012 .L.str.920
+00001ca5 l       .rodata.str1.1		 00000010 .L.str.921
+00001cb5 l       .rodata.str1.1		 0000000b .L.str.922
+00001cc0 l       .rodata.str1.1		 0000000b .L.str.923
+00001ccb l       .rodata.str1.1		 0000000b .L.str.924
+00001cd6 l       .rodata.str1.1		 00000013 .L.str.925
+00001ce9 l       .rodata.str1.1		 00000008 .L.str.926
+00001cf1 l       .rodata.str1.1		 00000011 .L.str.927
+00001d02 l       .rodata.str1.1		 0000000d .L.str.928
+00001d0f l       .rodata.str1.1		 0000000c .L.str.929
+000001e8 l       .rodata.str1.1		 00000003 .L.str.93
+00001d1b l       .rodata.str1.1		 0000000b .L.str.930
+00001d26 l       .rodata.str1.1		 00000011 .L.str.931
+00001d37 l       .rodata.str1.1		 0000000d .L.str.932
+00001d44 l       .rodata.str1.1		 0000000f .L.str.933
+00001d53 l       .rodata.str1.1		 00000011 .L.str.934
+00001d64 l       .rodata.str1.1		 0000000b .L.str.936
+00001d6f l       .rodata.str1.1		 00000002 .L.str.937
+00001d71 l       .rodata.str1.1		 00000004 .L.str.938
+00001d75 l       .rodata.str1.1		 00000004 .L.str.939
+000001eb l       .rodata.str1.1		 00000003 .L.str.94
+00001d79 l       .rodata.str1.1		 00000006 .L.str.940
+00001d7f l       .rodata.str1.1		 00000007 .L.str.941
+00001d86 l       .rodata.str1.1		 00000010 .L.str.942
+00001d96 l       .rodata.str1.1		 00000005 .L.str.943
+00001d9b l       .rodata.str1.1		 00000005 .L.str.944
+00001da0 l       .rodata.str1.1		 00000002 .L.str.945
+00001da2 l       .rodata.str1.1		 0000000b .L.str.946
+00001dad l       .rodata.str1.1		 00000019 .L.str.947
+00001dc6 l       .rodata.str1.1		 00000005 .L.str.948
+00001dcb l       .rodata.str1.1		 00000004 .L.str.949
+000001ee l       .rodata.str1.1		 00000003 .L.str.95
+00001dcf l       .rodata.str1.1		 0000000f .L.str.950
+00001dde l       .rodata.str1.1		 00000015 .L.str.951
+00001df3 l       .rodata.str1.1		 00000015 .L.str.952
+00001e08 l       .rodata.str1.1		 00000011 .L.str.953
+00001e19 l       .rodata.str1.1		 00000012 .L.str.954
+00001e2b l       .rodata.str1.1		 00000012 .L.str.955
+00001e3d l       .rodata.str1.1		 00000015 .L.str.956
+00001e52 l       .rodata.str1.1		 0000000b .L.str.957
+00001e5d l       .rodata.str1.1		 00000007 .L.str.958
+00001e64 l       .rodata.str1.1		 00000015 .L.str.959
+000001f1 l       .rodata.str1.1		 00000003 .L.str.96
+00001e79 l       .rodata.str1.1		 00000013 .L.str.960
+00001e8c l       .rodata.str1.1		 00000004 .L.str.961
+00001e90 l       .rodata.str1.1		 00000006 .L.str.962
+00001e96 l       .rodata.str1.1		 00000006 .L.str.963
+00001e9c l       .rodata.str1.1		 00000003 .L.str.964
+00001e9f l       .rodata.str1.1		 00000003 .L.str.965
+00001ea2 l       .rodata.str1.1		 00000003 .L.str.966
+00001ea5 l       .rodata.str1.1		 00000003 .L.str.967
+00001ea8 l       .rodata.str1.1		 00000003 .L.str.968
+00001eab l       .rodata.str1.1		 00000010 .L.str.969
+000001f4 l       .rodata.str1.1		 00000003 .L.str.97
+00001ebb l       .rodata.str1.1		 00000017 .L.str.970
+00001ed2 l       .rodata.str1.1		 00000017 .L.str.971
+00001ee9 l       .rodata.str1.1		 00000004 .L.str.972
+00001eed l       .rodata.str1.1		 00000006 .L.str.973
+00001ef3 l       .rodata.str1.1		 00000004 .L.str.974
+00001ef7 l       .rodata.str1.1		 00000007 .L.str.975
+00001efe l       .rodata.str1.1		 00000007 .L.str.976
+00001f05 l       .rodata.str1.1		 00000005 .L.str.977
+00001f0a l       .rodata.str1.1		 00000007 .L.str.978
+00001f11 l       .rodata.str1.1		 00000006 .L.str.979
+000001f7 l       .rodata.str1.1		 00000003 .L.str.98
+00001f17 l       .rodata.str1.1		 00000002 .L.str.980
+00001f19 l       .rodata.str1.1		 00000006 .L.str.981
+00001f1f l       .rodata.str1.1		 00000006 .L.str.982
+00001f25 l       .rodata.str1.1		 00000006 .L.str.983
+00001f2b l       .rodata.str1.1		 00000002 .L.str.984
+00001f2d l       .rodata.str1.1		 00000006 .L.str.985
+00001f33 l       .rodata.str1.1		 00000003 .L.str.986
+00001f36 l       .rodata.str1.1		 00000003 .L.str.987
+00001f39 l       .rodata.str1.1		 00000003 .L.str.988
+00001f3c l       .rodata.str1.1		 00000003 .L.str.989
+000001fa l       .rodata.str1.1		 00000003 .L.str.99
+00001f3f l       .rodata.str1.1		 00000004 .L.str.990
+00001f43 l       .rodata.str1.1		 00000005 .L.str.991
+00001f48 l       .rodata.str1.1		 00000005 .L.str.992
+00001f4d l       .rodata.str1.1		 00000005 .L.str.993
+00001f52 l       .rodata.str1.1		 00000005 .L.str.994
+00001f57 l       .rodata.str1.1		 00000004 .L.str.995
+00001f5b l       .rodata.str1.1		 00000006 .L.str.996
+00001f61 l       .rodata.str1.1		 00000003 .L.str.997
+00001f64 l       .rodata.str1.1		 00000003 .L.str.998
+00001f67 l       .rodata.str1.1		 00000004 .L.str.999
+00000020 l       .data		 00000104 .L_MergedGlobals
+00014630 l       .bss		 000001fc .L_MergedGlobals.1
+000155f0 l       .bss		 000001a4 .L_MergedGlobals.10
+000157a0 l       .bss		 000001cc .L_MergedGlobals.11
+00015970 l       .bss		 00000100 .L_MergedGlobals.12
+00015a70 l       .bss		 00000100 .L_MergedGlobals.13
+00015b70 l       .bss		 00000100 .L_MergedGlobals.14
+00015c70 l       .bss		 00000100 .L_MergedGlobals.15
+00015d70 l       .bss		 00000100 .L_MergedGlobals.16
+00015e70 l       .bss		 00000100 .L_MergedGlobals.17
+00015f70 l       .bss		 00000100 .L_MergedGlobals.18
+00016070 l       .bss		 00000100 .L_MergedGlobals.19
+00014830 l       .bss		 000001ec .L_MergedGlobals.2
+00016170 l       .bss		 00000108 .L_MergedGlobals.20
+00016280 l       .bss		 00000118 .L_MergedGlobals.21
+000163a0 l       .bss		 00000174 .L_MergedGlobals.22
+00016520 l       .bss		 00000184 .L_MergedGlobals.23
+00014a20 l       .bss		 000001d4 .L_MergedGlobals.3
+00014c00 l       .bss		 000001c0 .L_MergedGlobals.4
+00014dc0 l       .bss		 000001a4 .L_MergedGlobals.5
+00014f70 l       .bss		 000001dc .L_MergedGlobals.6
+00015150 l       .bss		 00000180 .L_MergedGlobals.7
+000152d0 l       .bss		 000001a0 .L_MergedGlobals.8
+00015470 l       .bss		 00000180 .L_MergedGlobals.9
+000371f8 l       .rodata		 0000000c .Lswitch.table
+00034b14 l       .rodata		 0000000c .Lui_input.b
+00034f68 l       .rodata		 00000074 ABOUT_QR
+00032e5c l       .rodata		 00000024 AF_L
+00033110 l       .rodata		 0000164a AF_L_DATA
+000348cb l       .rodata		 00000028 AF_L_EX
+00032e80 l       .rodata		 00000290 AF_L_G
+000348f3 l       .rodata		 0000003d AF_L_HC
+00034850 l       .rodata		 0000007b AF_L_KD
+0003475a l       .rodata		 000000f6 AF_L_KERN
+0002741c l       .rodata		 00000024 AF_M
+00028160 l       .rodata		 000032e4 AF_M_DATA
+0002bfe4 l       .rodata		 0000000a AF_M_EX
+00027440 l       .rodata		 00000d20 AF_M_G
+0002bfee l       .rodata		 00000035 AF_M_HC
+0002bc04 l       .rodata		 000003e0 AF_M_KD
+0002b444 l       .rodata		 000007c0 AF_M_KERN
+0002cda8 l       .rodata		 00000024 AF_S
+0002fae0 l       .rodata		 000028aa AF_S_DATA
+00032e4f l       .rodata		 0000000a AF_S_EX
+0002edc0 l       .rodata		 00000d20 AF_S_G
+00032ab8 l       .rodata		 00000397 AF_S_KD
+0003238a l       .rodata		 0000072e AF_S_KERN
+0002de3a l       .rodata		 00000e79 AI12_DATA
+0002d018 l       .rodata		 0000007b AI12_IDX
+0002ce50 l       .rodata		 000000d2 AI12_INK
+0002ecb4 l       .rodata		 000000d2 AI12_OFF
+0002d538 l       .rodata		 000008b5 AI16_DATA
+0002cf9d l       .rodata		 0000007b AI16_IDX
+0002ce04 l       .rodata		 0000004c AI16_INK
+0002ddee l       .rodata		 0000004c AI16_OFF
+0002d093 l       .rodata		 00000489 AI24_DATA
+0002cf22 l       .rodata		 0000007b AI24_IDX
+0002cdcc l       .rodata		 00000038 AI24_INK
+0002d51c l       .rodata		 0000001c AI24_OFF
+0002ed86 l       .rodata		 00000039 AI_HC
+00000c54 l       .rodata		 00000120 ANALOG_PRESETS
+0002cd54 l       .rodata		 00000038 B_NAME
+00000014 l       .rodata.cst4		 00000004 B_NOTE
+00027227 l       .rodata		 000000fc CFG_DESC
+00027323 l       .rodata		 000000b2 CFG_DESC_PLAIN
+0002450a l       .rodata		 0000001c CHORD_SHAPE
+0002717c l       .rodata		 00000006 CLICK_GAIN
+00034a68 l       .rodata		 0000000c CLICK_N
+00034a74 l       .rodata		 0000000c CLKLVL_N
+00034a80 l       .rodata		 0000000c COUNTIN_N
+00000030 l       .rodata.cst16		 00000010 CURVE_DARK
+00000020 l       .rodata.cst16		 00000010 CURVE_LIGHT
+00036a90 l       .rodata		 00000100 CUTOFF_HZ
+00027203 l       .rodata		 00000012 DEV_DESC
+00027215 l       .rodata		 00000012 DEV_DESC_PLAIN
+0002c3d0 l       .rodata		 000000c0 DIGITAL_PRESETS
+000244f8 l       .rodata		 00000006 DIV_DEN
+00035114 l       .rodata		 0000000a DIV_ORDER
+00021a86 l       .rodata		 00000009 DK_PLAYS
+00034e10 l       .rodata		 00000005 DK_SWAP
+00021a1c l       .rodata		 0000005e DRUM_GM
+00000010 l       .rodata.cst8		 00000008 DRUM_LANE_NOTE
+00021a04 l       .rodata		 00000018 DRUM_PRESETS
+000213f8 l       .rodata		 00000024 DRW_FOLD_LIM
+0002141c l       .rodata		 00000012 DRW_LV
+00021448 l       .rodata		 000000a0 DRW_REG
+00021430 l       .rodata		 00000018 DRW_ROT_SPD
+00021fe0 l       .rodata		 000000a8 DV_DEF
+00021a90 l       .rodata		 00000550 DV_KIT
+00022088 l       .rodata		 00000005 DV_KIT_ACC
+0002208e l       .rodata		 00000054 DV_METAL_R
+00021a7a l       .rodata		 0000000c DV_TYPE_LANE
+00034933 l       .rodata		 0000000d ED_BK_IDS
+00034940 l       .rodata		 00000024 ED_MENU
+00034930 l       .rodata		 00000003 ED_TIDS
+00000000 l       .rodata		 00000038 ENGINES
+00034de0 l       .rodata		 0000000d ENGINE_ORDER
+00000038 l       .rodata		 000000dc ENG_ANALOG
+000008d0 l       .rodata		 000000dc ENG_DRUM
+00000114 l       .rodata		 000000dc ENG_FM4_GONE
+00000a88 l       .rodata		 000000dc ENG_FM6
+00000484 l       .rodata		 000000dc ENG_FORMANT
+00000718 l       .rodata		 000000dc ENG_GRAIN
+000002cc l       .rodata		 000000dc ENG_LOFI
+000009ac l       .rodata		 000000dc ENG_NOISE
+000001f0 l       .rodata		 000000dc ENG_PHASE
+000007f4 l       .rodata		 000000dc ENG_PHYS
+000003a8 l       .rodata		 000000dc ENG_SAMPLE
+00000b64 l       .rodata		 000000dc ENG_SLICE
+00000560 l       .rodata		 000000dc ENG_TRIO
+0000063c l       .rodata		 000000dc ENG_WHEEL
+000243f8 l       .rodata		 00000100 ENV_EXP
+00020f34 l       .rodata		 00000200 ENV_LIN
+0002cd8c l       .rodata		 0000001c E_NAME
+000350fb l       .rodata		 0000000b FAM_BTN
+00000080 l       .rodata.cst32		 00000020 FM1_ANIM_POW
+000271e0 l       .rodata		 0000001b FM1_ANIM_X
+000271c4 l       .rodata		 0000001c FM1_ENC
+00027182 l       .rodata		 00000042 FM1_KEYMAP
+00000060 l       .rodata.cst32		 00000020 FM1__BR_K
+0002c388 l       .rodata		 00000048 FM4_ALG
+00000020 l       .rodata.cst8		 00000008 FM4_TO_FM6
+0002240e l       .rodata		 000000c0 FM6_ALG
+00000010 l       .rodata.cst16		 00000010 FM6_AMSENS
+0003711c l       .rodata		 000000c0 FM6_CELL
+0002290c l       .rodata		 00000080 FM6_COARSE
+0002280c l       .rodata		 00000100 FM6_DETUNE
+00022be4 l       .rodata		 00001004 FM6_EXP2
+00022674 l       .rodata		 00000021 FM6_EXPSCALE
+0002c954 l       .rodata		 00000400 FM6_FACTORY
+0002298c l       .rodata		 00000190 FM6_FINE
+0002c078 l       .rodata		 00000080 FM6_INIT
+00022660 l       .rodata		 00000014 FM6_LEVELLUT
+000224d0 l       .rodata		 00000190 FM6_LFO_DELTA
+00022b80 l       .rodata		 00000064 FM6_PENV_RATE
+00022b1c l       .rodata		 00000064 FM6_PENV_TAB
+00000008 l       .rodata.cst8		 00000008 FM6_PMS
+00022348 l       .rodata		 000000c0 FM6_PRESETS
+000226d8 l       .rodata		 00000134 FM6_STATICS
+00022695 l       .rodata		 00000040 FM6_VELDATA
+00020ed4 l       .rodata		 00000060 FORMANT_PRESETS
+00036398 l       .rodata		 00000018 FX_LATCH_FOOT
+0002c0f8 l       .rodata		 0000021c GP
+000214e8 l       .rodata		 00000060 GRAIN_PRESETS
+00021548 l       .rodata		 00000202 GR_HANN
+0002174a l       .rodata		 0000001a GR_NORM
+00000030 l       .rodata.cst8		 00000008 HOLD_MS
+00034a58 l       .rodata		 00000010 HOLD_N
+000363c0 l       .rodata		 000004d0 ICON_MAP
+00000000 l       .rodata.cst8		 00000008 IMA_IDX
+00020e20 l       .rodata		 000000b2 IMA_STEP
+0003501c l       .rodata		 000000d8 KC
+00035129 l       .rodata		 00001215 KC_DATA
+00036f3e l       .rodata		 00000121 KNOB_BIG_ANG
+00036ead l       .rodata		 00000091 KNOB_BIG_COV
+00037091 l       .rodata		 00000064 KNOB_SMALL_ANG
+0003705f l       .rodata		 00000032 KNOB_SMALL_COV
+00034d00 l       .rodata		 000000e0 LAYERS
+0002c75b l       .rodata		 00000014 LCD_SEQ
+00000010 l       .rodata.cst4		 00000004 LEDS_MENU
+00034aa0 l       .rodata		 00000010 LEDS_NAME
+00036b90 l       .rodata		 00000100 LEVEL_DB_X10
+00025066 l       .rodata		 00000100 LEVEL_Q12
+00036890 l       .rodata		 00000200 LFO_HZ_X100
+00025174 l       .rodata		 00000200 LFO_INC
+00001e24 l       .rodata		 00000014 LOFI_DCY
+00001c8c l       .rodata		 00000078 LOFI_PRESETS
+00001e10 l       .rodata		 00000014 LOFI_WAVNUM
+000350f4 l       .rodata		 00000007 LY_KC
+00034e18 l       .rodata		 0000000c LY_SCL
+00034e24 l       .rodata		 0000000c LY_SEQ
+00034e30 l       .rodata		 00000138 MENU_CREDITS
+000349d8 l       .rodata		 0000006c MENU_FLAGS
+0002453c l       .rodata		 0000000e MIDI_CC_ENG
+00024526 l       .rodata		 00000016 MIDI_CC_MAP
+00034964 l       .rodata		 00000050 MI_NAME
+000349b4 l       .rodata		 00000014 MI_TAB
+00000038 l       .rodata.cst8		 00000008 MTAB_ICON
+000349c8 l       .rodata		 00000010 MTAB_NAME
+00034fdc l       .rodata		 00000040 NM_ABC
+000019df l       .rodata.str1.1		 00000011 NM_NUM
+00001a30 l       .rodata.str1.1		 0000002c NM_SET
+0002223c l       .rodata		 00000014 NOISE_CLK
+00022214 l       .rodata		 00000014 NOISE_LONG
+00022228 l       .rodata		 00000014 NOISE_META
+000220f4 l       .rodata		 00000060 NOISE_PRESETS
+00022154 l       .rodata		 000000c0 NOISE_SEQ
+00000000 l       .rodata.cst32		 00000020 NOISE_TAPS
+00024e04 l       .rodata		 00000008 N_ALLOC
+00024d1c l       .rodata		 0000003c N_AMODE
+00000c40 l       .rodata		 00000014 N_ANALOG_WAVE
+00001c54 l       .rodata		 00000014 N_CHIP
+00024ea4 l       .rodata		 00000028 N_CHRD
+0002c314 l       .rodata		 0000000c N_CLOCK
+0002c328 l       .rodata		 00000004 N_DASH
+00001e7c l       .rodata		 00000084 N_DCY
+00024d58 l       .rodata		 00000028 N_DIV
+000219fc l       .rodata		 00000008 N_DRUM_KICK
+000219d8 l       .rodata		 00000024 N_DRUM_KIT
+00021358 l       .rodata		 0000001c N_DRW_PERC
+00021318 l       .rodata		 00000040 N_DRW_REG
+00021374 l       .rodata		 0000000c N_DRW_ROTR
+0002c33c l       .rodata		 00000038 N_ENGNAME
+00022298 l       .rodata		 00000088 N_FM6_ALG
+00022320 l       .rodata		 00000028 N_FM6_PATCH
+00024df0 l       .rodata		 00000008 N_GLMODE
+0002c334 l       .rodata		 00000008 N_GO
+00024d08 l       .rodata		 00000014 N_LWAVE
+00024e54 l       .rodata		 00000050 N_MDST
+0002c320 l       .rodata		 00000008 N_MIDI_INPUT
+00024e30 l       .rodata		 00000024 N_MSRC
+00022250 l       .rodata		 00000024 N_NOISE_LONG
+00022274 l       .rodata		 00000024 N_NOISE_META
+000220e4 l       .rodata		 00000010 N_NOISE_MODE
+00036c90 l       .rodata		 00000030 N_NOTE
+00024d80 l       .rodata		 00000008 N_ONOFF
+00001f20 l       .rodata		 00000008 N_ONOFF_E
+00024d88 l       .rodata		 00000008 N_ORDER
+00001bbc l       .rodata		 00000008 N_PD_LINE
+00001b78 l       .rodata		 00000020 N_PD_WAVE
+00001b98 l       .rodata		 00000024 N_PD_WAVE2
+000219b4 l       .rodata		 00000024 N_PHYS_CHORD
+00021764 l       .rodata		 00000010 N_PHYS_MODEL
+00024df8 l       .rodata		 0000000c N_PRIO
+00024dd0 l       .rodata		 00000010 N_QUANT
+00001c7c l       .rodata		 00000010 N_RARP
+0002c32c l       .rodata		 00000008 N_ROUTE
+0002c374 l       .rodata		 00000008 N_RTYPE
+00001c68 l       .rodata		 00000014 N_RWAVE
+00024d90 l       .rodata		 00000040 N_SCALE
+00024e0c l       .rodata		 0000000c N_SLCR
+00023bfc l       .rodata		 00000018 N_SLC_DIV
+00023c14 l       .rodata		 0000000c N_SLC_MODE
+00023c20 l       .rodata		 00000008 N_SLC_REV
+00023be8 l       .rodata		 00000014 N_SLC_SRC
+00024e18 l       .rodata		 00000018 N_SLDIV
+000211d8 l       .rodata		 00000010 N_TRIO_MODE
+00021198 l       .rodata		 00000040 N_TRIO_WAVE
+00024ecc l       .rodata		 00000014 N_VOIC
+00024de0 l       .rodata		 00000010 N_VOICE
+00001e38 l       .rodata		 00000044 N_WRAM
+00034b20 l       .rodata		 000001e0 PAGES
+000000a0 l       .rodata.cst32		 00000020 PANEL_DEFAULT
+0002c780 l       .rodata		 000001d4 PATTERNS
+00000004 l       .rodata.cst4		 00000004 PF_DEN
+00036d34 l       .rodata		 0000000c PF_DIV
+00036d28 l       .rodata		 0000000a PF_ICON
+00024ee6 l       .rodata		 00000180 PF_SVF
+00001bc4 l       .rodata		 00000090 PHASE_PRESETS
+000218a6 l       .rodata		 0000002a PHYS_CHORDS
+000218d0 l       .rodata		 00000080 PHYS_DESC
+0000050e l       .rodata.str1.1		 00000003 PHYS_DETUNE
+00021964 l       .rodata		 00000014 PHYS_D_BEND
+000219a0 l       .rodata		 00000014 PHYS_D_BUZZ
+00021978 l       .rodata		 00000014 PHYS_D_CHRD
+00021950 l       .rodata		 00000014 PHYS_D_HARM
+0002198c l       .rodata		 00000014 PHYS_D_SYMP
+00000000 l       .rodata.cst16		 00000010 PHYS_GAIN
+00021774 l       .rodata		 000000d8 PHYS_PRESETS
+00000d74 l       .rodata		 00000300 PITCH_OCT
+0002184c l       .rodata		 00000028 PX_MEMB_IDEAL
+00021874 l       .rodata		 00000028 PX_MEMB_LOADED
+0002189c l       .rodata		 0000000a PX_MEMB_M
+00000008 l       .rodata.cst4		 00000004 REV_AP
+00000018 l       .rodata.cst8		 00000008 REV_COMB
+00034ded l       .rodata		 00000003 RL_F
+000363bc l       .rodata		 00000003 RL_ICON
+000363b0 l       .rodata		 0000000c RL_LABEL
+0003633e l       .rodata		 00000011 ROLL_EASE
+00000020 l       .rodata.cst32		 00000020 SCALE_MASK
+00034a8c l       .rodata		 00000014 SCROFF_N
+00035124 l       .rodata		 00000005 SCR_MIN
+00021164 l       .rodata		 00000034 SEMI_Q16
+00001174 l       .rodata		 00000802 SINE
+00023c58 l       .rodata		 000003d0 SLC_BREAK
+00024028 l       .rodata		 000003d0 SLC_PIANO
+0003511e l       .rodata		 00000006 SLDIV_ORDER
+00023c28 l       .rodata		 00000030 SLICE_PRESETS
+00025374 l       .rodata		 00000006 SL_DEN
+00000040 l       .rodata.cst32		 00000020 SL_PAT
+00001f00 l       .rodata		 00000020 SMP_ALL_NAMES
+000020fc l       .rodata		 0001ed24 SMP_DATA
+00001f28 l       .rodata		 00000078 SMP_PRESET_TABLE
+00001fa0 l       .rodata		 00000028 SMP_SETS
+00024ee0 l       .rodata		 00000005 SMP_SET_ORIG
+00001fc8 l       .rodata		 00000134 SMP_ZONES
+00034a4c l       .rodata		 0000000c SPK_EQ
+0002c770 l       .rodata		 00000010 SPLASH_LINES
+000273d5 l       .rodata		 00000004 STR0
+000273d9 l       .rodata		 0000002a STR1
+00027403 l       .rodata		 00000010 STR2
+00034a44 l       .rodata		 00000008 STYLE_N
+00001074 l       .rodata		 00000100 SVF_G
+00001976 l       .rodata		 00000202 TANH_Q15
+0002c490 l       .rodata		 00000200 TIME_MS_X10
+00036d70 l       .rodata		 0000000c TL_ICON
+00036d40 l       .rodata		 00000030 TL_NAME
+0002454c l       .rodata		 000007bc TP
+00021300 l       .rodata		 00000018 TRIO_MIX
+000211e8 l       .rodata		 00000078 TRIO_PRESETS
+00021260 l       .rodata		 000000a0 TRIO_SETS
+0002c37c l       .rodata		 0000000c TRK_DEF
+0002537c l       .rodata		 00001e00 UAC_FIR
+0002c6b8 l       .rodata		 000000a0 UI_PALETTES
+0002c064 l       .rodata		 00000014 UI_PALETTE_MIGRATE
+00021152 l       .rodata		 0000000f VOWEL_B
+00021134 l       .rodata		 0000001e VOWEL_F
+00036e30 l       .rodata		 00000068 WAVE_ICON
+00021380 l       .rodata		 00000078 WHEEL_PRESETS
+00001d10 l       .rodata		 00000100 WRAM
+00000060 l       .rodata.cst16		 00000010 W_NOTE
+00000004 l       .bss		 00000800 abuf
+00000000 l     F .text.accel		 000000ac accel
+00000000 l     F .text.act_col		 00000038 act_col
+00000000 l     F .text.act_cols		 00000090 act_cols
+000371dc l       .rodata		 0000000c act_name.UP_GO
+000371e8 l       .rodata		 00000010 act_name.actions
+00000000 l     F .text.act_ready		 000001f2 act_ready
+00000000 l     F .text.analog_note_on		 00000022 analog_note_on
+00000000 l     F .text.analog_render		 000006a2 analog_render
+00000000 l     F .text.apply_preset		 0000001e apply_preset
+00000000 l     F .text.apply_preset_to		 00000166 apply_preset_to
+00000000 l     F .text.arp_chord		 00000090 arp_chord
+00000000 l     F .text.arp_chord_off		 00000032 arp_chord_off
+00000000 l     F .text.arp_off		 00000044 arp_off
+00000000 l     F .text.arp_pick		 0000014e arp_pick
+00050e24 l       .pool		 00000004 as.0
+00050e28 l       .pool		 00000004 as.1
+00050e2c l       .pool		 00000004 as.2
+00050e30 l       .pool		 00000004 as.3
+00050e34 l       .pool		 00000004 as.4
+00050e38 l       .pool		 00000004 as.5
+00050e3c l       .pool		 00000004 as.6
+00050e40 l       .pool		 00000001 as.7
+00000000 l     F .text.as_mix		 00000016 as_mix
+0001468c l       .bss		 00000004 audio_cpu_rem
+00014684 l       .bss		 00000004 audio_halves
+00014688 l       .bss		 00000004 audio_max_us
+00000000 l     F .text.audio_silence		 00000018 audio_silence
+00000000 l     F .text.autosave_sig		 000000c6 autosave_sig
+00000000 l     F .text.bar_x		 00000012 bar_x
+0003634f l       .rodata		 00000005 batt_icon.I
+00000000 l     F .text.batt_shown		 0000003c batt_shown
+000146d4 l       .bss		 00000004 beat_n
+000146d0 l       .bss		 00000004 beat_pos
+00000000 l     F .text.black_held		 0000003e black_held
+00014651 l       .bss		 00000001 boot_clean
+00000000 l     F .text.btn_hold		 00000064 btn_hold
+00000000 l     F .text.card_h		 00000012 card_h
+00014663 l       .bss		 00000001 card_mot
+00014964 l       .bss		 00000010 card_mot_mask
+00014662 l       .bss		 00000001 card_mot_next
+00000000 l     F .text.card_mot_of		 0000004c card_mot_of
+00000034 l       .data		 00000014 cdc
+00015e70 l       .bss		 00000100 cdc_in
+0000c6b4 l       .bss		 00000800 cdc_out
+000084e4 l       .bss		 000032e0 chain
+00000000 l     F .text.chain_apply		 000000a8 chain_apply
+00000000 l     F .text.chain_busy		 00000022 chain_busy
+00014a20 l       .bss		 00000024 chain_config
+00000000 l     F .text.chain_defaults		 0000001e chain_defaults
+00000000 l     F .text.chain_play_ui		 00000058 chain_play_ui
+00000000 l     F .text.chain_prepare		 000001c4 chain_prepare
+00000000 l     F .text.chain_valid		 00000032 chain_valid
+0001d390 l       .pool		 00001000 cho_buf
+00000000 l     F .text.chord_build		 0000007a chord_build
+00000000 l     F .text.chord_kit		 00000034 chord_kit
+00014a6c l       .bss		 00000028 chord_last
+00000000 l     F .text.chord_make		 00000256 chord_make
+00014774 l       .bss		 00000004 ci_r
+00014770 l       .bss		 00000004 ci_w
+00014634 l       .bss		 00000001 cin_bars
+00000000 l     F .text.cin_begin		 00000028 cin_begin
+00000000 l     F .text.cin_block		 00000060 cin_block
+000146cc l       .bss		 00000004 cin_flush
+00000000 l     F .text.cin_keep		 000000aa cin_keep
+00014632 l       .bss		 00000001 cin_left
+000146d8 l       .bss		 00000004 cin_n
+00014904 l       .bss		 00000010 cin_note
+000146dc l       .bss		 00000004 cin_pos
+00000000 l     F .text.cin_record		 00000082 cin_record
+0001463a l       .bss		 00000001 cin_total
+000146e0 l       .bss		 00000004 cin_up
+00014934 l       .bss		 00000010 cin_vel
+00000010 l       .data		 00000001 click_lvl
+00014640 l       .bss		 00000001 click_mode
+00000000 l     F .text.click_render		 000000fc click_render
+0001463b l       .bss		 00000001 click_req
+00014840 l       .bss		 00000004 clk.0
+00014844 l       .bss		 00000004 clk.1
+00014848 l       .bss		 00000004 clk.2
+0001484c l       .bss		 00000004 clk.3
+00014850 l       .bss		 00000004 clk.4
+0000002c l       .data		 00000004 clk_pos
+0001470c l       .bss		 00000004 clk_step
+0001477c l       .bss		 00000004 co_r
+00014778 l       .bss		 00000004 co_w
+00014dc0 l       .bss		 00000048 con
+00034ac8 l       .rodata		 0000004c con_dbg.NAMES
+00000000 l     F .text.con_dec		 00000050 con_dec
+00015f70 l       .bss		 00000100 con_flr.b
+00000000 l     F .text.con_hex		 0000002c con_hex
+000147d0 l       .bss		 00000004 con_inp.t_last
+00000000 l     F .text.con_kv		 00000020 con_kv
+00000000 l     F .text.con_kx		 00000026 con_kx
+00000000 l     F .text.con_num		 00000084 con_num
+00000000 l     F .text.con_putc		 00000076 con_putc
+00000000 l     F .text.con_puts		 00000012 con_puts
+00000000 l     F .text.con_uac		 000000fe con_uac
+00000000 l     F .text.con_word		 00000042 con_word
+00000000 l     F .text.confirm_open		 0000001c confirm_open
+000039c8 l       .noinit		 00000004 crash_seen
+00000000 l     F .text.cur_page		 00000022 cur_page
+00000000 l     F .text.cursor_fix		 00000032 cursor_fix
+00000000 l     F .text.cursor_set		 00000048 cursor_set
+00000000 l     F .text.cv_alpha		 000000b2 cv_alpha
+00000000 l     F .text.cv_alpha_hc		 00000222 cv_alpha_hc
+00000000 l     F .text.cv_begin		 00000054 cv_begin
+00014672 l       .bss		 00000002 cv_bg
+00000000 l     F .text.cv_blit		 00000032 cv_blit
+0001466e l       .bss		 00000002 cv_cy0
+00014670 l       .bss		 00000002 cv_cy1
+00000000 l     F .text.cv_frame		 0000004c cv_frame
+00000000 l     F .text.cv_free_text		 0000003a cv_free_text
+00014784 l       .bss		 00000004 cv_h
+00000000 l     F .text.cv_icon_in		 0000004e cv_icon_in
+00000000 l     F .text.cv_icon_mid		 0000001e cv_icon_mid
+00000000 l     F .text.cv_icon_on		 00000132 cv_icon_on
+00000000 l     F .text.cv_key_hint		 00000062 cv_key_hint
+00000000 l     F .text.cv_key_row		 000000b8 cv_key_row
+00000000 l     F .text.cv_keycap		 00000128 cv_keycap
+00000000 l     F .text.cv_line		 00000072 cv_line
+00000000 l     F .text.cv_line_t		 0000002e cv_line_t
+00014788 l       .bss		 00000004 cv_oy
+00000000 l     F .text.cv_pset		 0000002e cv_pset
+000411f0 l       .pool		 0000e880 cv_px
+00000000 l     F .text.cv_rect		 00000066 cv_rect
+00000000 l     F .text.cv_rrect		 0000017e cv_rrect
+00000000 l     F .text.cv_rule		 00000018 cv_rule
+00000000 l     F .text.cv_text		 0000001c cv_text
+00000000 l     F .text.cv_text_fit		 00000036 cv_text_fit
+00000000 l     F .text.cv_text_flags		 00000030 cv_text_flags
+00000000 l     F .text.cv_text_in		 0000002c cv_text_in
+00000000 l     F .text.cv_text_on		 00000014 cv_text_on
+00000000 l     F .text.cv_text_r		 00000030 cv_text_r
+00014780 l       .bss		 00000004 cv_w
+0001471c l       .bss		 00000004 dc_l
+00014724 l       .bss		 00000004 dc_r
+00014720 l       .bss		 00000004 dce_l
+00014728 l       .bss		 00000004 dce_r
+00000000 l     F .text.div_samples		 00000052 div_samples
+0001e390 l       .pool		 00020000 dly_buf
+00000000 l     F .text.draw_act_column		 00000058 draw_act_column
+00000000 l     F .text.draw_column		 00000942 draw_column
+00000000 l     F .text.draw_columns		 000015b0 draw_columns
+00036e20 l       .rodata		 00000010 draw_columns.FLAG_N
+00036e14 l       .rodata		 0000000c draw_columns.TIME_N
+00000018 l       .rodata.cst4		 00000004 draw_columns.icons
+00036e04 l       .rodata		 00000010 draw_columns.labels
+000147fc l       .bss		 00000004 draw_countin.shown
+00000000 l     F .text.draw_frame		 000000ac draw_frame
+00000000 l     F .text.draw_graph		 00003554 draw_graph
+00000000 l     F .text.draw_head		 00000566 draw_head
+000147f8 l       .bss		 00000004 draw_head.metro_beat
+00000012 l       .data		 00000002 draw_head.metro_x
+00036354 l       .rodata		 00000030 draw_menu.KEYS
+00000000 l     F .text.draw_rec_mark		 00000036 draw_rec_mark
+00000000 l     F .text.draw_rules		 00000062 draw_rules
+00000000 l     F .text.draw_text_box		 0000002c draw_text_box
+00000000 l     F .text.draw_text_line		 00000056 draw_text_line
+00014660 l       .bss		 00000001 draw_uboot.shown
+00000000 l     F .text.drum_amp		 00000036 drum_amp
+00000000 l     F .text.drum_from_perc		 00000026 drum_from_perc
+00000040 l       .rodata.cst16		 00000010 drum_from_perc.KIT
+00000000 l     F .text.drum_from_phys		 0000003e drum_from_phys
+00000000 l     F .text.drum_keys		 00000024 drum_keys
+00013710 l       .pool		 00001c80 drum_kit
+00000000 l     F .text.drum_lane		 00000032 drum_lane
+00000000 l     F .text.drum_lane_abbr		 00000048 drum_lane_abbr
+00036d7c l       .rodata		 00000020 drum_lane_abbr.N
+00000000 l     F .text.drum_lane_name		 00000048 drum_lane_name
+00034df0 l       .rodata		 00000020 drum_lane_name.N
+00000000 l     F .text.drum_lane_of		 0000005c drum_lane_of
+00000000 l     F .text.drum_note_on		 00000176 drum_note_on
+00000000 l     F .text.drum_render		 00001ae4 drum_render
+00000000 l     F .text.drum_swaps		 0000002a drum_swaps
+00000000 l     F .text.drw_level		 00000044 drw_level
+00003474 l       .bss		 00000180 drw_t
+000028f4 l       .bss		 00000b80 drw_v
+00000000 l     F .text.dv_bell_run		 000000fa dv_bell_run
+00000000 l     F .text.dv_clap_run		 0000014e dv_clap_run
+00000000 l     F .text.dv_cym_run		 0000011a dv_cym_run
+00000000 l     F .text.dv_hat_run		 0000012e dv_hat_run
+00000000 l     F .text.dv_hp1		 0000009a dv_hp1
+00000000 l     F .text.dv_kb		 00000056 dv_kb
+00000000 l     F .text.dv_kick_run		 00000254 dv_kick_run
+00000000 l     F .text.dv_metal_mix		 0000002e dv_metal_mix
+00000000 l     F .text.dv_metal_run		 00000076 dv_metal_run
+00000000 l     F .text.dv_out		 00000078 dv_out
+00000000 l     F .text.dv_pole		 00000050 dv_pole
+00000000 l     F .text.dv_rim_run		 000000dc dv_rim_run
+00000000 l     F .text.dv_snare_run		 00000244 dv_snare_run
+00000000 l     F .text.dv_tau_of		 00000048 dv_tau_of
+00000000 l     F .text.dv_tom_run		 00000126 dv_tom_run
+00000000 l     F .text.e0_chunk		 0000009c e0_chunk
+00000000 l     F .text.e0_send		 0000003e e0_send
+00000000 l     F .text.ed_b		 00000020 ed_b
+00000000 l     F .text.ed_begin		 00000024 ed_begin
+000147c0 l       .bss		 00000004 ed_bk_crc
+00014659 l       .bss		 00000001 ed_bk_gen
+0001465a l       .bss		 00000001 ed_bk_id
+000147bc l       .bss		 00000004 ed_bk_len
+000147c8 l       .bss		 00000004 ed_bk_ms
+00000000 l     F .text.ed_bk_object		 000000d2 ed_bk_object
+000147c4 l       .bss		 00000004 ed_bk_pos
+000147b8 l       .bss		 00000004 ed_bk_put
+00000000 l     F .text.ed_bk_r32		 0000001c ed_bk_r32
+00012dc0 l       .bss		 0000023c ed_bk_settings
+00000000 l     F .text.ed_bk_u32		 0000001a ed_bk_u32
+000147b4 l       .bss		 00000004 ed_bk_usb
+000147b0 l       .bss		 00000004 ed_bk_valid
+00000000 l     F .text.ed_d8_error		 00000024 ed_d8_error
+00000000 l     F .text.ed_desc		 0000004e ed_desc
+00000000 l     F .text.ed_eng		 00000012 ed_eng
+00000000 l     F .text.ed_flash_stop		 00000052 ed_flash_stop
+00000000 l     F .text.ed_handle		 0000236a ed_handle
+00015530 l       .bss		 000000c0 ed_handle.r
+00000000 l     F .text.ed_known		 0000005a ed_known
+00000000 l     F .text.ed_load_after		 00000074 ed_load_after
+00000000 l     F .text.ed_load_before		 0000007e ed_load_before
+00000000 l     F .text.ed_motion_args		 0000004e ed_motion_args
+00012bbc l       .bss		 00000004 ed_n
+00012964 l       .bss		 00000258 ed_out
+00000000 l     F .text.ed_room		 0000001c ed_room
+00000000 l     F .text.ed_rv		 0000000e ed_rv
+00000000 l     F .text.ed_send		 0000001c ed_send
+00000000 l     F .text.ed_service		 0000033a ed_service
+00014d38 l       .bss		 00000040 ed_service.f
+00000000 l     F .text.ed_shadow		 000000c0 ed_shadow
+00012bc0 l       .bss		 00000200 ed_smp_buf
+00000000 l     F .text.ed_smp_inval		 0000003e ed_smp_inval
+00000000 l     F .text.ed_step_put		 0000008e ed_step_put
+00000000 l     F .text.ed_step_reply		 00000066 ed_step_reply
+00000000 l     F .text.ed_step_sig		 00000060 ed_step_sig
+00000000 l     F .text.ed_str		 0000002a ed_str
+00000000 l     F .text.ed_tdesc		 00000014 ed_tdesc
+00000000 l     F .text.ed_u28		 0000001a ed_u28
+00000000 l     F .text.ed_ui_save		 00000058 ed_ui_save
+00000000 l     F .text.ed_ui_state		 00000060 ed_ui_state
+00000000 l     F .text.ed_unpack7		 0000008e ed_unpack7
+00000000 l     F .text.ed_v		 00000028 ed_v
+00000000 l     F .text.ed_val		 0000002a ed_val
+000140a4 l       .bss		 00000001 ed_w.0
+000140a8 l       .bss		 00000001 ed_w.1
+000141b0 l       .bss		 000000fc ed_w.10
+00016070 l       .bss		 00000100 ed_w.11
+000142ac l       .bss		 00000018 ed_w.12
+000142c4 l       .bss		 00000018 ed_w.13
+00014874 l       .bss		 00000004 ed_w.14
+000140aa l       .bss		 00000001 ed_w.2
+000140ac l       .bss		 00000001 ed_w.3
+000140b0 l       .bss		 00000001 ed_w.4
+00014864 l       .bss		 00000004 ed_w.5
+00014868 l       .bss		 00000004 ed_w.6
+0001486c l       .bss		 00000004 ed_w.7
+00014870 l       .bss		 00000004 ed_w.8
+000140b4 l       .bss		 000000fc ed_w.9
+00000000 l     F .text.edit_load		 00000126 edit_load
+00000000 l     F .text.edit_param		 000008a2 edit_param
+00000000 l     F .text.enc_drop		 00000012 enc_drop
+00000000 l     F .text.eng_abbr		 00000026 eng_abbr
+00036d9c l       .rodata		 00000068 eng_abbr.A
+00000000 l     F .text.eng_list_pos		 000000b8 eng_list_pos
+00000000 l     F .text.eng_ok		 00000016 eng_ok
+00000000 l     F .text.eng_rank		 00000028 eng_rank
+00000000 l     F .text.eng_step		 0000002e eng_step
+00000000 l     F .text.eng_vis		 00000018 eng_vis
+00000000 l     F .text.engine_icon		 00000026 engine_icon
+00036cc0 l       .rodata		 00000068 engine_icon.M
+00000000 l     F .text.enum_order		 00000026 enum_order
+00000000 l     F .text.enum_orig		 00000034 enum_orig
+00000000 l     F .text.enum_rank		 00000036 enum_rank
+000271fd l       .rodata		 00000003 ep0_service.RATE
+00027200 l       .rodata		 00000003 ep0_service.RATE48
+0001464d l       .bss		 00000001 ep0_service.alt
+000271fb l       .rodata		 00000002 ep0_service.zero2
+0000c2e0 l       .bss		 00000044 ep0buf
+0000c364 l       .bss		 00000044 ep1rx
+0000c324 l       .bss		 00000040 ep1tx
+0000c3a8 l       .bss		 00000008 ep2tx
+0000c3f0 l       .bss		 00000044 ep3rx
+0000c3b0 l       .bss		 00000040 ep3tx
+000155f0 l       .bss		 000000c4 ep4tx
+00000000 l     F .text.ev_busy		 0000001a ev_busy
+00000000 l     F .text.ev_fix		 0000006a ev_fix
+00000000 l     F .text.ev_follow		 0000002e ev_follow
+00000000 l     F .text.ev_id_ok		 00000060 ev_id_ok
+00000000 l     F .text.ev_id_step		 0000003a ev_id_step
+00000000 l     F .text.ev_len		 00000016 ev_len
+00000000 l     F .text.ev_name		 0000006e ev_name
+00000000 l     F .text.ev_row		 00000010 ev_row
+00000000 l     F .text.ev_rows		 00000082 ev_rows
+00000000 l     F .text.favorite_has		 00000048 favorite_has
+00000000 l     F .text.favorite_set		 0000007a favorite_set
+0000fa90 l       .bss		 00000208 favorites
+00000000 l     F .text.fl_erase4k		 0000001a fl_erase4k
+000002b8 l     F .ram_text		 00000364 fl_erase4k_ram
+00000000 l     F .text.fl_far		 0000000a fl_far
+00000000 l     F .ram_text		 0000014c fl_jedec_ram
+0000061c l     F .ram_text		 000003a8 fl_prog_ram
+000009c4 l     F .ram_text		 000001a8 fl_read_ram
+0000014c l     F .ram_text		 0000016c fl_status_ram
+00000000 l     F .text.fl_write		 0000004a fl_write
+00014650 l       .bss		 00000001 flash_ok
+00014b0d l       .bss		 00000029 fm1__an_acc
+00014ae4 l       .bss		 00000029 fm1__an_cb
+00014668 l       .bss		 00000002 fm1__an_f
+0001464b l       .bss		 00000001 fm1__an_glow
+00000000 l     F .text.fm1__anim_frame		 00000238 fm1__anim_frame
+0001466c l       .bss		 00000002 fm1__br_acc
+00014649 l       .bss		 00000001 fm1__br_d
+00014646 l       .bss		 00000001 fm1__br_lit
+00014666 l       .bss		 00000002 fm1__br_lv
+00014648 l       .bss		 00000001 fm1__br_on
+0001466a l       .bss		 00000002 fm1__br_ph
+0001464a l       .bss		 00000001 fm1__br_sel
+00000021 l       .data		 00000001 fm1__dim_k
+00000026 l       .data		 00000002 fm1__dim_t
+00000022 l       .data		 00000001 fm1__mid_n
+00014647 l       .bss		 00000001 fm1__mid_ph
+00000000 l     F .text.fm1__p33_op		 00000048 fm1__p33_op
+00000000 l     F .text.fm1__p33_xfer		 0000002e fm1__p33_xfer
+00000000 l     F .text.fm1__sr_bits		 00000032 fm1__sr_bits
+00014645 l       .bss		 00000001 fm1__tick_col
+00000000 l     F .text.fm1_adc_read		 00000060 fm1_adc_read
+00014080 l       .bss		 00000001 fm1_boot.0
+00014084 l       .bss		 00000004 fm1_boot.1
+00014088 l       .bss		 00000001 fm1_boot.2
+00000000 l     F .text.fm1_delay_ms		 0000001a fm1_delay_ms
+00000000 l     F .text.fm1_enc_take		 0000001c fm1_enc_take
+00000000 l     F .text.fm1_enter_uboot		 0000003e fm1_enter_uboot
+00000951 l       .rodata.str1.1		 00000010 fm1_enter_uboot.k
+00000000 l       .bss		 00000004 fm1_fault_c.in_fault
+00016280 l       .bss		 00000118 fm1_in
+00015880 l       .bss		 000000ec fm1_in_stat
+00000000 l     F .text.fm1_input_edges		 00000016 fm1_input_edges
+00000028 l       .rodata.cst8		 00000008 fm1_input_init.LEDP
+0000cf44 l       .bss		 00000004 fm1_lcd_timeouts
+00000000 l     F .text.fm1_lcd_wait		 00000030 fm1_lcd_wait
+000148b8 l       .bss		 0000000b fm1_led
+000148c3 l       .bss		 0000000b fm1_led_breath
+000148ce l       .bss		 0000000b fm1_led_dim
+00000000 l     F .text.fm1_led_dim_level		 00000028 fm1_led_dim_level
+000148d9 l       .bss		 0000000b fm1_led_mid
+00000000 l     F .text.fm1_main		 00002c6c fm1_main
+0001478c l       .bss		 00000004 fm1_main.t0
+000146a0 l       .bss		 00000004 fm1_ms
+00000000 l     F .text.fm1_p33_read		 00000044 fm1_p33_read
+0000d734 l       .bss		 00000004 fm1_p33_timeouts
+0001469c l       .bss		 00000004 fm1_timer5_irq.acc
+00014698 l       .bss		 00000004 fm1_timer5_irq.last
+00014694 l       .bss		 00000004 fm1_timer5_irq.owed
+00014690 l       .bss		 00000004 fm1_timer5_irq.sub
+00000000 l     F .text.fm1_wdt_feed		 0000000a fm1_wdt_feed
+00000000 l     F .text.fm4_abs		 00000006 fm4_abs
+00000000 l     F .text.fm4_apply		 0000005a fm4_apply
+00000000 l     F .text.fm4_convert		 000006b0 fm4_convert
+00000000 l     F .text.fm4_fall		 0000002a fm4_fall
+00000000 l     F .text.fm4_gone_note_on		 00000002 fm4_gone_note_on
+00000000 l     F .text.fm4_gone_render		 00000002 fm4_gone_render
+00000000 l     F .text.fm4_level		 0000004a fm4_level
+00000000 l     F .text.fm4_lg		 0000004c fm4_lg
+00000000 l     F .text.fm4_load_preset		 00000130 fm4_load_preset
+00000000 l     F .text.fm4_ms		 00000016 fm4_ms
+00000000 l     F .text.fm4_outlevel		 00000046 fm4_outlevel
+00000000 l     F .text.fm4_rate		 00000056 fm4_rate
+00000000 l     F .text.fm4_samples		 0000001c fm4_samples
+00000000 l     F .text.fm6_adopt		 000000b2 fm6_adopt
+00000000 l     F .text.fm6_bank_valid		 0000004e fm6_bank_valid
+00000000 l     F .text.fm6_block		 000000fa fm6_block
+00015970 l       .bss		 00000100 fm6_bus
+00000000 l     F .text.fm6_carriers		 0000002e fm6_carriers
+00000000 l     F .text.fm6_done		 00000112 fm6_done
+000035f4 l       .bss		 00000320 fm6_eff
+00000000 l     F .text.fm6_env_advance		 000000aa fm6_env_advance
+00014ea4 l       .bss		 00000060 fm6_lfo
+000148f4 l       .bss		 00000010 fm6_lfo_d
+000148e4 l       .bss		 00000010 fm6_lfo_v
+00000000 l     F .text.fm6_load_slot		 00000040 fm6_load_slot
+0002c690 l       .rodata		 00000015 fm6_max.OPMAX
+0002c6a5 l       .rodata		 00000013 fm6_max.VMAX
+00003914 l       .bss		 00001bc0 fm6_note
+00000000 l     F .text.fm6_note_on		 000002fa fm6_note_on
+00000000 l     F .text.fm6_op_fb		 0000008c fm6_op_fb
+00000000 l     F .text.fm6_op_run		 0000013e fm6_op_run
+00013a7c l       .bss		 00000200 fm6_own
+00014655 l       .bss		 00000001 fm6_own_ok
+00000000 l     F .text.fm6_pack		 0000011a fm6_pack
+000054d4 l       .bss		 00000270 fm6_patch
+00000000 l     F .text.fm6_penv_advance		 00000054 fm6_penv_advance
+000146b0 l       .bss		 00000004 fm6_pgen
+00000000 l     F .text.fm6_render		 00000662 fm6_render
+00000000 l     F .text.fm6_sanitize		 00000070 fm6_sanitize
+00000000 l     F .text.fm6_scaleout		 0000001a fm6_scaleout
+00000000 l     F .text.fm6_set_patch		 00000056 fm6_set_patch
+0001479c l       .bss		 00000004 fm6_slot
+00000000 l     F .text.fm6_sync		 0000028a fm6_sync
+00022408 l       .rodata		 00000006 fm6_sync.SPREAD
+00000000 l     F .text.fm6_unpack		 00000108 fm6_unpack
+00000000 l     F .text.fm_dot		 00000018 fm_dot
+00000000 l     F .text.fmt_fix		 0000006c fmt_fix
+00000000 l     F .text.fmt_int		 00000006 fmt_int
+00014661 l       .bss		 00000001 fmt_named
+00000000 l     F .text.fmt_ratio		 00000058 fmt_ratio
+00000000 l     F .text.fnv		 00000016 fnv
+00000000 l     F .text.fold		 0000001a fold
+00000000 l     F .text.foot_hint		 0000014c foot_hint
+00000000 l     F .text.foot_rename		 0000005a foot_rename
+00000000 l     F .text.formant_note_on		 00000040 formant_note_on
+00000000 l       .data		 00000004 formant_nz
+00000000 l     F .text.formant_render		 0000076a formant_render
+00000000 l     F .text.fres_coef		 000000ce fres_coef
+00014818 l       .bss		 00000004 fx.0
+0001481c l       .bss		 00000004 fx.1
+00014830 l       .bss		 00000004 fx.10
+00014834 l       .bss		 00000004 fx.11
+00014838 l       .bss		 00000004 fx.12
+0001483c l       .bss		 00000004 fx.13
+00014820 l       .bss		 00000004 fx.2
+00014824 l       .bss		 00000004 fx.3
+0001408c l       .bss		 00000008 fx.4
+00014094 l       .bss		 00000004 fx.5
+00014974 l       .bss		 00000010 fx.6
+00014098 l       .bss		 00000001 fx.7
+0001409c l       .bss		 00000002 fx.8
+00014828 l       .bss		 00000004 fx.9
+00000000 l     F .text.fx_buses		 00000260 fx_buses
+00014643 l       .bss		 00000001 fx_lowcut
+00014631 l       .bss		 00000001 fx_usb_fixed
+00000000 l     F .text.glide_set		 00000034 glide_set
+00000000 l     F .text.glo_sounding		 0000003a glo_sounding
+00000000 l     F .text.glyph		 0000004a glyph
+00000000 l     F .text.glyph_at		 0000003a glyph_at
+00000000 l     F .text.go_home		 00000026 go_home
+00000000 l     F .text.gr_fill		 000000d4 gr_fill
+00000000 l     F .text.gr_find		 000000a6 gr_find
+00000000 l       .pool		 00006db0 gr_p
+00000000 l     F .text.gr_seek		 000000d4 gr_seek
+00000000 l     F .text.grain_block		 00000422 grain_block
+00000000 l     F .text.grain_note_on		 00000070 grain_note_on
+00000000 l     F .text.grain_render		 0000093e grain_render
+00000000 l     F .text.graph_adsr		 00000192 graph_adsr
+00000000 l     F .text.graph_h		 00000012 graph_h
+00014804 l       .bss		 00000004 graph_ht
+00000000 l     F .text.graph_lfo		 000000ac graph_lfo
+00014bbe l       .bss		 00000034 graph_pname
+00014808 l       .bss		 00000004 graph_pname_sig
+00000000 l     F .text.graph_project_used		 0000009c graph_project_used
+00014810 l       .bss		 00000004 graph_project_used.frame
+00014664 l       .bss		 00000001 graph_project_used.mask
+0001480c l       .bss		 00000004 graph_project_used.ms
+00014814 l       .bss		 00000004 graph_project_used.ready
+00000000 l     F .text.graph_scope		 000000d0 graph_scope
+00013c7e l       .bss		 00000400 graph_scope.snap
+00000000 l     F .text.graph_steps		 00000122 graph_steps
+000370f8 l       .rodata		 00000024 graph_wheel.names
+00000000 l     F .text.graph_y		 00000012 graph_y
+00000000 l     F .text.grid_acc		 0000008c grid_acc
+00000000 l     F .text.grid_hit		 00000082 grid_hit
+00000000 l     F .text.grid_on		 00000050 grid_on
+00000000 l     F .text.grid_own		 00000052 grid_own
+0000d128 l       .bss		 0000060c hc_tab
+00000000 l     F .text.head_metro		 0000003a head_metro
+00000000 l     F .text.head_msg		 000002fe head_msg
+00000000 l     F .text.hexs		 00000026 hexs
+00000000 l     F .text.home_param		 0000004c home_param
+00000000 l     F .text.icon_cell		 00000046 icon_cell
+00000000 l     F .text.icon_for_label		 00000032 icon_for_label
+00000000 l     F .text.icon_ink		 0000009a icon_ink
+00000000 l     F .text.ink_in		 0000001c ink_in
+00000000 l     F .text.ink_w		 0000001a ink_w
+00000000 l     F .text.input_off		 000000ac input_off
+00000000 l     F .text.input_on		 000000ae input_on
+0001463e l       .bss		 00000001 kb_asleep
+0001463c l       .bss		 00000001 kb_boot_hold
+000149ac l       .bss		 0000001b kb_chn
+00014f70 l       .bss		 0000006c kb_chord
+00000000 l     F .text.kb_lat		 00000050 kb_lat
+000146f0 l       .bss		 00000004 kb_layer
+0001463d l       .bss		 00000001 kb_lock
+00000000 l     F .text.kb_map		 0000010c kb_map
+000244fe l       .rodata		 0000000c kb_map.DEGREE
+000146e8 l       .bss		 00000004 kb_mask
+000149e2 l       .bss		 0000001b kb_note
+00014680 l       .bss		 00000004 kb_out_tick
+000146e4 l       .bss		 00000004 kb_prev
+000149c7 l       .bss		 0000001b kb_trk
+00000000 l     F .text.kc_tag		 00000076 kc_tag
+00000000 l     F .text.kc_w		 00000016 kc_w
+00000000 l     F .text.kern		 00000032 kern
+00000000 l     F .text.key_black		 0000001c key_black
+00000000 l     F .text.key_place		 00000048 key_place
+00000000 l     F .text.keys_mode		 00000012 keys_mode
+00000000 l     F .text.kh_ink		 00000030 kh_ink
+00000000 l     F .text.kh_w		 00000024 kh_w
+00000000 l     F .text.knob		 00000186 knob
+00050d84 l       .pool		 000000a0 kr
+00000000 l     F .text.large_face_has		 0000002e large_face_has
+00000000 l     F .text.large_kind		 00000052 large_kind
+00000020 l       .data		 00000001 last_note
+00000000 l     F .text.layer_allowed		 0000002e layer_allowed
+00000000 l     F .text.layer_btn		 00000024 layer_btn
+00000000 l     F .text.layer_held		 00000024 layer_held
+00000000 l     F .text.layer_let_go		 0000005c layer_let_go
+00000000 l     F .text.layer_locked		 00000022 layer_locked
+00000000 l     F .text.layer_open		 0000002c layer_open
+00000000 l     F .text.layer_opened		 000000f2 layer_opened
+00000000 l     F .text.layer_set_open		 00000034 layer_set_open
+00000000 l     F .text.lc_box		 00000088 lc_box
+00000000 l     F .text.lc_fill		 0000003c lc_fill
+0001472c l       .bss		 00000004 lc_l1
+00014730 l       .bss		 00000004 lc_l2
+00014734 l       .bss		 00000004 lc_r1
+00014738 l       .bss		 00000004 lc_r2
+00014800 l       .bss		 00000004 lc_w
+0000cf40 l       .bss		 00000004 lcd_busy
+00000000 l     F .text.lcd_cmd		 0000002c lcd_cmd
+00000000 l     F .text.lcd_data		 00000034 lcd_data
+00000000 l     F .text.lcd_fill		 0000008a lcd_fill
+0000cf48 l       .bss		 000001e0 lcd_fillbuf
+00000000 l     F .text.lcd_power		 00000040 lcd_power
+00000000 l     F .text.lcd_rule		 00000018 lcd_rule
+00014cf8 l       .bss		 00000040 lcd_small
+00000000 l     F .text.lcd_spin		 0000001c lcd_spin
+00000000 l     F .text.lcd_sync		 00000020 lcd_sync
+00000000 l     F .text.lcd_window		 00000056 lcd_window
+00014944 l       .bss		 00000010 lce
+00000000 l     F .text.lcell		 00000266 lcell
+00014b36 l       .bss		 00000029 led_pos
+00000000 l     F .text.led_put		 0000002a led_put
+00000000 l     F .text.lfo_wave		 00000078 lfo_wave
+0000000c l       .data		 00000004 lim_env
+00000000 l     F .text.list_row		 0000007c list_row
+00000000 l     F .text.live_rec_sel		 0000003c live_rec_sel
+00000000 l     F .text.load_begin		 000000e6 load_begin
+00000000 l     F .text.load_end		 00000102 load_end
+00014657 l       .bss		 00000001 load_from
+00014656 l       .bss		 00000001 load_mo
+00000000 l     F .text.load_motion_hold		 0000003c load_motion_hold
+00000000 l     F .text.load_pat16		 0000007a load_pat16
+00000000 l     F .text.lock_held		 000000d0 lock_held
+00000000 l     F .text.lock_id		 0000007e lock_id
+00000000 l     F .text.lock_page_ok		 00000054 lock_page_ok
+00000000 l     F .text.lofi_amp		 000000b4 lofi_amp
+00000000 l     F .text.lofi_desc		 0000002e lofi_desc
+00000000 l     F .text.lofi_note_on		 0000003a lofi_note_on
+00000000 l     F .text.lofi_render		 000003a0 lofi_render
+00001d04 l       .rodata		 0000000c lofi_render.ARPS
+00000000 l       .rodata.cst4		 00000004 lofi_render.STEP_DUTY
+00000000 l     F .text.lowest_held		 00000034 lowest_held
+00000000 l     F .text.ly_avail		 00000040 ly_avail
+00000000 l     F .text.ly_bit		 0000001e ly_bit
+00000000 l     F .text.ly_down		 00000030 ly_down
+00000000 l     F .text.ly_page		 0000001a ly_page
+00014e54 l       .bss		 00000050 lys
+00000030 l       .data		 00000004 master_knob
+00000000 l     F .text.master_out		 0000026a master_out
+00000000 l     F .text.master_poll		 00000038 master_poll
+00015470 l       .bss		 000000c0 mchord
+00000000 l     F .text.mchord_of		 0000002a mchord_of
+00000000 l     F .text.menu_close		 0000001e menu_close
+00000000 l     F .text.menu_document		 00000246 menu_document
+00000000 l     F .text.menu_flag		 0000001c menu_flag
+00000000 l     F .text.menu_get		 000000c2 menu_get
+00000000 l     F .text.menu_large		 00000014 menu_large
+00000000 l     F .text.menu_n		 0000002e menu_n
+00000000 l     F .text.menu_put		 000000e8 menu_put
+00000000 l     F .text.menu_scroll_max		 00000016 menu_scroll_max
+00014794 l       .bss		 00000004 menu_serial_at
+00000000 l     F .text.menu_step		 0000005a menu_step
+00000000 l     F .text.menu_tab		 00000022 menu_tab
+00000000 l     F .text.menu_tabs		 0000014c menu_tabs
+00000000 l     F .text.menu_text		 000000d0 menu_text
+00000000 l     F .text.menu_vname		 000000f0 menu_vname
+000146c8 l       .bss		 00000004 mi_r
+000146c4 l       .bss		 00000004 mi_w
+000146c0 l       .bss		 00000004 midi_beat_samples
+00014924 l       .bss		 00000010 midi_bend_q8
+00014914 l       .bss		 00000010 midi_bend_target
+00000000 l     F .text.midi_cc_map		 000000c0 midi_cc_map
+000156b4 l       .bss		 000000e0 midi_ch
+00000000 l     F .text.midi_channel		 00000026 midi_channel
+00014a44 l       .bss		 00000028 midi_clock
+00000000 l     F .text.midi_clock_pulse		 000001c6 midi_clock_pulse
+00000000 l     F .text.midi_clock_transport		 00000060 midi_clock_transport
+00000000 l     F .text.midi_enqueue		 00000058 midi_enqueue
+00000000 l     F .text.midi_event		 0000029c midi_event
+00000000 l     F .text.midi_expression		 0000004c midi_expression
+00000000 l     F .text.midi_expression_channel		 00000032 midi_expression_channel
+00000000 l     F .text.midi_forget_track		 00000092 midi_forget_track
+00014638 l       .bss		 00000001 midi_hint
+00015b70 l       .bss		 00000100 midi_in_ms
+00014637 l       .bss		 00000001 midi_in_overflow
+00015a70 l       .bss		 00000100 midi_in_q
+00014c38 l       .bss		 00000040 midi_in_source
+00000000 l     F .text.midi_local_held		 0000005a midi_local_held
+00000000 l     F .text.midi_note_event		 00000188 midi_note_event
+00000000 l     F .text.midi_note_held		 00000074 midi_note_held
+00000000 l     F .text.midi_out_event		 0000003c midi_out_event
+00015c70 l       .bss		 00000100 midi_out_q
+000148b0 l       .bss		 00000008 midi_owners
+00000000 l     F .text.midi_pedal_up		 0000002c midi_pedal_up
+00000000 l     F .text.midi_release		 000000b6 midi_release
+00014635 l       .bss		 00000001 midi_route
+00000000 l     F .text.midi_route_ch14		 0000006e midi_route_ch14
+0000b7c4 l       .bss		 00000800 midi_sel_on
+00000000 l     F .text.midi_targets		 00000034 midi_targets
+000150cc l       .bss		 00000080 mix_l
+0001504c l       .bss		 00000080 mix_r
+00014704 l       .bss		 00000004 mo_r
+00014700 l       .bss		 00000004 mo_w
+00014b60 l       .bss		 0000002c mod
+00000000 l     F .text.mod_begin		 0000023a mod_begin
+00036ea1 l       .rodata		 0000000c mod_dst_icon.I
+00000000 l     F .text.mod_dst_name		 00000036 mod_dst_name
+00000000 l     F .text.mod_end		 0000003c mod_end
+00000000 l     F .text.mod_midi		 00000036 mod_midi
+00025166 l       .rodata		 0000000c mod_param.ID
+00000008 l       .data		 00000004 mod_seed
+00000000 l     F .text.mod_src_icon		 0000001c mod_src_icon
+00036e98 l       .rodata		 00000009 mod_src_icon.I
+00000000 l     F .text.mod_tsrc		 00000052 mod_tsrc
+0001465e l       .bss		 00000001 mod_ui_slot
+00000000 l     F .text.mod_voice		 0000017c mod_voice
+00000000 l     F .text.mod_voice_add		 0000007a mod_voice_add
+00000000 l     F .text.mono_pick		 00000042 mono_pick
+00000000 l     F .text.mono_play		 0000018c mono_play
+00000004 l       .data		 00000004 mono_play.seed
+00000000 l     F .text.mono_remove		 00000034 mono_remove
+00016520 l       .bss		 00000184 motion
+00014c78 l       .bss		 00000040 motion_active
+0000bfc8 l       .bss		 00000318 motion_base
+00014639 l       .bss		 00000001 motion_base_valid
+00000000 l     F .text.motion_base_value		 0000004e motion_base_value
+00000000 l     F .text.motion_begin		 00000044 motion_begin
+00000000 l     F .text.motion_capture		 0000012c motion_capture
+00000000 l     F .text.motion_clear		 00000096 motion_clear
+00000000 l     F .text.motion_clear_locks		 00000090 motion_clear_locks
+00000000 l     F .text.motion_count		 0000003e motion_count
+00000000 l     F .text.motion_delete_event		 0000008c motion_delete_event
+00000000 l     F .text.motion_enabled		 00000022 motion_enabled
+00000000 l     F .text.motion_find		 00000044 motion_find
+00014708 l       .bss		 00000004 motion_full
+00000000 l     F .text.motion_guard		 00000008 motion_guard
+00000000 l     F .text.motion_icon		 00000028 motion_icon
+00000000 l     F .text.motion_lock_count		 00000042 motion_lock_count
+00000000 l     F .text.motion_lock_get		 00000046 motion_lock_get
+00000000 l     F .text.motion_lock_steps		 00000050 motion_lock_steps
+00014cb8 l       .bss		 00000040 motion_locked
+00000000 l     F .text.motion_move		 000000d4 motion_move
+00000000 l     F .text.motion_param		 00000038 motion_param
+00000000 l     F .text.motion_put		 000000fc motion_put
+00000000 l     F .text.motion_rebase		 0000005c motion_rebase
+00000000 l     F .text.motion_replace_track		 00000092 motion_replace_track
+00000000 l     F .text.motion_reset		 00000004 motion_reset
+00000000 l     F .text.motion_restore		 0000007c motion_restore
+00000000 l     F .text.motion_set_enabled		 0000003e motion_set_enabled
+00000000 l     F .text.motion_set_lock		 00000010 motion_set_lock
+00000000 l     F .text.motion_sig		 00000058 motion_sig
+00000000 l     F .text.motion_snapshot_track		 00000076 motion_snapshot_track
+00000000 l     F .text.motion_step		 00000126 motion_step
+00000000 l     F .text.motion_undo_done		 0000002a motion_undo_done
+00000000 l     F .text.motion_undo_take		 000000ee motion_undo_take
+00000000 l     F .text.motion_unlock		 000000e6 motion_unlock
+00000000 l     F .text.motion_valid		 00000072 motion_valid
+00000000 l     F .text.mr_gap		 00000016 mr_gap
+00000000 l     F .text.mr_h		 0000001c mr_h
+00000000 l     F .text.mr_y		 00000016 mr_y
+00014494 l       .bss		 00000002 mt.0
+00014888 l       .bss		 00000004 mt.1
+00000000 l     F .text.mt_font		 00000018 mt_font
+00000000 l     F .text.mtab_first		 0000001a mtab_first
+00000000 l     F .text.mtab_rows		 00000024 mtab_rows
+00000000 l     F .text.name_close		 0000001c name_close
+00000000 l     F .text.name_on		 00000010 name_on
+00000000 l     F .text.name_open		 000000e4 name_open
+00050d54 l       .pool		 00000030 nm
+00000000 l     F .text.nm_black		 00000038 nm_black
+00000000 l     F .text.nm_commit		 00000016 nm_commit
+00000000 l     F .text.nm_do		 0000006e nm_do
+00036384 l       .rodata		 00000014 nm_draw_panel.FN
+00000000 l     F .text.nm_group		 0000002e nm_group
+00013c7c l       .bss		 00000002 nm_group.one
+00000000 l     F .text.nm_insert		 0000004a nm_insert
+00000000 l     F .text.noise_desc		 00000032 noise_desc
+00000000 l     F .text.noise_inc		 00000062 noise_inc
+00000000 l     F .text.noise_note_on		 00000040 noise_note_on
+00000000 l     F .text.noise_render		 00000610 noise_render
+00000000 l     F .text.note_line		 0000008a note_line
+00000000 l     F .text.note_name		 00000030 note_name
+0001465c l       .bss		 00000001 oct_taps.chord
+0001465b l       .bss		 00000001 oct_taps.down
+00000000 l     F .text.open_family		 00000090 open_family
+00000000 l     F .text.ota_crc16		 0000002e ota_crc16
+000147cc l       .bss		 00000004 ota_deadline
+00012ffc l       .bss		 00000280 ota_dec
+00000000 l     F .text.ota_erase		 0000002c ota_erase
+00000000 l     F .text.ota_frame_done		 0000000e ota_frame_done
+00000000 l     F .text.ota_frame_get		 00000022 ota_frame_get
+00000000 l     F .text.ota_fread		 00000004 ota_fread
+00000000 l     F .text.ota_idle		 00000004 ota_idle
+00000000 l     F .text.ota_in_area		 00000020 ota_in_area
+00000000 l     F .text.ota_jl_enc		 00000026 ota_jl_enc
+00000000 l     F .text.ota_memeq		 00000016 ota_memeq
+00014abc l       .bss		 00000028 ota_msg
+00000000 l     F .text.ota_prog		 00000020 ota_prog
+00000000 l     F .text.ota_rd16		 0000000a ota_rd16
+00000000 l     F .text.ota_rd24		 00000010 ota_rd24
+00000000 l     F .text.ota_rd32		 00000010 ota_rd32
+00000000 l     F .text.ota_read		 000000e0 ota_read
+00000000 l     F .text.ota_reply_identity		 00000030 ota_reply_identity
+00000cec l       .rodata.str1.1		 00000009 ota_reply_identity.ID
+00000000 l     F .text.ota_send_msg		 000000ba ota_send_msg
+00014fdc l       .bss		 00000070 ota_session.parm
+00000000 l     F .text.ota_show		 000000d8 ota_show
+00034ab0 l       .rodata		 00000018 ota_show.STEP
+0001367c l       .bss		 00000200 ota_stage.b
+0001327c l       .bss		 00000400 ota_stage.hdr
+0001387c l       .bss		 00000200 ota_stage.mine
+00000050 l       .rodata.cst16		 00000010 ota_stage_head.NAME
+00000000 l     F .text.ota_take		 00000096 ota_take
+00000000 l     F .text.ota_unstage		 00000018 ota_unstage
+00014b8c l       .bss		 00000032 ota_wire
+00000000 l     F .text.ota_wire_send		 000000d4 ota_wire_send
+00000000 l     F .text.ota_wr16		 00000008 ota_wr16
+00000000 l     F .text.ota_wr32		 00000012 ota_wr32
+00000000 l     F .text.page_desc		 0000006e page_desc
+00000000 l     F .text.page_entered		 00000074 page_entered
+00000000 l     F .text.page_first		 0000001c page_first
+00000000 l     F .text.page_icon		 00000032 page_icon
+000147e0 l       .bss		 00000004 page_over
+00000000 l     F .text.page_tap		 00000264 page_tap
+00000000 l     F .text.page_title		 00000174 page_title
+00000000 l     F .text.page_visible		 0000008e page_visible
+00000000 l     F .text.palette_from_stored		 00000022 palette_from_stored
+00000000 l     F .text.palette_set		 00000154 palette_set
+00000000 l     F .text.panel_btn_of		 0000001c panel_btn_of
+00000000 l     F .text.panel_enc		 0000002c panel_enc
+00000000 l     F .text.panel_init		 000000ae panel_init
+000147dc l       .bss		 00000004 panel_moved
+00000000 l     F .text.panel_note		 0000004e panel_note
+00000000 l     F .text.panel_setup		 00000238 panel_setup
+00014636 l       .bss		 00000001 panic_req
+00000000 l     F .text.param_desc_of		 00000028 param_desc_of
+00000000 l     F .text.param_fit		 0000002a param_fit
+00000000 l     F .text.param_format		 00000256 param_format
+00000000 l     F .text.param_icon		 000000e2 param_icon
+00000000 l     F .text.param_kept		 0000002a param_kept
+00000000 l     F .text.param_turn		 0000007c param_turn
+00000000 l     F .text.params_by_count		 0000003a params_by_count
+00015350 l       .bss		 00000080 part_buf
+00000000 l     F .text.pat_count		 00000016 pat_count
+00000000 l     F .text.pat_label		 0000005a pat_label
+00014798 l       .bss		 00000004 pat_last
+00000000 l     F .text.pat_load_ui		 00000168 pat_load_ui
+00000000 l     F .text.pat_pick		 0000001e pat_pick
+00014954 l       .bss		 00000010 pat_sig
+00000000 l     F .text.pd_setup		 00000102 pd_setup
+00000000 l     F .text.pd_wave		 00000124 pd_wave
+00014714 l       .bss		 00000004 perf_act
+00000000 l     F .text.perf_avail		 00000048 perf_avail
+00000000 l     F .text.perf_begin		 00000276 perf_begin
+00000000 l     F .text.perf_block		 000009da perf_block
+00000000 l     F .text.perf_buf_done		 0000004e perf_buf_done
+00000000 l     F .text.perf_buf_start		 000000fc perf_buf_start
+00000000 l     F .text.perf_harm		 00000246 perf_harm
+00000000 l     F .text.perf_harm_on		 0000001e perf_harm_on
+000146fc l       .bss		 00000004 perf_held
+00014710 l       .bss		 00000004 perf_k
+00000000 l     F .text.perf_key		 00000036 perf_key
+00014641 l       .bss		 00000001 perf_kill
+0001463f l       .bss		 00000001 perf_latch_on
+000146f4 l       .bss		 00000004 perf_latched
+00000000 l     F .text.perf_len		 0000003e perf_len
+000146ec l       .bss		 00000004 perf_mask
+00000000 l     F .text.perf_master		 00000094 perf_master
+00000000 l     F .text.perf_mute		 0000006c perf_mute
+00014c00 l       .bss		 00000038 perf_ord
+00000000 l     F .text.perf_pick		 00000034 perf_pick
+00000000 l     F .text.perf_pre		 0000007a perf_pre
+000146f8 l       .bss		 00000004 perf_seq
+00014642 l       .bss		 00000001 perf_solo
+00000000 l     F .text.perf_switch		 000000a2 perf_switch
+00014658 l       .bss		 00000001 persist_pending
+000147f0 l       .bss		 00000004 persist_retry_ms
+0000d738 l       .bss		 0000023c persist_saved
+00000048 l       .data		 000000dc pf
+00000000 l     F .text.phase_note_on		 0000000e phase_note_on
+00000000 l     F .text.phase_render		 00000232 phase_render
+00000000 l     F .text.phys_desc		 00000020 phys_desc
+00000000 l     F .text.phys_legacy		 00000010 phys_legacy
+00000000 l     F .text.phys_note_on		 000000b6 phys_note_on
+00000000 l     F .text.phys_render		 0000033c phys_render
+00000000 l     F .text.phys_reset		 0000003c phys_reset
+00006db0 l       .pool		 0000c960 phys_slot
+00000000 l     F .text.phys_symp_pitches		 00000098 phys_symp_pitches
+00000000 l     F .text.pow2_q16		 00000058 pow2_q16
+00000000 l     F .text.pr_bars		 000000ac pr_bars
+00000000 l     F .text.pr_held		 0000006a pr_held
+00000000 l     F .text.pr_note		 00000032 pr_note
+00000000 l     F .text.pr_row_y		 00000016 pr_row_y
+00000000 l     F .text.pr_split		 00000046 pr_split
+00000000 l     F .text.pr_src		 0000004a pr_src
+00000000 l     F .text.preset_all_at		 00000088 preset_all_at
+00000000 l     F .text.preset_all_pos		 000000d6 preset_all_pos
+00000000 l     F .text.preset_at		 0000005a preset_at
+00000000 l     F .text.preset_favorite		 00000036 preset_favorite
+00000000 l     F .text.preset_hinted		 0000001c preset_hinted
+00000000 l     F .text.preset_mark		 0000004c preset_mark
+00000000 l     F .text.preset_orig		 00000020 preset_orig
+00000000 l     F .text.preset_pat_hint		 00000082 preset_pat_hint
+00000000 l     F .text.preset_pos		 00000068 preset_pos
+00000000 l     F .text.preset_rank		 0000003e preset_rank
+00000000 l     F .text.preset_step		 00000084 preset_step
+00000000 l     F .text.proj_bound		 00000094 proj_bound
+00000025 l       .data		 00000001 proj_cur
+00000000 l     F .text.proj_drums_to_part		 00000070 proj_drums_to_part
+00000000 l     F .text.proj_engines_ok		 0000001e proj_engines_ok
+00000000 l     F .text.proj_fetch		 00000056 proj_fetch
+00000000 l     F .text.proj_fm4		 00000148 proj_fm4
+00000000 l     F .text.proj_g_from_v2		 00000022 proj_g_from_v2
+00000000 l     F .text.proj_hash		 0000001e proj_hash
+00000000 l     F .text.proj_import		 00000556 proj_import
+0000000c l       .rodata.cst4		 00000004 proj_legacy_drums.FX_DEF
+00050900 l       .pool		 0000000d proj_name
+00000000 l     F .text.proj_name_get		 00000038 proj_name_get
+00000000 l     F .text.proj_ok		 0000004a proj_ok
+00000000 l     F .text.proj_pack		 000002e2 proj_pack
+00000000 l     F .text.proj_perc		 000000d6 proj_perc
+00000000 l     F .text.proj_phys		 0000006a proj_phys
+0000d974 l       .bss		 0000121c proj_scratch
+00000000 l     F .text.proj_steps		 0000004c proj_steps
+00000000 l     F .text.proj_store_len		 0000001c proj_store_len
+00000000 l     F .text.proj_sum		 00000008 proj_sum
+00000000 l     F .text.proj_trk_from		 00000072 proj_trk_from
+00000000 l     F .text.proj_trk_from_v2		 0000001e proj_trk_from_v2
+00000000 l     F .text.proj_unpack		 000003fe proj_unpack
+00014653 l       .bss		 00000001 proj_wire_gen
+0000fc98 l       .bss		 00000f00 proj_wire_u
+00000000 l     F .text.project_capture		 0000011a project_capture
+00000000 l     F .text.project_load		 0000005e project_load
+00000000 l     F .text.project_name		 00000034 project_name
+00000000 l     F .text.project_restore_runtime		 0000034e project_restore_runtime
+00000000 l     F .text.project_save_as		 000000f2 project_save_as
+00000000 l     F .text.project_used		 00000018 project_used
+00014620 l       .bss		 00000001 proll.0
+00014624 l       .bss		 00000001 proll.1
+000148a8 l       .bss		 00000004 proll.2
+00014628 l       .bss		 00000001 proll.3
+000148ac l       .bss		 00000004 proll.4
+00000000 l     F .text.px_exp2		 00000116 px_exp2
+00000000 l     F .text.px_isqrt64		 0000006e px_isqrt64
+00000000 l     F .text.px_memb_block		 000002b4 px_memb_block
+00000000 l     F .text.px_modal_block		 000002a2 px_modal_block
+00000000 l     F .text.px_modal_exciter		 000001b0 px_modal_exciter
+00000000 l     F .text.px_modal_q		 00000078 px_modal_q
+00000000 l     F .text.px_modal_run		 0000026c px_modal_run
+00000000 l     F .text.px_sin		 00000078 px_sin
+00000000 l     F .text.px_string_block		 0000057e px_string_block
+00000000 l     F .text.px_string_excite		 00000252 px_string_excite
+00000000 l     F .text.px_string_run		 000003fe px_string_run
+00000000 l     F .text.px_svf_coef		 000000c8 px_svf_coef
+00000000 l     F .text.px_symp_block		 000001ca px_symp_block
+00000000 l     F .text.px_symp_run		 00000228 px_symp_run
+00000000 l     F .text.ramp		 00000136 ramp
+000157a0 l       .bss		 000000e0 rc
+00000000 l     F .text.rec_clearable		 00000036 rec_clearable
+00000000 l     F .text.rec_note		 000002b0 rec_note
+00000000 l     F .text.rec_on		 00000040 rec_on
+00000000 l     F .text.rec_release		 000000b6 rec_release
+00000000 l     F .text.rec_set		 0000002e rec_set
+00000000 l     F .text.rec_tap		 00000106 rec_tap
+0003e390 l       .pool		 00002692 rev_comb
+00000000 l     F .text.rev_room		 0000011c rev_room
+00000000 l     F .text.rev_spring		 0000021c rev_spring
+00040a24 l       .pool		 000007cc rev_u
+00000000 l     F .text.rl_name		 0000002a rl_name
+00000028 l       .data		 00000004 rng_state
+00000000 l     F .text.roll_note		 000000f0 roll_note
+00000000 l     F .text.roll_text		 000001ae roll_text
+00000000 l     F .text.rp_apply		 0000002a rp_apply
+00000000 l     F .text.rp_get		 00000038 rp_get
+00000000 l     F .text.rp_put		 00000048 rp_put
+00016170 l       .bss		 00000108 rs
+00000000 l     F .text.sample_next		 000000c6 sample_next
+00000000 l     F .text.sample_note_on		 0000010e sample_note_on
+00000000 l     F .text.sample_render		 00000224 sample_render
+00014498 l       .bss		 000000c0 sample_wave.0
+00014558 l       .bss		 000000c0 sample_wave.1
+0001488c l       .bss		 00000004 sample_wave.2
+00014890 l       .bss		 00000004 sample_wave.3
+00014894 l       .bss		 00000004 sample_wave.4
+00014898 l       .bss		 00000004 sample_wave.5
+0001489c l       .bss		 00000004 sample_wave.6
+000148a0 l       .bss		 00000004 sample_wave.7
+000148a4 l       .bss		 00000004 sample_wave.8
+00014618 l       .bss		 00000001 sample_wave.9
+0001474c l       .bss		 00000004 sb_env
+00014750 l       .bss		 00000004 sb_h1
+00014754 l       .bss		 00000004 sb_h2
+00014758 l       .bss		 00000004 sb_hl
+0001473c l       .bss		 00000004 sb_lp1
+00014740 l       .bss		 00000004 sb_lp2
+00014744 l       .bss		 00000004 sb_lp3
+00014748 l       .bss		 00000004 sb_lp4
+00000000 l     F .text.scale_mask		 00000020 scale_mask
+00000000 l     F .text.scale_snap		 0000004a scale_snap
+000080e4 l       .bss		 00000400 scope_buf
+000146bc l       .bss		 00000004 scope_w
+00000000 l     F .text.scr_get		 0000001c scr_get
+00000000 l     F .text.scr_wake		 0000001e scr_wake
+00000000 l     F .text.scr_wake_now		 0000004a scr_wake_now
+000140a0 l       .bss		 00000001 scrn.0
+00014854 l       .bss		 00000004 scrn.1
+00014858 l       .bss		 00000004 scrn.2
+0001485c l       .bss		 00000004 scrn.3
+00014860 l       .bss		 00000004 scrn.4
+00000000 l     F .text.select_engine		 00000046 select_engine
+00015250 l       .bss		 00000080 send_c
+000151d0 l       .bss		 00000080 send_d
+00015150 l       .bss		 00000080 send_r
+00000000 l     F .text.seq_counting		 00000010 seq_counting
+00000000 l     F .text.seq_is_empty		 0000001c seq_is_empty
+00000000 l     F .text.seq_ratchet		 000000c0 seq_ratchet
+00000000 l     F .text.seq_release		 00000030 seq_release
+00000000 l     F .text.seq_start		 000000fa seq_start
+00000000 l     F .text.seq_step		 00000354 seq_step
+00000000 l     F .text.seq_steps		 0000003e seq_steps
+00000000 l     F .text.seq_stop		 000000e4 seq_stop
+00000000 l     F .text.set_engine		 0000001e set_engine
+00000000 l     F .text.set_engine_of		 0000005a set_engine_of
+00000000 l     F .text.settings_export		 00000098 settings_export
+00000024 l       .data		 00000001 settings_hold
+00000000 l     F .text.settings_import		 0000022c settings_import
+00000000 l     F .text.settings_init		 0000005e settings_init
+00014652 l       .bss		 00000001 settings_leds
+00000000 l     F .text.settings_poll		 000001e6 settings_poll
+00000000 l     F .text.settings_save		 00000010 settings_save
+00000000 l     F .text.setup_show		 00000030 setup_show
+00000000 l     F .text.shed_check		 0000003a shed_check
+000146a4 l       .bss		 00000004 shed_count
+00014644 l       .bss		 00000001 shed_over
+00014630 l       .bss		 00000001 shed_req
+00000000 l     F .text.sie_rd		 0000005a sie_rd
+00000000 l     F .text.sie_wr		 00000054 sie_wr
+000153d0 l       .bss		 000000a0 sl
+00015390 l       .pool		 00008000 sl_buf
+00014718 l       .bss		 00000004 sl_lent
+00000000 l     F .text.slc_bounds		 000000b6 slc_bounds
+00000000 l     F .text.slc_count		 00000024 slc_count
+00000000 l     F .text.slc_dec_at		 00000012 slc_dec_at
+00000000 l     F .text.slc_dec_next		 000000c0 slc_dec_next
+00000000 l     F .text.slc_get		 00000042 slc_get
+00000000 l     F .text.slc_loop_fwd		 00000046 slc_loop_fwd
+000062b4 l       .bss		 00000630 slc_man
+00000000 l     F .text.slc_man_begin		 000000b6 slc_man_begin
+00014677 l       .bss		 00000003 slc_man_cur
+00014790 l       .bss		 00000004 slc_man_load
+00000000 l     F .text.slc_man_of		 0000004e slc_man_of
+0001465d l       .bss		 00000001 slc_man_save
+00000000 l     F .text.slc_note_slice		 0000001e slc_note_slice
+000068e4 l       .bss		 00001000 slc_rbuf
+00000000 l     F .text.slc_rec_room		 00000028 slc_rec_room
+00000000 l     F .text.slc_rev		 0000026a slc_rev
+00000000 l     F .text.slc_src_of		 00000016 slc_src_of
+00000000 l     F .text.slc_state_at		 00000130 slc_state_at
+00000000 l     F .text.slc_store_load		 000000f2 slc_store_load
+00005744 l       .bss		 00000b70 slc_usr
+00000000 l     F .text.slice_amp		 00000060 slice_amp
+00000000 l     F .text.slice_count		 0000001c slice_count
+00000000 l     F .text.slice_edit_begin		 0000010c slice_edit_begin
+00035108 l       .rodata		 0000000c slice_edit_begin.EMPTY
+00000000 l     F .text.slice_edit_end		 00000052 slice_edit_end
+00000000 l     F .text.slice_keys		 0000002c slice_keys
+00000000 l     F .text.slice_mark		 00000054 slice_mark
+00000000 l     F .text.slice_note_on		 00000154 slice_note_on
+00000000 l     F .text.slice_page_ok		 00000032 slice_page_ok
+00000000 l     F .text.slice_page_on		 00000026 slice_page_on
+00000000 l     F .text.slice_render		 00000474 slice_render
+00000000 l     F .text.slice_sel		 00000014 slice_sel
+00000000 l     F .text.slice_src		 00000044 slice_src
+00000000 l     F .text.slice_time		 0000005e slice_time
+00000000 l     F .text.slice_view		 00000076 slice_view
+00000000 l     F .text.slicer_track		 00000392 slicer_track
+00000000 l     F .text.smp_set_missing		 0000002c smp_set_missing
+00000000 l     F .text.smp_sine		 000000de smp_sine
+000146ac l       .bss		 00000004 smp_user_gen
+00000000 l     F .text.smp_user_scan		 00000568 smp_user_scan
+00000000 l     F .text.smp_zone		 0000002c smp_zone
+00000000 l     F .text.snd_id		 0000002a snd_id
+000147a4 l       .bss		 00000004 snd_said
+00014764 l       .bss		 00000004 so_r
+00014760 l       .bss		 00000004 so_w
+00014e08 l       .bss		 0000004c song
+000142dc l       .bss		 00000001 sp.0
+000142e0 l       .bss		 00000001 sp.1
+00014878 l       .bss		 00000004 sp.2
+0001487c l       .bss		 00000004 sp.3
+00014880 l       .bss		 00000004 sp.4
+00014884 l       .bss		 00000004 sp.5
+000142e4 l       .bss		 000000d8 sp.6
+000143bc l       .bss		 000000d8 sp.7
+00000000 l     F .text.splash_band		 00000056 splash_band
+00000000 l     F .text.st_body		 00000036 st_body
+0000eb90 l       .bss		 00000f00 st_buf
+00000000 l     F .text.st_crc32		 00000034 st_crc32
+0002c024 l       .rodata		 00000040 st_crc32.T
+00000000 l     F .text.st_current		 00000086 st_current
+00000000 l     F .text.st_erase		 00000064 st_erase
+00000000 l     F .text.st_head		 00000058 st_head
+00000000 l     F .text.st_load		 00000042 st_load
+00000000 l     F .text.st_prog		 00000044 st_prog
+00000000 l     F .text.st_read		 00000044 st_read
+00000000 l     F .text.st_save		 00000006 st_save
+00000000 l     F .text.st_save_to		 00000102 st_save_to
+00000000 l     F .text.st_sector		 00000044 st_sector
+00000000 l     F .text.step_accents		 00000018 step_accents
+00000000 l     F .text.step_chance		 00000010 step_chance
+00000000 l     F .text.step_clear		 00000014 step_clear
+00000000 l     F .text.step_lanes		 00000034 step_lanes
+00000000 l     F .text.step_on		 00000016 step_on
+00000000 l     F .text.step_ratchet		 0000000a step_ratchet
+00000000 l     F .text.step_set_chance		 00000010 step_set_chance
+00000000 l     F .text.step_set_ratchet		 00000026 step_set_ratchet
+00000000 l     F .text.step_to_grid		 00000074 step_to_grid
+00000000 l     F .text.steps_hash		 0000005e steps_hash
+00000000 l     F .text.steps_sig		 00000012 steps_sig
+00000000 l     F .text.str_cpy		 00000028 str_cpy
+00000000 l     F .text.str_eq		 00000020 str_eq
+00000000 l     F .text.str_hash		 00000014 str_hash
+00000000 l     F .text.str_len		 0000000e str_len
+00000000 l     F .text.strip_kind		 0000003a strip_kind
+0001464f l       .bss		 00000001 sx_busy
+0001464c l       .bss		 00000001 sx_collect
+0000c434 l       .bss		 00000280 sx_frame
+0001476c l       .bss		 00000004 sx_frame_len
+00015d70 l       .bss		 00000100 sx_out_q
+00014768 l       .bss		 00000004 sx_pos
+0001464e l       .bss		 00000001 sx_ready
+000147a0 l       .bss		 00000004 sync_reload
+00027413 l       .rodata		 00000006 sysex_byte.UBOOT_KEY
+0001467c l       .bss		 00000004 t5_nested_ticks
+00000000 l     F .text.text_fit		 00000086 text_fit
+00000000 l     F .text.text_ink		 0000001a text_ink
+00000000 l     F .text.text_run		 0000014e text_run
+00000000 l     F .text.text_w		 00000048 text_w
+00000000 l     F .text.tl_cell		 0000001e tl_cell
+00014994 l       .bss		 00000018 tl_do.b
+00000000 l     F .text.tl_euclid		 0000004e tl_euclid
+00034e15 l       .rodata		 00000003 tl_fill.E
+00000000 l     F .text.tl_hit_nth		 00000054 tl_hit_nth
+00000000 l     F .text.tl_lane_clear		 0000001e tl_lane_clear
+00000000 l     F .text.tl_lane_rnd		 000001ce tl_lane_rnd
+0005090e l       .pool		 00000444 tl_open
+00000000 l     F .text.tl_order		 0000008e tl_order
+00000000 l     F .text.tl_shift		 0000002a tl_shift
+00000000 l     F .text.tl_undo_take		 000000b4 tl_undo_take
+00000000 l     F .text.track_defaults_steps		 0000001e track_defaults_steps
+00000000 l     F .text.track_desc		 0000004c track_desc
+00000000 l     F .text.track_select		 0000003e track_select
+00000000 l     F .text.track_sig		 0000008e track_sig
+00000000 l     F .text.transport_busy		 00000034 transport_busy
+00014633 l       .bss		 00000001 transport_req
+00000000 l     F .text.trio_inc		 00000068 trio_inc
+00000000 l     F .text.trio_naive		 00000066 trio_naive
+00000000 l     F .text.trio_note_on		 00000034 trio_note_on
+00000000 l     F .text.trio_pass		 000002f8 trio_pass
+00000000 l     F .text.trio_render		 00000738 trio_render
+00000804 l       .bss		 00001bb0 trk
+00000000 l     F .text.trk_all_off		 00000034 trk_all_off
+00000000 l     F .text.trk_level		 00000016 trk_level
+00000000 l     F .text.trk_note_off		 0000010c trk_note_off
+00000000 l     F .text.trk_note_on		 0000044e trk_note_on
+00014984 l       .bss		 00000010 ts.0
+0001461c l       .bss		 00000004 ts.1
+000146b4 l       .bss		 00000004 ua_r
+000078e4 l       .bss		 00000800 ua_ring
+000146b8 l       .bss		 00000004 ua_w
+00014d78 l       .bss		 00000048 uac
+00000000 l     F .text.uac_ep4_reset		 0000002c uac_ep4_reset
+00000000 l     F .text.uac_render_start		 00000104 uac_render_start
+00000000 l     F .text.uac_service		 000001be uac_service
+00000000 l     F .text.uac_tap		 000000a0 uac_tap
+00000000 l     F .text.uac_tap48		 000001ae uac_tap48
+000163a0 l       .bss		 00000174 ui
+0001465f l       .bss		 00000001 ui_draw.counting
+00000000 l     F .text.ui_draw_page		 00002aa8 ui_draw_page
+00000000 l     F .text.ui_input		 000034ca ui_input
+000147d8 l       .bss		 00000004 ui_input.kb_seen
+000147d4 l       .bss		 00000004 ui_input.lock_ms
+000147f4 l       .bss		 00000004 ui_leds.ready
+00000000 l     F .text.ui_message		 0000000a ui_message
+000147ec l       .bss		 00000004 ui_notices.midi_last
+000147e8 l       .bss		 00000004 ui_notices.midi_t
+00000000 l     F .text.ui_say		 00000038 ui_say
+00014a00 l       .bss		 0000001c um
+0000cec0 l       .bss		 00000080 um_ring
+000123a8 l       .bss		 000005bc undo
+00014654 l       .bss		 00000001 undo_depth
+000147e4 l       .bss		 00000004 undo_mot_tag
+00000000 l     F .text.undo_swap		 0000022c undo_swap
+00000000 l     F .text.up_auto_name		 00000064 up_auto_name
+00010b98 l       .bss		 00001810 up_bank
+00000000 l     F .text.up_bank_check		 000000a0 up_bank_check
+00000000 l     F .text.up_engine		 00000018 up_engine
+000147ac l       .bss		 00000004 up_gen
+00000000 l     F .text.up_grid		 00000016 up_grid
+00000000 l     F .text.up_has_pat		 0000002a up_has_pat
+00000000 l     F .text.up_load		 0000016e up_load
+00000000 l     F .text.up_migrate		 00000060 up_migrate
+00000000 l     F .text.up_name		 00000034 up_name
+00000000 l     F .text.up_name_ok		 00000026 up_name_ok
+00000000 l     F .text.up_pat_norm		 00000020 up_pat_norm
+00000000 l     F .text.up_pat_nth		 0000001e up_pat_nth
+00000000 l     F .text.up_pat_rank		 00000020 up_pat_rank
+00000000 l     F .text.up_put		 000000ec up_put
+00000000 l     F .text.up_rec		 0000001e up_rec
+00000000 l     F .text.up_set_name		 0000003c up_set_name
+00000000 l     F .text.up_set_value		 00000018 up_set_value
+00000000 l     F .text.up_slot_label		 00000024 up_slot_label
+00000000 l     F .text.up_store		 00000170 up_store
+00000000 l     F .text.up_ui		 00000006 up_ui
+00000000 l     F .text.up_ui_named		 00000134 up_ui_named
+00000000 l     F .text.up_used		 0000001e up_used
+00000000 l     F .text.up_valid		 0000005e up_valid
+00000000 l     F .text.up_value		 00000018 up_value
+00000000 l     F .text.up_values		 0000008a up_values
+0004fa70 l       .pool		 00000e90 upf
+00000000 l     F .text.upf_empty		 00000026 upf_empty
+00000000 l     F .text.upf_fm6		 0000001c upf_fm6
+00000000 l     F .text.upf_get		 00000082 upf_get
+00000000 l     F .text.upf_migrate		 00000068 upf_migrate
+00000000 l     F .text.upf_save		 0000004c upf_save
+00000000 l     F .text.upf_set		 0000009a upf_set
+00000000 l     F .text.upf_tag		 0000002a upf_tag
+00000000 l     F .text.upf_valid		 00000022 upf_valid
+00014f04 l       .bss		 00000060 usb
+00000023 l       .data		 00000001 usb_cdc_on
+00000000 l     F .text.usb_detach		 00000028 usb_detach
+00000000 l     F .text.usb_fixed_dac		 00000020 usb_fixed_dac
+0001475c l       .bss		 00000004 usb_poll.tick
+000147a8 l       .bss		 00000004 usb_retry.t
+00000000 l     F .text.usb_serial_apply		 0000007a usb_serial_apply
+00000000 l     F .text.usb_start		 000000b6 usb_start
+00000000 l     F .text.user_of		 00000020 user_of
+00014674 l       .bss		 00000003 usr_nz
+000023b4 l       .bss		 00000540 usr_zone
+00014a94 l       .bss		 00000028 ux
+00000000 l     F .text.ux_gray		 0000000c ux_gray
+00000000 l     F .text.ux_mix		 0000007a ux_mix
+0002c758 l       .rodata		 00000003 ux_mix.MK
+00000a3b l       .rodata.str1.1		 00000003 ux_mix.SH
+0000bfc4 l       .bss		 00000004 vage
+000146a8 l       .bss		 00000004 voice_kills
+00000000 l     F .text.voice_reuse		 0000001e voice_reuse
+00000000 l     F .text.voice_room		 0000004a voice_room
+00000000 l     F .text.voice_start		 00000118 voice_start
+00000000 l     F .text.voice_victim		 000000d8 voice_victim
+00000000 l     F .text.voices_busy		 00000032 voices_busy
+00000000 l     F .text.vowel_at		 00000088 vowel_at
+000152d0 l       .bss		 00000080 wet
+00000000 l     F .text.wheel_block		 00000224 wheel_block
+00000000 l     F .text.wheel_note_on		 000000c2 wheel_note_on
+00000000 l     F .text.wheel_render		 00000334 wheel_render
+00000000         *UND*		 00000000 _bss_end
+00000000         *UND*		 00000000 _bss_start
+00000000         *UND*		 00000000 _data_end
+00000000         *UND*		 00000000 _data_load
+00000000         *UND*		 00000000 _data_start
+00000000         *UND*		 00000000 _etext
+00000000         *UND*		 00000000 _guard0
+00000000         *UND*		 00000000 _guard1
+00000000         *UND*		 00000000 _pool_end
+00000000         *UND*		 00000000 _pool_start
+00000000         *UND*		 00000000 _rt_end
+00000000         *UND*		 00000000 _rt_load
+00000000         *UND*		 00000000 _rt_start
+00000000         *UND*		 00000000 _sstack_lo
+00000000         *UND*		 00000000 _sstack_top
+00000000         *UND*		 00000000 _ustack_lo
+0000008c g       .noinit		 0000000c bootguard
+00000040 g       .noinit		 0000004c felucca_dbg
+00000000 g     F .text.fm1_alnk0_irq		 000019f6 fm1_alnk0_irq
+00000000 g       .noinit		 00000040 fm1_crash
+00000000 g     F .text.fm1_cstart		 00000246 fm1_cstart
+00000000         *UND*		 00000000 fm1_fatal_stubs
+00000000 g     F .text.fm1_fault_c		 000001d4 fm1_fault_c
+00000000 g     F .text.fm1_timer5_irq		 00001620 fm1_timer5_irq
+00000000         *UND*		 00000000 isr_alnk0
+00000000         *UND*		 00000000 isr_timer5
+00000000 g     F .text.memcmp		 0000001a memcmp
+00000000 g     F .text.memcpy		 00000010 memcpy
+00000000 g     F .text.memset		 0000000c memset
+00000098 g       .noinit		 00000020 panel
+000000c8 g       .noinit		 00003900 proj_slot
+000000b8 g       .noinit		 00000010 settings
