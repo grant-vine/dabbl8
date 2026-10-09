@@ -1,0 +1,16 @@
+source 0 reverse 0 mode 0 audible samples 65468
+source 0 reverse 0 mode 1 audible samples 65466
+source 0 reverse 0 mode 2 audible samples 65466
+source 0 reverse 0 mode 3 audible samples 8186
+source 0 reverse 1 mode 0 audible samples 65407
+source 0 reverse 1 mode 1 audible samples 65450
+source 0 reverse 1 mode 2 audible samples 65450
+source 0 reverse 1 mode 3 audible samples 8188
+source 4 reverse 0 mode 0 audible samples 65501
+source 4 reverse 0 mode 1 audible samples 65519
+source 4 reverse 0 mode 2 audible samples 65519
+source 4 reverse 0 mode 3 audible samples 8190
+source 4 reverse 1 mode 0 audible samples 65510
+source 4 reverse 1 mode 1 audible samples 65524
+source 4 reverse 1 mode 2 audible samples 65524
+source 4 reverse 1 mode 3 audible samples 8191

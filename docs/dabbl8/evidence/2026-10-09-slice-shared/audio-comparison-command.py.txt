@@ -1,0 +1,20 @@
+from pathlib import Path
+import subprocess,json,hashlib
+root=Path('/Users/grantv/Code/dabbl8');raw=root/'.local-baseline/slice-shared-check';raw.mkdir(exist_ok=True)
+m={}
+for name,sub,shared in [('previous','fm6-shared-state',0),('shared','slice-shared-state',1)]:
+ r=root/'.local-baseline'/sub;exe=raw/('audio-'+name)
+ args=['clang','-O2','-w','-DNPART=8',f'-DTEST_SHARED_SLICE={shared}',f'-DHOSTSIM_PATH="{r}/tests/hostsim.c"',f'-I{r}/build/gen',f'-I{r}/firmware/src','-o',str(exe),'/private/tmp/dabbl8-slice-shared-audio.c','-lm']
+ subprocess.run(args,check=True)
+ with (raw/('audio-'+name+'.pcm')).open('wb') as out,(raw/('audio-'+name+'.log')).open('w') as log:subprocess.run([str(exe)],stdout=out,stderr=log,check=True)
+ data=(raw/('audio-'+name+'.pcm')).read_bytes();m[name]={'compile_command':args,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}
+assert m['previous']['sha256']==m['shared']['sha256'] and m['previous']['bytes']==m['shared']['bytes']
+m['result']='PASS: exact sample byte comparison';m['scope']='BREAK/PIANO, forward/reverse, POLY/MONO/LEGATO (eight active tracks) and UNISON (one track),256 blocks,retriggers100/200; excludes all parameter combinations and hardware timing.'
+(raw/'audio-comparison.json').write_text(json.dumps(m,indent=2)+'\n');print(json.dumps(m,indent=2),flush=True)
+texts=[]
+for sub in ['fm6-shared-state','slice-shared-state']:
+ r=root/'.local-baseline'/sub
+ s=subprocess.check_output(['clang','-E','-P','-w','-Ibuild/gen','-Ifirmware/src','tests/hostsim.c'],cwd=r,text=True)
+ texts.append('\n'.join(x for x in s.replace(str(r),'REPO').splitlines() if x.strip()))
+assert texts[0]==texts[1]
+(raw/'four-track-source-check.json').write_text(json.dumps({'result':'PASS','source_base':'2df2466b0a2826a8adbc26e91ccb779b6fbe966b','normalized_preprocessed_sha256':hashlib.sha256(texts[0].encode()).hexdigest()},indent=2)+'\n')

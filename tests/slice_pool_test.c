@@ -14,7 +14,7 @@ static void check(const char *name, int ok)
 static void fresh(uint32_t reverse, uint32_t src, uint32_t distinct)
 {
     memset(trk, 0, sizeof trk); memset(&song, 0, sizeof song);
-    memset(slc_owner, 0, sizeof slc_owner); memset(slc_rbuf, 0, sizeof slc_rbuf);
+    memset(heavy_owner, 0, sizeof heavy_owner); memset(heavy_pool, 0, sizeof heavy_pool);
     host_tracks_init();
     for (uint32_t p = 0; p < NPART; p++) {
         host_preset(&trk[p], ENGI_SLICE, 0); trk[p].p[P_VOICE] = V_POLY;
@@ -74,19 +74,31 @@ static int render_isolation(uint32_t reverse, uint32_t src)
         }
         if (voices_busy() > 8) return 0;
     }
-    if (!reverse) for (uint32_t k = 0; k < NVOICE; k++) if (slc_owner[k]) return 0;
+    if (!reverse) for (uint32_t k = 0; k < NVOICE; k++) if (heavy_owner[k]) return 0;
     return nonzero != 0;
 }
 int main(void)
 {
     fresh(1, 0, 1);
     check("eight reverse notes own distinct windows", ownership() && voices_busy() == 8);
-    check("window storage is eight bodies", sizeof slc_rbuf == NVOICE * SLC_RB * sizeof(int16_t));
+    check("window storage is eight bodies", sizeof heavy_pool / sizeof heavy_pool[0] == NVOICE && sizeof heavy_pool[0].slice == SLC_RB * sizeof(int16_t));
     check("interleaved reverse samples equal forward decode reversed", exact_reverse());
     check("eight reverse renderers produce isolated identical BREAK loops", render_isolation(1, 0));
     check("forward BREAK render keeps its predictor and claims no reverse window", render_isolation(0, 0));
     check("forward PIANO render keeps its predictor and claims no reverse window", render_isolation(0, SLC_SRC_PIANO));
     check("reverse PIANO rendering has independent windows", render_isolation(1, SLC_SRC_PIANO));
+
+    fresh(1, 0, 1);
+    voice_t *transition = &trk[0].v[0];
+    int16_t *retired = slc_rb(&trk[0], transition);
+    trk[0].p[P_E5] = 0; trk_note_on(&trk[0], SLC_BASE, 100);
+    int32_t predictor = transition->s[0], step_index = transition->s[1];
+    check("reverse-to-forward retires window ownership", slc_rb(&trk[0], transition) == 0 && !heavy_live(13u, 0, 0));
+    voice_t *temporary = &trk[7].v[1]; temporary->active = 1; temporary->s[4] = 128;
+    check("retired window can be reassigned without touching forward decoder", slc_rb(&trk[7], temporary) == retired && transition->s[0] == predictor && transition->s[1] == step_index);
+    temporary->active = 0;
+    trk[0].p[P_E5] = 1; trk_note_on(&trk[0], SLC_BASE, 100);
+    check("forward-to-reverse reacquires an invalidated distinct window", slc_rb(&trk[0], transition) && transition->s[0] == 0x7FFFFFFF && ownership());
 
     fresh(1, 0, 1); int16_t snapshot[SLC_RB]; int32_t x;
     slc_rev(slc_get(0), &trk[0].v[0], slc_rb(&trk[0], &trk[0].v[0]), 0, &x);
@@ -96,12 +108,12 @@ int main(void)
     trk_note_on(&trk[7], SLC_BASE + 10, 100);
     check("ninth admitted note reuses retired state without aliasing", ownership() && voices_busy() == 8);
     fresh(1, 0, 1); trk[0].engine = trk[0].eng_req = 0;
-    voice_t *v = &trk[7].v[1]; v->active = 1; v->s[0] = 23;
+    voice_t *v = &trk[7].v[1]; v->active = 1; v->s[4] = 128; v->s[0] = 23;
     check("changed-engine reclamation invalidates the prior decoded window", slc_rb(&trk[7], v) && v->s[0] == 0x7FFFFFFF);
     v->active = 0; trk_all_off(&trk[0]); engine_block(&trk[0]);
     host_preset(&trk[0], ENGI_SLICE, 0); trk[0].p[P_E5] = 1; trk_note_on(&trk[0], SLC_BASE, 100);
     check("return to SLICE cannot alias a reassigned body", ownership());
-    fresh(1, 0, 1); trk[0].v[1].active = 1;
+    fresh(1, 0, 1); trk[0].v[1].active = 1; trk[0].v[1].s[4] = 128;
     check("unadmitted ninth window is refused", slc_rb(&trk[0], &trk[0].v[1]) == 0);
     trk[0].v[1].active = 0;
     uint32_t seed = 5, errors = 0; int32_t out[CTL];
@@ -116,6 +128,6 @@ int main(void)
     for (uint32_t p = 0; p < NPART; p++) trk_all_off(&trk[p]);
     for (uint32_t b = 0; b < 5000 && voices_busy(); b++) for (uint32_t p = 0; p < NPART; p++) track_render(&trk[p], out, CTL);
     check("all releases finish", !voices_busy());
-    printf("SLICE window pool: %d failures, %zu bytes for eight windows\n", bad, sizeof slc_rbuf);
+    printf("SLICE window pool: %d failures, %zu shared heavy-pool host bytes\n", bad, sizeof heavy_pool);
     return !!bad;
 }

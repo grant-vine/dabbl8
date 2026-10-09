@@ -55,10 +55,13 @@ typedef struct {
     uint8_t pad;
 } drum_lane_t;
 
+/* SLICE is included later; keep its unchanged window size checked there. */
+#define HEAVY_SLC_RB 64u
 /* A typed union preserves alignment and avoids byte-buffer aliasing. */
 typedef union {
     drw_vc_t wheel;
     fm6_note_t fm6;
+    int16_t slice[HEAVY_SLC_RB];
     gr_part_t grain;
     phys_slot_t phys;
     drum_lane_t drum[DV_NLANE];
@@ -71,6 +74,8 @@ static int heavy_live(uint32_t engine, uint32_t part, uint32_t voice)
     uint32_t i;
     if (part >= NPART || voice >= NVOICE || trk[part].engine != engine)
         return 0;
+    if (engine == 13u)
+        return trk[part].v[voice].active && ((uint32_t)trk[part].v[voice].s[4] & 128u); /* reverse only */
     if (engine == 7u || engine == 9u || engine == 12u)                                  /* WHEEL/PHYS/FM6: one body per sounding voice */
         return trk[part].v[voice].active != 0;
     if (engine != 8u && engine != 10u)
@@ -83,7 +88,7 @@ static int heavy_live(uint32_t engine, uint32_t part, uint32_t voice)
 static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
 {
     uint32_t key, k;
-    if (engine < 7u || engine > 12u || engine == 11u || (engine != 7u && engine != 9u && engine != 12u && voice != 0u) || !heavy_live(engine, part, voice))
+    if (engine < 7u || engine > 13u || engine == 11u || (engine != 7u && engine != 9u && engine != 12u && engine != 13u && voice != 0u) || !heavy_live(engine, part, voice))
         return 0;                                     /* idle block callbacks must not reserve memory */
     key = ((engine - 7u) * NPART + part) * NVOICE + voice + 1u;
     for (k = 0; k < NVOICE; k++)
@@ -97,6 +102,10 @@ static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
             else if (engine == 8u) memset(&heavy_pool[k].grain, 0, sizeof heavy_pool[k].grain);
             else if (engine == 9u) memset(&heavy_pool[k].phys, 0, sizeof heavy_pool[k].phys);
             else if (engine == 12u) memset(&heavy_pool[k].fm6, 0, sizeof heavy_pool[k].fm6);
+            else if (engine == 13u) {
+                memset(heavy_pool[k].slice, 0, sizeof heavy_pool[k].slice);
+                trk[part].v[voice].s[0] = 0x7FFFFFFF; /* new window: force decode before reading */
+            }
             else memset(heavy_pool[k].drum, 0, sizeof heavy_pool[k].drum);
             return &heavy_pool[k];                     /* another engine cannot inherit stale state */
         }

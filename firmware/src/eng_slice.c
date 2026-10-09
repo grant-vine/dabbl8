@@ -63,8 +63,7 @@ static const slc_src_t SLC_BREAK = SLC_BREAK_INIT;
 static const slc_src_t SLC_PIANO = SLC_PIANO_INIT;
 static slc_src_t slc_usr[SMP_USER_SLOTS];
 #if NPART >= NVOICE
-static int16_t slc_rbuf[NVOICE][SLC_RB];             /* eight shared sounding reverse windows */
-static uint16_t slc_owner[NVOICE];                  /* logical track/voice + 1, zero = free */
+typedef char slc_shared_size_check[SLC_RB == HEAVY_SLC_RB ? 1 : -1];
 #else
 static int16_t slc_rbuf[NPART][NVOICE][SLC_RB];       /* reverse windows, one per part voice */
 #endif
@@ -442,21 +441,8 @@ static int16_t *slc_rb(track_t *t, voice_t *v)
     if (p >= NPART || i >= NVOICE)
         return 0;
     {
-        uint32_t id = p * NVOICE + i + 1u, k;
-        for (k = 0; k < NVOICE; k++)
-            if (slc_owner[k] == id)
-                return slc_rbuf[k];                    /* the cached window still belongs to this voice */
-        for (k = 0; k < NVOICE; k++) {
-            uint32_t old = slc_owner[k];
-            if (!old || old > NPART * NVOICE ||
-                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
-                trk[(old - 1u) / NVOICE].engine != ENGI_SLICE) {
-                slc_owner[k] = (uint16_t)id;
-                v->s[0] = 0x7FFFFFFF;                 /* force a decode before reading another owner's data */
-                return slc_rbuf[k];
-            }
-        }
-        return 0;                                     /* refuse rather than alias an active window */
+        heavy_state_t *state = heavy_get(13u, p, i);
+        return state ? state->slice : 0;
     }
 #else
     return p < NPART && i < NVOICE ? slc_rbuf[p][i] : 0;
@@ -483,9 +469,15 @@ static void slice_note_on(track_t *t, voice_t *v)
     }
     j = slc_note_slice(p, v->note, slc_count(s, div));
     slc_bounds(s, div, j, &a, &b, &st);
+#if NPART >= NVOICE
+    if (b <= a) return;
+    v->s[4] = (int32_t)(src | (st >> 24) << 3 | rev << 7 | j << 8 | div << 16);
+    if (rev && !slc_rb(t, v)) return; /* publish reverse liveness before requesting a body */
+#else
     if (b <= a || (rev && !slc_rb(t, v)))
         return;
     v->s[4] = (int32_t)(src | (st >> 24) << 3 | rev << 7 | j << 8 | div << 16);
+#endif
     v->s[6] = 0;
     if (rev) {
         v->ph[0] = b;

@@ -1,0 +1,6 @@
+{
+  "exit_code": 1,
+  "source": "uncommitted SLICE shared allocation change in isolated branch",
+  "override": "NPART=8; build_app output in build/slice-shared-eight-probe, generated headers read only",
+  "no_source_loader_linker_map_changes_by_probe": true
+}

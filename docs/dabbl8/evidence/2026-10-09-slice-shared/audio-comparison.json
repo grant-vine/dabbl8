@@ -1,0 +1,40 @@
+{
+  "previous": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_SLICE=0",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/slice-shared-check/audio-previous",
+      "/private/tmp/dabbl8-slice-shared-audio.c",
+      "-lm"
+    ],
+    "bytes": 4194304,
+    "sha256": "4c6de01974fa9a9e4d327bd8cd731ee3e63f23a570237be2add7d8c2c57b4821"
+  },
+  "shared": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_SLICE=1",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/slice-shared-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/slice-shared-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/slice-shared-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/slice-shared-check/audio-shared",
+      "/private/tmp/dabbl8-slice-shared-audio.c",
+      "-lm"
+    ],
+    "bytes": 4194304,
+    "sha256": "4c6de01974fa9a9e4d327bd8cd731ee3e63f23a570237be2add7d8c2c57b4821"
+  },
+  "result": "PASS: exact sample byte comparison",
+  "scope": "BREAK/PIANO, forward/reverse, POLY/MONO/LEGATO (eight active tracks) and UNISON (one track),256 blocks,retriggers100/200; excludes all parameter combinations and hardware timing."
+}
