@@ -225,7 +225,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "full backup: CRC before writes, stale runtime, USB reset / timeout, malformed objects, older projects" "$OUT/backup_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/editor_test" tests/editor_test.c -lm
     run "editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)" \
-        env MENU_JSON="$OUT/menu.json" "$OUT/editor_test"
+        env MENU_JSON="$OUT/menu.json" D8CAPS_JSON="$OUT/d8caps.json" D8INFO_JSON="$OUT/d8info.json" "$OUT/editor_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/robust_test" tests/robust_test.c -lm
     run "robustness: crafted sample slots, engine numbers, retained old projects, preset patterns, malformed requests" \
         "$OUT/robust_test"
