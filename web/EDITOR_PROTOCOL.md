@@ -840,3 +840,7 @@ device gone at ~0.3 s, the MIDI port gone at ~0.57 s and back at ~1.15 s; ON -> 
 at ~0.6 s while the MIDI port was not seen to disappear at all (so do not wait for a disconnect event: after
 a real change, wait ~1.5 s and open again). What the editor sends in that window is lost, `WATCH` ends with the
 bus reset (send `INFO` and `WATCH` again after reconnecting), and a backup in progress answers rc 5 (stale).
+
+## Dabbl8 development extension: versioned motion (74)
+
+Command 74 prefixes the existing MOTION (64) explicit track/step operation payload with schema byte `1`; replies also prefix byte `1`. Operations and lock-kind extensions are otherwise unchanged. Unknown schemas and unavailable runtime tracks are refused before mutation. Historical command 64 remains restricted to tracks 0–3 with unchanged reply framing. The current runtime still has four tracks; clients must negotiate support before using the extension (capability negotiation is tracked in Dabbl8 #6). See [automation format](../docs/dabbl8/motion-address-format.md) for the separately versioned D8M1 save section and later storage gates.

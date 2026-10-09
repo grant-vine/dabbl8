@@ -18,7 +18,8 @@ enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, 
        ED_TRACK, ED_TRACK_MIX, ED_TRACK_DUMP, ED_TRACK_STEP,                    /* v3: tracks */
        ED_TRACK_PARAM, ED_TRACK_CHANGED, ED_SONG,
        ED_UI_STATE, ED_UI_SET, ED_UI_PALETTES, ED_FAV_GET, ED_FAV_SET,
-       ED_MOTION = 64, ED_BACKUP_LIST, ED_BACKUP_GET, ED_BACKUP_PUT };                              /* v6: song chain */
+       ED_MOTION = 64, ED_BACKUP_LIST, ED_BACKUP_GET, ED_BACKUP_PUT,
+       ED_D8_MOTION = 74 }; /* version-prefixed explicit track/step, never reuse command 64 */                              /* v6: song chain */
 
 static uint8_t ed_out[600];
 static uint32_t ed_n;
@@ -363,6 +364,12 @@ static void ed_motion_reply(uint32_t k, uint32_t rc, uint32_t kinds)
         if ((motion.event[i].place >> 6) == k)
             ed_b((motion.event[i].param & MOTION_LOCK) != 0u);
 }
+static int ed_motion_args(const uint8_t *a, uint32_t n, uint32_t tracks)
+{
+    return (n == 1u || (n == 2u && (a[1] == 2u || a[1] == 7u)) || (n == 3u && a[1] == 1u && a[2] <= 1u) ||
+            (n == 6u && (a[1] == 3u || a[1] == 5u)) || (n == 4u && a[1] == 4u) || (n == 3u && a[1] == 6u)) &&
+           a[0] < tracks && a[0] < NTRK;
+}
 static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
 {
     switch (cmd) {
@@ -389,10 +396,11 @@ static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
     case ED_TRACK_STEP:
         return n == 2u || n == 10u || n == 13u || (n == 14u && a[13] <= 100u) ||
                (n == 15u && a[13] <= 100u && a[14] >= 1u && a[14] <= 4u);
+    case ED_D8_MOTION:
+        if (n < 2u || a[0] != 1u) return 0;
+        return ed_motion_args(a + 1, n - 1u, NTRK);
     case ED_MOTION:
-        return (n == 1u || (n == 2u && (a[1] == 2u || a[1] == 7u)) || (n == 3u && a[1] == 1u && a[2] <= 1u) ||
-                (n == 6u && (a[1] == 3u || a[1] == 5u)) || (n == 4u && a[1] == 4u) || (n == 3u && a[1] == 6u)) &&
-               a[0] < NTRK;
+        return ed_motion_args(a, n, 4u);
     case ED_SONG:
         return n && (a[0] == 1u || n == 1u);
     default:
@@ -419,6 +427,9 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     if (ed_fm6_handle(cmd, a, na)) { ed_send(); return; }
     if (ed_menu_handle(cmd, a, na)) { ed_send(); return; }
     switch (cmd) {
+    case ED_D8_MOTION:
+        ed_b(1u); a++; na--; /* reply schema, then explicit track/step records */
+        /* fall through */
     case ED_MOTION: {
         track_t *t = &trk[a[0]]; uint32_t rc = 0;
         if (na > 1u && a[1] == 7u) {

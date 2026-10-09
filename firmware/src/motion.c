@@ -40,13 +40,14 @@ static int motion_param(uint32_t id)
         id == P_DETUNE || (id >= P_FM1_ATK && id <= P_FM4_LEVEL) || id >= P_LN0);   /* (not the chord keys; the
                                                                                      * DRUM lane levels, E0..E7) */
 }
+#include "motion_codec.h"
 static int motion_valid(const motion_store_t *m)
 {
     uint32_t i, j;
     if (m->count > MOTION_MAX || (m->on & ~((1u << NTRK) - 1u))) return 0;
     for (i = 0; i < m->count; i++) {
         const motion_event_t *e = &m->event[i];
-        if (!motion_param(MOTION_ID(e)) || e->value < -64 || e->value > 127) return 0;
+        if ((e->place >> 6) >= NTRK || !motion_param(MOTION_ID(e)) || e->value < -64 || e->value > 127) return 0;
         for (j = 0; j < i; j++)
             if (m->event[j].place == e->place && MOTION_ID(&m->event[j]) == MOTION_ID(e)) return 0;
     }
@@ -173,7 +174,7 @@ static int motion_put(track_t *t, uint32_t step, uint32_t id, int16_t value, uin
     for (i = 0; i < motion.count; i++)
         if (motion.event[i].place == (k << 6 | step) && MOTION_ID(&motion.event[i]) == id) break;
     if (i == MOTION_MAX) { motion_full = 1; motion_unguard(f); return 2; }
-    motion.event[i].place = (uint8_t)(k << 6 | step);
+    motion.event[i].place = (uint16_t)(k << 6 | step);
     motion.event[i].param = (uint8_t)(id | kind);
     motion.event[i].value = value;
     RING_PUBLISH();
@@ -355,7 +356,7 @@ static int motion_move(track_t *t, uint32_t i, uint32_t step, uint32_t id, int16
     f = motion_guard();
     if (motion.event[i].place != (trk_index(t) << 6 | step) || MOTION_ID(&motion.event[i]) != id)
         motion_restore(t);                              /* (a value alone: what sounds stays) */
-    motion.event[i].place = (uint8_t)(trk_index(t) << 6 | step);
+    motion.event[i].place = (uint16_t)(trk_index(t) << 6 | step);
     motion.event[i].param = (uint8_t)((motion.event[i].param & MOTION_LOCK) | id);
     motion.event[i].value = (int16_t)param_fit(d, v);
     motion_unguard(f);
