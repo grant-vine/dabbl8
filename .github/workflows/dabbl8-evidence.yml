@@ -35,20 +35,6 @@ jobs:
           python -m venv .local-baseline/ci/venv
           .local-baseline/ci/venv/bin/python -m pip install -r ci/requirements.txt
           echo "$PWD/.local-baseline/ci/venv/bin" >> "$GITHUB_PATH"
-      - name: Configure public image cache on this temporary runner
-        run: |
-          sudo python - <<'PYTHON_CACHE_CONFIG'
-          import json
-          from pathlib import Path
-          config = Path('/etc/docker/daemon.json')
-          data = json.loads(config.read_text()) if config.exists() else {}
-          mirrors = data.setdefault('registry-mirrors', [])
-          if 'https://mirror.gcr.io' not in mirrors:
-              mirrors.append('https://mirror.gcr.io')
-          config.parent.mkdir(parents=True, exist_ok=True)
-          config.write_text(json.dumps(data) + '\n')
-          PYTHON_CACHE_CONFIG
-          sudo systemctl restart docker
       - name: Acquire hash-verified target dependencies
         id: acquire
         run: python ci/bootstrap.py
