@@ -1,0 +1,8 @@
+from pathlib import Path
+import os,subprocess,json
+root=Path('/Users/grantv/Code/dabbl8');r=root/'.local-baseline/wheel-engine-state';e=root/'.local-baseline/wheel-pool-check'
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'])
+code="import sys;sys.path.insert(0,'tools');import build;build.OUT=build.OUT/'wheel-eight-probe';build.OUT.mkdir(exist_ok=True);build.CFLAGS.append('-DNPART=8');build.build_app()"
+with (e/'eight-track-probe.log').open('w') as log:p=subprocess.run([str(root/'.local-baseline/venv/bin/python'),'-c',code],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT)
+(e/'eight-track-probe.json').write_text(json.dumps({'exit_code':p.returncode,'source':'uncommitted WHEEL allocation change in isolated branch','override':'NPART=8; build_app output in build/wheel-eight-probe, generated headers read only','no_source_loader_linker_map_changes_by_probe':True},indent=2)+'\n')
+print('Eight-track WHEEL-pool target probe exit:',p.returncode,flush=True)

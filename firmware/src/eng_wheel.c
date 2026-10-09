@@ -114,7 +114,11 @@ typedef struct {                 /* per voice */
 } drw_vc_t;
 
 static drw_trk_t drw_t[NPART];
+#if NPART >= NVOICE
+static drw_vc_t *wheel_state_of(track_t *t, voice_t *v); /* typed shared-pool accessor, defined after GRAIN */
+#else
 static drw_vc_t drw_v[NPART][NVOICE];
+#endif
 
 static uint32_t drw_part(const track_t *t) { return (uint32_t)(t - trk) % NPART; }
 
@@ -177,7 +181,12 @@ static void wheel_block(track_t *t)
 static void wheel_note_on(track_t *t, voice_t *v)
 {
     uint32_t vi = (uint32_t)(v - t->v) % NVOICE, k, held = 0;
+#if NPART >= NVOICE
+    drw_vc_t *V = wheel_state_of(t, v);
+    if (!V) { v->active = 0; return; }
+#else
     drw_vc_t *V = &drw_v[drw_part(t)][vi];
+#endif
     for (k = 0; k < NVOICE; k++)                        /* single trigger: another key of the part held? */
         if (&t->v[k] != v && t->v[k].active && t->v[k].gate && t->v[k].stage != 4u)
             held = 1;
@@ -196,9 +205,16 @@ static void wheel_note_on(track_t *t, voice_t *v)
 static void wheel_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const vmod_t *m)
 {
     const drw_trk_t *T = &drw_t[drw_part(t)];
+#if NPART >= NVOICE
+    drw_vc_t *V = wheel_state_of(t, v);
+#else
     drw_vc_t *V = &drw_v[drw_part(t)][(uint32_t)(v - t->v) % NVOICE];
+#endif
     int32_t acc[CTL], perc1, clk0, clk1;
     uint32_t i, k;
+#if NPART >= NVOICE
+    if (!V) { v->active = 0; return; }
+#endif
     if (n > CTL)
         n = CTL;
     for (i = 0; i < n; i++)
