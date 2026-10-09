@@ -1,0 +1,44 @@
+from pathlib import Path
+import subprocess,hashlib,json,shutil
+root=Path('/Users/grantv/Code/dabbl8');current=root/'.local-baseline/main-workspace';parent=root/'.local-baseline/slice-shared-state';e=root/'.local-baseline/main-workspace-check'
+shutil.copy2(__file__,e/'scene-command.py.txt')
+body='''
+int main(int argc,char **argv) {
+    ui_power_on();
+    FILE *f=fopen(argv[1],"rb");if(!f)return 2;
+    if(fread(&proj_slot[0],1,sizeof proj_slot[0],f)!=sizeof proj_slot[0])return 2;fclose(f);
+    for(uint32_t i=1;i<4;i++)memcpy(&proj_slot[i],&proj_slot[0],sizeof proj_slot[0]);
+    const uint32_t palettes[]={UI_GREY_INDEX,UI_BW_INDEX};
+    for(uint32_t engine=0;engine<NENGINES;engine++)if(eng_ok(engine))
+      for(uint32_t part=0;part<NTRK;part++)
+       for(uint32_t pal=0;pal<2;pal++)
+        for(uint32_t layout=0;layout<2;layout++){
+          song.sel=(uint8_t)part;set_engine_of(&trk[part],engine);apply_preset_to(&trk[part],0);
+          settings.palette=palettes[pal];palette_set(palettes[pal]);
+          ui_prefs=(uint8_t)((ui_prefs & ~PREF_LARGE)|(layout?PREF_LARGE:0));
+          for(uint32_t page=0;page<NPAGES;page++){
+            ui.home=0;ui.page=(uint8_t)page;ui.layer=ui.menu=ui.confirm=ui.uboot=0;
+            ui.force=1;fm1_ms+=501;ui_draw();lcd_sync();
+            if(fwrite(host_screen,1,sizeof host_screen,stdout)!=sizeof host_screen)return 3;
+          }
+        }
+    return 0;
+}
+'''
+out=[]
+for label,r in [('parent',parent),('arena',current)]:
+    s=(r/'tests/ui_test.c').read_text().split('/* card slot drawn with MOTION')[0]+body
+    c=Path('/private/tmp/dabbl8-scenes-'+label+'.c');c.write_text(s);shutil.copy2(c,e/('scene-'+label+'.c.txt'))
+    binary=Path('/private/tmp/dabbl8-scenes-'+label)
+    cmd=['clang','-O2','-w','-DNPART=8','-I'+str(parent/'build/gen'),'-I'+str(r/'firmware/src'),'-I'+str(r/'tests'),str(c),'-o',str(binary),'-lm']
+    with (e/('scene-'+label+'.log')).open('w') as log:
+        p=subprocess.run(cmd,stdout=log,stderr=subprocess.STDOUT)
+        if p.returncode:out.append({'label':label,'compile_exit':p.returncode});break
+        p=subprocess.Popen([str(binary),str(r/'tests/fixtures/projects/fun9.bin')],stdout=subprocess.PIPE,stderr=log)
+        h=hashlib.sha256();n=0
+        while b:=p.stdout.read(1048576):h.update(b);n+=len(b)
+        rc=p.wait()
+    out.append({'label':label,'compile_exit':0,'test_exit':rc,'pixel_bytes':n,'frames':n//115200,'sha256':h.hexdigest()})
+    print(out[-1],flush=True)
+m={'source_base':'f0bb720bab0313ba1367c5a906cbd5f2bed592e8','scope':'Actual eight-track UI screen pixels for every page, enabled engine, selected track, GREY/MONO and both LARGE modes; existing expanded layout defects are not qualified by this comparison. Uses identical parent generated headers for both builds.','results':out,'equal':len(out)==2 and out[0].get('test_exit')==out[1].get('test_exit')==0 and out[0].get('sha256')==out[1].get('sha256') and out[0].get('pixel_bytes')==out[1].get('pixel_bytes')}
+(e/'scene-results.json').write_text(json.dumps(m,indent=2)+'\n');print('comparison',m['equal'],flush=True)

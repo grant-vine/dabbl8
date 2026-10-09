@@ -72,9 +72,15 @@ static void fm1_wdt_feed(void) { if (host_wdt_hook) host_wdt_hook(); }
 static void fm1_irq_off(void) {}
 static void fm1_irq_on(void) {}
 static uint16_t host_screen[240 * 240];
+#ifdef UI_ASYNC_LCD
+static void lcd_sync(void);
+#endif
 static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
 {
     uint32_t i, j;
+#ifdef UI_ASYNC_LCD
+    lcd_sync();
+#endif
 #ifdef UI_FILL_HOOK
     UI_FILL_HOOK(x, y, w, h);                     /* (tests/ui_render.c: what a fill covers is gone) */
 #endif
@@ -82,7 +88,25 @@ static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
         for (i = 0; i < w && x + i < 240u; i++)
             host_screen[(y + j) * 240u + x + i] = (uint16_t)((c >> 8) | (c << 8));
 }
+#ifdef UI_ASYNC_LCD
+/* Simulated DMA holds its source until the next LCD access, as lcd.c does. */
+static struct { const uint16_t *p; uint32_t x,y,w,h,hash; } dma;
+static uint32_t dma_errors, dma_consumed, sync_calls;
+static uint32_t pixels_hash(const uint16_t *p, uint32_t n) {
+    uint32_t h=2166136261u; for (uint32_t i=0;i<n;i++) h=(h^p[i])*16777619u; return h;
+}
+static void lcd_sync(void) {
+    sync_calls++;
+    if (!dma.p) return;
+    if (pixels_hash(dma.p,dma.w*dma.h)!=dma.hash) dma_errors++;
+    for(uint32_t j=0;j<dma.h && dma.y+j<240u;j++)
+        for(uint32_t i=0;i<dma.w && dma.x+i<240u;i++)
+            host_screen[(dma.y+j)*240u+dma.x+i]=dma.p[j*dma.w+i];
+    dma.p=0; dma_consumed++;
+}
+#else
 static void lcd_sync(void) {}
+#endif
 /* MENU > SCREEN OFF (lcd.c lcd_power / lcd_wake_now): what the panel was told, in order (0 off: backlight off,
  * DISPOFF, SLPIN; 1 SLPOUT; 2 DISPON, backlight on; 3 lcd_wake_now), with the time; host_bl the backlight */
 static uint32_t host_pw_n, host_pw[256], host_pw_ms[256];
@@ -101,10 +125,16 @@ static uint32_t scope_w;
 static uint32_t host_blit_rows;                    /* rows blitted (what a frame draws) */
 static void lcd_blit(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const uint16_t *p)
 {
+#ifdef UI_ASYNC_LCD
+    lcd_sync();
+    host_blit_rows += h;
+    dma.p=p;dma.x=x;dma.y=y;dma.w=w;dma.h=h;dma.hash=pixels_hash(p,w*h);
+#else
     uint32_t i, j;
     host_blit_rows += h;
     for (j = 0; j < h && y + j < 240u; j++)
         for (i = 0; i < w && x + i < 240u; i++) host_screen[(y + j) * 240u + x + i] = p[j * w + i];
+#endif
 }
 static struct { uint32_t stage; } felucca_dbg;
 #define FELUCCA_FLASH 0

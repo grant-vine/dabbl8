@@ -822,7 +822,14 @@ static int graph_project_used(uint32_t slot)
 {
     static uint32_t ms, frame;
     static uint8_t mask, ready;
+#if NPART >= NVOICE
+    /* A frame uses a stable name snapshot, even if drawing lasts over 500 ms.
+     * ui_draw preloads it before any canvas starts. Direct graph callers can
+     * refresh while still outside the canvas; queries during drawing only read. */
+    if (!cv_cpu_active && (!ready || (frame != ui.frame && (fm1_ms - ms >= 500u || ui.force)))) {
+#else
     if (!ready || fm1_ms - ms >= 500u || (ui.force && frame != ui.frame)) {
+#endif
         uint32_t i; mask = 0;
         for (i = 0; i < 4u; i++) mask |= (uint8_t)((project_name(i, graph_pname[i]) != 0) << i);
         graph_pname_sig = fnv(2166136261u, graph_pname, sizeof graph_pname);

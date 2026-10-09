@@ -1,0 +1,26 @@
+# Main-loop display and project workspace
+
+Preparatory issue #12 work stacked on PR36, exact source base `f0bb720bab0313ba1367c5a906cbd5f2bed592e8`. The expanded runtime shares its decoded project scratch with the existing full 59,520-byte canvas through a typed union. The eight-track project remains 8,764 bytes. No canvas capacity, sequencer banks, engine limits or shared eight-voice budget is reduced. Runtime defaults to four tracks.
+
+Project work waits for `lcd_sync()` before changing union members, with a compiler memory barrier. Borrowing during CPU drawing traps before any project write. Project borrowing invalidates the pixel member, so a later blit traps unless `cv_begin()` has established fresh pixels. Valid canvases can still be blitted repeatedly. Project calls are synchronous main-loop operations: their pointers must not survive a later drawing call. No audio ISR owns the arena. Current project callers do not draw inside those operations; pixel accesses occur in gfx and graph drawing.
+
+Project-name imports are prefetched before the first canvas on project/song pages. Queries inside a canvas read a stable snapshot even if the frame exceeds 500 ms. The change relocates only runtime project typedefs into a header; frozen historical FUN layouts, four-slot retained cache and legacy export refusal remain unchanged. Early shared track limits make include-order conditions explicit; expanded gfx follows engine/type definitions while the original four-track include order is retained.
+
+| Actual expanded compiler result | PR36 | This change | Capacity |
+| --- | ---: | ---: | ---: |
+| General RAM | 104,468 | 95,716 | 98,304 |
+| Engine pool | 333,328 | 333,328 | 344,064 |
+
+General RAM saves 8,752 bytes after ownership metadata/alignment, leaving 2,588 bytes. Pool free space remains 10,736 bytes, passing the unchanged required 8,192-byte reserve. The actual eight-track linker and `build.check()` PASS; image 446,848 bytes, SHA-256 `2da8fffbf397d9841928a4d624094a88f674ef459d47000d179ca0da93e91473`. This is compiler evidence, with no eight-track package or device installation. No linker regions, stack guards, loader or flash boundaries change.
+
+The rejected stack-workspace prototype is not adopted. This build's main-frame instruction inventory is 1,124 bytes, versus that prototype's 9,896 bytes. This inventory is not a call-stack or physical high-water bound; CPU SSP/USP selection and interrupt stack behavior remain unresolved. The ownership trap compiles to pi32v2 `bkpt`; its physical fault behavior is not qualified here.
+
+Sixteen final actual-eight-track ownership checks PASS in O2 and ASan/UBSan: pending and partial DMA consumption, CPU-phase rejection, stale-pixel blit rejection, repeated valid blits, cache expiry inside a canvas, track-eight capture, legacy load/export refusal, and 2,400 slot/song frames in both LARGE modes. All 16,804 simulated DMA sources retain their expected pixel hashes; zero ownership errors. The full suite's first optimized workspace section ran the initial 14 checks; the final 16 checks were separately rerun in both modes, and its sanitizer section also ran all 16. The initial harness typo and earlier 14-check measurements are preserved in ignored local evidence rather than erased.
+
+Independent comparison against PR36 renders every page, every enabled engine, every selected track, GREY/MONO and both LARGE modes. All 16,640 frames / 1,916,928,000 screen bytes match, SHA-256 `4beb5fe8c5b7fdd5fbb2ebcfb1ca6b51918784979eee9b69779ebd108195c5c9`. Both builds use identical parent-generated headers. This verifies output preservation for those histories, not the correctness of unfinished eight-track layouts or arbitrary UI/parameter histories. Existing expanded-layout work remains pending.
+
+Four-track full build and upstream/extended suite PASS with exact previous firmware/package/loader/golden/CPU/target hashes, recorded in results.json. Four-track normalized preprocessed firmware, project test, UI test and browser source are identical to PR36. No golden/reference hashes are rewritten. Native expanded browser syntax PASS; actual Emscripten/runtime SKIP.
+
+Pinned environment: Apple M1 Pro, macOS 26.7.1 (25G241); Python 3.14.8/Pillow 12.3.0/fonttools 4.66.1/Apple clang 21; JieLi pi32v2 clang 4.0.1 archive SHA-256 `f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958`; SDK `d179b4484759423312073f5fbb232501aa491047`; Docker linux/amd64 Debian digest `sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587`. Existing sanitizer exclusions remain signed-overflow/shift/bounds/object-size/pointer-overflow.
+
+Explicit local omissions: no DaisySP reference checkout, normal-suite V15 restore skipped because vendor firmware stays outside Git, editor has no MENU settings, and no Emscripten emulator. Full raw logs, compiler symbols/disassembly, source patch and prior failures remain in ignored `.local-baseline/main-workspace-check`; their hashes are recorded here. Hardware qualification SKIP. Physical DMA/deadlines, stack/pool high-water and complete workflow/engine-combination qualification remain under #12. Storage-map selection remains pending under #7; #9/#12 remain OPEN. No flash, merge, release or deployment occurred.
