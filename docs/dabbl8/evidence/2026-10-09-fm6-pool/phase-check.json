@@ -1,0 +1,44 @@
+{
+  "full_suite_test_sha256": "63efa70d193212403445acd989228f59372cc39f67e8988ad99671e3fe8446fa",
+  "enhanced_test_sha256": "4090be6ba906a4da95daa723d500d3777f306124b1ec68324c795686d3cc4518",
+  "checks": [
+    {
+      "mode": "o2",
+      "compile": 0,
+      "run": 0,
+      "compile_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "build/host/fm6_phase_o2",
+        "tests/fm6_pool_test.c",
+        "-lm"
+      ]
+    },
+    {
+      "mode": "san",
+      "compile": 0,
+      "run": 0,
+      "compile_command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "build/host/fm6_phase_san",
+        "tests/fm6_pool_test.c",
+        "-lm"
+      ]
+    }
+  ]
+}
