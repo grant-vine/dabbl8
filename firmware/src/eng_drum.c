@@ -34,7 +34,9 @@
  *
  * State: 8 lanes per part in the pool section (drum_kit: the parameters, coefficients, voice and metal
  * source of each lane). */
+#if NPART < NVOICE
 #include "drum_voice.c"
+#endif
 
 enum { DK_STD, DK_HAND, DK_CYM, DK_HCYM, DK_80, DK_10, DK_66, DK_55, DK_77, DK_COUNT };   /* (stored values) */
 /* the kit a stored KIT value plays: HAND CYM H+CYM (retired after 1.0.4) -> 66 (a conga on TOM), 10 (a cymbal on
@@ -48,6 +50,7 @@ static const uint8_t DV_TYPE_LANE[DVT_COUNT] = {
     DV_KICK, DV_KICK, DV_SNARE, DV_CLAP, DV_HATC, DV_HATO, DV_TOM, DV_TOM, DV_RIM, DV_RIM, DV_BELL, DV_BELL,
 };
 
+#if NPART < NVOICE
 typedef struct {
     dv_param_t key;              /* the parameters the coefficients were set up with */
     dv_coef_t c;
@@ -59,7 +62,10 @@ typedef struct {
     uint8_t pad;
 } drum_lane_t;
 
+#endif
+#if NPART < NVOICE
 static drum_lane_t drum_kit[NPART][DV_NLANE] __attribute__((section(".pool")));
+#endif
 
 /* 1..3 named as the kit they play: aliases, never shown or offered (EDITOR_PROTOCOL.md: retired values) */
 static const char *const N_DRUM_KIT[] = {"STD", "66", "10", "77", "80", "10", "66", "55", "77"};
@@ -175,7 +181,14 @@ static void step_to_grid(step_t *s)
 
 static drum_lane_t *drum_kit_of(const track_t *t)
 {
+#if NPART >= NVOICE
+    heavy_state_t *state;
+    if (t < &trk[0] || t >= &trk[NPART]) return 0;
+    state = heavy_get(10u, (uint32_t)(t - trk), 0);
+    return state ? state->drum : 0;
+#else
     return t >= &trk[0] && t < &trk[NPART] ? drum_kit[t - trk] : 0;
+#endif
 }
 
 /* the lane voice v plays, 0 when it plays none (any more) */

@@ -14,7 +14,7 @@ static void check(const char *name, int ok)
 static void fresh(void)
 {
     memset(trk, 0, sizeof trk); memset(&song, 0, sizeof song);
-    memset(phys_owner, 0, sizeof phys_owner); memset(phys_slot, 0, sizeof phys_slot);
+    memset(heavy_owner, 0, sizeof heavy_owner); memset(heavy_pool, 0, sizeof heavy_pool);
     host_tracks_init();
     for (uint32_t p = 0; p < NPART; p++) {
         host_preset(&trk[p], ENGI_PHYS, 0); trk[p].p[P_VOICE] = V_POLY;
@@ -46,7 +46,7 @@ int main(void)
     fresh();
     check("eight independent track notes own distinct state slots", ownership() && voices_busy() == 8);
     check("eight sounding states render within the shared budget", render() == 8);
-    check("buffer bound is eight states, not eight times the track cap", sizeof phys_slot == NVOICE * sizeof(phys_slot_t));
+    check("shared heavy-state bound is eight bodies across engines", sizeof heavy_pool == NVOICE * sizeof(heavy_state_t));
     phys_slot_t *first = phys_slot_of(&trk[0], &trk[0].v[0]);
     phys_slot_t snapshot = *first;
     trk_note_on(&trk[7], 55, 100); /* same note retrigger */
@@ -82,6 +82,6 @@ int main(void)
     for (uint32_t b = 0; b < 5000 && voices_busy(); b++) render();
     check("release completes and all states can be reused", voices_busy() == 0);
     fresh(); check("reset after a session recreates eight independent bodies", ownership() && render() == 8);
-    printf("PHYS state pool: %d failures, %zu bytes for eight states\n", bad, sizeof phys_slot);
+    printf("PHYS state pool: %d failures, %zu shared heavy-pool host bytes\n", bad, sizeof heavy_pool);
     return !!bad;
 }

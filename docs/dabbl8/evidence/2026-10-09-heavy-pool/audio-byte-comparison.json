@@ -1,0 +1,14 @@
+{
+  "result": "PASS: exact byte comparison of rendered int32 samples",
+  "outputs": {
+    "previous": {
+      "bytes": 3072000,
+      "sha256": "01a30e64de192aebdcf5a542ed8e0735e9b66bec9870f0bdeca630e2505a7ec6"
+    },
+    "shared": {
+      "bytes": 3072000,
+      "sha256": "01a30e64de192aebdcf5a542ed8e0735e9b66bec9870f0bdeca630e2505a7ec6"
+    }
+  },
+  "scope": "3 engines, eight continuously active tracks,1000 blocks each,same-note retriggers at blocks200/500; not all engine parameters/switching histories"
+}
