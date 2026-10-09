@@ -1,0 +1,32 @@
+editor: USB channels 1..8 hold eight distinct tracks                           ok
+editor: other port releases the same eight channel owners                      ok
+editor: USB channels 9..16 leave notes/controllers untouched                   ok
+editor: TRS channels 1..8 hold eight distinct tracks                           ok
+editor: other port releases the same eight channel owners                      ok
+editor: TRS channels 9..16 leave notes/controllers untouched                   ok
+editor: track eight pedal ownership uses bit seven without alias               ok
+editor: SEL note-off follows track seven after selection changes               ok
+editor: return to channel mode releases high channels but retains channel eight pedal ok
+editor: channel eight pedal-up clears its final owner                          ok
+editor: all eight armed tracks record independent notes concurrently           ok
+editor: recording releases all eight destinations without stale holds          ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: selection reaches track eight                                          ok
+editor: out-of-range selection cannot alias a valid track                      ok
+editor: read-only track discovery reports eight complete records               ok
+editor: legacy editor writes remain refused on the expanded model              ok
+editor: invalid track reads leave runtime ownership unchanged                  ok
+editor: channel route label matches eight-track mode                           ok
+editor: four project slots and four note positions stay independent of track count ok
+eight-track runtime: 0 failures; host evidence only, default build remains four tracks
