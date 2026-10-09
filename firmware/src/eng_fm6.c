@@ -29,7 +29,9 @@
  * State: per voice an fm6_note_t (fm6_note, 244 bytes, a side array as PHYS's slots: voice_t.s[] is too
  * small), per part the patch, the patch through the macros (fm6_eff, rebuilt in the audio ISR when either
  * changes) and the LFO (once a block). */
+#if NPART < NVOICE
 #include "fm6_core.c"
+#endif
 #include "felucca_fm6.h"         /* tools/gen_fm6_patches.py: FM6_INIT, FM6_FACTORY[] */
 
 #define ENGI_FM6 12u             /* engines.c ENGINES[] (append-only) */
@@ -50,11 +52,7 @@ static struct {                                  /* the patch through the macros
 } fm6_eff[NTRK];
 static fm6_lfo_t fm6_lfo[NTRK];
 static int32_t fm6_lfo_v[NTRK], fm6_lfo_d[NTRK]; /* this block's LFO value and delay (Q24) */
-#if NPART >= NVOICE
-/* Expanded tracks share the eight sounding operator-envelope states. */
-static fm6_note_t fm6_note[NVOICE];
-static uint16_t fm6_owner[NVOICE]; /* logical track/voice + 1, zero = free */
-#else
+#if NPART < NVOICE
 static fm6_note_t fm6_note[NTRK][FM6_POLY];
 #endif
 
@@ -306,21 +304,8 @@ static fm6_note_t *fm6_note_of(track_t *t, voice_t *v)
         return 0;
 #if NPART >= NVOICE
     {
-        uint32_t id = (uint32_t)(t - trk) * NVOICE + i + 1u, k;
-        for (k = 0; k < NVOICE; k++)
-            if (fm6_owner[k] == id)
-                return &fm6_note[k];                   /* retrigger retains operator state */
-        for (k = 0; k < NVOICE; k++) {
-            uint32_t old = fm6_owner[k];
-            if (!old || old > NPART * NVOICE ||
-                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
-                trk[(old - 1u) / NVOICE].engine != ENGI_FM6) {
-                fm6_owner[k] = (uint16_t)id;
-                memset(&fm6_note[k], 0, sizeof fm6_note[k]); /* new owner starts from silence */
-                return &fm6_note[k];
-            }
-        }
-        return 0;                                     /* refuse rather than alias a live note */
+        heavy_state_t *state = heavy_get(12u, (uint32_t)(t - trk), i);
+        return state ? &state->fm6 : 0;
     }
 #else
     return &fm6_note[t - trk][i];

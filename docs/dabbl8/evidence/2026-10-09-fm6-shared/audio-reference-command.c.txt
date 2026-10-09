@@ -1,0 +1,34 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+#define main hostsim_main
+#include HOSTSIM_PATH
+#undef main
+static void fresh(void)
+{
+    memset(trk,0,sizeof trk);memset(&song,0,sizeof song);host_tracks_init();
+    memset(heavy_pool,0,sizeof heavy_pool);memset(heavy_owner,0,sizeof heavy_owner);
+    memset(fm6_lfo,0,sizeof fm6_lfo);memset(fm6_eff,0,sizeof fm6_eff);
+#if !TEST_SHARED_FM6
+    memset(fm6_note,0,sizeof fm6_note);memset(fm6_owner,0,sizeof fm6_owner);
+#endif
+}
+int main(void)
+{
+    for(uint32_t preset=0;preset<ENGINES[12]->npresets;preset++)for(uint32_t mode=V_POLY;mode<=V_UNISON;mode++){
+        fresh();uint32_t audible=0;
+        for(uint32_t p=0;p<NPART;p++){
+            host_preset(&trk[p],12,preset);trk[p].p[P_VOICE]=mode;
+            if(mode!=V_UNISON||p==0)trk_note_on(&trk[p],60+p,100);
+        }
+        for(uint32_t b=0;b<256;b++){
+            if(b==100||b==200)for(uint32_t p=0;p<NPART;p++)if(mode!=V_UNISON||p==0)trk_note_on(&trk[p],60+p,100);
+            for(uint32_t p=0;p<NPART;p++)engine_block(&trk[p]);
+            for(uint32_t p=0;p<NPART;p++){
+                int32_t out[CTL];track_render(&trk[p],out,CTL);fwrite(out,sizeof out,1,stdout);
+                for(uint32_t i=0;i<CTL;i++)audible+=out[i]!=0;
+            }
+        }
+        fprintf(stderr,"preset %u mode %u audible samples %u\n",preset,mode,audible);
+        if(!audible)return 1;
+    }
+    return 0;
+}

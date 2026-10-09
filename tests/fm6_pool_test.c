@@ -14,7 +14,7 @@ static void check(const char *name, int ok)
 static void fresh(void)
 {
     memset(trk, 0, sizeof trk); memset(&song, 0, sizeof song);
-    memset(fm6_owner, 0, sizeof fm6_owner); memset(fm6_note, 0, sizeof fm6_note);
+    memset(heavy_owner, 0, sizeof heavy_owner); memset(heavy_pool, 0, sizeof heavy_pool);
     host_tracks_init();
     for (uint32_t p = 0; p < NPART; p++) {
         host_preset(&trk[p], ENGI_FM6, p % ENGINES[ENGI_FM6]->npresets);
@@ -45,7 +45,7 @@ int main(void)
 {
     fresh();
     check("eight tracks own distinct operator states", ownership() && voices_busy() == 8 && render() == 8);
-    check("state bound is eight bodies, independent of six-voice track cap", sizeof fm6_note == NVOICE * sizeof(fm6_note_t));
+    check("state bound is eight bodies, independent of six-voice track cap", sizeof heavy_pool / sizeof heavy_pool[0] == NVOICE && sizeof heavy_pool[0].fm6 == sizeof(fm6_note_t));
     fm6_note_t *first = fm6_note_of(&trk[0], &trk[0].v[0]);
     fm6_note_t snapshot = *first;
     trk_note_on(&trk[7], 55, 100);
@@ -85,6 +85,6 @@ int main(void)
     memset(trk, 0, sizeof trk); host_tracks_init(); host_preset(&trk[0], ENGI_FM6, 0); trk[0].p[P_VOICE] = V_POLY;
     for (uint32_t i = 0; i < 20; i++) trk_note_on(&trk[0], 36 + i, 100);
     check("one track retains its original six-voice cap", voices_busy() == FM6_POLY && ownership() && render() == FM6_POLY);
-    printf("FM6 state pool: %d failures, %zu bytes for eight bodies\n", bad, sizeof fm6_note);
+    printf("FM6 state pool: %d failures, %zu shared heavy-pool host bytes\n", bad, sizeof heavy_pool);
     return !!bad;
 }
