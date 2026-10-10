@@ -8,19 +8,20 @@
 #include "../firmware/src/d8p1_pool_runtime.c"
 #include "../firmware/src/d8pool_mapped.h"
 static uint8_t nor[0x100000],baseline[sizeof nor],wire[D8P1_LIMIT],out[D8P1_LIMIT];
-static unsigned checks,failures,reads,writes,irq_depth;
+static unsigned checks,failures,reads,writes,irq_disabled;
 static int cut=-1,late_irq=-1;
 static uint8_t flash_ok;
 #define CHECK(x) do {checks++;if(!(x)){failures++;fprintf(stderr,"line %d: %s\n",__LINE__,#x);}}while(0)
-static uint32_t irq_save(void){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;uint32_t was=irq_depth;irq_depth++;return was;}
-static void irq_restore(uint32_t was){CHECK(irq_depth>was);irq_depth=was;}
+/* Match actual fm1_flash.h: cli, return 0; csync/sti always enables. */
+static uint32_t irq_save(void){if(!irq_disabled){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;}irq_disabled=1;return 0;}
+static void irq_restore(uint32_t was){(void)was;irq_disabled=0;}
 static int allowed(uint32_t a,uint32_t n){for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
 static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;memcpy(p,nor+a,n);return 0;}
-static int mutate(void){CHECK(irq_depth&&!transport_req&&!transport_busy()&&!cv_cpu_active);if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
-static int st_erase(uint32_t a){CHECK(allowed(a,4096)&&a%4096==0);if(mutate())return -1;memset(nor+a,255,4096);return 0;}
-static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);if(mutate())return -1;for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];return 0;}
+static int mutate(void){CHECK(irq_disabled&&!transport_req&&!transport_busy()&&!cv_cpu_active);if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
+static int st_erase(uint32_t a){CHECK(allowed(a,4096)&&a%4096==0);uint32_t f=irq_save();int rc=mutate();if(!rc)memset(nor+a,255,4096);irq_restore(f);return rc;}
+static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);uint32_t f=irq_save();int rc=mutate();if(!rc)for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];irq_restore(f);return rc;}
 #include "../firmware/src/d8p1_flash_runtime.c"
-static void reset(void){reads=writes=irq_depth=0;cut=late_irq=-1;transport_req=0;}
+static void reset(void){reads=writes=irq_disabled=0;cut=late_irq=-1;transport_req=0;}
 static void blank(void){memset(nor,0xa5,sizeof nor);for(unsigned b=0;b<5;b++)memset(nor+d8pool_mapped_address(b),255,8192);reset();}
 /* Test-only seed for an explicitly migrated image; bypass is not device code. */
 static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;memcpy(p,nor+d8pool_mapped_address(a/8192)+a%8192,n);return 0;}
@@ -44,13 +45,13 @@ int main(void){
  reset();d8pool_index index;CHECK(!d8pool_inventory(&seed,&index));memcpy(baseline,nor,sizeof nor);
  trk[7].p[P_LEVEL]=90;n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n));uint8_t current=proj_cur;
  unsigned ops=2+(unsigned)((n+255)/256)+1;
- for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();cut=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&proj_cur==current&&trk[7].p[P_LEVEL]==90&&!irq_depth);reset();unchanged(&index);}
+ for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();cut=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&proj_cur==current&&trk[7].p[P_LEVEL]==90&&!irq_disabled);reset();unchanged(&index);}
  /* Inject PLAY at each critical-section entry, after prior stopped checks. */
- for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();late_irq=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&writes==c&&transport_req&&!irq_depth&&proj_cur==current);reset();unchanged(&index);}
+ for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();late_irq=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&writes==c&&transport_req&&!irq_disabled&&proj_cur==current);reset();unchanged(&index);}
  memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8p1_restore_flash_autosave(1,1)&&trk[7].p[P_LEVEL]==45&&proj_cur==PROJ_NO_SLOT);mix_block(audio,CTL);
  reset();transport_req=1;CHECK(d8p1_save_flash(0,1)==D8POOL_BUSY&&!reads&&!writes);transport_req=0;
  cv_begin(8,8,T_BG);reset();CHECK(d8p1_save_flash(0,1)==D8POOL_BUSY&&!reads&&!writes);cv_blit(0,0);
  CHECK(d8p1_save_flash(4,1)==D8POOL_INVALID&&!reads&&!writes);
- CHECK(!irq_depth&&!dma_errors);
+ CHECK(!irq_disabled&&!dma_errors);
  printf("D8P1 flash runtime: %u checks, %u failures; %u driver cuts, %u atomic late-start cuts; actual runtime, simulated physical hooks only\n",checks,failures,ops,ops);return failures!=0;
 }

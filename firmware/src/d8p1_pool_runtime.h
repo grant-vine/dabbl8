@@ -8,7 +8,7 @@
  * reenter drawing/runtime code. Status codes are D8POOL_*.
  * Validate all current objects before capture/adoption. A postcommit I/O
  * failure can leave a new save; rescan before retry. No automatic scheduler,
- * physical backend, project-menu binding or legacy migration is provided. */
+ * project-menu binding or legacy migration is provided. */
 int d8p1_save_pool(const d8pool *,unsigned object);
 int d8p1_load_pool(const d8pool *,unsigned object);
 /* Caller supplies the boot/recovery policy and RESTORE LAST decision. */

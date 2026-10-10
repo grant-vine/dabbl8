@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 static unsigned char nor[0x100000],baseline[sizeof nor],wire[D8P1_LIMIT],fresh[D8P1_LIMIT],out[D8P1_LIMIT],all[D8POOL_BYTES];
-static unsigned checks,failures,reads,writes;static int busy,cut=-1,read_error=-1,busy_after=-1;
+static unsigned checks,failures,reads,writes;static int busy,cut=-1,read_error=-1,busy_after=-1,busy_on_read=-1;
 #define CHECK(x) do {checks++;if(!(x)){failures++;fprintf(stderr,"line %d: %s\n",__LINE__,#x);}}while(0)
 static int allowed(uint32_t a,uint32_t n){for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
-static void reset(void){reads=writes=0;busy=0;cut=read_error=busy_after=-1;}
-static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;CHECK(allowed(a,n));reads++;if(read_error==0)return -1;if(read_error>0)read_error--;memcpy(p,nor+a,n);return 0;}
+static void reset(void){reads=writes=0;busy=0;cut=read_error=busy_after=busy_on_read=-1;}
+static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;CHECK(allowed(a,n));reads++;if(busy_on_read==(int)reads)busy=1;if(read_error==0)return -1;if(read_error>0)read_error--;memcpy(p,nor+a,n);return 0;}
 static int mutation(void){if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
 static int er(void *c,uint32_t a){(void)c;CHECK(allowed(a,4096)&&a%4096==0);if(mutation())return -1;memset(nor+a,255,4096);return 0;}
 static int pg(void *c,uint32_t a,const void *p,uint32_t n){(void)c;const unsigned char *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);if(mutation())return -1;for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];return 0;}
@@ -40,6 +40,7 @@ int main(int argc,char **argv){
  CHECK(!d8pool_mapped_open(&m,&io,1)&&m.state==2&&!writes);
  unsigned opened_reads=reads;
  CHECK(!m.pool.read(&m,0,all,sizeof all));for(unsigned b=0;b<5;b++)CHECK(!memcmp(all+b*8192,nor+d8pool_mapped_address(b),8192));
+ const uint32_t expected[5]={0x97000,0x99000,0x9b000,0x9d000,0xe5000};for(unsigned b=0;b<5;b++)CHECK(d8pool_mapped_address(b)==expected[b]);
  CHECK(d8pool_mapped_address(4)==0xe5000&&d8pool_mapped_address(5)==0);
  unsigned before_reads=reads,before_writes=writes;
  CHECK(m.pool.read(&m,D8POOL_BYTES-1,out,2)!=0&&m.pool.read(&m,0xffffffff,out,1)!=0&&m.pool.read(&m,0,NULL,1)!=0);
@@ -54,6 +55,11 @@ int main(int argc,char **argv){
  for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8pool_mapped_open(&m,&io,1));cut=(int)c;CHECK(d8pool_save(&m.pool,0,fresh,fresh_n,7)==D8POOL_IO);reset();currents(&index);protected();d8pool_mapped_close(&m);}
  for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8pool_mapped_open(&m,&io,1));busy_after=(int)c;CHECK(d8pool_save(&m.pool,0,fresh,fresh_n,7)==D8POOL_BUSY);reset();currents(&index);protected();d8pool_mapped_close(&m);}
  for(unsigned c=0;c<opened_reads;c++){memcpy(nor,baseline,sizeof nor);reset();read_error=(int)c;CHECK(d8pool_mapped_open(&m,&io,1)==D8POOL_IO&&!m.state&&!writes);reset();currents(&index);protected();}
+ memcpy(nor,baseline,sizeof nor);reset();busy_on_read=(int)opened_reads;CHECK(d8pool_mapped_open(&m,&io,1)==D8POOL_BUSY&&!m.state&&!writes);reset();currents(&index);protected();
+ /* A stopped-state loss after commit may leave a valid new record: rescan. */
+ memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8pool_mapped_open(&m,&io,1));busy_after=(int)ops;
+ CHECK(d8pool_save(&m.pool,0,fresh,fresh_n,7)==D8POOL_IO&&writes==ops);reset();size_t got=0;
+ CHECK(!d8pool_load(&seed,0,out,sizeof out,&got,7)&&got==fresh_n&&!memcmp(out,fresh,got));protected();
  memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8pool_mapped_open(&m,&io,1));
  for(unsigned i=0;i<80;i++){unsigned o=i%4;CHECK(!d8pool_save(&m.pool,o,fresh,fresh_n,7));size_t size=0;CHECK(!d8pool_load(&m.pool,o,out,sizeof out,&size,7)&&size==fresh_n&&!memcmp(out,fresh,size));protected();}
  /* Raw failure/foreign records revoke a previously usable session. */

@@ -1,5 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-/* Eight-track existing-driver adapter. No scheduler, migration or menu hook. */
+/* Eight-track existing-driver adapter. No scheduler, migration or menu hook.
+ * Main loop, IRQs enabled on entry: upstream helpers always restore STI and
+ * do not preserve nesting. Each call mutates at most one sector/page. */
 #include "d8pool_mapped.h"
 static int df_read(void *context,uint32_t off,void *out,uint32_t n)
 { (void)context;return flash_ok?st_read(off,out,n):-1; }

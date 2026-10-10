@@ -35,3 +35,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Real eight-track runtime through shared-pool persistence](runtime-shared-persistence.md)
 
 - [Original-preserving full-backup and persisted-autosave migration proposal](migration-bundle.md)
+
+- [Guarded native runtime connection to the existing flash driver](guarded-flash-backend.md)
