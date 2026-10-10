@@ -1,0 +1,21 @@
+/* Private deterministic native FX output comparison, no device execution. */
+#define NPART 8
+#define main hostsim_main
+#include HOSTSIM_SOURCE
+#undef main
+int main(int argc,char **argv)
+{
+ if(argc!=2)return 2;FILE *f=fopen(argv[1],"wb");if(!f)return 2;
+ host_tracks_init();uint32_t random=1;int32_t c[CTL],d[CTL],r[CTL],w[CTL];
+ for(unsigned b=0;b<1200;b++) {
+  song.g[G_RTYPE]=(int16_t)((b/75)&1u);song.g[G_RSIZE]=(int16_t)(b%128);song.g[G_RDAMP]=(int16_t)((b*7)%128);
+  song.g[G_DTIME]=(int16_t)(b%6);song.g[G_BPM]=(int16_t)(40+b%201);
+  unsigned n=b%CTL+1;
+  for(unsigned i=0;i<n;i++) {
+   random=random*1664525u+1013904223u;
+   c[i]=(int32_t)(random&65535u)-32768;d[i]=(int32_t)((random>>8)&65535u)-32768;r[i]=(int32_t)((random>>16)&65535u)-32768;
+  }
+  fx_buses(c,d,r,w,n);if(fwrite(w,sizeof *w,n,f)!=n)return 2;
+ }
+ return fclose(f)!=0;
+}

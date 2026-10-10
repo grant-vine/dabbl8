@@ -1,0 +1,2 @@
+line 56: !fx_resident_quiet()
+Native resident tails: 1256580 checks, 1 failures; 600 DSP/oracle blocks, longest-delay gap, 42 states x 29 late mutation cuts and postcommit restores; simulated hooks, no queued-audio proof
