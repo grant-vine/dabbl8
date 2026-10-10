@@ -42,12 +42,24 @@ int main(void){
  memcpy(nor+0x97000,"FELU",4);CHECK(d8p1_save_flash(0,1)==D8POOL_UNSUPPORTED&&!writes);
  blank();for(unsigned o=0;o<4;o++)CHECK(!d8pool_save(&seed,o,wire,n,7));reset();
  for(unsigned o=0;o<4;o++){trk[7].p[P_LEVEL]=(int16_t)(42+o);CHECK(!d8p1_save_flash(o,1));n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n));size_t got=0;CHECK(!d8pool_load(&seed,o,out,sizeof out,&got,7)&&n==got&&!memcmp(wire,out,n));trk[7].p[P_LEVEL]=1;CHECK(!d8p1_load_flash(o,1)&&trk[7].p[P_LEVEL]==42+(int)o);mix_block(audio,CTL);}
+ d8p1_project_catalog catalog,previous;memset(&catalog,0xa5,sizeof catalog);previous=catalog;reset();
+ CHECK(d8p1_catalog_flash(&catalog,0)==D8POOL_UNSUPPORTED&&!reads&&!writes&&!memcmp(&catalog,&previous,sizeof catalog));
+ CHECK(d8p1_rename_flash(0,"NAME",0)==D8POOL_UNSUPPORTED&&!reads&&!writes);
+ CHECK(d8p1_rename_flash(3,"NAME",1)==D8POOL_INVALID&&!reads&&!writes);
+ CHECK(!d8p1_catalog_flash(&catalog,1)&&catalog.present==7&&!writes);
+ trk[7].p[P_LEVEL]=91;proj_cur=2;reset();CHECK(!d8p1_rename_flash(2,"NATIVE NAME",1)&&trk[7].p[P_LEVEL]==91&&!strcmp(proj_name,"NATIVE NAME")&&!irq_disabled);
+ CHECK(!d8p1_catalog_flash(&catalog,1)&&!strcmp(catalog.name[2],"NATIVE NAME"));
+ CHECK(!d8p1_load_flash(2,1)&&trk[7].p[P_LEVEL]==44&&!strcmp(proj_name,"NATIVE NAME"));mix_block(audio,CTL);
  reset();d8pool_index index;CHECK(!d8pool_inventory(&seed,&index));memcpy(baseline,nor,sizeof nor);
  trk[7].p[P_LEVEL]=90;n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n));uint8_t current=proj_cur;
  unsigned ops=2+(unsigned)((n+255)/256)+1;
  for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();cut=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&proj_cur==current&&trk[7].p[P_LEVEL]==90&&!irq_disabled);reset();unchanged(&index);}
  /* Inject PLAY at each critical-section entry, after prior stopped checks. */
  for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();late_irq=(int)c;CHECK(d8p1_save_flash(0,1)==D8POOL_IO&&writes==c&&transport_req&&!irq_disabled&&proj_cur==current);reset();unchanged(&index);}
+ /* The actual existing-driver rename adapter has the same atomic guards. */
+ char oldname[sizeof proj_name];memcpy(oldname,proj_name,sizeof oldname);
+ for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();cut=(int)c;CHECK(d8p1_rename_flash(2,"CUT",1)==D8POOL_IO&&proj_cur==current&&!memcmp(oldname,proj_name,sizeof oldname)&&trk[7].p[P_LEVEL]==90&&!irq_disabled);reset();unchanged(&index);}
+ for(unsigned c=0;c<ops;c++){memcpy(nor,baseline,sizeof nor);reset();late_irq=(int)c;CHECK(d8p1_rename_flash(2,"LATE",1)==D8POOL_IO&&writes==c&&transport_req&&!irq_disabled&&!memcmp(oldname,proj_name,sizeof oldname));reset();unchanged(&index);}
  memcpy(nor,baseline,sizeof nor);reset();CHECK(!d8p1_restore_flash_autosave(1,1)&&trk[7].p[P_LEVEL]==45&&proj_cur==PROJ_NO_SLOT);mix_block(audio,CTL);
  reset();transport_req=1;CHECK(d8p1_save_flash(0,1)==D8POOL_BUSY&&!reads&&!writes);transport_req=0;
  cv_begin(8,8,T_BG);reset();CHECK(d8p1_save_flash(0,1)==D8POOL_BUSY&&!reads&&!writes);cv_blit(0,0);

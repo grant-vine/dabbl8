@@ -1,0 +1,8 @@
+Read-only parallel review of functional source 649c6ac and refusal tests 026ab73:
+No concrete defect found. Catalog publication occurs only after validating the complete current set. Rename copies the bounded name before arena borrowing, decodes the stored target, commits through the guarded pool, and updates the live name only after success for the matching current identity. Physical wrappers retain explicit migration ownership and the existing single-page IRQ guard.
+
+Requested meaningful coverage additions:
+1. Catalog read failures after partial name collection: b344d5c tests every observed read boundary and unchanged prior output/live state.
+2. Stable name supplied from shared arena: b344d5c tests input copying before staging reuse and the saved result.
+
+Both additions passed optimized and upstream ASan/UBSan runs: 425811 runtime checks each. Review did not execute SPI/device code or qualify migration, full stack chains, recovery, timing or release readiness.
