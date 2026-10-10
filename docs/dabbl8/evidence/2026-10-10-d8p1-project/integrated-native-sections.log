@@ -1,0 +1,9 @@
+== D8P1 native state and all frozen legacy round trips
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine
+
+== ASan/UBSan: D8P1 native state and all frozen legacy round trips
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine

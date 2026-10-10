@@ -1,0 +1,38 @@
+[
+  {
+    "mode": "optimized",
+    "exit_code": 0,
+    "compile": [
+      "cc",
+      "-O1",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "tests/d8p1_project_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/dabbl8-d8p1-project-test-optimized"
+    ]
+  },
+  {
+    "mode": "sanitizers",
+    "exit_code": 0,
+    "compile": [
+      "cc",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "tests/d8p1_project_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/dabbl8-d8p1-project-test-sanitizers"
+    ]
+  }
+]

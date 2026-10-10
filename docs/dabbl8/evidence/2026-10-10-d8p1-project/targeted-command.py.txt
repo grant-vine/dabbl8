@@ -1,0 +1,15 @@
+from pathlib import Path
+import subprocess,json,shutil,hashlib
+r=Path('/Users/grantv/Code/dabbl8/.local-baseline/main-workspace');e=r.parent/'d8p1-project-check'
+args=[str(Path('tests/fixtures/d8p1')/n) for n in ['minimal.d8p','maximum.d8p','unknown-optional.d8p']]+[str(p.relative_to(r)) for p in sorted((r/'tests/fixtures/projects').glob('*.bin')) if '.expected-fun9' not in p.name]
+results=[]
+for name,flags in [('optimized',['-O1']),('sanitizers',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined'])]:
+ exe='/private/tmp/dabbl8-d8p1-project-test-'+name
+ cmd=['cc',*flags,'-w','-Ibuild/gen','-Ifirmware/src','firmware/src/d8p1.c','tests/d8p1_project_test.c','-lm','-o',exe]
+ with (e/(name+'.log')).open('w') as log:
+  p=subprocess.run(cmd,cwd=r,stdout=log,stderr=subprocess.STDOUT)
+  if not p.returncode:p=subprocess.run([exe,*args],cwd=r,stdout=log,stderr=subprocess.STDOUT)
+ print(name,p.returncode,flush=True);results.append({'mode':name,'exit_code':p.returncode,'compile':cmd})
+ if p.returncode:break
+(e/'targeted-results.json').write_text(json.dumps(results,indent=2)+'\n');shutil.copy2(__file__,e/'targeted-command.py.txt')
+raise SystemExit(any(x['exit_code'] for x in results))

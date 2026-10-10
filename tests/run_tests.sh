@@ -162,6 +162,8 @@ ${CC%% *} -std=c11 -O1 -Wall -Wextra -Werror -o "$OUT/d8p1_test" firmware/src/d8
 run "D8P1 bounded byte codec and malformed input refusal" "$OUT/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
 
 if [ -f build/gen/felucca_tables.h ]; then
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
+    run "D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$OUT/d8p1_project_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
     run "D8P1 motion bytes and actual upstream eligibility" "$OUT/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/descdump" tests/descdump.c -lm
@@ -343,6 +345,8 @@ else
     # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
     run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    $SCC -o "$A/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
+    run "ASan/UBSan: D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$A/d8p1_project_test"
     $SCC -o "$A/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
     run "ASan/UBSan: D8P1 motion bytes and actual upstream eligibility" "$A/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $SCC -o "$A/ldr_test" tests/ldr_test.c

@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "target_staged_state_bytes": 9536,
+  "IR_sha256": "1e19086a74298cf2c564e7b6b20746846b9e7632d268e55ee8b79dfe15354f89",
+  "scope": "eight-track native adapter compiler IR only; no target linking, arena/cache adoption, stack/timing or physical proof"
+}
