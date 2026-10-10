@@ -162,6 +162,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-track chord, DRUM, SCL and selected automation ownership" "$OUT/quick_layer_conflicts_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/banked_mixer_test" tests/banked_mixer_test.c -lm
     run "eight-track bank controls, quick-layer ownership and all screen layouts" "$OUT/banked_mixer_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/versioned_track_test" tests/versioned_track_test.c -lm
+    run "versioned eight-track editor: bounds, ownership, busy errors and legacy refusal" "$OUT/versioned_track_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_runtime_test" tests/eight_track_runtime_test.c -lm
     run "eight-track recording, playback, USB/TRS routing and bounds" "$OUT/eight_track_runtime_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/voice_budget_test" tests/voice_budget_test.c -lm
@@ -334,7 +336,7 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
-    for t in quick_layer_conflicts_test banked_mixer_test eight_track_runtime_test voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
+    for t in versioned_track_test quick_layer_conflicts_test banked_mixer_test eight_track_runtime_test voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
     done

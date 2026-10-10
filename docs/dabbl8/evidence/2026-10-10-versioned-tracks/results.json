@@ -1,0 +1,78 @@
+{
+  "result": "targeted host and compiler PASS",
+  "base_commit": "b7c3140c27e262bcca39d9d2ba698c208c91b4e7",
+  "checks": 186,
+  "modes": [
+    "optimized",
+    "ASan/UBSan"
+  ],
+  "sanitizer_exclusions": "unchanged standard signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+  "stages": {
+    "optimized-compile": 0,
+    "optimized-runtime": 0,
+    "sanitized-compile": 0,
+    "sanitized-runtime": 0,
+    "four-track-build": 0,
+    "eight-track-target": 0
+  },
+  "whole_suite": {
+    "status": "PENDING",
+    "live_worker": 47666
+  },
+  "artifacts": {
+    "felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "versioned-tracks/felucca.bin": {
+      "bytes": 445104,
+      "sha256": "9b2b3c4446eb52cee3f02484eacb7c548ba1868f8ea9e0082d9eb6913901a05d"
+    }
+  },
+  "default_four_track_hashes_equal_previous_Mac_Oct10": true,
+  "expanded_memory": {
+    "general_used": 95732,
+    "general_limit": 98304,
+    "general_free": 2572,
+    "engine_pool_used": 333328,
+    "engine_pool_limit": 344064,
+    "engine_pool_free": 10736,
+    "unchanged_reserve": 8192,
+    "image_delta_from_mixer_bytes": 120
+  },
+  "raw_logs": {
+    "optimized-runtime.log": {
+      "bytes": 15325,
+      "sha256": "ee9bc9f2fbefcb7ca08765b31184268df5a55ef3113c427a855626353416c75c"
+    },
+    "sanitized-runtime.log": {
+      "bytes": 15325,
+      "sha256": "ee9bc9f2fbefcb7ca08765b31184268df5a55ef3113c427a855626353416c75c"
+    },
+    "four-track-build.log": {
+      "bytes": 2136,
+      "sha256": "d942c3d5c21fa98d9e7235797655c58bbacc2b9312903e32d0e46392c22ccdd8"
+    },
+    "eight-track-target.log": {
+      "bytes": 261,
+      "sha256": "f5c568f0dfbfa06eb7661364357981a148e9e21312418605a43de70fdce5d88e"
+    }
+  },
+  "source_hashes": {
+    "firmware/src/editor.c": "6c5a6bd0676b69289a9757b19cdb97cc6d025fc8fb37008b085b737c9f22c5b8",
+    "tests/versioned_track_test.c": "186b31a6dc9aefb2922c12d4b948fd5e63904232e444f2e79983860294e63c15",
+    "tests/run_tests.sh": "25b9645558691740b7de0f94f16020052aedebce42275221405af58cae05c15b",
+    "docs/dabbl8/versioned-track-editing.md": "e774de49730636c2271a9db73f54f9d2d911ad57373808e2091e6da998698ffc",
+    "docs/dabbl8/protocol-capabilities.md": "48e4170751ce253e9f30ed93be87d701f68f76a991d453aa9d853cfe11420589"
+  },
+  "hardware": "SKIP; no device writes, flash, timing or stack high-water qualification",
+  "expanded_package": "not produced; target compiler check only"
+}

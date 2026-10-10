@@ -1,0 +1,8 @@
+size: 743 main-loop functions built for size (8 not in this build; 104 reached from an interrupt kept -Os)
+{
+  "errors": [],
+  "notes": [
+    ".ram_text: 916 insns, no calls",
+    "image 445104 B; RAM .data+.bss 95732 B of 98304; pool 333328 B of 344064"
+  ]
+}
