@@ -1,0 +1,5 @@
+docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: exec: "/opt/jieli/pi32v2/bin/llvm-size": stat /opt/jieli/pi32v2/bin/llvm-size: no such file or directory
+
+Run 'docker run --help' for more information
+build: pi32v2/bin/llvm-size failed
+JieLi freestanding shared-pool object compiled

@@ -1,0 +1,2 @@
+line 57: d8pool_save(&pool,0,fresh,new_n,7)==D8POOL_AMBIGUOUS&&!writes
+D8P1 shared pool: 4546461 checks, 1 failures; 34 operation cuts, 7737 program-byte cuts, 8194 erase prefixes, 1000 rotating saves; virtual NOR only
