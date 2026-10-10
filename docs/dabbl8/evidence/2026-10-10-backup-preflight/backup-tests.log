@@ -1,0 +1,36 @@
+backup: numbers and CRC-32                                               ok
+backup: 7-bit pack / unpack round trip                                   ok
+backup: trailing bytes refused                                           ok
+backup: capture lists every object, empty ones as 0                      ok
+backup: capture -> file -> bytes round trip                              ok
+backup: a device that changes during capture fails the capture           ok
+backup: a damaged file is refused                                        ok
+backup: a file without the current music is refused                      ok
+backup: a short manifest is refused                                      ok
+backup: restore validates every byte before the first write              ok
+backup: restore order: projects, banks, samples, settings, live music last ok
+backup: restored objects equal the source                                ok
+backup: 13 objects: id 8 (the retired FM6 bank, empty) and id 9 (the user presets' FM6 patches) ok
+backup: an archive of 1.0..1.0.2 (12 objects, the bank as id 8) still reads ok
+backup: an archive of the 11 objects before FM6 still reads              ok
+backup: an archive missing another object is refused                     ok
+backup: a 1.0.2 archive (id 8, the bank) restores, its bank after the user presets ok
+backup: unsupported FM6 patches refused before any destructive request   ok
+backup: refused archive retains all original objects and bytes           ok
+backup: a 1.0.3 archive restores id 9                                    ok
+backup: refusal after preflight stops, never skips object 9 or restores live music ok
+backup: even an empty unsupported object is refused before writes        ok
+backup: malformed destination manifest refuses before writes             ok
+backup: unavailable destination manifest refuses before writes           ok
+backup: short write reply is not accepted as success                     ok
+backup: missing status write reply is not accepted as success            ok
+backup: non-seven-bit status write reply is not accepted as success      ok
+backup: wrong operation write reply is not accepted as success           ok
+backup: wrong object write reply is not accepted as success              ok
+backup: full sample header and three chunks restore byte for byte        ok
+backup: successful sample restore leaves the source archive unchanged    ok
+backup: wrong offset sample write reply stops before sample commit or live music ok
+backup: short sample write reply stops before sample commit or live music ok
+backup: missing status sample write reply stops before sample commit or live music ok
+backup: a refused chunk aborts that object and stops before the live music ok
+backup web tests passed

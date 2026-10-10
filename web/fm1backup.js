@@ -110,32 +110,44 @@ export async function captureBackup(request, firmware, onProgress = () => {}) {
 }
 export async function restoreBackup(request, file, onProgress = () => {}) {
   const archive = readBackup(file); // Validate every byte before the first destructive request.
+  // LIST is read-only. Confirm every source object is supported before any PUT
+  // or sample erase; never silently discard an archive object, even an empty one.
+  const supported = new Set(bkManifest(await request([BACKUP_CMD.LIST, []], { timeout: 3000, retries: 0 })).map((o) => o.id));
+  const unsupported = archive.objects.filter((o) => !supported.has(o.id)).map((o) => o.id);
+  if (unsupported.length) throw new Error(`Restore refused before writes: unsupported archive objects ${unsupported.join(", ")}. Keep the original backup.`);
   const total = archive.objects.reduce((n, o) => n + o.size, 0); let done = 0;
   const ask = async (r, o = {}) => request(r, { timeout: 4000, retries: 0, ...o });
-  const put = async (args) => { const a = await ask([BACKUP_CMD.PUT, args]); bkCheck(a[2]); return a; };
+  const validReply = (a, n) => Array.isArray(a) && a.length === n && a.every((b) => Number.isInteger(b) && b >= 0 && b < 128);
+  const put = async (args) => {
+    const a = await ask([BACKUP_CMD.PUT, args]);
+    if (!validReply(a, 3) || a[0] !== args[0] || a[1] !== args[1]) throw new Error("Unexpected backup write reply");
+    try { bkCheck(a[2]); } catch (e) { throw new Error(`Archive object ${args[1]}: ${e.message}`); }
+    return a;
+  };
   // Restore live music last. Other objects commit individually; a disconnect can leave a partial restore.
   for (const o of [...archive.objects.slice(2), archive.objects[1], archive.objects[0]]) {
     if (o.id >= 32) {
       const slot = o.id - 32;
-      const check = (a) => { if (a[0] !== slot) throw new Error("Unexpected sample reply"); bkCheck(a.at(-1)); };
-      if (!o.size) check(await ask([14, [slot]]));
+      const sample = async (cmd, args) => {
+        const a = await ask([cmd, args]);
+        if (!validReply(a, cmd === 12 ? 5 : 2) || a[0] !== slot ||
+            (cmd === 12 && args.slice(1, 4).some((b, i) => a[i + 1] !== b))) throw new Error("Unexpected sample reply");
+        bkCheck(a.at(-1));
+      };
+      if (!o.size) await sample(14, [slot]);
       else {
         if (o.size < 512) throw new Error("Short sample backup");
-        check(await ask([11, [slot]]));
+        await sample(11, [slot]);
         for (let off = 512; off < o.size; off += BACKUP_CHUNK) {
           const chunk = o.bytes.subarray(off, off + BACKUP_CHUNK);
-          check(await ask([12, [slot, off & 127, off >>> 7 & 127, off >>> 14 & 127, ...bkPack(chunk)]]));
+          await sample(12, [slot, off & 127, off >>> 7 & 127, off >>> 14 & 127, ...bkPack(chunk)]);
           done += chunk.length; onProgress(done, total);
         }
-        check(await ask([13, [slot, ...bkPack(o.bytes.subarray(0, 480))]]));
+        await sample(13, [slot, ...bkPack(o.bytes.subarray(0, 480))]);
         done += 512; onProgress(done, total);
       }
     } else {
-      if (o.id === 9) {                    // firmware before 1.0.3 does not take id 9 (rc 1 at begin, nothing written): skip it
-        const a = await ask([BACKUP_CMD.PUT, [0, o.id, ...bkU32(o.size), ...bkU32(o.crc)]]);
-        if (a[2] === 1) { done += o.size; onProgress(done, total); continue; }
-        bkCheck(a[2]);
-      } else await put([0, o.id, ...bkU32(o.size), ...bkU32(o.crc)]);
+      await put([0, o.id, ...bkU32(o.size), ...bkU32(o.crc)]);
       try {
         for (let off = 0; off < o.size; off += BACKUP_CHUNK) {
           const chunk = o.bytes.subarray(off, off + BACKUP_CHUNK);
