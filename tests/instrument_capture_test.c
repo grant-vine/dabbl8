@@ -44,6 +44,116 @@ static void op(unsigned o){uint8_t a[7]={1,(uint8_t)o};for(unsigned i=0;i<5;i++)
 static void begin_capture(unsigned full){uint8_t a[3]={1,1,(uint8_t)full};request(a,3);}
 static void scan(void){unsigned n=0;while(ed_capture.active&&(ed_capture.phase==1||ed_capture.phase==3)&&n++<1300){op(2);CHECK(!status());}CHECK(n==1248&&ed_capture.active);}
 static void get(unsigned role,unsigned off,unsigned count){uint8_t a[15]={1,4};for(unsigned i=0;i<5;i++){a[i+2]=(ed_capture.token>>(i*7))&127;a[i+8]=(off>>(i*7))&127;}a[7]=role;a[13]=count&127;a[14]=count>>7;request(a,15);}
+/* Decode the public GET reply, not the borrowed editor scratch. The independent
+ * raw-address oracle below catches incorrect physical role/offset selection. */
+static int reply_bytes(uint8_t *dst,unsigned role,unsigned off,unsigned count)
+{
+ get(role,off,count);
+ CHECK(!status()&&ed_n==23u+count+(count+6u)/7u);
+ if(status()||ed_n!=23u+count+(count+6u)/7u)return 0;
+ CHECK(ed_out[14]==role);
+ uint32_t echoed=0;for(unsigned i=0;i<5;i++)echoed|=(uint32_t)ed_out[15+i]<<(7*i);
+ CHECK(echoed==off&&((unsigned)ed_out[20]|(unsigned)ed_out[21]<<7)==count);
+ unsigned at=22,written=0;
+ while(written<count){unsigned mask=ed_out[at++],n=count-written;if(n>7)n=7;
+  CHECK(mask<(1u<<n));
+  for(unsigned i=0;i<n;i++){CHECK(ed_out[at]<128);dst[written++]=(uint8_t)(ed_out[at++]|(((mask>>i)&1u)<<7));}
+ }
+ CHECK(at+1==ed_n&&ed_out[at]==0xf7);return 1;
+}
+static uint8_t captured_pool[D8POOL_BYTES];
+static unsigned recovered_reads,recovered_mutations,cold_cases,rotating_cases;
+static int recovered_read(void *c,uint32_t off,void *dst,uint32_t n)
+{
+ (void)c;if(off>D8POOL_BYTES||n>D8POOL_BYTES-off)return -1;
+ recovered_reads++;memcpy(dst,captured_pool+off,n);return 0;
+}
+static int recovered_erase(void *c,uint32_t off)
+{(void)c;(void)off;recovered_mutations++;return -1;}
+static int recovered_program(void *c,uint32_t off,const void *src,uint32_t n)
+{(void)c;(void)off;(void)src;(void)n;recovered_mutations++;return -1;}
+static d8pool recovered_pool={NULL,recovered_read,recovered_erase,recovered_program,stop};
+static void capture_cold_setup(void)
+{
+ /* Actual host cold audio/UI initialization; no native load/bind/session.
+  * Global .pool zero-init is represented explicitly between repeated cases.
+  * Poison invalid arrangement storage to prove it cannot leak into capture. */
+ cold();native_as.ready=0;memset(&d8p1_runtime_cache,0xa5,sizeof d8p1_runtime_cache);
+ d8p1_runtime_cache.valid=0;flash_ok=1;usb.config=1;
+ memset(&ed_capture,0,sizeof ed_capture);memset(&d8_capture_change,0,sizeof d8_capture_change);
+ for(unsigned a=0;a<sizeof nor;a++)nor[a]=(uint8_t)(a^(a>>9)^0xa5);
+ reset();CHECK(!project_native_status()&&!native_as.ready&&!d8p1_runtime_arrangement());
+ CHECK(!chain_config.count);
+}
+static void cold_capture_cases(void)
+{
+ capture_cold_setup();
+ for(unsigned t=0;t<8;t++){
+  trk[t].p[P_LEVEL]=(int16_t)(17+t);trk[t].p[P_PAN]=(int16_t)(4*t-14);
+  trk[t].step[t].n=1;trk[t].step[t].note[0]=(uint8_t)(60+t);
+ }
+ song.sel=7;strcpy(proj_name,"COLD LIVE");
+ project_t before,after;project_capture(&before);memcpy(baseline,nor,sizeof nor);
+ begin_capture(1);CHECK(!status()&&ed_capture.active);scan();
+ unsigned length=ed_capture.live_length;CHECK(length&&length<=sizeof out);
+ for(unsigned off=0;off<length;off+=256){unsigned n=length-off;if(n>256)n=256;CHECK(reply_bytes(out+off,12,off,n));}
+ d8p1_project_state captured;CHECK(d8p1_project_decode(&captured,out,length,0));
+ CHECK(!memcmp(&before,&captured.project,sizeof before));
+ d8p1_arrangement empty={0};CHECK(!memcmp(&captured.arrangement,&empty,sizeof empty));
+ for(unsigned t=0;t<8;t++)CHECK(captured.project.t[t].p[P_LEVEL]==17+(int)t&&captured.project.t[t].p[P_PAN]==4*(int)t-14&&captured.project.t[t].step[t].note[0]==60+t);
+ CHECK(captured.project.sel==7&&!memcmp(captured.project.name,"COLD LIVE",9));
+ op(5);CHECK(!status());scan();op(6);project_capture(&after);
+ CHECK(!memcmp(&before,&after,sizeof before)&&!writes&&!memcmp(nor,baseline,sizeof nor));
+ CHECK(!project_native_status()&&!native_as.ready&&!d8p1_runtime_cache.valid);cold_cases++;
+ /* An unconverted historical chain refuses full-current encoding, while raw
+  * stores can still be retained. Nothing manufactures an empty chain. */
+ capture_cold_setup();chain_config.count=1;chain_config.row[0].slot=3;chain_config.row[0].repeat=2;
+ project_capture(&before);memcpy(baseline,nor,sizeof nor);begin_capture(1);
+ CHECK(status()==EDC_BAD&&!ed_capture.active);project_capture(&after);CHECK(!memcmp(&before,&after,sizeof before));
+ begin_capture(0);CHECK(!status());scan();CHECK(reply_bytes(out,3,0,256)&&!memcmp(out,nor+0x9d000,256));
+ op(5);CHECK(!status());scan();op(6);project_capture(&after);
+ CHECK(!memcmp(&before,&after,sizeof before)&&!writes&&!memcmp(nor,baseline,sizeof nor));cold_cases++;
+}
+static void rotating_autosave_capture_cases(void)
+{
+ for(unsigned wanted=0;wanted<D8POOL_BLOCKS;wanted++){
+  capture_cold_setup();blank();usb.config=1;flash_ok=1;
+  trk[7].p[P_LEVEL]=(int16_t)(40+wanted);strcpy(proj_name,"STORED AUTO");
+  size_t stored_n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&stored_n));
+  /* Actual writer chooses noncurrent spare blocks. Seeding 0..2 and a second
+   * autosave reaches block4 without moving headers or forging generations. */
+  unsigned manual=wanted<3?wanted:3;
+  for(unsigned o=0;o<manual;o++)CHECK(!d8pool_save(&seed,o,wire,stored_n,0));
+  CHECK(!d8pool_save(&seed,3,wire,stored_n,0));
+  if(wanted==4)CHECK(!d8pool_save(&seed,3,wire,stored_n,0));
+  d8pool_index original;CHECK(!d8pool_inventory(&seed,&original)&&original.object[3].block==wanted);
+  trk[7].p[P_LEVEL]=(int16_t)(100+wanted);strcpy(proj_name,"UNSAVED LIVE");
+  project_t live_before,live_after;project_capture(&live_before);
+  reset();memcpy(baseline,nor,sizeof nor);memset(captured_pool,0x5a,sizeof captured_pool);
+  begin_capture(1);CHECK(!status());scan();
+  for(unsigned role=0;role<5;role++)for(unsigned off=0;off<D8POOL_BLOCK;off+=256){
+   uint8_t *dst=captured_pool+role*D8POOL_BLOCK+off;
+   CHECK(reply_bytes(dst,role,off,256));CHECK(!memcmp(dst,nor+d8pool_mapped_address(role)+off,256));
+  }
+  unsigned live_n=ed_capture.live_length;CHECK(live_n&&live_n<=sizeof out);
+  for(unsigned off=0;off<live_n;off+=256){unsigned n=live_n-off;if(n>256)n=256;CHECK(reply_bytes(out+off,12,off,n));}
+  d8p1_project_state live;CHECK(d8p1_project_decode(&live,out,live_n,0)&&live.project.t[7].p[P_LEVEL]==100+(int)wanted);
+  op(5);CHECK(!status());scan();op(6);
+  recovered_reads=recovered_mutations=0;d8pool_index recovered;
+  CHECK(!d8pool_inventory(&recovered_pool,&recovered)&&!memcmp(&recovered,&original,sizeof recovered));
+  size_t got=777;CHECK(!d8pool_load(&recovered_pool,3,out,sizeof out,&got,recovered.present&7u));
+  CHECK(got==stored_n&&!memcmp(out,wire,got)&&recovered.object[3].block==wanted);
+  d8p1_project_state saved;CHECK(d8p1_project_decode(&saved,out,got,recovered.present&7u)&&saved.project.t[7].p[P_LEVEL]==40+(int)wanted);
+  CHECK(recovered_reads&&!recovered_mutations);
+  if(wanted<4){/* Role4 alone contains no current native autosave payload. */
+   CHECK(memcmp(captured_pool+4*D8POOL_BLOCK+D8POOL_HEADER,wire,stored_n)!=0);
+  }
+  project_capture(&live_after);CHECK(!memcmp(&live_before,&live_after,sizeof live_before));
+  CHECK(!writes&&!memcmp(nor,baseline,sizeof nor)&&!project_native_status()&&!native_as.ready&&!d8p1_runtime_cache.valid);
+  rotating_cases++;
+ }
+}
+
 static void configuration(unsigned c){memset(ep0buf,0,8);ep0buf[1]=9;ep0buf[2]=c;hs_regs[0][S_CSR0]=1;ep0_service();}
 static void upgrade(unsigned c){uint8_t f[6]={0xf0,0x22,0x24,0x35,(uint8_t)c,0xf7};for(unsigned i=0;i<6;i++)sysex_byte(f[i]);}
 static void printhex(const uint8_t *p,unsigned n){for(unsigned i=0;i<n;i++)printf("%s%02x",i?" ":"",p[i]);putchar('\n');fflush(stdout);}
@@ -60,6 +170,7 @@ static int bridge(void){char line[2048];fixture();while(fgets(line,sizeof line,s
  fflush(stdout);continue;
  }uint8_t frame[1024];unsigned n=0;char *p=line,*end;while(*p){unsigned long v=strtoul(p,&end,16);if(end==p)break;if(v>255||n==sizeof frame)return 2;frame[n++]=(uint8_t)v;p=end;}if(n<6||frame[0]!=0xf0||frame[n-1]!=0xf7)return 2;ed_n=0;ed_handle(frame+1,n-2);so_r=so_w;printhex(ed_out,ed_n);}return failures?1:0;}
 int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return bridge();
+ cold_capture_cases();rotating_autosave_capture_cases();
  fixture();memcpy(baseline,nor,sizeof nor);begin_capture(1);CHECK(!status());scan();CHECK(ed_capture.phase==2);
  unsigned oldzoom=settings.zoom;const uint8_t *current=edc_current(13);CHECK(settings.zoom==oldzoom&&current==(const uint8_t*)&ed_bk_settings);CHECK(ed_bk_settings.magic==PERSIST_MAGIC);
  for(unsigned r=0;r<17;r++){unsigned length=edc_length(r);for(unsigned off=0;off<length;off+=256){unsigned n=length-off;if(n>256)n=256;get(r,off,n);CHECK(!status()&&ed_n<=316);}}
@@ -91,5 +202,6 @@ int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return br
  fixture();begin_capture(0);scan();get(0,UINT32_MAX,1);CHECK(status()==EDC_BAD&&!ed_capture.active);
  fixture();begin_capture(0);uint8_t bad[3]={1,1,128};request(bad,3);CHECK(status()==EDC_BAD&&!ed_capture.active);
  fixture();cv_begin(8,8,T_BG);begin_capture(1);CHECK(status()==EDC_BUSY&&!ed_capture.active);cv_blit(0,0);
+ printf("Cold capture: %u cases; rotated native autosave: %u blocks; no native binding/session or physical qualification\n",cold_cases,rotating_cases);
  printf("Instrument capture: %u checks, %u failures; actual editor/native capture, virtual NOR, no physical qualification\n",checks,failures);return failures!=0;
 }
