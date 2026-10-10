@@ -156,7 +156,14 @@ python3 tools/fm1pkg_make.py "$OUT/old_app.bin" build/loader/ota.bin "$OUT/old.f
 $CC -o "$OUT/ldr_test" tests/ldr_test.c
 run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
 
+# D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
+run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
+${CC%% *} -std=c11 -O1 -Wall -Wextra -Werror -o "$OUT/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
+run "D8P1 bounded byte codec and malformed input refusal" "$OUT/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+
 if [ -f build/gen/felucca_tables.h ]; then
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
+    run "D8P1 motion bytes and actual upstream eligibility" "$OUT/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/descdump" tests/descdump.c -lm
     echo "== parameter and engine tables as JSON (for the editor mock test)"
     "$OUT/descdump" > "$OUT/desc.json" || fail=1
@@ -333,6 +340,11 @@ else
     A="$OUT/asan"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
+    # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
+    run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    $SCC -o "$A/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
+    run "ASan/UBSan: D8P1 motion bytes and actual upstream eligibility" "$A/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $SCC -o "$A/ldr_test" tests/ldr_test.c
     run "ASan/UBSan: update loader (other app -> this build)" "$A/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
     $SCC -DOWN_PKG=1 -o "$A/ota_test" tests/ota_test.c

@@ -1,0 +1,3 @@
+ui: D8P1 reference parsed before real motion policy comparison                 ok
+ui: D8P1 motion is byte-exact with the actual D8M1 decoder/encoder             ok
+D8P1 motion policy: 198 IDs/kinds match actual motion_param, 0 failures; no runtime adoption

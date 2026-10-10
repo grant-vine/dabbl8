@@ -1,0 +1,13 @@
+# From the repository root, with the documented pinned environment active.
+cc -std=c11 -O1 -Wall -Wextra -Werror firmware/src/d8p1.c tests/d8p1_test.c -o build/host/d8p1_test
+build/host/d8p1_test tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+cc -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined firmware/src/d8p1.c tests/d8p1_test.c -o build/host/asan/d8p1_test
+build/host/asan/d8p1_test tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+cc -O1 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm -o build/host/d8p1_motion_policy_test
+build/host/d8p1_motion_policy_test tests/fixtures/d8p1/maximum.d8p
+python3 tests/d8p1_fixtures_test.py
+sh tests/run_tests.sh
+# Standalone target probe used tools/build.py tc() with the pinned Docker/toolchain:
+# cc -target pi32v2 -Os -ffunction-sections -fno-builtin -Wall -Wno-unused-function -std=c11 -Wextra -Werror -c firmware/src/d8p1.c -o build/d8p1-codec.o
+# common/bin/objdump -t build/d8p1-codec.o
+# The target object was not linked into the firmware.
