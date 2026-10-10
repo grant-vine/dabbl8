@@ -1,0 +1,23 @@
+from pathlib import Path
+import subprocess,os,json,hashlib,sys
+root=Path('/Users/grantv/Code/dabbl8');repo=root/'.local-baseline/main-workspace';e=root/'.local-baseline/card-preflight-check';e.mkdir(exist_ok=True)
+shutil=None
+(e/'test-first-red.log').write_bytes(Path('/private/tmp/d8card-red.log').read_bytes())
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'])
+files=['build/felucca.bin','build/felucca.fwsc','build/loader/ota.bin','tests/golden.txt','tests/cpu_baseline.txt','tests/target_budget.txt']
+before={p:hashlib.sha256((repo/p).read_bytes()).hexdigest() for p in files}
+results=[]
+def run(name,cmd):
+ with (e/(name+'.log')).open('w') as f:p=subprocess.run(cmd,cwd=repo,env=env,stdout=f,stderr=subprocess.STDOUT)
+ results.append({'name':name,'exit':p.returncode});(e/'checks.json').write_text(json.dumps(results,indent=2)+'\n');print(name,p.returncode,flush=True)
+ if p.returncode:raise SystemExit(1)
+run('profile-cli',[str(root/'.local-baseline/venv/bin/python'),'tests/d8card_test.py'])
+for mode,flags in [('optimized',['-O2']),('sanitizers',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize-recover=undefined'])]:
+ exe=e/('d8card-'+mode)
+ run(mode+'-compile',['cc','-std=c11','-Wall','-Wextra','-Werror','-Ifirmware/src',*flags,'firmware/src/d8p1.c','firmware/src/d8card.c','tests/d8card_test.c','-o',str(exe)])
+ run(mode,[str(exe),'tests/fixtures/d8p1/minimal.d8p','tests/fixtures/d8p1/maximum.d8p','tests/fixtures/d8p1/unknown-optional.d8p'])
+code="""import sys;sys.path.insert(0,'tools');import build;build.OUT=build.OUT/'card-preflight-target';build.OUT.mkdir(exist_ok=True);build.tc('cc',*build.CFLAGS,'-Ifirmware/src','-c',build.FW/'src/d8card.c','-o',build.OUT/'d8card.o');print('JieLi freestanding card object compiled');build.OUT=build.SRC/'build/card-preflight-default';build.OUT.mkdir(exist_ok=True);img,syms,dis,rt=build.build_app();errors,notes=build.check(img,syms,dis,rt);print(errors,notes);import hashlib;assert not errors;assert hashlib.sha256(img).hexdigest()=='b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b';print('default app byte-identical')"""
+run('target-and-default',[str(root/'.local-baseline/venv/bin/python'),'-c',code])
+run('full-upstream-suite',['sh','tests/run_tests.sh'])
+after={p:hashlib.sha256((repo/p).read_bytes()).hexdigest() for p in files};assert before==after
+(e/'unchanged-artifacts.json').write_text(json.dumps(after,indent=2)+'\n');print('default package/loader/audio goldens and budgets unchanged',flush=True)

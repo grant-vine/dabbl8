@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-10",
+  "base_commit": "432e9d5ddab59669334c295068f1edb7854cd7b4",
+  "sources": {
+    "firmware/src/d8card.c": "6590ba07ed27c429b0bfc1d688362db664bcc46bd474dff0e8d3b82d9406b94c",
+    "firmware/src/d8card.h": "294c452097af5eab5b38585ffd508f789c6bee2ff1519e971500d0a8be9c9243",
+    "firmware/src/d8card.def": "7e8f5f1447bc8a421e55c4f90c7a6d07cbd357af085984322489b145f531a319",
+    "tools/dabbl8_card.py": "15602e163d0f9289001cf3e53e8d68397cc0c6932d4c192d753377a04dcdaf5c",
+    "tests/d8card_test.c": "33558e6a265c464b6ff33e68cbf914fed19c0de8a7d10aed55c7e3303261848f",
+    "tests/d8card_test.py": "09e6516b2965c9be6a8fff8b2d25e38b42d0a075d03319796669e23e617daf8e",
+    "tests/run_tests.sh": "dc4a4a5ed80b48a0381fc3ce55e4fb70e2bc37e045e6c0954172ff7c6d6ff69d",
+    "docs/dabbl8/cards/core.json": "f0733deffc93c61a0abe363a9f50117821a93e6aab58a3adb34d244128ee9725",
+    "docs/dabbl8/cards/breaks.json": "af72b98036995badf7a05023a4de45609ab0cabca677ef7aa3aa8520d28ca72c"
+  },
+  "evidence": {
+    "optimized.log": "c2a5f1b8c69d51546397baa012589af870fd5c9606ebf2c6f9bb0af5cbc59061",
+    "full-upstream-suite.log": "a1d63be456fa10986963eeacfadd856f8f6336a824b9342dd7b36727dbfe7293",
+    "test-first-red.log": "15589c12645baed207a0d43f432913c1f1b3f2157840170e3f612cbefdb3d44e",
+    "optimized-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks.json": "e557fb71de8a8e35dc81a1b46f5c61dd8efff14d2c024931b186aef9a11151d0",
+    "sanitizers-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile-cli.log": "da15e5d8d1b4a9155b258d059bcc0a46a495ee61e76681cb63cb0ce9bf9cc246",
+    "verification-command.py.txt": "2dd996d64ed0ea9275027e43e574db89532b3bf4b9c6fcb9e8f3b6956d708065",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "target-and-default.log": "d4f0be0e7016e33c5d0799e7e05c3fa1db0a7ae50c074a53436eeda37f7a86cb",
+    "sanitizers.log": "c2a5f1b8c69d51546397baa012589af870fd5c9606ebf2c6f9bb0af5cbc59061"
+  }
+}

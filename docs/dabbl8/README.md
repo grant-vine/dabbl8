@@ -25,3 +25,5 @@ The [browser conversion workflow](browser-project-conversion.md) uses the same C
 The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eight-track runtime state and retains arrangement metadata outside the display arena. Device transfer, persistence, playback and physical qualification remain open.
 
 - [Relative multi-sector save engine](multisector-record-engine.md): simulated A/B record preparation; approved map and physical integration remain gated.
+
+- [Software voice cards](software-voice-cards.md): resource research, test matrix and standalone profile/project preflight; runtime exclusion and released variants remain gated.
