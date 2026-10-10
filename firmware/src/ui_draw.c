@@ -791,6 +791,20 @@ static void draw_columns(void)
         return;
     }
     if (cur_page()->graph == GR_SONG) {
+#if NTRK == 8
+        unsigned rows=d8arr_ui_rows();
+        if(rows){
+            unsigned row=ui.song_row<rows?ui.song_row:rows-1,repeat=0;char name[13];
+            int used=d8arr_ui_row(row,name,&repeat);
+            fmt_int(val,(int32_t)row+1);draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
+            str_cpy(val,used?name:"--",sizeof val);draw_column(1,"SCENE",val,"",T_DIM,-1,ICON_X_PATTERN);
+            fmt_int(val,(int32_t)repeat);draw_column(2,"REPS",val,"",T_DIM,-1,ICON_AUTO);
+            if(d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE)fmt_int(val,(int32_t)chain.native.policy.pending+1);
+            else if(d8arr_running())fmt_int(val,(int32_t)chain.row+1);
+            else str_cpy(val,"--",sizeof val);
+            draw_column(3,d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE?"NEXT":"PLAYROW",val,"",d8arr_running()?VAL(3u):T_DIM,-1,ICON_X_SONG);return;
+        }
+#endif
         uint32_t row = ui.song_row < CHAIN_ROWS ? ui.song_row : CHAIN_ROWS - 1u;
         int used = row < chain_config.count;
         fmt_int(val, (int32_t)row + 1);

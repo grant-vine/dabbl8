@@ -105,6 +105,7 @@
 #include "d8pool.c"               /* virtual explicitly migrated storage backend */
 #include "native_migration_preflight.c" /* dormant readonly complete-plan staging */
 #include "d8p1_pool_runtime.c"    /* native runtime persistence; no implicit migration */
+#include "d8arr_prepare.c"          /* actual stopped reference playback preparation */
 #if FELUCCA_FLASH
 #include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
 #include "d8p1_flash_runtime.c"     /* explicitly authorized existing-driver adapter */

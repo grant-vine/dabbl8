@@ -669,6 +669,16 @@ static void edit_param(uint32_t slot, int32_t steps)
         return;
     }
     if (pg->graph == GR_SONG) {
+#if NTRK == 8
+        unsigned rows=d8arr_ui_rows();
+        if(rows){
+            if(slot==0u)ui.song_row=(uint8_t)clamp((int32_t)ui.song_row+steps,0,(int32_t)rows-1);
+            else if(slot==3u&&d8arr_running()) {
+                if(!d8arr_request_row(ui.song_row))ui_message("ROW QUEUED");
+            } else ui_message("NATIVE ROW READ ONLY");
+            return;
+        }
+#endif
         if (slot == 0u) {
             ui.song_row = (uint8_t)clamp((int32_t)ui.song_row + steps, 0,
                 chain_config.count < CHAIN_ROWS ? chain_config.count : CHAIN_ROWS - 1u);
@@ -766,6 +776,9 @@ static void act_do(void)
         return;
     }
     if (cur_page()->graph == GR_TOOLS) {
+#if NTRK == 8
+        if(d8arr_ui_rows()&&c>=2u){ui_message("NATIVE ROW READ ONLY");return;}
+#endif
         if (chain_busy()) { ui_message("STOP TO EDIT"); return; }
         if (!act_ready()) {                               /* nothing there to clear or delete */
             ui_message(c == 2u ? "NOTHING TO DELETE" : "NOTHING TO CLEAR");

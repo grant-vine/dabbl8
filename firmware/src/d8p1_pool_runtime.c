@@ -73,6 +73,7 @@ static int d8pr_save(const d8pool *s,unsigned object,const char *name)
      * references still require the validated preexisting stored set. */
     unsigned mask=(index.present&7u)|(object<3?1u<<object:0u);
     d8pool guarded=d8pr_guard(s);
+    d8arr_invalidate(); /* even postcommit uncertainty revokes suspended playback */
     rc=d8pool_save(&guarded,object,stage->wire,n,mask);
     if(!rc&&object<3) {
         proj_cur=(uint8_t)object;
@@ -122,6 +123,7 @@ int d8p1_rename_pool(const d8pool *s,unsigned object,const char *name)
     memcpy(stage->state.project.name,renamed,12);
     if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&n,&stage->state))return D8POOL_INVALID;
     d8pool guarded=d8pr_guard(s);
+    d8arr_invalidate();
     rc=d8pool_save(&guarded,object,stage->wire,n,index.present&7u);
     if(!rc&&proj_cur==object)memcpy(proj_name,renamed,sizeof renamed);
     return rc;

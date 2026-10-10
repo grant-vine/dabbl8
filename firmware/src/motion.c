@@ -243,6 +243,9 @@ static int motion_capture(track_t *t, uint32_t id, int16_t value)
 static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, const motion_store_t *m)
 {
     uint32_t k = trk_index(t), id, i;
+#if NTRK == 8
+    uint32_t owner=d8arr_source_track(t);
+#endif
     for (id = 0; id < P_COUNT; id++) {
         int32_t best = -1;
         int16_t v;
@@ -252,8 +255,15 @@ static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, c
         for (i = 0; i < m->count; i++) {
             const motion_event_t *e = &m->event[i];
             int32_t s = (int32_t)(e->place & 63u);
+#if NTRK == 8
+            if ((e->place >> 6) != owner || e->param != id || s > (int32_t)step || s <= best)
+#else
             if ((e->place >> 6) != k || e->param != id || s > (int32_t)step || s <= best)
+#endif
                 continue;                               /* (e->param == id: automation only, no MOTION_LOCK) */
+#if NTRK == 8
+            if(!d8arr_motion_compatible(t,id))continue;
+#endif
             best = s;
             v = (int16_t)param_fit(param_desc_of(eng_idx(t->eng_req), id), e->value);
         }
@@ -265,7 +275,14 @@ static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, c
 static __attribute__((noinline)) void motion_step(track_t *t, uint32_t step, const motion_store_t *m, uint32_t play)
 {
     uint32_t k = trk_index(t), i, w, any = 0;
+#if NTRK == 8
+    uint32_t owner=d8arr_source_track(t);
+#endif
+#if NTRK == 8
+    if (!((m->on >> owner) & 1u)) return;
+#else
     if (!((m->on >> k) & 1u)) return;
+#endif
     if (!((motion_base_valid >> k) & 1u)) {
         memcpy(motion_base[k], t->p, sizeof t->p);
         motion_base_valid |= (uint8_t)(1u << k);
@@ -277,7 +294,14 @@ static __attribute__((noinline)) void motion_step(track_t *t, uint32_t step, con
     for (i = 0; i < m->count; i++) {
         const motion_event_t *e = &m->event[i];
         uint32_t id = MOTION_ID(e);
+#if NTRK == 8
+        if (e->place != (owner << 6 | step) || ((e->param & MOTION_LOCK) && !play)) continue;
+#else
         if (e->place != (k << 6 | step) || ((e->param & MOTION_LOCK) && !play)) continue;
+#endif
+#if NTRK == 8
+        if(!d8arr_motion_compatible(t,id))continue;
+#endif
         const param_desc_t *d = param_desc_of(eng_idx(t->eng_req), id);
         t->p[id] = (int16_t)param_fit(d, e->value);
         motion_active[k][id / 32u] |= 1u << (id % 32u);

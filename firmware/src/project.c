@@ -718,6 +718,7 @@ static int project_native_bind(const project_native_ops *ops,int authorized)
     if(!pn_quiet())return D8POOL_BUSY;
     /* Copy before invalidating an existing binding (ops may refer to it). */
     project_native_ops next={0};if(ops)next=*ops;
+    d8arr_invalidate();
     project_native.mode=2;project_native.ready=0;ui.force=1;
     if(!next.catalog||!next.save||!next.load||!next.rename)return D8POOL_INVALID;
     project_native.ops=next;project_native.mode=1;
@@ -930,11 +931,19 @@ static int project_rename(uint32_t slot, const char *name)
 
 #if NPART >= NVOICE
 /* Live metadata survives display/project arena reuse. Main loop only; playback
- * does not consume these proposed banks/scenes until separately implemented. */
+ * consumes immutable prepared copies, never this main-loop cache directly. */
 static struct {
     d8p1_arrangement arrangement;
     uint8_t valid;
 } d8p1_runtime_cache __attribute__((section(".pool")));
+static unsigned d8arr_ui_rows(void)
+{ return d8p1_runtime_cache.valid?d8p1_runtime_cache.arrangement.rows:0; }
+static int d8arr_ui_row(unsigned row,char name[13],unsigned *repeat)
+{
+    const d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
+    if(!d8p1_runtime_cache.valid||row>=a->rows||a->row[row].scene>=a->scenes)return 0;
+    memcpy(name,a->scene[a->row[row].scene].name,12);name[12]=0;*repeat=a->row[row].repeat;return 1;
+}
 static int project_restore_runtime_mode(const project_t *input, int require_stopped)
 #else
 static int project_restore_runtime(const project_t *input)
@@ -956,6 +965,7 @@ static int project_restore_runtime(const project_t *input)
         fm1_irq_on();
         return 2;
     }
+    d8arr_invalidate();
     d8p1_runtime_cache.valid = 0; /* a successful historical load replaces D8P1 metadata */
 #endif
     transport_req = 2;
@@ -1113,7 +1123,12 @@ static int project_used(uint32_t slot) {
 static uint32_t chain_prepare(void)
 {
 #if NPART >= NVOICE
-    if(project_native.mode)return 1; /* native arrangement playback is issue #15 */
+    if(project_native.mode) {
+        if(project_native.mode!=1||!project_native.ready||!project_native.ops.prepare_arrangement)return 1;
+        if(!pn_quiet())return 2;
+        int rc=project_native.ops.prepare_arrangement(project_native.ops.context);
+        return !rc?0:rc==D8POOL_BUSY?2:1;
+    }
 #endif
     uint32_t i, k, j, used = 0;
     if (transport_busy())
@@ -1122,8 +1137,14 @@ static uint32_t chain_prepare(void)
         return 1;
     for (i = 0; i < chain_config.count; i++) {
         uint32_t s = chain_config.row[i].slot;
+#if NTRK == 8
+        int available=project_used(s);
+        if(available<0)return 2;
+        if(!available)return 3u+s;
+#else
         if (!project_used(s))
             return 3u + s;
+#endif
         used |= 1u << s;
     }
     chain.config = chain_config;

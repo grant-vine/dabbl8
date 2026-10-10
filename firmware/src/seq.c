@@ -649,6 +649,16 @@ static void keyboard_block(void)
 static void seq_start(void)
 {
     uint32_t i;
+#if NTRK == 8
+    /* A changed source invalidates Continue, but a subsequent fresh HOME/MIDI
+     * Start may play the current editable project. SONG always prepares first. */
+    if(chain.native_mode==2){chain.native_mode=0;chain.armed=0;}
+    else if(chain.native_mode&&(!chain.native.policy.valid||chain.native.policy.store_epoch!=d8_capture_change.epoch)){
+        chain.armed=0;chain.native.policy.preparing=0;
+        if(chain.native.policy.valid){chain.native_mode=2;chain.native.policy.valid=0;}
+        return;
+    }
+#endif
     motion_begin();
     chain_start();
     for (i = 0; i < NTRK; i++) {                   /* every track from its step 0, together */
@@ -671,6 +681,9 @@ static void seq_release(track_t *t)
 {
     uint32_t i;
     for (i = 0; i < t->seq_n; i++)
+#if NTRK == 8
+        if (!d8arr_running() || (!midi_note_held(t,t->seq_notes[i])&&!midi_local_held(t,t->seq_notes[i])))
+#endif
         trk_note_off(t, t->seq_notes[i]);
     t->seq_n = 0;
     t->seq_hold = 0;
@@ -832,7 +845,12 @@ static void seq_tick(track_t *t, uint32_t n)
              * automation and the locks before the notes, so a note-on reads them (eng_drum's KIT, ..) */
             if (step_chance(s) < 100u && rng() % 100u >= step_chance(s))
                 skip = SEQ_MISS;
+#if NTRK == 8
+            const motion_store_t *ms=d8arr_running()?d8arr_motion(t):chain.running?&chain.source[chain.slot].motion:&motion;
+            motion_step(t,t->seq_idx,ms,skip==SEQ_ROLLED);
+#else
             motion_step(t, t->seq_idx, chain.running ? &chain.source[chain.slot].motion : &motion, skip == SEQ_ROLLED);
+#endif
             if (t->rskip_n && t->rskip_idx == t->seq_idx) {
                 for (k = 0; k < t->rskip_n; k++) {
                     for (i = 0; i < s->n; i++)
@@ -972,6 +990,9 @@ static void events_block(uint32_t n)
     pr = panic_req;
     panic_req = 0;
     if (midi_in_overflow) {                            /* a lost note-off must never leave a held note */
+#if NTRK == 8
+        if(chain.native_mode){chain.native.policy.pending=D8ARR_NONE;chain.native.policy.preparing=0;chain.native.policy.generation++;}
+#endif
         mi_r = mi_w;
         memset(midi_sel_on, 0, sizeof midi_sel_on);
         memset(midi_ch, 0, sizeof midi_ch);
@@ -1035,6 +1056,9 @@ static void events_block(uint32_t n)
                 seq_n = midi_clock_advance(fm1_ms);
         }
     }
+#if NTRK == 8
+    d8arr_tick(seq_n,clk_pos,clk_step,div_samples(2));
+#endif
     chain_tick(seq_n);
     for (i = 0; i < NTRK; i++)
         seq_tick(&trk[i], seq_n);
