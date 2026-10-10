@@ -1,0 +1,18 @@
+SLICE pool: eight reverse notes own distinct windows PASS
+SLICE pool: window storage is eight bodies PASS
+SLICE pool: interleaved reverse samples equal forward decode reversed PASS
+SLICE pool: eight reverse renderers produce isolated identical BREAK loops PASS
+SLICE pool: forward BREAK render keeps its predictor and claims no reverse window PASS
+SLICE pool: forward PIANO render keeps its predictor and claims no reverse window PASS
+SLICE pool: reverse PIANO rendering has independent windows PASS
+SLICE pool: reverse-to-forward retires window ownership PASS
+SLICE pool: retired window can be reassigned without touching forward decoder PASS
+SLICE pool: forward-to-reverse reacquires an invalidated distinct window PASS
+SLICE pool: another track's retrigger cannot overwrite a cached window PASS
+SLICE pool: ninth admitted note reuses retired state without aliasing PASS
+SLICE pool: changed-engine reclamation invalidates the prior decoded window PASS
+SLICE pool: return to SLICE cannot alias a reassigned body PASS
+SLICE pool: unadmitted ninth window is refused PASS
+SLICE pool: 5000 reverse-loop steals preserve bounded unique windows PASS
+SLICE pool: all releases finish PASS
+SLICE window pool: 0 failures, 56960 shared heavy-pool host bytes
