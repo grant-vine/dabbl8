@@ -160,7 +160,11 @@ static int32_t roll_text(uint32_t k, int32_t x, int32_t y, const char *s, uint16
 #define HEAD_REC_X 20                                  /* the REC mark's cell (ink 23..33) */
 #define HEAD_BAT_X 214                                 /* the battery's cell */
 #define HEAD_GRP_R 208                                 /* the octave / song row ends here */
+#if NTRK == 8
+#define HEAD_MSG_W 128
+#else
 #define HEAD_MSG_W 158                                 /* a message centred on x 120: 41..199 */
+#endif
 #define HEAD_GAP 4                                     /* ink to ink: the metronome -> the BPM -> the lock */
 #define HEAD_PLAY_GAP 6                                /* the play state -> the metronome */
 /* the header's centre: the pen of the BPM, its ink, the metronome's ink (x0 .. x1), the BPM's rolling strip (sx0 ..
@@ -305,6 +309,9 @@ static void draw_head(void)
     cv_begin(240, H_HEAD, T_BG);
     cv_icon_mid(HEAD_TRK_X, H_HEAD / 2, 16, trk_icon(song.sel, 1), T_ACCENT, T_BG);
     draw_rec_mark(HEAD_REC_X, T_BG);
+#if NTRK == 8
+    cv_text_on(38, HEAD_SY, &AF_S, mixer_bank() ? "5-8" : "1-4", T_MID, T_BG);
+#endif
     if (centre) {
         int32_t ib[4], lx = g.bx + g.b[2];             /* lx: the right end of the BPM (and its lock) */
         uint32_t id = song.playing ? (chain.running ? ICON_X_SONG : ICON_X_PLAY) : seq_counting() ? ICON_X_PLAY : ICON_X_STOP;

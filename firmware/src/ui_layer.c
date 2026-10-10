@@ -77,9 +77,16 @@ static struct {
                                         * it opened (SEQ: a tool used); OCT- / OCT+ pressed in a SET layer (bits) */
     uint8_t cook;                      /* SEQ: COOK pressed since it opened */
     uint8_t rp_dirty;                  /* REC: a setting changed (settings_save when the layer lets go) */
-    int16_t v[9];                      /* the values when it opened: GLO mutes, levels, BPM; SCL ROOT..TRN, CHRD VOIC;
+#if NTRK == 8
+    int16_t v[2u * NTRK + 1u];
+#else
+    int16_t v[9];
+#endif                      /* the values when it opened: GLO mutes, levels, BPM; SCL ROOT..TRN, CHRD VOIC;
                                         * SEQ LEN DIV SWING GATE; REC the settings (ui_rec_prefs) */
     uint32_t solo;                     /* GLO: the keys held that solo */
+#if NTRK == 8
+    uint8_t solo_owner[4];             /* track at key-down, retained across bank/selection changes */
+#endif
     uint32_t tap[4];                   /* GLO TAP: the last taps (fm1_ms) */
     uint8_t ntap;
     uint8_t quiet;                     /* #39: a layer closed after it opened: KNOB 1..4 do nothing until quiet_t + */
@@ -238,7 +245,18 @@ static void layer_opened(uint32_t l)
             lys.v[k] = TSEL->p[P_ROOT + k];
             lys.v[4u + k] = k < 2u ? TSEL->p[P_CHRD + k] : 0;
         }
+#if NTRK == 8
+    if (l == LAYER_GLO)
+        for (k = 0; k < NTRK; k++) {
+            lys.v[k] = trk[k].p[P_MUTE];
+            lys.v[NTRK + k] = trk[k].p[P_LEVEL];
+        }
+#endif
+#if NTRK == 8
+    lys.v[2u * NTRK] = song.g[G_BPM];
+#else
     lys.v[8] = song.g[G_BPM];
+#endif
     if (l == LAYER_REC)
         lys.v[0] = ui_rec_prefs;
 }
@@ -449,12 +467,24 @@ static void layer_key(uint32_t l, uint32_t k)
 {
     uint32_t p = key_place(k), i;
     if (l == LAYER_GLO) {
+#if NTRK == 8
+        if (key_black(k)) {
+            if (p < 4u) {
+                track_t *t = &trk[mixer_bank() + p];
+                t->p[P_MUTE] = (int16_t)!t->p[P_MUTE];
+            }
+        } else if (p < 4u) {
+            lys.solo |= 1u << k;
+            lys.solo_owner[p] = (uint8_t)(mixer_bank() + p);
+        } else if (p == 4u) {
+#else
         if (key_black(k)) {
             if (p < NTRK)
                 trk[p].p[P_MUTE] = (int16_t)!trk[p].p[P_MUTE];
         } else if (p < NTRK) {
             lys.solo |= 1u << k;                        /* (layer_masks: perf_solo while held) */
         } else if (p == 4u) {
+#endif
             for (i = 0; i < NTRK; i++)
                 trk[i].p[P_MUTE] = 0;
         } else if (p == 7u) {
@@ -489,7 +519,11 @@ static void layer_keys(uint32_t keys)
     lys.solo &= kb_layer;
     for (k = 0; k < 27u; k++)
         if ((lys.solo >> k) & 1u)
+#if NTRK == 8
+            s |= 1u << lys.solo_owner[key_place(k) & 3u];
+#else
             s |= 1u << key_place(k);
+#endif
     perf_solo = (uint8_t)s;
 }
 
@@ -502,10 +536,18 @@ static void layer_knob(uint32_t k, int32_t s)
             s = -s;                                     /* DEPTH (100 - perf_k[3]) rises to the right (#40: it fell) */
         perf_k[k] = (int8_t)clamp(perf_k[k] + accel(EN_K1 + k, s, k ? 100 : 200), k ? 0 : -100, 100);   /* (#126) */
     } else if (l == LAYER_GLO) {                        /* T1..T4 LEVEL, recorded as on MIXER */
+#if NTRK == 8
+        uint32_t tr = mixer_bank() + k;
+        int16_t *vp = &trk[tr].p[P_LEVEL];
+        *vp = (int16_t)clamp(*vp + accel(EN_K1 + k, s, TP[P_LEVEL].max - TP[P_LEVEL].min), TP[P_LEVEL].min,
+                             TP[P_LEVEL].max);
+        motion_capture(&trk[tr], P_LEVEL, *vp);
+#else
         int16_t *vp = &trk[k].p[P_LEVEL];
         *vp = (int16_t)clamp(*vp + accel(EN_K1 + k, s, TP[P_LEVEL].max - TP[P_LEVEL].min), TP[P_LEVEL].min,
                              TP[P_LEVEL].max);
         motion_capture(&trk[k], P_LEVEL, *vp);
+#endif
     } else if (l == LAYER_EDIT) {                       /* ENG, No., FAV */
         if (k == 0u)
             edit_load(eng_step(TSEL->eng_req, s), 0);
@@ -595,9 +637,17 @@ static uint32_t layer_oct(uint32_t pressed, uint32_t oct)
         } else if (lys.l == LAYER_GLO) {
             for (k = 0; k < NTRK; k++) {
                 trk[k].p[P_MUTE] = lys.v[k];
+#if NTRK == 8
+                trk[k].p[P_LEVEL] = lys.v[NTRK + k];
+#else
                 trk[k].p[P_LEVEL] = lys.v[4u + k];
+#endif
             }
+#if NTRK == 8
+            song.g[G_BPM] = lys.v[2u * NTRK];
+#else
             song.g[G_BPM] = lys.v[8];
+#endif
             ui_message("MIX PUT BACK");
         } else {
             for (k = 0; k < 4u; k++)
@@ -627,8 +677,13 @@ static uint32_t layer_leds(uint32_t *br)
             can = e < PF_N && ((ok >> e) & 1u);
             on = can && ((held >> e) & 1u);
         } else if (l == LAYER_GLO) {                    /* sounding lit; SOLO held lit, the others, C4, F4 breathe */
+#if NTRK == 8
+            on = b ? p < 4u && glo_sounding(mixer_bank() + p) : p < 4u && ((lys.solo >> k) & 1u);
+            can = !b && (p < 4u || p == 4u || (p == 7u && !song.g[G_CLOCK]));
+#else
             on = b ? p < NTRK && glo_sounding(p) : p < NTRK && ((lys.solo >> k) & 1u);
             can = !b && (p < NTRK || p == 4u || (p == 7u && !song.g[G_CLOCK]));
+#endif
         } else if (l == LAYER_SCL) {                    /* the root lit, the scale's notes breathe */
             e = (k + 5u + 12u - root) % 12u;
             on = e == 0u;
@@ -662,7 +717,11 @@ static const char *const PF_DIV[3] = {"1/8", "1/16", "1/32"};   /* the REPEATs (
 static const uint8_t PF_ICON[PF_M1] = {ICON_X_REPEAT, ICON_X_REPEAT, ICON_X_REPEAT, ICON_X_REVERSE, ICON_CUTOFF,
     ICON_X_HPF, ICON_X_TSTOP, ICON_X_FREEZE, ICON_X_OCT_UP, ICON_X_OCT_DN};
 static const char W_NOTE[16] = {'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G'};
-static const char B_NOTE[NTRK] = {'F', 'G', 'A', 'C'};  /* black keys 1..4: F# G# A# C# */
+#if NTRK == 8
+static const char B_NOTE[NTRK] = {'F', 'G', 'A', 'C', 'D', 'F', 'G', 'A'};
+#else
+static const char B_NOTE[NTRK] = {'F', 'G', 'A', 'C'};
+#endif  /* black keys 1..4: F# G# A# C# */
 #define LC_X(c) (6 + 58 * (int32_t)(c))                 /* cell column c: 54 px wide, 4 px apart */
 #define LC_W 54
 #define LC_H 42                                          /* the big cells: rows at y 4 and 50 */
@@ -715,7 +774,11 @@ static void lcell(int32_t x, int32_t y, int32_t h, const char *note, uint32_t ic
     uint16_t ink, fill = lc_fill(st, &ink), idle = fill == T_RAISE;
     fill = lc_box(x, y, lc_w, h, fill);
     if (note)
+#if NTRK == 8
+        cv_text_on(x + 5, h < 16 ? y + CAP_IN(S, h) : y + 3, &AF_S, note, idle ? T_MID : ink, fill);
+#else
         cv_text_on(x + 5, y + 3, &AF_S, note, idle ? T_MID : ink, fill);
+#endif
     if (h > 30 && lc_w == LF_W) {
         GFX_HOOK_ALIGN(x, 0, x + lc_w, 0, AL_H, "FX cell icon centred across");
         cv_icon_on(x + (lc_w - 24) / 2, y + h - 25, 24, icon, ink, fill);   /* (its ink: rows 3 .. 20 of 24) */
@@ -773,9 +836,33 @@ static void layer_fx(void)
     lc_w = LC_W;
     for (e = 0; e < NTRK; e++) {                        /* the mutes of the black keys 1..4 */
         bnote(n, e);
+#if NTRK == 8
+        lcell(LC_X(e & 3u), LM_Y + (int32_t)(e / 4u) * 14, 12, n, ICON_MUTE, trk_icon(e, 0), 0,
+              (held >> (PF_M1 + e)) & 1u ? LS_MUTE : LS_OFF, 0);
+#else
         lcell(LC_X(e), LM_Y, LM_H, n, ICON_MUTE, trk_icon(e, 0), 0, (held >> (PF_M1 + e)) & 1u ? LS_MUTE : LS_OFF, 0);
+#endif
     }
 }
+#if NTRK == 8
+static void layer_glo(void)
+{
+    uint32_t e;
+    char n[3] = {0, 0, 0};
+    for (e = 0; e < 4u; e++) {                        /* F3 .. B3: SOLO while held */
+        n[0] = W_NOTE[e];
+        lcell(LC_X(e), 4, LC_H, n, trk_icon(mixer_bank() + e, 0), 0, "SOLO", (perf_solo >> (mixer_bank() + e)) & 1u ? LS_HELD : LS_OFF, 1);
+    }
+    n[0] = 'C';
+    lcell(LC_X(0), 50, LC_H, n, ICON_MUTE, 0, "ALL", LS_OFF, 0);   /* (unmute all) */
+    n[0] = 'F';
+    lcell(LC_X(3), 50, LC_H, n, ICON_TEMPO, 0, "TAP", song.g[G_CLOCK] ? LS_DIM : LS_OFF, 0);
+    for (e = 0; e < 4u; e++) {                        /* the black keys 1..4: MUTE, latched */
+        bnote(n, e);
+        lcell(LC_X(e), LM_Y, LM_H, n, ICON_MUTE, trk_icon(mixer_bank() + e, 0), 0, trk[mixer_bank() + e].p[P_MUTE] ? LS_MUTE : LS_OFF, 0);
+    }
+}
+#else
 static void layer_glo(void)
 {
     uint32_t e;
@@ -793,6 +880,7 @@ static void layer_glo(void)
         lcell(LC_X(e), LM_Y, LM_H, n, ICON_MUTE, trk_icon(e, 0), 0, trk[e].p[P_MUTE] ? LS_MUTE : LS_OFF, 0);
     }
 }
+#endif
 static void layer_scl(void)                             /* KNOB 2's scales, 4 x 4, the one now selected */
 {
     uint32_t i, sc = (uint32_t)TSEL->p[P_SCALE];
@@ -914,11 +1002,20 @@ static void layer_cards(uint32_t l)
             draw_column(3, "DEPTH", val, "%", VAL(3u), (100 - perf_k[3]) * 10, ICON_MIX);
         }
     } else if (l == LAYER_GLO) {                        /* T1..T4 LEVEL (the track's icon; muted: dim) */
+#if NTRK == 8
+        for (c = 0; c < 4u; c++) {
+            uint32_t tr = mixer_bank() + c;
+            param_format(&TP[P_LEVEL], trk[tr].p[P_LEVEL], val, &unit);
+            draw_column(c, "LEVEL", val, unit, glo_sounding(tr) ? VAL(c) : T_DIM, RATIO(&TP[P_LEVEL], trk[tr].p[P_LEVEL]),
+                        trk_icon(tr, 1));
+        }
+#else
         for (c = 0; c < NTRK; c++) {
             param_format(&TP[P_LEVEL], trk[c].p[P_LEVEL], val, &unit);
             draw_column(c, "LEVEL", val, unit, glo_sounding(c) ? VAL(c) : T_DIM, RATIO(&TP[P_LEVEL], trk[c].p[P_LEVEL]),
                         trk_icon(c, 1));
         }
+#endif
     } else if (l == LAYER_EDIT) {
         engine_columns();
     } else if (l == LAYER_REC) {                        /* CLICK COUNT-IN LEVEL, an empty card */
@@ -946,8 +1043,16 @@ static void draw_layer(void)
     if (l == LAYER_FX)
         sig += (perf_kill ? 0u : perf_held | perf_latched) * 31u + perf_latch_on * 11u + perf_act * 131u + perf_avail() * 7u + (uint32_t)perf_harm_on() * 3u;
     else if (l == LAYER_GLO)
+#if NTRK == 8
+    {
+        uint32_t m = 0;
+        for (uint32_t tr = 0; tr < NTRK; tr++) m |= (uint32_t)!!trk[tr].p[P_MUTE] << tr;
+        sig += perf_solo * 31u + (uint32_t)song.g[G_CLOCK] * 5u + m * 131u + mixer_bank() * 977u;
+    }
+#else
         sig += perf_solo * 31u + (uint32_t)song.g[G_CLOCK] * 5u +
                (uint32_t)(trk[0].p[P_MUTE] | trk[1].p[P_MUTE] << 1 | trk[2].p[P_MUTE] << 2 | trk[3].p[P_MUTE] << 3) * 131u;
+#endif
     else if (l == LAYER_SCL)
         sig += (uint32_t)TSEL->p[P_SCALE] * 31u;
     else if (l == LAYER_REC)
