@@ -1,0 +1,16 @@
+{
+  "head": "7451f1e8f09c66e5f00584988ade047fc5c270db",
+  "exit": 1,
+  "elapsed_seconds": 326.27052903175354,
+  "head_and_six_baselines_unchanged": true,
+  "skips": [
+    "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+    "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+    "ui: PRESETS KNOB 2: the engines in order, DIGITAL skipped, back to the first   ok",
+    "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+    "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+    "perform:   after an effect is let go and its ramp is over: skipped again           ok",
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "drum_test: KIT 1..3 (HAND CYM H+CYM until 1.0.4) play 66 10 77 (the same samples), the knob skips them, a stored value and motion land on the kit: ok"
+  ]
+}
