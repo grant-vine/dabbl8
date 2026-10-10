@@ -836,7 +836,17 @@ static int project_rename(uint32_t slot, const char *name)
     return 0;
 }
 
+#if NPART >= NVOICE
+/* Live metadata survives display/project arena reuse. Main loop only; playback
+ * does not consume these proposed banks/scenes until separately implemented. */
+static struct {
+    d8p1_arrangement arrangement;
+    uint8_t valid;
+} d8p1_runtime_cache __attribute__((section(".pool")));
+static int project_restore_runtime_mode(const project_t *input, int require_stopped)
+#else
 static int project_restore_runtime(const project_t *input)
+#endif
 {
     project_t *p = &proj_scratch;
     uint32_t i, k;
@@ -846,9 +856,21 @@ static int project_restore_runtime(const project_t *input)
     proj_phys(p);                                       /* .. before PHYS lost DUST and DRUM */
     proj_fm4(p);                                        /* .. that had DIGITAL tracks */
     proj_perc(p);                                       /* .. or SAMPLE PERC tracks */
+#if NPART >= NVOICE
+    fm1_irq_off();
+    /* Final coherent guard: a pending start/count-in may arrive during decode.
+     * Refuse before changing transport, panic, runtime or retained metadata. */
+    if (require_stopped && (song.playing || chain_busy() || transport_req || seq_counting())) {
+        fm1_irq_on();
+        return 2;
+    }
+    d8p1_runtime_cache.valid = 0; /* a successful historical load replaces D8P1 metadata */
+#endif
     transport_req = 2;
     panic_req = (1u << NTRK) - 1u;
+#if NPART < NVOICE
     fm1_irq_off();                                      /* the audio ISR must not see half a project */
+#endif
     seq_stop();
     transport_req = 0;
     chain_config = p->chain;
@@ -880,7 +902,11 @@ static int project_restore_runtime(const project_t *input)
         }
     }
     song.sel = (uint8_t)(p->sel < NTRK ? p->sel : 0u);
+#if NPART >= NVOICE
+    if (!require_stopped) fm1_irq_on(); /* native adoption also covers legacy default sounds */
+#else
     fm1_irq_on();
+#endif
     proj_name_get(proj_name, (const uint8_t *)p->name);
     proj_cur = PROJ_NO_SLOT;                            /* (project_load: its slot) */
     undo.trk = 0;                                       /* (ui.c) the undo copy belongs to the old project */
@@ -898,7 +924,11 @@ static int project_restore_runtime(const project_t *input)
             t->p[P_REV] = keep[P_REV];                  /* and the drums' reverb send */
             for (i = P_AMODE; i <= P_TRANS; i++)        /* the drum part had no arp or scale */
                 t->p[i] = TP[i].def;
+#if NPART >= NVOICE
+            if (!require_stopped) fm1_irq_on();
+#else
             fm1_irq_on();
+#endif
         }
         pat_sig[k] = ~steps_sig(t);                     /* a project's steps are the user's */
     }
@@ -907,8 +937,17 @@ static int project_restore_runtime(const project_t *input)
     ui.force = 1;
     ui_message("LOADED");
     memset(snd_said, 0, sizeof snd_said);               /* a missing sample is said again, after LOADED */
+#if NPART >= NVOICE
+    if (require_stopped) fm1_irq_on();
+#endif
     return 0;
 }
+#if NPART >= NVOICE
+static int project_restore_runtime(const project_t *input)
+{
+    return project_restore_runtime_mode(input, 0);
+}
+#endif
 static void project_load(uint32_t slot)
 {
 #if FELUCCA_FLASH

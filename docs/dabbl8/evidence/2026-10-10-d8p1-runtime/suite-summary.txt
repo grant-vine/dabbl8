@@ -1,0 +1,15 @@
+D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption
+Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes
+D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine
+main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors
+D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption
+Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes
+D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine
+main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors
+D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
+ALL HOST TESTS PASSED

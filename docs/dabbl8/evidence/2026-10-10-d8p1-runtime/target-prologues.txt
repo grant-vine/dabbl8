@@ -1,0 +1,52 @@
+set_engine_of:
+ 200a99c:    77 04             	[--sp] = {rets, r7-r4}
+ 200a99e:    42 2e             	r2 = 14
+ 200a9a0:    f4 e1 10 22       	r2 = r1 / r2 (u)
+ 200a9a4:    e2 e1 0e 20       	r2 = r2 * 0xE
+ 200a9a8:    96 1e             	r6 = r1 - r2
+ 200a9aa:    04 16             	r4 = r0
+ 200a9ac:    86 f8 04 02       	if (r6 != 1) goto 8 <set_engine_of+0x1C : 200a9b8 >
+ 200a9b0:    41 20             	r1 = 0
+ 200a9b2:    37 04             	{rets, r7-r4} = [sp++]
+ 200a9b4:    ff ea 2c ff       	goto -424 <fm4_load_preset : 200a810 >
+ 200a9b8:    c0 ff 9c 66 03 02 	r0 = 33777308 <ENGINES : 203669c >
+ 200a9be:    d8 ec 0a 76       	r7 = [r0+r6<<2]
+project_restore_runtime_mode:
+ 200ac00:    7f 04             	[--sp] = {rets, r15-r4}
+ 200ac02:    a2 85             	sp += -364
+ 200ac04:    05 16             	r5 = r0
+ 200ac06:    bf ea 36 f2       	call -7060 <main_project_workspace : 2009076 >
+ 200ac0a:    ce ff 04 03 c2 01 	r14 = 29491972 <main_workspace : 1c20304 >
+ 200ac10:    e0 16             	r0 = r14
+ 200ac12:    bf ea 01 f3       	call -6654 <proj_ok : 2009218 >
+ 200ac16:    01 16             	r1 = r0
+ 200ac18:    40 21             	r0 = 1
+ 200ac1a:    00 ff 00 10 03 02 	if (r1 == 0) goto 1030 <project_restore_runtime_mode+0x426 : 200b026 >
+ 200ac20:    01 e1 08 e1       	r1 = r14 + 264
+ 200ac24:    42 20             	r2 = 0
+d8p1_load_runtime:
+ 200b02a:    7f 04             	[--sp] = {rets, r15-r4}
+ 200b02c:    f0 e8 5c 1c       	sp += -932
+ 200b030:    29 16             	r9 = r2
+ 200b032:    15 16             	r5 = r1
+ 200b034:    06 16             	r6 = r0
+ 200b036:    06 58             	if (r6 == 0) goto 48 <d8p1_load_runtime+0x3E : 200b068 >
+ 200b038:    28 ff f8 5d 15 00 	if (r5 > 7936) goto 42 <d8p1_load_runtime+0x3E : 200b068 >
+ 200b03e:    02 fc 13 1e       	if (r2 > 15) goto 38 <d8p1_load_runtime+0x3E : 200b068 >
+ 200b042:    c8 ff 04 03 c2 01 	r8 = 29491972 <main_workspace : 1c20304 >
+ 200b048:    e4 e0 15 8d       	r4 = r8 + 0x2540
+ 200b04c:    04 e8 0e 60       	if (r6 == r4) goto 28 <d8p1_load_runtime+0x42 : 200b06c >
+ 200b050:    05 4d             	if (r5 == 0) goto 26 <d8p1_load_runtime+0x42 : 200b06c >
+d8p1_capture_runtime:
+ 200b6a8:    7f 04             	[--sp] = {rets, r15-r4}
+ 200b6aa:    e2 91             	sp += -60
+ 200b6ac:    24 16             	r4 = r2
+ 200b6ae:    17 16             	r7 = r1
+ 200b6b0:    0f 16             	r15 = r0
+ 200b6b2:    46 21             	r6 = 1
+ 200b6b4:    20 49             	if (r0 == 0) goto 146 <d8p1_capture_runtime+0xA0 : 200b748 >
+ 200b6b6:    24 48             	if (r4 == 0) goto 144 <d8p1_capture_runtime+0xA0 : 200b748 >
+ 200b6b8:    ce ff 04 03 c2 01 	r14 = 29491972 <main_workspace : 1c20304 >
+ 200b6be:    14 ec 00 6e       	if (r4 > r14) {
+ 200b6c2:    b4 e0 42 0e       		r0 = r4 - r14
+ 200b6c6:    c1 ff 80 e8 00 00 		r1 = 59520

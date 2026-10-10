@@ -1090,12 +1090,20 @@ static void set_engine_of(track_t *t, uint32_t ei)
     }
 #endif
     load_begin(t, UNDO_SOUND);
+#if NPART >= NVOICE
+    uint32_t guard = motion_guard(); /* preserve a native project's outer interrupt guard */
+#else
     fm1_irq_off();
+#endif
     t->eng_req = (uint8_t)(ei % NENGINES);
     for (i = 0; i < 8u; i++)
         t->p[P_E0 + i] = e->edit[i].def;
     apply_preset_to(t, 0);
+#if NPART >= NVOICE
+    motion_unguard(guard);
+#else
     fm1_irq_on();
+#endif
     load_end(t);
 }
 

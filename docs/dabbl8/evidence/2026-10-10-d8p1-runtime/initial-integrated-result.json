@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "scope": "Actual D8P1 native state, all legacy canonical round trips and complete upstream/extended suite",
+  "qualification": "DIAGNOSTIC ONLY: native publish guard and test coverage refined during this run; repeat final source before qualifying"
+}
