@@ -1,0 +1,26 @@
+[
+  {
+    "name": "integration-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "integration-optimized",
+    "exit": 0
+  },
+  {
+    "name": "integration-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "integration-san",
+    "exit": 0
+  },
+  {
+    "name": "target-default-and-eight",
+    "exit": 0
+  },
+  {
+    "name": "full-upstream-suite",
+    "exit": 0
+  }
+]

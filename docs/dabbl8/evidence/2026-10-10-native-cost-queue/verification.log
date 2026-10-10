@@ -1,0 +1,9 @@
+integration-optimized-compile 0
+integration-optimized 0
+integration-san-compile 0
+integration-san 0
+target-default-and-eight 0
+Traceback (most recent call last):
+  File "/private/tmp/dabbl8-native-cost-queue-verify.py", line 24, in <module>
+    assert (e/(name+'.log')).read_bytes()==(repo/'docs/dabbl8/evidence/2026-10-10-native-signature-cost/native-optimized-target-budget.log').read_bytes()
+AssertionError
