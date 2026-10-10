@@ -193,6 +193,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "immutable FUN1..FUN9 imports and canonical round trips" "$OUT/legacy_fixture_test" tests/fixtures/projects
     $CC -O1 -w -DLEGACY_DEST_TRACKS=8 -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test_8" tests/legacy_fixture_test.c -lm
     run "historical layouts/imports with an eight-track destination; refuse FUN9 truncation" "$OUT/legacy_fixture_test_8" tests/fixtures/projects
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
+    run "offline legacy import preview: preserve originals, report migrations and refuse unknown data" python3 tests/offline_import_test.py "$OUT/dabbl8_import_preview"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
     run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
@@ -336,6 +338,8 @@ else
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
     done
+    $SCC -o "$A/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
+    run "ASan/UBSan: offline import preservation, migrations and refusal" python3 tests/offline_import_test.py "$A/dabbl8_import_preview"
     $SCC -DNPART=8 -o "$A/main_workspace_test" tests/main_workspace_test.c -lm
     run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
