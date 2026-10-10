@@ -241,6 +241,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native automatic write: quiet guard at every physical mutation" "$OUT/native_quiet_autosave_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
+    run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -456,6 +458,8 @@ else
     run "ASan/UBSan: automatic write quiet guard and late activity" "$A/native_quiet_autosave_test"
     $SCC -o "$A/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
+    $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
+    run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm
