@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess,json,shutil
+r=Path('/Users/grantv/Code/dabbl8/.local-baseline/main-workspace');e=r.parent/'d8p1-conversion-check';e.mkdir(parents=True,exist_ok=True)
+results=[]
+for mode,flags in [('optimized',['-O1']),('sanitizers',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined'])]:
+ exe='/private/tmp/dabbl8-project-convert-'+mode
+ cmd=['cc',*flags,'-w','-Ibuild/gen','-Ifirmware/src','firmware/src/d8p1.c','tools/dabbl8_project_convert.c','-lm','-o',exe]
+ with (e/(mode+'.log')).open('w') as log:
+  p=subprocess.run(cmd,cwd=r,stdout=log,stderr=subprocess.STDOUT)
+  if not p.returncode:p=subprocess.run(['python3','tests/project_conversion_test.py',exe],cwd=r,stdout=log,stderr=subprocess.STDOUT)
+ results.append({'mode':mode,'exit_code':p.returncode,'compile':cmd});print(mode,p.returncode,flush=True)
+ if p.returncode:break
+(e/'targeted-results.json').write_text(json.dumps(results,indent=2)+'\n');shutil.copy2(__file__,e/'targeted-command.py.txt')
+raise SystemExit(any(x['exit_code'] for x in results))

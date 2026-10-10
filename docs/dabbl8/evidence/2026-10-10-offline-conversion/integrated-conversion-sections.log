@@ -1,0 +1,5 @@
+== offline D8P1 bundle: original snapshots, migration reports and verified references
+Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes
+
+== ASan/UBSan: offline D8P1 bundle and original/reference preservation
+Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes
