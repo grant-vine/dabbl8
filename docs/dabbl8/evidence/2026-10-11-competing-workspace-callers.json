@@ -1,0 +1,193 @@
+{
+  "format": "dabbl8-competing-workspace-callers-evidence",
+  "version": 1,
+  "functional_commit": "4888f35ea673fd7bc267c01370d577413e84b322",
+  "parent": "8a25353699be97c0a53c599ac9e4bded44c250e3",
+  "functional_source_sha256": {
+    "docs/dabbl8/competing-workspace-callers.md": "2a9a9395e0913eddfc0b565e427d6b9177629d2761ca0dbe83b26a8aa8e58c64",
+    "firmware/src/editor.c": "5beea9d815213caf7becb56c194280724808bdfb3d1c92cc0f18626f5f845a95",
+    "firmware/src/editor_backup.c": "05bbd4546ed2ace46d96d217350555c34bd18a0c20d352f48dcee7221848c603",
+    "firmware/src/gfx.c": "9d42b43d0018ccd089f7c3cb1581231196071b50dcd19317758bfefbbe281f91",
+    "firmware/src/project.c": "4051682e9abde79daaf295b6e759dd71315a056a050bc53e9a79482e64c4dddb",
+    "firmware/src/ui.c": "ad14272da50948bf602ac4525249a414323e37acb103ed570c1af3b3780403de",
+    "firmware/src/ui_draw.c": "183e32573e4ab6ddb1f610e4cbae70fd8aa94f4afe84ca24c9887884535b1113",
+    "firmware/src/ui_graph.c": "a2d89269843da79b9b1ff0b8ee47868ab47f2bb1d5cb1007a45b4d6a2d2edd0e",
+    "firmware/src/ui_input.c": "5057985515270375e5de61fa416f7b8dd6acc40b75cb5123ff3dac2a97484847",
+    "firmware/src/ui_layer.c": "eb1bf1bc79aae81cae99c456c1d9adf101019a210d0b1b2d303b8ec0802cf3bb",
+    "firmware/src/ui_menu.c": "38f7c5f0e2ab1ff072888b1e335a9a3596c2457bdf3d7f92830121c55df0ec4f",
+    "firmware/src/ui_name.c": "a1192f3703e2217accf524874b0d6350be8b3a0e8fff1f6344e848e85d4dbcf0",
+    "tests/competing_workspace_callers_test.c": "11368ce339c18a73c4ac353414fc94c8bb083ba4b705dac0d85cee94850000cd",
+    "tests/run_tests.sh": "c112916f0361145aa32ee096b1f7d33035266425b4ec83ea1e568ca1788195df"
+  },
+  "full_suite": {
+    "head": "4888f35ea673fd7bc267c01370d577413e84b322",
+    "exit": 0,
+    "elapsed_seconds": 752.9533231258392,
+    "head_and_six_baselines_unchanged": true,
+    "generated_29_inputs_unchanged": true,
+    "lines_containing_skip_not_all_skips": [
+      "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+      "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+      "ui: PRESETS KNOB 2: the engines in order, DIGITAL skipped, back to the first   ok",
+      "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+      "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+      "perform:   after an effect is let go and its ramp is over: skipped again           ok",
+      "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+      "drum_test: KIT 1..3 (HAND CYM H+CYM until 1.0.4) play 66 10 77 (the same samples), the knob skips them, a stored value and motion land on the kit: ok",
+      "--port picks a port the default match skips                      ok",
+      "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+      "editor: MENU settings (this editor has none)                     skip",
+      "library file: a patch for an unknown engine is skipped           ok",
+      "live: firmware before the sync tag echoes the editor's PRESET as RELOAD (the editor skips it) ok",
+      "FM6 import: supplement / performance blocks skipped, voices kept ok",
+      "backup: refusal after preflight stops, never skips object 9 or restores live music ok",
+      "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+    ]
+  },
+  "fresh_targets": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "actual_6f73_four_track_hash_matches": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 461396,
+      "sha256": "63451d5200f4b1da211543e25e6926bf68f3c66bee9c54cf2b89a317173e096a",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 461396 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ]
+    }
+  },
+  "budget_checks": [
+    {
+      "name": "target-budget-4",
+      "exit": 0,
+      "allowed_exits": [
+        0
+      ]
+    },
+    {
+      "name": "target-budget-8",
+      "exit": 1,
+      "allowed_exits": [
+        0,
+        1
+      ]
+    }
+  ],
+  "native_budget_failures": [
+    "uac_tap48 570 / 504",
+    "ROOM 296 / 218",
+    "SPRING 176 / 126"
+  ],
+  "canonical_baseline_sha256": {
+    "build/felucca.bin": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b",
+    "build/felucca.fwsc": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb",
+    "build/loader/ota.bin": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "generated_inputs": {
+    "build/gen/felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "build/gen/felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "build/gen/felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "build/gen/ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "build/gen/ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "build/gen/ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "build/gen/ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05",
+    "build/genwav/D CHAT.wav": "2d1d6b912d51463e2a673403e9dfdf5c26db31e8b255f0577358f84867919110",
+    "build/genwav/D CLAP.wav": "259a30e710726ee4d84bd5981662b4ab8549ef00e131fdf10117ea882826eb8f",
+    "build/genwav/D COWBELL.wav": "d00d79290209d51916aa17ef2d3da37371430468e1387a65d9d9c556a550269d",
+    "build/genwav/D CRASH.wav": "86dba714e62ae37bb5419a783f692519dd8e8ecaf940b425021968519dbce9d2",
+    "build/genwav/D KICK.wav": "279856d5818fa78c8ab5fa6999737a42f7bd6e121c826e22670bd5a9d7012fa2",
+    "build/genwav/D OHAT.wav": "d44471f44c1280058a36192a9e5574a1bc32c443dd21bebdea00c82dcd9cc00c",
+    "build/genwav/D RIDE.wav": "29cd69c70817fd74c2a40e87feb61836041920def2c9dc5d53ef92255edf9c38",
+    "build/genwav/D RIM.wav": "9c7634e1b9be5dee9a3180f3194d0b59101a93803d55a04bf2ea73e07291036f",
+    "build/genwav/D SNARE.wav": "b5ac665a957505128bcae606552eef56f021aefc572ef0ced66e1e1e226060a6",
+    "build/genwav/D TOM HI.wav": "e4b4e7d889f872fc6f38f84974bcce7d432eb45a44a22a3b560f4dcfd43a6269",
+    "build/genwav/D TOM LO.wav": "b10e3c3dad50c0788262e18c3f729cce082b7bfaa4b765fe958894ba242f6671",
+    "build/genwav/P PLUCK C2.wav": "68553dd965b5c4de5b384f7c203545a95a819b051ea32e06195f65de90b8ef9a",
+    "build/genwav/P PLUCK C3.wav": "5d9b3df3f7bfdadbbfccfca2e6c442985cf691b45215a0ad181dcc3b14bdf28f",
+    "build/genwav/P PLUCK C4.wav": "13fde0ee63b5275269f82deb673f53a2199f63d7bf9805b1441b5a559fbb7524",
+    "build/genwav/W BRASS.wav": "2fe4ae98eb100490fd145fd0e565fe8ffa22a107233ac2954ce6cbf23d50d414",
+    "build/genwav/W DIGI1.wav": "32e6332e61280831e96e3f4fcf9a988fe45c4108a4a24ab5786fbc54ca65214b",
+    "build/genwav/W DIGI2.wav": "f2cc0e9900a09c34c938af493b3f996ab885311c2e74a8f486e0bdd2cfc02f10",
+    "build/genwav/W DIGI3.wav": "4dfc631ff23653e63e888ab721cf6de1759a4fc1bc2a25cdf57f96cd7fded5d4",
+    "build/genwav/W GLASS.wav": "81140694c761d77416fff6c208f47f66fe5613c5471a4f542021e4d6b1c41a2c",
+    "build/genwav/W ORGAN.wav": "e5d63eddd93bcaa175293b330efcbe9f8b3ed04be9375d432ef415be428635e9",
+    "build/genwav/W REED.wav": "3db22bc7d73d86c7d692a25b127de02068433367a25747a802c5d1d1aa7622d6",
+    "build/genwav/W VOX.wav": "2358d0f9efcec3f1e61082439484f1dd17a99ddb4734146dcbe90351b06c7463"
+  },
+  "environment": {
+    "JIELI_TOOLCHAIN": "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1",
+    "AC79_SDK": "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+    "JIELI_DOCKER_IMAGE": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  },
+  "actual_coverage_omissions": [
+    "DaisySP PHYS reference: dependency absent",
+    "Official V15 restore: private vendor fixture absent",
+    "Sanitized editor MENU: variant has no MENU settings",
+    "Browser emulator: Emscripten absent"
+  ],
+  "runtime_sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "focused_checks": {
+    "competing_normal": 199,
+    "competing_sanitizer": 199,
+    "preflight_normal": 2611,
+    "capture_normal": 408934,
+    "collector_normal": 287,
+    "four_track_editor": "PASS",
+    "async_workspace": "2400frames/16806DMA/0errors"
+  },
+  "regression": {
+    "golden_renders": 92,
+    "changed": 0,
+    "gone": 0,
+    "health_failures": 0,
+    "voice_routing_failures": 0,
+    "host_cpu_over_budget": 0
+  },
+  "qualification": {
+    "device_writes": false,
+    "hardware_qualified": false,
+    "migration_authority": false,
+    "production_coordinator": false,
+    "native_timing_qualified": false
+  },
+  "private_evidence_sha256": {
+    "competing-callers-check/competing-opt-199.log": "fb2d0219bb9b24702aac39d88a778c185a1b2ae275fadeb1ec0e6d19b640df73",
+    "competing-callers-check/competing-san-199.log": "fb2d0219bb9b24702aac39d88a778c185a1b2ae275fadeb1ec0e6d19b640df73",
+    "competing-callers-check/initial-failures.md": "c882ff9cbc39ce127b2d827129c1c1b077b043639056ce9dc2c92ebbedcb5f74",
+    "competing-callers-check/capture-opt.log": "5dcff9df7cc1f25f32f41ae1388a3ae4f8d5795568cf5413b770621b3232e64d",
+    "competing-callers-check/collector-opt.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "competing-callers-check/workspace-opt-final.log": "84e50177d90ac6b875cacc5d0d70a98339544e418762c24373901ebca788f5f3",
+    "competing-callers-check/preflight-opt.log": "bd085507b0376183d6ef8b4950ebcc4ea68eebf8adc2e79c34c0d328f09bbe42",
+    "competing-callers-target-check/target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "competing-callers-target-check/terminal.json": "c42772cb4b432f33fad6209ba5867e881f8e5f2da61a4ba7b369d596d5bfa019",
+    "competing-callers-target-check/independent-audit.json": "68df6bd0c24472b79fb34cac6643aaae94573e5d2e1d5d025224b6eefa5d7b0f",
+    "competing-callers-target-check/run.py": "4b893f8339fa4fe4d99b14737f39c10ba3969f87fa7fa9a6b69df804fedd4c0e",
+    "competing-callers-target-check/verify.py": "4b893f8339fa4fe4d99b14737f39c10ba3969f87fa7fa9a6b69df804fedd4c0e",
+    "competing-callers-full-suite/full-suite.log": "684ad38a21e82583ea64d2d05a01f4f1c7b51f7fb9b2a8214b61f9613d65c2d9",
+    "competing-callers-full-suite/result.json": "4daa2c0411ecad61848b178c6c5df398a44aebd2808ac558033eba73fd6233e0",
+    "competing-callers-full-suite/session.log": "a30890d308b44f94bafc62677ed23b609773b319af9f5ea04d46038ba9e52bda",
+    "competing-callers-full-suite/run.py": "27f322f95e958b4d6639fc37f77ec91e075b0ab8d0bd9a73122adbaf98da4c58"
+  }
+}
