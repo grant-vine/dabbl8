@@ -1,0 +1,5 @@
+Focused optimized: cc -O2 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm; same for d8p1_flash_runtime_test.c.
+Sanitizer: cc -O1 -g -w -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined; ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1.
+Pinned tools/build.py build_app/check, separate OUT build/native-quiet-auto-{4,8}, DNPART=8 for expanded build; default SHA asserted.
+Fresh regress against tests/golden.txt and tests/cpu_baseline.txt.
+Full suite: tests/run_tests.sh with pinned AC79_SDK, toolchain, Docker and isolated venv PATH; raw log retained privately.

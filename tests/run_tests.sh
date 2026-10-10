@@ -221,6 +221,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
+    run "native automatic write: quiet guard at every physical mutation" "$OUT/native_quiet_autosave_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -416,6 +418,8 @@ else
     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
+    $SCC -o "$A/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
+    run "ASan/UBSan: automatic write quiet guard and late activity" "$A/native_quiet_autosave_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm

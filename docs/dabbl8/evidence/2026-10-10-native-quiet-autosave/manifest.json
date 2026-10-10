@@ -1,0 +1,52 @@
+{
+  "parent": "82866dbadf7f4757800e4c3d7abff35e2a93b977",
+  "executable_and_test_source": "199c221ce8d89a0e5ca506079763bffd86b7ceff",
+  "source_files": {
+    "firmware/src/d8p1_flash_runtime.c": "b04462e3c28dba6f78e98de91363e4a96de7ddd1171fbb04afd07c11f523f502",
+    "firmware/src/d8p1_pool_runtime.h": "ce137d11eb46c60d8fd67c50809965628c3fead7159341957069516da961a199",
+    "tests/d8p1_flash_runtime_test.c": "02533e510d53719c14fbc27b4fa528a605c6544e1fb1b9f87ad0b7303ec2ea67",
+    "tests/native_quiet_autosave_test.c": "6de80d7a466c3d81da93f02d836dbdf0df67b742e0dd2f627194792be3e96c8a",
+    "tests/run_tests.sh": "8af82a1393a03e15746e871b43fedb9180116e4f1c722ee0d474b0cbcbeac4a2"
+  },
+  "evidence_files": {
+    "audio-regression.log": "727765f3cc35f15977f60b6509282c5551321bb22ab9e60bce006650f2156633",
+    "checks.json": "00489ad8d7a8055610cf23dd5e6ea41304e5beaf2ae2c66fe6e1b7ad2dc88a06",
+    "commands.txt": "c246a948d4f7d4b5d07421adcd67cab9c685ec2b41a6adfd3101bcbc09d5c1c7",
+    "failure-history.json": "2d2318d89e98e6e125549d28f4310467e67e59ff0ecabd9a6b1e12263ca4df16",
+    "failures-and-skips.txt": "82bc77327c3e10496a690b084d43605f8d55e2e3fb73168c229e1a9b73de8678",
+    "flash-optimized.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "flash-san.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "full-suite-first-failure-tail.log": "a06373826456ccba5eebddd3f56bb4a7b4ef4430baff2983b3c1ccac376cad93",
+    "full-suite-summary.log": "cdc9d1eacb21ba3fdd7ea1fda096b8701da6a0b0a93c16469aa66a1ab0b2973e",
+    "parallel-review.txt": "21ea859f7307bc689dfea43b1545b7213ad6081b4ea42f9b7ae2e19a5f48a9dd",
+    "quiet-san.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "target-4.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-8.json": "8fc30f8565f837053060d452c6dbd66da9e747effa081bec648fbefc1b972133",
+    "target-default-and-eight.log": "6f723c8b8f859cc968c182b23498289f652d7df679dbf48b5b40de4b7d2aa967",
+    "test.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "verification.log": "846734a2bce36997a5631e5756b3c896cfb0d5a74901310aed0f81ef4a4e3ec5"
+  },
+  "private_orchestration_sha256": "9410b70f8db62693185051de241e5c6207e02732adcb9dcdc3ad4746b590ace9",
+  "verification_scope": "Full local upstream host suite plus focused actual runtime and simulated physical hooks; pinned target builds and fresh92render regression. No device execution.",
+  "hardware": "SKIP; ownership, scheduler, effects-tail/session/restore policy, migration and recovery remain unfinished",
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "target_environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang 4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "private_full_suite_sha256": "e11de3ca33db5bfcbc95f6423d835e7ce74bc7dc16ff8d61d19e9f1b84b39393",
+  "private_first_full_suite_failure_sha256": "cb7b9cc8194da56ce703073a6a76dc4f877d850e6e2035fdc42101433bbe9973"
+}

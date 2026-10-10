@@ -11,17 +11,19 @@ static uint8_t nor[0x100000],baseline[sizeof nor],wire[D8P1_LIMIT],out[D8P1_LIMI
 static unsigned checks,failures,reads,writes,irq_disabled;
 static int cut=-1,late_irq=-1,post_commit_start,post_commit_io;
 static uint8_t flash_ok;
+static int inject_at=-1;
+static void (*irq_inject)(void),(*after_commit)(void);
 #define CHECK(x) do {checks++;if(!(x)){failures++;fprintf(stderr,"line %d: %s\n",__LINE__,#x);}}while(0)
 /* Match actual fm1_flash.h: cli, return 0; csync/sti always enables. */
-static uint32_t irq_save(void){if(!irq_disabled){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;}irq_disabled=1;return 0;}
+static uint32_t irq_save(void){if(!irq_disabled){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;if(inject_at==0&&irq_inject){inject_at=-1;irq_inject();}if(inject_at>0)inject_at--;}irq_disabled=1;return 0;}
 static void irq_restore(uint32_t was){(void)was;irq_disabled=0;}
 static int allowed(uint32_t a,uint32_t n){for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
 static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;if(post_commit_io==2)return -1;memcpy(p,nor+a,n);return 0;}
 static int mutate(void){CHECK(irq_disabled&&!transport_req&&!transport_busy()&&!cv_cpu_active);if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
 static int st_erase(uint32_t a){CHECK(allowed(a,4096)&&a%4096==0);uint32_t f=irq_save();int rc=mutate();if(!rc)memset(nor+a,255,4096);irq_restore(f);return rc;}
-static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);uint32_t f=irq_save();int rc=mutate();if(!rc)for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];irq_restore(f);if(!rc&&post_commit_io==1&&n==32&&a%8192==0x1000)post_commit_io=2;if(!rc&&post_commit_start&&n==32&&a%8192==0x1000)transport_req=1;return rc;}
+static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);uint32_t f=irq_save();int rc=mutate();if(!rc)for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];irq_restore(f);if(!rc&&post_commit_io==1&&n==32&&a%8192==0x1000)post_commit_io=2;if(!rc&&post_commit_start&&n==32&&a%8192==0x1000)transport_req=1;if(!rc&&after_commit&&n==32&&a%8192==0x1000)after_commit();return rc;}
 #include "../firmware/src/d8p1_flash_runtime.c"
-static void reset(void){reads=writes=irq_disabled=0;cut=late_irq=-1;post_commit_start=post_commit_io=0;transport_req=0;}
+static void reset(void){reads=writes=irq_disabled=0;cut=late_irq=-1;post_commit_start=post_commit_io=0;transport_req=0;inject_at=-1;irq_inject=after_commit=NULL;}
 static void blank(void){memset(nor,0xa5,sizeof nor);for(unsigned b=0;b<5;b++)memset(nor+d8pool_mapped_address(b),255,8192);reset();}
 /* Test-only seed for an explicitly migrated image; bypass is not device code. */
 static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;memcpy(p,nor+d8pool_mapped_address(a/8192)+a%8192,n);return 0;}
@@ -30,6 +32,8 @@ static int pg(void *c,uint32_t a,const void *p,uint32_t n){(void)c;const uint8_t
 static int stop(void *c){(void)c;return 1;}
 static d8pool seed={NULL,rd,er,pg,stop};
 static void unchanged(d8pool_index *index){d8pool_index now;CHECK(!d8pool_inventory(&seed,&now)&&now.present==index->present);for(unsigned o=0;o<4;o++)CHECK(!memcmp(&now.object[o],&index->object[o],sizeof now.object[o]));CHECK(!memcmp(nor,baseline,0x97000)&&!memcmp(nor+0x9f000,baseline+0x9f000,0x46000)&&!memcmp(nor+0xe7000,baseline+0xe7000,sizeof nor-0xe7000));}
+
+#ifndef D8FLASH_RUNTIME_NO_MAIN
 int main(void){
  ui_power_on();int32_t audio[CTL*2];mix_block(audio,CTL);
  FILE *f=fopen("tests/fixtures/d8p1/minimal.d8p","rb");if(!f)return 2;size_t n=fread(wire,1,sizeof wire,f);CHECK(!ferror(f)&&fgetc(f)==EOF);fclose(f);
@@ -83,3 +87,5 @@ int main(void){
  CHECK(!irq_disabled&&!dma_errors);
  printf("D8P1 flash runtime: %u checks, %u failures; %u driver cuts, %u atomic late-start cuts; actual runtime, simulated physical hooks only\n",checks,failures,ops,ops);return failures!=0;
 }
+
+#endif /* D8FLASH_RUNTIME_NO_MAIN */
