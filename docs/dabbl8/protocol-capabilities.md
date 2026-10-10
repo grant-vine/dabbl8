@@ -20,9 +20,9 @@ Command 75 (`D8_CAPS`) takes no arguments. Its exact 15-byte reply is:
 | 10–11 | Parameter / engine ID schemas | 1 / 1 |
 | 12 | Motion section schema | 1 (D8M1) |
 | 13 | Live project-save schema | 9 (frozen FUN9; D8P1 is not live yet) |
-| 14 | Feature bits | Bit 0: versioned motion command 74; bit 1: original legacy writes are safe |
+| 14 | Feature bits | Bit 0: versioned motion command 74; bit 1: original legacy writes are safe; bit 2: expanded in-memory track envelope 77 |
 
-Every byte is seven-bit. Counts and schemas must match the separate INFO report. Unknown capabilities, unsupported layouts, timeout, malformed replies or inconsistent limits cannot grant writes. Unknown feature bits are ignored, rather than treated as an existing feature. Bit 1 is advertised only while the runtime retains at most four tracks. It must be cleared when eight tracks are enabled. The limits describe current behavior, not future implementation or hardware qualification.
+Every byte is seven-bit. Counts and schemas must match the separate INFO report. Unknown capabilities, unsupported layouts, timeout, malformed replies or inconsistent limits cannot grant writes. Unknown feature bits are ignored, rather than treated as an existing feature. Bit 1 is advertised only while the runtime retains at most four tracks. It must be cleared when eight tracks are enabled. Experimental expanded firmware advertises bit 2 for the separately versioned [track envelope](versioned-track-editing.md); it does not grant project, backup or other legacy writes. Default four-track firmware does not advertise that bit. The limits describe current behavior, not future implementation or hardware qualification.
 
 Parameter and engine ID schema 1 retains the audited upstream IDs: P_COUNT 99 / P_E0 91, G_COUNT 27, retired DIGITAL engine ID 1 reserved, FM6 ID 12 and SLICE ID 13. New capabilities do not renumber them. The existing browser uses descriptors for values and retains its original four-track request layout.
 
@@ -33,6 +33,7 @@ Command 76 (`D8_ERROR`) carries `[1, original_command, reason]`:
 - 1: the legacy write family cannot safely edit this runtime.
 - 2: unsupported request schema.
 - 3: malformed request or unavailable index.
+- 4: busy, used by the expanded versioned track envelope when song playback/arming prevents a step or timing edit.
 
 The versioned motion command validates before mutation and sends explicit schema/bounds errors. Invalid legacy commands retain their historical behavior on the current four-track runtime. The client request queue recognizes a valid error for its pending command and rejects immediately; an unrelated or malformed error cannot complete another request.
 

@@ -19,7 +19,7 @@ enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, 
        ED_TRACK_PARAM, ED_TRACK_CHANGED, ED_SONG,
        ED_UI_STATE, ED_UI_SET, ED_UI_PALETTES, ED_FAV_GET, ED_FAV_SET,
        ED_MOTION = 64, ED_BACKUP_LIST, ED_BACKUP_GET, ED_BACKUP_PUT,
-       ED_D8_MOTION = 74, ED_D8_CAPS, ED_D8_ERROR }; /* version-prefixed explicit track/step, never reuse command 64 */                              /* v6: song chain */
+       ED_D8_MOTION = 74, ED_D8_CAPS, ED_D8_ERROR, ED_D8_TRACK }; /* version-prefixed explicit track/step, never reuse command 64 */                              /* v6: song chain */
 
 static uint8_t ed_out[600];
 static uint32_t ed_n;
@@ -391,7 +391,7 @@ static int ed_read_request(uint32_t cmd, const uint8_t *a, uint32_t n)
 }
 static int ed_family_allowed(uint32_t tracks, uint32_t cmd, const uint8_t *a, uint32_t n)
 {
-    return tracks <= 4u || cmd == ED_D8_MOTION || ed_read_request(cmd, a, n);
+    return tracks <= 4u || cmd == ED_D8_MOTION || cmd == ED_D8_TRACK || ed_read_request(cmd, a, n);
 }
 static void ed_d8_error(uint32_t cmd, uint32_t rc)
 {
@@ -423,6 +423,22 @@ static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
     case ED_TRACK_STEP:
         return n == 2u || n == 10u || n == 13u || (n == 14u && a[13] <= 100u) ||
                (n == 15u && a[13] <= 100u && a[14] >= 1u && a[14] <= 4u);
+#if NTRK > 4
+    case ED_D8_TRACK: {
+        /* Explicit versioned envelope, not permission to run arbitrary legacy
+         * commands. Only bounded in-memory track operations are eligible. */
+        if (n < 2u || a[0] != 1u) return 0;
+        uint32_t op=a[1], len=n-2u; const uint8_t *v=a+2;
+        if (op != ED_TRACK && op != ED_TRACK_MIX && op != ED_TRACK_DUMP &&
+            op != ED_TRACK_STEP && op != ED_TRACK_PARAM) return 0;
+        if (!ed_args_ok(op,v,len)) return 0;
+        if (op == ED_TRACK) return !len || v[0] < NTRK;
+        if (!len || v[0] >= NTRK) return 0;
+        if (op == ED_TRACK_PARAM && v[1] >= P_COUNT) return 0;
+        if (op == ED_TRACK_STEP && v[1] >= NSTEP) return 0;
+        return 1;
+    }
+#endif
     case ED_D8_MOTION:
         if (n < 2u || a[0] != 1u) return 0;
         return ed_motion_args(a + 1, n - 1u, NTRK);
@@ -445,9 +461,17 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     int16_t *vp;
     const param_desc_t *d;
     if (!ed_family_allowed(NTRK, cmd, a, na)) { ed_d8_error(cmd, 1u); return; }
-    if (cmd == ED_D8_MOTION && (!na || a[0] != 1u)) { ed_d8_error(cmd, 2u); return; }
+    if ((cmd == ED_D8_MOTION
+#if NTRK > 4
+         || cmd == ED_D8_TRACK
+#endif
+        ) && (!na || a[0] != 1u)) { ed_d8_error(cmd, 2u); return; }
     if (!ed_args_ok(cmd, a, na)) {
-        if (cmd == ED_D8_MOTION || cmd == ED_D8_CAPS) ed_d8_error(cmd, 3u);
+        if (cmd == ED_D8_MOTION || cmd == ED_D8_CAPS
+#if NTRK > 4
+            || cmd == ED_D8_TRACK
+#endif
+           ) ed_d8_error(cmd, 3u);
         return;
     }
     if ((cmd >= ED_SMP_BEGIN && cmd <= ED_SMP_INFO) || (cmd >= ED_BACKUP_LIST && cmd <= ED_BACKUP_PUT))
@@ -457,6 +481,18 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     if (ed_backup_handle(cmd, a, na)) { ed_send(); return; }
     if (ed_fm6_handle(cmd, a, na)) { ed_send(); return; }
     if (ed_menu_handle(cmd, a, na)) { ed_send(); return; }
+#if NTRK > 4
+    if (cmd == ED_D8_TRACK) {
+        uint32_t op=a[1]; const uint8_t *v=a+2; uint32_t len=na-2u;
+        if (chain_busy() && ((op == ED_TRACK_STEP && len > 2u) ||
+            (op == ED_TRACK_PARAM && len == 4u && v[1] >= P_SLEN && v[1] <= P_SGATE))) {
+            ed_d8_error(ED_D8_TRACK,4u); return; /* busy, no false write confirmation */
+        }
+        /* Preserve the outer wire command and reuse the real handlers below,
+         * including clamping, sync shadows, motion capture and UI refresh. */
+        ed_b(1u); ed_b(op); cmd=op; a=v; na=len;
+    }
+#endif
     switch (cmd) {
     case ED_D8_CAPS:
         ed_b('D'); ed_b('8'); ed_b(1u);             /* protocol family, schema */
@@ -464,7 +500,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         ed_b(P_COUNT); ed_b(G_COUNT); ed_b(NENGINES);
         ed_b(1u); ed_b(1u);                        /* stable parameter / engine ID schemas */
         ed_b(1u); ed_b(9u);                        /* D8M1 section schema; live saves still FUN9 */
-        ed_b(1u | (NTRK <= 4u ? 2u : 0u));         /* versioned motion; safe legacy writes */
+        ed_b(1u | (NTRK <= 4u ? 2u : 4u));         /* motion; legacy writes OR versioned track envelope */
         break;
     case ED_D8_MOTION:
         ed_b(1u); a++; na--; /* reply schema, then explicit track/step records */
