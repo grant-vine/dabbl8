@@ -35,7 +35,8 @@ def plan():
         'blocks': [{'index': i, 'existing_address': a, 'bytes': n} for i, (a, n) in enumerate(blocks)],
         'block_ownership': 'dynamic object ID/generation, not fixed per-object addresses',
         'save_policy': 'stopped; payload first, commit header last; reclaim previous only after validation',
-        'migration_required': True, 'flash_backend_implemented': False,
+        'migration_required': True, 'flash_backend_implemented': True,
+        'flash_backend_activated': False, 'migration_executor_implemented': False,
         'hardware_qualified': False,
     }
 

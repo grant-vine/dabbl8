@@ -1,0 +1,24 @@
+{
+  "scope": "Actual linked local plus saved-register prologues; excludes descendant callbacks, callers, underlying driver and IRQ frames; not a full stack bound.",
+  "source": "1a7e2f8",
+  "local_plus_saved_register_frame_bytes": {
+    "d8pool_mapped_open": 92,
+    "dm_read": 32,
+    "dm_erase": 16,
+    "dm_program": 28,
+    "d8p1_save_flash": 80,
+    "d8p1_load_flash": 80,
+    "df_erase": 8,
+    "df_program": 16
+  },
+  "prologues": {
+    "d8pool_mapped_open": " 200c89a:    78 04             \t[--sp] = {rets, r8-r4}\n 200c89c:    e2 8f             \tsp += -68\n 200c89e:    04 16             \tr4 = r0\n 200c8a0:    40 21             \tr0 = 1\n 200c8a2:    24 4a             \tif (r4 == 0) goto 148 <d8pool_mapped_open+0x9E : 200c938 >\n 200c8a4:    c0 14             \tr8 = 0",
+    "dm_read": " 200c93c:    7a 04             \t[--sp] = {rets, r10-r4}\n 200c93e:    34 16             \tr4 = r3\n 200c940:    25 16             \tr5 = r2\n 200c942:    16 16             \tr6 = r1\n 200c944:    08 16             \tr8 = r0\n 200c946:    bf ea 99 ff       \tcall -206 <dm_stopped : 200c87c >",
+    "dm_erase": " 200c9bc:    76 04             \t[--sp] = {rets, r6-r4}\n 200c9be:    14 16             \tr4 = r1\n 200c9c0:    06 16             \tr6 = r0\n 200c9c2:    15 3f             \tr5 = -1\n 200c9c4:    16 48             \tif (r6 == 0) goto 80 <dm_erase+0x5A : 200ca16 >\n 200c9c6:    60 6a             \tr0 = [r6+40] ",
+    "dm_program": " 200ca1a:    79 04             \t[--sp] = {rets, r9-r4}\n 200ca1c:    34 16             \tr4 = r3\n 200ca1e:    28 16             \tr8 = r2\n 200ca20:    17 16             \tr7 = r1\n 200ca22:    05 16             \tr5 = r0\n 200ca24:    16 3f             \tr6 = -1",
+    "d8p1_save_flash": " 200ca9e:    76 04             \t[--sp] = {rets, r6-r4}\n 200caa0:    e2 90             \tsp += -64\n 200caa2:    04 15             \tr5_r4 = r1_r0\n 200caa4:    40 21             \tr0 = 1\n 200caa6:    04 fc 1c 06       \tif (r4 > 3) goto 56 <d8p1_save_flash+0x44 : 200cae2 >\n 200caaa:    05 58             \tif (r5 == 0) goto 48 <d8p1_save_flash+0x3E : 200cadc >",
+    "d8p1_load_flash": " 200ccc4:    76 04             \t[--sp] = {rets, r6-r4}\n 200ccc6:    e2 90             \tsp += -64\n 200ccc8:    04 15             \tr5_r4 = r1_r0\n 200ccca:    40 21             \tr0 = 1\n 200cccc:    04 fc 1c 06       \tif (r4 > 3) goto 56 <d8p1_load_flash+0x44 : 200cd08 >\n 200ccd0:    05 58             \tif (r5 == 0) goto 48 <d8p1_load_flash+0x3E : 200cd02 >",
+    "df_erase": " 200cbf2:    74 04             \t[--sp] = {rets, r4}\n 200cbf4:    60 00             \tcli\n 200cbf6:    14 16             \tr4 = r1\n 200cbf8:    40 20             \tr0 = 0\n 200cbfa:    bf ea a8 ff       \tcall -176 <df_stopped : 200cb4e >\n 200cbfe:    30 e8 00 20       \tif (r0 == 0) {",
+    "df_program": " 200cc9e:    76 04             \t[--sp] = {rets, r6-r4}\n 200cca0:    60 00             \tcli\n 200cca2:    34 16             \tr4 = r3\n 200cca4:    25 16             \tr5 = r2\n 200cca6:    16 16             \tr6 = r1\n 200cca8:    40 20             \tr0 = 0"
+  }
+}

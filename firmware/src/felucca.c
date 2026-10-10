@@ -103,7 +103,11 @@
 #include "d8p1.c"                /* freestanding codec for the in-memory native API */
 #include "d8p1_runtime.c"        /* stopped native adoption */
 #include "d8pool.c"               /* virtual explicitly migrated storage backend */
-#include "d8p1_pool_runtime.c"    /* native runtime persistence; no physical/menu binding */
+#include "d8p1_pool_runtime.c"    /* native runtime persistence; no implicit migration */
+#if FELUCCA_FLASH
+#include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
+#include "d8p1_flash_runtime.c"     /* explicitly authorized existing-driver adapter */
+#endif
 #endif
 #if FELUCCA_OTA
 #include "ota.c"

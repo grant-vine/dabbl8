@@ -1,0 +1,10 @@
+[
+  {
+    "name": "target-default-and-eight",
+    "exit": 0
+  },
+  {
+    "name": "full-upstream-suite",
+    "exit": 0
+  }
+]

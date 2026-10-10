@@ -36,3 +36,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 
 - [Offline converter developer-preview kit](offline-preview-kit.md): local host-specific tooling package, complete corresponding source and original-preserving conversion; device migration and release gates remain open.
 - [Original-preserving full-backup and persisted-autosave migration proposal](migration-bundle.md)
+
+- [Guarded native runtime connection to the existing flash driver](guarded-flash-backend.md)
