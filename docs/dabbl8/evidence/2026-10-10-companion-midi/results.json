@@ -1,0 +1,43 @@
+{
+  "result": "PASS targeted; full suite pending",
+  "base_commit": "ee12f229fb2fbbb5158fca9198fa9777ba51c8a2",
+  "checks": [
+    {
+      "mode": "optimized",
+      "exit_code": 0,
+      "checks": 85
+    },
+    {
+      "mode": "sanitized",
+      "exit_code": 0,
+      "checks": 85
+    }
+  ],
+  "source_hashes": {
+    "web/d8midi.js": "8d1d2b4148867b0604f910ca1287765593d4a05dc434374ea9daa068268be0ed",
+    "web/test_d8midi.mjs": "f572c456fa962bc08dd2b1e5f5735922a6c132351d6ec4fb83d7f6a643ea42a2",
+    "tests/run_tests.sh": "6725c089e56f7864d1f194138de97b53e6567a530a01eea459a7a7c10b57e8fb",
+    "docs/dabbl8/companion-midi-transport.md": "9ecb7db83b574b2dd7c4d5aefe19c03d11bce6acb9012e443ba001b7e6e7caac",
+    "docs/dabbl8/companion-track-client.md": "d1a116415b60b7e111efae91cc1370be125643c148c5611c046772bcc629622f"
+  },
+  "log_hashes": {
+    "sanitized-transport.log": "97cdf6c7f7f6982a6c2b3e1558f640532d1c1d83d60b03604a80c89b7ce4ddef",
+    "optimized-transport.log": "97cdf6c7f7f6982a6c2b3e1558f640532d1c1d83d60b03604a80c89b7ce4ddef"
+  },
+  "bridge_hashes": {
+    "optimized-bridge8": "1a7285ebee538a76a131f7a38b3c0424874f6056acf76478b16fb3caf4e5491c",
+    "sanitized-bridge8": "eab3502d8ba9f7ece5af67a158aefe925e159efdd3db40e04e01ed9755565cd7",
+    "sanitized-bridge4": "7d5d6ed4bcbbba92a911c1594c0e9d06c7cf4110495e8c20cfc002ddf2b926f6",
+    "optimized-bridge4": "d1cfbf6ea99c6621cbc10c2718c7f8884d8222092d8e51a10be82b4b9f4dda9a"
+  },
+  "node": "v26.11.0",
+  "C_source_changed": false,
+  "physical_hardware": "SKIP; simulated MIDI ports and host C handlers only",
+  "full_suite": "Running; exact worker and raw logs retained in local handoff",
+  "hosted_ci": "pending draft creation",
+  "remaining": [
+    "Visible companion page and mock browser preview",
+    "Physical port/reconnect/timing qualification",
+    "New-format project/backup round trips and storage/runtime prerequisites"
+  ]
+}

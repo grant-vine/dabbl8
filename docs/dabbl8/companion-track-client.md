@@ -2,7 +2,9 @@
 
 Preparatory issue #11 client stage. `web/d8tracks.js` implements the versioned
 in-memory track operations from [command 77](versioned-track-editing.md).
-A user-facing companion page and physical MIDI transport remain to be built.
+The separate [MIDI transport stage](companion-midi-transport.md) provides framing
+and port lifecycle handling. A user-facing companion page and physical
+qualification remain to be completed.
 This module alone is not the completed editor or a firmware release.
 
 ## Negotiation and limits
@@ -27,8 +29,8 @@ not separate target qualification.
 The transport receives `[command, sevenBitArguments]` and resolves to a decoded
 seven-bit reply payload. It must verify the reply command and convert a valid
 D8_ERROR for that pending command to `TrackProtocolError(reason)`; reason 4 is
-an explicit busy refusal. Physical MIDI framing/timeout/port ownership is the
-next page/transport stage, not a capability inferred by this module.
+an explicit busy refusal. The separate MIDI transport supplies framing/timeout/port ownership; these
+are not capabilities inferred by this client module.
 
 After negotiation, the client exposes:
 
@@ -73,7 +75,7 @@ real-handler replies assert zero simulated flash writes/erases. Both bridge
 modes are integrated into the standard repository suite.
 
 Remaining work: musical controls and labels in a responsive companion page,
-physical transport with explicit port lifecycle handling, browser mock previews,
+physical transport qualification, browser mock previews,
 new-format project and backup conversion/round trips, and storage/runtime and
 hardware acceptance gates. Do not close issue #11 or advertise a hardware-tested
 editor from these host tests. No firmware, loader, flash map or reference hashes
