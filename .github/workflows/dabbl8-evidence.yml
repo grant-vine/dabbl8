@@ -43,6 +43,9 @@ jobs:
         env:
           D8_SETUP_OK: ${{ steps.python.outcome == 'success' && steps.node.outcome == 'success' && steps.hostdeps.outcome == 'success' && steps.acquire.outcome == 'success' }}
         run: python ci/run_evidence.py
+      - name: Build pinned browser converter and verify actual native parity
+        if: always()
+        run: python ci/run_browser_conversion.py
       - name: Preserve review evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -50,6 +53,7 @@ jobs:
           name: dabbl8-evidence-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             build/ci-evidence/
+            build/browser-conversion-evidence/
             build/ui_new/report.txt
             build/ui_new/align.txt
           if-no-files-found: warn

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { mountProjectConversion } from './d8project-conversion-page.js';
 import { D8MidiSession } from './d8midi.js';
 import { CompanionModel, parameterDescriptor, parameterName, noteName } from './d8companion-model.js';
 import { descriptors } from './d8descriptors.js';
@@ -11,13 +12,15 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   const checkbox=(checked,label)=>{const n=el('input',{type:'checkbox'});n.checked=checked;return {input:n,node:el('label',{class:'check'},n,label)};};
   const select=(options,value)=>{const n=el('select',{});for(const [v,label]of options)n.append(el('option',{value:v},label));n.value=String(value);return n;};
   const heading=el('header',{},el('p',{class:'eyebrow'},'Dabbl8 · development companion'),el('h1',{},'Eight tracks. One view.'),el('p',{},'Edit the in-memory sequencer on compatible development firmware. Eight tracks share eight sounding voices.'));
-  const notice=el('p',{class:'notice'},'Development tool: host tests have passed; physical MIDI qualification is pending. Changes stay in memory. Project save, backup and firmware installation are unavailable here.');
+  const notice=el('p',{class:'notice'},'Development tool: host tests have passed; physical MIDI qualification is pending. Changes stay in memory. Device project save, backup and firmware installation are unavailable here. Offline project conversion is available separately below.');
   const status=el('p',{class:'status',role:'status','aria-live':'polite'},'Choose MIDI ports to begin.');
   const identity=el('p',{class:'identity small'}),inputSelect=el('select',{'aria-label':'MIDI input'}),outputSelect=el('select',{'aria-label':'MIDI output'});
   const find=button('Find MIDI ports',findPorts),join=button('Connect',connectPorts,{class:'primary'}),leave=button('Disconnect',disconnect),refresh=button('Refresh from device',()=>act((m)=>m.refresh()));
   const connection=el('section',{class:'connection','aria-label':'Connection'},el('h2',{},'Connection'),el('div',{class:'row'},field('Receive from',inputSelect),field('Send to',outputSelect),find,join,leave),identity,status);
   const controls=el('div',{}),foot=el('footer',{},el('p',{class:'small'},'Built on Felucca by Hügelton Instruments and its contributors. Dabbl8 is GPL-3.0-only.'),el('p',{class:'small'},el('a',{href:'https://github.com/grant-vine/dabbl8'},'Source and development status'),' · ',el('a',{href:'editor.html'},'Legacy four-track editor'),' · ',el('a',{href:'https://github.com/grant-vine/dabbl8/blob/dabbl8/develop/LICENSING.md'},'Licensing')));
-  root.replaceChildren(heading,notice,connection,controls,foot);
+  const conversionRoot=el('section',{});
+  root.replaceChildren(heading,notice,connection,controls,conversionRoot,foot);
+  const conversion=mountProjectConversion(conversionRoot);
   function setStatus(message,bad=false){status.textContent=message;status.className='status'+(bad?' bad':'');}
   function availability(){const busy=working||Boolean(model?.state.busy);find.disabled=busy||Boolean(session);join.disabled=busy||Boolean(session)||!inputSelect.value||!outputSelect.value;inputSelect.disabled=busy||Boolean(session);outputSelect.disabled=inputSelect.disabled;leave.disabled=!working&&!session;refresh.disabled=busy||!model?.editable;}
   function render(){
@@ -72,5 +75,5 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   async function disconnect(){const old=model,oldSession=session;generation++;abort?.abort();model=null;session=null;working=false;identity.textContent='';controls.replaceChildren();setStatus('Disconnected.');availability();await (old?old.close():oldSession?.close());}
   inputSelect.addEventListener('change',availability);outputSelect.addEventListener('change',availability);availability();
   const pagehide=()=>{void disconnect();};doc.defaultView?.addEventListener('pagehide',pagehide);
-  return {disconnect,destroy:()=>{doc.defaultView?.removeEventListener('pagehide',pagehide);return disconnect();}};
+  return {disconnect,destroy:()=>{conversion.destroy();doc.defaultView?.removeEventListener('pagehide',pagehide);return disconnect();}};
 }
