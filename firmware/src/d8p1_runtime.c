@@ -60,3 +60,24 @@ int d8p1_capture_runtime(uint8_t *out, size_t capacity, size_t *written)
     fm1_irq_on();
     return d8p1_project_encode(out,capacity,written,&stage->state) ? D8RT_OK : D8RT_BAD;
 }
+
+/* A stopped coherent signature of exactly the canonical native musical state.
+ * Borrow the existing staging arena; no retained cache or flash write. Selected
+ * track and project-page controls deliberately do not mark music dirty. As with
+ * upstream autosave, this 32-bit change detector is not an integrity proof.
+ * Output must be main-loop owned and outside the borrowed arena. */
+int d8p1_signature_runtime(uint32_t *signature)
+{
+    if (!signature || d8ps_overlap(signature,sizeof *signature,&main_workspace,sizeof main_workspace))
+        return D8RT_BAD;
+    d8p1_stage_workspace *stage=&main_workspace.d8p1;
+    size_t n=0;
+    int rc=d8p1_capture_runtime(stage->wire,sizeof stage->wire,&n);
+    if(rc)return rc;
+    stage->state.project.sel=0;
+    stage->state.project.g[G_SLOT]=stage->state.project.g[G_NAME]=
+        stage->state.project.g[G_LOAD]=stage->state.project.g[G_SAVE]=0;
+    if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&n,&stage->state))return D8RT_BAD;
+    *signature=as_mix(2166136261u,stage->wire,(uint32_t)n);
+    return D8RT_OK;
+}
