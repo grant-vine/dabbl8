@@ -1310,6 +1310,57 @@ static void track_strip(uint32_t c, uint32_t sel, uint32_t st, uint32_t mute, ui
         cv_rrect(5, TSS_MY, m < 3 ? 3 : m, 3, 1, T_MID, T_RAISE);
     cv_blit((uint32_t)CARD_X(c), LG_Y_GRAPH);
 }
+#if NTRK == 8
+/* Eight-track overview: both four-track groups remain visible. LARGE uses the same
+ * four rows in two columns, retaining engine, mute/record state and voice meter. */
+static void draw_tracks(void)
+{
+    uint32_t changed = ui.force, gh = graph_h();
+    int32_t rh = (int32_t)(gh - 2u) / 4;
+    for (uint32_t c = 0; c < NTRK; c++) {
+        track_t *t = &trk[c];
+        char name[16];
+        int32_t m = t->p[P_MUTE] ? 0 : meter_px(t->peak);
+        t->peak = 0;
+        if (m < ts.meter[c] - 1) m = ts.meter[c] - 1;
+        ts.meter[c] = (uint8_t)(m < 0 ? 0 : m);
+        trk_short_name(c, name);
+        uint32_t sig = str_hash(c + 1u, name) + (c == song.sel) * 7919u +
+            (uint32_t)t->eng_req * 131u + (uint32_t)!!t->p[P_MUTE] * 977u +
+            ((song.rec >> c) & 1u) * 104729u + (uint32_t)song.playing * 37u +
+            trk_level(c) * 1299709u + ts.meter[c] * 31u + gh * 47u;
+        changed |= sig != ts.col[c];
+        ts.col[c] = sig;
+    }
+    if (!changed) return;
+    cv_begin(240, gh, T_BG);
+    for (uint32_t c = 0; c < NTRK; c++) {
+        const track_t *t = &trk[c];
+        const engine_t *e = ENGINES[t->eng_req % NENGINES];
+        int32_t x = 5 + (int32_t)(c / 4u) * 116, y = 1 + (int32_t)(c & 3u) * rh;
+        uint16_t bg = c == song.sel ? T_RAISE : T_SURF;
+        uint16_t fg = t->p[P_MUTE] ? T_DIM : c == song.sel ? T_ACCENT : T_TEXT;
+        char name[16];
+        cv_rrect(x, y, 114, rh - 1, 3, bg, T_BG);
+        cv_icon_on(x + 3, y + 1, 12, trk_icon(c, c == song.sel), fg, bg);
+        cv_free_text(x + 19, y + CAP_IN(S, 15), &AF_S, eng_abbr(e->name), fg, bg, 42);
+        if (t->p[P_MUTE]) cv_icon_on(x + 65, y + 1, 12, ICON_MUTE, T_DIM, bg);
+        if ((song.rec >> c) & 1u)
+            cv_text_r(x + 111, y + CAP_IN(S, 15), &AF_S, song.playing ? "REC" : "ARM",
+                       song.playing ? T_REC : T_ACCENT, bg);
+        if (rh >= 25) {
+            trk_short_name(c, name);
+            cv_free_text(x + 19, y + 15, &AF_S, name, fg, bg, 90);
+        }
+        cv_rect(x + 19, y + rh - 2, 90, 1, T_DIM);
+        int32_t level = (int32_t)trk_level(c) * 90 / 127;
+        if (level) cv_rect(x + 19, y + rh - 2, level, 1, t->p[P_MUTE] ? T_DIM : T_THEME);
+        int32_t meter = (int32_t)ts.meter[c] * 90 / (TS_MH - 2);
+        if (meter) cv_rect(x + 19, y + rh - 2, meter, 1, T_ACCENT);
+    }
+    cv_blit(0, graph_y());
+}
+#else
 static void draw_tracks(void)
 {
     uint32_t c, sk = strip_kind() == SK_TRK;
@@ -1398,6 +1449,7 @@ static void draw_tracks(void)
         cv_blit((uint32_t)CARD_X(c), Y_GRAPH);
     }
 }
+#endif
 /* oscilloscope of the output, triggered on a rising zero crossing: a RAISE centre line, the trace 2 px (in silence
  * a flat line on it; MENU > SCREEN OFF keeps it from staying on the panel for hours) */
 static void graph_scope(uint16_t c)

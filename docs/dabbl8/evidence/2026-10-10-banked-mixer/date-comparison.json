@@ -1,0 +1,19 @@
+{
+  "date_macro": "Oct  9 2026",
+  "normal_build_date": "Oct 10 2026",
+  "normal_vs_prior_differing_offsets": [
+    441380,
+    441381
+  ],
+  "normal_vs_prior_changed_bytes": 2,
+  "date_pinned_check_exit": 0,
+  "scope": "Compiler macro held constant for reproducibility comparison; normal build retained unchanged; no source or golden changes.",
+  "felucca.bin": {
+    "bytes": 447924,
+    "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+  },
+  "felucca.fwsc": {
+    "bytes": 610086,
+    "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+  }
+}

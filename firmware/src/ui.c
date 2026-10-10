@@ -1296,6 +1296,11 @@ static const param_desc_t *home_param(uint32_t k, int16_t **vp)
     return track_desc(TSEL, id);
 }
 
+#if NTRK == 8
+/* Four physical knobs follow the selected track's group; SEQ ui.bank stays separate. */
+static uint32_t mixer_bank(void) { return song.sel & 4u; }
+#endif
+
 /* select track i (KNOB 1 on TRACKS, the editor): its sound, pages and pattern from now on */
 static void track_select(uint32_t i)
 {
