@@ -1274,6 +1274,10 @@ static void ui_draw(void)
     }
     if (!scr_frame())                                   /* MENU > SCREEN OFF: dark (or waking), nothing drawn */
         return;
+#if NPART >= NVOICE
+    if (cur_page()->graph == GR_SLOTS || cur_page()->graph == GR_SONG)
+        (void)graph_project_used(0); /* decode names before the first canvas/DMA */
+#endif
     ui_draw_page(counting);
     scr_shown();
 }

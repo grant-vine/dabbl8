@@ -68,7 +68,30 @@ typedef struct { uint16_t off; uint8_t w; const char *label; } kc_t;
 #define AL_N(n) ((uint32_t)(n) << 8)
 
 #define CV_MAX (240u * 124u)      /* the graph strip is 240 x 124 */
+#include "track_limits.h"
+#if NPART >= NVOICE
+#include "project_types.h"
+/* Main-loop phases only. LCD DMA retains pixels until lcd_sync returns.
+ * Project calls are synchronous and may not retain this pointer across drawing.
+ * The audio ISR owns neither member. No project data is a live display cache. */
+static union {
+    uint16_t pixels[CV_MAX];
+    project_t project;
+} main_workspace __attribute__((section(".pool")));
+_Static_assert(sizeof(project_t) <= sizeof main_workspace.pixels, "project workspace fits canvas arena");
+static uint8_t cv_cpu_active, cv_canvas_valid;
+#define cv_px (main_workspace.pixels)
+static project_t *main_project_workspace(void)
+{
+    if (cv_cpu_active) __builtin_trap(); /* fail before corrupting an unfinished drawing */
+    lcd_sync();
+    __asm__ volatile("" ::: "memory"); /* DMA consumption precedes switching union members */
+    cv_canvas_valid = 0; /* any future blit needs a fresh cv_begin */
+    return &main_workspace.project;
+}
+#else
 static uint16_t cv_px[CV_MAX] __attribute__((section(".pool")));
+#endif
 static uint32_t cv_w, cv_h;
 static uint16_t cv_bg;           /* what cv_begin cleared the canvas to */
 static uint8_t cv_scroll;        /* 1: drawing a scrolled view (its text may run past the canvas) */
@@ -177,6 +200,9 @@ static void cv_begin(uint32_t w, uint32_t h, uint16_t bg)
     if (w * h > CV_MAX)
         h = CV_MAX / w;
     lcd_sync();                     /* the last blit may still read cv_px */
+#if NPART >= NVOICE
+    cv_cpu_active = cv_canvas_valid = 1;
+#endif
     GFX_HOOK_BEGIN();
     cv_w = w;
     cv_h = h;
@@ -190,16 +216,28 @@ static void cv_begin(uint32_t w, uint32_t h, uint16_t bg)
 
 static void cv_blit(uint32_t x, uint32_t y)
 {
+#if NPART >= NVOICE
+    if (!cv_canvas_valid) __builtin_trap(); /* project work invalidated the pixel member */
+#endif
     GFX_HOOK_BLIT(x, y, 0u);
     lcd_blit(x, y, cv_w, cv_h, cv_px);
+#if NPART >= NVOICE
+    cv_cpu_active = 0; /* DMA remains the owner until lcd_sync */
+#endif
 }
 
 /* canvas rows r0 .. cv_h-1 only, to screen row y + r0 */
 static void cv_blit_from(uint32_t x, uint32_t y, uint32_t r0)
 {
+#if NPART >= NVOICE
+    if (!cv_canvas_valid) __builtin_trap(); /* project work invalidated the pixel member */
+#endif
     GFX_HOOK_BLIT(x, y, r0);
     if (r0 < cv_h)
         lcd_blit(x, y + r0, cv_w, cv_h - r0, cv_px + r0 * cv_w);
+#if NPART >= NVOICE
+    cv_cpu_active = 0;
+#endif
 }
 
 static inline void cv_pset(int32_t x, int32_t y, uint16_t c)

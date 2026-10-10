@@ -54,11 +54,17 @@
 /* ----------------------------------------------------- base, display --- */
 #include "libc.c"
 #include "lcd.c"
+#include "track_limits.h"
+#if NPART < NVOICE
 #include "gfx.c"
+#endif
 
 /* ----------------------------------------------------------- sound --- */
 #include "core.h"
 #include "engines.c"             /* dsp.c, the eng_*.c files, the factory patterns */
+#if NPART >= NVOICE
+#include "gfx.c"
+#endif
 #include "params.c"
 #include "mod.c"               /* the modulation matrix, used by voice.c and fx.c */
 #include "voice.c"

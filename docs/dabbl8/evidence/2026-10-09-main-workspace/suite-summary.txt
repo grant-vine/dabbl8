@@ -1,0 +1,8 @@
+Four-track build and full upstream/extended suite: PASS
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)
+editor: MENU settings (this editor has none)                     skip
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
+ALL HOST TESTS PASSED
+
+Final integrated ownership: 16 checks PASS in O2 and ASan/UBSan; 2400 slot/song redraws, 16804 simulated DMA sources, zero ownership errors.

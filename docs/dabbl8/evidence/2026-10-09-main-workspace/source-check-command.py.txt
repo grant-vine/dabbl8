@@ -1,0 +1,18 @@
+from pathlib import Path
+import subprocess,json,hashlib,shutil
+root=Path('/Users/grantv/Code/dabbl8');a=root/'.local-baseline/slice-shared-state';b=root/'.local-baseline/main-workspace';e=root/'.local-baseline/main-workspace-check'
+shutil.copy2(__file__,e/'source-check-command.py.txt')
+m=[]
+for src in ['firmware/src/felucca.c','tests/project_test.c','tests/ui_test.c','web/emu/felucca_web.c']:
+    digests=[]
+    for r in [a,b]:
+        cmd=['clang','-E','-P','-I'+str(a/'build/gen'),'-Ifirmware/hal','-Ifirmware/src','-Itests',src]
+        p=subprocess.run(cmd,cwd=r,text=True,capture_output=True)
+        if p.returncode:raise RuntimeError(p.stderr)
+        text='\n'.join(x for x in p.stdout.splitlines() if x.strip())+'\n'
+        digests.append(hashlib.sha256(text.encode()).hexdigest())
+    m.append({'source':src,'four_track_normalized_source_equal':digests[0]==digests[1],'sha256':digests})
+cmd=['clang','-w','-fsyntax-only','-DNPART=8','-I'+str(a/'build/gen'),'-Ifirmware/src','-Itests','web/emu/felucca_web.c']
+p=subprocess.run(cmd,cwd=b,text=True,capture_output=True);(e/'browser-eight-syntax.log').write_text(p.stdout+p.stderr)
+out={'source_base':'f0bb720bab0313ba1367c5a906cbd5f2bed592e8','four_track_sources':m,'native_browser_eight_syntax_exit':p.returncode,'actual_emscripten_runtime':'SKIP: emcc unavailable; native syntax is not browser runtime evidence'}
+(e/'source-results.json').write_text(json.dumps(out,indent=2)+'\n');print(json.dumps(out,indent=2))
