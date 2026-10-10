@@ -1,0 +1,11 @@
+tests/target_budget.txt:1:# FELUCCA target cost budget (tests/target_budget.py): instructions in the loops of each
+tests/target_budget.txt:2:# function in build/felucca.dis, x4 per nesting level, divides x9. The check allows +10 %.
+tools/build.py:219:    (OUT / "felucca.dis").write_text(dis)
+tests/target_budget.py:5:(build/felucca.dis). For each engine's render function and the audio ISR: the instructions
+tests/target_budget.py:12:  tests/target_budget.py [DIS [BUDGET]]      BUDGET_UPDATE=1 rewrites BUDGET"""
+tests/target_budget.py:40:dis = sys.argv[1] if len(sys.argv) > 1 else "build/felucca.dis"
+tests/target_budget.py:106:            f.write("# FELUCCA target cost budget (tests/target_budget.py): instructions in the loops of each\n"
+tests/target_budget.py:107:                    f"# function in build/felucca.dis, x{NEST} per nesting level, divides x{1 + DIV_W}. The check allows "
+tests/run_tests.sh:7:# Regression suite (tests/regress.c, tests/target_budget.py; details at the top of regress.c):
+tests/run_tests.sh:490:run "regression: target cost of the render loops (pi32v2 disassembly)" python3 tests/target_budget.py \
+tests/run_tests.sh:491:    build/felucca.dis tests/target_budget.txt
