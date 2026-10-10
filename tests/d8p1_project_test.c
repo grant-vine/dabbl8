@@ -91,6 +91,7 @@ int main(int argc,char **argv){
   n=load(argv[f]);d8p1_legacy_report report;size_t written=0;
   check(proj_import(&legacy_expected,raw,(int)n),"independent unchanged importer reads expected legacy chain");
   memcpy(before,raw,n);
+  memset(&workspace,0xA5,sizeof workspace);
   check(d8p1_legacy_convert(&state,&workspace,&report,raw,n,15),"real frozen legacy fixture converts with available references");
   check(!memcmp(before,raw,n),"legacy source remains byte-exact through migration");
   check(d8p1_project_encode(encoded,sizeof encoded,&written,&state)&&d8p1_project_decode(&roundtrip,encoded,written,15),"legacy state round-trips through the new file codec");

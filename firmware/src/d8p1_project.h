@@ -195,6 +195,9 @@ static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *works
     const uint8_t *b=data;uint32_t magic=(uint32_t)d8ps_u16(b)|((uint32_t)d8ps_u16(b+2)<<16);
     uint32_t length=(uint32_t)d8ps_u16(b+4)|((uint32_t)d8ps_u16(b+6)<<16);
     if(length!=n||magic<PROJ_MAGIC_V1||magic>PROJ_MAGIC)return 0;
+    /* Canonicalize the whole object, including trailing padding, even when
+     * caller workspace previously held unrelated data. */
+    memset(workspace,0,sizeof *workspace);
     project_t *q=&workspace->project;d8p1_arrangement *a=&workspace->arrangement;
     if(!proj_import_any(q,data,(int)n)||!proj_engines_ok(q))return 0;
     d8p1_legacy_report result;memset(&result,0,sizeof result);memset(result.scene_for_project,255,4);
@@ -222,7 +225,7 @@ static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *works
     for(unsigned i=0;i<a->rows;i++){a->row[i].scene=result.scene_for_project[q->chain.row[i].slot];a->row[i].repeat=q->chain.row[i].repeat;}
     chain_defaults(&q->chain);q->parts=8;q->phys=2;q->rsv=0;q->magic=PROJ_MAGIC;q->size=sizeof *q;q->sum=proj_sum(q);
     if(!d8ps_valid(workspace))return 0;
-    *out=*workspace;*report=result;return 1;
+    memcpy(out,workspace,sizeof *out);*report=result;return 1;
 }
 
 #endif

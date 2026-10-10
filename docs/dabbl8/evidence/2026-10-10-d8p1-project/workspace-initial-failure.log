@@ -1,0 +1,15 @@
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+FAIL: all native fields and new arrangement semantics survive round trip
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 18193 checks, 13 failures; staged state only, no runtime/flash adoption

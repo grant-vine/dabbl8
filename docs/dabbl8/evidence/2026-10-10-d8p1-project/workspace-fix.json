@@ -1,0 +1,17 @@
+{
+  "result": "targeted PASS; final integrated repeat pending",
+  "reason": "pre-filled caller workspace reproduced 13 native-state round-trip failures from trailing padding; whole workspace zeroing and explicit object copy make staging canonical",
+  "adapter_checks_each_mode": 18193,
+  "tested_source_hashes": {
+    "firmware/src/d8p1_project.h": "64c540b8c5263d0abbdd3fd2dffd7f9c899bac250b573ab3a3ab79ce4b143fad",
+    "tests/d8p1_project_test.c": "2f89388c3e73b1f9bcf2470602b0003f6e5ab155183d78743ed2649c3272f6e0"
+  },
+  "native_target": {
+    "result": "PASS",
+    "target_staged_state_bytes": 9536,
+    "IR_sha256": "f1b87f0866495306a402f1fecea520bf33478662bef7d9b5d78067acd012da01",
+    "scope": "eight-track native adapter compiler IR only; no target linking, arena/cache adoption, stack/timing or physical proof"
+  },
+  "previous_integrated_head": "656d6281ed289e5dc55a4158f44842a59fc6eccd",
+  "scope": "staging initialization only; no target link/adoption/flash"
+}
