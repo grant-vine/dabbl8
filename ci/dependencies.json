@@ -1,0 +1,15 @@
+{
+  "python": "3.14.8",
+  "pillow": "12.3.0",
+  "fonttools": "4.66.1",
+  "node": "26.11.0",
+  "host_clang_package": "1:18.1.3-1",
+  "toolchain_url": "https://jl-update.oss-cn-shenzhen.aliyuncs.com/jieli-linux-toolchains-20250324.1.tar.xz",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "toolchain_directory": "jieli-linux-toolchains-20250324.1",
+  "sdk_url": "https://gitee.com/Jieli-Tech/fw-AC79_AIoT_SDK.git",
+  "sdk_tag": "AC79NN_SDK_V1.2.1_2023-12-13",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "container": "mirror.gcr.io/library/debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "container_origin": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+}

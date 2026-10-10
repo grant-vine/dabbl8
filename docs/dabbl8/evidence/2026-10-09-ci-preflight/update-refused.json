@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "time_utc": "2026-10-09T20:57:20.885322+00:00",
+  "host": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+  "checks": [
+    {
+      "name": "preflight",
+      "status": "FAIL",
+      "reason": "Baseline rewriting flag refused"
+    }
+  ],
+  "skips": [
+    {
+      "name": "build-and-host",
+      "reason": "Failed preflight"
+    }
+  ],
+  "artifacts": {
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "dependency_lock": {
+    "python": "3.14.8",
+    "pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "node": "26.11.0",
+    "host_clang_package": "1:18.1.3-1",
+    "toolchain_url": "https://pkgman.jieliapp.com/s/linux-toolchain",
+    "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "toolchain_directory": "jieli-linux-toolchains-20250324.1",
+    "sdk_url": "https://gitee.com/Jieli-Tech/fw-AC79_AIoT_SDK.git",
+    "sdk_tag": "AC79NN_SDK_V1.2.1_2023-12-13",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "hardware": {
+    "status": "SKIP",
+    "reason": "No physical device qualification or flashing authorized"
+  },
+  "source": {
+    "exit_code": 0,
+    "output": "981262a91b924db3aa2ad0a481d8dc7da75bd5c3"
+  },
+  "worktree_status": {
+    "exit_code": 0,
+    "output": "?? .github/workflows/\n?? ci/\n?? docs/dabbl8/ci-evidence.md"
+  },
+  "versions": {
+    "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+    "node": {
+      "exit_code": 0,
+      "output": "v26.11.0"
+    },
+    "host_compiler": {
+      "exit_code": 0,
+      "output": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin"
+    },
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1"
+  },
+  "sdk_commit": {
+    "exit_code": null,
+    "output": "AC79_SDK absent"
+  },
+  "container_inspect": {
+    "exit_code": 0,
+    "output": "[\"debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587\"]"
+  },
+  "python_dependencies": {
+    "exit_code": 0,
+    "output": "fonttools==4.66.1\npillow==12.3.0"
+  },
+  "host_packages": {
+    "exit_code": null,
+    "output": "Not Debian/Ubuntu: package inventory unavailable"
+  },
+  "result": "FAIL"
+}

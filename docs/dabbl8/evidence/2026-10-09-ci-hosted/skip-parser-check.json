@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "checks_omitted": [
+    "mod: cost: no instruction counter on this host (proc_pid_rusage), skipped",
+    "slicer: cost: no instruction counter on this host",
+    "perform: cost: no instruction counter on this host",
+    "reverb: cost: no instruction counter on this host",
+    "regress: CPU: no instruction counter on this host (proc_pid_rusage); the budget is not checked",
+    "phys_test: cost: no instruction counter on this host (proc_pid_rusage); not checked",
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "drum_test: cost: no instruction counter on this host (proc_pid_rusage); not measured",
+    "noise: cost: no instruction counter on this host (proc_pid_rusage); not measured",
+    "fm6: cost: no instruction counter on this host (proc_pid_rusage); not measured",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "counter_omissions": 9,
+  "behavioral_skips_not_misclassified": true
+}
