@@ -1,0 +1,10 @@
+Source base a686c29a7acb298ed38ab85b486e7a7b6c7f2b5f; isolated branch dabbl8/native-output-queue-gate.
+Queue, queue-tone (-DFELUCCA_UAC_TONE=1), quiet, tails and physical compile:
+cc -O2 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/<fixture>.c -lm -o <private>/<name>
+Inherited SAN flags: -O1 -g -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined -w
+ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1
+Existing tests/audio_test.c -O2 and tests/uac_test.c -O2 -DT_CDC=1 -DHALF_FRAMES=128; USB repeated with -DNTRK=8.
+Pinned tools/build.py build_app/check default CFLAGS then -DNPART=8, separate build/output-queue-{4,8}; no loader/package/release build. Target4 hash assertion against exact existing default.
+Private wave-verify.py uses git archive exact parent, compiles actual UI/DSP/audio.c for parent/current and records 1200 CTL blocks of final DAC and USB-tap int32 samples. Includes all8 track note transitions, DIST/sends, changing solo, LOWCUT/BASS+, click, fixed USB gain; no golden rewrite.
+sh -n tests/run_tests.sh; git diff --check.
+Full-suite/new-head CI and device tests not run in this parallel lane.

@@ -1,0 +1,189 @@
+df_stopped:
+ 200cfa2:    7a 04             	[--sp] = {rets, r10-r4}
+ 200cfa4:    c6 ff c0 d2 c1 01 	r6 = 29479616 <shed_req : 1c1d2c0 >
+ 200cfaa:    05 d6             	r5 = r0  #
+ 200cfac:    69 42             		 r1 = b[r6+2] (u)
+ 200cfae:    44 20             	r4 = 0
+ 200cfb0:    01 49             	if (r1 == 0) goto 18 <df_stopped+0x22 : 200cfc4 >
+ 200cfb2:    50 ee 60 06       	r0 = b[r6+96] (u)
+ 200cfb6:    50 e8 05 02       	if ((r0 & 1) != 0) goto 10 <df_stopped+0x22 : 200cfc4 >
+ 200cfba:    bf ea 22 e1       	call -15804 <transport_busy : 2009202 >
+ 200cfbe:    80 42             	if (r0 != 0) goto 4 <df_stopped+0x22 : 200cfc4 >
+ 200cfc0:    68 41             	r0 = b[r6+1] (u)
+ 200cfc2:    00 42             	if (r0 == 0) goto 4 <df_stopped+0x26 : 200cfc8 >
+ 200cfc4:    40 16             	r0 = r4
+ 200cfc6:    5a 04             	{pc, r10-r4} = [sp++]
+ 200cfc8:    05 f8 c9 00       	if (r5 == 0) goto 402 <df_stopped+0x1BC : 200d15e >
+ 200cfcc:    bf ea c6 ff       	call -116 <autosave_quiet : 200cf5c >
+ 200cfd0:    70 59             	if (r0 == 0) goto -14 <df_stopped+0x22 : 200cfc4 >
+ 200cfd2:    c0 ff c0 d4 c1 01 	r0 = 29480128 <clk.1 : 1c1d4c0 >
+ 200cfd8:    d0 ec 04 1e       	r1 = [r0+228]
+ 200cfdc:    f1 53             	if (r1 != 0) goto -26 <df_stopped+0x22 : 200cfc4 >
+ 200cfde:    d0 ec 08 1e       	r1 = [r0+232]
+ 200cfe2:    f1 50             	if (r1 != 0) goto -32 <df_stopped+0x22 : 200cfc4 >
+ 200cfe4:    d0 ec 0c 1e       	r1 = [r0+236]
+ 200cfe8:    f1 4d             	if (r1 != 0) goto -38 <df_stopped+0x22 : 200cfc4 >
+ 200cfea:    d0 ec 00 8f       	r8 = [r0+240]
+ 200cfee:    63 16             	r3 = r6
+ 200cff0:    d1 ec 32 9e       	r9 = [++r3=480]
+ 200cff4:    01 f1 e4 60       	r1 = r6 + 228  #
+ 200cff8:    37 63             		 r7 = [r3+12] 
+ 200cffa:    07 fc e3 7f       	if (r7 > 63) goto -58 <df_stopped+0x22 : 200cfc4 >
+ 200cffe:    45 f0 00 f0       	r5 = -4096  # <_data_load+0xFFFFFFFFFDF8F560 : fffffffffffff000 >
+ 200d002:    17 61             		 r7 = [r1+4] 
+ 200d004:    12 63             	r2 = [r1+12] 
+ 200d006:    72 d9             	r2 |= r7  #
+ 200d008:    37 61             		 r7 = [r3+4] 
+ 200d00a:    90 f1 22 a5       	r10 = r2 & r5  #
+ 200d00e:    33 62             		 r3 = [r3+8] 
+ 200d010:    90 f1 90 58       	r5 = r9 | r8  #
+ 200d014:    12 62             		 r2 = [r1+8] 
+ 200d016:    90 f1 50 87       	r8 = r5 | r7  #
+ 200d01a:    17 60             		 r7 = [r1+0] 
+ 200d01c:    90 f1 30 38       	r3 = r3 | r8  #
+ 200d020:    15 64             		 r5 = [r1+16] 
+ 200d022:    73 d9             	r3 |= r7  #
+ 200d024:    17 67             		 r7 = [r1+28] 
+ 200d026:    32 d9             	r2 |= r3  #
+ 200d028:    13 65             		 r3 = [r1+20] 
+ 200d02a:    52 d9             	r2 |= r5  #
+ 200d02c:    15 66             		 r5 = [r1+24] 
+ 200d02e:    90 e1 20 2a       	r2 = r2 | r10
+ 200d032:    32 d9             	r2 |= r3  #
+ 200d034:    13 68             		 r3 = [r1+32] 
+ 200d036:    52 d9             	r2 |= r5  #
+ 200d038:    15 69             		 r5 = [r1+36] 
+ 200d03a:    90 f1 20 87       	r8 = r2 | r7  #
+ 200d03e:    17 6a             		 r7 = [r1+40] 
+ 200d040:    90 f1 30 38       	r3 = r3 | r8  #
+ 200d044:    12 6b             		 r2 = [r1+44] 
+ 200d046:    53 d9             	r3 |= r5  #
+ 200d048:    15 6d             		 r5 = [r1+52] 
+ 200d04a:    73 d9             	r3 |= r7  #
+ 200d04c:    17 6e             		 r7 = [r1+56] 
+ 200d04e:    32 d9             	r2 |= r3  #
+ 200d050:    13 6c             		 r3 = [r1+48] 
+ 200d052:    32 d9             	r2 |= r3  #
+ 200d054:    11 6f             		 r1 = [r1+60] 
+ 200d056:    52 19             	r2 |= r5
+ 200d058:    72 19             	r2 |= r7
+ 200d05a:    21 19             	r1 |= r2
+ 200d05c:    d1 53             	if (r1 != 0) goto -154 <df_stopped+0x22 : 200cfc4 >
+ 200d05e:    69 4c             	r1 = b[r6+12] (u)
+ 200d060:    d1 51             	if (r1 != 0) goto -158 <df_stopped+0x22 : 200cfc4 >
+ 200d062:    01 62             	r1 = [r0+8] 
+ 200d064:    d1 4f             	if (r1 != 0) goto -162 <df_stopped+0x22 : 200cfc4 >
+ 200d066:    41 20             	r1 = 0
+ 200d068:    02 e1 14 01       	r2 = r0 + 276
+ 200d06c:    d8 ec 2a 21       	r2 = [r2+r1<<2]
+ 200d070:    d2 49             	if (r2 != 0) goto -174 <df_stopped+0x22 : 200cfc4 >
+ 200d072:    02 e1 f4 00       	r2 = r0 + 244
+ 200d076:    d8 ec 2a 21       	r2 = [r2+r1<<2]
+ 200d07a:    02 fc a3 3f       	if (r2 > 31) goto -186 <df_stopped+0x22 : 200cfc4 >
+ 200d07e:    c1 21             	r1 += 1
+ 200d080:    81 f9 f2 09       	if (r1 < 4) goto -28 <df_stopped+0xC6 : 200d068 >
+ 200d084:    c5 ff 44 89 c0 01 	r5 = 29395268 <trk : 1c08944 >
+ 200d08a:    01 e1 bc 56       	r1 = r5 + 1724
+ 200d08e:    42 20             	r2 = 0
+ 200d090:    1b 40             	r3 = b[r1+0] (u)
+ 200d092:    03 46             	if (r3 == 0) goto 12 <df_stopped+0xFE : 200d0a0 >
+ 200d094:    13 7d             	r3 = [r1+-12] 
+ 200d096:    c3 56             	if (r3 != 0) goto -212 <df_stopped+0x22 : 200cfc4 >
+ 200d098:    13 7e             	r3 = [r1+-8] 
+ 200d09a:    c3 54             	if (r3 != 0) goto -216 <df_stopped+0x22 : 200cfc4 >
+ 200d09c:    13 7f             	r3 = [r1+-4] 
+ 200d09e:    c3 52             	if (r3 != 0) goto -220 <df_stopped+0x22 : 200cfc4 >
+ 200d0a0:    c2 21             	r2 += 1
+ 200d0a2:    01 e1 ec 16       	r1 = r1 + 1772
+ 200d0a6:    82 f9 f3 11       	if (r2 < 8) goto -26 <df_stopped+0xEE : 200d090 >
+ 200d0aa:    50 ee 65 13       	r1 = b[r6+53] (u)
+ 200d0ae:    c1 4a             	if (r1 != 0) goto -236 <df_stopped+0x22 : 200cfc4 >
+ 200d0b0:    50 ee 66 13       	r1 = b[r6+54] (u)
+ 200d0b4:    c1 47             	if (r1 != 0) goto -242 <df_stopped+0x22 : 200cfc4 >
+ 200d0b6:    d0 ec 08 1c       	r1 = [r0+200]
+ 200d0ba:    c1 44             	if (r1 != 0) goto -248 <df_stopped+0x22 : 200cfc4 >
+ 200d0bc:    d0 ec 0c 1c       	r1 = [r0+204]
+ 200d0c0:    c1 41             	if (r1 != 0) goto -254 <df_stopped+0x22 : 200cfc4 >
+ 200d0c2:    50 ee 00 1d       	r1 = b[r0+208] (u)
+ 200d0c6:    81 f8 7d 01       	if (r1 != 0) goto -262 <df_stopped+0x22 : 200cfc4 >
+ 200d0ca:    50 ee 01 0d       	r0 = b[r0+209] (u)
+ 200d0ce:    80 f8 79 01       	if (r0 != 0) goto -270 <df_stopped+0x22 : 200cfc4 >
+ 200d0d2:    c0 ff 90 d8 c1 01 	r0 = 29481104 <mod : 1c1d890 >
+ 200d0d8:    d1 ec 08 06       	r0 = [r0+360]
+ 200d0dc:    80 f8 72 01       	if (r0 != 0) goto -284 <df_stopped+0x22 : 200cfc4 >
+ 200d0e0:    d0 ec 68 09       	r0 = [r6+152]
+ 200d0e4:    d0 ec 64 19       	r1 = [r6+148]
+ 200d0e8:    81 e8 6c 01       	if (r0 != r1) goto -296 <df_stopped+0x22 : 200cfc4 >
+ 200d0ec:    68 48             	r0 = b[r6+8] (u)
+ 200d0ee:    80 f8 69 01       	if (r0 != 0) goto -302 <df_stopped+0x22 : 200cfc4 >
+ 200d0f2:    d0 ec 64 0c       	r0 = [r6+196]
+ 200d0f6:    80 f8 65 01       	if (r0 != 0) goto -310 <df_stopped+0x22 : 200cfc4 >
+ 200d0fa:    d0 ec 6c 0b       	r0 = [r6+188]
+ 200d0fe:    80 f8 61 01       	if (r0 != 0) goto -318 <df_stopped+0x22 : 200cfc4 >
+ 200d102:    d0 ec 6c 0d       	r0 = [r6+220]
+ 200d106:    80 f8 5d 01       	if (r0 != 0) goto -326 <df_stopped+0x22 : 200cfc4 >
+ 200d10a:    c0 ff 20 80 c0 01 	r0 = 29392928 <last_note : 1c08020 >
+ 200d110:    50 ee 01 14       	r1 = b[r0+65] (u)
+ 200d114:    81 f8 56 25       	if (r1 != 18) goto -340 <df_stopped+0x22 : 200cfc4 >
+ 200d118:    50 ee 0c 13       	r1 = b[r0+60] (u)
+ 200d11c:    81 f8 52 01       	if (r1 != 0) goto -348 <df_stopped+0x22 : 200cfc4 >
+ 200d120:    d0 ec 08 18       	r1 = [r0+136]
+ 200d124:    d0 ec 0c 08       	r0 = [r0+140]
+ 200d128:    10 19             	r0 |= r1
+ 200d12a:    80 f8 4b 01       	if (r0 != 0) goto -362 <df_stopped+0x22 : 200cfc4 >
+ 200d12e:    46 e0 8c 03       	r6 = 908 <build/output-queue-8/felucca_size.ll+0x38C : 38c >
+ 200d132:    47 20             	r7 = 0
+ 200d134:    50 ed 5a 05       	r0 = h[r5+90] (u)
+ 200d138:    00 f8 44 05       	if (r0 == 2) goto -376 <df_stopped+0x22 : 200cfc4 >
+ 200d13c:    50 16             	r0 = r5
+ 200d13e:    bf ea bf bd       	call -33922 <slicer_busy : 2004cc0 >
+ 200d142:    80 f8 3f 01       	if (r0 != 0) goto -386 <df_stopped+0x22 : 200cfc4 >
+ 200d146:    50 ed 52 02       	r0 = h[r5+34] (u)
+ 200d14a:    00 44             	if (r0 == 0) goto 8 <df_stopped+0x1B2 : 200d154 >
+ 200d14c:    d8 ee 50 06       	r0 = b[r5+r6] (u)
+ 200d150:    80 f8 38 01       	if (r0 != 0) goto -400 <df_stopped+0x22 : 200cfc4 >
+ 200d154:    c7 21             	r7 += 1
+ 200d156:    05 e1 ec 56       	r5 = r5 + 1772
+ 200d15a:    87 f9 eb 11       	if (r7 < 8) goto -42 <df_stopped+0x192 : 200d134 >
+ 200d15e:    44 21             	r4 = 1
+ 200d160:    97 91             	goto -414 <df_stopped+0x22 : 200cfc4 >
+
+
+
+df_erase:
+ 200d1ee:    74 04             	[--sp] = {rets, r4}
+ 200d1f0:    60 00             	cli
+ 200d1f2:    14 16             	r4 = r1
+ 200d1f4:    bf ea d5 fe       	call -598 <df_stopped : 200cfa2 >
+ 200d1f8:    30 e8 00 20       	if (r0 == 0) {
+ 200d1fc:    10 3f             		r0 = -1
+                               	} else {
+ 200d1fe:    40 16             		r0 = r4
+ 200d200:    bf ea c3 ff       		call -122
+                               	} <st_erase : 200d18a >
+ 200d204:    20 00             	csync
+ 200d206:    61 00             	sti
+ 200d208:    54 04             	{pc, r4} = [sp++]
+
+
+
+df_program:
+ 200d298:    76 04             	[--sp] = {rets, r6-r4}
+ 200d29a:    60 00             	cli
+ 200d29c:    34 16             	r4 = r3
+ 200d29e:    25 16             	r5 = r2
+ 200d2a0:    16 16             	r6 = r1
+ 200d2a2:    bf ea 7e fe       	call -772 <df_stopped : 200cfa2 >
+ 200d2a6:    00 46             	if (r0 == 0) goto 12 <df_program+0x1C : 200d2b4 >
+ 200d2a8:    60 16             	r0 = r6
+ 200d2aa:    51 16             	r1 = r5
+ 200d2ac:    42 16             	r2 = r4
+ 200d2ae:    bf ea d1 ff       	call -94 <st_prog : 200d254 >
+ 200d2b2:    04 81             	goto 2 <df_program+0x1E : 200d2b6 >
+ 200d2b4:    10 3f             	r0 = -1
+ 200d2b6:    20 00             	csync
+ 200d2b8:    61 00             	sti
+ 200d2ba:    56 04             	{pc, r6-r4} = [sp++]
+
+
+

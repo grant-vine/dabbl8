@@ -1,0 +1,2 @@
+line 85: nest_calls>=200&&uq.ring&&!uac_output_quiet()
+Native output queues: 249563 checks, 1 failures; 1444 real audio/UAC full-buffer oracles, 7 queue states x 29 late mutation cuts plus postcommit restore; simulated controller, no physical pipeline/timing claim
