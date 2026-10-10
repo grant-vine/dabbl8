@@ -36,15 +36,11 @@ int d8p1_load_runtime(const void *raw, size_t n, unsigned available_projects)
     return D8RT_OK;
 }
 
-/* Stopped, coherent native snapshot. Out/written are caller-owned and may not
- * alias the arena, except out may be exactly its pre-borrowed wire member.
- * A historical nonempty slot chain refuses rather than losing its meaning.
- * No flash writes or device backup protocol are performed here. */
-int d8p1_capture_runtime(uint8_t *out, size_t capacity, size_t *written)
+/* Shared coherent structured capture. Main-loop entry with interrupts enabled;
+ * borrowing fences LCD DMA, then rechecks transport under the existing IRQ guard.
+ * Wire encoding/validation belongs to each caller; no snapshot survives drawing. */
+static int d8p1_capture_state_runtime(void)
 {
-    if (!out || !written || d8ps_overlap(written,sizeof *written,&main_workspace,sizeof main_workspace) ||
-        (out != main_workspace.d8p1.wire && d8ps_overlap(out,capacity,&main_workspace,sizeof main_workspace)))
-        return D8RT_BAD;
     if (cv_cpu_active || transport_busy() || transport_req) return D8RT_BUSY;
     d8p1_stage_workspace *stage=main_d8p1_workspace();
     fm1_irq_off();
@@ -58,6 +54,21 @@ int d8p1_capture_runtime(uint8_t *out, size_t capacity, size_t *written)
     else
         memset(&stage->state.arrangement,0,sizeof stage->state.arrangement);
     fm1_irq_on();
+    return D8RT_OK;
+}
+
+/* Stopped, coherent native snapshot. Out/written are caller-owned and may not
+ * alias the arena, except out may be exactly its pre-borrowed wire member.
+ * A historical nonempty slot chain refuses rather than losing its meaning.
+ * No flash writes or device backup protocol are performed here. */
+int d8p1_capture_runtime(uint8_t *out, size_t capacity, size_t *written)
+{
+    if (!out || !written || d8ps_overlap(written,sizeof *written,&main_workspace,sizeof main_workspace) ||
+        (out != main_workspace.d8p1.wire && d8ps_overlap(out,capacity,&main_workspace,sizeof main_workspace)))
+        return D8RT_BAD;
+    int rc=d8p1_capture_state_runtime();
+    if (rc) return rc;
+    d8p1_stage_workspace *stage=&main_workspace.d8p1;
     return d8p1_project_encode(out,capacity,written,&stage->state) ? D8RT_OK : D8RT_BAD;
 }
 
@@ -72,8 +83,11 @@ int d8p1_signature_runtime(uint32_t *signature)
         return D8RT_BAD;
     d8p1_stage_workspace *stage=&main_workspace.d8p1;
     size_t n=0;
-    int rc=d8p1_capture_runtime(stage->wire,sizeof stage->wire,&n);
+    int rc=d8p1_capture_state_runtime();
     if(rc)return rc;
+    /* Validate before normalizing: an invalid selected track must still refuse.
+     * This preserves capture's native-state refusals without the first wire CRC. */
+    if(!d8ps_valid(&stage->state))return D8RT_BAD;
     stage->state.project.sel=0;
     stage->state.project.g[G_SLOT]=stage->state.project.g[G_NAME]=
         stage->state.project.g[G_LOAD]=stage->state.project.g[G_SAVE]=0;
