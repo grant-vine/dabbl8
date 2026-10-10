@@ -149,7 +149,7 @@ static void menu_dots(void);
 /* the menu's header (0..24): its icon and title, the REC mark, the way back (the tabs: HOME CLOSE before the dots) */
 static void menu_head(void)
 {
-    cv_begin(240, H_HEAD, T_BG);
+    CV_DRAW_BEGIN(240, H_HEAD, T_BG);
     GFX_HOOK_ALIGN(0, HEAD_MY + AF_M_CAP_Y, 0, HEAD_MY + AF_M_CAP_Y + AF_M_CAP_H, AL_V, "header icon on its title's line");
     cv_icon_mid(8, H_HEAD / 2, 16, ui.menu == 2 ? ICON_X_INFO : ICON_X_COG, T_THEME, T_BG);   /* (as draw_head's) */
     GFX_HOOK_ALIGN(0, 0, 0, H_HEAD, AL_V, "header text on its middle");
@@ -350,7 +350,7 @@ static void draw_menu(void)
           (ui.menu == 2 ? ui.menu_scroll * 48611u : 0u);
     if (!ui.force && sig == ui.menu_sig) {
         if (ui.menu == 1 && mt.pos != pos0) {          /* only the tabs slid: their strip */
-            cv_begin(240, MP_Y - H_HEAD, T_BG);
+            CV_DRAW_BEGIN(240, MP_Y - H_HEAD, T_BG);
             cv_oy = -H_HEAD;
             menu_tabs();
             cv_oy = 0;
@@ -365,7 +365,7 @@ static void draw_menu(void)
         int32_t thumb = MENU_DOC_H * MENU_DOC_H / (max + MENU_DOC_H);
         if (thumb < 12) thumb = 12;
         for (pass = 0; pass < 2u; pass++) {
-            cv_begin(240, pass ? MENU_DOC_H - 124u : 124u, T_BG);
+            CV_DRAW_BEGIN(240, pass ? MENU_DOC_H - 124u : 124u, T_BG);
             cv_oy = pass ? -124 : 0;
             cv_scroll = 1;
             menu_document(-scroll, 1);
@@ -375,7 +375,7 @@ static void draw_menu(void)
             cv_oy = 0;
             cv_blit(0, H_HEAD + pass * 124u);
         }
-        cv_begin(240, 240 - (H_HEAD + MENU_DOC_H), T_BG);
+        CV_DRAW_BEGIN(240, 240 - (H_HEAD + MENU_DOC_H), T_BG);
         cv_key_hint(8, 4, KC_PRESETS, "SCROLL", 1, T_BG);
         cv_blit(0, H_HEAD + MENU_DOC_H);
         return;
@@ -385,7 +385,7 @@ static void draw_menu(void)
     split = menu_split(n);
     for (pass = 0; pass < 2u; pass++) {
         int32_t top_y = pass ? (int32_t)split : H_HEAD;
-        cv_begin(240, pass ? 240u - split : split - H_HEAD, T_BG);
+        CV_DRAW_BEGIN(240, pass ? 240u - split : split - H_HEAD, T_BG);
         cv_oy = -top_y;                               /* drawn in screen rows */
         if (!pass)
             menu_tabs();

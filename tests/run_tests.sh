@@ -250,6 +250,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "pre-migration quarantine: actual boot, application writers, binding and read-only capture" "$OUT/instrument_write_quarantine_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_preflight_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_migration_preflight_test.c -lm
     run "readonly migration staging: complete native set and exclusive LCD arena" "$OUT/native_migration_preflight_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/competing_workspace_callers_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/competing_workspace_callers_test.c -lm
+    run "checked historical/editor/drawing callers preserve competing arena ownership" "$OUT/competing_workspace_callers_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
@@ -476,6 +478,8 @@ else
     run "ASan/UBSan: actual pre-migration application write quarantine" "$A/instrument_write_quarantine_test"
     $SCC -o "$A/native_migration_preflight_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_migration_preflight_test.c -lm
     run "ASan/UBSan: complete migration preflight and exclusive LCD arena" "$A/native_migration_preflight_test"
+    $SCC -o "$A/competing_workspace_callers_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/competing_workspace_callers_test.c -lm
+    run "ASan/UBSan: checked actual historical/editor/boot/drawing caller refusals" "$A/competing_workspace_callers_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"

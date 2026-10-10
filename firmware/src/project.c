@@ -663,8 +663,10 @@ static void proj_legacy_drums(track_t *t)
 
 #if NPART >= NVOICE
 #define proj_scratch (*main_project_workspace())
+#define project_work_try() main_project_workspace_try()
 #else
 static project_t proj_scratch;              /* decoded main-loop work, never audio ISR */
+#define project_work_try() (&proj_scratch)
 #endif
 static char proj_name[PROJ_NAME_LEN + 1u]    /* the name of the music as it is now (loaded, saved, the editor's */
     __attribute__((section(".pool")));       /* runtime restore); "" = none. A save takes it unless one is given */
@@ -789,20 +791,40 @@ static void proj_bound(project_t *q)
 
 #if FELUCCA_FLASH
 /* slot from flash into RAM (format 7, or format 6 / 5 / 4 / 3 / 2 / 1 converted) */
-static void proj_fetch(uint32_t slot)
+#if NPART >= NVOICE
+static void proj_fetch_work(uint32_t slot,project_t *p)
 {
     project_store_t *q = &proj_slot[slot & 3u];
     int n;
     proj_wire_gen++;
     n = st_load(OBJ_PROJECT0 + (slot & 3u), &proj_wire, sizeof proj_wire);
-    if (!proj_import(&proj_scratch, &proj_wire, n))
+    if (!proj_import(p, &proj_wire, n))
         memset(q->raw, 0, 4);
     else {
-        proj_bound(&proj_scratch);
-        if (!proj_pack(q, &proj_scratch))
+        proj_bound(p);
+        if (!proj_pack(q, p))
             memset(q->raw, 0, 4);
     }
 }
+static void proj_fetch(uint32_t slot){project_t *p=project_work_try();if(p)proj_fetch_work(slot,p);}
+#else
+static void proj_fetch(uint32_t slot)
+{
+    project_t *p=project_work_try();
+    if(!p)return;
+    project_store_t *q = &proj_slot[slot & 3u];
+    int n;
+    proj_wire_gen++;
+    n = st_load(OBJ_PROJECT0 + (slot & 3u), &proj_wire, sizeof proj_wire);
+    if (!proj_import(p, &proj_wire, n))
+        memset(q->raw, 0, 4);
+    else {
+        proj_bound(p);
+        if (!proj_pack(q, p))
+            memset(q->raw, 0, 4);
+    }
+}
+#endif
 #endif
 
 static void project_capture(project_t *p)
@@ -877,17 +899,23 @@ static void project_cur_name(char *b) { str_cpy(b, proj_name, PROJ_NAME_LEN + 1u
 static int project_name(uint32_t slot, char *b)
 {
 #if NPART >= NVOICE
-    b[0]=0;if(slot>=3)return 0;
+    if(cv_cpu_active||migration_owner)return -D8POOL_BUSY;
+    if(slot>=3){b[0]=0;return 0;}
     if(project_native.mode) {
+        b[0]=0;
         if(!project_native.ready)return 0;
         memcpy(b,project_native.catalog.name[slot],13);
         return (project_native.catalog.present>>slot)&1u;
     }
 #endif
+    project_t *p=project_work_try();
+#if NPART >= NVOICE
+    if(!p)return -D8POOL_BUSY;
+#endif
     b[0] = 0;
-    if (!proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t)))
+    if (!proj_import(p, &proj_slot[slot & 3u], sizeof(project_store_t)))
         return 0;
-    proj_name_get(b, (const uint8_t *)proj_scratch.name);
+    proj_name_get(b, (const uint8_t *)p->name);
     return 1;
 }
 
@@ -940,9 +968,20 @@ static int project_restore_runtime_mode(const project_t *input, int require_stop
 static int project_restore_runtime(const project_t *input)
 #endif
 {
-    project_t *p = &proj_scratch;
     uint32_t i, k;
     if (!proj_ok(input) || !proj_engines_ok(input)) return 1;
+#if NPART >= NVOICE
+    /* Already-decoded arena input has completed its LCD fence. Do not open a
+     * second nested acquisition after the caller has staged its wire/cache. */
+    project_t *p;
+    if(input==&main_workspace.project&&!cv_canvas_valid) {
+        if(cv_cpu_active||migration_owner)return 2;
+        p=&main_workspace.project;
+    } else p=project_work_try();
+    if(!p)return 2;
+#else
+    project_t *p=&proj_scratch;
+#endif
     if (p != input) memcpy(p, input, sizeof *p);
     proj_drums_to_part(p);                              /* a RAM slot of firmware before 1.0 */
     proj_phys(p);                                       /* .. before PHYS lost DUST and DRUM */
@@ -1040,6 +1079,26 @@ static int project_restore_runtime(const project_t *input)
     return project_restore_runtime_mode(input, 0);
 }
 #endif
+#if NPART >= NVOICE
+static int project_load(uint32_t slot)
+{
+#if NPART >= NVOICE
+    if(slot>=3) { return pn_result(D8POOL_INVALID,""); }
+    if(project_native.mode) { return pn_action(1,slot,NULL); }
+#endif
+    project_t *p=project_work_try();
+    if(!p){ui_message("WORKSPACE BUSY");return D8POOL_BUSY;}
+#if FELUCCA_FLASH
+    if (flash_ok && !proj_import(p, &proj_slot[slot & 3u], sizeof(project_store_t))) proj_fetch_work(slot,p);
+#endif
+    if (!proj_import(p, &proj_slot[slot & 3u], sizeof(project_store_t))) { ui_message("EMPTY SLOT"); return 1; }
+    proj_bound(p);                          /* a retained RAM slot of an older format: as from flash */
+    int rc=project_restore_runtime(p);
+    if(!rc)proj_cur=(uint8_t)(slot&3u);
+    return rc;
+}
+
+#else
 static void project_load(uint32_t slot)
 {
 #if NPART >= NVOICE
@@ -1055,6 +1114,8 @@ static void project_load(uint32_t slot)
         proj_cur = (uint8_t)(slot & 3u);
 }
 
+#endif
+
 /* settings + learned panel table: one flash object. The flash copy wins at
  * boot (the .noinit copies are garbage after a power-off). */
 #include "settings_persist.c"
@@ -1069,6 +1130,10 @@ static uint32_t persist_retry_ms;
 
 static void persist_boot(void)                    /* before settings_init / panel_init */
 {
+#if NPART >= NVOICE
+    project_t *boot_work=project_work_try();
+    if(!boot_work)return;
+#endif
 #if FELUCCA_FLASH
     persist_t p;
     uint32_t f = irq_save();
@@ -1094,8 +1159,16 @@ static void persist_boot(void)                    /* before settings_init / pane
     {   /* projects: fill empty RAM slots from flash, so the slot list is right after power-on */
         uint32_t i;
         for (i = 0; i < 4u; i++)
+#if NPART >= NVOICE
+            if (!proj_import(boot_work, &proj_slot[i], sizeof(project_store_t)))
+#else
             if (!proj_import(&proj_scratch, &proj_slot[i], sizeof(project_store_t)))
+#endif
+#if NPART >= NVOICE
+                proj_fetch_work(i,boot_work);
+#else
                 proj_fetch(i);
+#endif
     }
     up_boot();                                     /* user presets */
 #endif
@@ -1103,10 +1176,15 @@ static void persist_boot(void)                    /* before settings_init / pane
 
 static int project_used(uint32_t slot) {
 #if NPART >= NVOICE
+    if(cv_cpu_active||migration_owner)return -D8POOL_BUSY;
     if(slot>=3)return 0;
     if(project_native.mode)return project_native.ready&&((project_native.catalog.present>>slot)&1u);
 #endif
-    return proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t));
+    project_t *p=project_work_try();
+#if NPART >= NVOICE
+    if(!p)return -D8POOL_BUSY;
+#endif
+    return proj_import(p, &proj_slot[slot & 3u], sizeof(project_store_t));
 }
 
 /* Main loop only: no flash access or copies when the ISR changes rows. */
@@ -1120,16 +1198,28 @@ static uint32_t chain_prepare(void)
         return 2;
     if (!chain_valid(&chain_config) || !chain_config.count)
         return 1;
+#if NPART >= NVOICE
+    project_t *work=project_work_try();
+    if(!work)return 2;
+#endif
     for (i = 0; i < chain_config.count; i++) {
         uint32_t s = chain_config.row[i].slot;
+#if NPART >= NVOICE
+        if(s>=PROJECT_UI_SLOTS||!proj_import(work,&proj_slot[s],sizeof(project_store_t)))return 3u+s;
+#else
         if (!project_used(s))
             return 3u + s;
+#endif
         used |= 1u << s;
     }
     chain.config = chain_config;
     for (i = 0; i < 4u; i++)
         if ((used >> i) & 1u) {
+#if NPART >= NVOICE
+            project_t *p=work;
+#else
             project_t *p = &proj_scratch;
+#endif
             if (!proj_import(p, &proj_slot[i], sizeof(project_store_t))) return 3u + i;
             chain.source[i].motion = p->motion;
             /* A song keeps its current instruments. Engine-specific motion from
@@ -1274,12 +1364,15 @@ static void autosave_hold(void) {
 static void autosave_poll(void)
 {
 #if NPART >= NVOICE
+    if(cv_cpu_active||migration_owner)return;
     if(project_native_owns_storage()) {
 #if FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST)
         (void)d8p1_autosave_session_poll();
 #endif
         return;
     }
+    project_t *as_work=project_work_try();
+    if(!as_work)return;
 #endif
 #if FELUCCA_FLASH
     uint32_t sig;
@@ -1297,9 +1390,19 @@ static void autosave_poll(void)
         return;
     as.last = fm1_ms;
     as.wrote = 1;
+#if NPART >= NVOICE
+    project_capture(as_work);
+#else
     project_capture(&proj_scratch);
+#endif
     proj_wire_gen++;
-    as.err = !proj_pack(&proj_wire, &proj_scratch) || st_save(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire) != 0;
+    as.err = !proj_pack(&proj_wire,
+#if NPART >= NVOICE
+        as_work
+#else
+        &proj_scratch
+#endif
+        ) || st_save(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire) != 0;
     if (!as.err) {
         as.saved = sig;
         as.writes++;
@@ -1312,6 +1415,10 @@ static void autosave_poll(void)
  * The music now (restored or not) is what is saved: nothing is written until it changes. 1 = restored */
 static int autosave_boot(int allowed)
 {
+#if NPART >= NVOICE
+    project_t *as_work=project_work_try();
+    if(!as_work)return D8POOL_BUSY;
+#endif
     int rc = 0;
 #if FELUCCA_FLASH
     if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)
@@ -1322,9 +1429,27 @@ static int autosave_boot(int allowed)
         int n;
         proj_wire_gen++;
         n = st_load(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire);
-        if (n > 0 && proj_import(&proj_scratch, &proj_wire, n)) {
-            proj_bound(&proj_scratch);
-            if (!project_restore_runtime(&proj_scratch)) {
+        if (n > 0 && proj_import(
+#if NPART >= NVOICE
+            as_work
+#else
+            &proj_scratch
+#endif
+            , &proj_wire, n)) {
+            proj_bound(
+#if NPART >= NVOICE
+                as_work
+#else
+                &proj_scratch
+#endif
+                );
+            if (!project_restore_runtime(
+#if NPART >= NVOICE
+                as_work
+#else
+                &proj_scratch
+#endif
+                )) {
                 ui_message("RESTORED");
                 rc = 1;
             }
