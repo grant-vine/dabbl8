@@ -1,0 +1,12 @@
+Host focused tests, each optimized and inherited sanitizer:
+cc -O2 -w -Ibuild/gen -Ifirmware/src -o <private-out>/<test> firmware/src/d8p1.c tests/<test>.c -lm
+<test>: native_signature_test, d8p1_runtime_test, native_signature_equivalence_test
+Sanitizers: -O1 -g -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined -w; ASAN_OPTIONS=detect_leaks=0
+
+Optional cost probe, from the matching pinned checkout:
+cc -O2 -w -Ibuild/gen -Ifirmware/src -o <private-out>/cost firmware/src/d8p1.c tests/native_signature_cost_probe.c -lm
+<private-out>/cost
+Exact parent extracted with git archive 268981e672ae41ee12d96996a14b9f7e60437104 and matching generated headers; same algorithm/flags on changed source.
+
+Pinned target: tools/build.py build_app/check/mmio_check, separate build/signature-cost-opt-{4,8} OUT, unchanged CFLAGS then -DNPART=8; linux/amd64 pinned Debian/JieLi environment. Default app compared to immutable b69e74e... baseline hash. No loader/package rebuilding or install.
+Target instruction budgets: python3 tests/target_budget.py <linked-disassembly> (default PASS, native parent/changed inherited FAIL with identical complete output).
