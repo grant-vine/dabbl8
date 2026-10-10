@@ -29,3 +29,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Software voice cards](software-voice-cards.md): resource research, test matrix and standalone profile/project preflight; runtime exclusion and released variants remain gated.
 
 - [Selected three-project shared storage](three-project-shared-storage.md): three projects and one shared autosave, all samples retained, commit-last write spare; replaces the per-object A/B proposal for initial integration.
+
+- [Shared storage pool implementation and remaining migration gates](shared-storage-pool.md)

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "final-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "final-optimized",
+    "exit": 0
+  },
+  {
+    "name": "final-sanitizers-compile",
+    "exit": 0
+  },
+  {
+    "name": "final-sanitizers",
+    "exit": 0
+  },
+  {
+    "name": "target-and-default",
+    "exit": 1
+  },
+  {
+    "name": "target-and-default",
+    "exit": 1
+  },
+  {
+    "name": "target-and-default",
+    "exit": 0
+  },
+  {
+    "name": "full-upstream-suite",
+    "exit": 0
+  }
+]

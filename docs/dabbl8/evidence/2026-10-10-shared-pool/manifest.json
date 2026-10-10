@@ -1,0 +1,58 @@
+{
+  "source_base": "e904f9c46ae283d091fc7b22c3f6805d7a0190f3",
+  "baseline": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "source_hashes": {
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "firmware/src/d8pool.h": "ce008b58ca544dfbc867c77ce5f9b2b85a32a8779f714e91afba7787e4c9b1d1",
+    "tests/d8pool_test.c": "e1d49f1d041d33cb7402772ff22fe9393f381177436229cf078201674282214c",
+    "tests/run_tests.sh": "0685a035c795debbcacd24c3e4b003f20a8bdf7db4dd9e21f7e8093bdc906c21",
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "docs/dabbl8/shared-storage-pool.md": "f15005f060d749cd6fe9f53b1691721d25d0646b8ea7f2c0d4d220a8a4f46a28",
+    "docs/dabbl8/three-project-shared-storage.md": "d1feeff58f4b979d66dfcd0ba500870b00a5634f71bec51fcb95412b4a884cdf",
+    "docs/dabbl8/README.md": "63a1ebea019e6660739638f7077c736d2db81f0098a9fc4445b1417e9d7d0aac"
+  },
+  "evidence_hashes": {
+    "resume-verify.py.txt": "0e9b8689b4ef0ff89760ecd852d5900ab1edf648f3e2e40cbaeab935b63dbfd9",
+    "missing-size-command.py.txt": "0052c3264186ac45b654404421e83e3ddc3d68fb18e3e16484210346d365f90c",
+    "full-upstream-suite.log": "85d90527e3b08ce3108a3cd05859b7ef52fcd85dbdbc5fe6a41a543b6f5c0486",
+    "final-sanitizers.log": "67ae24db866b55cb9608767ff738143769809fd72f3b500708f66397ae0079c2",
+    "missing-size-utility.log": "76130815ea8a6a93b443d103d0001468918261a0909fb5746f5ca15c32cce85a",
+    "final-sanitizers-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target-memory.json": "713bc6aaffc242fefae7a56f8cfec23a2c7409802e2d2ede1710be347b1c44dc",
+    "generation-test-initial-failure.log": "cae699628d781b3fbfed7cd2cc894aa37af27f4d88f8a302c4227a76ddf180f7",
+    "verify.py.txt": "84a1b9e641ca034d95a267efa389981db5c86d25d1b2e535f291abda283efd6a",
+    "earlier-attempts.txt": "b3be4ef7c77221943a98647fa849b15372d0c5ebc5da6cf62d95751610d83a16",
+    "checks.json": "6027e63eeaba018ddcb0a4febada9891e89f461ee0ca7eea329ff54772b119ca",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "target-and-default.log": "c94b6035c19ba3af9d1ea928329aee696665246fa588fcddfd540c084acd3e56",
+    "final-optimized-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-optimized.log": "67ae24db866b55cb9608767ff738143769809fd72f3b500708f66397ae0079c2",
+    "unsupported-stack-option.log": "043d9ae3895413a7802ddcb610a2f5302678c933dc021392954078b72377e67c",
+    "target-disassembly.txt": "aff9f62819bdabefe0861a497654fb3ec485e1b4461950d9ccdb62d406640276"
+  },
+  "private_artifacts": {
+    "final-optimized": {
+      "bytes": 68288,
+      "sha256": "651b83bcdbeba0e36105a4289e7725de168cdf363a15c82b2eb2ece86291b4cc"
+    },
+    "final-sanitizers": {
+      "bytes": 116544,
+      "sha256": "0bb6d46f116c5ef93e08ff69be4e322802f8742872b389c46194eed276e8922c"
+    }
+  },
+  "host": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "final_results": "PASS; failed setup/test attempts preserved separately",
+  "hardware": "SKIP: no device binding, migration, installation or physical qualification",
+  "skips": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ]
+}

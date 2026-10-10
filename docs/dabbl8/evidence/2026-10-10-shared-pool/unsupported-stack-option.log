@@ -1,0 +1,2 @@
+clang: error: unknown argument: '-fstack-usage'
+build: pi32v2/bin/clang failed

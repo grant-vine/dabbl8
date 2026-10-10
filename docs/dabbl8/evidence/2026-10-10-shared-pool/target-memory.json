@@ -1,0 +1,23 @@
+{
+  "target": "pi32v2 JieLi clang 4.0.1 / -Os",
+  "standalone_text_sections_bytes": {
+    ".text.dp_valid": 28,
+    ".text.dp_scan": 546,
+    ".text.d8pool_inventory": 218,
+    ".text.d8pool_current": 62,
+    ".text.d8pool_load": 148,
+    ".text.d8pool_save": 660
+  },
+  "total_text_bytes": 1662,
+  "data_bss_bytes": 0,
+  "local_plus_saved_register_frame_bytes": {
+    "dp_scan": 344,
+    "d8pool_inventory": 208,
+    "d8pool_current": 80,
+    "d8pool_load": 120,
+    "d8pool_save": 248
+  },
+  "visible_save_inventory_scan_chain_bytes": 800,
+  "visible_load_current_inventory_scan_chain_bytes": 752,
+  "qualification": "Disassembly prologue arithmetic only: excludes caller, CRC/parser/callback descendants, IRQ frames and physical high-water measurement. Not a complete call-chain upper bound."
+}
