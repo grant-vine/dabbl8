@@ -23,3 +23,5 @@ The [staged D8P1 adapter](d8p1-project-state.md) uses explicit project fields an
 The [browser conversion workflow](browser-project-conversion.md) uses the same C importer and produces a local original/report/project-data ZIP without MIDI access. Its device upload and recovery gates remain open.
 
 The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eight-track runtime state and retains arrangement metadata outside the display arena. Device transfer, persistence, playback and physical qualification remain open.
+
+- [Relative multi-sector save engine](multisector-record-engine.md): simulated A/B record preparation; approved map and physical integration remain gated.

@@ -160,6 +160,8 @@ run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" bui
 run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
 ${CC%% *} -std=c11 -O1 -Wall -Wextra -Werror -o "$OUT/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
 run "D8P1 bounded byte codec and malformed input refusal" "$OUT/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8store_test" firmware/src/d8p1.c firmware/src/d8store.c tests/d8store_test.c
+run "D8P1 relative multi-sector records and every program-byte cut" "$OUT/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
 
 if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
@@ -349,6 +351,8 @@ else
     # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
     run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8store_test" firmware/src/d8p1.c firmware/src/d8store.c tests/d8store_test.c
+    run "ASan/UBSan: strict relative multi-sector storage and exhaustive cuts" "$A/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
     $SCC -o "$A/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "ASan/UBSan: offline D8P1 bundle and original/reference preservation" python3 tests/project_conversion_test.py "$A/dabbl8_project_convert"
     $SCC -o "$A/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
