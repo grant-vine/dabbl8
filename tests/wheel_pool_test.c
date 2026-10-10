@@ -35,9 +35,9 @@ static int ownership(void)
 {
     heavy_state_t *seen[NVOICE];uint32_t n=0;
     for(uint32_t p=0;p<NPART;p++){
-        uint32_t e=trk[p].engine;if(e<7||e>10)continue;
+        uint32_t e=trk[p].engine;if(e<7||e>12||e==11)continue;
         for(uint32_t i=0;i<NVOICE;i++)if(trk[p].v[i].active){
-            heavy_state_t *s=heavy_get(e,p,(e==7||e==9)?i:0);
+            heavy_state_t *s=heavy_get(e,p,(e==7||e==9||e==12)?i:0);
             if(!s||n==NVOICE)return 0;
             for(uint32_t j=0;j<n;j++)if(seen[j]==s)return 0;
             seen[n++]=s;if(e==8||e==10)break;
@@ -71,7 +71,8 @@ int main(void)
     check("one organ track keeps its original eight-voice cap",voices_busy()==8&&ownership()&&render()==8);
     fresh();fill();uint32_t seed=23,errors=0;
     for(uint32_t i=0;i<5000;i++){
-        seed=seed*1664525u+1013904223u;uint32_t p=seed>>29,e=7+(seed>>16)%4;
+        seed=seed*1664525u+1013904223u;uint32_t p=seed>>29,e=7+(seed>>16)%5;
+        if(e==11)e=12;
         if(trk[p].engine!=e){
             trk[p].eng_req=e;for(uint32_t b=0;b<300&&trk[p].engine!=e;b++)render();
             if(trk[p].engine!=e){errors++;break;}

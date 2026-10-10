@@ -1,0 +1,40 @@
+{
+  "previous": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_FM6=0",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-check/audio-previous",
+      "/private/tmp/dabbl8-fm6-shared-audio.c",
+      "-lm"
+    ],
+    "bytes": 8388608,
+    "sha256": "32246037fab2ca5a06668ace5928af53508442469943d117194a2e80ed4ec292"
+  },
+  "shared": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_FM6=1",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/fm6-shared-check/audio-shared",
+      "/private/tmp/dabbl8-fm6-shared-audio.c",
+      "-lm"
+    ],
+    "bytes": 8388608,
+    "sha256": "32246037fab2ca5a06668ace5928af53508442469943d117194a2e80ed4ec292"
+  },
+  "result": "PASS: exact sample byte comparison",
+  "scope": "Every FM6 factory preset, POLY/MONO/LEGATO (eight active tracks) and UNISON (one track, original six-voice cap),256 blocks,retriggers100/200; excludes reclaimed-owner startup, all parameter combinations and hardware timing."
+}
