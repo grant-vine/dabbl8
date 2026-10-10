@@ -1272,6 +1272,9 @@ static void style_apply(void)
 static void ui_draw_page(uint32_t counting);
 static void ui_draw(void)
 {
+#if NPART >= NVOICE
+    if(migration_owner){ui.force=1;return;} /* do not borrow an exclusive staged plan */
+#endif
     static uint8_t counting;
     style_apply();
     ui.frame++;
