@@ -11,6 +11,9 @@ static int ota_erase(uint32_t off)
     uint32_t took;
     if (!ota_in_area(off, 0x1000u) || (off & 0xFFFu))
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     audio_silence();
     return fl_erase4k(off, &took);
 }
@@ -18,6 +21,9 @@ static int ota_prog(uint32_t off, const void *p, uint32_t n)
 {
     if (!ota_in_area(off, n))
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     return fl_write(off, p, n);
 }
 static int ota_fread(uint32_t off, void *p, uint32_t n) { return st_read(off, p, n); }

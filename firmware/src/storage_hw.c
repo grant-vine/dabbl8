@@ -34,6 +34,9 @@ static int st_erase(uint32_t off)
     int rc;
     if (!FL_STORE_OK(off, 0x1000u))
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     f = irq_save();
     audio_silence();
     rc = FL_FAR(fl_erase4k_ram)(off, &took);
@@ -44,5 +47,8 @@ static int st_prog(uint32_t off, const void *src, uint32_t n)
 {
     if (!FL_STORE_OK(off, n))                   /* only inside the storage areas */
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     return fl_write(off, src, n);
 }
