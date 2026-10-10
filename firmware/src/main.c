@@ -56,6 +56,7 @@ void fm1_timer5_irq(void)
 #endif
     owed = 0;
 }
+#ifndef FELUCCA_TIMER5_ONLY /* host tests may exercise the actual IRQ alone */
 extern void isr_timer5(void);
 
 static void timer5_start(void)                 /* OSC /4 = 6 MHz, PRD 600 -> 10 kHz */
@@ -330,3 +331,5 @@ void fm1_cstart(void)
     for (;;)
         ;
 }
+
+#endif /* FELUCCA_TIMER5_ONLY */

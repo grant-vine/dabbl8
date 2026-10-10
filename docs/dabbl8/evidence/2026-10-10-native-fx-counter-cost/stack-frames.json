@@ -1,0 +1,42 @@
+{
+  "parent": {
+    "rev_room": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 12,
+      "direct_frame_bytes": 64,
+      "entry": " 2005406:    7f 04             \t[--sp] = {rets, r15-r4}\n 2005408:    e2 9d             \tsp += -12\n 200540a:    c1 ff 80 da c1 01 \tr1 = 29481600 <con : 1c1da80 >\n 2005410:    54 ed 18 25       \tr2 = h[r1+88] (s)"
+    },
+    "rev_spring": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 52,
+      "direct_frame_bytes": 104,
+      "entry": " 2005182:    7f 04             \t[--sp] = {rets, r15-r4}\n 2005184:    e2 93             \tsp += -52\n 2005186:    c1 ff 80 da c1 01 \tr1 = 29481600 <con : 1c1da80 >\n 200518c:    54 ed 1a 25       \tr2 = h[r1+90] (s)"
+    },
+    "fx_buses": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 40,
+      "direct_frame_bytes": 92,
+      "entry": " 2005568:    7f 04             \t[--sp] = {rets, r15-r4}\n 200556a:    e2 96             \tsp += -40\n 200556c:    c4 ff 80 da c1 01 \tr4 = 29481600 <con : 1c1da80 >\n 2005572:    54 ed 40 05       \tr0 = h[r4+80] (s)"
+    }
+  },
+  "current": {
+    "rev_room": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 16,
+      "direct_frame_bytes": 68,
+      "entry": " 2005410:    7f 04             \t[--sp] = {rets, r15-r4}\n 2005412:    e2 9c             \tsp += -16\n 2005414:    c1 ff 80 da c1 01 \tr1 = 29481600 <con : 1c1da80 >\n 200541a:    54 ed 18 25       \tr2 = h[r1+88] (s)"
+    },
+    "rev_spring": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 52,
+      "direct_frame_bytes": 104,
+      "entry": " 2005182:    7f 04             \t[--sp] = {rets, r15-r4}\n 2005184:    e2 93             \tsp += -52\n 2005186:    c1 ff 80 da c1 01 \tr1 = 29481600 <con : 1c1da80 >\n 200518c:    54 ed 1a 25       \tr2 = h[r1+90] (s)"
+    },
+    "fx_buses": {
+      "register_save_bytes": 52,
+      "local_stack_bytes": 52,
+      "direct_frame_bytes": 104,
+      "entry": " 200557e:    7f 04             \t[--sp] = {rets, r15-r4}\n 2005580:    e2 93             \tsp += -52\n 2005582:    c6 ff 80 da c1 01 \tr6 = 29481600 <con : 1c1da80 >\n 2005588:    54 ed 60 05       \tr0 = h[r6+80] (s)"
+    }
+  }
+}

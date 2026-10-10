@@ -25,9 +25,30 @@ static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
 { *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
 #define FT16(c,p,v) ft_store16(&fx_tail.c,(p),(int16_t)(v))
 #define FT32(c,p,v) ft_store32(&fx_tail.c,(p),(v))
+/* Production render owns local totals until its bounded synchronous call ends.
+ * Main-loop readers cannot run inside the audio ISR; nested TIMER5 only serves
+ * UAC, never the native flash adapter. No total is published per sample. */
+static inline void ft_local16(uint32_t *count,int16_t *p,int16_t value,int16_t old)
+{ if(value){if(!old)++*count;}else if(old)--*count;*p=value;
+#ifdef FT_LOCAL_STORE_HOOK
+    FT_LOCAL_STORE_HOOK(); /* test-only nested ISR observation */
+#endif
+}
+static inline void ft_local32(uint32_t *count,int32_t *p,int32_t value,int32_t old)
+{ if(value){if(!old)++*count;}else if(old)--*count;*p=value;
+#ifdef FT_LOCAL_STORE_HOOK
+    FT_LOCAL_STORE_HOOK(); /* test-only nested ISR observation */
+#endif
+}
+#define FTL16(c,p,v) ft_local16(&(c),(p),(int16_t)(v),*(p))
+#define FTLO16(c,p,v,o) ft_local16(&(c),(p),(int16_t)(v),(int16_t)(o))
+#define FTLO32(c,p,v,o) ft_local32(&(c),(p),(v),(o))
 #else
 #define FT16(c,p,v) (*(p)=(int16_t)(v))
 #define FT32(c,p,v) (*(p)=(v))
+#define FTL16(c,p,v) (*(p)=(int16_t)(v))
+#define FTLO16(c,p,v,o) (*(p)=(int16_t)(v))
+#define FTLO32(c,p,v,o) (*(p)=(v))
 #endif
 static struct {
     uint32_t dly_w, cho_w, cho_ph;
@@ -209,6 +230,9 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
 {
     uint32_t i, k;
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
+#if NTRK == 8
+    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
+#endif
     for (i = 0; i < n; i++) {
         int32_t a = 0;
         int16_t *c = rev_comb;
@@ -216,7 +240,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         for (k = 0; k < 4u; k++) {
             int32_t o = c[fx.comb_i[k]];
             fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
-            FT16(comb,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
+            FTLO16(comb_nz,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767),o);
             if (++fx.comb_i[k] >= REV_COMB[k])
                 fx.comb_i[k] = 0;
             a += o;
@@ -226,7 +250,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         for (k = 0; k < 2u; k++) {
             int32_t o = c[fx.ap_i[k]];
             int32_t v = a + (o >> 1);
-            FT16(ap,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
+            FTLO16(ap_nz,&c[fx.ap_i[k]],clamp(v, -32768, 32767),o);
             a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
             if (++fx.ap_i[k] >= REV_AP[k])
                 fx.ap_i[k] = 0;
@@ -234,6 +258,9 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         }
         out[i] += a;
     }
+#if NTRK == 8
+    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
+#endif
 }
 
 /* SPRING (see the top), added to out */
@@ -245,6 +272,9 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t 
     int32_t len = (int32_t)(1323u + ((s * 1323u) >> 7)) << 8, L, L2, L3, f, w;
     int16_t *ln = rev_comb;
     int32_t *ap = rev_u.sp;
+#if NTRK == 8
+    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
+#endif
     if (!fx.sp_size)
         fx.sp_size = len;
     fx.sp_size += clamp(len - fx.sp_size, -256, 256);   /* SIZE glides (a sample a block at most) */
@@ -266,18 +296,21 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t 
         fx.sp_hp += o >> 6;
         x -= fx.sp_hp;
         p = ap[j];                                      /* the chain: ap[j + k], stage k's output 4 samples ago */
-        FT32(ap,&ap[j],x);
+        FTLO32(ap_nz,&ap[j],x,p);
         for (k = 1; k <= SP_N; k++) {                   /* (lossless: bounded by the loop's input, no clamp) */
             int32_t v = (x - ap[j + k]) * SP_A;         /* towards 0, as the loop's gain: floors would feed */
             o = ap[j + k];                              /* the loop a little offset and noise for ever */
             x = ((v + ((v >> 31) & 4095)) >> 12) + p;
             p = o;
-            FT32(ap,&ap[j + k],x);
+            FTLO32(ap_nz,&ap[j + k],x,o);
         }
-        FT16(comb,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
+        FTL16(comb_nz,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
         fx.sp_w = (uint16_t)(wp + 1u);
         out[i] += (t0 + (((t1 - t0) * f) >> 8)) * 4 + ln[(wp - (uint32_t)L3) & SP_MASK] * 2;
     }
+#if NTRK == 8
+    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
+#endif
 }
 
 /* the reverb's buffers and states to silence (the model changed) */
@@ -307,10 +340,13 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
     int32_t dmix = song.g[G_DMIX] * 258;
     int32_t cdepth = song.g[G_CDEPTH] * 6, rt;
     uint32_t cinc = LFO_INC[song.g[G_CRATE] & 127] / CTL;
+#if NTRK == 8
+    uint32_t delay_nz=fx_tail.delay,chorus_nz=fx_tail.chorus;
+#endif
     for (i = 0; i < n; i++) {
         int32_t y = 0, x, r;
         /* chorus: modulated short delay, 5..15 ms */
-        FT16(chorus,&cho_buf[fx.cho_w & (CHO_LEN - 1u)],clamp(cho_in[i] >> 1, -32768, 32767));
+        FTL16(chorus_nz,&cho_buf[fx.cho_w & (CHO_LEN - 1u)],clamp(cho_in[i] >> 1, -32768, 32767));
         fx.cho_ph += cinc;
         r = (400 << 8) + ((osc_sine(fx.cho_ph) + 32768) * cdepth >> 8);   /* Q8 delay: read between samples */
         {
@@ -323,12 +359,15 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
         /* delay with a low-passed feedback */
         x = dly_buf[(fx.dly_w - dl) & (DLY_LEN - 1u)];
         fx.dly_lp += mulq15(x - fx.dly_lp, col);
-        FT16(delay,&dly_buf[fx.dly_w & (DLY_LEN - 1u)],
+        FTL16(delay_nz,&dly_buf[fx.dly_w & (DLY_LEN - 1u)],
             clamp((dly_in[i] >> 1) + mulq15(fx.dly_lp, fb), -32768, 32767));
         fx.dly_w++;
         y += mulq15(x << 1, dmix);
         wet[i] = y;
     }
+#if NTRK == 8
+    fx_tail.delay=delay_nz;fx_tail.chorus=chorus_nz;
+#endif
     rt = song.g[G_RTYPE] == 1;
     if (rt != fx.rtype) {                               /* the model changed: the old one's block fades out, */
         int32_t *t = part_buf, g = 65536, d = 65536 / (int32_t)n;   /* its buffers are cleared, the new */
@@ -353,7 +392,9 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
 #if NTRK == 8
 /* Bounded resident-state proof only: no queued USB/DAC or device timing claim.
  * Conservative fixed-point residuals may defer forever; never clear a tail to
- * manufacture eligibility. Read fresh inside the existing IRQ-off write fence. */
+ * manufacture eligibility. Main-loop readers only: local totals are incomplete
+ * during rendering. Read fresh inside the existing IRQ-off write fence; never
+ * call this predicate from an interrupt nested inside audio rendering. */
 static int fx_resident_quiet(void)
 {
     if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx.dly_lp||
