@@ -831,15 +831,23 @@ static int graph_project_used(uint32_t slot)
     if (!ready || fm1_ms - ms >= 500u || (ui.force && frame != ui.frame)) {
 #endif
         uint32_t i; mask = 0;
-        for (i = 0; i < 4u; i++) mask |= (uint8_t)((project_name(i, graph_pname[i]) != 0) << i);
+        for (i = 0; i < PROJECT_UI_SLOTS; i++) mask |= (uint8_t)((project_name(i, graph_pname[i]) != 0) << i);
         graph_pname_sig = fnv(2166136261u, graph_pname, sizeof graph_pname);
         ready = 1; ms = fm1_ms; frame = ui.frame;
     }
+#if NPART >= NVOICE
+    return slot<PROJECT_UI_SLOTS?((mask >> slot) & 1u):0;
+#else
     return (mask >> (slot & 3u)) & 1u;
+#endif
 }
 static const char *graph_project_name(uint32_t slot)  /* (after graph_project_used) */
 {
+#if NPART >= NVOICE
+    return slot<PROJECT_UI_SLOTS?graph_pname[slot]:"";
+#else
     return graph_pname[slot & 3u];
+#endif
 }
 
 /* MENU > LARGE's strip under the tall cards (ui.c LK_TALL): HOME's scope, ENV's ADSR, LFO's wave, PATTERN's steps,
@@ -1185,7 +1193,7 @@ static void graph_events(void)
 static void graph_slots(void)
 {
     uint32_t i;
-    for (i = 0; i < 4u; i++) {
+    for (i = 0; i < PROJECT_UI_SLOTS; i++) {
         int32_t y = 12 + (int32_t)i * 26;
         char b[4];
         int sel = (int32_t)i + 1 == song.g[G_SLOT], used = graph_project_used(i);
@@ -1194,6 +1202,10 @@ static void graph_slots(void)
         b[1] = 0;
         list_row(y, sel, b, T_MID, !used ? "--" : n[0] ? n : "USED", used ? T_TEXT : T_DIM, 232);
     }
+#if NPART >= NVOICE
+    cv_text_on(8,102,&AF_S,project_native_status()==0?"MIGRATE TO SAVE":
+               project_native_status()==1?"3 PROJECTS":"CHECK STORAGE",T_DIM,T_SURF);
+#endif
 }
 /* MIXER page: four SURF columns, one under each card: the track number on its cushion (in the accent:
  * the selected track) with a REC / ARM / MUTE badge (P_MUTE, KNOB 1), the sound's short name (a MUTE badge

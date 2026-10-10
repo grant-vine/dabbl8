@@ -62,6 +62,23 @@ int main(void) {
     project_t before,after;project_capture(&before);
     uint8_t old[4]={7,P_LEVEL,10,64};n=request(ED_TRACK_PARAM,old,4);project_capture(&after);
     bad+=proof("legacy parameter write remains denied on expanded firmware",n==9 && host_wire[7]==1 && !memcmp(&before,&after,sizeof before));
+    /* Native project menu discovery cannot grant legacy write/restore access. */
+    uint8_t query[2]={2,0};
+    for(unsigned slot=0;slot<3;slot++) {
+        query[1]=slot;n=request(ED_PROJECT,query,2);
+        bad+=proof("project query exposes exactly three active identities",n==9 && host_wire[4]==ED_PROJECT && host_wire[5]==2 && host_wire[6]==slot);
+    }
+    query[1]=3;n=request(ED_PROJECT,query,2);
+    bad+=proof("historical fourth project query is refused without aliasing",n==0);
+    for(unsigned op=0;op<2;op++) {
+        query[0]=op;query[1]=0;project_capture(&before);n=request(ED_PROJECT,query,2);project_capture(&after);
+        bad+=proof("legacy project load/save remains denied with live music intact",n==9 && host_wire[4]==ED_D8_ERROR && host_wire[7]==1 && !memcmp(&before,&after,sizeof before));
+    }
+    query[0]=1;query[1]=G_SLOT;n=request(ED_DESC,query,2);
+    bad+=proof("editor slot descriptor reports three while historical descriptor remains four",n>14 && ed_rv(host_wire+10)==3 && GP[G_SLOT].max==4);
+    n=request(ED_INFO,NULL,0);unsigned backup_caps=99;
+    for(unsigned i=5;i+2<n;i++)if(host_wire[i]==0x42 && host_wire[i+1]==1)backup_caps=host_wire[i+2];
+    bad+=proof("expanded firmware does not advertise an unimplemented native full backup",backup_caps==0);
     bad+=proof("versioned editing made no flash erase or write",host_writes==0 && host_erases==0);
     printf("versioned tracks: %u assertions, %d failures; host evidence only\n",assertions,bad);
     return bad?1:0;

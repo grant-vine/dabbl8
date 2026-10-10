@@ -130,6 +130,12 @@ static int st_load(uint32_t obj, void *dst, uint32_t max)
 /* save into copy `to` (0 A, 1 B; -1: the one that is not the current copy, as st_save) */
 static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
 {
+#if defined(NPART) && NPART >= 8
+    /* Eight-track projects cannot use the historical wire layout. Refuse
+     * these legacy writes even before binding/after cold boot; the native
+     * pool shares all four project pairs plus the autosave pair. */
+    if((obj>=OBJ_PROJECT0&&obj<OBJ_PROJECT0+4u)||obj==OBJ_AUTOSAVE)return -1;
+#endif
     uint32_t seq, base, off;
     int cur, rc;
     st_hdr_t h;

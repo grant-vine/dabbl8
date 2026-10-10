@@ -818,6 +818,12 @@ static void act_do(void)
         project_load(k);
         break;
     case G_SAVE:                                          /* the NAME screen writes it */
+#if NPART >= NVOICE
+        if(project_native_status()!=1) {
+            ui_message(project_native_status()==0?"MIGRATION REQUIRED":"STORAGE ERROR");
+            break;
+        }
+#endif
         if (transport_busy())
             ui_message("STOP TO SAVE");
         else if (project_used(k))

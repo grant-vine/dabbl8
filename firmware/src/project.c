@@ -671,6 +671,80 @@ static char proj_name[PROJ_NAME_LEN + 1u]    /* the name of the music as it is n
 #define PROJ_NO_SLOT 0xFFu
 static uint8_t proj_cur = PROJ_NO_SLOT;      /* the slot the music was loaded from or last saved to (a rename of it
                                               * renames the music too); PROJ_NO_SLOT none (the editor's restore) */
+#if NPART >= NVOICE
+#include "project_native_frontend.h"
+static struct {
+    project_native_ops ops;
+    d8p1_project_catalog catalog;
+    uint8_t mode, ready; /* 0 historical read-only; 1 bound native; 2 native offline */
+} project_native __attribute__((section(".pool")));
+static int project_native_owns_storage(void) { return project_native.mode!=0; }
+static void project_native_reset(void) { memset(&project_native,0,sizeof project_native); }
+static int project_native_status(void)
+{ return !project_native.mode?0:project_native.mode==1&&project_native.ready?1:2; }
+static int pn_quiet(void) { return !cv_cpu_active&&!transport_busy()&&!transport_req; }
+static int pn_catalog_valid(const d8p1_project_catalog *c)
+{
+    if(c->present&~7u)return 0;
+    for(unsigned s=0;s<3;s++) {
+        if(c->name[s][12])return 0;
+        unsigned zero=0;
+        for(unsigned i=0;i<12;i++) {
+            unsigned ch=(uint8_t)c->name[s][i];
+            if(!ch)zero=1;else if(zero||ch<32||ch>126)return 0;
+        }
+        if(!(c->present&(1u<<s))&&c->name[s][0])return 0;
+    }
+    return 1;
+}
+static int project_native_refresh(void)
+{
+    if(project_native.mode!=1)return D8POOL_UNSUPPORTED;
+    if(!pn_quiet())return D8POOL_BUSY;
+    d8p1_project_catalog c;memset(&c,0,sizeof c);
+    int rc=project_native.ops.catalog(project_native.ops.context,&c);
+    if(!rc&&!pn_catalog_valid(&c))rc=D8POOL_INVALID;
+    project_native.ready=(uint8_t)!rc;
+    if(!rc)project_native.catalog=c;
+    ui.force=1;return rc;
+}
+static int project_native_bind(const project_native_ops *ops,int authorized)
+{
+    if(!authorized)return D8POOL_UNSUPPORTED;
+    if(!pn_quiet())return D8POOL_BUSY;
+    /* Copy before invalidating an existing binding (ops may refer to it). */
+    project_native_ops next={0};if(ops)next=*ops;
+    project_native.mode=2;project_native.ready=0;ui.force=1;
+    if(!next.catalog||!next.save||!next.load||!next.rename)return D8POOL_INVALID;
+    project_native.ops=next;project_native.mode=1;
+    int rc=project_native_refresh();
+    if(rc)project_native.mode=2;
+    return rc;
+}
+static int pn_result(int rc,const char *done)
+{
+    if(!rc) { ui_message(done);return 0; }
+    ui_message(rc==D8POOL_BUSY?"STOP TO SAVE":rc==D8POOL_EMPTY?"EMPTY SLOT":
+               rc==D8POOL_UNSUPPORTED?"MIGRATION REQUIRED":"STORAGE ERROR");
+    return rc==D8POOL_BUSY||rc==D8POOL_EMPTY||rc==D8POOL_UNSUPPORTED?1:2;
+}
+static int pn_action(unsigned op,uint32_t slot,const char *name)
+{
+    if(slot>=3)return pn_result(D8POOL_INVALID,"");
+    if(!pn_quiet())return pn_result(D8POOL_BUSY,"");
+    if(project_native.mode!=1)return pn_result(D8POOL_UNSUPPORTED,"");
+    /* Hidden/stale inventory must never bypass overwrite confirmation.
+     * Recovery requires a separate successful catalog refresh first. */
+    if(op!=1&&!project_native.ready)return pn_result(D8POOL_IO,"");
+    int rc=op==0?project_native.ops.save(project_native.ops.context,slot,name):
+           op==1?project_native.ops.load(project_native.ops.context,slot):
+                 project_native.ops.rename(project_native.ops.context,slot,name);
+    /* Even an error can follow a committed record. Invalidate first, then
+     * rescan; never display stale inventory as current after a write attempt. */
+    if(op!=1) { project_native.ready=0;(void)project_native_refresh(); }
+    return pn_result(rc,op==0?"SAVED":op==1?"LOADED":"RENAMED");
+}
+#endif
 static union {                               /* serialized main-loop work; no retained expansion */
     project_store_t s;
     uint8_t raw[3840];                         /* (the staging of a backup object, up to a storage object: editor_backup.c) */
@@ -757,6 +831,9 @@ static void project_capture(project_t *p)
  * The current name becomes the saved one */
 static int project_save_as(uint32_t slot, const char *name)
 {
+#if NPART >= NVOICE
+    return pn_action(0,slot,name);
+#endif
     project_t *p = &proj_scratch;
     if (transport_busy()) {                            /* a flash erase silences the audio and stalls the */
         ui_message("STOP TO SAVE");                     /* sequencer (storage_hw.c): only while stopped */
@@ -795,6 +872,14 @@ static void project_cur_name(char *b) { str_cpy(b, proj_name, PROJ_NAME_LEN + 1u
 /* slot's name -> b (PROJ_NAME_LEN + 1 bytes); 0 = an empty slot (b ""). Uses proj_scratch */
 static int project_name(uint32_t slot, char *b)
 {
+#if NPART >= NVOICE
+    b[0]=0;if(slot>=3)return 0;
+    if(project_native.mode) {
+        if(!project_native.ready)return 0;
+        memcpy(b,project_native.catalog.name[slot],13);
+        return (project_native.catalog.present>>slot)&1u;
+    }
+#endif
     b[0] = 0;
     if (!proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t)))
         return 0;
@@ -807,6 +892,9 @@ static int project_name(uint32_t slot, char *b)
  * an empty slot), 2 failed (the slot as it was) */
 static int project_rename(uint32_t slot, const char *name)
 {
+#if NPART >= NVOICE
+    return pn_action(2,slot,name);
+#endif
     project_t *p = &proj_scratch;
     if (transport_busy()) {
         ui_message("STOP TO SAVE");
@@ -950,6 +1038,10 @@ static int project_restore_runtime(const project_t *input)
 #endif
 static void project_load(uint32_t slot)
 {
+#if NPART >= NVOICE
+    if(slot>=3) { (void)pn_result(D8POOL_INVALID,"");return; }
+    if(project_native.mode) { (void)pn_action(1,slot,NULL);return; }
+#endif
 #if FELUCCA_FLASH
     if (flash_ok && !proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t))) proj_fetch(slot);
 #endif
@@ -1005,11 +1097,20 @@ static void persist_boot(void)                    /* before settings_init / pane
 #endif
 }
 
-static int project_used(uint32_t slot) { return proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t)); }
+static int project_used(uint32_t slot) {
+#if NPART >= NVOICE
+    if(slot>=3)return 0;
+    if(project_native.mode)return project_native.ready&&((project_native.catalog.present>>slot)&1u);
+#endif
+    return proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t));
+}
 
 /* Main loop only: no flash access or copies when the ISR changes rows. */
 static uint32_t chain_prepare(void)
 {
+#if NPART >= NVOICE
+    if(project_native.mode)return 1; /* native arrangement playback is issue #15 */
+#endif
     uint32_t i, k, j, used = 0;
     if (transport_busy())
         return 2;
@@ -1163,6 +1264,9 @@ static void autosave_hold(void) { as.t = fm1_ms; }   /* the editor's transfers: 
 /* main loop, every pass (after settings_poll) */
 static void autosave_poll(void)
 {
+#if NPART >= NVOICE
+    if(project_native_owns_storage())return; /* native scheduler is separate integration */
+#endif
 #if FELUCCA_FLASH
     uint32_t sig;
     if (!flash_ok || fm1_ms - as.poll < AS_POLL_MS)
@@ -1196,7 +1300,11 @@ static int autosave_boot(int allowed)
 {
     int rc = 0;
 #if FELUCCA_FLASH
-    if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)) {
+    if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)
+#if NPART >= NVOICE
+        && !project_native_owns_storage()
+#endif
+       ) {
         int n;
         proj_wire_gen++;
         n = st_load(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire);
