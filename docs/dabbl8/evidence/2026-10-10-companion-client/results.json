@@ -1,0 +1,61 @@
+{
+  "result": "PASS",
+  "base_commit": "b418052730d883d968ac43c740ad703876a665d7",
+  "sections": {
+    "optimized": {
+      "checks": 144,
+      "result": "PASS",
+      "C_handlers": "actual NPART4/8 compiled; sanitizer mode uses standard ASan/UBSan exclusions"
+    },
+    "sanitized": {
+      "checks": 144,
+      "result": "PASS",
+      "C_handlers": "actual NPART4/8 compiled; sanitizer mode uses standard ASan/UBSan exclusions"
+    }
+  },
+  "full_suite_exit_code": 0,
+  "full_log_sha256": "e89d2d554b9a40f94a29fcda40288b481e4f8378b56fce3cfad4e4820e50d7ef",
+  "source_hashes": {
+    "web/d8tracks.js": "00b336556b9aef925d5af3d8f7f9425249b0adfb033613fe734a3775fcdafe44",
+    "web/test_d8tracks.mjs": "b06e4f52ae650b28e126eaee0b90e0dd9e62a3dea0041e8ae26939a2b1f69c27",
+    "tests/track_client_bridge.c": "68d0f0eb8461b7cee5fdbade8adbc0e4a1ab7947d1dc9e20968a1456fc2e5a19",
+    "tests/run_tests.sh": "0d3d43bb788657b425a5d3c7e377e3a7efb45f5efdba980b95451835967ef53f",
+    "docs/dabbl8/companion-track-client.md": "6b8cbb47abc36158dfbe9bc9507649a7ffd5ea7024cb69a54dbc9e476724a4b6"
+  },
+  "artifacts_unchanged_from_preceding_Mac_Oct10": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally absent from Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP; actual C means host simulator, no physical USB/MIDI/backup/flash/installation",
+  "firmware_source_changed": false,
+  "UI_and_physical_transport": "not implemented by this module stage",
+  "hosted_ci": "pending after draft creation"
+}

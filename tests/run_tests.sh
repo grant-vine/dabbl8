@@ -164,6 +164,9 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-track bank controls, quick-layer ownership and all screen layouts" "$OUT/banked_mixer_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/versioned_track_test" tests/versioned_track_test.c -lm
     run "versioned eight-track editor: bounds, ownership, busy errors and legacy refusal" "$OUT/versioned_track_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge8" tests/track_client_bridge.c -lm
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge4" tests/track_client_bridge.c -lm
+    run "companion track client: real C four/eight-track negotiation, edits and stale reply guards" node web/test_d8tracks.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_runtime_test" tests/eight_track_runtime_test.c -lm
     run "eight-track recording, playback, USB/TRS routing and bounds" "$OUT/eight_track_runtime_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/voice_budget_test" tests/voice_budget_test.c -lm
@@ -340,6 +343,9 @@ else
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
     done
+    $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
+    $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
+    run "ASan/UBSan: companion client through actual C four/eight-track handlers" node web/test_d8tracks.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     $SCC -o "$A/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
     run "ASan/UBSan: offline import preservation, migrations and refusal" python3 tests/offline_import_test.py "$A/dabbl8_import_preview"
     $SCC -DNPART=8 -o "$A/main_workspace_test" tests/main_workspace_test.c -lm
