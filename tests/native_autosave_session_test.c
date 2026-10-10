@@ -21,6 +21,15 @@ static void idle_fixture(void)
  for(unsigned o=0;o<4;o++)CHECK(!d8pool_save(&seed,o,wire,n,7));
  CHECK(!project_native_bind_flash(1));reset();
 }
+/* Test-only valid committed NOR fixture, not a mocked sequence comparison. */
+static void sequence_max_fixture(void)
+{
+ d8pool_record record;CHECK(!d8pool_current(&seed,3,&record));
+ uint8_t *header=nor+d8pool_mapped_address(record.block);
+ for(unsigned i=0;i<4;i++)header[12+i]=0xff;
+ uint32_t crc=d8p1_crc32(header,28);for(unsigned i=0;i<4;i++)header[28+i]=(uint8_t)(crc>>(i*8));
+ CHECK(!d8pool_current(&seed,3,&record)&&record.sequence==UINT32_MAX);
+}
 static void begin(void){CHECK(!d8p1_autosave_session_begin(1,0));reset();}
 static void dirty(void){trk[7].p[P_LEVEL]=100;CHECK(!tick(AS_POLL_MS));CHECK(native_as.seen==current_signature());}
 static void due(void){CHECK(!tick(AS_IDLE_MS));}
@@ -66,6 +75,18 @@ int main(void)
  /* Real logical output histories and held notes defer signature/write work. */
  for(queue_kind=0;queue_kind<7;queue_kind++){idle_fixture();begin();dirty();queue_disturb();CHECK(tick(AS_IDLE_MS)==D8POOL_BUSY&&!reads&&!writes);}
  idle_fixture();begin();dirty();fm1_in.notes=1;CHECK(tick(AS_IDLE_MS)==D8POOL_BUSY&&!writes);fm1_in.notes=0;CHECK(!tick(AS_IDLE_MS)&&writes);
+ /* Actual committed object3 rollover is distinct from clock rollover. */
+ idle_fixture();sequence_max_fixture();begin();CHECK(native_as.sequence==UINT32_MAX);dirty();due();
+ d8pool_record wrapped;uint32_t wrapped_sig=0;CHECK(!d8p1_autosave_snapshot_flash(&wrapped_sig,&wrapped,1)&&wrapped.sequence==0);
+ CHECK(native_as.sequence==0&&native_as.writes==1&&!native_as.pending&&!native_as.err&&native_as.saved==wrapped_sig);identity();
+ /* Unchanged MAX record after failed write cannot count as replacement. */
+ idle_fixture();sequence_max_fixture();begin();dirty();cut=0;CHECK(tick(AS_IDLE_MS)==D8POOL_IO);
+ CHECK(native_as.sequence==UINT32_MAX&&!native_as.pending&&native_as.err&&!native_as.writes);cut=-1;
+ CHECK(!tick(AS_RETRY_MS)&&native_as.sequence==0&&native_as.writes==1&&!native_as.err);identity();
+ /* Physically committed zero remains uncertain until actual readback. */
+ idle_fixture();sequence_max_fixture();begin();dirty();post_commit_io=1;CHECK(tick(AS_IDLE_MS)==D8POOL_IO&&native_as.pending&&native_as.sequence==UINT32_MAX&&!native_as.writes);
+ unsigned wrapped_count=writes;post_commit_io=0;CHECK(!tick(AS_RETRY_MS)&&writes==wrapped_count&&!native_as.pending&&native_as.sequence==0&&native_as.writes==1&&!native_as.err);
+ CHECK(!d8p1_autosave_snapshot_flash(&wrapped_sig,&wrapped,1)&&wrapped.sequence==0&&native_as.saved==wrapped_sig);identity();
  /* Time subtraction is unsigned through wrap for poll, idle and write gap. */
  idle_fixture();fm1_ms=UINT32_MAX-5000u;begin();dirty();due();CHECK(native_as.writes==1&&fm1_ms<AS_IDLE_MS);
  trk[7].p[P_LEVEL]=101;CHECK(!tick(AS_POLL_MS));CHECK(!tick(AS_GAP_MS)&&native_as.writes==2);
