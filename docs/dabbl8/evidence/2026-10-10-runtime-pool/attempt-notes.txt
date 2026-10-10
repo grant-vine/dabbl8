@@ -1,0 +1,1 @@
+Initial test used step.n as MIDI pitch instead of its actual note-count field. Structural encoding correctly refused n>4, causing dependent setup checks to fail. Corrected fixture uses n=1 and note[0] for pitch. Raw initial failure log retained. No parser or original fixture/golden changed.

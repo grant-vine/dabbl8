@@ -101,7 +101,9 @@
 #include "project.c"
 #if NPART >= NVOICE
 #include "d8p1.c"                /* freestanding codec for the in-memory native API */
-#include "d8p1_runtime.c"        /* stopped adoption; no editor/flash entry point */
+#include "d8p1_runtime.c"        /* stopped native adoption */
+#include "d8pool.c"               /* virtual explicitly migrated storage backend */
+#include "d8p1_pool_runtime.c"    /* native runtime persistence; no physical/menu binding */
 #endif
 #if FELUCCA_OTA
 #include "ota.c"

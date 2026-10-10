@@ -31,3 +31,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Selected three-project shared storage](three-project-shared-storage.md): three projects and one shared autosave, all samples retained, commit-last write spare; replaces the per-object A/B proposal for initial integration.
 
 - [Shared storage pool implementation and remaining migration gates](shared-storage-pool.md)
+
+- [Real eight-track runtime through shared-pool persistence](runtime-shared-persistence.md)

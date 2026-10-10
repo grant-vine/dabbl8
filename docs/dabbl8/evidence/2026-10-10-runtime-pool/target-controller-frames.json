@@ -1,0 +1,21 @@
+{
+  "scope": "Actual eight-track linked controller prologues; not complete call-chain, callback, caller or IRQ stack bounds.",
+  "local_plus_saved_register_frame_bytes": {
+    "d8pr_stopped": 16,
+    "d8pr_preflight": 36,
+    "d8p1_save_pool": 116,
+    "d8p1_load_pool": 100
+  },
+  "autosave_restore": "Tail-jump to load or no-op; no new prologue shown",
+  "memory": {
+    "track_count": 8,
+    "sha256": "888d6cc32a850d758b5cd92eae042d8ec2bd322e1df946294019f872fe537cec",
+    "bytes": 453728,
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 453728 B; RAM .data+.bss 95716 B of 98304; pool 334100 B of 344064"
+    ],
+    "errors": [],
+    "hardware": "SKIP"
+  }
+}
