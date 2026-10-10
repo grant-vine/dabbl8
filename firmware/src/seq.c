@@ -552,6 +552,9 @@ static void key_on(uint32_t k, track_t *t)
         midi_out_event(0x09u | (0x90u | mc) << 8 | x << 16 | 100u << 24);
     }
     kb_chn[k] = (uint8_t)n;
+#if NTRK == 8
+    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
+#endif
     last_note = kb_note[k];                         /* (step entry, the SAMPLE zone: the key's note) */
 }
 
@@ -567,6 +570,9 @@ static void key_off(uint32_t k, track_t *t)
         input_off(t, x);
         midi_out_event(0x08u | (0x80u | mc) << 8 | x << 16);
     }
+#if NTRK == 8
+    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
+#endif
 }
 
 #ifdef FM1_INPUT_LAT
@@ -682,7 +688,7 @@ static void seq_release(track_t *t)
     uint32_t i;
     for (i = 0; i < t->seq_n; i++)
 #if NTRK == 8
-        if (!d8arr_running() || (!midi_note_held(t,t->seq_notes[i])&&!midi_local_held(t,t->seq_notes[i])))
+        if (!d8arr_running() || !((chain.native.policy.held[trk_index(t)][t->seq_notes[i]/32u]>>(t->seq_notes[i]%32u))&1u))
 #endif
         trk_note_off(t, t->seq_notes[i]);
     t->seq_n = 0;
@@ -998,6 +1004,9 @@ static void events_block(uint32_t n)
         memset(midi_ch, 0, sizeof midi_ch);
         memset(midi_owners, 0, sizeof midi_owners);
         memset(mchord, 0, sizeof mchord);
+#if NTRK == 8
+        if(chain.native_mode==1){chain.native.policy.input_generation++;if(!chain.native.policy.preparing)d8arr_held_build(chain.native.policy.held);}
+#endif
         midi_hint = 0;
         for (i = 0; i < NTRK; i++) {
             trk[i].rh_n = trk[i].rskip_n = 0;

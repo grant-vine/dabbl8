@@ -57,10 +57,18 @@ motion restoration scans, 64 bytes of timing and eight phase resets; source
 step-zero events may then invoke up to 96 local note-ons. This is not O(1) audio
 work. Same-pitch MIDI/panel held notes are protected using actual ownership
 helpers, including sustain; final key/channel release and All Sound Off retire
-them. Protection uses bounded existing ownership scans per released pitch: up
-to 16 MIDI channels (with at most 24 chord-source lookups), 24 four-note MIDI
-chords and 27 four-note panel chords; this adds real control-boundary CPU work
-and is not a constant-time bitset or a target deadline proof. It retains eight shared voices and existing stealing/release envelopes.
+them. A 128-bit mask per track lives inside the existing unused source extent.
+Each sequence release uses one cached pitch bit. Actual MIDI/chord/panel
+ownership changes refresh only affected pitches with the original predicates;
+sustain, repeated notes and channel remaps follow those same paths. Aggregate
+panic/forget and initial stopped preparation rebuild bounded ownership data.
+These rebuilds are real work (16×128 raw ownership entries with chord-source
+checks, 24 four-note chords and 27 four-note panel chords for complete build;
+rare single-track forget checks 128 pitches). They are not hidden deadline
+qualification. An input-generation guard rejects a mixed initial cache rebuild.
+The cache is tested independently against original ownership predicates after
+actual input transitions, rather than merely against its own builder.
+It retains eight shared voices and existing stealing/release envelopes.
 The sequencer's local note path does not emit MIDI packets: this boundary does
 not itself produce a 96-packet output burst. The inherited keyboard output ring
 is 64 packets and silently declines enqueue when full; physical output remains

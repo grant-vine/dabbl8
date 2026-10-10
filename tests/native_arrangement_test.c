@@ -58,6 +58,39 @@ static int live_same(void)
 {return !memcmp(before.tracks,trk,sizeof trk)&&!memcmp(&before.song_state,&song,sizeof song)&&
  !memcmp(&before.motion_state,&motion,sizeof motion)&&!memcmp(before.patches,fm6_patch,sizeof fm6_patch)&&
  !memcmp(&before.undo_state,&undo,sizeof undo)&&before.slot==proj_cur;}
+static void prepare_start(void);
+static void held_oracle(void)
+{
+ for(unsigned t=0;t<8;t++)for(unsigned n=0;n<128;n++){
+  unsigned bit=(chain.native.policy.held[t][n/32]>>(n%32))&1u;
+  proof(bit==(unsigned)(midi_note_held(&trk[t],n)||midi_local_held(&trk[t],n)),"held cache equals independent original ownership predicates");
+ }
+}
+static void cache_cases(void)
+{
+ arrange();reset();prepare_start();song.playing=0;usb.config=0;
+ for(unsigned t=0;t<8;t++){trk[t].p[P_MUTE]=0;trk[t].p[P_AMODE]=0;trk[t].p[P_CHRD]=CH_MAJ;}
+ for(unsigned i=0;i<200;i++){
+  unsigned ch=i%16,n=36+(i*17)%72;
+  song.g[G_ROUTE]=(int16_t)(i%2);song.sel=(uint8_t)((i*5)%8);
+  if(i%7==0)midi_control(ch,64,127);
+  midi_note_event(ch,n,100);held_oracle();
+  if(i%3==0)midi_note_event(ch,n,100); /* repeated/chord source remap */
+  midi_note_event(ch,n,0);held_oracle();
+  if(i%7==0){midi_control(ch,64,0);held_oracle();}
+  if(i%5==0){
+   unsigned k=i%27;track_t *t=&trk[(i*3)%8];
+   if(kb_chn[k])key_off(k,&trk[kb_trk[k]]);
+   kb_trk[k]=(uint8_t)trk_index(t);kb_note[k]=(uint8_t)n;key_on(k,t);held_oracle();
+   key_off(k,t);held_oracle();
+  }
+  if(i%11==0){midi_control(ch,123,0);held_oracle();}
+  if(i%13==0){midi_control(ch,120,0);held_oracle();}
+ }
+ midi_in_overflow=1;events_block(1);held_oracle();
+ for(unsigned t=0;t<8;t++){midi_forget_track(t);held_oracle();}
+ seq_stop();song.g[G_ROUTE]=0;
+}
 static void prepare_start(void)
 {proof(!chain_prepare()&&chain.armed&&chain.native.policy.valid&&!writes,"actual frontend read-only preparation arms");transport_req=0;seq_start();proof(d8arr_running()&&song.playing&&chain.row==0&&chain.remaining==d8p1_runtime_cache.arrangement.row[0].repeat,"actual sequencer starts native row zero");}
 static void boundary(uint32_t carry)
@@ -142,7 +175,7 @@ int main(void)
  midi_control(7,120,0);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate;
  proof(!gated&&!midi_note_held(held,100),"All Sound Off ends protected native held gates");
  arrange();reset();prepare_start();song.playing=0;held->p[P_MUTE]=0;held->p[P_AMODE]=0;
- kb_trk[0]=7;kb_chn[0]=1;kb_chord[0][0]=100;trk_note_on(held,100,100);held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
+ kb_trk[0]=7;kb_note[0]=100;held->p[P_CHRD]=CH_OFF;key_on(0,held);held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
  gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
  proof(gated&&midi_local_held(held,100),"same-pitch panel key retains native sounding gate");
  key_off(0,held);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
@@ -190,6 +223,7 @@ int main(void)
  arrange();d8p1_runtime_cache.arrangement.scene[0].apply=D8ARR_APPLY_MIX;transport_req=0;
  proof(chain_prepare()==1&&!transport_req&&!song.playing,"failed SONG preparation never requests editable fallback playback");events_block(1);
  proof(!song.playing,"failed SONG request remains stopped");
+ cache_cases();
  /* Native row count/name/repeats are real loaded metadata, not stale legacy. */
  arrange();char name[13];unsigned repeat=0;
  proof(d8arr_ui_rows()==3&&d8arr_ui_row(2,name,&repeat)&&!strcmp(name,"SCENE3")&&repeat==1,"native UI reads actual arrangement metadata");

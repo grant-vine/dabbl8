@@ -73,6 +73,44 @@ static int midi_local_held(const track_t *t, uint32_t note)
     return 0;
 }
 
+
+#if NTRK == 8
+/* Main-loop preparation or an actual input-ownership change only. Sequence
+ * release uses cached bits. This preserves the existing held predicates,
+ * including chord source roots that do not themselves sound. */
+static void d8arr_held_build(uint32_t out[8][4])
+{
+    memset(out,0,128);
+    for(unsigned ch=0;ch<16;ch++)for(unsigned note=0;note<128;note++){
+        unsigned id=midi_notes[ch][note]&127u;
+        if(id&&id<=8&&!mchord_of(ch,note,id))out[id-1][note/32u]|=1u<<(note%32u);
+    }
+    for(unsigned i=0;i<MCHORD_N;i++)if(mchord[i].id&&mchord[i].id<=8)
+        for(unsigned j=0;j<mchord[i].n;j++){unsigned note=mchord[i].note[j];out[mchord[i].id-1][note/32u]|=1u<<(note%32u);}
+    for(unsigned k=0;k<27;k++)if(kb_trk[k]<8)
+        for(unsigned j=0;j<kb_chn[k];j++){unsigned note=kb_chord[k][j];out[kb_trk[k]][note/32u]|=1u<<(note%32u);}
+}
+static void d8arr_held_refresh(track_t *t,unsigned note)
+{
+    if(chain.native_mode!=1)return;
+    d8arr_state *a=&chain.native.policy;a->input_generation++;
+    if(a->preparing)return;
+    uint32_t bit=1u<<(note%32u),*word=&a->held[trk_index(t)][note/32u];
+    if(midi_note_held(t,note)||midi_local_held(t,note))*word|=bit;else *word&=~bit;
+}
+/* Aggregate panic/forget is rare actual ownership mutation. Its bounded
+ * rebuild cost is explicit; not a fake ISR static-cost qualification. */
+static void d8arr_held_rebuild(unsigned track)
+{
+    if(chain.native_mode!=1)return;
+    d8arr_state *a=&chain.native.policy;a->input_generation++;
+    if(a->preparing)return;
+    memset(a->held[track],0,sizeof a->held[track]);
+    for(unsigned note=0;note<128;note++)
+        if(midi_note_held(&trk[track],note)||midi_local_held(&trk[track],note))a->held[track][note/32u]|=1u<<(note%32u);
+}
+#endif
+
 static void midi_release(uint32_t ch, uint32_t note)
 {
     uint32_t id = midi_notes[ch][note] & 0x7Fu;
@@ -96,6 +134,10 @@ static void midi_release(uint32_t ch, uint32_t note)
         for (i = 0; i < n; i++)
             if (!midi_local_held(&trk[id - 1u], nn[i]))
                 input_off(&trk[id - 1u], nn[i]);  /* input_off also checks other MIDI owners */
+#if NTRK == 8
+        d8arr_held_refresh(&trk[id-1u],note);
+        for(i=0;i<n;i++)d8arr_held_refresh(&trk[id-1u],nn[i]);
+#endif
     }
 }
 
@@ -143,6 +185,11 @@ static void midi_note_event(uint32_t ch, uint32_t note, uint32_t vel)
         midi_notes[ch][note] = (uint8_t)(trk_index(t) + 1u);
         midi_owners[trk_index(t)]++;
         c->owned[trk_index(t)]++;
+#if NTRK == 8
+        d8arr_held_refresh(t,note);
+        mchord_t *held_chord=mchord_of(ch,note,trk_index(t)+1u);
+        if(held_chord)for(unsigned j=0;j<held_chord->n;j++)d8arr_held_refresh(t,held_chord->note[j]);
+#endif
     } else if (id) {
         if (c->pedal && !drum_track(&trk[id - 1u]))
             midi_notes[ch][note] |= MIDI_PEDAL_NOTE;
@@ -177,6 +224,9 @@ static void __attribute__((noinline)) midi_forget_track(uint32_t track)
     midi_owners[track] = 0;
     mchord_forget(track);
     midi_bend_q8[track] = midi_bend_target[track] = 0;
+#if NTRK == 8
+    d8arr_held_rebuild(track);
+#endif
 }
 
 static void midi_silence_track(uint32_t track)

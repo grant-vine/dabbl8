@@ -33,7 +33,7 @@ static int d8arr_prepare_pool(const d8pool *s)
     /* Invalid before unlocked bulk copy: Start/Continue abort preparation. A
      * late failure may discard an old suspended cache, never publish half data. */
     chain.native_mode=1;chain.armed=0;chain.native.policy.valid=0;
-    chain.native.policy.suspended=0;chain.native.policy.preparing=1;
+    chain.native.policy.suspended=0;chain.native.policy.preparing=1;chain.native.policy.input_generation=0;
     motion_unguard(f);
     for(unsigned o=0;o<3;o++)if(used&(1u<<o)){
         size_t n=0;
@@ -55,10 +55,12 @@ static int d8arr_prepare_pool(const d8pool *s)
         if(index.object[o].sequence!=after.object[o].sequence||index.object[o].length!=after.object[o].length||
            index.object[o].crc!=after.object[o].crc||index.object[o].block!=after.object[o].block){rc=D8POOL_BUSY;goto failed;}
     }
+    next.input_generation=chain.native.policy.input_generation;
+    d8arr_held_build(next.held);
     int metadata_same=d8p1_runtime_cache.valid&&metadata==d8p1_crc32(a,sizeof *a);
     f=motion_guard();
     if(!chain.native.policy.preparing||!d8pr_stopped((void *)s)||migration_owner||cv_cpu_active||
-       !metadata_same||epoch!=d8_capture_change.epoch){
+       !metadata_same||epoch!=d8_capture_change.epoch||next.input_generation!=chain.native.policy.input_generation){
         motion_unguard(f);rc=D8POOL_BUSY;goto failed;
     }
     next.valid=1;next.store_epoch=epoch;

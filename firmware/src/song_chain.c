@@ -19,11 +19,15 @@ typedef struct {
     uint8_t banks, scenes, rows, valid, suspended, scene, bank, pending, preparing;
     uint32_t generation, pending_generation, store_epoch;
     uint32_t sequence[3], length[3], crc[3];
+    uint32_t held[8][4],input_generation;
 } d8arr_state;
 _Static_assert(sizeof(d8arr_state)<=sizeof(chain_pattern_t), "native policy fits unused source");
 static uint32_t motion_guard(void);
 static void motion_unguard(uint32_t);
 static unsigned d8arr_ui_rows(void);
+static void d8arr_held_build(uint32_t [8][4]);
+static void d8arr_held_refresh(track_t *,unsigned);
+static void d8arr_held_rebuild(unsigned);
 static int d8arr_ui_row(unsigned,char [13],unsigned *);
 #endif
 
