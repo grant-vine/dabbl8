@@ -1,0 +1,155 @@
+Partial local plus saved-register frames only, not descendant/caller/driver/IRQ chain bounds.
+
+d8pr_name_copy:
+ 200c65a:    74 04             	[--sp] = {rets, r4}
+ 200c65c:    01 5b             	if (r1 == 0) goto 54 <d8pr_name_copy+0x3A : 200c694 >
+ 200c65e:    82 14             	r3_r2 = 0
+ 200c660:    d8 ee 01 23       	b[r0+r3] = r2
+ 200c664:    c3 21             	r3 += 1
+ 200c666:    83 f8 fb 1b       	if (r3 != 13) goto -10 <d8pr_name_copy+0x6 : 200c660 >
+ 200c66a:    12 07             	r2 = b[r1++=1] (u)
+ 200c66c:    43 20             	r3 = 0
+ 200c66e:    02 4d             	if (r2 == 0) goto 26 <d8pr_name_copy+0x30 : 200c68a >
+ 200c670:    34 e1 e0 2f       	r4 = r2 + -32
+ 200c674:    44 17             	r4 = r4.b0 (u)
+ 200c676:    04 fc 0d bc       	if (r4 > 94) goto 26 <d8pr_name_copy+0x3A : 200c694 >
+ 200c67a:    d8 ee 01 23       	b[r0+r3] = r2
+ 200c67e:    d8 ee 10 23       	r2 = b[r1+r3] (u)
+ 200c682:    c3 21             	r3 += 1
+ 200c684:    83 f9 f3 19       	if (r3 < 12) goto -26 <d8pr_name_copy+0x14 : 200c66e >
+ 200c688:    04 81             	goto 2 <d8pr_name_copy+0x32 : 200c68c >
+ 200c68a:    42 20             	r2 = 0
+ 200c68c:    40 21             	r0 = 1
+ 200c68e:    60 ff ff 20 01 00 	if ((r2 & 0xFF) == 0) goto 2 <d8pr_name_copy+0x3C : 200c696 >
+ 200c694:    40 20             	r0 = 0
+ 200c696:    54 04             	{pc, r4} = [sp++]
+d8pr_save:
+ 200c7bc:    78 04             	[--sp] = {rets, r8-r4}
+ 200c7be:    e2 83             	sp += -116
+ 200c7c0:    16 16             	r6 = r1
+ 200c7c2:    07 16             	r7 = r0
+ 200c7c4:    40 20             	r0 = 0
+ 200c7c6:    28 d6             	r8 = r2  #
+ 200c7c8:    80 2a             		 [sp+40] = r0
+ 200c7ca:    45 21             	r5 = 1
+ 200c7cc:    06 fc 1b 06       	if (r6 > 3) goto 54 <d8pr_save+0x4A : 200c806 >
+ 200c7d0:    02 45             	if (r2 == 0) goto 10 <d8pr_save+0x20 : 200c7dc >
+ 200c7d2:    88 9b             	r0 = sp + 27
+ 200c7d4:    81 16             	r1 = r8
+ 200c7d6:    bf ea 40 ff       	call -384 <d8pr_name_copy : 200c65a >
+ 200c7da:    00 55             	if (r0 == 0) goto 42 <d8pr_save+0x4A : 200c806 >
+ 200c7dc:    a9 90             	r1 = sp + 48
+ 200c7de:    aa 8c             	r2 = sp + 44
+ 200c7e0:    43 20             	r3 = 0
+ 200c7e2:    70 16             	r0 = r7
+ 200c7e4:    bf ea 6e ff       	call -292 <d8pr_preflight : 200c6c4 >
+ 200c7e8:    05 16             	r5 = r0
+ 200c7ea:    85 4d             	if (r5 != 0) goto 26 <d8pr_save+0x4A : 200c806 >
+ 200c7ec:    41 f0 00 1f       	r1 = 7936  # <build/native-save-as-8/felucca_size.ll+0x1F00 : 1f00 >
+ 200c7f0:    04 2b             		 r4 = [sp+44]
+ 200c7f2:    e0 e0 15 4d       	r0 = r4 + 0x2540
+ 200c7f6:    aa 88             	r2 = sp + 40
+ 200c7f8:    bf ea 6c fb       	call -2344 <d8p1_capture_runtime : 200bed4 >
+ 200c7fc:    00 47             	if (r0 == 0) goto 14 <d8pr_save+0x50 : 200c80c >
+ 200c7fe:    45 24             	r5 = 4
+ 200c800:    b0 e8 02 00       	if (r0 != 2) {
+ 200c804:    45 21             		r5 = 1
+                               	}
+ 200c806:    50 16             	r0 = r5
+ 200c808:    02 9d             	sp += 116
+ 200c80a:    58 04             	{pc, r8-r4} = [sp++]
+ 200c80c:    08 f8 17 00       	if (r8 == 0) goto 46 <d8pr_save+0x82 : 200c83e >
+ 200c810:    40 e0 2a 22       	r0 = 8746 <build/native-save-as-8/felucca_size.ll+0x222A : 222a >
+ 200c814:    40 18             	r0 += r4
+ 200c816:    41 20             	r1 = 0
+ 200c818:    8a 9b             	r2 = sp + 27
+ 200c81a:    d8 ee 20 21       	r2 = b[r2+r1] (u)
+ 200c81e:    d8 ee 01 21       	b[r0+r1] = r2
+ 200c822:    c1 21             	r1 += 1
+ 200c824:    81 f8 f8 19       	if (r1 != 12) goto -16 <d8pr_save+0x5C : 200c818 >
+ 200c828:    41 f0 00 1f       	r1 = 7936  # <build/native-save-as-8/felucca_size.ll+0x1F00 : 1f00 >
+ 200c82c:    04 2b             		 r4 = [sp+44]
+ 200c82e:    e0 e0 15 4d       	r0 = r4 + 0x2540
+ 200c832:    aa 88             	r2 = sp + 40
+ 200c834:    43 16             	r3 = r4
+ 200c836:    bf ea 69 f7       	call -4398 <d8p1_project_encode : 200b70c >
+ 200c83a:    45 21             	r5 = 1
+ 200c83c:    70 44             	if (r0 == 0) goto -56 <d8pr_save+0x4A : 200c806 >
+ 200c83e:    00 2c             	r0 = [sp+48]
+ 200c840:    87 21             	[sp+4] = r7
+ 200c842:    c1 ff f8 56 03 02 	r1 = 33773304 <d8pr_read : 20356f8 >
+ 200c848:    81 22             	[sp+8] = r1
+ 200c84a:    c1 ff 04 57 03 02 	r1 = 33773316 <d8pr_erase : 2035704 >
+ 200c850:    81 23             	[sp+12] = r1
+ 200c852:    c1 ff 0c 57 03 02 	r1 = 33773324 <d8pr_program : 203570c >
+ 200c858:    81 24             	[sp+16] = r1
+ 200c85a:    c2 ff 98 c6 00 02 	r2 = 33605272 <d8pr_stopped : 200c698 >
+ 200c860:    41 21             	r1 = 1
+ 200c862:    61 da             	r1 <<= r6  #
+ 200c864:    82 25             		 [sp+20] = r2
+ 200c866:    36 e9 03 00       	if (r6 >= 3) {
+ 200c86a:    41 20             		r1 = 0
+                               	}
+ 200c86c:    60 f1 07 00       	r0 = r0 & 0x7  #
+ 200c870:    03 2a             		 r3 = [sp+40]
+ 200c872:    01 19             	r1 |= r0
+ 200c874:    e2 f0 15 4d       	r2 = r4 + 0x2540  #
+ 200c878:    81 20             		 [sp] = r1
+ 200c87a:    88 84             	r0 = sp + 4
+ 200c87c:    61 16             	r1 = r6
+ 200c87e:    bf ea a2 fd       	call -1212 <d8pool_save : 200c3c6 >
+ 200c882:    05 16             	r5 = r0
+ 200c884:    06 fc bf 05       	if (r6 > 2) goto -130 <d8pr_save+0x4A : 200c806 >
+ 200c888:    d5 5e             	if (r5 != 0) goto -132 <d8pr_save+0x4A : 200c806 >
+ 200c88a:    c0 ff 00 80 c0 01 	r0 = 29392896 <proj_cur : 1c08000 >
+ 200c890:    8e 40             	b[r0+0] = r6
+ 200c892:    08 f8 b8 01       	if (r8 == 0) goto -144 <d8pr_save+0x4A : 200c806 >
+ 200c896:    40 20             	r0 = 0
+ 200c898:    c1 ff 84 eb c2 01 	r1 = 29551492 <proj_name : 1c2eb84 >
+ 200c89e:    8a 9b             	r2 = sp + 27
+ 200c8a0:    d8 ee 20 20       	r2 = b[r2+r0] (u)
+ 200c8a4:    d8 ee 01 21       	b[r0+r1] = r2
+ 200c8a8:    c0 21             	r0 += 1
+ 200c8aa:    80 f8 f8 1b       	if (r0 != 13) goto -16 <d8pr_save+0xE2 : 200c89e >
+ 200c8ae:    d7 8b             	goto -170 <d8pr_save+0x4A : 200c806 >
+d8p1_save_as_pool:
+ 200c8b6:    10 04             	[--sp] = rets
+ 200c8b8:    03 16             	r3 = r0
+ 200c8ba:    40 21             	r0 = 1
+ 200c8bc:    b1 ec 02 40       	if (r1 <= 2) {
+ 200c8c0:    30 16             		r0 = r3
+ 200c8c2:    bf ea 7b ff       		call -266
+                               	} <d8pr_save : 200c7bc >
+ 200c8c6:    00 04             	pc = [sp++]
+d8p1_save_as_flash:
+ 200d006:    77 04             	[--sp] = {rets, r7-r4}
+ 200d008:    e2 90             	sp += -64
+ 200d00a:    26 16             	r6 = r2
+ 200d00c:    14 16             	r4 = r1
+ 200d00e:    05 16             	r5 = r0
+ 200d010:    40 21             	r0 = 1
+ 200d012:    05 fc 1d 04       	if (r5 > 2) goto 58 <d8p1_save_as_flash+0x4A : 200d050 >
+ 200d016:    06 59             	if (r6 == 0) goto 50 <d8p1_save_as_flash+0x44 : 200d04a >
+ 200d018:    c0 ff c0 d2 c1 01 	r0 = 29479616 <shed_req : 1c1d2c0 >
+ 200d01e:    08 42             	r0 = b[r0+2] (u)
+ 200d020:    00 56             	if (r0 == 0) goto 44 <d8p1_save_as_flash+0x48 : 200d04e >
+ 200d022:    8f 80             	r7 = sp + 0
+ 200d024:    c1 ff 30 76 03 02 	r1 = 33781296 <NM_SET+0x71E : 2037630 >
+ 200d02a:    42 34             	r2 = 20
+ 200d02c:    70 16             	r0 = r7
+ 200d02e:    bf ea 72 a0       	call -48924 <memcpy : 2001116 >
+ 200d032:    88 94             	r0 = sp + 20
+ 200d034:    71 16             	r1 = r7
+ 200d036:    62 16             	r2 = r6
+ 200d038:    bf ea 57 fd       	call -1362 <d8pool_mapped_open : 200caea >
+ 200d03c:    80 49             	if (r0 != 0) goto 18 <d8p1_save_as_flash+0x4A : 200d050 >
+ 200d03e:    88 94             	r0 = sp + 20
+ 200d040:    51 16             	r1 = r5
+ 200d042:    42 16             	r2 = r4
+ 200d044:    bf ea ba fb       	call -2188 <d8pr_save : 200c7bc >
+ 200d048:    04 83             	goto 6 <d8p1_save_as_flash+0x4A : 200d050 >
+ 200d04a:    40 25             	r0 = 5
+ 200d04c:    04 81             	goto 2 <d8p1_save_as_flash+0x4A : 200d050 >
+ 200d04e:    40 22             	r0 = 2
+ 200d050:    02 90             	sp += 64
+ 200d052:    57 04             	{pc, r7-r4} = [sp++]

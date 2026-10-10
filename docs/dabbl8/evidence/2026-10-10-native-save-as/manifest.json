@@ -1,0 +1,44 @@
+{
+  "parent": "e7984814f98a04828588dd6407bdca9af3e92147",
+  "executable_and_test_source": "ab54a5a4dc19aed26e8dbae95b1b236e6a899d69",
+  "source_files": {
+    "firmware/src/d8p1_pool_runtime.c": "32ad9eb6f6eec1f0ac29c444f0659b2397ad95ac2b94cd5ab9e0caa9c315d3c3",
+    "firmware/src/d8p1_pool_runtime.h": "bcaec075c9c6351a5eea531e59bccfc168d223b7a2d6d190286cefbe10e5ec3a",
+    "firmware/src/d8p1_flash_runtime.c": "f0c8487b755a6daecea7ee82a5e3a5e11aba631681d0aa1ce54bb6831470b2be",
+    "tests/d8p1_pool_runtime_test.c": "afcf0a85f63bf8767e06db05364b23709b982b59f2f330fd4ca631d895e27592",
+    "tests/d8p1_flash_runtime_test.c": "c058024fb44b4b3690b0c323a2569b99c50d66fbf795babb75221e4d997f8e2b",
+    "tests/run_tests.sh": "bc2bdbf4efce37fb20800c3d56d63bae553fd200ccf9d7fb96499d0354b53d7a"
+  },
+  "logs": {
+    "audio-regression.log": "8124e4f10c0b0c81fb374b92cfc1565e735543f78c8688972c89b02dee1cf1dc",
+    "flash-reviewed.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "entry-frames.txt": "180be92b62e8ecce2b79400b66e73702dd98b4fcc585409356a7693a2f22b40f",
+    "checks.json": "188b058bdf944ebb9e31efff20a434f7b35fe40a9aba35cd1f09f16a0ae3875d",
+    "pool-final.log": "87d31a71d620fddb25a41bcfa2e3a0bde73dbc8b16a9a3383cca34bd4ac8da25",
+    "flash-san.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "target-default-and-eight.log": "b98feff286e678c1bdaa2307618f3aeaac1c8566c1e641b3543eb4023a938779",
+    "target-4.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-8.json": "ad47da3e45ea10a5e3c3f6c29ccb3b650a30ecdab51c9e70caa11574cbfb5e2f",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "pool-san.log": "87d31a71d620fddb25a41bcfa2e3a0bde73dbc8b16a9a3383cca34bd4ac8da25",
+    "parallel-review.txt": "d1ffeda67f2a818163c2db80261a506b635b4367beeeeef307581d5a424351cb"
+  },
+  "verification_scope": "Focused real runtime/shared pool and mapped physical-hook tests optimized/upstream ASan/UBSan; actual pinned target builds; newly compiled 92-render audio/health/voice/CPU regressions. Full upstream suite not rerun locally for this small controller change; parent PR65 full suite is separate earlier evidence, and this draft PR CI runs the full suite. No current-CI pass claimed.",
+  "hardware": "SKIP; no SPI/device execution, installation, migration executor, full stack/IRQ/deadline/power-loss/qualified restore",
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "target_environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang 4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  }
+}
