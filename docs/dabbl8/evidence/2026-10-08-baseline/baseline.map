@@ -1,0 +1,1431 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+XIP              0x0000000002000120 0x000000000008dfbc xr
+RAMTEXT          0x0000000001c00000 0x0000000000006000 xrw
+RAM              0x0000000001c08000 0x0000000000018000 xrw
+POOL             0x0000000001c20000 0x0000000000054000 rw
+NOINIT           0x0000000001c7c000 0x0000000000003d50 rw
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+
+.text           0x0000000002000120    0x6c7c8
+ *(.text.crt0)
+ .text.crt0     0x0000000002000120       0x38 build/crt0.o
+                0x0000000002000120                _start
+ *(.text*)
+ .text          0x0000000002000158        0x0 build/crt0.o
+ .text          0x0000000002000158        0x0 build/fm1_vec.o
+ .text.fm1vec   0x0000000002000158      0x300 build/fm1_vec.o
+                0x0000000002000158                fm1_fatal_stubs
+ .text.fm1vec_common
+                0x0000000002000458       0x16 build/fm1_vec.o
+                0x0000000002000458                fm1_fatal_common
+ .text          0x000000000200046e        0x0 build/fm1_isr.o
+ .text.isr_timer5
+                0x000000000200046e       0x10 build/fm1_isr.o
+                0x000000000200046e                isr_timer5
+ .text.isr_alnk0
+                0x000000000200047e       0x10 build/fm1_isr.o
+                0x000000000200047e                isr_alnk0
+ .text          0x000000000200048e        0x0 build/felucca.o
+ .text.lcd_spin
+                0x000000000200048e       0x1c build/felucca.o
+ .text.fm1_lcd_wait
+                0x00000000020004aa       0x30 build/felucca.o
+ .text.lcd_sync
+                0x00000000020004da       0x20 build/felucca.o
+ .text.lcd_cmd  0x00000000020004fa       0x2c build/felucca.o
+ .text.scr_wake_now
+                0x0000000002000526       0x4a build/felucca.o
+ .text.lcd_data
+                0x0000000002000570       0x34 build/felucca.o
+ .text.lcd_window
+                0x00000000020005a4       0x56 build/felucca.o
+ .text.lcd_fill
+                0x00000000020005fa       0x8a build/felucca.o
+ .text.fold     0x0000000002000684       0x1a build/felucca.o
+ .text.kern     0x000000000200069e       0x32 build/felucca.o
+ .text.glyph_at
+                0x00000000020006d0       0x3a build/felucca.o
+ .text.glyph    0x000000000200070a       0x4a build/felucca.o
+ .text.text_w   0x0000000002000754       0x48 build/felucca.o
+ .text.cv_begin
+                0x000000000200079c       0x54 build/felucca.o
+ .text.cv_alpha_hc
+                0x00000000020007f0      0x222 build/felucca.o
+ .text.cv_alpha
+                0x0000000002000a12       0xb2 build/felucca.o
+ .text.text_run
+                0x0000000002000ac4      0x14e build/felucca.o
+ .text.text_ink
+                0x0000000002000c12       0x1a build/felucca.o
+ .text.ink_in   0x0000000002000c2c       0x1c build/felucca.o
+ .text.ux_gray  0x0000000002000c48        0xc build/felucca.o
+ .text.ramp     0x0000000002000c54      0x136 build/felucca.o
+ .text.cv_text_flags
+                0x0000000002000d8a       0x30 build/felucca.o
+ .text.cv_text  0x0000000002000dba       0x1c build/felucca.o
+ .text.cv_blit  0x0000000002000dd6       0x32 build/felucca.o
+ .text.draw_text_line
+                0x0000000002000e08       0x56 build/felucca.o
+ .text.hexs     0x0000000002000e5e       0x26 build/felucca.o
+ .text.fm1__p33_xfer
+                0x0000000002000e84       0x2e build/felucca.o
+ .text.fm1__p33_op
+                0x0000000002000eb2       0x48 build/felucca.o
+ .text.fm1_fault_c
+                0x0000000002000efa      0x1d4 build/felucca.o
+                0x0000000002000efa                fm1_fault_c
+ .text.memset   0x00000000020010ce        0xc build/felucca.o
+                0x00000000020010ce                memset
+ .text.memcpy   0x00000000020010da       0x10 build/felucca.o
+                0x00000000020010da                memcpy
+ .text.memcmp   0x00000000020010ea       0x1a build/felucca.o
+                0x00000000020010ea                memcmp
+ .text.lowest_held
+                0x0000000002001104       0x34 build/felucca.o
+ .text.uac_render_start
+                0x0000000002001138      0x104 build/felucca.o
+ .text.rec_on   0x000000000200123c       0x40 build/felucca.o
+ .text.div_samples
+                0x000000000200127c       0x52 build/felucca.o
+ .text.rec_release
+                0x00000000020012ce       0xb6 build/felucca.o
+ .text.mono_remove
+                0x0000000002001384       0x34 build/felucca.o
+ .text.mono_pick
+                0x00000000020013b8       0x42 build/felucca.o
+ .text.voices_busy
+                0x00000000020013fa       0x32 build/felucca.o
+ .text.voice_victim
+                0x000000000200142c       0xd8 build/felucca.o
+ .text.voice_room
+                0x0000000002001504       0x52 build/felucca.o
+ .text.glide_set
+                0x0000000002001556       0x34 build/felucca.o
+ .text.voice_start
+                0x000000000200158a      0x118 build/felucca.o
+ .text.mono_play
+                0x00000000020016a2      0x18c build/felucca.o
+ .text.trk_note_off
+                0x000000000200182e      0x10c build/felucca.o
+ .text.arp_chord_off
+                0x000000000200193a       0x32 build/felucca.o
+ .text.arp_off  0x000000000200196c       0x44 build/felucca.o
+ .text.seq_release
+                0x00000000020019b0       0x30 build/felucca.o
+ .text.motion_restore
+                0x00000000020019e0       0x7c build/felucca.o
+ .text.seq_stop
+                0x0000000002001a5c       0xe4 build/felucca.o
+ .text.motion_begin
+                0x0000000002001b40       0x44 build/felucca.o
+ .text.chain_apply
+                0x0000000002001b84       0xa8 build/felucca.o
+ .text.seq_start
+                0x0000000002001c2c       0xfa build/felucca.o
+ .text.cin_block
+                0x0000000002001d26       0x60 build/felucca.o
+ .text.midi_clock_transport
+                0x0000000002001d86       0x60 build/felucca.o
+ .text.cin_begin
+                0x0000000002001de6       0x28 build/felucca.o
+ .text.midi_channel
+                0x0000000002001e0e       0x26 build/felucca.o
+ .text.mchord_of
+                0x0000000002001e34       0x2a build/felucca.o
+ .text.midi_local_held
+                0x0000000002001e5e       0x5a build/felucca.o
+ .text.midi_note_held
+                0x0000000002001eb8       0x74 build/felucca.o
+ .text.input_off
+                0x0000000002001f2c       0xac build/felucca.o
+ .text.midi_release
+                0x0000000002001fd8       0xb6 build/felucca.o
+ .text.midi_expression
+                0x000000000200208e       0x4c build/felucca.o
+ .text.midi_route_ch14
+                0x00000000020020da       0x6e build/felucca.o
+ .text.midi_forget_track
+                0x0000000002002148       0x92 build/felucca.o
+ .text.trk_all_off
+                0x00000000020021da       0x34 build/felucca.o
+ .text.drum_lane
+                0x000000000200220e       0x32 build/felucca.o
+ .text.trk_note_on
+                0x0000000002002240      0x452 build/felucca.o
+ .text.key_place
+                0x0000000002002692       0x48 build/felucca.o
+ .text.perf_key
+                0x00000000020026da       0x36 build/felucca.o
+ .text.scale_snap
+                0x0000000002002710       0x4a build/felucca.o
+ .text.kb_map   0x000000000200275a      0x10c build/felucca.o
+ .text.chord_kit
+                0x0000000002002866       0x34 build/felucca.o
+ .text.chord_make
+                0x000000000200289a      0x256 build/felucca.o
+ .text.chord_build
+                0x0000000002002af0       0x7a build/felucca.o
+ .text.cin_keep
+                0x0000000002002b6a       0xaa build/felucca.o
+ .text.rec_note
+                0x0000000002002c14      0x2b0 build/felucca.o
+ .text.input_on
+                0x0000000002002ec4       0xae build/felucca.o
+ .text.midi_out_event
+                0x0000000002002f72       0x3c build/felucca.o
+ .text.kb_lat   0x0000000002002fae       0x50 build/felucca.o
+ .text.midi_clock_pulse
+                0x0000000002002ffe      0x1c6 build/felucca.o
+ .text.midi_note_event
+                0x00000000020031c4      0x188 build/felucca.o
+ .text.midi_targets
+                0x000000000200334c       0x34 build/felucca.o
+ .text.midi_expression_channel
+                0x0000000002003380       0x32 build/felucca.o
+ .text.mod_midi
+                0x00000000020033b2       0x36 build/felucca.o
+ .text.midi_pedal_up
+                0x00000000020033e8       0x2c build/felucca.o
+ .text.motion_param
+                0x0000000002003414       0x38 build/felucca.o
+ .text.enum_orig
+                0x000000000200344c       0x34 build/felucca.o
+ .text.param_fit
+                0x0000000002003480       0x2a build/felucca.o
+ .text.motion_put
+                0x00000000020034aa       0xfa build/felucca.o
+ .text.motion_capture
+                0x00000000020035a4      0x12c build/felucca.o
+ .text.midi_cc_map
+                0x00000000020036d0       0xc0 build/felucca.o
+ .text.midi_event
+                0x0000000002003790      0x29c build/felucca.o
+ .text.motion_unlock
+                0x0000000002003a2c       0xe6 build/felucca.o
+ .text.motion_step
+                0x0000000002003b12      0x126 build/felucca.o
+ .text.seq_step
+                0x0000000002003c38      0x354 build/felucca.o
+ .text.seq_ratchet
+                0x0000000002003f8c       0xc0 build/felucca.o
+ .text.cin_record
+                0x000000000200404c       0x82 build/felucca.o
+ .text.arp_pick
+                0x00000000020040ce      0x14e build/felucca.o
+ .text.arp_chord
+                0x000000000200421c       0x90 build/felucca.o
+ .text.perf_avail
+                0x00000000020042ac       0x48 build/felucca.o
+ .text.perf_begin
+                0x00000000020042f4      0x276 build/felucca.o
+ .text.mod_tsrc
+                0x000000000200456a       0x52 build/felucca.o
+ .text.mod_voice_add
+                0x00000000020045bc       0x7a build/felucca.o
+ .text.mod_begin
+                0x0000000002004636      0x23a build/felucca.o
+ .text.lfo_wave
+                0x0000000002004870       0x78 build/felucca.o
+ .text.mod_voice
+                0x00000000020048e8      0x17c build/felucca.o
+ .text.slicer_track
+                0x0000000002004a64      0x392 build/felucca.o
+ .text.mod_end  0x0000000002004df6       0x3c build/felucca.o
+ .text.perf_mute
+                0x0000000002004e32       0x6c build/felucca.o
+ .text.perf_pre
+                0x0000000002004e9e       0x7a build/felucca.o
+ .text.rev_spring
+                0x0000000002004f18      0x21c build/felucca.o
+ .text.rev_room
+                0x0000000002005134      0x11c build/felucca.o
+ .text.fx_buses
+                0x0000000002005250      0x260 build/felucca.o
+ .text.perf_pick
+                0x00000000020054b0       0x34 build/felucca.o
+ .text.perf_len
+                0x00000000020054e4       0x3e build/felucca.o
+ .text.perf_buf_start
+                0x0000000002005522       0xfc build/felucca.o
+ .text.perf_switch
+                0x000000000200561e       0xa2 build/felucca.o
+ .text.perf_harm
+                0x00000000020056c0      0x246 build/felucca.o
+ .text.perf_buf_done
+                0x0000000002005906       0x4e build/felucca.o
+ .text.perf_block
+                0x0000000002005954      0x9da build/felucca.o
+ .text.master_out
+                0x000000000200632e      0x26a build/felucca.o
+ .text.perf_master
+                0x0000000002006598       0x94 build/felucca.o
+ .text.uac_tap48
+                0x000000000200662c      0x1ae build/felucca.o
+ .text.uac_tap  0x00000000020067da       0xa0 build/felucca.o
+ .text.usb_fixed_dac
+                0x000000000200687a       0x20 build/felucca.o
+ .text.click_render
+                0x000000000200689a       0xfc build/felucca.o
+ .text.shed_check
+                0x0000000002006996       0x3a build/felucca.o
+ .text.fm1_alnk0_irq
+                0x00000000020069d0     0x19f6 build/felucca.o
+                0x00000000020069d0                fm1_alnk0_irq
+ .text.fm1__sr_bits
+                0x00000000020083c6       0x32 build/felucca.o
+ .text.fm1__anim_frame
+                0x00000000020083f8      0x238 build/felucca.o
+ .text.sie_wr   0x0000000002008630       0x54 build/felucca.o
+ .text.sie_rd   0x0000000002008684       0x5a build/felucca.o
+ .text.uac_service
+                0x00000000020086de      0x1be build/felucca.o
+ .text.e0_chunk
+                0x000000000200889c       0x9c build/felucca.o
+ .text.e0_send  0x0000000002008938       0x3e build/felucca.o
+ .text.uac_ep4_reset
+                0x0000000002008976       0x2c build/felucca.o
+ .text.midi_enqueue
+                0x00000000020089a2       0x58 build/felucca.o
+ .text.fm1_timer5_irq
+                0x00000000020089fa     0x1620 build/felucca.o
+                0x00000000020089fa                fm1_timer5_irq
+ .text.fm1_p33_read
+                0x000000000200a01a       0x44 build/felucca.o
+ .text.fm1_enter_uboot
+                0x000000000200a05e       0x3e build/felucca.o
+ .text.fl_far   0x000000000200a09c        0xa build/felucca.o
+ .text.slc_get  0x000000000200a0a6       0x42 build/felucca.o
+ .text.slc_rec_room
+                0x000000000200a0e8       0x28 build/felucca.o
+ .text.st_crc32
+                0x000000000200a110       0x34 build/felucca.o
+ .text.slc_man_begin
+                0x000000000200a144       0xb6 build/felucca.o
+ .text.slc_state_at
+                0x000000000200a1fa      0x130 build/felucca.o
+ .text.slc_store_load
+                0x000000000200a32a       0xf2 build/felucca.o
+ .text.smp_user_scan
+                0x000000000200a41c      0x568 build/felucca.o
+ .text.st_sector
+                0x000000000200a984       0x44 build/felucca.o
+ .text.st_read  0x000000000200a9c8       0x44 build/felucca.o
+ .text.st_head  0x000000000200aa0c       0x58 build/felucca.o
+ .text.st_body  0x000000000200aa64       0x36 build/felucca.o
+ .text.st_current
+                0x000000000200aa9a       0x86 build/felucca.o
+ .text.st_load  0x000000000200ab20       0x42 build/felucca.o
+ .text.palette_from_stored
+                0x000000000200ab62       0x22 build/felucca.o
+ .text.settings_import
+                0x000000000200ab84      0x22c build/felucca.o
+ .text.proj_hash
+                0x000000000200adb0       0x1e build/felucca.o
+ .text.proj_sum
+                0x000000000200adce        0x8 build/felucca.o
+ .text.chain_valid
+                0x000000000200add6       0x32 build/felucca.o
+ .text.motion_valid
+                0x000000000200ae08       0x6a build/felucca.o
+ .text.proj_ok  0x000000000200ae72       0x4a build/felucca.o
+ .text.proj_drums_to_part
+                0x000000000200aebc       0x70 build/felucca.o
+ .text.phys_legacy
+                0x000000000200af2c       0x10 build/felucca.o
+ .text.drum_from_phys
+                0x000000000200af3c       0x3e build/felucca.o
+ .text.proj_phys
+                0x000000000200af7a       0x6a build/felucca.o
+ .text.param_desc_of
+                0x000000000200afe4       0x28 build/felucca.o
+ .text.params_by_count
+                0x000000000200b00c       0x3a build/felucca.o
+ .text.chain_defaults
+                0x000000000200b046       0x1e build/felucca.o
+ .text.proj_trk_from
+                0x000000000200b064       0x72 build/felucca.o
+ .text.proj_g_from_v2
+                0x000000000200b0d6       0x22 build/felucca.o
+ .text.proj_trk_from_v2
+                0x000000000200b0f8       0x1e build/felucca.o
+ .text.step_to_grid
+                0x000000000200b116       0x74 build/felucca.o
+ .text.step_set_ratchet
+                0x000000000200b18a       0x26 build/felucca.o
+ .text.proj_name_get
+                0x000000000200b1b0       0x38 build/felucca.o
+ .text.proj_unpack
+                0x000000000200b1e8      0x36e build/felucca.o
+ .text.proj_engines_ok
+                0x000000000200b556       0x1e build/felucca.o
+ .text.fm4_abs  0x000000000200b574        0x6 build/felucca.o
+ .text.fm4_samples
+                0x000000000200b57a       0x1c build/felucca.o
+ .text.fm6_carriers
+                0x000000000200b596       0x2e build/felucca.o
+ .text.fm4_lg   0x000000000200b5c4       0x4c build/felucca.o
+ .text.fm4_ms   0x000000000200b610       0x16 build/felucca.o
+ .text.fm6_scaleout
+                0x000000000200b626       0x1a build/felucca.o
+ .text.fm4_outlevel
+                0x000000000200b640       0x46 build/felucca.o
+ .text.fm4_rate
+                0x000000000200b686       0x56 build/felucca.o
+ .text.fm4_level
+                0x000000000200b6dc       0x4a build/felucca.o
+ .text.fm4_fall
+                0x000000000200b726       0x2a build/felucca.o
+ .text.fm6_sanitize
+                0x000000000200b750       0x70 build/felucca.o
+ .text.fm4_convert
+                0x000000000200b7c0      0x6b0 build/felucca.o
+ .text.fm6_pack
+                0x000000000200be70      0x11a build/felucca.o
+ .text.proj_fm4
+                0x000000000200bf8a      0x154 build/felucca.o
+ .text.drum_from_perc
+                0x000000000200c0de       0x26 build/felucca.o
+ .text.proj_perc
+                0x000000000200c104       0xde build/felucca.o
+ .text.proj_import
+                0x000000000200c1e2      0x556 build/felucca.o
+ .text.proj_steps
+                0x000000000200c738       0x4c build/felucca.o
+ .text.proj_bound
+                0x000000000200c784       0x94 build/felucca.o
+ .text.step_ratchet
+                0x000000000200c818        0xa build/felucca.o
+ .text.proj_pack
+                0x000000000200c822      0x27a build/felucca.o
+ .text.proj_fetch
+                0x000000000200ca9c       0x56 build/felucca.o
+ .text.up_valid
+                0x000000000200caf2       0x5e build/felucca.o
+ .text.up_value
+                0x000000000200cb50       0x18 build/felucca.o
+ .text.up_set_value
+                0x000000000200cb68       0x18 build/felucca.o
+ .text.up_migrate
+                0x000000000200cb80       0x60 build/felucca.o
+ .text.up_grid  0x000000000200cbe0       0x16 build/felucca.o
+ .text.up_pat_norm
+                0x000000000200cbf6       0x20 build/felucca.o
+ .text.up_bank_check
+                0x000000000200cc16       0xa0 build/felucca.o
+ .text.upf_valid
+                0x000000000200ccb6       0x22 build/felucca.o
+ .text.upf_empty
+                0x000000000200ccd8       0x26 build/felucca.o
+ .text.fm6_bank_valid
+                0x000000000200ccfe       0x4e build/felucca.o
+ .text.up_rec   0x000000000200cd4c       0x1e build/felucca.o
+ .text.up_used  0x000000000200cd6a       0x1e build/felucca.o
+ .text.upf_fm6  0x000000000200cd88       0x1c build/felucca.o
+ .text.upf_tag  0x000000000200cda4       0x2a build/felucca.o
+ .text.upf_get  0x000000000200cdce       0x82 build/felucca.o
+ .text.fm6_unpack
+                0x000000000200ce50      0x108 build/felucca.o
+ .text.upf_set  0x000000000200cf58       0x9a build/felucca.o
+ .text.upf_migrate
+                0x000000000200cff2       0x68 build/felucca.o
+ .text.audio_silence
+                0x000000000200d05a       0x18 build/felucca.o
+ .text.st_erase
+                0x000000000200d072       0x64 build/felucca.o
+ .text.fl_write
+                0x000000000200d0d6       0x4a build/felucca.o
+ .text.st_prog  0x000000000200d120       0x44 build/felucca.o
+ .text.st_save_to
+                0x000000000200d164      0x102 build/felucca.o
+ .text.upf_save
+                0x000000000200d266       0x4c build/felucca.o
+ .text.favorite_has
+                0x000000000200d2b2       0x48 build/felucca.o
+ .text.favorite_set
+                0x000000000200d2fa       0x7a build/felucca.o
+ .text.ota_fread
+                0x000000000200d374        0x4 build/felucca.o
+ .text.ota_in_area
+                0x000000000200d378       0x20 build/felucca.o
+ .text.fl_erase4k
+                0x000000000200d398       0x1a build/felucca.o
+ .text.ota_erase
+                0x000000000200d3b2       0x2c build/felucca.o
+ .text.ota_unstage
+                0x000000000200d3de       0x18 build/felucca.o
+ .text.ux_mix   0x000000000200d3f6       0x7a build/felucca.o
+ .text.palette_set
+                0x000000000200d470      0x154 build/felucca.o
+ .text.settings_init
+                0x000000000200d5c4       0x5e build/felucca.o
+ .text.usb_serial_apply
+                0x000000000200d622       0x7a build/felucca.o
+ .text.cv_text_on
+                0x000000000200d69c       0x14 build/felucca.o
+ .text.splash_band
+                0x000000000200d6b0       0x56 build/felucca.o
+ .text.panel_init
+                0x000000000200d706       0xae build/felucca.o
+ .text.fm6_set_patch
+                0x000000000200d7b4       0x56 build/felucca.o
+ .text.motion_guard
+                0x000000000200d80a        0x8 build/felucca.o
+ .text.motion_rebase
+                0x000000000200d812       0x5c build/felucca.o
+ .text.motion_clear
+                0x000000000200d86e       0x94 build/felucca.o
+ .text.motion_reset
+                0x000000000200d902        0x4 build/felucca.o
+ .text.step_clear
+                0x000000000200d906       0x14 build/felucca.o
+ .text.track_defaults_steps
+                0x000000000200d91a       0x1e build/felucca.o
+ .text.fnv      0x000000000200d938       0x16 build/felucca.o
+ .text.steps_sig
+                0x000000000200d94e       0x12 build/felucca.o
+ .text.track_sig
+                0x000000000200d960       0x8e build/felucca.o
+ .text.motion_enabled
+                0x000000000200d9ee       0x22 build/felucca.o
+ .text.motion_set_enabled
+                0x000000000200da10       0x3e build/felucca.o
+ .text.load_motion_hold
+                0x000000000200da4e       0x3c build/felucca.o
+ .text.motion_snapshot_track
+                0x000000000200da8a       0x70 build/felucca.o
+ .text.load_begin
+                0x000000000200dafa       0xe8 build/felucca.o
+ .text.param_kept
+                0x000000000200dbe2       0x2a build/felucca.o
+ .text.fm6_adopt
+                0x000000000200dc0c       0xb2 build/felucca.o
+ .text.fm4_apply
+                0x000000000200dcbe       0x5a build/felucca.o
+ .text.motion_count
+                0x000000000200dd18       0x3e build/felucca.o
+ .text.load_end
+                0x000000000200dd56      0x104 build/felucca.o
+ .text.fm4_load_preset
+                0x000000000200de5a      0x130 build/felucca.o
+ .text.preset_orig
+                0x000000000200df8a       0x20 build/felucca.o
+ .text.fm6_load_slot
+                0x000000000200dfaa       0x40 build/felucca.o
+ .text.apply_preset_to
+                0x000000000200dfea      0x166 build/felucca.o
+ .text.set_engine_of
+                0x000000000200e150       0x5a build/felucca.o
+ .text.fm1_adc_read
+                0x000000000200e1aa       0x60 build/felucca.o
+ .text.fm1_delay_ms
+                0x000000000200e20a       0x1a build/felucca.o
+ .text.usb_start
+                0x000000000200e224       0xb6 build/felucca.o
+ .text.fm1_led_dim_level
+                0x000000000200e2da       0x28 build/felucca.o
+ .text.icon_cell
+                0x000000000200e302       0x46 build/felucca.o
+ .text.icon_ink
+                0x000000000200e348       0x9a build/felucca.o
+ .text.cv_rect  0x000000000200e3e2       0x66 build/felucca.o
+ .text.cv_pset  0x000000000200e448       0x2e build/felucca.o
+ .text.cv_rrect
+                0x000000000200e476      0x17e build/felucca.o
+ .text.cv_icon_on
+                0x000000000200e5f4      0x132 build/felucca.o
+ .text.cv_icon_in
+                0x000000000200e726       0x4e build/felucca.o
+ .text.cv_icon_mid
+                0x000000000200e774       0x1e build/felucca.o
+ .text.draw_text_box
+                0x000000000200e792       0x2c build/felucca.o
+ .text.fm1_wdt_feed
+                0x000000000200e7be        0xa build/felucca.o
+ .text.fm1_input_edges
+                0x000000000200e7c8       0x16 build/felucca.o
+ .text.setup_show
+                0x000000000200e7de       0x30 build/felucca.o
+ .text.fm1_enc_take
+                0x000000000200e80e       0x1c build/felucca.o
+ .text.str_cpy  0x000000000200e82a       0x28 build/felucca.o
+ .text.str_len  0x000000000200e852        0xe build/felucca.o
+ .text.ui_say   0x000000000200e860       0x38 build/felucca.o
+ .text.ui_message
+                0x000000000200e898        0xa build/felucca.o
+ .text.panel_setup
+                0x000000000200e8a2      0x238 build/felucca.o
+ .text.chain_busy
+                0x000000000200eada       0x22 build/felucca.o
+ .text.seq_counting
+                0x000000000200eafc       0x10 build/felucca.o
+ .text.transport_busy
+                0x000000000200eb0c       0x34 build/felucca.o
+ .text.cur_page
+                0x000000000200eb40       0x22 build/felucca.o
+ .text.slice_page_ok
+                0x000000000200eb62       0x32 build/felucca.o
+ .text.slice_page_on
+                0x000000000200eb94       0x26 build/felucca.o
+ .text.slc_man_of
+                0x000000000200ebba       0x4e build/felucca.o
+ .text.settings_export
+                0x000000000200ec08       0x98 build/felucca.o
+ .text.st_save  0x000000000200eca0        0x6 build/felucca.o
+ .text.settings_poll
+                0x000000000200eca6      0x1e6 build/felucca.o
+ .text.settings_save
+                0x000000000200ee8c       0x10 build/felucca.o
+ .text.project_restore_runtime
+                0x000000000200ee9c      0x34e build/felucca.o
+ .text.motion_base_value
+                0x000000000200f1ea       0x4e build/felucca.o
+ .text.as_mix   0x000000000200f238       0x16 build/felucca.o
+ .text.autosave_sig
+                0x000000000200f24e       0xc6 build/felucca.o
+ .text.master_poll
+                0x000000000200f314       0x38 build/felucca.o
+ .text.usb_detach
+                0x000000000200f34c       0x28 build/felucca.o
+ .text.ed_eng   0x000000000200f374       0x12 build/felucca.o
+ .text.ed_room  0x000000000200f386       0x1c build/felucca.o
+ .text.ed_val   0x000000000200f3a2       0x2a build/felucca.o
+ .text.seq_steps
+                0x000000000200f3cc       0x3e build/felucca.o
+ .text.ed_step_sig
+                0x000000000200f40a       0x60 build/felucca.o
+ .text.ed_shadow
+                0x000000000200f46a       0xc0 build/felucca.o
+ .text.ed_begin
+                0x000000000200f52a       0x24 build/felucca.o
+ .text.ed_b     0x000000000200f54e       0x20 build/felucca.o
+ .text.ota_idle
+                0x000000000200f56e        0x4 build/felucca.o
+ .text.ota_wire_send
+                0x000000000200f572       0xd4 build/felucca.o
+ .text.ed_send  0x000000000200f646       0x1c build/felucca.o
+ .text.ed_v     0x000000000200f662       0x28 build/felucca.o
+ .text.ota_frame_get
+                0x000000000200f68a       0x22 build/felucca.o
+ .text.ed_u28   0x000000000200f6ac       0x1a build/felucca.o
+ .text.ed_ui_state
+                0x000000000200f6c6       0x60 build/felucca.o
+ .text.ed_ui_save
+                0x000000000200f726       0x58 build/felucca.o
+ .text.ed_str   0x000000000200f77e       0x2a build/felucca.o
+ .text.ed_rv    0x000000000200f7a8        0xe build/felucca.o
+ .text.ed_flash_stop
+                0x000000000200f7b6       0x52 build/felucca.o
+ .text.project_capture
+                0x000000000200f808      0x11a build/felucca.o
+ .text.project_used
+                0x000000000200f922       0x18 build/felucca.o
+ .text.ed_bk_object
+                0x000000000200f93a       0xd2 build/felucca.o
+ .text.ed_bk_u32
+                0x000000000200fa0c       0x1a build/felucca.o
+ .text.ed_bk_r32
+                0x000000000200fa26       0x1c build/felucca.o
+ .text.proj_store_len
+                0x000000000200fa42       0x1c build/felucca.o
+ .text.ed_unpack7
+                0x000000000200fa5e       0x8e build/felucca.o
+ .text.menu_n   0x000000000200faec       0x2e build/felucca.o
+ .text.menu_flag
+                0x000000000200fb1a       0x1c build/felucca.o
+ .text.scr_get  0x000000000200fb36       0x1c build/felucca.o
+ .text.rp_get   0x000000000200fb52       0x38 build/felucca.o
+ .text.menu_get
+                0x000000000200fb8a       0xc2 build/felucca.o
+ .text.menu_vname
+                0x000000000200fc4c       0xf0 build/felucca.o
+ .text.rp_apply
+                0x000000000200fd3c       0x2a build/felucca.o
+ .text.rp_put   0x000000000200fd66       0x48 build/felucca.o
+ .text.menu_put
+                0x000000000200fdae       0xe8 build/felucca.o
+ .text.motion_delete_event
+                0x000000000200fe96       0x86 build/felucca.o
+ .text.motion_set_lock
+                0x000000000200ff1c       0x10 build/felucca.o
+ .text.motion_clear_locks
+                0x000000000200ff2c       0x8c build/felucca.o
+ .text.ed_tdesc
+                0x000000000200ffb8       0x14 build/felucca.o
+ .text.ed_desc  0x000000000200ffcc       0x4e build/felucca.o
+ .text.ed_load_before
+                0x000000000201001a       0x7e build/felucca.o
+ .text.set_engine
+                0x0000000002010098       0x1e build/felucca.o
+ .text.ed_load_after
+                0x00000000020100b6       0x74 build/felucca.o
+ .text.step_set_chance
+                0x000000000201012a       0x10 build/felucca.o
+ .text.ed_step_put
+                0x000000000201013a       0x8e build/felucca.o
+ .text.step_chance
+                0x00000000020101c8       0x10 build/felucca.o
+ .text.ed_step_reply
+                0x00000000020101d8       0x66 build/felucca.o
+ .text.apply_preset
+                0x000000000201023e       0x1e build/felucca.o
+ .text.project_save_as
+                0x000000000201025c       0xf2 build/felucca.o
+ .text.project_load
+                0x000000000201034e       0x5e build/felucca.o
+ .text.ed_smp_inval
+                0x00000000020103ac       0x3e build/felucca.o
+ .text.up_values
+                0x00000000020103ea       0x8a build/felucca.o
+ .text.up_name_ok
+                0x0000000002010474       0x26 build/felucca.o
+ .text.up_put   0x000000000201049a       0xec build/felucca.o
+ .text.eng_ok   0x0000000002010586       0x16 build/felucca.o
+ .text.up_slot_label
+                0x000000000201059c       0x24 build/felucca.o
+ .text.up_auto_name
+                0x00000000020105c0       0x64 build/felucca.o
+ .text.up_set_name
+                0x0000000002010624       0x3c build/felucca.o
+ .text.step_lanes
+                0x0000000002010660       0x34 build/felucca.o
+ .text.step_accents
+                0x0000000002010694       0x18 build/felucca.o
+ .text.up_store
+                0x00000000020106ac      0x170 build/felucca.o
+ .text.up_load  0x000000000201081c      0x16e build/felucca.o
+ .text.track_select
+                0x000000000201098a       0x3e build/felucca.o
+ .text.ed_known
+                0x00000000020109c8       0x5a build/felucca.o
+ .text.chain_prepare
+                0x0000000002010a22      0x1c0 build/felucca.o
+ .text.ed_handle
+                0x0000000002010be2     0x23a6 build/felucca.o
+ .text.ota_frame_done
+                0x0000000002012f88        0xe build/felucca.o
+ .text.ed_service
+                0x0000000002012f96      0x33a build/felucca.o
+ .text.ota_rd16
+                0x00000000020132d0        0xa build/felucca.o
+ .text.ota_rd24
+                0x00000000020132da       0x10 build/felucca.o
+ .text.ota_take
+                0x00000000020132ea       0x96 build/felucca.o
+ .text.ota_send_msg
+                0x0000000002013380       0xba build/felucca.o
+ .text.ota_reply_identity
+                0x000000000201343a       0x30 build/felucca.o
+ .text.ota_show
+                0x000000000201346a       0xd8 build/felucca.o
+ .text.ota_wr16
+                0x0000000002013542        0x8 build/felucca.o
+ .text.ota_wr32
+                0x000000000201354a       0x12 build/felucca.o
+ .text.ota_rd32
+                0x000000000201355c       0x10 build/felucca.o
+ .text.ota_read
+                0x000000000201356c       0xe0 build/felucca.o
+ .text.ota_jl_enc
+                0x000000000201364c       0x26 build/felucca.o
+ .text.ota_crc16
+                0x0000000002013672       0x2e build/felucca.o
+ .text.ota_memeq
+                0x00000000020136a0       0x16 build/felucca.o
+ .text.ota_prog
+                0x00000000020136b6       0x20 build/felucca.o
+ .text.con_putc
+                0x00000000020136d6       0x76 build/felucca.o
+ .text.con_puts
+                0x000000000201374c       0x12 build/felucca.o
+ .text.con_word
+                0x000000000201375e       0x42 build/felucca.o
+ .text.con_dec  0x00000000020137a0       0x50 build/felucca.o
+ .text.con_kv   0x00000000020137f0       0x20 build/felucca.o
+ .text.con_uac  0x0000000002013810       0xfe build/felucca.o
+ .text.con_hex  0x000000000201390e       0x2c build/felucca.o
+ .text.con_kx   0x000000000201393a       0x26 build/felucca.o
+ .text.con_num  0x0000000002013960       0x84 build/felucca.o
+ .text.panel_enc
+                0x00000000020139e4       0x2c build/felucca.o
+ .text.scr_wake
+                0x0000000002013a10       0x1e build/felucca.o
+ .text.btn_hold
+                0x0000000002013a2e       0x64 build/felucca.o
+ .text.ly_bit   0x0000000002013a92       0x1e build/felucca.o
+ .text.layer_let_go
+                0x0000000002013ab0       0x5c build/felucca.o
+ .text.ly_avail
+                0x0000000002013b0c       0x40 build/felucca.o
+ .text.name_on  0x0000000002013b4c       0x10 build/felucca.o
+ .text.layer_allowed
+                0x0000000002013b5c       0x2e build/felucca.o
+ .text.ly_down  0x0000000002013b8a       0x30 build/felucca.o
+ .text.layer_held
+                0x0000000002013bba       0x24 build/felucca.o
+ .text.layer_opened
+                0x0000000002013bde       0xf2 build/felucca.o
+ .text.act_cols
+                0x0000000002013cd0       0x90 build/felucca.o
+ .text.layer_open
+                0x0000000002013d60       0x2c build/felucca.o
+ .text.layer_set_open
+                0x0000000002013d8c       0x34 build/felucca.o
+ .text.motion_replace_track
+                0x0000000002013dc0       0x8e build/felucca.o
+ .text.undo_swap
+                0x0000000002013e4e      0x22a build/felucca.o
+ .text.tl_undo_take
+                0x0000000002014078       0xb6 build/felucca.o
+ .text.key_black
+                0x000000000201412e       0x1c build/felucca.o
+ .text.eng_vis  0x000000000201414a       0x18 build/felucca.o
+ .text.snd_id   0x0000000002014162       0x2a build/felucca.o
+ .text.select_engine
+                0x000000000201418c       0x46 build/felucca.o
+ .text.user_of  0x00000000020141d2       0x20 build/felucca.o
+ .text.up_has_pat
+                0x00000000020141f2       0x2a build/felucca.o
+ .text.up_pat_rank
+                0x000000000201421c       0x20 build/felucca.o
+ .text.preset_pat_hint
+                0x000000000201423c       0x82 build/felucca.o
+ .text.preset_hinted
+                0x00000000020142be       0x1c build/felucca.o
+ .text.preset_rank
+                0x00000000020142da       0x3e build/felucca.o
+ .text.up_engine
+                0x0000000002014318       0x18 build/felucca.o
+ .text.eng_list_pos
+                0x0000000002014330       0xb8 build/felucca.o
+ .text.edit_load
+                0x00000000020143e8      0x126 build/felucca.o
+ .text.confirm_open
+                0x000000000201450e       0x1c build/felucca.o
+ .text.seq_is_empty
+                0x000000000201452a       0x1c build/felucca.o
+ .text.rec_set  0x0000000002014546       0x2e build/felucca.o
+ .text.rl_name  0x0000000002014574       0x2a build/felucca.o
+ .text.tl_cell  0x000000000201459e       0x1e build/felucca.o
+ .text.tl_order
+                0x00000000020145bc       0x8e build/felucca.o
+ .text.tl_shift
+                0x000000000201464a       0x2a build/felucca.o
+ .text.grid_own
+                0x0000000002014674       0x52 build/felucca.o
+ .text.grid_hit
+                0x00000000020146c6       0x82 build/felucca.o
+ .text.tl_lane_clear
+                0x0000000002014748       0x1e build/felucca.o
+ .text.tl_euclid
+                0x0000000002014766       0x4e build/felucca.o
+ .text.tl_lane_rnd
+                0x00000000020147b4      0x1ce build/felucca.o
+ .text.tl_hit_nth
+                0x0000000002014982       0x54 build/felucca.o
+ .text.grid_acc
+                0x00000000020149d6       0x8c build/felucca.o
+ .text.drum_swaps
+                0x0000000002014a62       0x2a build/felucca.o
+ .text.drum_lane_name
+                0x0000000002014a8c       0x48 build/felucca.o
+ .text.fmt_fix  0x0000000002014ad4       0x6c build/felucca.o
+ .text.fmt_int  0x0000000002014b40        0x6 build/felucca.o
+ .text.perf_harm_on
+                0x0000000002014b46       0x1e build/felucca.o
+ .text.accel    0x0000000002014b64       0xac build/felucca.o
+ .text.eng_rank
+                0x0000000002014c10       0x28 build/felucca.o
+ .text.eng_step
+                0x0000000002014c38       0x2e build/felucca.o
+ .text.preset_mark
+                0x0000000002014c66       0x4c build/felucca.o
+ .text.page_first
+                0x0000000002014cb2       0x1c build/felucca.o
+ .text.ly_page  0x0000000002014cce       0x1a build/felucca.o
+ .text.cursor_set
+                0x0000000002014ce8       0x48 build/felucca.o
+ .text.ev_rows  0x0000000002014d30       0x7e build/felucca.o
+ .text.ev_row   0x0000000002014dae       0x10 build/felucca.o
+ .text.ev_busy  0x0000000002014dbe       0x1a build/felucca.o
+ .text.ev_len   0x0000000002014dd8       0x16 build/felucca.o
+ .text.track_desc
+                0x0000000002014dee       0x4c build/felucca.o
+ .text.ev_id_ok
+                0x0000000002014e3a       0x60 build/felucca.o
+ .text.lock_page_ok
+                0x0000000002014e9a       0x54 build/felucca.o
+ .text.lock_id  0x0000000002014eee       0x7e build/felucca.o
+ .text.motion_find
+                0x0000000002014f6c       0x44 build/felucca.o
+ .text.ev_id_step
+                0x0000000002014fb0       0x3a build/felucca.o
+ .text.ev_fix   0x0000000002014fea       0x6a build/felucca.o
+ .text.motion_sig
+                0x0000000002015054       0x58 build/felucca.o
+ .text.motion_undo_take
+                0x00000000020150ac       0xf0 build/felucca.o
+ .text.motion_move
+                0x000000000201519c       0xd2 build/felucca.o
+ .text.enum_order
+                0x000000000201526e       0x26 build/felucca.o
+ .text.enum_rank
+                0x0000000002015294       0x36 build/felucca.o
+ .text.param_turn
+                0x00000000020152ca       0x7c build/felucca.o
+ .text.motion_undo_done
+                0x0000000002015346       0x2a build/felucca.o
+ .text.ev_follow
+                0x0000000002015370       0x2e build/felucca.o
+ .text.preset_all_pos
+                0x000000000201539e       0xd6 build/felucca.o
+ .text.preset_all_at
+                0x0000000002015474       0x88 build/felucca.o
+ .text.preset_pos
+                0x00000000020154fc       0x68 build/felucca.o
+ .text.preset_at
+                0x0000000002015564       0x5a build/felucca.o
+ .text.preset_step
+                0x00000000020155be       0x84 build/felucca.o
+ .text.slc_src_of
+                0x0000000002015642       0x16 build/felucca.o
+ .text.slice_src
+                0x0000000002015658       0x44 build/felucca.o
+ .text.slc_count
+                0x000000000201569c       0x24 build/felucca.o
+ .text.slice_count
+                0x00000000020156c0       0x1c build/felucca.o
+ .text.slice_sel
+                0x00000000020156dc       0x14 build/felucca.o
+ .text.slc_bounds
+                0x00000000020156f0       0xb6 build/felucca.o
+ .text.slice_edit_begin
+                0x00000000020157a6      0x10c build/felucca.o
+ .text.slice_mark
+                0x00000000020158b2       0x54 build/felucca.o
+ .text.slice_view
+                0x0000000002015906       0x76 build/felucca.o
+ .text.slice_edit_end
+                0x000000000201597c       0x52 build/felucca.o
+ .text.pat_count
+                0x00000000020159ce       0x16 build/felucca.o
+ .text.pat_pick
+                0x00000000020159e4       0x1e build/felucca.o
+ .text.page_desc
+                0x0000000002015a02       0x6e build/felucca.o
+ .text.edit_param
+                0x0000000002015a70      0x8a2 build/felucca.o
+ .text.grid_on  0x0000000002016312       0x50 build/felucca.o
+ .text.keys_mode
+                0x0000000002016362       0x12 build/felucca.o
+ .text.go_home  0x0000000002016374       0x26 build/felucca.o
+ .text.menu_close
+                0x000000000201639a       0x1e build/felucca.o
+ .text.name_close
+                0x00000000020163b8       0x1c build/felucca.o
+ .text.rec_tap  0x00000000020163d4      0x106 build/felucca.o
+ .text.cv_text_r
+                0x00000000020164da       0x30 build/felucca.o
+ .text.menu_text
+                0x000000000201650a       0xd0 build/felucca.o
+ .text.menu_document
+                0x00000000020165da      0x246 build/felucca.o
+ .text.menu_scroll_max
+                0x0000000002016820       0x16 build/felucca.o
+ .text.enc_drop
+                0x0000000002016836       0x12 build/felucca.o
+ .text.menu_tab
+                0x0000000002016848       0x22 build/felucca.o
+ .text.mtab_first
+                0x000000000201686a       0x1a build/felucca.o
+ .text.mtab_rows
+                0x0000000002016884       0x24 build/felucca.o
+ .text.str_eq   0x00000000020168a8       0x20 build/felucca.o
+ .text.menu_step
+                0x00000000020168c8       0x5a build/felucca.o
+ .text.nm_commit
+                0x0000000002016922       0x16 build/felucca.o
+ .text.nm_group
+                0x0000000002016938       0x2e build/felucca.o
+ .text.nm_insert
+                0x0000000002016966       0x4a build/felucca.o
+ .text.nm_black
+                0x00000000020169b0       0x38 build/felucca.o
+ .text.nm_do    0x00000000020169e8       0x6e build/felucca.o
+ .text.up_ui_named
+                0x0000000002016a56      0x134 build/felucca.o
+ .text.page_visible
+                0x0000000002016b8a       0x8e build/felucca.o
+ .text.page_entered
+                0x0000000002016c18       0x74 build/felucca.o
+ .text.open_family
+                0x0000000002016c8c       0x90 build/felucca.o
+ .text.up_name  0x0000000002016d1c       0x34 build/felucca.o
+ .text.project_name
+                0x0000000002016d50       0x34 build/felucca.o
+ .text.name_open
+                0x0000000002016d84       0xe4 build/felucca.o
+ .text.up_ui    0x0000000002016e68        0x6 build/felucca.o
+ .text.up_pat_nth
+                0x0000000002016e6e       0x1e build/felucca.o
+ .text.pat_label
+                0x0000000002016e8c       0x5a build/felucca.o
+ .text.load_pat16
+                0x0000000002016ee6       0x7a build/felucca.o
+ .text.pat_load_ui
+                0x0000000002016f60      0x168 build/felucca.o
+ .text.live_rec_sel
+                0x00000000020170c8       0x3c build/felucca.o
+ .text.lock_held
+                0x0000000002017104       0xd0 build/felucca.o
+ .text.motion_lock_steps
+                0x00000000020171d4       0x50 build/felucca.o
+ .text.page_tap
+                0x0000000002017224      0x262 build/felucca.o
+ .text.cursor_fix
+                0x0000000002017486       0x32 build/felucca.o
+ .text.panel_btn_of
+                0x00000000020174b8       0x1c build/felucca.o
+ .text.chain_play_ui
+                0x00000000020174d4       0x58 build/felucca.o
+ .text.act_col  0x000000000201752c       0x38 build/felucca.o
+ .text.act_ready
+                0x0000000002017564      0x1f2 build/felucca.o
+ .text.slc_note_slice
+                0x0000000002017756       0x1e build/felucca.o
+ .text.black_held
+                0x0000000002017774       0x3e build/felucca.o
+ .text.motion_lock_get
+                0x00000000020177b2       0x46 build/felucca.o
+ .text.home_param
+                0x00000000020177f8       0x4c build/felucca.o
+ .text.smp_set_missing
+                0x0000000002017844       0x2c build/felucca.o
+ .text.ui_input
+                0x0000000002017870     0x34c8 build/felucca.o
+ .text.layer_btn
+                0x000000000201ad38       0x24 build/felucca.o
+ .text.led_put  0x000000000201ad5c       0x2a build/felucca.o
+ .text.scale_mask
+                0x000000000201ad86       0x20 build/felucca.o
+ .text.glo_sounding
+                0x000000000201ada6       0x3a build/felucca.o
+ .text.rec_clearable
+                0x000000000201ade0       0x36 build/felucca.o
+ .text.lcd_power
+                0x000000000201ae16       0x40 build/felucca.o
+ .text.kc_w     0x000000000201ae56       0x16 build/felucca.o
+ .text.kh_ink   0x000000000201ae6c       0x30 build/felucca.o
+ .text.cv_keycap
+                0x000000000201ae9c      0x128 build/felucca.o
+ .text.cv_key_hint
+                0x000000000201afc4       0x62 build/felucca.o
+ .text.str_hash
+                0x000000000201b026       0x14 build/felucca.o
+ .text.layer_locked
+                0x000000000201b03a       0x22 build/felucca.o
+ .text.batt_shown
+                0x000000000201b05c       0x3c build/felucca.o
+ .text.roll_note
+                0x000000000201b098       0xf0 build/felucca.o
+ .text.roll_text
+                0x000000000201b188      0x1ae build/felucca.o
+ .text.head_metro
+                0x000000000201b336       0x3a build/felucca.o
+ .text.draw_rec_mark
+                0x000000000201b370       0x36 build/felucca.o
+ .text.kc_tag   0x000000000201b3a6       0x76 build/felucca.o
+ .text.text_fit
+                0x000000000201b41c       0x86 build/felucca.o
+ .text.cv_free_text
+                0x000000000201b4a2       0x3a build/felucca.o
+ .text.head_msg
+                0x000000000201b4dc      0x2fe build/felucca.o
+ .text.draw_head
+                0x000000000201b7da      0x566 build/felucca.o
+ .text.menu_large
+                0x000000000201bd40       0x14 build/felucca.o
+ .text.mt_font  0x000000000201bd54       0x18 build/felucca.o
+ .text.cv_rule  0x000000000201bd6c       0x18 build/felucca.o
+ .text.menu_tabs
+                0x000000000201bd84      0x14c build/felucca.o
+ .text.kh_w     0x000000000201bed0       0x24 build/felucca.o
+ .text.mr_h     0x000000000201bef4       0x1c build/felucca.o
+ .text.mr_gap   0x000000000201bf10       0x16 build/felucca.o
+ .text.mr_y     0x000000000201bf26       0x16 build/felucca.o
+ .text.cv_key_row
+                0x000000000201bf3c       0xb8 build/felucca.o
+ .text.cv_text_in
+                0x000000000201bff4       0x2c build/felucca.o
+ .text.large_kind
+                0x000000000201c020       0x52 build/felucca.o
+ .text.card_h   0x000000000201c072       0x12 build/felucca.o
+ .text.graph_y  0x000000000201c084       0x12 build/felucca.o
+ .text.graph_h  0x000000000201c096       0x12 build/felucca.o
+ .text.lcd_rule
+                0x000000000201c0a8       0x18 build/felucca.o
+ .text.draw_rules
+                0x000000000201c0c0       0x62 build/felucca.o
+ .text.draw_frame
+                0x000000000201c122       0xac build/felucca.o
+ .text.icon_for_label
+                0x000000000201c1ce       0x32 build/felucca.o
+ .text.ink_w    0x000000000201c200       0x1a build/felucca.o
+ .text.large_face_has
+                0x000000000201c21a       0x2e build/felucca.o
+ .text.cv_text_fit
+                0x000000000201c248       0x36 build/felucca.o
+ .text.draw_column
+                0x000000000201c27e      0x942 build/felucca.o
+ .text.param_format
+                0x000000000201cbc0      0x256 build/felucca.o
+ .text.engine_icon
+                0x000000000201ce16       0x26 build/felucca.o
+ .text.preset_favorite
+                0x000000000201ce3c       0x36 build/felucca.o
+ .text.card_mot_of
+                0x000000000201ce72       0x4c build/felucca.o
+ .text.param_icon
+                0x000000000201cebe       0xe2 build/felucca.o
+ .text.ev_name  0x000000000201cfa0       0x6e build/felucca.o
+ .text.motion_icon
+                0x000000000201d00e       0x28 build/felucca.o
+ .text.motion_lock_count
+                0x000000000201d036       0x42 build/felucca.o
+ .text.draw_act_column
+                0x000000000201d078       0x58 build/felucca.o
+ .text.trk_level
+                0x000000000201d0d0       0x16 build/felucca.o
+ .text.slice_time
+                0x000000000201d0e6       0x5e build/felucca.o
+ .text.mod_src_icon
+                0x000000000201d144       0x1c build/felucca.o
+ .text.mod_dst_name
+                0x000000000201d160       0x36 build/felucca.o
+ .text.note_name
+                0x000000000201d196       0x30 build/felucca.o
+ .text.step_on  0x000000000201d1c6       0x16 build/felucca.o
+ .text.draw_columns
+                0x000000000201d1dc     0x15ac build/felucca.o
+ .text.lc_fill  0x000000000201e788       0x3c build/felucca.o
+ .text.lc_box   0x000000000201e7c4       0x88 build/felucca.o
+ .text.lcell    0x000000000201e84c      0x266 build/felucca.o
+ .text.drum_lane_abbr
+                0x000000000201eab2       0x48 build/felucca.o
+ .text.eng_abbr
+                0x000000000201eafa       0x26 build/felucca.o
+ .text.list_row
+                0x000000000201eb20       0x7c build/felucca.o
+ .text.strip_kind
+                0x000000000201eb9c       0x3a build/felucca.o
+ .text.knob     0x000000000201ebd6      0x186 build/felucca.o
+ .text.smp_zone
+                0x000000000201ed5c       0x2c build/felucca.o
+ .text.graph_project_used
+                0x000000000201ed88       0x9c build/felucca.o
+ .text.steps_hash
+                0x000000000201ee24       0x5e build/felucca.o
+ .text.pr_src   0x000000000201ee82       0x4a build/felucca.o
+ .text.pr_note  0x000000000201eecc       0x32 build/felucca.o
+ .text.pr_held  0x000000000201eefe       0x6a build/felucca.o
+ .text.cv_line  0x000000000201ef68       0x72 build/felucca.o
+ .text.cv_line_t
+                0x000000000201efda       0x2e build/felucca.o
+ .text.graph_scope
+                0x000000000201f008       0xd0 build/felucca.o
+ .text.graph_adsr
+                0x000000000201f0d8      0x192 build/felucca.o
+ .text.graph_lfo
+                0x000000000201f26a       0xac build/felucca.o
+ .text.bar_x    0x000000000201f316       0x12 build/felucca.o
+ .text.graph_steps
+                0x000000000201f328      0x122 build/felucca.o
+ .text.page_title
+                0x000000000201f44a      0x174 build/felucca.o
+ .text.pr_split
+                0x000000000201f5be       0x46 build/felucca.o
+ .text.cv_frame
+                0x000000000201f604       0x4c build/felucca.o
+ .text.pr_row_y
+                0x000000000201f650       0x16 build/felucca.o
+ .text.pr_bars  0x000000000201f666       0xac build/felucca.o
+ .text.note_line
+                0x000000000201f712       0x8a build/felucca.o
+ .text.panel_note
+                0x000000000201f79c       0x4e build/felucca.o
+ .text.slc_dec_at
+                0x000000000201f7ea       0x12 build/felucca.o
+ .text.slc_dec_next
+                0x000000000201f7fc       0xc0 build/felucca.o
+ .text.drw_level
+                0x000000000201f8bc       0x44 build/felucca.o
+ .text.fm_dot   0x000000000201f900       0x18 build/felucca.o
+ .text.draw_graph
+                0x000000000201f918     0x3550 build/felucca.o
+ .text.page_icon
+                0x0000000002022e68       0x32 build/felucca.o
+ .text.foot_hint
+                0x0000000002022e9a      0x14a build/felucca.o
+ .text.foot_rename
+                0x0000000002022fe4       0x5a build/felucca.o
+ .text.ui_draw_page
+                0x000000000202303e     0x2aa8 build/felucca.o
+ .text.fm1_main
+                0x0000000002025ae6     0x2c6c build/felucca.o
+ .text.fm1_cstart
+                0x0000000002028752      0x246 build/felucca.o
+                0x0000000002028752                fm1_cstart
+ .text.analog_note_on
+                0x0000000002028998       0x22 build/felucca.o
+ .text.analog_render
+                0x00000000020289ba      0x6a2 build/felucca.o
+ .text.fm4_gone_note_on
+                0x000000000202905c        0x2 build/felucca.o
+ .text.fm4_gone_render
+                0x000000000202905e        0x2 build/felucca.o
+ .text.phase_note_on
+                0x0000000002029060        0xe build/felucca.o
+ .text.pd_setup
+                0x000000000202906e      0x102 build/felucca.o
+ .text.pd_wave  0x0000000002029170      0x124 build/felucca.o
+ .text.phase_render
+                0x0000000002029294      0x232 build/felucca.o
+ .text.lofi_note_on
+                0x00000000020294c6       0x3a build/felucca.o
+ .text.lofi_render
+                0x0000000002029500      0x3a0 build/felucca.o
+ .text.lofi_amp
+                0x00000000020298a0       0xb4 build/felucca.o
+ .text.lofi_desc
+                0x0000000002029954       0x2e build/felucca.o
+ .text.sample_note_on
+                0x0000000002029982      0x10e build/felucca.o
+ .text.pow2_q16
+                0x0000000002029a90       0x58 build/felucca.o
+ .text.smp_sine
+                0x0000000002029ae8       0xde build/felucca.o
+ .text.sample_next
+                0x0000000002029bc6       0xc6 build/felucca.o
+ .text.sample_render
+                0x0000000002029c8c      0x224 build/felucca.o
+ .text.formant_note_on
+                0x0000000002029eb0       0x40 build/felucca.o
+ .text.vowel_at
+                0x0000000002029ef0       0x88 build/felucca.o
+ .text.fmt_ratio
+                0x0000000002029f78       0x58 build/felucca.o
+ .text.fres_coef
+                0x0000000002029fd0       0xce build/felucca.o
+ .text.formant_render
+                0x000000000202a09e      0x76a build/felucca.o
+ .text.trio_note_on
+                0x000000000202a808       0x34 build/felucca.o
+ .text.trio_inc
+                0x000000000202a83c       0x68 build/felucca.o
+ .text.trio_pass
+                0x000000000202a8a4      0x2f8 build/felucca.o
+ .text.trio_naive
+                0x000000000202ab9c       0x66 build/felucca.o
+ .text.trio_render
+                0x000000000202ac02      0x738 build/felucca.o
+ .text.wheel_note_on
+                0x000000000202b33a       0xc2 build/felucca.o
+ .text.wheel_render
+                0x000000000202b3fc      0x334 build/felucca.o
+ .text.wheel_block
+                0x000000000202b730      0x224 build/felucca.o
+ .text.gr_find  0x000000000202b954       0xa6 build/felucca.o
+ .text.grain_note_on
+                0x000000000202b9fa       0x70 build/felucca.o
+ .text.gr_seek  0x000000000202ba6a       0xd4 build/felucca.o
+ .text.gr_fill  0x000000000202bb3e       0xd4 build/felucca.o
+ .text.grain_render
+                0x000000000202bc12      0x93e build/felucca.o
+ .text.grain_block
+                0x000000000202c550      0x422 build/felucca.o
+ .text.phys_reset
+                0x000000000202c972       0x3c build/felucca.o
+ .text.phys_note_on
+                0x000000000202c9ae       0xb6 build/felucca.o
+ .text.px_sin   0x000000000202ca64       0x78 build/felucca.o
+ .text.px_exp2  0x000000000202cadc      0x116 build/felucca.o
+ .text.px_svf_coef
+                0x000000000202cbf2       0xc8 build/felucca.o
+ .text.px_modal_exciter
+                0x000000000202ccba      0x1b0 build/felucca.o
+ .text.px_modal_q
+                0x000000000202ce6a       0x78 build/felucca.o
+ .text.px_modal_block
+                0x000000000202cee2      0x2a2 build/felucca.o
+ .text.px_modal_run
+                0x000000000202d184      0x26c build/felucca.o
+ .text.px_memb_block
+                0x000000000202d3f0      0x2b4 build/felucca.o
+ .text.px_isqrt64
+                0x000000000202d6a4       0x6e build/felucca.o
+ .text.px_string_block
+                0x000000000202d712      0x57e build/felucca.o
+ .text.px_string_excite
+                0x000000000202dc90      0x252 build/felucca.o
+ .text.px_string_run
+                0x000000000202dee2      0x3fe build/felucca.o
+ .text.phys_symp_pitches
+                0x000000000202e2e0       0x98 build/felucca.o
+ .text.px_symp_block
+                0x000000000202e378      0x1ca build/felucca.o
+ .text.px_symp_run
+                0x000000000202e542      0x228 build/felucca.o
+ .text.phys_render
+                0x000000000202e76a      0x33c build/felucca.o
+ .text.phys_desc
+                0x000000000202eaa6       0x20 build/felucca.o
+ .text.drum_note_on
+                0x000000000202eac6      0x176 build/felucca.o
+ .text.drum_lane_of
+                0x000000000202ec3c       0x5c build/felucca.o
+ .text.dv_tau_of
+                0x000000000202ec98       0x48 build/felucca.o
+ .text.dv_kb    0x000000000202ece0       0x56 build/felucca.o
+ .text.dv_pole  0x000000000202ed36       0x50 build/felucca.o
+ .text.dv_hp1   0x000000000202ed86       0x9a build/felucca.o
+ .text.dv_metal_run
+                0x000000000202ee20       0x76 build/felucca.o
+ .text.dv_metal_mix
+                0x000000000202ee96       0x2e build/felucca.o
+ .text.dv_kick_run
+                0x000000000202eec4      0x254 build/felucca.o
+ .text.dv_snare_run
+                0x000000000202f118      0x244 build/felucca.o
+ .text.dv_clap_run
+                0x000000000202f35c      0x14e build/felucca.o
+ .text.dv_hat_run
+                0x000000000202f4aa      0x12e build/felucca.o
+ .text.dv_tom_run
+                0x000000000202f5d8      0x126 build/felucca.o
+ .text.dv_rim_run
+                0x000000000202f6fe       0xdc build/felucca.o
+ .text.dv_bell_run
+                0x000000000202f7da       0xfa build/felucca.o
+ .text.dv_cym_run
+                0x000000000202f8d4      0x11a build/felucca.o
+ .text.dv_out   0x000000000202f9ee       0x78 build/felucca.o
+ .text.drum_render
+                0x000000000202fa66     0x1ae4 build/felucca.o
+ .text.drum_amp
+                0x000000000203154a       0x36 build/felucca.o
+ .text.drum_keys
+                0x0000000002031580       0x24 build/felucca.o
+ .text.noise_note_on
+                0x00000000020315a4       0x40 build/felucca.o
+ .text.noise_inc
+                0x00000000020315e4       0x62 build/felucca.o
+ .text.noise_render
+                0x0000000002031646      0x610 build/felucca.o
+ .text.noise_desc
+                0x0000000002031c56       0x32 build/felucca.o
+ .text.fm6_sync
+                0x0000000002031c88      0x28a build/felucca.o
+ .text.fm6_env_advance
+                0x0000000002031f12       0xaa build/felucca.o
+ .text.fm6_penv_advance
+                0x0000000002031fbc       0x54 build/felucca.o
+ .text.fm6_note_on
+                0x0000000002032010      0x2fa build/felucca.o
+ .text.fm6_op_fb
+                0x000000000203230a       0x8c build/felucca.o
+ .text.fm6_op_run
+                0x0000000002032396      0x13e build/felucca.o
+ .text.fm6_render
+                0x00000000020324d4      0x662 build/felucca.o
+ .text.fm6_block
+                0x0000000002032b36       0xfa build/felucca.o
+ .text.fm6_done
+                0x0000000002032c30      0x112 build/felucca.o
+ .text.slice_note_on
+                0x0000000002032d42      0x154 build/felucca.o
+ .text.slc_rev  0x0000000002032e96      0x26a build/felucca.o
+ .text.slc_loop_fwd
+                0x0000000002033100       0x46 build/felucca.o
+ .text.slice_render
+                0x0000000002033146      0x474 build/felucca.o
+ .text.slice_amp
+                0x00000000020335ba       0x60 build/felucca.o
+ .text.slice_keys
+                0x000000000203361a       0x2c build/felucca.o
+ *(.rodata*)
+ *fill*         0x0000000002033646        0x2 
+ .rodata        0x0000000002033648    0x37204 build/felucca.o
+ .rodata.str1.1
+                0x000000000206a84c     0x1f10 build/felucca.o
+                                       0x21fd (size before relaxing)
+ .rodata.cst4   0x000000000206c75c       0x1c build/felucca.o
+ .rodata.cst8   0x000000000206c778       0x40 build/felucca.o
+ .rodata.cst16  0x000000000206c7b8       0x70 build/felucca.o
+ .rodata.cst32  0x000000000206c828       0xc0 build/felucca.o
+                0x000000000206c8e8                . = ALIGN (0x4)
+                0x000000000206c8e8                _etext = .
+
+.ram_text       0x0000000001c00000      0xb6c load address 0x000000000206c8e8
+                0x0000000001c00000                _rt_start = .
+ *(.ram_text*)
+ .ram_text      0x0000000001c00000      0xb6c build/felucca.o
+                0x0000000001c00b6c                . = ALIGN (0x4)
+                0x0000000001c00b6c                _rt_end = .
+                0x000000000206c8e8                _rt_load = LOADADDR (.ram_text)
+
+.data           0x0000000001c08000      0x124 load address 0x000000000206d454
+                0x0000000001c08000                . = ALIGN (0x4)
+                0x0000000001c08000                _data_start = .
+ *(.data*)
+ .data          0x0000000001c08000      0x124 build/felucca.o
+ *(.sdata*)
+                0x0000000001c08124                . = ALIGN (0x4)
+                0x0000000001c08124                _data_end = .
+                0x000000000206d454                _data_load = LOADADDR (.data)
+
+.bss            0x0000000001c08130    0x16324 load address 0x000000000206d578
+                0x0000000001c08130                _bss_start = .
+ *(.bss*)
+ .bss           0x0000000001c08130    0x16324 build/felucca.o
+ *(.sbss*)
+ *(COMMON)
+                0x0000000001c1e454                . = ALIGN (0x4)
+                0x0000000001c1e454                _bss_end = .
+
+.pool           0x0000000001c20000    0x50dc4
+                0x0000000001c20000                _pool_start = .
+ *(.pool*)
+ .pool          0x0000000001c20000    0x50dc1 build/felucca.o
+                0x0000000001c70dc4                . = ALIGN (0x4)
+ *fill*         0x0000000001c70dc1        0x3 
+                0x0000000001c70dc4                _pool_end = .
+
+.noinit         0x0000000001c7c000     0x39cc
+ *(.noinit*)
+ .noinit        0x0000000001c7c000     0x39cc build/felucca.o
+                0x0000000001c7c000                fm1_crash
+                0x0000000001c7c040                felucca_dbg
+                0x0000000001c7c08c                bootguard
+                0x0000000001c7c098                panel
+                0x0000000001c7c0b8                settings
+                0x0000000001c7c0c8                proj_slot
+                0x0000000001c74000                _guard0 = 0x1c74000
+                0x0000000001c74100                _ustack_lo = 0x1c74100
+                0x0000000001c7a000                _ustack_top = 0x1c7a000
+                0x0000000001c7a000                _guard1 = 0x1c7a000
+                0x0000000001c7a100                _sstack_lo = 0x1c7a100
+                0x0000000001c7c000                _sstack_top = 0x1c7c000
+
+/DISCARD/
+ *(.comment)
+ *(.note*)
+LOAD build/crt0.o
+LOAD build/fm1_vec.o
+LOAD build/fm1_isr.o
+LOAD build/felucca.o
+OUTPUT(build/baseline-map.elf elf32-pi32v2)

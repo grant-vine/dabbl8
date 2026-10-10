@@ -1,0 +1,330 @@
+diff --git a/README.md b/README.md
+index 8ee56e9..5774ce2 100644
+--- a/README.md
++++ b/README.md
+@@ -5,7 +5,7 @@
+ 
+ ![Felucca 1.0](docs/felucca-1.0.png)
+ 
+-**TL;DR:** Felucca 1.1.5 — Big New Features, field testing. Connect your FM-1 to a computer by USB,
++**TL;DR:** Felucca 1.1.5.1 — Big New Features, field testing. Connect your FM-1 to a computer by USB,
+ open the [web installer](https://hugelton.github.io/Felucca/) in Chrome or Edge, and press Install;
+ no extra hardware is needed. Installing is at your own risk: M-VAVE's updater or the installer's
+ **Return to official V15** takes you back. Want to look around first?
+@@ -72,7 +72,7 @@ Multi-engine synthesizer firmware for the M-VAVE FM-1. Please report what you fi
+   grayscale, black and white, high contrast and NIGHT; tracks numbered 1–4 on small cushions;
+   MENU > LARGE for tall knob cards with larger labels and values; the menu in four tabs. The header
+   shows the track, the play state and the tempo in three parts; a new start-up screen; the screen can
+-  turn itself off when the panel is left alone (MENU > SCREEN OFF)
++  go dark when the panel is left alone (MENU > SCREEN OFF)
+ - **LEDs:** idle buttons and keys glow dim so the panel can be found in the dark (MENU > LEDS: OFF,
+   DIM LO, DIM HI or INV, the official firmware's look); PLAY turns green while playing; the keys show
+   the notes the sequencer and MIDI IN play, and on SEQ > STEP (stopped) the notes of the step under the cursor;
+@@ -125,9 +125,10 @@ too (COLOR to USB SERIAL), saved the same way as from the menu; with 1.0.5 it gr
+   the LED sweep at power-on
+ - **LEDS:** OFF (no glow), DIM LO, DIM HI (default) or INV (the idle LEDs lit, the active ones dark).
+   What can be pressed breathes up to about 60 % of a lit LED, about 30 % with DIM LO
+-- **SCREEN OFF:** NEVER, 5 MIN, 15 MIN, 30 MIN (default) or 60 MIN: after that long with no button, key or
+-  knob touched, the screen and its backlight go off; the sound, the sequencer, MIDI and USB go on. The next
+-  button, key or knob only turns the screen back on
++- **SCREEN OFF:** NEVER (default since 1.1.5.1), 5 MIN, 15 MIN, 30 MIN or 60 MIN: after that long with no
++  button, key or knob touched, the screen goes dark; the sound, the sequencer, MIDI and USB go on. The
++  backlight stays on: on the FM-1 its line also enables the buttons and keys (1.1.5 turned it off, and then
++  nothing woke the FM-1 until it was switched off). The next button, key or knob only turns the screen back on
+ - **HOLD:** how long FX, GLO, SCL or EDIT is held before its map shows
+ - **KNOB ACCEL:** OFF (one step per click) or ON: a fast, steady turn of a wide value moves 2 to 4 steps
+   per click, up to 8 on values of more than 64 steps, the FX and GLO layers' knobs included; lists never
+@@ -248,6 +249,13 @@ Issues are for reproducible bugs (one per issue). Ideas and requests go to
+ [Discussions](https://github.com/hugelton/Felucca/discussions), and feature requests posted as issues will be
+ moved there. Pull requests are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md).
+ 
++## AI disclaimer
++
++Felucca is developed with the assistance of AI coding agents. These tools are used for coding, testing, documentation, translation, and maintenance.
++The instrument's design, features, sound design, and overall direction are determined by the maintainer or community.
++No generative AI is used to create music, icons, or visual artwork for this project.
++For more details, see [On AI-Assisted Development and Responsibility](https://github.com/hugelton/Felucca/discussions/166).
++
+ ## Credits
+ 
+ - **[Hügelton Instruments](https://hugelton.com)** (Leo Kuroshita, [@kurogedelic](https://github.com/kurogedelic)):
+diff --git a/firmware/src/felucca.c b/firmware/src/felucca.c
+index dc166f6..cb6d84f 100644
+--- a/firmware/src/felucca.c
++++ b/firmware/src/felucca.c
+@@ -32,7 +32,7 @@
+ #define FELUCCA_ID "FM-1_900"    /* package identity (build.py: the .fwsc marker string) */
+ #endif
+ #ifndef FELUCCA_VERSION
+-#define FELUCCA_VERSION "v1.1.5" /* shown in the menu, the console and the editor; build.py --release X.Y */
++#define FELUCCA_VERSION "v1.1.5.1" /* shown in the menu, the console and the editor; build.py --release X.Y */
+ #endif
+ #if FELUCCA_OTA && !FELUCCA_FLASH
+ #error "FELUCCA_OTA needs FELUCCA_FLASH"
+diff --git a/firmware/src/lcd.c b/firmware/src/lcd.c
+index 027ba12..46beb7b 100644
+--- a/firmware/src/lcd.c
++++ b/firmware/src/lcd.c
+@@ -130,22 +130,18 @@ static void lcd_init(void)
+     lcd_cmd(0x29);
+ }
+ 
+-/* MENU > SCREEN OFF (ui.c scr_frame): the panel and its backlight off while the sound goes on. s 0: backlight off,
+- * DISPOFF, SLPIN; 1: SLPOUT (the panel wants 120 ms after it, and 120 ms after SLPIN before it: ui.c waits, a frame
+- * at a time, never here); 2: DISPON, backlight on (after the frame that redrew it all). The panel keeps its RAM
+- * asleep, but the UI redraws everything before it shows (ui.force) */
++/* MENU > SCREEN OFF (ui.c scr_frame): the panel dark while the sound goes on. s 0: DISPOFF, SLPIN; 1: SLPOUT (the
++ * panel wants 120 ms after it, and 120 ms after SLPIN before it: ui.c waits, a frame at a time, never here); 2: DISPON
++ * (after the frame that redrew it all). The panel keeps its RAM asleep, but the UI redraws everything before it shows
++ * (ui.force). The backlight stays on: PA2 is also the key matrix 595's /OE, so with it
++ * high no button, key or knob reads and nothing could wake the screen (#157 follow-up, found on 1.1.5) */
+ static void lcd_power(uint32_t s)
+ {
+-    if (s == 1u) {
++    if (s == 1u)
+         lcd_cmd(0x11);                             /* SLPOUT */
+-        return;
+-    }
+-    if (s == 2u)
++    else if (s == 2u)
+         lcd_cmd(0x29);                             /* DISPON */
+-    fm1_irq_off();                                 /* (port A: the key scan's rows too) */
+-    fm1_lcd_backlight(s == 2u);
+-    fm1_irq_on();
+-    if (s == 0u) {
++    else {
+         lcd_cmd(0x28);                             /* DISPOFF */
+         lcd_cmd(0x10);                             /* SLPIN */
+     }
+diff --git a/firmware/src/menu_items.c b/firmware/src/menu_items.c
+index c71a27c..3e568b1 100644
+--- a/firmware/src/menu_items.c
++++ b/firmware/src/menu_items.c
+@@ -76,7 +76,7 @@ static const char *const HOLD_N[4] = {"0.3 s", "0.4 s", "0.5 s", "0.6 s"};   /*
+ static const char *const CLICK_N[3] = {"OFF", "REC", "ON"};          /* REC: while a track is armed and playing */
+ static const char *const CLKLVL_N[3] = {"LOW", "MID", "HIGH"};
+ static const char *const COUNTIN_N[3] = {"OFF", "1 BAR", "2 BARS"};
+-/* 1.1.5: SCREEN OFF (ui.c scr_*: the screen and backlight off after this long without panel input; 30 MIN the default) */
++/* 1.1.5: SCREEN OFF (ui.c scr_*: the screen dark after this long without panel input; NEVER the default since 1.1.5.1) */
+ static const char *const SCROFF_N[5] = {"NEVER", "5 MIN", "15 MIN", "30 MIN", "60 MIN"};
+ 
+ /* MENU > USB SERIAL (#67). The serial console is a developer tool (README: FELUCCA_CDC). ON (the default) presents it,
+diff --git a/firmware/src/settings_persist.c b/firmware/src/settings_persist.c
+index 71f4612..7183460 100644
+--- a/firmware/src/settings_persist.c
++++ b/firmware/src/settings_persist.c
+@@ -42,7 +42,7 @@ static int settings_import(persist_t *p, int n)
+                 b &= ~(3u << (2u * f));
+         p->favorites.factory[15][28] = (uint8_t)b;
+     }
+-    if ((p->favorites.factory[15][27] ^ 3u) > 4u)  /* SCREEN OFF (1.1.5, ui.c ui_scr): stored ^ 3, unknown = 0 (30 MIN) */
++    if (p->favorites.factory[15][27] > 7u)         /* SCREEN OFF (1.1.5, ui.c SCR_CODE): unknown = 0 (NEVER since 1.1.5.1) */
+         p->favorites.factory[15][27] = 0;
+     p->magic = PERSIST_MAGIC;
+     p->palette = palette_to_stored(palette_from_stored(p->palette));
+diff --git a/firmware/src/ui.c b/firmware/src/ui.c
+index c74d5bd..aa6665c 100644
+--- a/firmware/src/ui.c
++++ b/firmware/src/ui.c
+@@ -169,19 +169,24 @@ enum { CF_NONE, CF_CLEAR_SEQ, CF_CLEAR_TRK, CF_OVR_PROJ, CF_OVR_USER, CF_LOAD_PA
+                                    * SAVE over a used slot; a pattern over the user's steps;
+                                    * USER ERASE */
+ 
+-/* MENU > DISPLAY > SCREEN OFF (1.1.5): after a while with no input on the panel the screen and its backlight go off
++/* MENU > DISPLAY > SCREEN OFF (1.1.5): after a while with no input on the panel the screen goes dark (the backlight
++ * stays on: lcd.c lcd_power)
+  * (a picture held for hours can stay faintly on the panel); the sound, the sequencer, MIDI and USB go on, the LEDs
+- * stay as they are. NEVER, 5, 15, 30 (the default), 60 minutes, kept in a byte no engine uses, saved with the
+- * settings: stored value ^ 3, so 0 (every older setting) is 30 MIN; 5..7 unknown read as 30 MIN.
++ * stay as they are. NEVER (the default since 1.1.5.1), 5, 15, 30, 60 minutes, kept in a byte no engine uses, saved
++ * with the settings (SCR_CODE). 1.1.5 stored value ^ 3, 0 (its default and every older setting) being 30 MIN; 1.1.5.1
++ * reads that 0 as NEVER (the new default: the panel went dark for good on 1.1.5, see lcd.c lcd_power) and keeps the
++ * other codes, 30 MIN now 4. Unknown codes read as NEVER.
+  * Input is the panel's only: a button or key held or pressed, a knob turned (not MIDI, the editor or MASTER, an
+  * analogue pot). The press, key or turn that wakes it is swallowed: no note (seq.c kb_asleep), no button, no
+  * value, until everything is let go and the knobs rest for SCR_EAT_MS. A dialog, the count-in and the UPDATE MODE
+  * countdown keep it on (and wake it); the crash screen, UPDATE and UBOOT wake it at once (lcd_wake_now).
+- * Off: lcd_power(0) (backlight off, DISPOFF, SLPIN) and nothing is drawn. Waking, a frame at a time (never a wait in
++ * Off: lcd_power(0) (DISPOFF, SLPIN) and nothing is drawn. Waking, a frame at a time (never a wait in
+  * the loop): 120 ms after the SLPIN, SLPOUT (lcd_power(1)); 120 ms after that one frame redraws everything
+- * (ui.force), then DISPON and the backlight (lcd_power(2)) */
++ * (ui.force), then DISPON (lcd_power(2)) */
+ #define ui_scr (favorites.factory[15][27])
+-#define SCR_DEF 3u                                     /* 30 MIN */
++#define SCR_DEF 0u                                     /* NEVER (1.1.5.1; 1.1.5: 30 MIN) */
++static const uint8_t SCR_CODE[5] = {0, 2, 1, 4, 7};    /* the stored byte of NEVER 5 15 30 60 MIN (1.1.5: 3 2 1 0 7) */
++static const uint8_t SCR_DEC[8] = {0, 2, 1, 0, 3, 0, 0, 4};   /* .. and back (3: 1.1.5's NEVER; 5, 6 unknown) */
+ #define SCR_EAT_MS 300u
+ static const uint8_t SCR_MIN[5] = {0, 5, 15, 30, 60};  /* NEVER, minutes */
+ enum { SCR_ON, SCR_OFF, SCR_WAKE, SCR_SLPOUT, SCR_SHOW };
+@@ -194,12 +199,11 @@ static struct {
+ } scrn;
+ static uint32_t scr_get(void)                          /* the MENU's value: 0 NEVER .. 4 60 MIN */
+ {
+-    uint32_t v = ui_scr ^ SCR_DEF;
+-    return v < NELEM(SCR_MIN) ? v : SCR_DEF;
++    return ui_scr < NELEM(SCR_DEC) ? SCR_DEC[ui_scr] : SCR_DEF;
+ }
+ static void scr_put(uint32_t v)                        /* (the time counts from the change: the editor's too) */
+ {
+-    ui_scr = (uint8_t)((v < NELEM(SCR_MIN) ? v : SCR_DEF) ^ SCR_DEF);
++    ui_scr = SCR_CODE[v < NELEM(SCR_MIN) ? v : SCR_DEF];
+     scrn.idle = fm1_ms;
+ }
+ static void scr_wake(void)
+diff --git a/firmware/src/ui_menu.c b/firmware/src/ui_menu.c
+index 7bad945..f6a3828 100644
+--- a/firmware/src/ui_menu.c
++++ b/firmware/src/ui_menu.c
+@@ -346,7 +346,7 @@ static void draw_menu(void)
+         mt_follow();
+     sig = ui.menu * 7u + ui.menu_sel * 131u + settings.palette * 1009u + settings.lowcut * 7919u + settings_hold * 3511u +
+           settings_leds * 6151u + ui_prefs * 4099u + ui_style * 257u + song.rec * 65537u + song.sel * 13u +
+-          ui_rec_prefs * 92821u +
++          ui_rec_prefs * 92821u + ui_scr * 131071u +          /* (#157: SCREEN OFF's value redraws its row) */
+           (ui.menu == 2 ? ui.menu_scroll * 48611u : 0u);
+     if (!ui.force && sig == ui.menu_sig) {
+         if (ui.menu == 1 && mt.pos != pos0) {          /* only the tabs slid: their strip */
+diff --git a/tests/editor_test.c b/tests/editor_test.c
+index 8acdd38..8b16404 100644
+--- a/tests/editor_test.c
++++ b/tests/editor_test.c
+@@ -766,7 +766,7 @@ static int menu_protocol(void)
+         {"CLICK", "OFF,REC,ON"}, {"CLICK LEVEL", "LOW,MID,HIGH"}, {"COUNT-IN", "OFF,1 BAR,2 BARS"},   /* (1.1: appended) */
+         {"RESTORE LAST", "ON,OFF"}, {"SCALE LEDS", "OFF,ON"},                                        /* (1.2) */
+         {"SCREEN OFF", "NEVER,5 MIN,15 MIN,30 MIN,60 MIN"}};
+-    static const int32_t DEF[18] = {-1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3};   /* (COLOR: the default palette) */
++    static const int32_t DEF[18] = {-1, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0};   /* (COLOR: the default palette) */
+     static const uint8_t TAB[18] = {0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 2, 2, 2, 3, 1, 0};      /* DISPLAY CONTROL AUDIO SYSTEM */
+     static const char *const TABN[4] = {"DISPLAY", "CONTROL", "AUDIO", "SYSTEM"};
+     int bad = 0, ok = 1;
+diff --git a/tests/ui_test.c b/tests/ui_test.c
+index 661ffc4..46663e6 100644
+--- a/tests/ui_test.c
++++ b/tests/ui_test.c
+@@ -83,8 +83,9 @@ static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
+             host_screen[(y + j) * 240u + x + i] = (uint16_t)((c >> 8) | (c << 8));
+ }
+ static void lcd_sync(void) {}
+-/* MENU > SCREEN OFF (lcd.c lcd_power / lcd_wake_now): what the panel was told, in order (0 off: backlight off,
+- * DISPOFF, SLPIN; 1 SLPOUT; 2 DISPON, backlight on; 3 lcd_wake_now), with the time; host_bl the backlight */
++/* MENU > SCREEN OFF (lcd.c lcd_power / lcd_wake_now): what the panel was told, in order (0 off: DISPOFF, SLPIN;
++ * 1 SLPOUT; 2 DISPON; 3 lcd_wake_now), with the time; host_bl the panel showing (the backlight itself stays on: PA2 is
++ * the key matrix's /OE too, lcd.c lcd_power) */
+ static uint32_t host_pw_n, host_pw[256], host_pw_ms[256];
+ static int host_bl = 1;
+ static void host_pw_log(uint32_t s)
+@@ -4833,7 +4834,7 @@ static int test_step_leds(void)
+ /* MENU > DISPLAY > SCREEN OFF (1.1.5, ui.c scr_*): the screen and its backlight off after NEVER / 5 / 15 / 30 (default)
+  * / 60 minutes without panel input; the press, key or turn that wakes it does nothing else; the dialogs, the count-in
+  * and the UPDATE MODE countdown keep it on and wake it; the sound goes on as if it were on (forked sessions, bit for
+- * bit); the setting saved (a spare favorites byte, 0 = 30 MIN) and offered in the MENU */
++ * bit); the setting saved (a spare favorites byte, 0 = NEVER since 1.1.5.1) and offered in the MENU */
+ static void scr_idle(uint32_t ms)                  /* nobody touches it for ms (a frame a minute, then frames) */
+ {
+     while (ms > 60000u) { fm1_ms += 60000u - 16u; host_ticks += 60000u * 1000u; frame(); ms -= 60000u; }
+@@ -4902,12 +4903,13 @@ static int test_screen_off(void)
+     int16_t *vp, v0;
+ 
+     ui_power_on();
+-    ok = ui_scr == 0u && scr_get() == 3u && SCR_MIN[scr_get()] == 30u && str_eq(MI_NAME[MI_SCROFF], "SCREEN OFF") &&
++    ok = ui_scr == 0u && scr_get() == 0u && SCR_MIN[scr_get()] == 0u && str_eq(MI_NAME[MI_SCROFF], "SCREEN OFF") &&
+          MI_TAB[MI_SCROFF] == MTAB_DISPLAY && menu_n(MI_SCROFF) == 5u && str_eq(menu_vname(MI_SCROFF, 0), "NEVER") &&
+          str_eq(menu_vname(MI_SCROFF, 1), "5 MIN") && str_eq(menu_vname(MI_SCROFF, 2), "15 MIN") &&
+          str_eq(menu_vname(MI_SCROFF, 3), "30 MIN") && str_eq(menu_vname(MI_SCROFF, 4), "60 MIN") &&
+-         menu_get(MI_SCROFF) == 3u;
+-    bad += check("SCREEN OFF: MENU > DISPLAY row, NEVER 5 15 30 60 MIN, 30 MIN by default (stored 0)", ok);
++         menu_get(MI_SCROFF) == 0u;
++    bad += check("SCREEN OFF: MENU > DISPLAY row, NEVER 5 15 30 60 MIN, NEVER by default (stored 0, 1.1.5.1)", ok);
++    menu_put(MI_SCROFF, 3u);                         /* 30 MIN for what follows */
+ 
+     host_pw_n = 0;
+     scr_idle(30u * 60000u - 2000u);
+@@ -4918,7 +4920,7 @@ static int test_screen_off(void)
+     ui_message("SAVED");
+     scr_idle(5000u);
+     ok &= host_blit_rows == rows && host_pw_n == 1u && !ui.msg_t;
+-    bad += check("SCREEN OFF: 30 MIN untouched -> backlight off, DISPOFF + SLPIN once; dark: nothing drawn", ok);
++    bad += check("SCREEN OFF: 30 MIN untouched -> DISPOFF + SLPIN once; dark: nothing drawn", ok);
+ 
+     n = host_pw_n;
+     ok = ui.home && !ui.menu;
+@@ -4933,7 +4935,7 @@ static int test_screen_off(void)
+     ok &= ui.home && !ui.menu && !ui.layer && !scrn.eat && !kb_asleep;
+     press(B_ENV);                                     /* awake: the button works again */
+     ok &= !ui.home && cur_page()->fam == FAM_ENV;
+-    bad += check("SCREEN OFF: a button wakes it (SLPOUT, 120 ms, the page redrawn, DISPON + backlight), swallowed", ok);
++    bad += check("SCREEN OFF: a button wakes it (SLPOUT, 120 ms, the page redrawn, DISPON), swallowed", ok);
+ 
+     go_home();
+     for (i = 0; i < 3u; i++) {                        /* HOME, SAVE, REC held across the wake: no menu, undo, clear */
+@@ -4978,7 +4980,7 @@ static int test_screen_off(void)
+     menu_put(MI_SCROFF, 0u);                         /* NEVER */
+     n = host_pw_n;
+     scr_idle(3u * 3600000u);
+-    ok = host_pw_n == n && host_bl && ui_scr == 3u;
++    ok = host_pw_n == n && host_bl && ui_scr == 0u;
+     menu_put(MI_SCROFF, 1u);                         /* 5 MIN */
+     scr_idle(4u * 60000u + 50000u);
+     ok &= host_pw_n == n && host_bl;
+@@ -5015,21 +5017,28 @@ static int test_screen_off(void)
+     ok &= host_pw_n == n + 1u && host_pw[n] == 3u && host_bl && scrn.st == SCR_ON;
+     bad += check("SCREEN OFF: a dialog, the count-in, UPDATE MODE keep it on and wake it; the crash screen at once", ok);
+ 
+-    {   /* the setting with the settings: stored ^ 3 in favorites.factory[15][27], 0 (older settings) = 30 MIN */
++    {   /* the setting with the settings: SCR_CODE in favorites.factory[15][27]; 1.1.5's codes: 0 (its 30 MIN, its
++         * default) now NEVER, 3 (its NEVER) NEVER, 2 1 7 as they were; 30 MIN is 4 now; unknown NEVER */
+         persist_t p = {0};
+         p.magic = PERSIST_MAGIC; p.panel = panel;
+         menu_put(MI_SCROFF, 4u);
+         settings_export(&p); ui_scr = 0;
+         ok = p.favorites.factory[15][27] == 7u && settings_import(&p, sizeof p) && scr_get() == 4u;
+         p.favorites.factory[15][27] = 0;
+-        ok &= settings_import(&p, sizeof p) && scr_get() == 3u;
+-        p.favorites.factory[15][27] = 6;              /* unknown: 30 MIN */
+-        ok &= settings_import(&p, sizeof p) && p.favorites.factory[15][27] == 0u && scr_get() == 3u;
+-        ui_scr = 0x55; ok &= scr_get() == 3u;
+-        bad += check("SCREEN OFF: saved with the settings (0 and unknown = 30 MIN)", ok);
++        ok &= settings_import(&p, sizeof p) && scr_get() == 0u;
++        p.favorites.factory[15][27] = 3;              /* 1.1.5's NEVER */
++        ok &= settings_import(&p, sizeof p) && scr_get() == 0u;
++        p.favorites.factory[15][27] = 2;              /* 5 MIN, as on 1.1.5 */
++        ok &= settings_import(&p, sizeof p) && scr_get() == 1u;
++        menu_put(MI_SCROFF, 3u); ok &= ui_scr == 4u && scr_get() == 3u;
++        p.favorites.factory[15][27] = 6;              /* unknown: NEVER */
++        ok &= settings_import(&p, sizeof p) && scr_get() == 0u;
++        ui_scr = 0x55; ok &= scr_get() == 0u;
++        bad += check("SCREEN OFF: saved with the settings (0, 1.1.5's 30 MIN, and unknown = NEVER)", ok);
+     }
+ 
+     ui_power_on();                                    /* in the MENU: OCT+ / a knob step it */
++    menu_put(MI_SCROFF, 3u);
+     hold(B_HOME);
+     for (i = 0; i < 5u; i++) turn(EN_PRESET, 1);
+     ok = ui.menu == 1 && ui.menu_sel == MI_SCROFF;
+diff --git a/web/EDITOR_PROTOCOL.md b/web/EDITOR_PROTOCOL.md
+index 59aacfd..ea3b328 100644
+--- a/web/EDITOR_PROTOCOL.md
++++ b/web/EDITOR_PROTOCOL.md
+@@ -800,7 +800,7 @@ before SCALE LEDS the first 16, before SCREEN OFF the first 17):
+ | 14 | 14 | COUNT-IN | 0 | 0 OFF, 1 "1 BAR", 2 "2 BARS" (1.1) | OFF | 2 AUDIO |
+ | 15 | 15 | RESTORE LAST | 0 | 0 ON, 1 OFF (1.2) | ON | 3 SYSTEM |
+ | 16 | 16 | SCALE LEDS | 0 | 0 OFF, 1 ON (1.2) | OFF | 1 CONTROL |
+-| 17 | 17 | SCREEN OFF | 0 | 0 NEVER, 1 "5 MIN", 2 "15 MIN", 3 "30 MIN", 4 "60 MIN" (1.1.5) | 30 MIN | 0 DISPLAY |
++| 17 | 17 | SCREEN OFF | 0 | 0 NEVER, 1 "5 MIN", 2 "15 MIN", 3 "30 MIN", 4 "60 MIN" (1.1.5) | NEVER (1.1.5.1; 1.1.5: 30 MIN) | 0 DISPLAY |
+ 
+ The device's AUDIO tab shows SPEAKER EQ, USB LEVEL, CLICK, CLICK LEVEL, COUNT-IN (index 9, 10, 12, 13, 14).
+ CLICK: the metronome while the transport runs: OFF, REC (while a track is armed), ON (always); CLICK LEVEL its
+diff --git a/web/test_web.mjs b/web/test_web.mjs
+index 10edbdf..561ffda 100644
+--- a/web/test_web.mjs
++++ b/web/test_web.mjs
+@@ -177,7 +177,7 @@ async function editorMock() {
+        items[12].names.join() === "OFF,REC,ON" && items[12].value === 0 && items[13].names.join() === "LOW,MID,HIGH" &&
+        items[13].value === 1 && items[14].names.join() === "OFF,1 BAR,2 BARS" && items[14].value === 0 &&
+        items[15].names.join() === "ON,OFF" && items[15].value === 0 && items[16].names.join() === "OFF,ON" && items[16].value === 0 &&
+-       items[17].names.join() === "NEVER,5 MIN,15 MIN,30 MIN,60 MIN" && items[17].value === 3 &&
++       items[17].names.join() === "NEVER,5 MIN,15 MIN,30 MIN,60 MIN" && items[17].value === 0 &&
+        items.every((d) => d.kind === 0 && d.min === 0 && d.names.length === d.max - d.min + 1) &&
+        eq(items[0].names, prefs.palettes) && items[0].value === m.state.palette &&
+        items[4].names.join() === "OFF,DIM LO,DIM HI,INV" && items[4].value === 2 && items[5].value === 1,
