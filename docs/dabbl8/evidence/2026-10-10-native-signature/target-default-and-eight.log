@@ -1,0 +1,7 @@
+size: 744 main-loop functions built for size (18 not in this build; 104 reached from an interrupt kept -Os)
+size: 754 main-loop functions built for size (8 not in this build; 104 reached from an interrupt kept -Os)
+4 [] ['.ram_text: 916 insns, no calls', 'image 447924 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064']
+default app byte-identical
+default verified
+8 [] ['.ram_text: 916 insns, no calls', 'image 457156 B; RAM .data+.bss 95732 B of 98304; pool 334164 B of 344064']
+linked guarded hardware adapter symbols verified
