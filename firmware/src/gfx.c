@@ -75,20 +75,53 @@ typedef struct { uint16_t off; uint8_t w; const char *label; } kc_t;
  * Project calls are synchronous and may not retain this pointer across drawing.
  * The audio ISR owns none of these members. No project data is a live display cache. */
 #include "d8p1_project_types.h"
+#include "native_migration_preflight.h"
 static union {
     uint16_t pixels[CV_MAX];
     project_t project;
     d8p1_stage_workspace d8p1;
+    d8mp_workspace migration;
 } main_workspace __attribute__((section(".pool")));
 _Static_assert(sizeof(project_t) <= sizeof main_workspace.pixels, "project workspace fits canvas arena");
 _Static_assert(sizeof(d8p1_stage_workspace) <= sizeof main_workspace.pixels, "D8P1 staging fits canvas arena");
+_Static_assert(sizeof(d8mp_workspace) <= sizeof main_workspace.pixels, "complete migration plan fits canvas arena");
+_Static_assert(offsetof(d8mp_workspace,stage)==0, "native staging retains arena offset");
+_Static_assert(offsetof(d8mp_workspace,plan)==sizeof(d8p1_stage_workspace), "plan disjoint from native staging");
+_Static_assert(_Alignof(d8mp_workspace)<=_Alignof(__typeof__(main_workspace)), "migration alignment");
 static uint8_t cv_cpu_active, cv_canvas_valid;
+/* Exclusive main-loop lifetime, not storage authority. Never wraps: an ancient
+ * generation cannot release a later borrow. No external/interrupt accessor. */
+static uint32_t migration_generation __attribute__((section(".pool")));
+static uint32_t migration_owner __attribute__((section(".pool")));
+static int migration_alias(const void *p,size_t n)
+{
+    uintptr_t a=(uintptr_t)p,b=(uintptr_t)&main_workspace;
+    return n&&(a<=b?b-a<n:a-b<sizeof main_workspace);
+}
+static d8mp_workspace *main_migration_workspace(uint32_t generation)
+{ return generation&&migration_owner==generation?&main_workspace.migration:NULL; }
+static int main_migration_begin(uint32_t *generation)
+{
+    if(!generation||migration_alias(generation,sizeof *generation))return D8MP_BAD;
+    if(cv_cpu_active||migration_owner||migration_generation==UINT32_MAX)return D8MP_BUSY;
+    lcd_sync();
+    __asm__ volatile("" ::: "memory");
+    if(cv_cpu_active||migration_owner)return D8MP_BUSY;
+    cv_canvas_valid=0;migration_owner=++migration_generation;
+    *generation=migration_owner;return D8MP_OK;
+}
+static int main_migration_end(uint32_t generation)
+{
+    if(!generation||migration_owner!=generation)return D8MP_STALE;
+    migration_owner=0;cv_canvas_valid=0;return D8MP_OK;
+}
 #define cv_px (main_workspace.pixels)
 static project_t *main_project_workspace(void)
 {
-    if (cv_cpu_active) __builtin_trap(); /* fail before corrupting an unfinished drawing */
+    if (cv_cpu_active || migration_owner) __builtin_trap(); /* fail before corrupting an unfinished drawing */
     lcd_sync();
     __asm__ volatile("" ::: "memory"); /* DMA consumption precedes switching union members */
+    if (cv_cpu_active || migration_owner) __builtin_trap(); /* recheck after synchronous completion/reentry */
     cv_canvas_valid = 0; /* any future blit needs a fresh cv_begin */
     return &main_workspace.project;
 }
@@ -205,11 +238,16 @@ static inline uint16_t swap16(uint32_t c) { return (uint16_t)(((c >> 8) & 0xFFu)
 static void cv_begin(uint32_t w, uint32_t h, uint16_t bg)
 {
     uint32_t i, n;
+#if NPART >= NVOICE
+    if(migration_owner)__builtin_trap(); /* unchecked primitive, no operational grant */
+#endif
     uint16_t s = swap16(bg);
     if (w * h > CV_MAX)
         h = CV_MAX / w;
     lcd_sync();                     /* the last blit may still read cv_px */
 #if NPART >= NVOICE
+    __asm__ volatile("" ::: "memory");
+    if(migration_owner)__builtin_trap(); /* nested acquisition may occur in lcd_sync */
     cv_cpu_active = cv_canvas_valid = 1;
 #endif
     GFX_HOOK_BEGIN();

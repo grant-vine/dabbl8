@@ -1,0 +1,13 @@
+#define NPART 8
+#include "../firmware/src/felucca.c"
+const unsigned d8mp_probe_canvas=sizeof main_workspace;
+const unsigned d8mp_probe_complete=sizeof(d8mp_workspace);
+const unsigned d8mp_probe_stage=sizeof(d8p1_stage_workspace);
+const unsigned d8mp_probe_plan_offset=__builtin_offsetof(d8mp_workspace,plan);
+const unsigned d8mp_probe_stage_offset=__builtin_offsetof(d8mp_workspace,stage);
+const unsigned d8mp_probe_alignment=__alignof__(d8mp_workspace);
+const unsigned d8mp_probe_canvas_alignment=__alignof__(main_workspace);
+int d8mp_probe_begin(uint32_t *g){return d8mp_begin(g);}
+int d8mp_probe_receive(uint32_t g,uint32_t o,const void *b,uint32_t n){return d8mp_receive(g,o,b,n);}
+int d8mp_probe_validate(uint32_t g,d8mp_result *r){return d8mp_validate(g,r);}
+int d8mp_probe_end(uint32_t g){return d8mp_end(g);}

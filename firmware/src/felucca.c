@@ -103,6 +103,7 @@
 #include "d8p1.c"                /* freestanding codec for the in-memory native API */
 #include "d8p1_runtime.c"        /* stopped native adoption */
 #include "d8pool.c"               /* virtual explicitly migrated storage backend */
+#include "native_migration_preflight.c" /* dormant readonly complete-plan staging */
 #include "d8p1_pool_runtime.c"    /* native runtime persistence; no implicit migration */
 #if FELUCCA_FLASH
 #include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
