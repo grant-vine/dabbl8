@@ -1,0 +1,364 @@
+{
+  "source": "a660427945c28bc8f95eb0606ad9d41602b64378",
+  "native_disassembly_sha256": "dafac58184c5eae348e2b94f2b0eedd5f5c7f0e399d4563a2a6dfd01f077b41f",
+  "parent_disassembly_sha256": "7a94dac70204e081a38653b40f53fc8e426e1116e7c0a40e9ae8f6a6c1d7c1a7",
+  "parent_ed_handle_prologue": "ed_handle:\n 20140f6:    7f 04             \t[--sp] = {rets, r15-r4}\n 20140f8:    f0 e8 4c 18       \tsp += -1972\n 20140fc:    14 16             \tr4 = r1\n 20140fe:    0c 16 ",
+  "functions": {
+    "ed_handle": {
+      "direct_frame_bytes": 2024,
+      "prologue": [
+        " 20144fa:    7f 04             \t[--sp] = {rets, r15-r4}",
+        " 20144fc:    f0 e8 4c 18       \tsp += -1972",
+        " 2014500:    15 16             \tr5 = r1",
+        " 2014502:    03 ff 04 50 64 02 \tif (r5 < 4) goto 1224 <.GJTIE462_3_3_+0x68 : 20149d0 >",
+        " 2014508:    3b e1 fc 5f       \tr11 = r5 + -4"
+      ],
+      "direct_named_calls": [
+        "apply_preset",
+        "audio_silence",
+        "autosave_hold",
+        "chain_busy",
+        "chain_defaults",
+        "chain_prepare",
+        "chain_valid",
+        "d8_capture_store_changed",
+        "ed_args_ok",
+        "ed_b",
+        "ed_begin",
+        "ed_bk_r32",
+        "ed_bk_u32",
+        "ed_d8_error",
+        "ed_desc",
+        "ed_eng",
+        "ed_flash_stop",
+        "ed_known",
+        "ed_load_after",
+        "ed_load_before",
+        "ed_rv",
+        "ed_send",
+        "ed_shadow",
+        "ed_smp_inval",
+        "ed_step_put",
+        "ed_step_reply",
+        "ed_step_sig",
+        "ed_str",
+        "ed_tdesc",
+        "ed_ui_save",
+        "ed_ui_state",
+        "ed_unpack7",
+        "ed_v",
+        "ed_val",
+        "edc_length",
+        "edc_ram",
+        "edc_read",
+        "edc_reply",
+        "edc_stopped",
+        "edc_valid",
+        "enum_orig",
+        "favorite_has",
+        "favorite_set",
+        "fl_erase4k",
+        "fl_write",
+        "fm1_wdt_feed",
+        "fm4_load_preset",
+        "fm6_adopt",
+        "fm6_bank_valid",
+        "fm6_pack",
+        "fm6_set_patch",
+        "fm6_unpack",
+        "load_begin",
+        "load_end",
+        "main_project_workspace",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "menu_get",
+        "menu_n",
+        "menu_put",
+        "menu_vname",
+        "motion_base_value",
+        "motion_capture",
+        "motion_clear",
+        "motion_clear_locks",
+        "motion_count",
+        "motion_delete_event",
+        "motion_enabled",
+        "motion_param",
+        "motion_put",
+        "motion_set_enabled",
+        "motion_set_lock",
+        "palette_set",
+        "panel_init",
+        "proj_bound",
+        "proj_import",
+        "proj_store_len",
+        "project_capture",
+        "project_load",
+        "project_save_as",
+        "project_used",
+        "seq_steps",
+        "set_engine",
+        "settings_export",
+        "settings_import",
+        "settings_init",
+        "settings_save",
+        "smp_user_scan",
+        "st_crc32",
+        "st_save",
+        "track_select",
+        "track_sig",
+        "up_bank_check",
+        "up_grid",
+        "up_load",
+        "up_migrate",
+        "up_name_ok",
+        "up_pat_norm",
+        "up_put",
+        "up_rec",
+        "up_set_value",
+        "up_store",
+        "up_used",
+        "up_values",
+        "upf_empty",
+        "upf_fm6",
+        "upf_get",
+        "upf_migrate",
+        "upf_save",
+        "upf_set",
+        "upf_valid"
+      ],
+      "indirect_call_lines": []
+    },
+    "ed_service": {
+      "direct_frame_bytes": 60,
+      "prologue": [
+        " 2016c94:    7f 04             \t[--sp] = {rets, r15-r4}",
+        " 2016c96:    e2 9e             \tsp += -8",
+        " 2016c98:    c9 ff d0 d2 c1 01 \tr9 = 29479632 <shed_req : 1c1d2d0 >",
+        " 2016c9e:    d0 ec 94 66       \tr6 = [r9+100]",
+        " 2016ca2:    c0 ff 08 cd c1 01 \tr0 = 29478152 <ed_w.0 : 1c1cd08 >"
+      ],
+      "direct_named_calls": [
+        "ed_b",
+        "ed_begin",
+        "ed_eng",
+        "ed_handle",
+        "ed_room",
+        "ed_send",
+        "ed_shadow",
+        "ed_step_sig",
+        "ed_v",
+        "ed_val",
+        "ota_frame_done",
+        "ota_frame_get",
+        "seq_steps"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_ram": {
+      "direct_frame_bytes": 40,
+      "prologue": [
+        " 2012c7c:    7b 04             \t[--sp] = {rets, r11-r4}",
+        " 2012c7e:    e2 9f             \tsp += -4",
+        " 2012c80:    39 16             \tr9 = r3",
+        " 2012c82:    24 16             \tr4 = r2",
+        " 2012c84:    18 16             \tr8 = r1"
+      ],
+      "direct_named_calls": [
+        "d8p1_capture_runtime",
+        "edc_length",
+        "edc_stopped",
+        "memcpy",
+        "st_crc32"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_read": {
+      "direct_frame_bytes": 32,
+      "prologue": [
+        " 2012e56:    7a 04             \t[--sp] = {rets, r10-r4}",
+        " 2012e58:    2a 16             \tr10 = r2",
+        " 2012e5a:    15 16             \tr5 = r1",
+        " 2012e5c:    01 16             \tr1 = r0",
+        " 2012e5e:    40 21             \tr0 = 1"
+      ],
+      "direct_named_calls": [
+        "st_read"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_stopped": {
+      "direct_frame_bytes": 12,
+      "prologue": [
+        " 2012b84:    75 04             \t[--sp] = {rets, r5, r4}",
+        " 2012b86:    c5 ff d0 d2 c1 01 \tr5 = 29479632 <shed_req : 1c1d2d0 >",
+        " 2012b8c:    58 42             \tr0 = b[r5+2] (u)",
+        " 2012b8e:    44 20             \tr4 = 0",
+        " 2012b90:    00 4c             \tif (r0 == 0) goto 24 <edc_stopped+0x26 : 2012baa >"
+      ],
+      "direct_named_calls": [
+        "transport_busy"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_valid": {
+      "direct_frame_bytes": 8,
+      "prologue": [
+        " 2012bd4:    74 04             \t[--sp] = {rets, r4}",
+        " 2012bd6:    c0 ff dc 19 c7 01 \tr0 = 29825500 <ed_capture.8 : 1c719dc >",
+        " 2012bdc:    08 40             \tr0 = b[r0+0] (u)",
+        " 2012bde:    44 20             \tr4 = 0",
+        " 2012be0:    10 4c             \tif (r0 == 0) goto 88 <edc_valid+0x66 : 2012c3a >"
+      ],
+      "direct_named_calls": [
+        "edc_stopped"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_reply": {
+      "direct_frame_bytes": 16,
+      "prologue": [
+        " 2012b14:    76 04             \t[--sp] = {rets, r6-r4}",
+        " 2012b16:    c4 ff d0 d2 c1 01 \tr4 = 29479632 <shed_req : 1c1d2d0 >",
+        " 2012b1c:    d1 ec 4c 26       \tr2 = [r4+364]",
+        " 2012b20:    c5 ff cc b3 c1 01 \tr5 = 29471692 <ed_out : 1c1b3cc >",
+        " 2012b26:    42 fc 18 ac       \tif (r2 > 598) goto 48 <edc_reply+0x46 : 2012b5a >"
+      ],
+      "direct_named_calls": [
+        "ed_bk_u32"
+      ],
+      "indirect_call_lines": []
+    },
+    "edc_length": {
+      "direct_frame_bytes": 0,
+      "prologue": [
+        " 2012c3e:    01 16             \tr1 = r0",
+        " 2012c40:    01 fc 09 16       \tif (r1 > 11) goto 18 <edc_length+0x18 : 2012c56 >",
+        " 2012c44:    10 a4             \tr0 = r1 << 4",
+        " 2012c46:    c1 ff 9c d5 06 02 \tr1 = 34002332 <edc_roles : 206d59c >",
+        " 2012c4c:    10 18             \tr0 += r1"
+      ],
+      "direct_named_calls": [],
+      "indirect_call_lines": []
+    },
+    "d8p1_capture_runtime": {
+      "direct_frame_bytes": 20,
+      "prologue": [
+        " 200c09a:    77 04             \t[--sp] = {rets, r7-r4}",
+        " 200c09c:    24 16             \tr4 = r2",
+        " 200c09e:    15 16             \tr5 = r1",
+        " 200c0a0:    06 16             \tr6 = r0",
+        " 200c0a2:    40 21             \tr0 = 1"
+      ],
+      "direct_named_calls": [
+        "d8p1_capture_state_runtime",
+        "d8p1_project_encode"
+      ],
+      "indirect_call_lines": []
+    },
+    "d8p1_capture_state_runtime": {
+      "direct_frame_bytes": 12,
+      "prologue": [
+        " 200b7ca:    75 04             \t[--sp] = {rets, r5, r4}",
+        " 200b7cc:    c5 ff d0 d2 c1 01 \tr5 = 29479632 <shed_req : 1c1d2d0 >",
+        " 200b7d2:    50 ee 50 06       \tr0 = b[r5+96] (u)",
+        " 200b7d6:    44 22             \tr4 = 2",
+        " 200b7d8:    90 41             \tif (r0 != 0) goto 66 <d8p1_capture_state_runtime+0x52 : 200b81c >"
+      ],
+      "direct_named_calls": [
+        "main_project_workspace",
+        "project_capture",
+        "transport_busy"
+      ],
+      "indirect_call_lines": []
+    },
+    "project_capture": {
+      "direct_frame_bytes": 44,
+      "prologue": [
+        " 200b6b2:    7d 04             \t[--sp] = {rets, r13-r4}",
+        " 200b6b4:    bf ea ff f8       \tcall -3586 <motion_guard : 200a8b6 >",
+        " 200b6b8:    08 16             \tr8 = r0",
+        " 200b6ba:    c9 ff 04 03 c2 01 \tr9 = 29491972 <main_workspace : 1c20304 >",
+        " 200b6c0:    41 20             \tr1 = 0"
+      ],
+      "direct_named_calls": [
+        "fm6_pack",
+        "memcpy",
+        "memset",
+        "motion_base_value",
+        "motion_guard",
+        "proj_sum",
+        "str_len"
+      ],
+      "indirect_call_lines": []
+    },
+    "d8p1_project_encode": {
+      "direct_frame_bytes": 120,
+      "prologue": [
+        " 200baea:    7f 04             \t[--sp] = {rets, r15-r4}",
+        " 200baec:    e2 8f             \tsp += -68",
+        " 200baee:    3f 16             \tr15 = r3",
+        " 200baf0:    29 16             \tr9 = r2",
+        " 200baf2:    17 16             \tr7 = r1"
+      ],
+      "direct_named_calls": [
+        "d8p1_crc32",
+        "d8ps_finish_chunk",
+        "d8ps_valid",
+        "motion_v1_valid"
+      ],
+      "indirect_call_lines": []
+    },
+    "d8p1_write": {
+      "direct_frame_bytes": 124,
+      "prologue": [
+        " 2008e56:    7e 04             \t[--sp] = {rets, r14-r4}",
+        " 2008e58:    e2 8d             \tsp += -76",
+        " 2008e5a:    3e 16             \tr14 = r3",
+        " 2008e5c:    28 16             \tr8 = r2",
+        " 2008e5e:    16 16             \tr6 = r1"
+      ],
+      "direct_named_calls": [
+        "d8p1_crc32",
+        "d8p1_read",
+        "fields_ok",
+        "file_crc",
+        "find"
+      ],
+      "indirect_call_lines": []
+    },
+    "st_read": {
+      "direct_frame_bytes": 28,
+      "prologue": [
+        " 200cfe6:    79 04             \t[--sp] = {rets, r9-r4}",
+        " 200cfe8:    25 16             \tr5 = r2",
+        " 200cfea:    16 16             \tr6 = r1",
+        " 200cfec:    07 16             \tr7 = r0",
+        " 200cfee:    c0 14             \tr8 = 0"
+      ],
+      "direct_named_calls": [
+        "fl_far"
+      ],
+      "indirect_call_lines": [
+        " 200d012:    c3 00             \tcall r3"
+      ]
+    },
+    "main_d8p1_workspace": {
+      "linked_symbol": "inlined_or_absent"
+    }
+  },
+  "linker_stack_regions": {
+    "user": {
+      "lo": "0x01c74100",
+      "top": "0x01c7a000",
+      "bytes": 24320
+    },
+    "supervisor": {
+      "lo": "0x01c7a100",
+      "top": "0x01c7c000",
+      "bytes": 7936
+    },
+    "guards_bytes_each": 256
+  },
+  "limitation": "Direct linked function frames/prologue/call names only; no summed whole main-loop, IRQ nesting, ROM/indirect callees or device safety bound. Static .data+.bss remaining2524 is not stack headroom."
+}
