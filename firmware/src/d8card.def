@@ -1,0 +1,17 @@
+/* SPDX-License-Identifier: GPL-3.0-only
+ * Engine identities derive from Felucca, Copyright (C) 2026 Leo Kuroshita
+ * (@kurogedelic), Hügelton Instruments. */
+/* Stable Felucca engine IDs. ID 1 remains reserved for retired DIGITAL. */
+D8_ENGINE(ANALOG, 0, 0)
+D8_ENGINE(PHASE, 2, 0)
+D8_ENGINE(LOFI, 3, 0)
+D8_ENGINE(SAMPLE, 4, 1)
+D8_ENGINE(VOICE, 5, 0)
+D8_ENGINE(TRIO, 6, 0)
+D8_ENGINE(WHEEL, 7, 4)
+D8_ENGINE(GRAIN, 8, 5)
+D8_ENGINE(PHYS, 9, 4)
+D8_ENGINE(DRUM, 10, 4)
+D8_ENGINE(NOISE, 11, 0)
+D8_ENGINE(FM6, 12, 6)
+D8_ENGINE(SLICE, 13, 5)

@@ -27,3 +27,7 @@ GitHub Issues are authoritative for progress. Dependency links are planning gate
 | D8-019 | M5 | [#21 Prepare Dabbl8 information for dabbl.co.za](https://github.com/grant-vine/dabbl8/issues/21) | [#20](https://github.com/grant-vine/dabbl8/issues/20) |
 
 Implementation steps and acceptance criteria live in the issue bodies. backlog.json preserves the original plan IDs and links to the corresponding issues; it does not mirror live completion status automatically.
+
+## Owner requested extensions
+
+- [Software voice cards #53](https://github.com/grant-vine/dabbl8/issues/53): expanded resource research, test matrix and staged profile/exclusion/catalogue implementation; supports #12/#21 without replacing the original 19-task planning snapshot.
