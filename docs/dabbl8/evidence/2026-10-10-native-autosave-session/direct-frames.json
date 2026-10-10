@@ -1,0 +1,63 @@
+{
+  "scope": "Only five named direct frames/callees; excludes caller, descendant, callback, IRQ and external driver stack; no whole-stack bound.",
+  "functions": {
+    "d8p1_autosave_session_begin": {
+      "saved_words": 4,
+      "local_bytes": 24,
+      "direct_frame_bytes": 40,
+      "direct_calls": [
+        "d8p1_autosave_snapshot_flash",
+        "d8p1_load_flash",
+        "d8p1_signature_runtime"
+      ],
+      "indirect_or_unresolved_calls": []
+    },
+    "d8p1_autosave_session_poll": {
+      "saved_words": 5,
+      "local_bytes": 24,
+      "direct_frame_bytes": 44,
+      "direct_calls": [
+        "d8p1_autosave_flash",
+        "d8p1_autosave_snapshot_flash",
+        "d8p1_signature_runtime",
+        "df_automatic_quiet",
+        "nas_reconcile"
+      ],
+      "indirect_or_unresolved_calls": []
+    },
+    "nas_reconcile": {
+      "saved_words": 5,
+      "local_bytes": 20,
+      "direct_frame_bytes": 40,
+      "direct_calls": [
+        "d8p1_autosave_snapshot_flash",
+        "df_automatic_quiet"
+      ],
+      "indirect_or_unresolved_calls": []
+    },
+    "d8p1_autosave_snapshot_flash": {
+      "saved_words": 5,
+      "local_bytes": 64,
+      "direct_frame_bytes": 84,
+      "direct_calls": [
+        "d8p1_autosave_snapshot_pool",
+        "d8pool_mapped_open",
+        "memcpy"
+      ],
+      "indirect_or_unresolved_calls": []
+    },
+    "d8p1_autosave_snapshot_pool": {
+      "saved_words": 7,
+      "local_bytes": 84,
+      "direct_frame_bytes": 112,
+      "direct_calls": [
+        "d8p1_project_decode",
+        "d8p1_project_encode",
+        "d8pool_load",
+        "d8pr_preflight",
+        "memcpy"
+      ],
+      "indirect_or_unresolved_calls": []
+    }
+  }
+}
