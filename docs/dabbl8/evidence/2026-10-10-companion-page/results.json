@@ -1,0 +1,176 @@
+{
+  "result": "PASS",
+  "base_commit": "53bde7e1d57a4f0cfc5c25b80c0e3dd237efe719",
+  "model_checks_each_mode": 48,
+  "descriptor_combinations_checked": 1386,
+  "full_suite_exit_code": 0,
+  "full_log_sha256": "f988cbe8f3e0baa846955e6213d16f96a0232618dfdf2999b449d5a26d14512f",
+  "source_hashes": {
+    "web/d8companion.html": "213e1c5fc41ece4da87beef007789a6bd1b8b9d2e8af115849d28aa1609fbe6b",
+    "web/d8companion.css": "e31b9b410e1fcc595c79cea5d8aabf882f3b1dd770e84242cb69d8e9cad50e42",
+    "web/d8companion.js": "24a29984da42b227cfe6bb7996b23536fde1b2b211accc20e3aa017a055d8d5f",
+    "web/d8companion-model.js": "cf030340bf2f02ef5863b2c4a7780071e5cdc802c936a423fcef67c1d61d2a5c",
+    "web/d8descriptors.js": "36bab95596c4856ccbad283e1816fddcc4b09ffc44ccd27d07c7a23be40de28d",
+    "web/test_d8companion.mjs": "97c8b1f0cd7131edd599458025b54b7d9e813375a056126bef15cd4a21bbb94f",
+    "tools/dabbl8_descriptors.py": "67aa1629d5b97f82ac2edde10724db723cc03ede38a8662fcd92ed8b4ca2954c",
+    "tests/run_tests.sh": "bed590e29252cf6cd8a2a3caa837b6ce2f76014fbc96e53c28e2c445aca129b3",
+    "docs/dabbl8/companion-editor-page.md": "d1af56ec39b5b67a3d67b6aa6b6cef701c44561210c1c1cf28cee76f97970fa5"
+  },
+  "default_artifacts_unchanged": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "browser": {
+    "type": "Chrome; injected simulated MIDI ports plus production transport and actual eight-track host C parser",
+    "dimensions": [
+      [
+        1440,
+        900
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "horizontal_overflow": false,
+    "track8_mix_pan_step64_round_trip": "PASS",
+    "other_mix_values_unchanged": "PASS",
+    "malformed_pan64_refused": "PASS",
+    "disconnect_reconnect": "PASS",
+    "mock_four_track_shape_readonly": "PASS; not actual four-track browser backend",
+    "mock_permission_denial": "PASS",
+    "cancelled_late_discovery": "PASS",
+    "app_errors_warnings": [],
+    "request_trace_sha256": "879d4b44cce1bfdd896fcc24b2ee03734ae277d498beaf86f44aa62c65393832",
+    "all_simulated_flash_write_erase_counters_zero": true,
+    "DOM_snapshot": {
+      "drums": [
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Kick"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Snare"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Clap"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Closed hat"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Open hat"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Tom"
+        },
+        {
+          "accent": false,
+          "hit": true,
+          "name": "Rim"
+        },
+        {
+          "accent": true,
+          "hit": true,
+          "name": "Bell"
+        }
+      ],
+      "notes": [
+        60,
+        64,
+        67,
+        72
+      ],
+      "pan": -32,
+      "parameterCount": 99,
+      "status": "Step 64 loaded.",
+      "stepCount": 64,
+      "stepIndex": 63,
+      "tracks": [
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 1"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 2"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 3"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 4"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 5"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 6"
+        },
+        {
+          "level": 104,
+          "mute": false,
+          "name": "Track 7"
+        },
+        {
+          "level": 73,
+          "mute": true,
+          "name": "Track 8"
+        }
+      ]
+    }
+  },
+  "coverage_note": "Node model/test source stayed constant through full suite. Renderer received connection-generation/page-exit guards during suite; final renderer was subsequently reloaded and verified separately in Chrome. Full suite does not automate DOM renderer coverage.",
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally outside Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP; no actual MIDI permission, ports, flash or firmware installation",
+  "hosted_ci": "pending draft creation",
+  "target_image": "not rebuilt for web-only changes; no new memory claim"
+}

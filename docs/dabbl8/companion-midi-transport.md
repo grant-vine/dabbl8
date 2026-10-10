@@ -69,7 +69,8 @@ signed parameter round trips, with zero simulated flash writes/erases checked on
 every real-handler response. Both optimized and sanitizer bridge modes are included
 in the repository suite. This is host evidence, not a physical MIDI connection.
 
-The visible musical editor and browser preview are the next step. New-format save,
+The separate [visible editor stage](companion-editor-page.md) now supplies musical
+controls and browser simulator evidence. New-format save,
 backup conversion/round trips, storage/runtime prerequisites and hardware gates
 remain unfinished. Do not close issue #11 or claim a qualified firmware release.
 No loader, flash boundary, firmware source, fixture or golden is changed here.
