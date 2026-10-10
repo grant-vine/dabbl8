@@ -168,6 +168,7 @@
       <span id="mock" class="dim" hidden data-t="mock"></span>
     </div>
     <div id="status"></div>
+    <p id="protocol-fallback" class="hint" hidden></p>
     <nav class="tabs" id="tabs" role="tablist">
       <button role="tab" data-tab="sound" data-t="sound" data-ic="symbol_audio"></button>
       <button role="tab" data-tab="fm6" data-t="tabFm6" data-ic="ui_knob"></button>
@@ -360,7 +361,55 @@ const CMD = { INFO: 1, GET: 2, SET: 3, DUMP: 4, DESC: 5, STEP_GET: 6, STEP_SET: 
   TRACK_PARAM: 31, TRACK_CHANGED: 32, SONG: 33,
   UI_STATE: 34, UI_SET: 35, UI_PALETTES: 36, FAV_GET: 37, FAV_SET: 38,
   MOTION: 64, BACKUP_LIST: 65, BACKUP_GET: 66, BACKUP_PUT: 67,
-  FM6_GET: 68, FM6_PUT: 69, FM6_LIST: 70, FM6_ERASE: 71 };
+  FM6_GET: 68, FM6_PUT: 69, FM6_LIST: 70, FM6_ERASE: 71,
+  D8_MOTION: 74, D8_CAPS: 75, D8_ERROR: 76 };
+/* Dabbl8 negotiation. Unknown devices are identity-only, never writable by guesswork. */
+function d8ParseCaps(a) {
+  if (!Array.isArray(a) || a.length !== 15 || a.some(x => !Number.isInteger(x) || x < 0 || x > 127) ||
+      a[0] !== 68 || a[1] !== 56 || a[2] !== 1 || a[3] < 1 || a[3] > 8 || a[4] !== 64 ||
+      a[5] < 1 || a[5] > 8 || a[6] !== 64 || a[7] < 1 || a[7] > 127 || a[8] < 1 || a[9] < 1) {
+    throw new Error("Unsupported firmware capabilities");
+  }
+  return { family: "D8", schema: a[2], tracks: a[3], steps: a[4], voices: a[5], motionMax: a[6],
+    params: a[7], globals: a[8], engines: a[9], paramSchema: a[10], engineSchema: a[11],
+    motionSchema: a[12], projectSchema: a[13], features: a[14] };
+}
+async function d8Negotiate(info, request) {
+  const fallback = reason => ({ writable: false, reason, caps: null });
+  if (info.d8Schema !== 1) return fallback("This firmware has no supported Dabbl8 handshake.");
+  try {
+    const caps = d8ParseCaps(await request([CMD.D8_CAPS, []], { timeout: 500, retries: 1, quiet: true }));
+    if (caps.paramSchema !== 1 || caps.engineSchema !== 1 || caps.motionSchema !== 1 || caps.projectSchema !== 9 ||
+        caps.tracks !== info.ntrk || caps.steps !== info.nstep || caps.params !== info.pcount ||
+        caps.globals !== info.gcount || caps.engines !== info.nengines) {
+      return fallback("The firmware schema does not match this editor.");
+    }
+    /* This editor still has a four-track UI; the eight-track client is task #11. */
+    if (caps.tracks > 4 || (caps.features & 3) !== 3) return fallback("This editor does not support the firmware's editing features.");
+    return { writable: true, reason: "", caps };
+  } catch (e) {
+    if (e.message === "closed") throw e;
+    return fallback("The firmware handshake could not be verified.");
+  }
+}
+function d8ReadRequest([cmd, a]) {
+  if ([CMD.INFO, CMD.GET, CMD.DUMP, CMD.DESC, CMD.STEP_GET, CMD.NAMES, CMD.SMP_INFO,
+       CMD.UP_LIST, CMD.UP_GET, CMD.WATCH, CMD.PING, CMD.TRACK_DUMP, CMD.UI_STATE,
+       CMD.UI_PALETTES, CMD.FAV_GET, CMD.BACKUP_LIST, CMD.BACKUP_GET, CMD.FM6_GET,
+       CMD.FM6_LIST, CMD.D8_CAPS].includes(cmd)) return true;
+  if (cmd === CMD.TRACK) return a.length === 0;
+  if (cmd === CMD.TRACK_MIX) return a.length === 1;
+  if (cmd === CMD.TRACK_STEP || cmd === CMD.TRACK_PARAM) return a.length === 2;
+  if (cmd === CMD.PROJECT) return a.length === 2 && a[0] === 2;
+  if (cmd === CMD.SONG) return a.length === 1 && a[0] === 0;
+  if (cmd === CMD.MOTION) return a.length === 1 || (a.length === 2 && a[1] === 7);
+  return false;
+}
+async function d8Request(mode, request, r, opt) {
+  if (!mode?.writable && !d8ReadRequest(r)) throw new Error("Read-only connection: firmware editing is not supported.");
+  return request(r, opt);
+}
+
 /* frames the device sends on its own (while WATCH is on); never replies */
 const PUSH = new Set([CMD.CHANGED, CMD.RELOAD, CMD.STEP_CHANGED, CMD.TRACK_CHANGED]);
 /* user preset bank: name 1..12 printable ASCII, a 16-step pattern of (note, flags 1 acc 2 slide 4 tie) */
@@ -454,6 +503,7 @@ const parse = {
       if (trailer[r] === 0x4E && trailer[r + 1] === 1) r += 3;                            /* and the MENU settings (1.0.4) */
       if (o.syncCaps && trailer[r] === 0x52 && trailer[r + 1] === 1) o.ratchet = trailer[r + 2];   /* RATCH: max hits */
     }
+    o.d8Schema = trailer.length >= 3 && trailer.at(-3) === 68 && trailer.at(-2) === 56 ? trailer.at(-1) : 0;
     return o;
   },
   [CMD.UI_STATE](a) {
@@ -747,6 +797,9 @@ class Link {
     if (!f) return;                                  /* not ours (notes, clock, other SysEx) */
     if (PUSH.has(f.cmd)) { this.onPush(f); return; }
     const c = this.cur;
+    if (c && f.cmd === CMD.D8_ERROR && f.a.length === 3 && f.a[0] === 1 && f.a[1] === c.cmd && [1, 2, 3].includes(f.a[2])) {
+      this.finish(null, new Error("Firmware refused the request (code " + f.a[2] + ")")); return;
+    }
     if (!c || f.cmd !== c.cmd || !replyMatches(c.cmd, c.args, f.a)) { this.onUnknown(f); return; }
     this.finish(f.a);
   }
@@ -2058,6 +2111,10 @@ function makeMockDevice(opt = {}) {
         m.events.forEach(e => {b(e.step);b(e.param);v(e.value);});
         break;
       }
+      case CMD.D8_CAPS:
+        if (!opt.dabbl8 || opt.legacy) return null;
+        [68,56,1,NTRK,NSTEP,8,64,P_COUNT,G_COUNT,ENG.length,1,1,1,9,3].forEach(b);
+        break;
       case CMD.INFO:
         s(opt.legacy ? "FELUCCA 0.4 BETA (MOCK)" : "FELUCCA v1.0 (MOCK)"); b(ENG.length); b(P_COUNT); b(G_COUNT); b(NSTEP); b(P_E0);
         ENG.forEach((e) => s(e.name));
@@ -2067,6 +2124,7 @@ function makeMockDevice(opt = {}) {
           if (st.uiCaps) { b(0x55); b(1); b(st.uiCaps); b(0x4d); b(1); b(64); b(1); if (!opt.noFm6) { b(0x46); b(1); b(FM6.FACTORY_PK.length); b(0); }
             if (syncCaps()) { b(0x53); b(1); b(syncCaps()); if (!opt.noFm6) { b(0x50); b(1); b(3); } if (ratchetOn()) { b(0x52); b(1); b(4); } } }   /* (FM6 v2: no bank, preset patches) */
         }
+        if (opt.dabbl8 && !opt.legacy) [68,56,1].forEach(b);
         break;
       case CMD.GET: case CMD.SET: {
         if (a.length < 2) return null;
@@ -2509,6 +2567,7 @@ const TEXT = {
     fm6Factories: "ファクトリー音色",
     fm6NeedDevice: "FM-1 を接続すると 6-OP FM の音色を編集してトラックへ送れます。",
     fm6NoFw: "このファームウェアには 6-OP FM（FM6）がありません。Felucca 1.0 以降に更新すると使えます。",
+    protocolReadOnly: "読み取り専用の接続。このファームウェアを安全に編集できません。",
     motion: "オートメーション", motionOn: "再生", motionClear: "オートメーションを消去", motionConfirm: "選択トラックのオートメーションを消しますか？", chance: "確率 %", ratchet: "ラチェット", motionStep: "ステップ", motionParam: "パラメーター", motionValue: "値",
     backupTitle: "全体バックアップ", backupExport: "バックアップ保存", backupImport: "バックアップ復元", backupHelp: "現在の曲・A〜D・音色バンク・ユーザーサンプル・設定を、このパソコンへ保存。", backupOld: "全体バックアップには対応版への更新が必要です。", backupConfirm: "全体バックアップを復元しますか？ 現在の曲、保存データとサンプルを置き換えます。USBを抜かないでください。", backupWorking: "バックアップ処理中 ", backupDone: "バックアップを保存しました", backupRestored: "全体バックアップを復元しました",
     deviceDisplay: "本体の画面",
@@ -2612,6 +2671,7 @@ const TEXT = {
     fm6Factories: "Factory patch",
     fm6NeedDevice: "Connect the FM-1 to edit 6-OP FM voices and send them to a track.",
     fm6NoFw: "This firmware has no 6-OP FM (FM6). Update to Felucca 1.0 or later to use it.",
+    protocolReadOnly: "Read-only connection. This editor cannot safely edit this firmware.",
     motion: "Automation", motionOn: "Play automation", motionClear: "Clear automation", motionConfirm: "Clear this track's automation?", chance: "Chance %", ratchet: "Ratchet", motionStep: "Step", motionParam: "Parameter", motionValue: "Value",
     backupTitle: "Complete backup", backupExport: "Save backup", backupImport: "Restore backup", backupHelp: "Save the current music, A–D, sound banks, user samples and settings to this computer.", backupOld: "Complete backups need firmware with archive support.", backupConfirm: "Restore this complete backup? Current music, saved data and samples will be replaced. Keep USB connected.", backupWorking: "Backing up / restoring ", backupDone: "Backup saved", backupRestored: "Complete backup restored",
     deviceDisplay: "Device display",
@@ -2741,6 +2801,16 @@ function showTab(name) {
   if (name === "fm6" && prev !== "fm6" && dev && dev.dump && dev.info.fm6 && !fm6Listing) op(fm6Refresh);
 }
 function renderPanels() {
+  const readonly = !!dev?.protocol && !dev.protocol.writable;
+  $("tabs").hidden = readonly;
+  $("protocol-fallback").hidden = !readonly;
+  $("protocol-fallback").textContent = readonly ? `${t("protocolReadOnly")} ${dev.info.version} · ${dev.info.ntrk || 1} tracks. ${dev.protocol.reason}` : "";
+  if (readonly) {
+    $("hint").hidden = true;
+    document.querySelectorAll(".panel").forEach(p => { p.hidden = true; });
+    $("trackbar").hidden = true;
+    return;
+  }
   /* the Tracks tab only with a four-track firmware */
   const tracksOk = !dev || hasTracks() || !dev.info;
   const fm6Off = !!dev && !!dev.info && !dev.info.fm6;             /* the 6-OP FM tab: a hint without FM6 firmware */
@@ -2866,7 +2936,7 @@ async function connect() {
   sayK("connecting");
   try {
     if (!access) {
-      if (MOCK) { mock = makeMockDevice({ legacy: QS.get("legacy") === "1" }); access = mock.access; }
+      if (MOCK) { mock = makeMockDevice({ legacy: QS.get("legacy") === "1", dabbl8: QS.get("dabbl8") === "1" }); access = mock.access; }
       else {
         try { access = await navigator.requestMIDIAccess({ sysex: true }); }
         catch (e) { sayK("denied"); return; }
@@ -2939,7 +3009,7 @@ function onState(e) {
 function assertSession(d) { if (!d || d !== dev) throw new Error("closed"); }
 async function sessionRequest(d, r, opt) {
   assertSession(d);
-  const reply = await d.link.request(r, opt);
+  const reply = await d8Request(d.protocol, (r, o) => d.link.request(r, o), r, opt);
   assertSession(d);
   return reply;
 }
@@ -2955,6 +3025,9 @@ async function load(d) {
     /* the first frame after opening the port can be lost: a few tries */
     d.info = parse[CMD.INFO](await sessionRequest(d, req.info(), { timeout: 500, retries: 3 }));
     $("version").textContent = d.info.version;
+    d.protocol = await d8Negotiate(d.info, (r, o) => sessionRequest(d, r, o));
+    assertSession(d);
+    if (!d.protocol.writable) { renderPanels(); sayK("protocolReadOnly"); return; }
     const total = d.info.pcount + d.info.gcount;
     for (let i = 0; i < d.info.pcount; i++) { sayK("reading", `${i + 1}/${total}`); d.pdesc[i] = await getDescOrNull(0, i, d); }
     for (let i = 0; i < d.info.gcount; i++) { sayK("reading", `${d.info.pcount + i + 1}/${total}`); d.gdesc[i] = await getDescOrNull(1, i, d); }

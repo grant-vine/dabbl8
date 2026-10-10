@@ -844,3 +844,7 @@ bus reset (send `INFO` and `WATCH` again after reconnecting), and a backup in pr
 ## Dabbl8 development extension: versioned motion (74)
 
 Command 74 prefixes the existing MOTION (64) explicit track/step operation payload with schema byte `1`; replies also prefix byte `1`. Operations and lock-kind extensions are otherwise unchanged. Unknown schemas and unavailable runtime tracks are refused before mutation. Historical command 64 remains restricted to tracks 0–3 with unchanged reply framing. The current runtime still has four tracks; clients must negotiate support before using the extension (capability negotiation is tracked in Dabbl8 #6). See [automation format](../docs/dabbl8/motion-address-format.md) for the separately versioned D8M1 save section and later storage gates.
+
+## Dabbl8 capability negotiation (75) and errors (76)
+
+INFO appends final discovery tag `44 38 01` (D8, schema 1) without changing its original fields. Query command 75 with no arguments only after recognized discovery. The exact reply declares protocol family/schema, actual track/step/voice/motion limits, stable parameter/engine schemas, motion/save formats and feature bits. Unknown or mismatched capabilities mean a read-only identity connection; no write MIDI is sent. Command 76 returns `[1, original_command, reason]` (1 unsupported legacy write family, 2 unsupported request schema, 3 malformed request/index). Full wire format and compatibility matrix: [Dabbl8 capability specification](../docs/dabbl8/protocol-capabilities.md).
