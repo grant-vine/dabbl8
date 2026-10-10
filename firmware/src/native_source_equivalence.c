@@ -7,17 +7,17 @@ static struct {
  uint32_t generation,plan_crc,original[5],crc,offset,epoch,usb,last,live_crc,live_length;
  uint8_t phase,role,copy,present[5],selected[5],original_mask,target_mask,choice;
 } d8sv __attribute__((section(".pool")));
-enum { SV_IDLE,SV_SCAN,SV_SEMANTIC,SV_COMPARE,SV_CURRENT,SV_FINAL,SV_DONE,SV_FAILED };
+enum { SV_IDLE,SV_START,SV_SCAN,SV_SEMANTIC,SV_COMPARE,SV_CURRENT,SV_FINAL,SV_DONE,SV_FAILED };
 static void d8sv_cancel(void){memset(&d8sv,0,sizeof d8sv);}
 static int d8sv_fail(int rc){d8sv.phase=SV_FAILED;return rc;}
 static int d8sv_guard(void)
 {
  if(!main_migration_workspace(d8sv.generation)||d8mp.generation!=d8sv.generation||d8mp.phase!=1||d8mp.received!=D8POOL_BYTES)return D8SV_STALE;
- if(cv_cpu_active||transport_busy()||transport_req||seq_counting()||usb.ota_req||usb.uboot_req||usb.resets!=d8sv.usb||d8_capture_change.epoch!=d8sv.epoch||(uint32_t)(fm1_ms-d8sv.last)>EDC_TIMEOUT)return D8SV_CHANGED;
+ if(!flash_ok||usb.config!=1||cv_cpu_active||transport_busy()||transport_req||seq_counting()||usb.ota_req||usb.uboot_req||usb.resets!=d8sv.usb||d8_capture_change.epoch!=d8sv.epoch||(uint32_t)(fm1_ms-d8sv.last)>EDC_TIMEOUT)return D8SV_CHANGED;
  if(!d8sv.io.valid(d8sv.io.context,d8sv.generation))return D8SV_CHANGED;
  /* Callback reentry may end/start a different lifetime. */
  if(!main_migration_workspace(d8sv.generation)||d8mp.generation!=d8sv.generation||d8mp.phase!=1||d8mp.received!=D8POOL_BYTES)return D8SV_STALE;
- if(cv_cpu_active||transport_busy()||transport_req||seq_counting()||usb.ota_req||usb.uboot_req||usb.resets!=d8sv.usb||d8_capture_change.epoch!=d8sv.epoch)return D8SV_CHANGED;
+ if(!flash_ok||usb.config!=1||cv_cpu_active||transport_busy()||transport_req||seq_counting()||usb.ota_req||usb.uboot_req||usb.resets!=d8sv.usb||d8_capture_change.epoch!=d8sv.epoch||(uint32_t)(fm1_ms-d8sv.last)>EDC_TIMEOUT)return D8SV_CHANGED;
  return D8SV_MORE;
 }
 static int d8sv_plan_read(void *c,uint32_t off,void *out,uint32_t n)
@@ -41,6 +41,7 @@ static int d8sv_alias(const void *p,size_t n)
 static int d8sv_begin(uint32_t g,const d8sv_io *io,const uint32_t source_crc[5],unsigned choice)
 {
  if(d8sv.phase!=SV_IDLE||!io||!io->read||!io->valid||!source_crc||choice>D8SV_CURRENT||d8sv_alias(io,sizeof *io)||d8sv_alias(source_crc,5*sizeof *source_crc))return D8SV_BAD;
+ d8sv.phase=SV_START; /* Reserve before any callback: recursive begin refuses. */
  d8sv.io=*io;d8sv.generation=g;d8sv.choice=(uint8_t)choice;memcpy(d8sv.original,source_crc,sizeof d8sv.original);
  d8sv.epoch=d8_capture_change.epoch;d8sv.usb=usb.resets;d8sv.last=fm1_ms;int rc=d8sv_guard();if(rc)return d8sv_fail(rc);
  d8mp_workspace *w=main_migration_workspace(g);d8sv.plan_crc=d8p1_crc32(w->plan,D8POOL_BYTES);

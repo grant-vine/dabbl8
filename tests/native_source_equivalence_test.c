@@ -5,12 +5,12 @@
 #include "../firmware/src/native_migration_preflight.c"
 #include "../firmware/src/native_source_equivalence.c"
 static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES],sv_raw[4096];
-static unsigned sv_reads,sv_allowed,sv_fault,sv_action,sv_at;
+static unsigned sv_reads,sv_allowed,sv_fault,sv_action,sv_at,sv_valid_action,sv_valid_nested;
 static uint32_t sv_g,sv_crc[5];
 static d8p1_project_state sv_state;
-static int sv_rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;sv_reads++;CHECK(n==256&&a%256==0);if(sv_fault&&sv_reads==sv_fault)return -1;memcpy(p,nor+a,n);if(sv_action&&sv_reads==sv_at){unsigned action=sv_action;sv_action=0;if(action==1)sv_allowed=0;else if(action==2)d8_capture_store_changed();else if(action==3)usb.resets++;else if(action==4){CHECK(!d8mp_end(sv_g));uint32_t other;CHECK(!d8mp_begin(&other));}else if(action==5)nor[0x97000]^=1;else if(action==6)main_migration_workspace(sv_g)->plan[40959]^=1;else if(action==7)trk[0].p[P_LEVEL]^=1;else if(action==8)fm1_ms+=EDC_TIMEOUT+1;}
+static int sv_rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;sv_reads++;CHECK(n==256&&a%256==0);if(sv_fault&&sv_reads==sv_fault)return -1;memcpy(p,nor+a,n);if(sv_action&&sv_reads==sv_at){unsigned action=sv_action;sv_action=0;if(action==1)sv_allowed=0;else if(action==2)d8_capture_store_changed();else if(action==3)usb.resets++;else if(action==4){CHECK(!d8mp_end(sv_g));uint32_t other;CHECK(!d8mp_begin(&other));}else if(action==5){nor[0x97000]^=1;d8_capture_store_changed();}else if(action==9)nor[0x97000]^=1;else if(action==6)main_migration_workspace(sv_g)->plan[40959]^=1;else if(action==7)trk[0].p[P_LEVEL]^=1;else if(action==8)fm1_ms+=EDC_TIMEOUT+1;}
  return 0;}
-static int sv_valid(void *c,uint32_t g){(void)c;return sv_allowed&&g==sv_g;}
+static int sv_valid(void *c,uint32_t g){(void)c;unsigned a=sv_valid_action;sv_valid_action=0;if(a==1)fm1_ms+=EDC_TIMEOUT+1;else if(a==2)usb.config=0;else if(a==3)flash_ok=0;else if(a==4){d8sv_io again={NULL,sv_rd,sv_valid};sv_valid_nested=d8sv_begin(sv_g,&again,sv_crc,D8SV_CURRENT);}return sv_allowed&&g==sv_g;}
 static int sv_pr(void *c,uint32_t a,void *p,uint32_t n){(void)c;if(a>D8POOL_BYTES||n>D8POOL_BYTES-a)return -1;memcpy(p,sv_plan+a,n);return 0;}
 static int sv_pe(void *c,uint32_t a){(void)c;memset(sv_plan+a,255,4096);return 0;}
 static int sv_pp(void *c,uint32_t a,const void *p,uint32_t n){(void)c;for(unsigned i=0;i<n;i++)sv_plan[a+i]&=((const uint8_t*)p)[i];return 0;}
@@ -20,7 +20,7 @@ static void sv_record(unsigned role,unsigned copy,uint32_t seq,const void *raw,s
 static void sv_refresh(void){for(unsigned r=0;r<5;r++)sv_crc[r]=st_crc32(nor+edc_roles[r].a,8192);}
 static int sv_build(const char *path,unsigned mask,unsigned choice,int erasedauto)
 {
- fixture();project_native_reset();native_as.ready=0;d8sv_cancel();sv_reads=sv_fault=sv_action=sv_at=0;sv_allowed=1;
+ fixture();project_native_reset();native_as.ready=0;d8sv_cancel();sv_reads=sv_fault=sv_action=sv_at=sv_valid_action=sv_valid_nested=0;sv_allowed=1;
  for(unsigned r=0;r<5;r++)memset(nor+edc_roles[r].a,255,8192);
  size_t n=sv_load(path);for(unsigned r=0;r<4;r++)if(mask&(1u<<r))sv_record(r,0,1,sv_raw,n);if(!erasedauto)sv_record(4,0,1,sv_raw,n);
  memset(sv_plan,255,sizeof sv_plan);d8pool pool={NULL,sv_pr,sv_pe,sv_pp,stop};d8p1_legacy_report report;unsigned available=mask&7u;
@@ -95,5 +95,26 @@ int main(void)
  CHECK(d8sv_begin(sv_g,(d8sv_io*)&main_workspace,sv_crc,D8SV_CURRENT)==D8SV_BAD);
  CHECK(d8sv_begin(sv_g,&io,sv_crc,2)==D8SV_BAD);
  CHECK(d8p1_crc32(&main_workspace,sizeof main_workspace)==arena_before);sv_end();
+ /* Guard must recheck facts changed by actual valid() callback, including
+  * lifetime timeout/config/flash loss on completed PERSISTED proof. */
+ for(unsigned action=1;action<=3;action++){
+  CHECK(sv_build(base,7,D8SV_PERSISTED,0));CHECK(sv_run(D8SV_PERSISTED)==D8SV_COMPLETE);sv_valid_action=action;CHECK(d8sv_completed(sv_g)==D8SV_CHANGED);sv_end();
+ }
+ for(unsigned action=1;action<=3;action++){
+  CHECK(sv_build(base,7,D8SV_CURRENT,0));sv_valid_action=action;CHECK(sv_run(D8SV_CURRENT)==D8SV_CHANGED&&!sv_reads);sv_end();
+ }
+ CHECK(sv_build(base,7,D8SV_CURRENT,0));sv_valid_action=4;CHECK(sv_run(D8SV_CURRENT)==D8SV_COMPLETE&&sv_valid_nested==D8SV_BAD);sv_end();
+ /* Explicit scope diagnostic: direct unobserved NOR mutation behind the
+  * final already-scanned range can preserve its CRC consistency result.
+  * This is NOT corruption detection, an atomic snapshot, or write authority.
+  * Real writers must observe/serialize; executor independently rereads originals. */
+ unsigned unobserved_diagnostics=0;
+ for(unsigned choice=0;choice<2;choice++)for(unsigned cut=400;cut<=401;cut++){
+  CHECK(sv_build(base,7,choice,0));sv_action=9;sv_at=cut;CHECK(sv_run(choice)==D8SV_COMPLETE);CHECK(memcmp(nor,baseline,sizeof nor)!=0);unobserved_diagnostics++;sv_end();
+ }
+ /* In contrast the same direct unobserved mutation before the affected final
+  * scan range is actually caught by raw CRC consistency, without observer help. */
+ for(unsigned cut=1;cut<=321;cut+=160){CHECK(sv_build(base,7,D8SV_CURRENT,0));sv_action=9;sv_at=cut;CHECK(sv_run(D8SV_CURRENT)==D8SV_CHANGED);sv_end();}
+ printf("Unobserved late-NOR limitation: %u explicit diagnostics; not atomic snapshot or authority\n",unobserved_diagnostics);
  printf("Native source equivalence: %u checks, %u failures; fixed physical originals, explicit autosave source, canonical byte equality, no retention/consent/authority/device qualification\n",checks,failures);return failures?1:0;
 }
