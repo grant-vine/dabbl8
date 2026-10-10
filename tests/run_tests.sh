@@ -208,6 +208,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+    run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -391,6 +393,8 @@ else
     run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
     $SCC -o "$A/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
+    $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+    run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm

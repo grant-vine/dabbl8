@@ -1,0 +1,76 @@
+{
+  "source_base": "053d501d7f9d404fcaa750435cb51dd7aa214ac7",
+  "baseline": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "source_hashes": {
+    "firmware/src/d8p1_pool_runtime.c": "143695498a05f624160716d7b9c247527442c4fd3311669926ad53987adab735",
+    "firmware/src/d8p1_pool_runtime.h": "29b2eee809697860a6367e3864eb407736960cf4ba9ea4264fc2b2469413c230",
+    "firmware/src/felucca.c": "56b388da71096ef2caaf6b4b6bc4010ebaaf8adb6dd902df4e0d28e769ddea85",
+    "tests/d8p1_pool_runtime_test.c": "236a15eb363af78642faf38487e58fa2c8fa32845a0dccd81deaf000ec2967d8",
+    "tests/run_tests.sh": "f49d8ee4450dc17d66432929a7e4d70b2fd70e95a9ba76841702299e3dae913f",
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "firmware/src/d8pool.h": "ce008b58ca544dfbc867c77ce5f9b2b85a32a8779f714e91afba7787e4c9b1d1",
+    "firmware/src/d8p1_runtime.c": "9cd3492d34cc5025eea2cca152942f66a29f3ce3552e7c81ef87ec94cf99817b",
+    "firmware/src/d8p1_project.h": "bc8ba87e3754c765701b9830a982ff06e9abb1c4378abb383ecc61efa43e4a24",
+    "firmware/src/project.c": "83eaf3d02b8d615d1eb1687817240f49de03f50c9b6140ee1a27fc001d9772a0",
+    "firmware/src/gfx.c": "4e08be277c4d5555521be470a32158c7dd0684c28e9085f955229c5d65a65510",
+    "docs/dabbl8/runtime-shared-persistence.md": "542db601cc3c259b099067e0e20ad30ec6de5a4838bc54fbce401b5d31058403",
+    "docs/dabbl8/README.md": "000e55248eff64de4bbc6f3a406535ba3e2d91006a2ee9bb3d47550f2eb80b2d"
+  },
+  "evidence_hashes": {
+    "target-4-memory.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-controller-disassembly.txt": "2991cb6d8201b2d69332c51bcc603b004f3151d137b5e65957198ab9d6fa2dff",
+    "full-upstream-suite.log": "1ad8de8ffc5a5128905f53d99d5f234e1aa1fa8b9f0c5e16aa9d0b5f06043c34",
+    "native-linked-symbols.txt": "09cca00c5a0706db5ceb43b46a40795c8dfbe6ad4c9d23d5c5cb084dc62fa7e2",
+    "final-sanitizers.log": "8b2c6eb01c078e1ed45e19be89542a3af993ceac40db668f867f80a489906064",
+    "initial-invalid-note-count.log": "4a7948aa833fb2826e895eba79ecbcca6c3e529ab28919270c6bab4429406951",
+    "target-8-memory.json": "3877494378b552ada0d6025d358dd16de0d874016b5998a676de4955ade5ff99",
+    "final-sanitizers-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "checks.json": "cdd2b60f509f690f4931024595b7a0d276a399a23b0fc6bd594bc328b7d64b65",
+    "attempt-notes.txt": "a1d4bf35c84b1635b80301e3d4ccee91a4d396b781faa8d8d8e4f8b2f506ffc8",
+    "target-default-and-eight.log": "6295cd92194343dc5a42359d551a9db978dffc5807d1f09df64b2370c66f4513",
+    "verification-command.py.txt": "43f992e83e33fd36664275a5d6809718f10ace4253d425e855928b2d43f2021e",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "final-optimized-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-optimized.log": "8b2c6eb01c078e1ed45e19be89542a3af993ceac40db668f867f80a489906064",
+    "target-controller-frames.json": "6fb8e1b75440088cd8538e95951187fa29c7ed21336de7f5a8f774590cfab974"
+  },
+  "private_artifacts": {
+    "/Users/grantv/Code/dabbl8/.local-baseline/runtime-pool-check/final-optimized": {
+      "bytes": 413264,
+      "sha256": "8f5113c9c5055a3e22020343dad94e4052ebf11f677e0eb12a13d8303323e9b2"
+    },
+    "/Users/grantv/Code/dabbl8/.local-baseline/runtime-pool-check/final-sanitizers": {
+      "bytes": 957776,
+      "sha256": "ef048756a5282773c0252e4c16293439b7569ed6ca3215941faec2413be43877"
+    },
+    "/Users/grantv/Code/dabbl8/.local-baseline/main-workspace/build/runtime-pool-8/felucca.bin": {
+      "bytes": 453728,
+      "sha256": "888d6cc32a850d758b5cd92eae042d8ec2bd322e1df946294019f872fe537cec"
+    },
+    "/Users/grantv/Code/dabbl8/.local-baseline/main-workspace/build/runtime-pool-8/felucca.elf": {
+      "bytes": 500140,
+      "sha256": "6c4975c8959c5941f3c358cf0a885fe5a5825b6a53bc4790432207ece23f095e"
+    }
+  },
+  "host": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "dependencies": {
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1"
+  },
+  "host_compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "toolchain": "JieLi clang 4.0.1",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "sanitizers": "Runtime uses upstream DSP exclusions; codec/pool strict tests still run; macOS leak detection unsupported and disabled",
+  "hardware": "SKIP; real runtime, virtual NOR, no physical driver/migration/installation",
+  "skips": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ]
+}
