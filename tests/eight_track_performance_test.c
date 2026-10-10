@@ -17,6 +17,9 @@ static void setup(unsigned candidate)
         trk[t].p[P_AMODE]=0;trk[t].p[P_LEVEL]=100;trk[t].p[P_PAN]=0;
     }
     memset(dly_buf,0,sizeof dly_buf);memset(cho_buf,0,sizeof cho_buf);rev_clear();
+#ifdef FT16
+    fx_tail.delay=fx_tail.chorus=0; /* match the synthetic buffer reset */
+#endif
     dc_l=dc_r=dce_l=dce_r=lc_l1=lc_l2=lc_r1=lc_r2=0;
     memset(lce,0,sizeof lce);lim_env=LIM_T;
     perf_held=perf_latched=perf_act=perf_solo=perf_kill=0;

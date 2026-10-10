@@ -36,8 +36,9 @@ int d8p1_save_flash(unsigned object,int native_authorized);
 /* Fixed shared autosave identity, explicit completed migration ownership.
  * Rechecks stopped transport, inactive canvas, released panel and silent
  * voices, pending MIDI and known performance/slicer/held-arp state before each
- * physical mutation, including under IRQ-off. Resident effects-tail drain
- * is a separate required caller gate: this does not prove inaudible output.
+ * physical mutation, including under IRQ-off. Resident DSP tail state is
+ * checked without scanning audio buffers. Queued USB/DAC audio and physical
+ * timing remain required caller gates: this does not prove inaudible output.
  * This is not a scheduler; caller must apply RESTORE LAST/idle/wear policy. */
 int d8p1_autosave_flash(int native_authorized);
 int d8p1_load_flash(unsigned object,int native_authorized);

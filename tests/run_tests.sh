@@ -223,6 +223,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
     run "eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain" "$OUT/eight_track_performance_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
+    run "native resident tails: real DSP counter oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
     run "native automatic write: quiet guard at every physical mutation" "$OUT/native_quiet_autosave_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
@@ -422,6 +424,8 @@ else
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm
     run "ASan/UBSan: eight-track solo dry/send isolation and cold first activation" "$A/eight_track_performance_test"
+    $SCC -o "$A/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
+    run "ASan/UBSan: resident DSP tails and every late mutation refusal" "$A/native_fx_tail_test"
     $SCC -o "$A/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
     run "ASan/UBSan: automatic write quiet guard and late activity" "$A/native_quiet_autosave_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
