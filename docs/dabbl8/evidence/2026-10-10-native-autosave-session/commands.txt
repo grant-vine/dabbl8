@@ -1,0 +1,8 @@
+Working directory: isolated native-autosave-session-policy, exact PR74 fd2c1a458190b21f82f9dca69e4b3eae0c86f93c.
+Optimized test compile: clang -O2 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/<fixture>.c -lm -o <private-output>
+Fixtures: native_autosave_session_test, native_quiet_autosave_test, native_output_queue_test, d8p1_flash_runtime_test, d8p1_pool_runtime_test.
+Signature/runtime tests link only firmware/src/d8p1.c plus respective test.
+Sanitizer flags replacing -O2: -O1 -g -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined
+Run from repository root with ASAN_OPTIONS=detect_leaks=0; record exit code and logs.
+Target: pinned Python venv invokes private native-autosave-session-target.py, tools/build.py build_app/check/mmio_check, default and additional -DNPART=8, output dirs build/native-session-{4,8}. No loader/package/install operations.
+Default comparison uses immutable b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b, not mutable research checkout artifacts.
