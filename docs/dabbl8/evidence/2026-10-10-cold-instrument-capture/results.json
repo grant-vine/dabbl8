@@ -1,0 +1,64 @@
+{
+  "functional_commit": "06d86ba506d33f478306a8d4a31dbb71ced9018e",
+  "parent": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "scope": "tests only; no production authority, runtime adoption, target rebuild or new full-suite run",
+  "capture_checks": {
+    "optimized": 407512,
+    "inherited_sanitizer": 407512,
+    "cold_cases": 2,
+    "native_autosave_physical_blocks": 5
+  },
+  "collector_checks": {
+    "optimized": 287,
+    "inherited_sanitizer": 287
+  },
+  "source_sha256": {
+    "tests/instrument_capture_test.c": "d2a87075f77ee7905070e69720f10d8b8e03e38496c9583972d003b3db194099",
+    "tests/instrument_capture_collector_test.py": "44770b60614f323cd4da969811d390917e107e1d90e0df09b1a0d46e7c8ab37e",
+    "tests/run_tests.sh": "f05d1fe731b6a6be015c67970f9be056048a92678954d54cb11a69866baa7da1",
+    "firmware/src/editor.c": "95d07c1a3f7db211f6bd84b858fddf223cf563ef07cbb26d60ec02e4ae799614",
+    "firmware/src/editor_capture.c": "c7ce61d9668f15c413e8a7cbc9b847ebf832f826a4c4e88ce0200bd5aea96e82",
+    "firmware/src/d8p1_runtime.c": "b96b5bd46c66104ffb6619c283eb9b57cc23705e1fb3309488860b8719788cce",
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "firmware/src/d8pool_mapped.c": "493e58cb3841477197f14615091afbc91c8731039a0d65067b9e083905fc4e89",
+    "firmware/src/storage.c": "0a57e117cfb7808e9585120cccc2e63848ddc86f5103e5049cdf83079e11b582"
+  },
+  "unchanged_reference_sha256": {
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "generated_headers_sha256": {
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "python": "3.14.8",
+  "sanitizer": {
+    "enabled": [
+      "address",
+      "undefined"
+    ],
+    "inherited_exclusions": [
+      "signed-integer-overflow",
+      "shift",
+      "bounds",
+      "object-size",
+      "pointer-overflow"
+    ],
+    "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  },
+  "limitations": [
+    "Host cold audio/UI initializer and explicit resets are not actual firmware main/persist_boot or pre-upgrade capture proof.",
+    "Five blocks and storage/read-window primitives are virtual NOR; no physical flash, USB transfer, FIFO/codec completion, deadline or power-cut qualification.",
+    "No native ownership grant, scheduler activation, migration execution or firmware download qualification.",
+    "Existing native target static cost failures remain UAC 570/504, ROOM 296/218, SPRING 176/126; no budget or audio-golden edits.",
+    "Focused fixture uses inherited DSP sanitizer exclusions; not strict whole-DSP undefined-behavior proof."
+  ]
+}
