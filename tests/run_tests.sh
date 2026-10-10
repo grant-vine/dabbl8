@@ -121,7 +121,7 @@ $CC -o "$OUT/storage_test" tests/storage_test.c
 run "flash storage (A/B, torn writes)" "$OUT/storage_test"
 
 $CC -o "$OUT/native_storage_gate_test" tests/native_storage_gate_test.c
-run "eight-track refusal of all legacy project/autosave writers" "$OUT/native_storage_gate_test"
+run "eight-track refusal of all legacy application object writers" "$OUT/native_storage_gate_test"
 
 $CC -o "$OUT/upreset_test" tests/upreset_test.c
 run "user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)" "$OUT/upreset_test"
@@ -246,6 +246,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
     run "read-only instrument capture: actual handler, fixed stores, current state and interruption" "$OUT/instrument_capture_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
+    run "pre-migration quarantine: actual boot, application writers, binding and read-only capture" "$OUT/instrument_write_quarantine_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
@@ -443,7 +445,7 @@ else
     $SCC -o "$A/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
     run "ASan/UBSan: native signature canonical wire equivalence and refusals" "$A/native_signature_equivalence_test"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/native_storage_gate_test" tests/native_storage_gate_test.c
-    run "ASan/UBSan: strict eight-track legacy sector write refusal" "$A/native_storage_gate_test"
+    run "ASan/UBSan: strict eight-track application object write refusal" "$A/native_storage_gate_test"
     $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
     run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"
     $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
@@ -468,6 +470,8 @@ else
     run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
     $SCC -o "$A/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
     run "ASan/UBSan: read-only instrument capture and actual USB/storage interruption" "$A/instrument_capture_test"
+    $SCC -o "$A/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
+    run "ASan/UBSan: actual pre-migration application write quarantine" "$A/instrument_write_quarantine_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"

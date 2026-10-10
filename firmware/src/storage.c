@@ -12,6 +12,7 @@
  * Flash access goes through three hooks (also used by the host test):
  *   st_read(off, dst, n)   st_erase(off)   st_prog(off, src, n)
  */
+#include "instrument_write_gate.h"
 #define ST_MAGIC 0x554C4546u                   /* "FELU" */
 #define ST_SECTOR 4096u
 #define ST_PAYLOAD_OFF 256u
@@ -135,6 +136,7 @@ static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
      * these legacy writes even before binding/after cold boot; the native
      * pool shares all four project pairs plus the autosave pair. */
     if((obj>=OBJ_PROJECT0&&obj<OBJ_PROJECT0+4u)||obj==OBJ_AUTOSAVE)return -1;
+    if(!d8_instrument_write_allowed())return D8_INSTRUMENT_QUARANTINED;
 #endif
     uint32_t seq, base, off;
     int cur, rc;

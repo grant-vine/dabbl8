@@ -189,11 +189,11 @@ int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return br
  fixture();begin_capture(1);scan();((uint8_t*)&upf)[100]^=1;op(5);CHECK(!status());unsigned count=0;while(ed_capture.active&&count++<1300)op(2);CHECK(status()==EDC_CHANGED&&!ed_capture.active);
  fixture();fm1_ms=UINT32_MAX-100u;begin_capture(0);fm1_ms+=200;op(2);CHECK(!status()&&ed_capture.active);op(6);
  fixture();begin_capture(0);uint8_t other[4]={0x7d,0x46,0x4c,25};ed_handle(other,4);so_r=so_w;CHECK(!ed_capture.active);
- fixture();begin_capture(0);uint8_t value=0;cut=0;CHECK(capture_hw_prog(0x97000,&value,1)==-1&&d8_capture_change.changed&&!writes);cut=-1;op(2);CHECK(status()==EDC_CHANGED&&!ed_capture.active);
- fixture();begin_capture(0);CHECK(!capture_hw_erase(0x97000)&&d8_capture_change.changed&&writes==1);op(2);CHECK(status()==EDC_CHANGED&&!ed_capture.active);
+ fixture();begin_capture(0);uint8_t value=0;cut=0;CHECK(capture_hw_prog(0x97000,&value,1)==D8_INSTRUMENT_QUARANTINED&&!d8_capture_change.changed&&!writes&&!memcmp(nor,baseline,sizeof nor));cut=-1;op(2);CHECK(!status()&&ed_capture.active);op(6);
+ fixture();begin_capture(0);CHECK(capture_hw_erase(0x97000)==D8_INSTRUMENT_QUARANTINED&&!d8_capture_change.changed&&!writes&&!memcmp(nor,baseline,sizeof nor));op(2);CHECK(!status()&&ed_capture.active);op(6);
  fixture();begin_capture(0);CHECK(capture_hw_prog(0,&value,1)==-8&&!d8_capture_change.changed&&!writes);op(2);CHECK(!status());op(6);
  fixture();hw_read_calls=0;CHECK(!capture_hw_read(0x97000,out,1024)&&hw_read_calls==4&&!irq_disabled&&!memcmp(out,nor+0x97000,1024));
- fixture();begin_capture(0);CHECK(!ed_smp_erase(0,0)&&d8_capture_change.changed&&writes==1);op(2);CHECK(status()==EDC_CHANGED&&!ed_capture.active);
+ fixture();begin_capture(0);CHECK(ed_smp_erase(0,0)==D8_INSTRUMENT_QUARANTINED&&!d8_capture_change.changed&&!writes&&!memcmp(nor,baseline,sizeof nor));op(2);CHECK(!status()&&ed_capture.active);op(6);
  fixture();memcpy(out,&upf,sizeof upf);CHECK(upf_store(0,7)==3&&!writes&&memcmp(out,&upf,sizeof upf));begin_capture(1);CHECK(!status());scan();get(16,0,256);CHECK(!status()&&!writes);op(6);
  fixture();settings.lowcut=2;settings_leds=1;settings_hold=1;favorites.factory[15][27]=7;panel.dir[0]=-1;uint8_t settings_before[sizeof settings],panel_before[sizeof panel],favorites_before[sizeof favorites];memcpy(settings_before,&settings,sizeof settings);memcpy(panel_before,&panel,sizeof panel);memcpy(favorites_before,&favorites,sizeof favorites);begin_capture(1);CHECK(!status()&&!memcmp(settings_before,&settings,sizeof settings)&&!memcmp(panel_before,&panel,sizeof panel)&&!memcmp(favorites_before,&favorites,sizeof favorites));CHECK(ed_bk_settings.lowcut==2&&ed_bk_settings.favorites.factory[15][27]==7);op(6);
  fixture();song.sel=8;begin_capture(1);CHECK(status()==EDC_BAD&&!ed_capture.active);begin_capture(0);CHECK(!status()&&ed_capture.active);op(6);

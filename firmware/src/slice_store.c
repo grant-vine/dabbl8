@@ -80,6 +80,9 @@ static int slc_store_write(uint32_t k)
     slc_rec_make(k, &r);
     if (!memcmp(&r, smp_user_xip(k) + SLC_REC_OFF, sizeof r))
         return 0;                                    /* unchanged: no erase cycle */
+#if NTRK > 4
+    if(!d8_instrument_write_allowed())return 2;
+#endif
     if (st_erase(off) || st_prog(off, &r, sizeof r))
         return 2;
     return 3;
