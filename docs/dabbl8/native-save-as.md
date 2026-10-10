@@ -1,0 +1,21 @@
+# Native save-as naming
+
+The experimental eight-track persistence controller now captures live music with a proposed manual-save name in staging. It never temporarily renames live music to produce the stored snapshot. `d8p1_save_as_pool(backend, slot, name)` accepts manual identities 0–2 only. NULL retains the current name, empty clears it, and other names must be terminated printable ASCII of at most 12 characters. The bounded name is copied before the display/project arena is borrowed, including when the input itself is held in that arena.
+
+Preflight validates every current project and shared autosave. Coherent stopped runtime capture retains all eight tracks, patches, automation and arrangement. The proposed name replaces only the staged name. Commit uses the existing shared write spare. Current manual identity and live name publish only after verified success. A new manual identity makes its own project reference available; it cannot authorize another missing identity. Existing `d8p1_save_pool` continues to support manual saves and unnamed autosave, with unchanged autosave identity semantics. Rename uses the same bounded name-copy helper and still operates on a stored snapshot.
+
+`d8p1_save_as_flash` wraps the actual existing-driver adapter and requires explicit completed migration ownership. No menu, boot, editor or scheduler caller grants that policy. Blank/legacy/future/unknown/damaged data and busy transport/drawing refuse. IRQ-enabled serialized main-loop use and stable callback/arena ownership remain required. No loader, flash driver, physical allocation or historical project layout changes.
+
+An error after commit does not prove the old record is still current. The tests inject both a transport start after the header and an actual simulated readback I/O failure. Both report failure without publishing the proposed live name or slot; a later rescan/load finds the committed save. The frontend must reconcile inventory/name caches before retry or claiming current storage status.
+
+## Evidence and limits
+
+Optimized and upstream ASan/UBSan runtime/shared-pool tests each pass 525110 checks; mapped physical-hook adapter tests each pass 217341. Tests cover full live snapshot comparison, maximum/empty/NULL/invalid/arena-held names, all interruption and late-start boundaries, postcommit failures, explicit migration refusal, absent-slot creation/self references and refusal of other absent references. A parallel read-only review found no defect; its requested coverage additions pass. Runtime sanitizers keep upstream DSP exclusions (signed overflow, shifts, bounds, object-size and pointer overflow), and physical hooks are simulated.
+
+Pinned JieLi builds pass: eight-track app 455440 bytes, SHA-256 `2daeac13155c4a12bfd389ed7a4c0c2efdfcc51d4e2ebd5846d0e9be9f2a0041`, RAM 95716/98304 and pool 334100/344064. `.ram_text` remains 916 instructions/no calls. This adds 228 image bytes over PR #65 with no retained allocation. Default four-track app is byte-identical; package/loader/goldens and budget files retain their hashes. Partial local plus saved-register frames are 140 bytes for the common save worker, 4 for its save-as wrapper and 84 for the physical save-as adapter; these are not complete descendant/caller/driver/IRQ stack bounds or hardware timing evidence.
+
+Newly compiled audio regressions pass all 92 goldens unchanged, with zero health/voice-routing/CPU-budget failures and two existing timing notes. The full unrelated upstream suite was not rerun locally for this small controller change: parent PR #65 has separate full-suite evidence, and the new draft PR's CI runs the full suite. Do not conflate source versions or claim a CI pass before auditing its artifact. Evidence, exact source, hashes, commands and frames are in `evidence/2026-10-10-native-save-as/`.
+
+Next steps remain the three-slot menu/cache, serialized editor/backup/native writer ownership, completed migration ownership, boot restore and quiet-time shared autosave integration. Issues #11/#13/#14 stay open until their full acceptance criteria, including hardware/recovery requirements, are met. No firmware installation or release offer is made.
+
+SPDX-License-Identifier: GPL-3.0-only. Preserve Felucca and dependency notices.

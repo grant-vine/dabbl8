@@ -1,0 +1,718 @@
+== flash storage (A/B, torn writes)
+empty flash loads nothing                      ok
+save A                                         ok
+load returns A                                 ok
+save B                                         ok
+load returns B (newer seq)                     ok
+torn save keeps B                              ok
+header not written keeps B                     ok
+save A again                                   ok
+load returns A                                 ok
+both copies corrupt -> nothing                 ok
+other objects untouched                        ok
+settings save/load                             ok
+CRC-32 is zlib's (check value 0xCBF43926)      ok
+newer copy rotten -> the older one loads       ok
+save over the rotten copy                      ok
+... loads the new data                         ok
+both headers broken -> nothing                 ok
+data stays in the Felucca regions              ok
+FM6 user preset patches (and the retired bank) in the sectors 0x9F000 / 0xFE000 ok
+the autosave in its own sectors 0xE5000 / 0xE6000, nothing else touched ok
+a bank copy does not read as the patches object (its type) ok
+st_save_to: the first patches write into A, the bank's older copy; the bank's B still loads ok
+the next save goes to B (over the bank), A/B as any object ok
+FM6 patches: the sector tails stay erased      ok
+every payload/header byte cut keeps old data   ok
+erase failure keeps old data                   ok
+write protection is a save error               ok
+save sequence wraps                            ok
+wrapped sequence loads new data                ok
+save after sequence wrap                       ok
+invalid object load does no flash access       ok
+invalid object save does no flash access       ok
+wrapped object rejected                        ok
+small destination rejects whole object         ok
+oversized save rejected                        ok
+storage test passed
+== user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)
+UP_PUT frame < 640 bytes                       ok
+UP_PUT parses                                  ok
+UP_PUT values (negative v14 too)               ok
+pattern: rest drops flags, tie has no note     ok
+UP_PUT short frame -> args                     ok
+every short prefix rejected without record changes ok
+short optional tail rejected                   ok
+UP_PUT slot 32 -> args                         ok
+UP_PUT bad engine -> args                      ok
+UP_PUT engine 1 (DIGITAL): kept as it is       ok
+  a bank read keeps it engine 1 (its values DIGITAL's) ok
+UP_PUT empty name -> args                      ok
+UP_PUT 13-char name -> args                    ok
+UP_PUT 12-char name ok                         ok
+name shown upper case                          ok
+bank fits one object                           ok
+bank save                                      ok
+bank load: the record is back                  ok
+other slots empty                              ok
+bank 0 never written -> empty                  ok
+banks in 0xDC000..0xDFFFF                      ok
+bank with another record size -> empty         ok
+record with another version -> empty           ok
+a version 3 record (a drum grid) is used       ok
+UP_PUT kind 1: a grid record, accents only on hits ok
+UP_PUT kind 0: a note pattern (version 2)      ok
+UP_PUT short grid rejected, record unchanged   ok
+UP_PUT unknown kind rejected                   ok
+UP_PUT trailing byte rejected                  ok
+a grid record: bank round trip                 ok
+bank load: PHYS DRUM -> DRUM engine, MEMB kept ok
+UP_PUT of PHYS DRUM -> DRUM engine             ok
+bank load: SAMPLE PERC -> DRUM kit, FLUTE kept ok
+  migrated again: as it is                     ok
+UP_PUT of SAMPLE PERC -> DRUM kit              ok
+np < P_COUNT: mapped by count                  ok
+old record (np 53): SLICER and matrix defaults, E0..E7 kept ok
+old record (np 57): SLICER kept, matrix defaults, E0..E7 kept ok
+v4 / v5 records of 91, 89 and 69 parameters: E0..E7 at P_E0, lane levels and chord keys defaults ok
+np == P_COUNT: as stored                       ok
+steps -> pattern                               ok
+empty sequencer -> empty pattern               ok
+user preset test passed
+tests/input_test.c:252:9: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  252 |         FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;   /* rows open */
+      |         ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:696:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  696 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;   /* rows open */
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:774:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  774 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:915:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  915 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+4 warnings generated.
+== keys and buttons: fast press, long release, bouncy contacts (one note each), glitches, encoders
+debounce: press 2 frames, release 8 frames, frame 1100 us
+clean press: contact -> press avg 1746 us, max 2297 us; release -> note off max 8897 us
+clean presses: one press and one release each, every key and button      ok
+clean press: counted within 2.3 ms of the contact (2 frames)             ok
+clean release: the note ends within 10 ms                                ok
+press stat (first closed frame -> press): avg 1100 us over 1
+the press stat counts the note keys' presses (one frame after the first) ok
+bouncy press (<= 3 ms of bounce): first touch -> press avg 2511 us, max 5186 us; settled -> press max 2298 us; last bounce -> note off max 8899 us
+2000 bouncy presses: exactly one note-on / press and one release each    ok
+no note ends while its key is held                                       ok
+no hanging note 12 ms after the last bounce of a release                 ok
+bouncy press: counted within 2.3 ms of the contact settling, or sooner   ok
+bouncy release: the note ends within 10 ms of the last bounce            ok
+a 150 us glitch plays no note                                            ok
+10 notes 40 ms apart (20 ms held, bouncy): 10 note-ons, 10 releases      ok
+encoder 0: one cycle -> 1 step(s)
+an encoder detent cycle is one step                                      ok
+#63 a still knob: one contact chattering or both lost together never steps ok
+encoder at speed: 720 turns of 12 detents, 0 miscounted (worst by 0)
+#126 12-detent turns up to 300 detents/s (even) / 150/s (bunched in half a click): every detent ok
+#126 slow turns (3..40 detents/s), contacts bouncing 1.5 ms: one step a click (0 off) ok
+#126 120 detents/s, bouncing 0.2 ms: 8 right then 6 left at once -> 8, then 2 ok
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 1: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3125..3375 ns (target 3200 +-30 %) ok
+LEDs HI, bus 2: the pulse spans 11..12 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 4: the pulse spans 5..5 bits of the shift (no wait)
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 1: the pulse spans 11..11 bits of the shift (no wait)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1375..1625 ns (target 1600 +-30 %) ok
+LEDs LO, bus 2: the pulse spans 4..5 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1208..1708 ns (target 1600 +-30 %) ok
+LEDs LO, bus 4: the pulse spans 1..2 bits of the shift (no wait)
+#119 breath HI, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 60.8 % of lit (50..70), from the peak (57.7 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 8 over 25 %, 28 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath HI, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 61.0 % of lit (50..70), from the peak (57.9 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 7 over 25 %, 38 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath LO, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 29.2 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 22 over 25 %, 58 at all ok
+  the glow still 1500..1625 ns (target 1583 +-30 %)                      ok
+#119 breath LO, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 32.3 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 13 over 25 %, 39 at all ok
+  the glow still 1458..1708 ns (target 1583 +-30 %)                      ok
+mid level HI: lit 1 frame in 8, evenly (every 8 frames, ~113 Hz), the glow between, in step ok
+  its level 15.5 % of lit (1/8 + the glow), above the glow, below a breath's peak ok
+mid level LO: lit 1 frame in 12, evenly (every 12 frames, ~75 Hz), the glow between, in step ok
+  its level 9.8 % of lit (1/12 + the glow), above the glow, below a breath's peak ok
+power-on sweep DIM: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, the glow on every LED; nothing breathing or mid  ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep (DIM): frame  ms  keys F3..G5 (black and white by place)  buttons
+     0    0  |:                          |     0/64
+    32   35  |*@-.                       |     0/64
+    64   70  |-=+%+:                     |     0/64
+    96  105  |.:--+#%.                   |     0/64
+   128  140  |...::-=%=:                 |     0/64
+   160  176  |......:-+##:               |     0/64
+   192  211  |.......::-=*=:             |     0/64
+   224  246  |..........:-+##:.          |     0/64
+   256  281  |............:-=*%=.        |     0/64
+   288  316  |..............:--+#:       |     0/64
+   320  352  |................::-*@-.    |     0/64
+   352  387  |..................:-=+#*   |     0/64
+   384  422  |....................::-=@-.|  .  0/64
+   416  457  |......................::=+%|  .  0/64
+   448  492  |........................::-|  :  6/64
+   480  528  |..........................:|  - 11/64
+   512  563  |...........................|  - 13/64
+   544  598  |...........................|  :  8/64
+   576  633  |...........................|  :  5/64
+   608  668  |...........................|  .  0/64
+   640  704  |...........................|  .  0/64
+power-on sweep OFF: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, dark (no glow); nothing breathing or mid         ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep: a key down at frame 200: done the next frame, the glow left ok
+LEDs: refresh 909 Hz lit, 909 Hz dim
+LEDs: host 72.9 ns per tick without dim LEDs, 75.9 ns with, 76.4 ns with a breath too
+input debounce: all ok
+== TRS MIDI parser
+uart: running status, realtime, SysEx, system common ok
+clock: timestamps and USB/TRS source, no active sensing ok
+uart: channels 1, 2, 3, 10, 16 -> USB-MIDI packets   ok
+usb: ota_wire_send packets (CIN 4.. then 5/6/7)      ok
+usb: received frame == the bytes between F0 and F7   ok
+usb: a frame while one is pending is dropped         ok
+usb: a truncated frame is replaced by the next one   ok
+usb: an oversized frame (698 B) is not taken         ok
+usb: soft key -> uboot_req, not a frame              ok
+usb: upgrade key -> ota_req, not a frame             ok
+usb: bytes outside F0..F7 are ignored                ok
+usb: send with a full ring and no host fails at once ok
+usb: send with a full ring times out (200 ms)        ok
+midi parser test passed
+== USB audio input: descriptors (with CDC), ring and packets, 44.1 -> 48 kHz resampler, 48 kHz stream
+-- USB audio input, CDC on
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class misc / IAD (EF 02 01)                               ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: audio IF 0-2, CDC IF 3-4                                   ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 71..145 (band 80..128)              ok
+1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+FIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok
+1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok
+  frames out / in: 48031 / 44128 (160 / 147)                     ok
+     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok
+    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok
+   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok
+   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok
+  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok
+  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok
+  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok
+  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok
+  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok
+  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.8 ns / 44.1 kHz frame
+48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok
+  every frame = the resampled render, in order (0 off); no underrun / overrun ok
+  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok
+  1000 packets, 2.5 ms renders: no glitch                        ok
+48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok
+switch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok
+switch to 48 mid-stream: silence, primed again, every frame in order ok
+uac: all ok
+== USB audio input: descriptors (without CDC), ring and packets, resampler, 48 kHz stream
+-- USB audio input, CDC off
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class 0 (per interface)                                   ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: none                                                       ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 71..145 (band 80..128)              ok
+1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+FIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok
+1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok
+  frames out / in: 48031 / 44128 (160 / 147)                     ok
+     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok
+    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok
+   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok
+   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok
+  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok
+  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok
+  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok
+  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok
+  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok
+  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.3 ns / 44.1 kHz frame
+48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok
+  every frame = the resampled render, in order (0 off); no underrun / overrun ok
+  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok
+  1000 packets, 2.5 ms renders: no glitch                        ok
+48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok
+switch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok
+switch to 48 mid-stream: silence, primed again, every frame in order ok
+uac: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.21                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 + the 48 kHz rate (format, EP 0x84 size, bcdDevice), nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 1
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 1
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.23                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 2-4, CDC IF 0-1, before their first interface             ok
+CDC first: IF 0-1, audio from IF 2                                       ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 2
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 01                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.25                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+layout 2: no AppleUSBCDC device personality matches                      ok
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 3
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 3
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 00                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.27                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 2
+-- USB descriptors: CDC 1 (left out), UAC 1 (44.1 / 48 kHz), layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.11                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 byte for byte                                     ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.10                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 2
+-- USB descriptors: CDC 1 (presented), UAC 1, layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 01                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.15                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+layout 2: no AppleUSBCDC device personality matches                      ok
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.10                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.01                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 4 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (5: MIDI 01 81, CDC 82 03 83)                  ok
+IADs: audio IF 0-1, CDC IF 2-3, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 byte for byte                                     ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 1
+-- USB descriptors: CDC 1 (presented), UAC 0, layout 1
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.03                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 4 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (5: MIDI 01 81, CDC 82 03 83)                  ok
+IADs: audio IF 2-3, CDC IF 0-1, before their first interface             ok
+CDC first: IF 0-1, audio from IF 2                                       ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.00                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 2 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (2: MIDI 01 81)                                ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.00                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 2 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (2: MIDI 01 81)                                ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== M-UPGRADE entry (own loader)
+handshake answered                                   ok
+identity frame is FM-1_900                           ok
+  19 requests
+session commits                                      ok
+headers + loader + confirm, no head reads            ok
+staged body == the package's loader                  ok
+LOADER.BIN head CRC                                  ok
+record at 0xE4F00 == RAM record                      ok
+record CRC / type / magic / ota_addr                 ok
+nothing written outside 0xE0000..0xE4FFF             ok
+boot cleanup erases the area                         ok
+second boot: nothing to do                           ok
+host gone -> no commit, area clean                   ok
+no 'success' -> -13, no commit, area clean           ok
+ota test passed
+fm1pkg_make: /Users/grantv/fw-AC79_AIoT_SDK/cpu/wl82/tools/uboot.boot: No such file or directory. Set AC79_SDK to a JieLi AC79 SDK checkout.

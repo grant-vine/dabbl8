@@ -1,0 +1,34 @@
+[
+  {
+    "source": "firmware/src/felucca.c",
+    "four_track_equal": true,
+    "sha256": [
+      "753803b82bd596c307c34084d2f46772997c7d59d5e908639d62b1db6009ab73",
+      "753803b82bd596c307c34084d2f46772997c7d59d5e908639d62b1db6009ab73"
+    ]
+  },
+  {
+    "source": "tests/project_test.c",
+    "four_track_equal": true,
+    "sha256": [
+      "efd2c27ba5720aa389b7c164b635a470eceecf716849496c7343763b23731b2a",
+      "efd2c27ba5720aa389b7c164b635a470eceecf716849496c7343763b23731b2a"
+    ]
+  },
+  {
+    "source": "tests/ui_test.c",
+    "four_track_equal": true,
+    "sha256": [
+      "d2c55820f260b79282dc16ad19b7d25f9c34d99cc3a167d743f1ef42e128ef9e",
+      "d2c55820f260b79282dc16ad19b7d25f9c34d99cc3a167d743f1ef42e128ef9e"
+    ]
+  },
+  {
+    "source": "web/emu/felucca_web.c",
+    "four_track_equal": true,
+    "sha256": [
+      "5684e29046ec3cd14192239237bba79b35cba62b28c03baea1ed60314f5cd4b7",
+      "5684e29046ec3cd14192239237bba79b35cba62b28c03baea1ed60314f5cd4b7"
+    ]
+  }
+]

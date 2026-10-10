@@ -10,7 +10,11 @@
  * POLY part that is not its lowest note. A voice taken from another part fades out
  * over one block (stage 4: the envelope goes to 0, the block's amplitude ramp
  * declicks it); one of the part's own is restarted in place, as before. Extra UNISON
- * voices only start when there is room. */
+ * voices only start when there is room.
+ * Expanded builds (NPART >= NVOICE) make lead/bass protection a last-priority
+ * preference: the oldest protected voice yields if all eight are protected.
+ * Steals retire immediately there, so fading engine work cannot exceed eight.
+ * The default four-track build retains upstream crossfades and golden audio. */
 static uint32_t vage;                                   /* voice ages: one clock for every part */
 static int32_t lfo_wave(track_t *t, uint32_t ph)
 {
@@ -93,7 +97,7 @@ static uint32_t lowest_held(const track_t *t)           /* index of the lowest h
  * Returns its index, *pp its part; NVOICE = none */
 static uint32_t voice_victim(const track_t *self, int soft, track_t **pp)
 {
-    uint32_t p, i, best = NVOICE, cat = 4;
+    uint32_t p, i, best = NVOICE, cat = 5;
     for (p = 0; p < NPART; p++) {
         track_t *t = &trk[p];
         uint32_t mode = trk_vmode(t);
@@ -111,6 +115,10 @@ static uint32_t voice_victim(const track_t *self, int soft, track_t **pp)
                 c = 2;                                  /* extra UNISON, or a voice left by a mode / cap change */
             else if (!soft && mode == V_POLY && i != low)
                 c = 3;                                  /* held, not the bass */
+#if NPART >= NVOICE
+            else if (!soft)
+                c = 4;                                  /* full protected set: oldest lead/bass yields */
+#endif
             else
                 continue;
             if (c < cat || (c == cat && v->age < (*pp)->v[best].age)) {
@@ -129,6 +137,14 @@ static void voice_kill(voice_t *v)                      /* fade out over the nex
     v->gate = 0;
     v->stage = 4;
     voice_kills++;
+#if NPART >= NVOICE
+    /* A fading engine still renders. Expanded builds retire before admission,
+     * keeping at most eight actual engine voices; no overlapping steal tail.
+     * This can cut a waveform: audible declick quality remains a release gate. */
+    v->active = 0;
+    v->stage = 0;
+    v->env = v->env_out = 0;
+#endif
 }
 
 /* the budget is full: free a voice for part t. 0 = nothing to take (soft) */
@@ -140,16 +156,15 @@ static int voice_room(track_t *t, int soft)
         return 1;
     k = voice_victim(t, soft, &vp);
     if (k == NVOICE)
-        return !soft;                                   /* hard: over the budget (cannot happen: each of the
-                                                         * NPART < NVOICE parts protects one voice at most) */
+        return 0;                                       /* fail closed: never admit without a slot */
     voice_kill(&vp->v[k]);
     return 1;
 }
 
 static voice_t *voice_reuse(track_t *t, voice_t *v)
 {
-    if (v->stage == 4u)
-        voice_room(t, 0);                               /* its budget was taken before this block */
+    if ((!v->active || v->stage == 4u) && !voice_room(t, 0))
+        return 0;                                       /* its budget was taken before this block */
     return v;
 }
 
@@ -180,8 +195,9 @@ static voice_t *voice_alloc(track_t *t, uint32_t note)
         uint32_t k = voice_victim(t, 0, &vp);
         if (k < np && vp == t)
             return &t->v[k];                            /* our own: restart it in place (no click) */
-        if (k < NVOICE)
-            voice_kill(&vp->v[k]);
+        if (k == NVOICE)
+            return 0;
+        voice_kill(&vp->v[k]);
     }
     if (t->p[P_ALLOC] || t->p[P_GLIDE]) {
         for (i = 0; i < np; i++) {
@@ -363,6 +379,8 @@ static void trk_note_on(track_t *t, uint32_t note, uint32_t vel)
         voice_t *v = voice_alloc(t, note);
         t->nmono = 0;                                   /* no stale mono stack after a mode change */
         t->mono_note = 0;
+        if (!v)
+            return;                                     /* bounded allocation refused this event */
         v->fine = 0;
         voice_start(t, v, note, vel, t->p[P_GLIDE] != 0 && !ENGINES[t->engine]->oneshot);
         return;

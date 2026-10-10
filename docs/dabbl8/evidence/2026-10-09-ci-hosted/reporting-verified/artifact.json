@@ -1,0 +1,13 @@
+{
+  "run_id": 37993568222,
+  "job_id": 114033701280,
+  "artifact_id": 11646362033,
+  "archive_bytes": 108486,
+  "archive_sha256": "9ba96dbddb0fd1febce776850fc0af7aa6df86d5cb8a79f67c85bfa4231d38e8",
+  "pr_head": "94c109d573880014952f72518a8825c2793711e6",
+  "tested_merge_commit": "c8bba9ced1a4d67dcff089e7218bc6b753c87f01",
+  "merge_parents": [
+    "981262a91b924db3aa2ad0a481d8dc7da75bd5c3",
+    "94c109d573880014952f72518a8825c2793711e6"
+  ]
+}

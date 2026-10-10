@@ -18,7 +18,8 @@ enum { ED_INFO = 1, ED_GET, ED_SET, ED_DUMP, ED_DESC, ED_STEP_GET, ED_STEP_SET, 
        ED_TRACK, ED_TRACK_MIX, ED_TRACK_DUMP, ED_TRACK_STEP,                    /* v3: tracks */
        ED_TRACK_PARAM, ED_TRACK_CHANGED, ED_SONG,
        ED_UI_STATE, ED_UI_SET, ED_UI_PALETTES, ED_FAV_GET, ED_FAV_SET,
-       ED_MOTION = 64, ED_BACKUP_LIST, ED_BACKUP_GET, ED_BACKUP_PUT };                              /* v6: song chain */
+       ED_MOTION = 64, ED_BACKUP_LIST, ED_BACKUP_GET, ED_BACKUP_PUT,
+       ED_D8_MOTION = 74, ED_D8_CAPS, ED_D8_ERROR, ED_D8_TRACK, ED_D8_CAPTURE }; /* version-prefixed explicit track/step, never reuse command 64 */                              /* v6: song chain */
 
 static uint8_t ed_out[600];
 static uint32_t ed_n;
@@ -92,6 +93,9 @@ static int ed_smp_erase(uint32_t k, uint32_t all)  /* header sector, or the whol
         usr_zone[k][i].n = 0;                     /* a sounding voice ends instead of reading 0xFF */
     for (i = 0; i < (all ? SMP_USER_SIZE / 0x1000u : 1u) && !rc; i++) {
         audio_silence();
+#if NTRK > 4
+        d8_capture_store_changed();
+#endif
         rc = fl_erase4k(ed_smp_slot(k) + i * 0x1000u, &took);
         fm1_wdt_feed();
     }
@@ -114,6 +118,9 @@ static int ed_smp_end(uint32_t k, const uint8_t *a, uint32_t na)
     ed_smp_inval(k);
     if (st_crc32(smp_user_xip(k) + SMP_USER_DATA, h->data_len) != h->crc)
         return 3;
+#if NTRK > 4
+        d8_capture_store_changed();
+#endif
     if (fl_write(ed_smp_slot(k), ed_smp_buf, sizeof(smp_user_hdr_t)))
         return 4;
     ed_smp_inval(k);
@@ -286,7 +293,7 @@ static const param_desc_t *ed_desc(uint32_t scope, uint32_t id, int16_t **vp)
     }
     if (scope == 1 && id < G_COUNT) {
         *vp = &song.g[id];
-        return &GP[id];
+        return global_desc(id);
     }
     return 0;
 }
@@ -345,6 +352,9 @@ static int ed_flash_stop(void)
 #include "editor_backup.c"
 #include "editor_fm6.c"
 #include "editor_menu.c"
+#if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
+#include "editor_capture.c"
+#endif
 
 /* MOTION's reply: the records of track k as (step, id, v14), a lock's id without its MOTION_LOCK bit (a 7-bit SysEx
  * byte); kinds (1.1: the ops 5..7): then one byte per record, in the same order, 0 automation, 1 lock. The query and
@@ -363,11 +373,44 @@ static void ed_motion_reply(uint32_t k, uint32_t rc, uint32_t kinds)
         if ((motion.event[i].place >> 6) == k)
             ed_b((motion.event[i].param & MOTION_LOCK) != 0u);
 }
+static int ed_motion_args(const uint8_t *a, uint32_t n, uint32_t tracks)
+{
+    return (n == 1u || (n == 2u && (a[1] == 2u || a[1] == 7u)) || (n == 3u && a[1] == 1u && a[2] <= 1u) ||
+            (n == 6u && (a[1] == 3u || a[1] == 5u)) || (n == 4u && a[1] == 4u) || (n == 3u && a[1] == 6u)) &&
+           a[0] < tracks && a[0] < NTRK;
+}
+/* The legacy family is writable only while the original four-track model fits.
+ * Unknown legacy commands cannot acquire write access on an expanded runtime. */
+static int ed_read_request(uint32_t cmd, const uint8_t *a, uint32_t n)
+{
+    switch (cmd) {
+    case ED_INFO: case ED_GET: case ED_DUMP: case ED_DESC: case ED_STEP_GET: case ED_NAMES:
+    case ED_SMP_INFO: case ED_UP_LIST: case ED_UP_GET: case ED_WATCH: case ED_PING:
+    case ED_TRACK_DUMP: case ED_UI_STATE: case ED_UI_PALETTES: case ED_FAV_GET:
+    case ED_BACKUP_LIST: case ED_BACKUP_GET: case ED_FM6_GET: case ED_FM6_LIST: case ED_MENU_DESC:
+    case ED_D8_CAPS: return 1;
+    case ED_TRACK: return n == 0u;
+    case ED_TRACK_MIX: return n == 1u;
+    case ED_TRACK_STEP: case ED_TRACK_PARAM: return n == 2u;
+    case ED_PROJECT: return n == 2u && a[0] == 2u;
+    case ED_SONG: return n == 1u && a[0] == 0u;
+    case ED_MOTION: return n == 1u || (n == 2u && a[1] == 7u);
+    default: return 0;
+    }
+}
+static int ed_family_allowed(uint32_t tracks, uint32_t cmd, const uint8_t *a, uint32_t n)
+{
+    return tracks <= 4u || cmd == ED_D8_MOTION || cmd == ED_D8_TRACK || ed_read_request(cmd, a, n);
+}
+static void ed_d8_error(uint32_t cmd, uint32_t rc)
+{
+    ed_begin(ED_D8_ERROR); ed_b(1u); ed_b(cmd); ed_b(rc); ed_send();
+}
 static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
 {
     switch (cmd) {
     case ED_INFO: case ED_DUMP: case ED_SMP_INFO: case ED_PING:
-    case ED_UI_STATE: case ED_UI_PALETTES:
+    case ED_UI_STATE: case ED_UI_PALETTES: case ED_D8_CAPS:
         return !n;
     case ED_GET: case ED_DESC: case ED_PRESET: case ED_PROJECT: case ED_UP_LIST:
     case ED_TRACK_PARAM:
@@ -389,10 +432,27 @@ static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
     case ED_TRACK_STEP:
         return n == 2u || n == 10u || n == 13u || (n == 14u && a[13] <= 100u) ||
                (n == 15u && a[13] <= 100u && a[14] >= 1u && a[14] <= 4u);
+#if NTRK > 4
+    case ED_D8_TRACK: {
+        /* Explicit versioned envelope, not permission to run arbitrary legacy
+         * commands. Only bounded in-memory track operations are eligible. */
+        if (n < 2u || a[0] != 1u) return 0;
+        uint32_t op=a[1], len=n-2u; const uint8_t *v=a+2;
+        if (op != ED_TRACK && op != ED_TRACK_MIX && op != ED_TRACK_DUMP &&
+            op != ED_TRACK_STEP && op != ED_TRACK_PARAM) return 0;
+        if (!ed_args_ok(op,v,len)) return 0;
+        if (op == ED_TRACK) return !len || v[0] < NTRK;
+        if (!len || v[0] >= NTRK) return 0;
+        if (op == ED_TRACK_PARAM && v[1] >= P_COUNT) return 0;
+        if (op == ED_TRACK_STEP && v[1] >= NSTEP) return 0;
+        return 1;
+    }
+#endif
+    case ED_D8_MOTION:
+        if (n < 2u || a[0] != 1u) return 0;
+        return ed_motion_args(a + 1, n - 1u, NTRK);
     case ED_MOTION:
-        return (n == 1u || (n == 2u && (a[1] == 2u || a[1] == 7u)) || (n == 3u && a[1] == 1u && a[2] <= 1u) ||
-                (n == 6u && (a[1] == 3u || a[1] == 5u)) || (n == 4u && a[1] == 4u) || (n == 3u && a[1] == 6u)) &&
-               a[0] < NTRK;
+        return ed_motion_args(a, n, 4u);
     case ED_SONG:
         return n && (a[0] == 1u || n == 1u);
     default:
@@ -407,10 +467,27 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     uint32_t cmd = f[3], i;
     const uint8_t *a = f + 4;
     uint32_t na = n - 4u;
+#if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
+    if(cmd==ED_D8_CAPTURE){ed_begin(cmd);ed_capture_handle(a,na);ed_send();return;}
+    /* Any other editor transaction conservatively ends this private session. */
+    ed_capture.active=0;
+#endif
     int16_t *vp;
     const param_desc_t *d;
-    if (!ed_args_ok(cmd, a, na))
+    if (!ed_family_allowed(NTRK, cmd, a, na)) { ed_d8_error(cmd, 1u); return; }
+    if ((cmd == ED_D8_MOTION
+#if NTRK > 4
+         || cmd == ED_D8_TRACK
+#endif
+        ) && (!na || a[0] != 1u)) { ed_d8_error(cmd, 2u); return; }
+    if (!ed_args_ok(cmd, a, na)) {
+        if (cmd == ED_D8_MOTION || cmd == ED_D8_CAPS
+#if NTRK > 4
+            || cmd == ED_D8_TRACK
+#endif
+           ) ed_d8_error(cmd, 3u);
         return;
+    }
     if ((cmd >= ED_SMP_BEGIN && cmd <= ED_SMP_INFO) || (cmd >= ED_BACKUP_LIST && cmd <= ED_BACKUP_PUT))
         autosave_hold();                                /* (a transfer: no autosave meanwhile, project.c) */
     ed_begin(cmd);
@@ -418,7 +495,30 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     if (ed_backup_handle(cmd, a, na)) { ed_send(); return; }
     if (ed_fm6_handle(cmd, a, na)) { ed_send(); return; }
     if (ed_menu_handle(cmd, a, na)) { ed_send(); return; }
+#if NTRK > 4
+    if (cmd == ED_D8_TRACK) {
+        uint32_t op=a[1]; const uint8_t *v=a+2; uint32_t len=na-2u;
+        if (chain_busy() && ((op == ED_TRACK_STEP && len > 2u) ||
+            (op == ED_TRACK_PARAM && len == 4u && v[1] >= P_SLEN && v[1] <= P_SGATE))) {
+            ed_d8_error(ED_D8_TRACK,4u); return; /* busy, no false write confirmation */
+        }
+        /* Preserve the outer wire command and reuse the real handlers below,
+         * including clamping, sync shadows, motion capture and UI refresh. */
+        ed_b(1u); ed_b(op); cmd=op; a=v; na=len;
+    }
+#endif
     switch (cmd) {
+    case ED_D8_CAPS:
+        ed_b('D'); ed_b('8'); ed_b(1u);             /* protocol family, schema */
+        ed_b(NTRK); ed_b(NSTEP); ed_b(NVOICE); ed_b(MOTION_MAX);
+        ed_b(P_COUNT); ed_b(G_COUNT); ed_b(NENGINES);
+        ed_b(1u); ed_b(1u);                        /* stable parameter / engine ID schemas */
+        ed_b(1u); ed_b(9u);                        /* D8M1 section schema; live saves still FUN9 */
+        ed_b(1u | (NTRK <= 4u ? 2u : 4u));         /* motion; legacy writes OR versioned track envelope */
+        break;
+    case ED_D8_MOTION:
+        ed_b(1u); a++; na--; /* reply schema, then explicit track/step records */
+        /* fall through */
     case ED_MOTION: {
         track_t *t = &trk[a[0]]; uint32_t rc = 0;
         if (na > 1u && a[1] == 7u) {
@@ -450,7 +550,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         ed_b(CHAIN_ROWS);                                  /* v6 */
         ed_b(0x55); ed_b(1); ed_b(ed_ui_caps());             /* tagged preferences v1: commands 34..38 */
         ed_b(0x4d); ed_b(1); ed_b(MOTION_MAX); ed_b(1); /* motion + chance v1 */
-        ed_b(0x42); ed_b(1); ed_b(3); /* bounded full-backup read + restore */
+        ed_b(0x42); ed_b(1); ed_b(NTRK>4?0:3); /* native full backup not yet implemented */
         ed_b(0x46); ed_b(1); ed_b(FM6_NFACTORY); ed_b(0);   /* FM6 patches: cmds 68..71 (no bank since 1.0.3) */
         ed_b(0x53); ed_b(1); ed_b(3);   /* live sync: bit 0 WATCH while on keeps the shadow, bit 1 no RELOAD echo */
         ed_b(0x50); ed_b(1); ed_b(3);   /* FM6 patches v2: bit 0 no bank (SLOT F1..F8, 8 OWN), bit 1 user preset
@@ -458,6 +558,10 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         ed_b(0x4E); ed_b(1); ed_b(ED_MENU_N);   /* MENU settings: cmds 72, 73; the items MENU_DESC offers */
         ed_b(0x52); ed_b(1); ed_b(4);   /* RATCH: a step's ratchet (1..4 hits) after its chance */
         ed_b(0x4C); ed_b(1); ed_b(1);   /* 1.1 parameter locks: MOTION ops 5..7, the kinds after the records */
+        ed_b('D'); ed_b('8'); ed_b(1u); /* final discovery tag: query D8_CAPS, do not infer support from NTRK */
+#if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
+        ed_b('C');ed_b('8');ed_b(1u);ed_b(ED_D8_CAPTURE); /* read-only capture; no restore capability */
+#endif
         break;
     case ED_GET:
     case ED_SET:
@@ -545,7 +649,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         break;
     }
     case ED_PROJECT:                                       /* 0 = load, 1 = save, 2 = query; slot 0..3 */
-        if (na < 2u || a[0] > 2u || a[1] >= 4u)
+        if (na < 2u || a[0] > 2u || a[1] >= PROJECT_UI_SLOTS)
             return;
         if (a[0] == 1u) {
             if (ed_flash_stop() || project_save(a[1]))
@@ -589,8 +693,14 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         else {
             if (!(off & 0xFFFu)) {                         /* first write into a sector: erase it */
                 audio_silence();
+#if NTRK > 4
+        d8_capture_store_changed();
+#endif
                 rc = fl_erase4k(ed_smp_slot(a[0]) + off, &took) ? 2u : 0u;
             }
+#if NTRK > 4
+        d8_capture_store_changed();
+#endif
             if (!rc && fl_write(ed_smp_slot(a[0]) + off, ed_smp_buf, len))
                 rc = 3;
         }

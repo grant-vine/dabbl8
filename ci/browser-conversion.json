@@ -1,0 +1,8 @@
+{
+  "emscripten_version": "4.0.17",
+  "emsdk_commit": "35ff8a6d150541276abbc6bae512ca90bcfbe220",
+  "release_build": "41d2106c68c28e101e6252a48e22c78b07722508",
+  "linux_archive_url": "https://storage.googleapis.com/webassembly/emscripten-releases-builds/linux/41d2106c68c28e101e6252a48e22c78b07722508/wasm-binaries.tar.xz",
+  "linux_archive_bytes": 354354448,
+  "linux_archive_sha256": "5e4269ab4d4dd97da93f2833bb97780ef6ddee9a7325d345587bddf8890d89aa"
+}

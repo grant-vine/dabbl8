@@ -1,0 +1,76 @@
+{
+  "result": "PASS",
+  "base": "400b939df0b96e111f6b0027d311faceebaa57da",
+  "scope": "Address-independent simulated NOR only; engine is not linked into device firmware",
+  "storage_assertions_each_mode": 884086,
+  "operation_cuts": 34,
+  "program_byte_cuts": 7737,
+  "partial_erase_positions_each_sector": 241,
+  "modes": [
+    "optimized",
+    "strict ASan/UBSan (no DSP exclusions for storage)"
+  ],
+  "existing_runtime_checks_each_mode": 8911,
+  "full_existing_suite": "PASS",
+  "unchanged_device_sources_and_references": [
+    "firmware/src/felucca.c",
+    "firmware/src/storage.c",
+    "firmware/src/storage_hw.c",
+    "firmware/src/project.c",
+    "firmware/src/d8p1.c",
+    "firmware/src/d8p1_runtime.c",
+    "firmware/hal/fm1_flash.h",
+    "tests/golden.txt",
+    "tests/cpu_baseline.txt",
+    "tests/target_budget.txt",
+    "LICENSING.md"
+  ],
+  "hardware": "SKIP",
+  "map_binding": "NOT IMPLEMENTED",
+  "raw_hashes": {
+    "audit.json": "6dac075bee1978d9fd9947b8246a6689b0e0cdfcbff341d3f8e02c777d736543",
+    "target-object.log": "5f7791df018b768fd45f687864131e968b4edaadafc2493fa80ae3b7be86a9b3",
+    "initial-missing-sdk-host-tests.log": "8d4ecc5db79c67ef3e78d8e7829e641f00e614f964ab51cef1ded7552bdac6e4",
+    "portable-target-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "d8store-portable.c": "839a31d98132512dd513fcafdb1683af38bb53863bd521b3ce879db08c0996c9",
+    "preceding-store-source.c": "2b5ec282a5f200685853285c5956158b608add4db3f263bbfcfe717c626866f2",
+    "suite-command.py.txt": "b10744c5ea18c66bdc109c2c17fc4819a5daae61b509392bd0b8d0d024ed3571",
+    "final-storage-optimized.log": "2100a66585c0d1dfbf71483bf5a75a8fe509fab0bd3daffae769fa656b6b1d53",
+    "host-tests.log": "96519cab7572c498f0cbad1e287760b103e8d46096d5b55313c3ce4048b8a632",
+    "suite-result.json": "0b67a533a496aff8d11a3535521adebd67e346d6155005ead1229b23d2422cff",
+    "initial-missing-sdk-suite-command.py.txt": "9fc8978b8ee945dffe99f70ab7a82a1f00ee53f7062bb34234ec7b47a5cbc8a7",
+    "final-storage-sanitizer.log": "2100a66585c0d1dfbf71483bf5a75a8fe509fab0bd3daffae769fa656b6b1d53",
+    "initial-missing-sdk-suite-result.json": "79ebf72163077fede962c2bcf9ef9357b8bd54e4448b4c3aa569092e75b0ae7e",
+    "d8store-portable.o": "e56213919c892299ce7dce166ab9bc8ba7ad30626bf3d8ce13dce867b7f0dcba"
+  },
+  "failures": [
+    {
+      "file": "initial-missing-sdk-host-tests.log",
+      "reason": "First new wrapper omitted AC79_SDK; upstream packaging check refused. Corrected wrapper restores previously pinned environment. No source assertions or golden hashes weakened."
+    },
+    {
+      "file": "target-object.log",
+      "reason": "Pinned JieLi compiler has no string.h; final source removes that include and replaces the sole 32-byte memset with a bounded zero loop. Corrected target object compile and final focused optimized/strict sanitizer runs PASS."
+    }
+  ],
+  "full_suite_source_hashes": {
+    "firmware/src/d8store.h": "5e33009d47f6dd0f01af62467a4b035b0f437c99eda9de563376d86b4b932bea",
+    "firmware/src/d8store.c": "2b5ec282a5f200685853285c5956158b608add4db3f263bbfcfe717c626866f2",
+    "tests/d8store_test.c": "e8a2a87ac13915cfaa425aff7c289c0af61d4e1470687d496bc4ccd5eae07566",
+    "tests/run_tests.sh": "82631c51b390f272b878da09672b8d1acd9bf17da91fe89b17161c6f2f478e7f"
+  },
+  "final_source_hashes": {
+    "firmware/src/d8store.h": "5e33009d47f6dd0f01af62467a4b035b0f437c99eda9de563376d86b4b932bea",
+    "firmware/src/d8store.c": "839a31d98132512dd513fcafdb1683af38bb53863bd521b3ce879db08c0996c9",
+    "tests/d8store_test.c": "e8a2a87ac13915cfaa425aff7c289c0af61d4e1470687d496bc4ccd5eae07566",
+    "tests/run_tests.sh": "82631c51b390f272b878da09672b8d1acd9bf17da91fe89b17161c6f2f478e7f"
+  },
+  "verification_scope": "Full suite passed at preceding header-clear implementation; final change is solely removal of string.h and replacement of 32-byte memset with bounded zero loop, verified by exact source diff, both final focused modes and pinned target object compile. Complete final-source Linux validation is pending draft PR.",
+  "target_object": {
+    "bytes": 2556,
+    "sha256": "e56213919c892299ce7dce166ab9bc8ba7ad30626bf3d8ce13dce867b7f0dcba",
+    "compiler": "Pinned JieLi pi32v2 clang 4.0.1",
+    "container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "scope": "standalone object only, no device link/map/stack proof"
+  }
+}

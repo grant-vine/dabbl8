@@ -1,0 +1,2 @@
+Initial optimized attempt: 3584289 checks, 1 failure at raw maximum-fixture refusal: counters were not reset after preceding inventory reads. Reset test counters; engine refusal did not call backend. Initial log was superseded before archival; result retained from tool output.
+Initial strict sanitizer invocation aborted: AddressSanitizer detect_leaks is not supported on this platform (exit 134). Rerun with detect_leaks=0; ASan/UBSan remain enabled. Initial abort log was superseded before archival; diagnostic retained from tool output.

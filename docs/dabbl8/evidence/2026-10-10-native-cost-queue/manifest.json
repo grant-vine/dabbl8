@@ -1,0 +1,45 @@
+{
+  "source_commit": "47db25dbed1057154b4917d13784999c747e2921",
+  "combined_parent": "fd2c1a458190b21f82f9dca69e4b3eae0c86f93c",
+  "optimization_functional_source": "5874d1722fc6daefbef4d3fbb56b7882a1f22af9",
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "source_files": {
+    "firmware/src/d8p1_runtime.c": "b96b5bd46c66104ffb6619c283eb9b57cc23705e1fb3309488860b8719788cce",
+    "firmware/src/fx.c": "7c56ba5b7cb0592b43f480c6289f8171d24ff42cddf276209c8a0a5017f6e3fd",
+    "firmware/src/usb.c": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033",
+    "firmware/src/audio.c": "22ff55fee43acccc2d93adad5e7e05769df0f95e885e69ff6c425b3f192429ca",
+    "tests/run_tests.sh": "a6af3b11d024e452205f26a361746e4543acda8abab3586fad52d9c172263bb5",
+    "tests/native_signature_equivalence_test.c": "74677a98006eb3c6c97bcd917512615e05aebad247e2caa856b1a70a0ca57c19",
+    "tests/native_autosave_integration_test.c": "311772d0ce4a0f191bdad31014e30678a1b9215cadb2d9b66de506920dea7c39"
+  },
+  "evidence_files": {
+    "README.md": "71427f7092619262aceca9aba75aec5f015aaa23e10eb03c437ed150aa6d6051",
+    "checks.json": "f11d5a12564e044ab16aadc729c1258995aab2400c45df7960dea98a00ca5b8e",
+    "failures-and-skips.txt": "990627736574e5cb4c2e1a3b529d79878b74041f207cb4764bf2907ce68a90b0",
+    "full-upstream-suite.log": "21f158d88594e85043ec255bde16e9fe1a0dd98bb46bb66455bf3baccd88fe1c",
+    "integration-optimized.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "integration-san.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "resume.log": "1700fb7777f76d89063e40ee865ee8d0af5e97d6b30bf01f62c54a0f65677e36",
+    "resume.py.txt": "0d7081c8d13c55a9d30942c7e77144edbd3c8e021c7a703caa89d69185aad0a8",
+    "target-4.json": "c68e0157b4e7f1fc47a24535ed364df46943f89f9cc338a8a2b56967dbd7ecd9",
+    "target-8.json": "c0b43c7c154dac54bfef0cbaf330df34997e324b7a2537a28531b3e34497331c",
+    "target-budget-status.json": "1e27e67249e068bcbb836062d77b81b7682f253bb2b4decdeef637d2db507dc7",
+    "target-default-and-eight.log": "705d517468c8f386d2b7def74798f7452b2c9e3c1bf67b416480f1aecd2f7540",
+    "target-instruction-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "target-instruction-budget-8.log": "deff1ccd77c453dba3be9853b3b79cccaa01c5a264376bd31d1371ce1dfbf15f",
+    "target-instruction-budget-parent74.log": "deff1ccd77c453dba3be9853b3b79cccaa01c5a264376bd31d1371ce1dfbf15f",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "verification.log": "d50c72134879b014160cf6fe160aeb810cc832234c74e999938cf66025260be9",
+    "verify.py.txt": "0d2b7cc630555171710dda29892c87a96462784831dac4eeacffb1ccd4b8e981"
+  },
+  "scope": "Completed local combined suite; native budget failures retained; no target timing/recovery/scheduler proof",
+  "target_environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  }
+}

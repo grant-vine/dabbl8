@@ -1,0 +1,49 @@
+Companion model: musical schema equals actual pinned descriptor export ok
+Companion model: all 1386 engine/parameter combinations have musical labels and ranges ok
+Companion model: engine controls use correct engine-specific descriptors ok
+Companion model: musical note names span the full MIDI range ok
+Companion model: complete initial eight-track view from actual handlers ok
+Companion model: visible selection loads matching sound and step 1 ok
+Companion model: visible mixer reflects actual values 1 ok
+Companion model: visible signed pan reaches actual track 1 ok
+Companion model: visible selection loads matching sound and step 2 ok
+Companion model: visible mixer reflects actual values 2 ok
+Companion model: visible signed pan reaches actual track 2 ok
+Companion model: visible selection loads matching sound and step 3 ok
+Companion model: visible mixer reflects actual values 3 ok
+Companion model: visible signed pan reaches actual track 3 ok
+Companion model: visible selection loads matching sound and step 4 ok
+Companion model: visible mixer reflects actual values 4 ok
+Companion model: visible signed pan reaches actual track 4 ok
+Companion model: visible selection loads matching sound and step 5 ok
+Companion model: visible mixer reflects actual values 5 ok
+Companion model: visible signed pan reaches actual track 5 ok
+Companion model: visible selection loads matching sound and step 6 ok
+Companion model: visible mixer reflects actual values 6 ok
+Companion model: visible signed pan reaches actual track 6 ok
+Companion model: visible selection loads matching sound and step 7 ok
+Companion model: visible mixer reflects actual values 7 ok
+Companion model: visible signed pan reaches actual track 7 ok
+Companion model: visible selection loads matching sound and step 8 ok
+Companion model: visible mixer reflects actual values 8 ok
+Companion model: visible signed pan reaches actual track 8 ok
+Companion model: last step preserves captured notes and all drum/chance/ratchet fields ok
+Companion model: invalid musical range/value sends no requests ok
+Companion model: pan values remain isolated 1 ok
+Companion model: pan values remain isolated 2 ok
+Companion model: pan values remain isolated 3 ok
+Companion model: pan values remain isolated 4 ok
+Companion model: pan values remain isolated 5 ok
+Companion model: pan values remain isolated 6 ok
+Companion model: pan values remain isolated 7 ok
+Companion model: pan values remain isolated 8 ok
+Companion model: changed sound discards cached step and requires review ok
+Companion model: changed-sound preflight and review gate send no parameter writes ok
+Companion model: explicit refresh clears changed-sound review gate ok
+Companion model: pending operation blocks concurrent UI actions ok
+Companion model: close stops follow-up step reads after delayed dump ok
+Companion model: closed model rejects pending result without applying stale state ok
+Companion model: closed view cannot issue new traffic or callbacks ok
+Companion model: four-track firmware cannot create an editing model ok
+Companion model: view model never sends legacy globals project preset sample or backup commands ok
+Companion model: 48 checks passed; actual C host handlers, physical hardware unqualified

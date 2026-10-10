@@ -1,0 +1,30 @@
+{
+  "result": "PASS",
+  "base_commit": "b5e954b03e7396541401f54d3f461c135b1c5d55",
+  "node": "v26.11.0",
+  "checks": {
+    "backup-tests.log": {
+      "checks": 35,
+      "bytes": 2753,
+      "sha256": "62462dcae1002d44335572e81cea192fc0ea589b49b351be632198f52fe316da",
+      "result": "PASS"
+    },
+    "editor-package-tests.log": {
+      "checks": 270,
+      "bytes": 19547,
+      "sha256": "0e5eee42d59d542e32695695d7bdccb35cd95e24b1857c230b79e108614447c0",
+      "result": "PASS"
+    }
+  },
+  "source_hashes": {
+    "web/fm1backup.js": "f46e07ffd9571752c811fc4aed4873a87325f02669a0e1ad9b6de7c6a9a6db16",
+    "web/test_backup.mjs": "8e5eb4ca6ab9287004265e034cd951cb4c89c4cff644f72fc80036bb1a0e3a1d",
+    "docs/dabbl8/backup-restore-preflight.md": "e04a14a89ff1fe410969335066d521aca3013433d3e7a8848c2f76f479fa762e"
+  },
+  "omissions": [
+    "embedded editor MENU settings implementation absent"
+  ],
+  "hardware": "SKIP: simulated devices only; no MIDI permission/device writes/restore/flash",
+  "firmware_source_changed": false,
+  "whole_c_suite": "not repeated locally for this JS-only change; preceding #40 full local/hosted suite separately PASS; new draft hosted workflow pending"
+}

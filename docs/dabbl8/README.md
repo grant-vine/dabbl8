@@ -1,6 +1,6 @@
 # Dabbl8 plan
 
-Status: source research and task planning; no target build or flash performed here. GitHub Issues are authoritative for progress. All 19 implementation tasks and roadmap issue #2 have been created. Start with the unchanged baseline build in issue #3. This folder records scope and source evidence, not completed implementation.
+The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately; draft implementation PRs do not establish a hardware-qualified eight-track release. No device flashing has been performed in this work. All 19 implementation tasks and roadmap issue #2 have been created.
 
 ## Reading order
 
@@ -15,3 +15,32 @@ The numbered research documents are the original 8 October audit snapshot. Any â
 M0â€“M5 are phase identifiers used in issue titles and bodies. They are not configured GitHub milestone objects. Dependency links are explicit planning gates; they do not enforce merge or close operations automatically.
 
 Initial scope preserves eight shared sounding voices while adding eight logical tracks. Weighted budgets, new engines and multichannel USB are experiments or later work. Do not advertise them as delivered. Source planning material is GPL-3.0-only; original dependency notices remain in force.
+
+## Project conversion preparation
+
+The [staged D8P1 adapter](d8p1-project-state.md) uses explicit project fields and preserves the pinned legacy importer. The [offline conversion workflow](offline-project-conversion.md) saves original snapshots and migration reports, validates complete saved-slot reference bundles, and emits proposed project data. Neither adds qualified device upload, runtime adoption or flash persistence.
+
+The [browser conversion workflow](browser-project-conversion.md) uses the same C importer and produces a local original/report/project-data ZIP without MIDI access. Its device upload and recovery gates remain open.
+
+The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eight-track runtime state and retains arrangement metadata outside the display arena. Device transfer, persistence, playback and physical qualification remain open.
+
+- [Relative multi-sector save engine](multisector-record-engine.md): simulated A/B record preparation; approved map and physical integration remain gated.
+
+- [Software voice cards](software-voice-cards.md): resource research, test matrix and standalone profile/project preflight; runtime exclusion and released variants remain gated.
+
+- [Selected three-project shared storage](three-project-shared-storage.md): three projects and one shared autosave, all samples retained, commit-last write spare; replaces the per-object A/B proposal for initial integration.
+
+- [Shared storage pool implementation and remaining migration gates](shared-storage-pool.md)
+
+- [Real eight-track runtime through shared-pool persistence](runtime-shared-persistence.md)
+
+- [Offline converter developer-preview kit](offline-preview-kit.md): local host-specific tooling package, complete corresponding source and original-preserving conversion; device migration and release gates remain open.
+- [Original-preserving full-backup and persisted-autosave migration proposal](migration-bundle.md)
+
+- [Guarded native runtime connection to the existing flash driver](guarded-flash-backend.md)
+
+- [Native three-project names and stored-snapshot rename preparation](native-project-catalog.md)
+
+- [Native staged save-as naming and commit-only publication](native-save-as.md)
+
+- [Three-project native menu, cached inventory and legacy-writer refusal](native-project-menu.md)

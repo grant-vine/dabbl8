@@ -1,0 +1,53 @@
+{
+  "source_commit": "47db25dbed1057154b4917d13784999c747e2921",
+  "source_parent": "10c502129dca97a5dd25a2422c42e25b31f8a884",
+  "production_usb_restored_sha256": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033",
+  "candidate_usb_sha256": "8e1c56c229f70642379b7042fe7974b1befc8db9a3306cccbd6713fef1585c67",
+  "source_sha256": {
+    "firmware/src/usb.c": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033",
+    "tests/native_output_queue_test.c": "8e37f8f7b2bc4df74c35cbb0627c71252ffe01a734c1cd5ad29a84edd9c65eff",
+    "tests/native_queue_audio_fixture.h": "0c387ca18a77fc5f1718925e9713e69879b75874a7eede6e2e2ea5ef1bbf213c",
+    "tests/native_queue_usb_hal.h": "1c54d64c0af19a056720ff03cfc590c443959f325c4181edb5a4ec25c4b02237"
+  },
+  "evidence_sha256": {
+    "producer_probe.c": "69cd3ff589f6a966c968e62e92a4b5669ef3593497821cf37db017c3563ce483",
+    "parent-bench.log": "e537e4e4dfcfc663d05e730eb9422b49e97701aef3925c7be77414d58ddcbf90",
+    "summary.json": "348fadf2c9f0bc672ab0f43041ef56b4b92f0657874c0a55a823e96e9ebcaa0c",
+    "scan-queue-san.log": "24f4522e6c9f54508d4014f88fa7c45f4bb85a8bc45843120e9cf8d3730594d8",
+    "history-scan-budget.log": "58e0731392dd6156491f74f3c2b89e4ac0367a4e34882060a634f4fc501adba7",
+    "README.md": "3ba0b2c5c497c3fc957d5d23be6287a8cd33e9544b18d372a8b05e0078c08536",
+    "history-scan.patch": "1a879acb26cbcc2c7bb58355341995363696e2f14f5e6d986212e530af40ab1a",
+    "scan-queue-normal.log": "24f4522e6c9f54508d4014f88fa7c45f4bb85a8bc45843120e9cf8d3730594d8",
+    "history-scan-bench.log": "10c04bbf8bd598ea264e129ebe08b3fb09ca5f1004cc69f44ffb0a785a3f5ec8",
+    "parent-budget.log": "deff1ccd77c453dba3be9853b3b79cccaa01c5a264376bd31d1371ce1dfbf15f",
+    "scan-queue-tone.log": "2c39286b072072bafa30774ad46943c581f4a3a9cf59abceb59e8af15faa6b61"
+  },
+  "wave_comparison": {
+    "bytes": 1161568,
+    "sha256": "3c1933b827e532b8a000b21d5f37796c467e3accf2317ff68f5ffad628067f07",
+    "cases": "132 variable n=0..32 ring/FIR/packet cases and 160 actual DAC/audio-IRQ halves at44.1/48k"
+  },
+  "environment": {
+    "macOS": "26.7.1(25G241)",
+    "host_arch": "arm64",
+    "host_compiler": "Apple clang21.0.0(clang-2100.1.1.101)",
+    "python": "3.14.8",
+    "target_compiler": "JieLi clang4.0.1",
+    "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "private_evidence_directory": "/Users/grantv/Code/dabbl8/.local-baseline/usb-occupancy-check",
+  "hardware": "NOT TESTED",
+  "decision": "Research only; all production USB changes reverted; native target timing gate remains open",
+  "research_document_sha256": "2ca1e2aaea46fc364e62814be2ac9ac9f502f13a12293b7b81bbcd699117909e",
+  "generated_headers_sha256": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  }
+}

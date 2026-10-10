@@ -1,0 +1,7 @@
+== D8P1 relative multi-sector records and every program-byte cut
+D8P1 multi-sector records: 884086 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts; relative simulator only
+D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification
+== ASan/UBSan: strict relative multi-sector storage and exhaustive cuts
+D8P1 multi-sector records: 884086 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts; relative simulator only
+D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification
+ALL HOST TESTS PASSED

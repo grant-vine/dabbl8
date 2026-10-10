@@ -1,0 +1,4 @@
+firmware/src/d8store.c:4:10: fatal error: 'string.h' file not found
+#include <string.h>
+         ^~~~~~~~~~
+1 error generated.

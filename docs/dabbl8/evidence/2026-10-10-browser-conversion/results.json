@@ -1,0 +1,99 @@
+{
+  "result": "PASS for local checks; new hosted browser step pending",
+  "base_commit": "5087e4640e633bd970b9506f1a2ded09c3e240f7",
+  "actual_WASM_native_parity_checks": 218,
+  "tested_source_hashes": {
+    "web/build-d8converter.sh": "7bf5a28048b0004e71c21b310a751ef10e9537000302fc68d0689205a0dfa8b1",
+    "web/d8project-conversion.js": "9f19baf3af8a2820e03e9dcecd69220b095965d933fcf548cd0dd0ec4bae924f",
+    "web/d8project-conversion-page.js": "392ff155a6855d403daebc6d87bf244da5868336fc8570a217edd3a48a3ccba4",
+    "web/d8companion.js": "0ab4df2dbc2916ca103e72eef2b8fe60cad3f65008e8b9c85303db5b5064ff27",
+    "web/d8companion.css": "a0a27a4ce66931a761efe109b72949af818f8662792c784a03d39e0b989777fd",
+    "tests/browser_project_conversion_test.mjs": "4e9d5a756fc9e9120db47db3e9bc29aa4d729f699937da534757326873ad6e0e",
+    "tests/browser-project-conversion-fixture.html": "3e83fd74488501ee50c4af6b1a58dfceb5870467736607e2e0ee6ea9d0df708a",
+    "ci/browser-conversion.json": "a25b61713bb261f840cf9a3a93381c11b8e3d850710b55b8bd101faee505e1e3",
+    "ci/run_browser_conversion.py": "d22f68abfa54af639043126449eab628a50aa3d774b5c1550f96c5e3681a5de2",
+    ".github/workflows/dabbl8-evidence.yml": "b61febb709f964d8db0678b95bc0c26b51d37587ab68bc2e75a610d707a9f81a",
+    "tools/dabbl8_project_convert.c": "bc799c191d248c07c08d69ea62b79fc0b48046b22c8b342e0ec284b688705241",
+    "firmware/src/d8p1.c": "71c4ef0a8cc402de357f9a03a43141e3c0cbc9a31627b373eba8ac5445406a35",
+    "firmware/src/d8p1_project.h": "64c540b8c5263d0abbdd3fd2dffd7f9c899bac250b573ab3a3ab79ce4b143fad"
+  },
+  "compiler": {
+    "sdk_commit": "35ff8a6d150541276abbc6bae512ca90bcfbe220",
+    "selected_version": "4.0.17",
+    "release_build": "41d2106c68c28e101e6252a48e22c78b07722508",
+    "version": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.17 (bb11bae9af3a6551132655a0908f86889d2d423b)\nCopyright (C) 2025 the Emscripten authors (see AUTHORS.txt)\nThis is free and open source software under the MIT license.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "archives": {
+      "41d2106c68c28e101e6252a48e22c78b07722508-wasm-binaries-arm64.tar.xz": {
+        "bytes": 296463404,
+        "sha256": "8a571a73461d7755787fc5ffb35b7284216741cfbbcf52d855d54d2cc36ecb9e"
+      },
+      "node-v24.19.0-darwin-arm64.tar.gz": {
+        "bytes": 52234372,
+        "sha256": "8294b7aa9b03997481c06babf1e8b270c859358f27da57a11509afe537ac381d"
+      },
+      "python-3.13.3-0-macos-arm64.tar.gz": {
+        "bytes": 44280478,
+        "sha256": "2b0899d7ade9463b0c909ef23aeea27546a4f412637998d817a49718bc2bac19"
+      }
+    },
+    "configuration": "SDK-local .emscripten; explicit EM_CONFIG; no shell profile or baseline PATH changes",
+    "install_log_sha256": "1ef26d1372ad2d0c65d8da5645e479d88972cdeadc37a6c5b1ad868c3d18821c"
+  },
+  "generated_artifacts": {
+    "dabbl8_project_convert.wasm": {
+      "bytes": 271137,
+      "sha256": "8919ed4e36cb6e5b338df4c135a11491f4c446294b7e59ee9213b937670540e2"
+    },
+    "compiler-version.txt": {
+      "bytes": 330,
+      "sha256": "a15564b7d1ba91e7773478e36124bd4b2cf5e0bffbcb1a82c4d61991887c00d9"
+    },
+    "dabbl8_project_convert.mjs": {
+      "bytes": 60278,
+      "sha256": "3c517bd31420101747c3946857b065c98ddac5f156cb3177d1d7c1f70611b297"
+    }
+  },
+  "actual_Chrome_accepted_download": {
+    "result": "PASS",
+    "path": "/Users/grantv/Downloads/dabbl8-project-bundle.zip",
+    "bytes": 36489,
+    "sha256": "3347bec29da5f1f8c10418445f22e0181695e5b9b03ae080c828237e0ca19f50",
+    "entries": [
+      "original.bin",
+      "slot-0-original.bin",
+      "slot-3-original.bin",
+      "slot-0.d8p",
+      "slot-3.d8p",
+      "project.d8p",
+      "report.json"
+    ],
+    "mask": 9,
+    "scope": "Actual Chrome download; byte-exact original and native output, complete real slot0/3 context, all ZIP CRCs and report hashes verified; no MIDI"
+  },
+  "actual_Chrome_refusal_download": {
+    "result": "PASS",
+    "bytes": 7623,
+    "sha256": "ea2b89803d6e9a7059cd4a28ab88c7fb03d0efab974899dd4f87c0c4e1bd3010",
+    "scope": "Actual Chrome unknown-optional refusal download; complete original retained; no converted files"
+  },
+  "actual_Chrome_lifecycle": {
+    "changed_input_after_held_real_converter": "settled1; zero downloads; prepare enabled",
+    "page_exit_after_held_real_converter": "settled2; zero downloads; prepare enabled",
+    "resume": "settled3; accepted FUN1 DIGITAL migration to FM6",
+    "destroy_after_held_real_converter": "settled4; zero downloads; prepare disabled; zero enabled file inputs"
+  },
+  "responsive": {
+    "viewport": 390,
+    "document_scroll_width": 390,
+    "body_scroll_width": 390,
+    "override_reset": true
+  },
+  "firmware_changes": "No native firmware source changed from the prior audited full local/hosted run; new browser/CIscope validation separate",
+  "hardware": "SKIP",
+  "unqualified": [
+    "device upload/backup/restore",
+    "runtime adoption/arrangement playback",
+    "approved flash map/persistence/power cuts",
+    "target state/cache/stack allocation"
+  ]
+}

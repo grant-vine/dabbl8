@@ -1,0 +1,4 @@
+line 85: d8p1_autosave_snapshot_flash(NULL,&rec,1)==D8POOL_INVALID&&!reads&&!writes
+line 86: d8p1_autosave_snapshot_flash(&output,(d8pool_record *)&output,1)==D8POOL_INVALID&&!reads&&!writes
+line 87: d8p1_autosave_snapshot_flash((uint32_t *)&main_workspace,&rec,1)==D8POOL_INVALID&&!reads&&!writes
+Native autosave session: 276312 checks, 3 failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant

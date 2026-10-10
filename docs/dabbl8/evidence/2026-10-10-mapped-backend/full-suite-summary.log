@@ -1,0 +1,13 @@
+D8P1 mapped pool: 92620 checks, 0 failures; 34 operation cuts, 34 late-stop cuts, 109 read cuts, 80 rotating saves; 1MiB simulated NOR only
+D8P1 flash runtime: 73557 checks, 0 failures; 29 driver cuts, 29 atomic late-start cuts; actual runtime, simulated physical hooks only
+regress: CPU note  cpu/SAMPLE/00_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/01_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: 92 golden renders (0 changed, 0 gone), 0 health failures, 0 voice / routing checks failed, 0 CPU entries over budget (2 notes), 0 crashes; 0.8 s
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+D8P1 mapped pool: 92620 checks, 0 failures; 34 operation cuts, 34 late-stop cuts, 109 read cuts, 80 rotating saves; 1MiB simulated NOR only
+D8P1 flash runtime: 73557 checks, 0 failures; 29 driver cuts, 29 atomic late-start cuts; actual runtime, simulated physical hooks only
+target: wheel_block       184 instructions,   86 in loops, 0 divides,  1 calls there: cost    86 (budget 102) note: -16 % (BUDGET_UPDATE=1 to keep it)
+official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)
+editor: MENU settings (this editor has none)                     skip
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
+ALL HOST TESTS PASSED

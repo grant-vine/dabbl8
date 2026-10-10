@@ -1,0 +1,13 @@
+fun1: 688 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun1-digital: 688 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun2: 2552 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun3: 2584 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun4: 2680 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun4-phys-drum: 2680 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun5: 3352 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun6: 3388 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun7: 3388 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun8: 3584 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun8-perc: 3584 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun9: 3648 B, destination 8 tracks, baseline import/round-trip/corruption ok
+fun9-digital: 3648 B, destination 8 tracks, baseline import/round-trip/corruption ok

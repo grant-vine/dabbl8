@@ -1,0 +1,25 @@
+# Native shared-autosave activity guard
+
+The experimental eight-track existing-driver adapter now exposes `d8p1_autosave_flash(native_authorized)` for the one shared autosave, object 3. It preserves the current manual project identity and name. Explicit completed-migration authorization remains mandatory; blank, legacy and unauthorized storage cannot be initialized by this API. No boot, menu or scheduler caller grants authorization or invokes automatic writes yet.
+
+The dedicated automatic policy refuses running/pending transport, active canvas, held panel keys/buttons, any of the 64 track/voice states still active, queued USB/TRS MIDI or overflow, performance-held/latched state, resident performance replay state, configured stopped STUT or active slicer state, and enabled arpeggiators with retained notes. A released HOLD arpeggiator can generate another note after a voiceless gate gap; checking current voices alone would miss it. Explicit manual saves retain their existing policy.
+
+Each mapped access rechecks eligibility. Immediately before each physical erase/program, the adapter rechecks under the existing IRQ-off fence. Upstream non-nesting IRQ/driver behavior remains unchanged, and the API requires synchronous main-loop entry with interrupts enabled. Driver failure or new activity stops subsequent mutations; a postcommit verification error can still leave a valid newer autosave, so error does not imply that nothing was saved. Current records and approved physical boundaries retain the shared-spare/commit-last contract.
+
+## Remaining automatic-save integration gates
+
+This bounded activity check **does not prove inaudible output**. Delay can retain audio for 65536 samples (about 1.486 seconds at 44.1 kHz), and recursive ROOM/SPRING histories can produce future output after a silent gap. Audio-path qualification must cover the USB tap before DAC master gain and click rendering after the mixer. Never infer safe erase merely from current zero output, released voices or muted master.
+
+The follow-up [resident DSP guard](native-resident-tail.md) is now implemented and tested in a separate stacked change: four occupancy counters cost 16 bytes, with bounded scalar checks and no IRQ-off buffer scan. It never clears musical state to force eligibility; exact-zero residuals may defer indefinitely. This closes the resident-state gap, while queued USB/DAC output and physical timing remain separate gates. The verification below describes the earlier activity-guard revision; follow-up evidence is linked separately.
+
+The scheduler also needs a coherent dirty signature including native arrangement metadata, idle/wear/retry policy, explicit RESTORE LAST/session semantics and boot ownership after original-preserving migration. These are remaining issue #13 work; native full backup/editor and physical qualification remain #11/#12/#14 gates. No firmware has been installed, no flash/loader boundaries changed, and no release is offered.
+
+## Verification
+
+Final source passes 594684 focused checks in optimized and inherited ASan/UBSan modes: all 64 voice entries, real stopped HOLD key-release paths on all eight tracks, 20 activity kinds at every one of 29 IRQ-entry mutation boundaries, 29 physical failure cuts, 20 postcommit disturbances and successful autosave byte readback. Existing manual adapter tests pass 217341 checks in both modes. Independent review found no further concrete defect. Storage is simulated NOR with real runtime/adapter paths; this does not establish physical SPI behavior or hardware deadlines.
+
+Pinned target builds pass: default four-track app is byte-identical to unchanged v1.1.5 commit `276f72a4e6ea8a12499a7a6819aadf3165126755`. Eight-track app is 456556 bytes, SHA-256 `f824dbdb8ce55671e9976d67aab7837e47f2cd78863b784a8327f32120cb5617`, RAM 95716/98304 and pool 334164/344064; interrupt RAM text remains 916 instructions with no calls. This adds 268 image bytes over PR #67 and no retained RAM/pool allocation. Whole caller/driver/IRQ stack and actual device timing remain unqualified.
+
+Full local upstream host suite passes, including sanitizer and fixed-seed fuzz sections. Four local omissions remain: DaisySP reference, optional vendor-restore simulator fixture, web MENU-settings subtest and browser emulator without emcc. Fresh regression checks preserve all 92 golden renders with zero health, voice/routing or CPU-budget failures and two existing timing notes. Baseline app/package/loader/golden/CPU/target hashes remain unchanged. Runtime sanitizers retain upstream DSP exclusions for signed overflow, shifts, bounds, object size and pointer overflow; they are not a claim of strict whole-engine UBSan coverage. Detailed evidence, initial failure history, omissions and exact source hashes are in `evidence/2026-10-10-native-quiet-autosave/`.
+
+SPDX-License-Identifier: GPL-3.0-only. Preserve Felucca and dependency notices.

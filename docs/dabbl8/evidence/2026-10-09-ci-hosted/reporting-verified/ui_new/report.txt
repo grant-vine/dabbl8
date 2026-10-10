@@ -1,0 +1,56 @@
+LINT self-test              spills out of its cell           'SPILL' (8,62)-(37,72) / 'cell' (6,59)-(26,72)
+LINT self-test              overlaps                         'AAAA' (4,31)-(34,40) / 'BBBB' (14,35)-(43,44)
+LINT self-test              ellipsised (not free text)       'WWW…' (4,47)-(58,59)
+LINT self-test              cut by its canvas                'CUT' (44,61)-(74,74)
+LINT self-test              touches a divider                'RULE' (10,115)-(38,125) / 'divider' (0,120)-(240,121)
+(self-test: 8 findings above are expected)
+
+free   GREY/mixer             ellipsised 'PULSE…'
+free   GREY/mock_mixer        ellipsised 'DRUM…'
+STYLE LINE (every palette): 0 lint findings
+free   LARGE ANALOG/PHRASES   ellipsised 'SAW LE…'
+free   LARGE ANALOG/MIXER     ellipsised 'SAW L…'
+free   LARGE VOICE/MIXER      ellipsised 'CHOIR…'
+free   LARGE VOICE/AUTO LIST  ellipsised 'CHOIR A…'
+free   LARGE TRIO/MIXER       ellipsised 'FAT BA…'
+free   LARGE WHEEL/PHRASES    ellipsised 'FULL OR…'
+free   LARGE WHEEL/MIXER      ellipsised 'FULL…'
+free   LARGE WHEEL/AUTO LIST  ellipsised 'FULL O…'
+free   LARGE GRAIN/MIXER      ellipsised 'CLOU…'
+free   LARGE GRAIN/AUTO LIST  ellipsised 'CLOUD…'
+free   LARGE PHYS/MIXER       ellipsised 'BELL T…'
+MENU > LARGE (FLAT and LINE, every palette, the page / value sweep): 0 lint findings; 1220 screens with tall cards
+  tall card values: 243053 in L, 15 in M (a glyph not in L: "&"), 43635 in M (L too wide), 14 in S
+  too wide for L, e.g.: '355' 'USR2' '1/16' '-6.0' '1.18' 'MODW' '-100' 'GATE' 'DIA7' 'CLOSE' '+OCT' 'DIA3' 'RATE' 'LAST' 'CH1-4' 'SAW'
+  in S, e.g.: 'THUMB' 'SMOOT'
+
+draw cost on the host (cc -O1; only the ratios mean anything on the device):
+  screen            full redraw us   texts+icons   glyph px read
+  home                       106.2            28            5977
+  presets                     82.5            38           10474
+  step                        80.6            24            5499
+  roll_chords                 81.8            24            5229
+  drum                        83.0            33            7753
+  mixer                      106.2            61           11660
+  menu                        91.6            26            9202
+  about_credits              130.3            48           39667
+  confirm_project             63.5            12            5911
+  HOME, a frame without force (lazy strips): 32.4 us, 0 texts
+  roll_chords: the panel redrawn 39.3 us; an unchanged frame (signature only) 0.48 us
+  roll_playing: the panel redrawn 39.4 us; an unchanged frame (signature only) 0.50 us
+  drum: the panel redrawn 39.3 us; an unchanged frame (signature only) 0.24 us
+  roll frame (header BPM 129->130 and card TUNE 19->20, strips only): 7.39 us, 1254 glyph px, 2658 px blitted; header + 4 cards redrawn whole: 28.18 us, 3783 glyph px, 15792 px blitted
+  MENU > LARGE:
+  home                       103.6            32            8573
+  edit_analog                 88.3            29            9258
+  env                         87.2            29            8224
+  lfo                         88.6            27            8013
+  mixer                       99.8            41           10982
+  fx                          87.5            30            9164
+  pattern                     86.3            28            7928
+  LARGE HOME, a frame without force (lazy strips): 17.8 us, 0 texts
+  LARGE ENV, a frame without force (lazy strips): 0.8 us, 0 texts
+
+alignment: 2321428 measurements of 78 places, 0 off by 1 px or more (OUTDIR/align.txt)
+
+0 lint findings, 0 inks on their own colour, 244 ellipsised free texts, 0 GREY / MONO pixels off gray / neutral; 148458 column values swept; 136 FM6 charts linted; 894 cards linted with MOTION's icon

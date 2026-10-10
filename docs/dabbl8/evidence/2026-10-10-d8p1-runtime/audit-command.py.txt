@@ -1,0 +1,26 @@
+from pathlib import Path
+import json,hashlib,re,shutil
+r=Path('/Users/grantv/Code/dabbl8/.local-baseline/main-workspace');e=r.parent/'d8p1-runtime-check/final';pub=r/'docs/dabbl8/evidence/2026-10-10-d8p1-runtime'
+log=(e/'final-upstream-suite.log').read_text()
+assert json.loads((e/'final-suite-result.json').read_text())['exit_code']==0 and 'ALL HOST TESTS PASSED' in log
+markers=['D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification','main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors','D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption','D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption','Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes','D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine']
+for marker in markers:assert log.count(marker)==2,(marker,log.count(marker))
+assert '218 checks passed' in (e/'browser-parity.log').read_text()
+assert json.loads((e/'default-build-result.json').read_text())['exit_code']==0
+previous=json.loads((r/'docs/dabbl8/evidence/2026-10-10-d8p1-staging/results.json').read_text());artifacts={}
+for name,expected in previous['default_artifacts_unchanged'].items():
+    p=r/name;actual={'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()};assert actual==expected;artifacts[name]=actual
+sources=json.loads((e/'source-hashes.json').read_text())
+for name,digest in sources.items():assert hashlib.sha256((r/name).read_bytes()).hexdigest()==digest
+target=json.loads((e/'results.json').read_text());assert target['build_check_exit_code']==0 and target['experimental_image']=={'bytes':451432,'sha256':'dafa33427a5e530294e0a0f7392a2fbeac454fafdaff211b7a18297863609fb1'}
+symbols=(r/'build/d8p1-runtime-eight-final/symbols.txt').read_text()
+for name in ['d8p1_load_runtime','d8p1_capture_runtime','d8p1_runtime_arrangement']:assert re.search(r' g\s+F \.text\s+[0-9a-f]+ '+name+r'$',symbols,re.M),name
+assert re.search(r'\.pool\s+00000304 d8p1_runtime_cache',symbols) and re.search(r'\.pool\s+0000e880 main_workspace',symbols)
+text=(e/'eight-track-probe.log').read_text();assert 'RAM .data+.bss 95716 B of 98304; pool 334100 B of 344064' in text and '.ram_text: 916 insns, no calls' in text
+out={'result':'PASS','base_commit':'1ee9e1d055e3b2570a723f5ede3f2859c2c43793','runtime_checks_each_mode':8911,'complete_suite_exit_code':0,'source_unchanged_during_suite':True,'source_hashes':sources,'browser_checks':218,'target':target,'linked_native_symbols_verified':True,'RAM':{'used':95716,'capacity':98304,'free':2588},'pool':{'used':334100,'capacity':344064,'free':9964,'required_reserve':8192},'cache_bytes':772,'arena_bytes':59520,'static_local_reservations_excluding_saved_registers':{'load':932,'capture':60,'restore':364},'default_artifacts_unchanged':artifacts,'raw_log_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in e.glob('*.log')},'omissions':previous['omissions'],'hardware':'SKIP','hosted_CI':'pending draft','scope':'Actual linked stopped native load/capture and retained metadata; host control-flow/engine ownership only; no device protocol/flash/playback/physical stack or timing qualification'}
+pub.mkdir(exist_ok=True);(pub/'results.json').write_text(json.dumps(out,indent=2)+'\n');(e/'audit.json').write_text(json.dumps(out,indent=2)+'\n')
+for name in ['browser-parity.log','eight-track-probe.log','probe-command.py.txt','final-suite-command.py.txt','default-build-command.py.txt']:shutil.copy2(e/name,pub/name)
+for name in ['initial-policy-failure.log','checksum-fixed-policy-failure.log','initial-integrated-result.json']:shutil.copy2(e.parent/name,pub/name)
+(pub/'suite-summary.txt').write_text('\n'.join(l for l in log.splitlines() if any(m in l for m in markers) or 'ALL HOST TESTS PASSED' in l or '== skip' in l)+'\n')
+shutil.copy2('/private/tmp/dabbl8-runtime-prologues.txt',pub/'target-prologues.txt');shutil.copy2(__file__,pub/'audit-command.py.txt')
+print('Runtime independently audited PASS: 8911 checks twice, unchanged-source full suite, 218 browser checks, actual native target link and memory, unchanged default artifacts; hardware SKIP')

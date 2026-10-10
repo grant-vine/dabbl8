@@ -120,6 +120,9 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 $CC -o "$OUT/storage_test" tests/storage_test.c
 run "flash storage (A/B, torn writes)" "$OUT/storage_test"
 
+$CC -o "$OUT/native_storage_gate_test" tests/native_storage_gate_test.c
+run "eight-track refusal of all legacy project/autosave writers" "$OUT/native_storage_gate_test"
+
 $CC -o "$OUT/upreset_test" tests/upreset_test.c
 run "user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)" "$OUT/upreset_test"
 
@@ -156,8 +159,96 @@ python3 tools/fm1pkg_make.py "$OUT/old_app.bin" build/loader/ota.bin "$OUT/old.f
 $CC -o "$OUT/ldr_test" tests/ldr_test.c
 run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
 
+# D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
+run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
+run "Dabbl8 card configurations: all subsets and bounded CLI" python3 tests/d8card_test.py
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c
+run "Dabbl8 card dependencies and non-mutating project preflight" "$OUT/d8card_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O1 -Wall -Wextra -Werror -o "$OUT/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
+run "D8P1 bounded byte codec and malformed input refusal" "$OUT/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8store_test" firmware/src/d8p1.c firmware/src/d8store.c tests/d8store_test.c
+run "D8P1 relative multi-sector records and every program-byte cut" "$OUT/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8pool_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8pool_test.c
+run "D8P1 three projects, shared autosave and interrupted pool writes" "$OUT/d8pool_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8pool_mapped_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8pool_mapped_test.c
+run "D8P1 mapped existing allocations, session policy and physical cut guards" "$OUT/d8pool_mapped_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p
+
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_project_archive" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_project_archive.c
+run "offline native project-set archive: exact originals, sparse roles and whole-set readback" python3 tests/native_project_archive_test.py "$OUT/dabbl8_project_archive"
+
 if [ -f build/gen/felucca_tables.h ]; then
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
+    run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
+    ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
+    run "offline migration: complete originals, persisted autosave and real shared-pool proposal" python3 tests/migration_bundle_test.py "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize"
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
+    run "D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$OUT/d8p1_project_test"
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
+    run "D8P1 motion bytes and actual upstream eligibility" "$OUT/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/descdump" tests/descdump.c -lm
+    echo "== parameter and engine tables as JSON (for the editor mock test)"
+    "$OUT/descdump" > "$OUT/desc.json" || fail=1
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/hostsim" tests/hostsim.c -lm
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/quick_layer_conflicts_test" tests/quick_layer_conflicts_test.c -lm
+    run "eight-track chord, DRUM, SCL and selected automation ownership" "$OUT/quick_layer_conflicts_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/banked_mixer_test" tests/banked_mixer_test.c -lm
+    run "eight-track bank controls, quick-layer ownership and all screen layouts" "$OUT/banked_mixer_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/versioned_track_test" tests/versioned_track_test.c -lm
+    run "versioned eight-track editor: bounds, ownership, busy errors and legacy refusal" "$OUT/versioned_track_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge8" tests/track_client_bridge.c -lm
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge4" tests/track_client_bridge.c -lm
+    run "companion track client: real C four/eight-track negotiation, edits and stale reply guards" node web/test_d8tracks.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
+    run "companion MIDI session: framing, lifecycle and actual C handlers" node web/test_d8midi.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
+    run "companion editor model: musical schema and all-track actual C controls" node web/test_d8companion.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_runtime_test" tests/eight_track_runtime_test.c -lm
+    run "eight-track recording, playback, USB/TRS routing and bounds" "$OUT/eight_track_runtime_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/voice_budget_test" tests/voice_budget_test.c -lm
+    run "eight actual parts: ninth note, held/sustain/release, stealing and render budget" "$OUT/voice_budget_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
+    run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
+    run "FM6 eight-part operator state: ownership, retriggers, release and full-pool refusal" "$OUT/fm6_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/slice_pool_test" tests/slice_pool_test.c -lm
+    run "SLICE eight-part reverse windows: ownership, exact decode and render isolation" "$OUT/slice_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/heavy_pool_test" tests/heavy_pool_test.c -lm
+    run "GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades" "$OUT/heavy_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/wheel_pool_test" tests/wheel_pool_test.c -lm
+    run "WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership" "$OUT/wheel_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/main_workspace_test" firmware/src/d8p1.c tests/main_workspace_test.c -lm
+    run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
+    run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
+    run "native coherent canonical dirty signature: arrangement, music and UI exclusions" "$OUT/native_signature_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
+    run "native signature optimization: canonical wire and pre-normalization refusals" "$OUT/native_signature_equivalence_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
+    run "actual native three-slot project menu/cache/ownership" "$OUT/native_project_menu_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+    run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+    run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
+    run "eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain" "$OUT/eight_track_performance_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
+    run "native resident tails: real DSP counter oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
+    run "native FX publication: actual nested TIMER5 and complete post-block counters" "$OUT/native_fx_counter_boundary_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+    run "native logical output queues: actual DMA/USB service, drain and late writes" "$OUT/native_output_queue_test"
+    $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+    run "native output queues: autonomous USB benchmark refuses autosave" "$OUT/native_output_queue_tone_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
+    run "native signature and output-queue integration: natural drain/save/restore" "$OUT/native_autosave_integration_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
+    run "native automatic write: quiet guard at every physical mutation" "$OUT/native_quiet_autosave_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
+    run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+    run "read-only instrument capture: actual handler, fixed stores, current state and interruption" "$OUT/instrument_capture_test"
+    run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
+    run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -169,6 +260,14 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "TRACKS: 4-track pattern, live recording (lengths, swing), voice budget, engine switch, cost" env TRACKS=build/tracks_demo "$OUT/hostsim" 0 0 1 "$OUT/tracks.wav"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/project_test" tests/project_test.c -lm
     run "project formats (FUN1..FUN5 -> FUN6, the grid and song chain; DIGITAL tracks -> FM6, SAMPLE PERC -> DRUM)" "$OUT/project_test"
+    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test" tests/legacy_fixture_test.c -lm
+    run "immutable FUN1..FUN9 imports and canonical round trips" "$OUT/legacy_fixture_test" tests/fixtures/projects
+    $CC -O1 -w -DLEGACY_DEST_TRACKS=8 -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test_8" tests/legacy_fixture_test.c -lm
+    run "historical layouts/imports with an eight-track destination; refuse FUN9 truncation" "$OUT/legacy_fixture_test_8" tests/fixtures/projects
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
+    run "offline legacy import preview: preserve originals, report migrations and refuse unknown data" python3 tests/offline_import_test.py "$OUT/dabbl8_import_preview"
+    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
+    run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
     run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
@@ -219,7 +318,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "full backup: CRC before writes, stale runtime, USB reset / timeout, malformed objects, older projects" "$OUT/backup_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/editor_test" tests/editor_test.c -lm
     run "editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)" \
-        env MENU_JSON="$OUT/menu.json" "$OUT/editor_test"
+        env MENU_JSON="$OUT/menu.json" D8CAPS_JSON="$OUT/d8caps.json" D8INFO_JSON="$OUT/d8info.json" "$OUT/editor_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/robust_test" tests/robust_test.c -lm
     run "robustness: crafted sample slots, engine numbers, retained old projects, preset patterns, malformed requests" \
         "$OUT/robust_test"
@@ -238,9 +337,6 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "REVERB TYPE: ROOM bit-identical, SPRING decay / chirp / stability / level, model change, cost, demos" "$OUT/reverb_test" build/fx_demo
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/regress" tests/regress.c -lm
     run "regression: golden renders, health, voices, CPU budget" "$OUT/regress" tests/golden.txt tests/cpu_baseline.txt
-    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/descdump" tests/descdump.c -lm
-    echo "== parameter and engine tables as JSON (for the editor mock test)"
-    "$OUT/descdump" > "$OUT/desc.json" || fail=1
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/phys_test" tests/phys_test.c -lm
     mkdir -p build/phys_demo
     run "PHYS: stability C-1..G9 over the parameter corners, worst-case cost against PHASE WIRE, demos" "$OUT/phys_test" build/phys_demo
@@ -298,6 +394,27 @@ else
     A="$OUT/asan"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
+    # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
+    run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c
+    run "ASan/UBSan: strict card dependencies and project preflight" "$A/d8card_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8store_test" firmware/src/d8p1.c firmware/src/d8store.c tests/d8store_test.c
+    run "ASan/UBSan: strict relative multi-sector storage and exhaustive cuts" "$A/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8pool_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8pool_test.c
+    run "ASan/UBSan: strict shared pool cuts, rotation and refusal" "$A/d8pool_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8pool_mapped_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8pool_mapped_test.c
+    run "ASan/UBSan: mapped physical bounds, session revocation and cuts" "$A/d8pool_mapped_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p
+    $SCC -o "$A/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
+    run "ASan/UBSan: offline D8P1 bundle and original/reference preservation" python3 tests/project_conversion_test.py "$A/dabbl8_project_convert"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
+    run "ASan/UBSan: original-preserving migration and real shared-pool proposal" python3 tests/migration_bundle_test.py "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_project_archive" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_project_archive.c
+    run "ASan/UBSan: strict native project-set archive and whole-set readback" python3 tests/native_project_archive_test.py "$A/dabbl8_project_archive"
+    $SCC -o "$A/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
+    run "ASan/UBSan: D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$A/d8p1_project_test"
+    $SCC -o "$A/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
+    run "ASan/UBSan: D8P1 motion bytes and actual upstream eligibility" "$A/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $SCC -o "$A/ldr_test" tests/ldr_test.c
     run "ASan/UBSan: update loader (other app -> this build)" "$A/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
     $SCC -DOWN_PKG=1 -o "$A/ota_test" tests/ota_test.c
@@ -306,6 +423,54 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
+    for t in versioned_track_test quick_layer_conflicts_test banked_mixer_test eight_track_runtime_test voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
+        $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
+        run "ASan/UBSan: actual eight parts $t" "$A/$t"
+    done
+    $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
+    $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
+    run "ASan/UBSan: companion client through actual C four/eight-track handlers" node web/test_d8tracks.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
+    run "ASan/UBSan: companion MIDI session through actual C handlers" node web/test_d8midi.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
+    run "ASan/UBSan: companion editor model through actual C handlers" node web/test_d8companion.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
+    $SCC -o "$A/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
+    run "ASan/UBSan: offline import preservation, migrations and refusal" python3 tests/offline_import_test.py "$A/dabbl8_import_preview"
+    $SCC -DNPART=8 -o "$A/main_workspace_test" firmware/src/d8p1.c tests/main_workspace_test.c -lm
+    run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
+    $SCC -o "$A/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
+    run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
+    $SCC -o "$A/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
+    run "ASan/UBSan: native coherent canonical dirty signature" "$A/native_signature_test"
+    $SCC -o "$A/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
+    run "ASan/UBSan: native signature canonical wire equivalence and refusals" "$A/native_signature_equivalence_test"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/native_storage_gate_test" tests/native_storage_gate_test.c
+    run "ASan/UBSan: strict eight-track legacy sector write refusal" "$A/native_storage_gate_test"
+    $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
+    run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"
+    $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+    run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
+    $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+    run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
+    $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm
+    run "ASan/UBSan: eight-track solo dry/send isolation and cold first activation" "$A/eight_track_performance_test"
+    $SCC -o "$A/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
+    run "ASan/UBSan: resident DSP tails and every late mutation refusal" "$A/native_fx_tail_test"
+    $SCC -o "$A/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
+    run "ASan/UBSan: actual audio/TIMER5 counter publication boundaries" "$A/native_fx_counter_boundary_test"
+    $SCC -o "$A/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+    run "ASan/UBSan: actual logical audio/USB queues and late refusal" "$A/native_output_queue_test"
+    $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+    run "ASan/UBSan: autonomous USB benchmark refuses autosave" "$A/native_output_queue_tone_test"
+    $SCC -o "$A/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
+    run "ASan/UBSan: native signature and natural output-drain integration" "$A/native_autosave_integration_test"
+    $SCC -o "$A/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
+    run "ASan/UBSan: automatic write quiet guard and late activity" "$A/native_quiet_autosave_test"
+    $SCC -o "$A/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
+    run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
+    $SCC -o "$A/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+    run "ASan/UBSan: read-only instrument capture and actual USB/storage interruption" "$A/instrument_capture_test"
+    run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
+    $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
+    run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm

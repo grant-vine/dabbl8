@@ -1,0 +1,601 @@
+
+build/shared-pool-target/d8pool.o:	file format ELF32-pi32v2
+
+Disassembly of section .text.dp_valid:
+dp_valid:
+       0:    01 16             	r1 = r0
+       2:    40 20             	r0 = 0
+       4:    01 4a             	if (r1 == 0) goto 20 <dp_valid+0x1A : 1a >
+       6:    12 61             	r2 = [r1+4] 
+       8:    02 48             	if (r2 == 0) goto 16 <dp_valid+0x1A : 1a >
+       a:    12 62             	r2 = [r1+8] 
+       c:    02 46             	if (r2 == 0) goto 12 <dp_valid+0x1A : 1a >
+       e:    12 63             	r2 = [r1+12] 
+      10:    02 44             	if (r2 == 0) goto 8 <dp_valid+0x1A : 1a >
+      12:    11 64             	r1 = [r1+16] 
+      14:    40 21             	r0 = 1
+      16:    81 41             	if (r1 != 0) goto 2 <dp_valid+0x1A : 1a >
+      18:    10 16             	r0 = r1
+      1a:    80 00             	rts
+
+Disassembly of section .text.dp_scan:
+dp_scan:
+       0:    7f 04             	[--sp] = {rets, r15-r4}
+       2:    a2 97             	sp += -292
+       4:    07 16             	r7 = r0
+       6:    07 eb 11 00       	{r4, r0} = [r7+]
+       a:    38 16             	r8 = r3
+       c:    29 16             	r9 = r2
+       e:    1b 16             	r11 = r1
+      10:    15 ad             	r5 = r1 << 13
+      12:    f8 e8 04 21       	r2 = sp + 260
+      16:    4b 20             	r3 = 32
+      18:    51 16             	r1 = r5
+      1a:    c4 00             	call r4
+      1c:    00 44             	if (r0 == 0) goto 8 <dp_scan+0x26 : 26 >
+      1e:    44 22             	r4 = 2
+      20:    40 16             	r0 = r4
+      22:    42 89             	sp += 292
+      24:    5f 04             	{pc, r15-r4} = [sp++]
+      26:    dc e9 21 01       	r0 = b[sp+289] (u)
+      2a:    dc e9 20 41       	r4 = b[sp+288] (u)
+      2e:    dc e9 22 11       	r1 = b[sp+290] (u)
+      32:    dc e9 23 21       	r2 = b[sp+291] (u)
+      36:    a4 e1 20 04       	r4 <= insert(r0, p:8, l:8)
+      3a:    a4 e1 20 18       	r4 <= insert(r1, p:16, l:8)
+      3e:    a4 e1 20 2c       	r4 <= insert(r2, p:24, l:8)
+      42:    f8 e8 04 01       	r0 = sp + 260
+      46:    41 3c             	r1 = 28
+      48:    80 ea 00 00       	call 0 <dp_scan+0x4C : 4c >
+      4c:    80 e8 d2 40       	if (r4 != r0) goto 420 <dp_scan+0x1F4 : 1f4 >
+      50:    dc e9 05 01       	r0 = b[sp+261] (u)
+      54:    dc e9 04 11       	r1 = b[sp+260] (u)
+      58:    dc e9 06 21       	r2 = b[sp+262] (u)
+      5c:    dc e9 07 31       	r3 = b[sp+263] (u)
+      60:    a1 e1 20 04       	r1 <= insert(r0, p:8, l:8)
+      64:    a1 e1 20 28       	r1 <= insert(r2, p:16, l:8)
+      68:    a1 e1 20 3c       	r1 <= insert(r3, p:24, l:8)
+      6c:    c0 ff 44 38 53 50 	r0 = 1347631172 <dp_scan+0x50533844 : 50533844 >
+      72:    44 25             	r4 = 5
+      74:    80 e8 d4 11       	if (r1 != r0) goto -88 <dp_scan+0x20 : 20 >
+      78:    dc e9 08 01       	r0 = b[sp+264] (u)
+      7c:    80 f8 d0 03       	if (r0 != 1) goto -96 <dp_scan+0x20 : 20 >
+      80:    dc e9 0a 01       	r0 = b[sp+266] (u)
+      84:    e0 4d             	if (r0 != 0) goto -102 <dp_scan+0x20 : 20 >
+      86:    dc e9 0b 01       	r0 = b[sp+267] (u)
+      8a:    e0 4a             	if (r0 != 0) goto -108 <dp_scan+0x20 : 20 >
+      8c:    dc e9 0d 01       	r0 = b[sp+269] (u)
+      90:    dc e9 0c 11       	r1 = b[sp+268] (u)
+      94:    dc e9 0e 21       	r2 = b[sp+270] (u)
+      98:    dc e9 0f 31       	r3 = b[sp+271] (u)
+      9c:    a1 e1 20 04       	r1 <= insert(r0, p:8, l:8)
+      a0:    a1 e1 20 28       	r1 <= insert(r2, p:16, l:8)
+      a4:    a1 e1 20 3c       	r1 <= insert(r3, p:24, l:8)
+      a8:    f8 e8 04 61       	r6 = sp + 260
+      ac:    01 fc b8 07       	if (r1 > 3) goto -144 <dp_scan+0x20 : 20 >
+      b0:    dc e9 1d 01       	r0 = b[sp+285] (u)
+      b4:    dc e9 1c 11       	r1 = b[sp+284] (u)
+      b8:    dc e9 1e 21       	r2 = b[sp+286] (u)
+      bc:    dc e9 1f 31       	r3 = b[sp+287] (u)
+      c0:    a1 e1 20 04       	r1 <= insert(r0, p:8, l:8)
+      c4:    a1 e1 20 28       	r1 <= insert(r2, p:16, l:8)
+      c8:    a1 e1 20 3c       	r1 <= insert(r3, p:24, l:8)
+      cc:    f1 f8 a8 ff       	if (r1 != -1) goto -176 <dp_scan+0x20 : 20 >
+      d0:    dc e9 09 01       	r0 = b[sp+265] (u)
+      d4:    44 23             	r4 = 3
+      d6:    8b e8 a3 01       	if (r0 != r11) goto -186 <dp_scan+0x20 : 20 >
+      da:    dc e9 15 01       	r0 = b[sp+277] (u)
+      de:    dc e9 14 21       	r2 = b[sp+276] (u)
+      e2:    dc e9 16 11       	r1 = b[sp+278] (u)
+      e6:    dc e9 17 31       	r3 = b[sp+279] (u)
+      ea:    a2 e1 20 04       	r2 <= insert(r0, p:8, l:8)
+      ee:    a2 e1 20 18       	r2 <= insert(r1, p:16, l:8)
+      f2:    a2 e1 20 3c       	r2 <= insert(r3, p:24, l:8)
+      f6:    30 e1 ff 2f       	r0 = r2 + -1
+      fa:    80 a8             	r0 = r0 >> 8
+      fc:    f8 e8 04 11       	r1 = sp + 260
+     100:    0c e1 10 10       	r12 = r1 + 16
+     104:    00 fc 8c 3d       	if (r0 > 30) goto -232 <dp_scan+0x20 : 20 >
+     108:    4d f1 80 5f       	r13 = r5 | 0x100  #
+     10c:    86 20             		 [sp] = r6
+     10e:    16 3f             	r6 = -1
+     110:    c6 14             	r14 = 0
+     112:    c5 ff 20 83 b8 ed 	r5 = 3988292384 <dp_scan+0xEDB88320 : edb88320 >
+     118:    b4 e0 e0 1d       	r1 = r14 + r13
+     11c:    b4 e0 22 fe       	r15 = r2 - r14
+     120:    3f e9 00 01       	if (r15 >= 256) {
+     124:    4f e0 00 01       		r15 = 256
+                               	} <dp_scan+0x100 : 100 >
+     128:    72 16             	r2 = r7
+     12a:    f3 d6             	r3 = r15  #
+     12c:    20 05             		 r0 = [r2++=4] 
+     12e:    d0 ec 20 a0       	r10 = [r2+0]
+     132:    8a 84             	r2 = sp + 4
+     134:    ca 00             	call r10
+     136:    80 f8 72 01       	if (r0 != 0) goto -284 <dp_scan+0x1E : 1e >
+     13a:    0f f8 10 00       	if (r15 == 0) goto 32 <dp_scan+0x15E : 15e >
+     13e:    88 84             	r0 = sp + 4
+     140:    01 07             	r1 = b[r0++=1] (u)
+     142:    1e 19             	r6 ^= r1
+     144:    41 28             	r1 = 8
+     146:    62 e1 01 60       	r2 = r6 & 0x1
+     14a:    a2 e0 00 20       	r2 = 0x0 - r2
+     14e:    d2 19             	r2 &= r5
+     150:    e3 a1             	r3 = r6 >> 1
+     152:    90 e1 21 63       	r6 = r2 ^ r3
+     156:    01 ea f6 ff       	if (--r1 != 0) goto -20 <dp_scan+0x146 : 146 >
+     15a:    0f ea f1 ff       	if (--r15 != 0) goto -30 <dp_scan+0x140 : 140 >
+     15e:    50 ee c1 20       	r2 = b[r12+1] (u)
+     162:    50 ee c0 00       	r0 = b[r12+0] (u)
+     166:    50 ee c2 30       	r3 = b[r12+2] (u)
+     16a:    50 ee c3 10       	r1 = b[r12+3] (u)
+     16e:    a0 e1 20 24       	r0 <= insert(r2, p:8, l:8)
+     172:    a0 e1 20 38       	r0 <= insert(r3, p:16, l:8)
+     176:    02 16             	r2 = r0
+     178:    a2 e1 20 1c       	r2 <= insert(r1, p:24, l:8)
+     17c:    0e e1 00 e1       	r14 = r14 + 256
+     180:    0e ec ca 21       	if (r2 > r14) goto -108 <dp_scan+0x118 : 118 >
+     184:    dc e9 19 21       	r2 = b[sp+281] (u)
+     188:    dc e9 18 31       	r3 = b[sp+280] (u)
+     18c:    dc e9 1a 51       	r5 = b[sp+282] (u)
+     190:    dc e9 1b 71       	r7 = b[sp+283] (u)
+     194:    a3 e1 20 24       	r3 <= insert(r2, p:8, l:8)
+     198:    a3 e1 20 58       	r3 <= insert(r5, p:16, l:8)
+     19c:    a3 f1 20 7c       	r3 <= insert(r7, p:24, l:8)  #
+     1a0:    07 20             		 r7 = [sp]
+     1a2:    ea 19             	r2 = ~r6
+     1a4:    82 e8 3c 31       	if (r3 != r2) goto -392 <dp_scan+0x20 : 20 >
+     1a8:    d0 ec 9d b0       	[r9+12] = r11
+     1ac:    dc e9 11 31       	r3 = b[sp+273] (u)
+     1b0:    dc e9 10 41       	r4 = b[sp+272] (u)
+     1b4:    dc e9 12 51       	r5 = b[sp+274] (u)
+     1b8:    dc e9 13 61       	r6 = b[sp+275] (u)
+     1bc:    a4 e1 20 34       	r4 <= insert(r3, p:8, l:8)
+     1c0:    a4 e1 20 58       	r4 <= insert(r5, p:16, l:8)
+     1c4:    a4 e1 20 6c       	r4 <= insert(r6, p:24, l:8)
+     1c8:    d0 ec 91 40       	[r9+0] = r4
+     1cc:    a0 e1 20 1c       	r0 <= insert(r1, p:24, l:8)
+     1d0:    d0 ec 95 00       	[r9+4] = r0
+     1d4:    d0 ec 99 20       	[r9+8] = r2
+     1d8:    78 49             	r0 = b[r7+9] (u)
+     1da:    79 48             	r1 = b[r7+8] (u)
+     1dc:    a1 f1 20 04       	r1 <= insert(r0, p:8, l:8)  #
+     1e0:    7a 4a             		 r2 = b[r7+10] (u)
+     1e2:    a1 f1 20 28       	r1 <= insert(r2, p:16, l:8)  #
+     1e6:    7b 4b             		 r3 = b[r7+11] (u)
+     1e8:    a1 e1 20 3c       	r1 <= insert(r3, p:24, l:8)
+     1ec:    d0 ec 81 10       	[r8+0] = r1
+     1f0:    44 20             	r4 = 0
+     1f2:    87 96             	goto -468 <dp_scan+0x20 : 20 >
+     1f4:    40 20             	r0 = 0
+     1f6:    c1 ff 44 38 53 50 	r1 = 1347631172 <dp_scan+0x50533844 : 50533844 >
+     1fc:    42 20             	r2 = 0
+     1fe:    f8 e8 04 31       	r3 = sp + 260
+     202:    d8 ee 30 32       	r3 = b[r3+r2] (u)
+     206:    c8 e1 12 40       	r4 = r1 >> r0
+     20a:    44 17             	r4 = r4.b0 (u)
+     20c:    c3 19             	r3 &= r4
+     20e:    84 e8 06 30       	if (r3 != r4) goto 12 <dp_scan+0x21E : 21e >
+     212:    c2 21             	r2 += 1
+     214:    c0 28             	r0 += 8
+     216:    82 fc f2 07       	if (r2 <= 3) goto -28 <dp_scan+0x1FE : 1fe >
+     21a:    44 23             	r4 = 3
+     21c:    87 81             	goto -510 <dp_scan+0x20 : 20 >
+     21e:    44 25             	r4 = 5
+     220:    77 9f             	goto -514 <dp_scan+0x20 : 20 >
+
+Disassembly of section .text.d8pool_inventory:
+d8pool_inventory:
+       0:    7c 04             	[--sp] = {rets, r12-r4}
+       2:    c2 96             	sp += -168
+       4:    18 16             	r8 = r1
+       6:    09 16             	r9 = r0
+       8:    88 80             	r0 = sp + 0
+       a:    41 20             	r1 = 0
+       c:    52 24             	r2 = 68
+       e:    80 ea 00 00       	call 0 <d8pool_inventory+0x12 : 12 >
+      12:    90 16             	r0 = r9
+      14:    80 ea 00 00       	call 0 <d8pool_inventory+0x18 : 18 >
+      18:    01 16             	r1 = r0
+      1a:    40 21             	r0 = 1
+      1c:    08 f8 5b 00       	if (r8 == 0) goto 182 <d8pool_inventory+0xD6 : d6 >
+      20:    21 5a             	if (r1 == 0) goto 180 <d8pool_inventory+0xD6 : d6 >
+      22:    ce 98             	r6 = sp + 88
+      24:    45 20             	r5 = 0
+      26:    4a e0 01 00       	r10 = 1 <d8pool_inventory : 0 >
+      2a:    c4 14             	r12 = 0
+      2c:    c3 14             	r11 = 0
+      2e:    47 20             	r7 = 0
+      30:    c8 84             	r0 = sp + 68
+      32:    0b 1d             	r3 = r0 + r5
+      34:    90 16             	r0 = r9
+      36:    71 16             	r1 = r7
+      38:    62 16             	r2 = r6
+      3a:    80 ea 00 00       	call 0 <d8pool_inventory+0x3E : 3e >
+      3e:    00 f8 1e 06       	if (r0 == 3) goto 60 <d8pool_inventory+0x7E : 7e >
+      42:    a0 47             	if (r0 != 0) goto 142 <d8pool_inventory+0xD2 : d2 >
+      44:    c8 84             	r0 = sp + 68
+      46:    d8 ec 0a 07       	r0 = [r0+r7<<2]
+      4a:    c8 e1 a0 40       	r4 = r10 << r0
+      4e:    4c fa 0a 00       	if ((r12 & r4) == 0) goto 20 <d8pool_inventory+0x66 : 66 >
+      52:    01 a4             	r1 = r0 << 4
+      54:    8a 80             	r2 = sp + 0
+      56:    21 d8             	r1 += r2  #
+      58:    62 60             		 r2 = [r6+0] 
+      5a:    11 61             	r1 = [r1+4] 
+      5c:    01 e8 0b 20       	if (r2 == r1) goto 22 <d8pool_inventory+0x76 : 76 >
+      60:    29 1e             	r1 = r2 - r1
+      62:    81 fd 08 00       	ifs (r1 < 0) goto 16 <d8pool_inventory+0x76 : 76 >
+      66:    00 a4             	r0 = r0 << 4
+      68:    89 80             	r1 = sp + 0
+      6a:    10 18             	r0 += r1
+      6c:    c0 24             	r0 += 4
+      6e:    42 30             	r2 = 16
+      70:    61 16             	r1 = r6
+      72:    80 ea 00 00       	call 0 <d8pool_inventory+0x76 : 76 >
+      76:    94 e1 b0 b7       	r11 = r11 | (1 << r7)
+      7a:    90 e1 c0 c4       	r12 = r12 | r4
+      7e:    c5 24             	r5 += 4
+      80:    c7 21             	r7 += 1
+      82:    c6 30             	r6 += 16
+      84:    87 f9 d4 0b       	if (r7 < 5) goto -88 <d8pool_inventory+0x30 : 30 >
+      88:    d4 e9 01 c0       	[sp] = r12
+      8c:    41 20             	r1 = 0
+      8e:    ca 98             	r2 = sp + 88
+      90:    94 e1 b2 01       	r0 = r11 & (1 << r1)
+      94:    00 53             	if (r0 == 0) goto 38 <d8pool_inventory+0xBC : bc >
+      96:    c8 84             	r0 = sp + 68
+      98:    d8 ec 0a 01       	r0 = [r0+r1<<2]
+      9c:    03 a4             	r3 = r0 << 4
+      9e:    88 80             	r0 = sp + 0
+      a0:    30 d8             	r0 += r3  #
+      a2:    24 60             		 r4 = [r2+0] 
+      a4:    00 61             	r0 = [r0+4] 
+      a6:    04 1f             	r4 = r0 - r4
+      a8:    40 26             	r0 = 6
+      aa:    84 fd 14 00       	ifs (r4 < 0) goto 40 <d8pool_inventory+0xD6 : d6 >
+      ae:    84 46             	if (r4 != 0) goto 12 <d8pool_inventory+0xBC : bc >
+      b0:    8c 80             	r4 = sp + 0
+      b2:    43 d8             	r3 += r4  #
+      b4:    24 63             		 r4 = [r2+12] 
+      b6:    33 64             	r3 = [r3+16] 
+      b8:    84 e8 0d 30       	if (r3 != r4) goto 26 <d8pool_inventory+0xD6 : d6 >
+      bc:    c1 21             	r1 += 1
+      be:    c2 30             	r2 += 16
+      c0:    81 f9 e6 0b       	if (r1 < 5) goto -52 <d8pool_inventory+0x90 : 90 >
+      c4:    89 80             	r1 = sp + 0
+      c6:    52 24             	r2 = 68
+      c8:    80 16             	r0 = r8
+      ca:    80 ea 00 00       	call 0 <d8pool_inventory+0xCE : ce >
+      ce:    40 20             	r0 = 0
+      d0:    04 82             	goto 4 <d8pool_inventory+0xD6 : d6 >
+      d2:    d4 e9 01 c0       	[sp] = r12
+      d6:    22 8a             	sp += 168
+      d8:    5c 04             	{pc, r12-r4} = [sp++]
+
+Disassembly of section .text.d8pool_current:
+d8pool_current:
+       0:    75 04             	[--sp] = {rets, r5, r4}
+       2:    e2 8f             	sp += -68
+       4:    24 16             	r4 = r2
+       6:    15 16             	r5 = r1
+       8:    02 16             	r2 = r0
+       a:    40 21             	r0 = 1
+       c:    05 fc 15 06       	if (r5 > 3) goto 42 <d8pool_current+0x3A : 3a >
+      10:    04 54             	if (r4 == 0) goto 40 <d8pool_current+0x3A : 3a >
+      12:    89 80             	r1 = sp + 0
+      14:    20 16             	r0 = r2
+      16:    80 ea 00 00       	call 0 <d8pool_current+0x1A : 1a >
+      1a:    80 4f             	if (r0 != 0) goto 30 <d8pool_current+0x3A : 3a >
+      1c:    00 20             	r0 = [sp]
+      1e:    94 e1 02 05       	r0 = r0 & (1 << r5)
+      22:    00 4a             	if (r0 == 0) goto 20 <d8pool_current+0x38 : 38 >
+      24:    50 a4             	r0 = r5 << 4
+      26:    89 80             	r1 = sp + 0
+      28:    10 18             	r0 += r1
+      2a:    09 84             	r1 = r0 + 4
+      2c:    42 30             	r2 = 16
+      2e:    40 16             	r0 = r4
+      30:    80 ea 00 00       	call 0 <d8pool_current+0x34 : 34 >
+      34:    40 20             	r0 = 0
+      36:    04 81             	goto 2 <d8pool_current+0x3A : 3a >
+      38:    40 23             	r0 = 3
+      3a:    02 91             	sp += 68
+      3c:    55 04             	{pc, r5, r4} = [sp++]
+
+Disassembly of section .text.d8pool_load:
+d8pool_load:
+       0:    79 04             	[--sp] = {rets, r9-r4}
+       2:    e2 89             	sp += -92
+       4:    37 16             	r7 = r3
+       6:    25 16             	r5 = r2
+       8:    06 16             	r6 = r0
+       a:    05 59             	if (r5 == 0) goto 50 <d8pool_load+0x3E : 3e >
+       c:    04 3e             	r4 = [sp+120]
+       e:    04 57             	if (r4 == 0) goto 46 <d8pool_load+0x3E : 3e >
+      10:    d4 e9 7c 80       	r8 = [sp+124]
+      14:    08 fc 13 0e       	if (r8 > 7) goto 38 <d8pool_load+0x3E : 3e >
+      18:    ca 8c             	r2 = sp + 76
+      1a:    80 ea 00 00       	call 0 <d8pool_load+0x1E : 1e >
+      1e:    80 50             	if (r0 != 0) goto 32 <d8pool_load+0x40 : 40 >
+      20:    03 34             	r3 = [sp+80]
+      22:    f8 e8 4c 90       	r9 = sp + 76
+      26:    07 ec 0a 30       	if (r3 > r7) goto 20 <d8pool_load+0x3E : 3e >
+      2a:    85 e9 03 40       	if (r4 < r5) goto 6 <d8pool_load+0x34 : 34 >
+      2e:    48 1f             	r0 = r4 - r5
+      30:    83 e9 05 00       	if (r0 < r3) goto 10 <d8pool_load+0x3E : 3e >
+      34:    84 ec 06 50       	if (r5 <= r4) goto 12 <d8pool_load+0x44 : 44 >
+      38:    50 1f             	r0 = r5 - r4
+      3a:    00 f9 03 08       	if (r0 >= 4) goto 6 <d8pool_load+0x44 : 44 >
+      3e:    40 21             	r0 = 1
+      40:    02 97             	sp += 92
+      42:    59 04             	{pc, r9-r4} = [sp++]
+      44:    41 f0 00 01       	r1 = 256  # <d8pool_load+0x100 : 100 >
+      48:    02 36             		 r2 = [sp+88]
+      4a:    06 eb 41 00       	{r6, r0} = [r6+]
+      4e:    a1 e1 cc 26       	r1 <= insert(r2, p:13, l:19)
+      52:    52 16             	r2 = r5
+      54:    c6 00             	call r6
+      56:    01 16             	r1 = r0
+      58:    40 22             	r0 = 2
+      5a:    f1 52             	if (r1 != 0) goto -28 <d8pool_load+0x40 : 40 >
+      5c:    d0 ec 94 10       	r1 = [r9+4]
+      60:    50 16             	r0 = r5
+      62:    80 ea 00 00       	call 0 <d8pool_load+0x66 : 66 >
+      66:    01 35             	r1 = [sp+84]
+      68:    81 e8 e9 01       	if (r0 != r1) goto -46 <d8pool_load+0x3E : 3e >
+      6c:    d0 ec 94 20       	r2 = [r9+4]
+      70:    88 80             	r0 = sp + 0
+      72:    51 16             	r1 = r5
+      74:    80 ea 00 00       	call 0 <d8pool_load+0x78 : 78 >
+      78:    80 f8 e1 03       	if (r0 != 1) goto -62 <d8pool_load+0x3E : 3e >
+      7c:    88 80             	r0 = sp + 0
+      7e:    81 16             	r1 = r8
+      80:    80 ea 00 00       	call 0 <d8pool_load+0x84 : 84 >
+      84:    01 16             	r1 = r0
+      86:    40 21             	r0 = 1
+      88:    61 5b             	if (r1 == 0) goto -74 <d8pool_load+0x40 : 40 >
+      8a:    d0 ec 94 00       	r0 = [r9+4]
+      8e:    c0 60             	[r4+0] = r0
+      90:    40 20             	r0 = 0
+      92:    e7 96             	goto -84 <d8pool_load+0x40 : 40 >
+
+Disassembly of section .text.d8pool_save:
+d8pool_save:
+       0:    7f 04             	[--sp] = {rets, r15-r4}
+       2:    c2 8f             	sp += -196
+       4:    34 16             	r4 = r3
+       6:    2a 16             	r10 = r2
+       8:    18 16             	r8 = r1
+       a:    0b 16             	r11 = r0
+       c:    40 20             	r0 = 0
+       e:    41 20             	r1 = 0
+      10:    d0 e9 1d 00       	d[sp+28] = r1_r0
+      14:    d0 e9 15 00       	d[sp+20] = r1_r0
+      18:    d0 e9 0d 00       	d[sp+12] = r1_r0
+      1c:    d0 e9 05 00       	d[sp+4] = r1_r0
+      20:    47 21             	r7 = 1
+      22:    43 21             	r3 = 1
+      24:    b8 ec 03 00       	if (r8 <= 3) {
+      28:    43 20             		r3 = 0
+                               	}
+      2a:    b0 16             	r0 = r11
+      2c:    80 ea 00 00       	call 0 <d8pool_save+0x30 : 30 >
+      30:    41 21             	r1 = 1
+      32:    00 41             	if (r0 == 0) goto 2 <d8pool_save+0x36 : 36 >
+      34:    41 20             	r1 = 0
+      36:    90 e1 30 01       	r0 = r3 | r1
+      3a:    41 21             	r1 = 1
+      3c:    ba e8 00 00       	if (r10 != 0) {
+      40:    41 20             		r1 = 0
+                               	}
+      42:    10 19             	r0 |= r1
+      44:    41 21             	r1 = 1
+      46:    04 41             	if (r4 == 0) goto 2 <d8pool_save+0x4A : 4a >
+      48:    41 20             	r1 = 0
+      4a:    25 3e             	r5 = [sp+248]
+      4c:    05 fc f9 0e       	if (r5 > 7) goto 498 <d8pool_save+0x242 : 242 >
+      50:    28 ff f8 4d f6 00 	if (r4 > 7936) goto 492 <d8pool_save+0x242 : 242 >
+      56:    10 19             	r0 |= r1
+      58:    80 f8 f3 00       	if (r0 != 0) goto 486 <d8pool_save+0x242 : 242 >
+      5c:    e8 98             	r0 = sp + 120
+      5e:    a1 16             	r1 = r10
+      60:    42 16             	r2 = r4
+      62:    80 ea 00 00       	call 0 <d8pool_save+0x66 : 66 >
+      66:    80 f8 ec 02       	if (r0 != 1) goto 472 <d8pool_save+0x242 : 242 >
+      6a:    e8 98             	r0 = sp + 120
+      6c:    51 16             	r1 = r5
+      6e:    80 ea 00 00       	call 0 <d8pool_save+0x72 : 72 >
+      72:    00 f8 e6 00       	if (r0 == 0) goto 460 <d8pool_save+0x242 : 242 >
+      76:    d0 ec b0 00       	r0 = [r11+0]
+      7a:    d0 ec b0 11       	r1 = [r11+16]
+      7e:    c1 00             	call r1
+      80:    00 f8 de 00       	if (r0 == 0) goto 444 <d8pool_save+0x240 : 240 >
+      84:    a9 94             	r1 = sp + 52
+      86:    b0 16             	r0 = r11
+      88:    80 ea 00 00       	call 0 <d8pool_save+0x8C : 8c >
+      8c:    07 16             	r7 = r0
+      8e:    87 f8 d8 00       	if (r7 != 0) goto 432 <d8pool_save+0x242 : 242 >
+      92:    a9 94             	r1 = sp + 52
+      94:    00 2d             	r0 = [sp+52]
+      96:    1a 90             	r2 = r1 + 16
+      98:    43 20             	r3 = 0
+      9a:    41 20             	r1 = 0
+      9c:    94 e1 02 53       	r5 = r0 & (1 << r3)
+      a0:    05 43             	if (r5 == 0) goto 6 <d8pool_save+0xA8 : a8 >
+      a2:    25 60             	r5 = [r2+0] 
+      a4:    94 e1 10 15       	r1 = r1 | (1 << r5)
+      a8:    c3 21             	r3 += 1
+      aa:    c2 30             	r2 += 16
+      ac:    83 f8 f6 09       	if (r3 != 4) goto -20 <d8pool_save+0x9C : 9c >
+      b0:    45 20             	r5 = 0
+      b2:    94 e1 12 25       	r2 = r1 & (1 << r5)
+      b6:    02 46             	if (r2 == 0) goto 12 <d8pool_save+0xC4 : c4 >
+      b8:    c5 21             	r5 += 1
+      ba:    85 f9 fa 0b       	if (r5 < 5) goto -12 <d8pool_save+0xB2 : b2 >
+      be:    47 21             	r7 = 1
+      c0:    05 f8 bf 0a       	if (r5 == 5) goto 382 <d8pool_save+0x242 : 242 >
+      c4:    94 e1 02 08       	r0 = r0 & (1 << r8)
+      c8:    00 48             	if (r0 == 0) goto 16 <d8pool_save+0xDA : da >
+      ca:    c0 e1 84 00       	r0 = r8 << 4
+      ce:    a9 94             	r1 = sp + 52
+      d0:    10 18             	r0 += r1
+      d2:    00 61             	r0 = [r0+4] 
+      d4:    0c e1 01 00       	r12 = r0 + 1
+      d8:    04 82             	goto 4 <d8pool_save+0xDE : de >
+      da:    4c e0 01 00       	r12 = 1 <d8pool_save : 0 >
+      de:    c0 e1 5d 90       	r9 = r5 << 13
+      e2:    46 20             	r6 = 0
+      e4:    06 e8 13 50       	if (r5 == r6) goto 38 <d8pool_save+0x10E : 10e >
+      e8:    aa 84             	r2 = sp + 36
+      ea:    8b 80             	r3 = sp + 0
+      ec:    b0 16             	r0 = r11
+      ee:    61 16             	r1 = r6
+      f0:    80 ea 00 00       	call 0 <d8pool_save+0xF4 : f4 >
+      f4:    07 16             	r7 = r0
+      f6:    07 f8 0a 06       	if (r7 == 3) goto 20 <d8pool_save+0x10E : 10e >
+      fa:    87 f8 a2 00       	if (r7 != 0) goto 324 <d8pool_save+0x242 : 242 >
+      fe:    00 20             	r0 = [sp]
+     100:    88 e8 05 00       	if (r0 != r8) goto 10 <d8pool_save+0x10E : 10e >
+     104:    00 29             	r0 = [sp+36]
+     106:    b4 e0 c2 00       	r0 = r12 - r0
+     10a:    80 fd 9d 00       	ifs (r0 < 0) goto 314 <d8pool_save+0x248 : 248 >
+     10e:    c6 21             	r6 += 1
+     110:    86 f9 e8 0b       	if (r6 < 5) goto -48 <d8pool_save+0xE4 : e4 >
+     114:    88 84             	r0 = sp + 4
+     116:    41 20             	r1 = 0
+     118:    c2 ff 44 38 53 50 	r2 = 1347631172 <d8pool_save+0x50533844 : 50533844 >
+     11e:    c8 e1 22 31       	r3 = r2 >> r1
+     122:    c1 28             	r1 += 8
+     124:    83 07             	b[r0++=1] = r3
+     126:    81 f8 fa 41       	if (r1 != 32) goto -12 <d8pool_save+0x11E : 11e >
+     12a:    40 21             	r0 = 1
+     12c:    de e9 08 00       	b[sp+8] = r0
+     130:    de e9 09 50       	b[sp+9] = r5
+     134:    88 84             	r0 = sp + 4
+     136:    c0 28             	r0 += 8
+     138:    41 20             	r1 = 0
+     13a:    c8 e1 82 21       	r2 = r8 >> r1
+     13e:    c1 28             	r1 += 8
+     140:    82 07             	b[r0++=1] = r2
+     142:    81 f8 fa 41       	if (r1 != 32) goto -12 <d8pool_save+0x13A : 13a >
+     146:    88 84             	r0 = sp + 4
+     148:    c0 2c             	r0 += 12
+     14a:    41 20             	r1 = 0
+     14c:    c8 e1 c2 21       	r2 = r12 >> r1
+     150:    c1 28             	r1 += 8
+     152:    82 07             	b[r0++=1] = r2
+     154:    81 f8 fa 41       	if (r1 != 32) goto -12 <d8pool_save+0x14C : 14c >
+     158:    88 84             	r0 = sp + 4
+     15a:    c0 30             	r0 += 16
+     15c:    41 20             	r1 = 0
+     15e:    c8 e1 42 21       	r2 = r4 >> r1
+     162:    c1 28             	r1 += 8
+     164:    82 07             	b[r0++=1] = r2
+     166:    81 f8 fa 41       	if (r1 != 32) goto -12 <d8pool_save+0x15E : 15e >
+     16a:    a0 16             	r0 = r10
+     16c:    41 16             	r1 = r4
+     16e:    80 ea 00 00       	call 0 <d8pool_save+0x172 : 172 >
+     172:    89 84             	r1 = sp + 4
+     174:    0d e1 14 10       	r13 = r1 + 20
+     178:    41 20             	r1 = 0
+     17a:    d2 16             	r2 = r13
+     17c:    c8 e1 02 31       	r3 = r0 >> r1
+     180:    c1 28             	r1 += 8
+     182:    a3 07             	b[r2++=1] = r3
+     184:    81 f8 fa 41       	if (r1 != 32) goto -12 <d8pool_save+0x17C : 17c >
+     188:    88 84             	r0 = sp + 4
+     18a:    c0 38             	r0 += 24
+     18c:    41 20             	r1 = 0
+     18e:    7a 3f             	r2 = 255
+     190:    d8 ee 01 21       	b[r0+r1] = r2
+     194:    c1 21             	r1 += 1
+     196:    81 f8 fb 09       	if (r1 != 4) goto -10 <d8pool_save+0x190 : 190 >
+     19a:    8e 84             	r6 = sp + 4
+     19c:    41 3c             	r1 = 28
+     19e:    60 16             	r0 = r6
+     1a0:    80 ea 00 00       	call 0 <d8pool_save+0x1A4 : 1a4 >
+     1a4:    69 9c             	r1 = r6 + 28
+     1a6:    42 20             	r2 = 0
+     1a8:    c8 e1 02 32       	r3 = r0 >> r2
+     1ac:    c2 28             	r2 += 8
+     1ae:    93 07             	b[r1++=1] = r3
+     1b0:    82 f8 fa 41       	if (r2 != 32) goto -12 <d8pool_save+0x1A8 : 1a8 >
+     1b4:    46 20             	r6 = 0
+     1b6:    d0 ec b0 00       	r0 = [r11+0]
+     1ba:    d0 ec b0 11       	r1 = [r11+16]
+     1be:    c1 00             	call r1
+     1c0:    10 5f             	if (r0 == 0) goto 126 <d8pool_save+0x240 : 240 >
+     1c2:    d0 ec b0 00       	r0 = [r11+0]
+     1c6:    d0 ec b8 20       	r2 = [r11+8]
+     1ca:    b4 e0 90 16       	r1 = r9 + r6
+     1ce:    c2 00             	call r2
+     1d0:    90 55             	if (r0 != 0) goto 106 <d8pool_save+0x23C : 23c >
+     1d2:    16 e1 00 60       	r6 = r6 + 4096
+     1d6:    23 ff 00 6d ed ff 	if (r6 < 8192) goto -38 <d8pool_save+0x1B6 : 1b6 >
+     1dc:    04 5f             	if (r4 == 0) goto 62 <d8pool_save+0x21C : 21c >
+     1de:    4e e1 80 9f       	r14 = r9 | 0x100
+     1e2:    47 20             	r7 = 0
+     1e4:    46 16             	r6 = r4
+     1e6:    d0 ec b0 00       	r0 = [r11+0]
+     1ea:    d0 ec b0 11       	r1 = [r11+16]
+     1ee:    c1 00             	call r1
+     1f0:    10 47             	if (r0 == 0) goto 78 <d8pool_save+0x240 : 240 >
+     1f2:    b4 e0 e0 17       	r1 = r14 + r7
+     1f6:    b4 e0 a0 27       	r2 = r10 + r7
+     1fa:    63 16             	r3 = r6
+     1fc:    36 e9 00 01       	if (r6 >= 256) {
+     200:    43 e0 00 01       		r3 = 256
+                               	} <d8pool_save+0x100 : 100 >
+     204:    d0 ec b0 00       	r0 = [r11+0]
+     208:    d0 ec bc f0       	r15 = [r11+12]
+     20c:    cf 00             	call r15
+     20e:    80 56             	if (r0 != 0) goto 44 <d8pool_save+0x23C : 23c >
+     210:    07 e1 00 71       	r7 = r7 + 256
+     214:    36 e1 00 6f       	r6 = r6 + -256
+     218:    84 e9 e5 71       	if (r7 < r4) goto -54 <d8pool_save+0x1E6 : 1e6 >
+     21c:    d0 ec b0 00       	r0 = [r11+0]
+     220:    d0 ec b0 11       	r1 = [r11+16]
+     224:    c1 00             	call r1
+     226:    47 24             	r7 = 4
+     228:    00 4c             	if (r0 == 0) goto 24 <d8pool_save+0x242 : 242 >
+     22a:    d0 ec b0 00       	r0 = [r11+0]
+     22e:    d0 ec bc 60       	r6 = [r11+12]
+     232:    8a 84             	r2 = sp + 4
+     234:    4b 20             	r3 = 32
+     236:    91 16             	r1 = r9
+     238:    c6 00             	call r6
+     23a:    00 48             	if (r0 == 0) goto 16 <d8pool_save+0x24C : 24c >
+     23c:    47 22             	r7 = 2
+     23e:    04 81             	goto 2 <d8pool_save+0x242 : 242 >
+     240:    47 24             	r7 = 4
+     242:    70 16             	r0 = r7
+     244:    22 91             	sp += 196
+     246:    5f 04             	{pc, r15-r4} = [sp++]
+     248:    47 26             	r7 = 6
+     24a:    f7 9b             	goto -10 <d8pool_save+0x242 : 242 >
+     24c:    aa 84             	r2 = sp + 36
+     24e:    8b 80             	r3 = sp + 0
+     250:    b0 16             	r0 = r11
+     252:    51 16             	r1 = r5
+     254:    80 ea 00 00       	call 0 <d8pool_save+0x258 : 258 >
+     258:    f0 51             	if (r0 != 0) goto -30 <d8pool_save+0x23C : 23c >
+     25a:    00 20             	r0 = [sp]
+     25c:    88 e8 ee 01       	if (r0 != r8) goto -36 <d8pool_save+0x23C : 23c >
+     260:    00 29             	r0 = [sp+36]
+     262:    8c e8 eb 01       	if (r0 != r12) goto -42 <d8pool_save+0x23C : 23c >
+     266:    00 2a             	r0 = [sp+40]
+     268:    47 22             	r7 = 2
+     26a:    84 e8 ea 01       	if (r0 != r4) goto -44 <d8pool_save+0x242 : 242 >
+     26e:    50 ee d0 00       	r0 = b[r13+0] (u)
+     272:    dc e9 19 10       	r1 = b[sp+25] (u)
+     276:    dc e9 1a 20       	r2 = b[sp+26] (u)
+     27a:    dc e9 1b 30       	r3 = b[sp+27] (u)
+     27e:    a0 f1 20 14       	r0 <= insert(r1, p:8, l:8)  #
+     282:    04 2b             		 r4 = [sp+44]
+     284:    a0 e1 20 28       	r0 <= insert(r2, p:16, l:8)
+     288:    a0 e1 20 3c       	r0 <= insert(r3, p:24, l:8)
+     28c:    47 20             	r7 = 0
+     28e:    80 e8 d5 41       	if (r4 != r0) goto -86 <d8pool_save+0x23C : 23c >
+     292:    e7 97             	goto -82 <d8pool_save+0x242 : 242 >
+

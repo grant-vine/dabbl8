@@ -1,0 +1,141 @@
+tracks: actual expanded capabilities grant only track editing ok
+tracks: metadata contains all eight actual tracks ok
+tracks: selection reaches track 1 ok
+tracks: parameter write/read reaches track 1 ok
+tracks: parameter write isolates track 1 ok
+tracks: complete dump reaches track 1 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 1 ok
+tracks: mix write/read reaches track 1 ok
+tracks: selection reaches track 2 ok
+tracks: parameter write/read reaches track 2 ok
+tracks: parameter write isolates track 2 ok
+tracks: complete dump reaches track 2 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 2 ok
+tracks: mix write/read reaches track 2 ok
+tracks: selection reaches track 3 ok
+tracks: parameter write/read reaches track 3 ok
+tracks: parameter write isolates track 3 ok
+tracks: complete dump reaches track 3 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 3 ok
+tracks: mix write/read reaches track 3 ok
+tracks: selection reaches track 4 ok
+tracks: parameter write/read reaches track 4 ok
+tracks: parameter write isolates track 4 ok
+tracks: complete dump reaches track 4 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 4 ok
+tracks: mix write/read reaches track 4 ok
+tracks: selection reaches track 5 ok
+tracks: parameter write/read reaches track 5 ok
+tracks: parameter write isolates track 5 ok
+tracks: complete dump reaches track 5 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 5 ok
+tracks: mix write/read reaches track 5 ok
+tracks: selection reaches track 6 ok
+tracks: parameter write/read reaches track 6 ok
+tracks: parameter write isolates track 6 ok
+tracks: complete dump reaches track 6 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 6 ok
+tracks: mix write/read reaches track 6 ok
+tracks: selection reaches track 7 ok
+tracks: parameter write/read reaches track 7 ok
+tracks: parameter write isolates track 7 ok
+tracks: complete dump reaches track 7 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 7 ok
+tracks: mix write/read reaches track 7 ok
+tracks: selection reaches track 8 ok
+tracks: parameter write/read reaches track 8 ok
+tracks: parameter write isolates track 8 ok
+tracks: complete dump reaches track 8 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 8 ok
+tracks: mix write/read reaches track 8 ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: local input refusal sends nothing and preserves the session ok
+tracks: actual busy refusal is recoverable and live mix remains available ok
+tracks: actual default four-track firmware remains read-only in companion ok
+tracks: read-only client refuses track mutation ok
+tracks: no unsupported track command sent to four-track firmware ok
+tracks: untagged firmware receives identity read only ok
+tracks: unsupported/mismatched capability 0=0 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 2=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 3=9 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 4=63 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 5=7 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 6=63 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 7=100 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 8=28 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 9=15 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 10=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 11=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 12=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 13=10 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 14=1 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 14=7 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: arrays follow negotiated count 5 rather than a fixed eight ok
+tracks: arrays follow negotiated count 6 rather than a fixed eight ok
+tracks: arrays follow negotiated count 7 rather than a fixed eight ok
+tracks: malformed acknowledgment refused for operation 27 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 27 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 29 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 30 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 30 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: disconnect ignores pending reply and cancels queued mutation before transport ok
+tracks: full reply validation finishes before a queued edit can transmit ok
+tracks: fresh handshake reconnects without reviving the closed client ok
+tracks: old closed client stays disabled after reconnect ok
+tracks: client exposes no legacy/project/sample/backup write family ok
+tracks: negotiated bounds cannot be mutated by callers ok
+companion tracks: 144 checks passed; actual C four/eight-track handlers, no physical device

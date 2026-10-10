@@ -1,0 +1,226 @@
+{
+  "source_base": "f0bb720bab0313ba1367c5a906cbd5f2bed592e8",
+  "verified_source_patch_sha256": "cc7440be1da6f7732fec9d3522c020df9b3a6458cfeccfa5f595bd9325eedd53",
+  "verified_source_files": {
+    "firmware/src/core.h": "9d2e15607c83dc22b5c5354bcc5e384d20b4afa6ee01bbf604fd29682a8a6bf3",
+    "firmware/src/felucca.c": "920bab2fc057ac93705550a435887f9fef62d62f4b2290df34702b5b25e68077",
+    "firmware/src/gfx.c": "d9d4bb112eca37543b1b597e36fd2df6b1d2bf485d38acef30a589f7e663cac9",
+    "firmware/src/project.c": "ec0a8b0f2cff0055db437f9c1441ee67d8511183c66e8c47c2d75bf2c7d2cdd5",
+    "firmware/src/project_types.h": "7d2c726e5d35931d9d641bbd0d71a685e83a8d81f8059e20344292151e91d013",
+    "firmware/src/track_limits.h": "859531183b2ccdb5d376364802e9691e6570de7598d264c2619c38a787b9fb6a",
+    "firmware/src/ui_draw.c": "6f5839228c3260f6a4385c72470ec29a605abbec7e72edeeade125647972fded",
+    "firmware/src/ui_graph.c": "434d28c705fb2927908c04ff51abf3511bd65eb9fd2c1a21fa9871471cb6fb79",
+    "tests/main_workspace_test.c": "3e55aebe849447ad96695136d20febdd104d3d58964431b0475521eb1651f72c",
+    "tests/run_tests.sh": "3fd59a25a4c2fc819469cade9835b1c174402aa281054d0bd6f3e753158d0770",
+    "tests/ui_test.c": "062c211cba4740a33bf6afc3511e4d6501665d788f7abcd0fc29f35f2a2cc746"
+  },
+  "target_eight": {
+    "build_check_exit_code": 0,
+    "source_base": "f0bb720bab0313ba1367c5a906cbd5f2bed592e8",
+    "scope": "Uncommitted typed main-loop display/project arena experiment; no package, flashing or hardware qualification.",
+    "experimental_image": {
+      "bytes": 446848,
+      "sha256": "2da8fffbf397d9841928a4d624094a88f674ef459d47000d179ca0da93e91473"
+    }
+  },
+  "four": {
+    "source_base": "f0bb720bab0313ba1367c5a906cbd5f2bed592e8",
+    "build_exit_code": 0,
+    "tests_exit_code": 0,
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "integrated_ownership": [
+    {
+      "mode": "o2",
+      "compile_exit": 0,
+      "test_exit": 0,
+      "compile_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-Itests",
+        "tests/main_workspace_test.c",
+        "-o",
+        "/private/tmp/dabbl8-main-workspace-final-o2",
+        "-lm"
+      ]
+    },
+    {
+      "mode": "asan",
+      "compile_exit": 0,
+      "test_exit": 0,
+      "compile_command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-Itests",
+        "tests/main_workspace_test.c",
+        "-o",
+        "/private/tmp/dabbl8-main-workspace-final-asan",
+        "-lm"
+      ]
+    }
+  ],
+  "ui_scenes": {
+    "source_base": "f0bb720bab0313ba1367c5a906cbd5f2bed592e8",
+    "scope": "Actual eight-track UI screen pixels for every page, enabled engine, selected track, GREY/MONO and both LARGE modes; existing expanded layout defects are not qualified by this comparison. Uses identical parent generated headers for both builds.",
+    "results": [
+      {
+        "label": "parent",
+        "compile_exit": 0,
+        "test_exit": 0,
+        "pixel_bytes": 1916928000,
+        "frames": 16640,
+        "sha256": "4beb5fe8c5b7fdd5fbb2ebcfb1ca6b51918784979eee9b69779ebd108195c5c9"
+      },
+      {
+        "label": "arena",
+        "compile_exit": 0,
+        "test_exit": 0,
+        "pixel_bytes": 1916928000,
+        "frames": 16640,
+        "sha256": "4beb5fe8c5b7fdd5fbb2ebcfb1ca6b51918784979eee9b69779ebd108195c5c9"
+      }
+    ],
+    "equal": true
+  },
+  "four_track_source": {
+    "source_base": "f0bb720bab0313ba1367c5a906cbd5f2bed592e8",
+    "four_track_sources": [
+      {
+        "source": "firmware/src/felucca.c",
+        "four_track_normalized_source_equal": true,
+        "sha256": [
+          "753803b82bd596c307c34084d2f46772997c7d59d5e908639d62b1db6009ab73",
+          "753803b82bd596c307c34084d2f46772997c7d59d5e908639d62b1db6009ab73"
+        ]
+      },
+      {
+        "source": "tests/project_test.c",
+        "four_track_normalized_source_equal": true,
+        "sha256": [
+          "efd2c27ba5720aa389b7c164b635a470eceecf716849496c7343763b23731b2a",
+          "efd2c27ba5720aa389b7c164b635a470eceecf716849496c7343763b23731b2a"
+        ]
+      },
+      {
+        "source": "tests/ui_test.c",
+        "four_track_normalized_source_equal": true,
+        "sha256": [
+          "d2c55820f260b79282dc16ad19b7d25f9c34d99cc3a167d743f1ef42e128ef9e",
+          "d2c55820f260b79282dc16ad19b7d25f9c34d99cc3a167d743f1ef42e128ef9e"
+        ]
+      },
+      {
+        "source": "web/emu/felucca_web.c",
+        "four_track_normalized_source_equal": true,
+        "sha256": [
+          "5684e29046ec3cd14192239237bba79b35cba62b28c03baea1ed60314f5cd4b7",
+          "5684e29046ec3cd14192239237bba79b35cba62b28c03baea1ed60314f5cd4b7"
+        ]
+      }
+    ],
+    "native_browser_eight_syntax_exit": 0,
+    "actual_emscripten_runtime": "SKIP: emcc unavailable; native syntax is not browser runtime evidence"
+  },
+  "retained_raw_local_files": {
+    "four-build.log": {
+      "bytes": 2127,
+      "sha256": "0635c775bdcecfd2e31ceaccbdef83c4299552a8fdf075fdfe0b20fcfd543973"
+    },
+    "four-tests.log": {
+      "bytes": 365688,
+      "sha256": "7d17f2a2ac7cc516f17e820e734fd223baed07ef438cd307f0db3070e762b4c8"
+    },
+    "eight-track-probe.log": {
+      "bytes": 261,
+      "sha256": "aad040c7092bfc0058a215a5357324b81c2d732d9d37fe110cfc0c27f4bf9c9f"
+    },
+    "integrated-o2.log": {
+      "bytes": 1387,
+      "sha256": "74bdb065254e82afe2b103aca62d2fd1522d06d6b20256b0fa3ade9a4d2cf4b4"
+    },
+    "integrated-asan.log": {
+      "bytes": 1387,
+      "sha256": "74bdb065254e82afe2b103aca62d2fd1522d06d6b20256b0fa3ade9a4d2cf4b4"
+    },
+    "source-results.json": {
+      "bytes": 1357,
+      "sha256": "81eea74046a40178af2944cc7df85e435d8e012edf80d7cdae38aeb4df1e0465"
+    },
+    "scene-results.json": {
+      "bytes": 805,
+      "sha256": "a7fde105b3cc76a3bc0a66b3717ca875d613d92685530dd38874aeb8d22a8310"
+    },
+    "verified-source.diff.txt": {
+      "bytes": 19535,
+      "sha256": "cc7440be1da6f7732fec9d3522c020df9b3a6458cfeccfa5f595bd9325eedd53"
+    },
+    "host-results.json": {
+      "bytes": 1209,
+      "sha256": "e179104074ba81f4e2e5a1899ae7e627cc04b53c9fc0d192f2c983aa9e1bffef"
+    },
+    "initial-host-o2.log": {
+      "bytes": 191,
+      "sha256": "0638b7b5822a9ffdca812f8238412e658438c1429831d8bd3e898d5e59949d5a"
+    },
+    "pre-validity-results.json": {
+      "bytes": 351,
+      "sha256": "6c5d2a86917192df2c380a02a5783c8ad0ca8fd521d207378ce2a59b7b5a26db"
+    }
+  },
+  "memory": {
+    "before_general": 104468,
+    "after_general": 95716,
+    "general_capacity": 98304,
+    "pool_used": 333328,
+    "pool_capacity": 344064,
+    "required_pool_free": 8192,
+    "canvas_arena": 59520,
+    "runtime_project": 8764,
+    "main_frame_instruction_inventory": 1124
+  },
+  "qualification": {
+    "hardware": "SKIP",
+    "actual_emscripten": "SKIP",
+    "runtime_default_tracks": 4,
+    "eight_package": "NOT CREATED",
+    "storage_selection": "PENDING",
+    "full_suite_workspace_o2_checks": 14,
+    "final_standalone_workspace_o2_and_sanitizer_checks": 16,
+    "full_suite_workspace_sanitizer_checks": 16
+  }
+}

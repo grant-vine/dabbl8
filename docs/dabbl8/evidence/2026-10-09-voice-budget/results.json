@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-09T20:45:45.315845+00:00",
+  "checks": [
+    {
+      "name": "build",
+      "exit_code": 0
+    },
+    {
+      "name": "tests",
+      "exit_code": 0
+    },
+    {
+      "name": "voice-compile-O2",
+      "exit_code": 0
+    },
+    {
+      "name": "voice-budget-O2",
+      "exit_code": 0
+    },
+    {
+      "name": "voice-compile-O1",
+      "exit_code": 0
+    },
+    {
+      "name": "voice-budget-O1",
+      "exit_code": 0
+    },
+    {
+      "name": "diff-check",
+      "exit_code": 0
+    }
+  ],
+  "artifacts": {
+    "build/felucca.bin": {
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f",
+      "bytes": 447924
+    },
+    "build/felucca.fwsc": {
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb",
+      "bytes": 610086
+    },
+    "build/loader/ota.bin": {
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+      "bytes": 6930
+    },
+    "tests/golden.txt": {
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+      "bytes": 3754
+    },
+    "tests/cpu_baseline.txt": {
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+      "bytes": 2116
+    },
+    "tests/target_budget.txt": {
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e",
+      "bytes": 992
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source_commit": "309b761f5807e443a905a3beccfb4a3cf1d5c932",
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "parent_signature_head": "268981e672ae41ee12d96996a14b9f7e60437104",
+  "queue_functional_source": "43b413cb99955f231c4f31db0f2265b38efd391d",
+  "source_files": {
+    "tests/native_autosave_integration_test.c": "311772d0ce4a0f191bdad31014e30678a1b9215cadb2d9b66de506920dea7c39",
+    "tests/native_output_queue_test.c": "8e37f8f7b2bc4df74c35cbb0627c71252ffe01a734c1cd5ad29a84edd9c65eff",
+    "tests/run_tests.sh": "1f63433437cedb872a94b8ac19d8206047c4d30ddc16b554ad34af2125e29d8e",
+    "firmware/src/d8p1_runtime.c": "b43752fb75e2a15bf56cddf43381a12af625367d721b94ec8b8ab686140eb4be",
+    "firmware/src/d8p1_flash_runtime.c": "d78306f550ae3deb05d97496ff120299e0125e590f0f552475e03b69b82c3ae3",
+    "firmware/src/audio.c": "22ff55fee43acccc2d93adad5e7e05769df0f95e885e69ff6c425b3f192429ca",
+    "firmware/src/usb.c": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033",
+    "firmware/src/storage_hw.c": "103956ea65903d78c8f120dfeec719079b9a6f573e99f31a6cbbfbee9382d900"
+  },
+  "evidence_files": {
+    "README.md": "b5710dfb5d98a59c16e2a53999ed84b836aa0f0004011a9bee4e69cc76831014",
+    "checks.json": "f11d5a12564e044ab16aadc729c1258995aab2400c45df7960dea98a00ca5b8e",
+    "commands.py.txt": "66378a17d62fff704be85cf38c40d1fa23a65afd43346ab1d93de659ff3a2697",
+    "failures-and-skips.txt": "9a9d07039833535fd2a64f720dc20f1546f6da9dda1d107906a0177fc39773a7",
+    "full-upstream-suite.log": "a0c8822ebb0b99e38c0eefb9fc507ed3942e95b45ed479cc1b5cd680dbc42b1e",
+    "integration-optimized.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "integration-san.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "target-4.json": "c68e0157b4e7f1fc47a24535ed364df46943f89f9cc338a8a2b56967dbd7ecd9",
+    "target-8.json": "807419e918592e4ce7ea59dccd5fe04cf6cd3df87892adf2f891106c45299511",
+    "target-default-and-eight.log": "bb26dc67d6b2f8a113b7043f399e17804a5bedc05dbbb7fbff3e86aaa15e7caa",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "verification.log": "3583aa0f3171055809b52d4180cbffe0b8eff5cdebe2612682b818480a67acd2"
+  },
+  "scope": "Full local suite and combined logical integration, not scheduler/device qualification",
+  "target_environment": {
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "compiler": "JieLi clang4.0.1",
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1"
+  }
+}

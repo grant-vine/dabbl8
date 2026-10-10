@@ -1,0 +1,20 @@
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== M-UPGRADE entry (own loader)
+handshake answered                                   ok
+identity frame is FM-1_900                           ok
+  19 requests
+session commits                                      ok
+headers + loader + confirm, no head reads            ok
+staged body == the package's loader                  ok
+LOADER.BIN head CRC                                  ok
+record at 0xE4F00 == RAM record                      ok
+record CRC / type / magic / ota_addr                 ok
+nothing written outside 0xE0000..0xE4FFF             ok
+boot cleanup erases the area                         ok
+second boot: nothing to do                           ok
+host gone -> no commit, area clean                   ok
+no 'success' -> -13, no commit, area clean           ok
+ota test passed
+fm1pkg_make: /Users/grantv/fw-AC79_AIoT_SDK/cpu/wl82/tools/uboot.boot: No such file or directory. Set AC79_SDK to a JieLi AC79 SDK checkout.

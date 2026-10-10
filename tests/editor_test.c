@@ -110,6 +110,45 @@ static uint32_t pack7(const uint8_t *p, uint32_t n, uint8_t *a)
 
 /* 1.1 parameter locks over MOTION (64): ops 5 (set a lock), 6 (clear a step's locks, 127 every step's), 7 (the query
  * with the kinds); the query and ops 1..4 reply as before (a lock's id without bit 7) */
+static int d8_capabilities(void)
+{
+    int bad = 0; uint8_t a[6] = {0}; reset();
+    uint32_t n = request(ED_D8_CAPS, a, 0);
+    bad += check("D8 capabilities: family/schema and actual track/step/voice/event limits",
+        n == 21u && host_wire[5] == 'D' && host_wire[6] == '8' && host_wire[7] == 1u &&
+        host_wire[8] == NTRK && host_wire[9] == NSTEP && host_wire[10] == NVOICE && host_wire[11] == MOTION_MAX &&
+        host_wire[12] == P_COUNT && host_wire[13] == G_COUNT && host_wire[14] == NENGINES &&
+        host_wire[15] == 1u && host_wire[16] == 1u && host_wire[17] == 1u && host_wire[18] == 9u && host_wire[19] == 3u);
+    const char *path = getenv("D8CAPS_JSON");
+    if (path) { FILE *f = fopen(path, "w"); if (!f) return bad + 1;
+        fprintf(f, "["); for (uint32_t i = 5u; i < 20u; i++) fprintf(f, "%s%u", i == 5u ? "" : ",", host_wire[i]);
+        fprintf(f, "]\n"); fclose(f); }
+    n = request(ED_INFO, a, 0);
+    const char *info_path = getenv("D8INFO_JSON");
+    if (info_path) { FILE *f = fopen(info_path, "w"); if (!f) return bad + 1;
+        fprintf(f, "["); for (uint32_t i = 5u; i + 1u < n; i++) fprintf(f, "%s%u", i == 5u ? "" : ",", host_wire[i]);
+        fprintf(f, "]\n"); fclose(f); }
+    bad += check("INFO appends D8 discovery without replacing the legacy reply",
+        n > 4u && host_wire[n-4u] == 'D' && host_wire[n-3u] == '8' && host_wire[n-2u] == 1u);
+    project_t before, after; project_capture(&before);
+    n = request(ED_D8_CAPS, a, 1);
+    project_capture(&after);
+    bad += check("malformed capability query has an explicit bounds error, no mutation",
+        n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[6] == ED_D8_CAPS && host_wire[7] == 3u && !memcmp(&before, &after, sizeof before));
+    /* Policy at the eight-track boundary; the production handler calls this
+     * before any legacy write handler. This is not eight-track playback. */
+    bad += check("eight-track protocol policy denies old editor sound/project/preset writes",
+        !ed_family_allowed(8, ED_SET, a, 4) && !ed_family_allowed(8, ED_PRESET, a, 2) &&
+        !ed_family_allowed(8, ED_PROJECT, a, 2) && !ed_family_allowed(8, ED_BACKUP_PUT, a, 0) &&
+        !ed_family_allowed(8, ED_TRACK_PARAM, a, 4) && !ed_family_allowed(8, 127, a, 0));
+    a[0] = 2;
+    bad += check("eight-track policy permits identity and bounded reads; schema command remains distinct",
+        ed_family_allowed(8, ED_INFO, a, 0) && ed_family_allowed(8, ED_D8_CAPS, a, 0) &&
+        ed_family_allowed(8, ED_PROJECT, a, 2) && ed_family_allowed(8, ED_D8_MOTION, a, 6));
+    bad += check("four-track new firmware keeps old editor commands compatible", ed_family_allowed(4, ED_SET, a, 4));
+    return bad;
+}
+
 static int motion_locks(void)
 {
     int bad = 0;
@@ -137,6 +176,16 @@ static int motion_locks(void)
     a[2] = 127; request(ED_MOTION, a, 3);
     bad += check("MOTION op 6, 127: every lock goes, the automation stays", host_wire[6] == 0 && host_wire[8] == 1 &&
         host_wire[14] == 0 && !motion_lock_count(&trk[1]));
+    /* A distinct command carries an explicit schema. Old command replies stay unchanged. */
+    uint8_t v1[7] = {1, 1, 5, 63, P_REV, (100 + 8192) & 127, (100 + 8192) >> 7};
+    n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION schema 1: explicit track/step lock, version-prefixed reply",
+        n && host_wire[5] == 1 && host_wire[6] == 1 && host_wire[7] == 0 && motion_lock_get(&trk[1], 63, P_REV, &(int16_t){0}));
+    motion_store_t saved = motion;
+    v1[0] = 2; n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION unknown schema error refuses without mutation", n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[7] == 2u && !memcmp(&saved, &motion, sizeof saved));
+    v1[0] = 1; v1[1] = NTRK; n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION unavailable track error refuses without aliasing", n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[7] == 3u && !memcmp(&saved, &motion, sizeof saved));
     motion_clear(&trk[1]);
     return bad;
 }
@@ -147,6 +196,7 @@ static int preferences(void)
     uint8_t a[4] = {0, 7, 0, 0};
     reset();
     uint32_t n = request(ED_INFO, a, 0);
+    n -= 3u; /* appended D8 discovery; all original trailer bytes are still checked below */
     bad += check("INFO explicitly tags display capabilities after SONG without changing command 33",
         ED_SONG == 33 && ED_UI_STATE == 34 && ED_FAV_SET == 38 &&
         host_wire[n - 31] == CHAIN_ROWS && host_wire[n - 30] == 0x55 &&
@@ -980,7 +1030,7 @@ static int drum_kit_retired(void)
 #ifndef EDITOR_TEST_NO_MAIN                              /* (robust_test.c, fuzz_*.c: this file is their base) */
 int main(void)
 {
-    int bad = preferences() + motion_locks() + framing() + uart_recovery() + steps() + samples() + song_protocol() + malformed_saves() +
+    int bad = d8_capabilities() + preferences() + motion_locks() + framing() + uart_recovery() + steps() + samples() + song_protocol() + malformed_saves() +
               fm6_patches() + user_preset_roundtrip() + live_sync() + usb_burst() + menu_protocol() + drum_kit_retired();
     printf("%s\n", bad ? "EDITOR TEST FAILED" : "editor test passed");
     return bad != 0;

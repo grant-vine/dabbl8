@@ -293,7 +293,7 @@ int main(void)
             memcpy(v8 + pos, st.raw + pos9, 2u + NSTEP * 9u);
             pos += 2u + NSTEP * 9u; pos9 += 2u + NSTEP * 9u;
         }
-        memcpy(v8 + pos, st.raw + pos9, sizeof(chain_config_t) + sizeof(motion_store_t));
+        memcpy(v8 + pos, st.raw + pos9, sizeof(chain_config_t) + sizeof(motion_legacy_store_t));
         memcpy(v8 + 3056u, st.raw + PROJ_FM6_OFF, NTRK * FM6_PACKED);
         ((uint32_t *)v8)[0] = 0x46554E38u;
         ((uint32_t *)v8)[1] = 3584u;

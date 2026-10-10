@@ -1,0 +1,25 @@
+size: 744 main-loop functions built for size (8 not in this build; 104 reached from an interrupt kept -Os)
+JieLi freestanding shared-pool object compiled
+
+build/shared-pool-target/d8pool.o:	file format ELF32-pi32v2
+
+Sections:
+Idx Name          Size      Address          Type
+  0               00000000 0000000000000000 
+  1 .strtab       000000ea 0000000000000000 
+  2 .text         00000000 0000000000000000 TEXT DATA 
+  3 .text.dp_valid 0000001c 0000000000000000 TEXT DATA 
+  4 .text.dp_scan 00000222 0000000000000000 TEXT DATA 
+  5 .rela.text.dp_scan 0000000c 0000000000000000 
+  6 .text.d8pool_inventory 000000da 0000000000000000 TEXT DATA 
+  7 .rela.text.d8pool_inventory 0000003c 0000000000000000 
+  8 .text.d8pool_current 0000003e 0000000000000000 TEXT DATA 
+  9 .rela.text.d8pool_current 00000018 0000000000000000 
+ 10 .text.d8pool_load 00000094 0000000000000000 TEXT DATA 
+ 11 .rela.text.d8pool_load 00000030 0000000000000000 
+ 12 .text.d8pool_save 00000294 0000000000000000 TEXT DATA 
+ 13 .rela.text.d8pool_save 00000060 0000000000000000 
+ 14 .symtab       000000d0 0000000000000000 
+
+[] ['.ram_text: 916 insns, no calls', 'image 447924 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064']
+default app byte-identical

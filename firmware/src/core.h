@@ -8,10 +8,15 @@
 #include <stdint.h>
 
 /* ------------------------------------------------------------ sizes --- */
-#define NVOICE 8                 /* voices per part, and the budget shared by all parts */
-#define NPART 4                  /* synth parts: tracks 1..4 */
-#define NTRK NPART               /* tracks (the formats and the protocol count these): every track is a part */
+#include "track_limits.h"
 #define NSTEP 64
+#if NTRK > 4
+/* Observation only: any attempted store/update mutation invalidates a capture.
+ * Sticky changed survives epoch rollover; no new mutation authority. */
+static struct { uint32_t epoch; uint8_t changed; } d8_capture_change;
+static void d8_capture_store_changed(void)
+{ d8_capture_change.epoch++; d8_capture_change.changed=1; }
+#endif
 #define HALF_FRAMES 128          /* I2S half buffer: 2.9 ms at 44.1 kHz (a key waits 0..1 half, then plays 1 half later) */
 #ifndef FELUCCA_SLICE
 #define FELUCCA_SLICE 1          /* the SLICE engine (eng_slice.c), engine 13; FELUCCA_SLICE=0 builds without it */
@@ -244,15 +249,19 @@ static void step_set_ratchet(step_t *s, uint32_t hits)
     s->flags = (uint8_t)((s->flags & ~SF_RATCH) | ((hits < 1u ? 0u : hits > 4u ? 3u : hits - 1u) << SF_RATCH_SH));
 }
 #define MOTION_MAX 64u
-/* Four tracks x64 steps fit one byte. Values retain their signed parameter range.
+/* Runtime addresses use nine bits for eight tracks x64 steps. Historical disk
+ * records remain one-byte addresses and are converted explicitly. Values retain their signed parameter range.
  * param: the P_* id (< 128: P_COUNT is at most 127, project.c), bit 7 (MOTION_LOCK, 1.1) a parameter lock: the value
  * sounds on that step only and goes back after it (motion.c motion_step); without it an automation event, the
  * value holds until another one changes it. One record per (track, step, id), of either kind */
 #define MOTION_LOCK 0x80u
 #define MOTION_ID(e) ((uint32_t)(e)->param & 0x7Fu)
-typedef struct { uint8_t place, param; int16_t value; } motion_event_t;
+typedef struct { uint16_t place; uint8_t param; int16_t value; } motion_event_t;
 typedef struct { uint8_t count, on, rsv[2]; motion_event_t event[MOTION_MAX]; } motion_store_t;
-_Static_assert(sizeof(motion_store_t) == 260u, "motion disk layout");
+/* Frozen FUN7–FUN9 wire records; never memcpy runtime motion into these. */
+typedef struct { uint8_t place, param; int16_t value; } motion_legacy_event_t;
+typedef struct { uint8_t count, on, rsv[2]; motion_legacy_event_t event[MOTION_MAX]; } motion_legacy_store_t;
+_Static_assert(sizeof(motion_legacy_store_t) == 260u, "legacy motion disk layout");
 #define CHAIN_ROWS 16u
 typedef struct { uint8_t slot, repeat; } chain_row_t;
 typedef struct {
@@ -359,7 +368,9 @@ static inline uint32_t swing_step_len(const track_t *t, uint32_t base, uint32_t 
 }
 
 /* ----------------------------------------------------------- system --- */
+#ifndef RING_PUBLISH
 #define RING_PUBLISH() __asm__ volatile("" ::: "memory")   /* slot store before the index update */
+#endif
 static volatile uint32_t fm1_ms;  /* milliseconds since boot (TIMER4-based, TIMER5 ISR in main.c) */
 /* boot-loop guard (main.c): two boots in a row that die in the first 30 s -> UBOOT */
 #define BOOTGUARD_MAGIC 0x42475244u

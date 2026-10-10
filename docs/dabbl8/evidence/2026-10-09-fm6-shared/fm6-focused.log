@@ -1,0 +1,13 @@
+FM6 pool: eight tracks own distinct operator states PASS
+FM6 pool: state bound is eight bodies, independent of six-voice track cap PASS
+FM6 pool: another track's retrigger preserves the first operator body PASS
+FM6 pool: same destination retrigger retains nonzero operator phase PASS
+FM6 pool: ninth note reuses retired state without aliasing live notes PASS
+FM6 pool: changed-engine ownership is reclaimed with all operator state cleared PASS
+FM6 pool: returning to FM6 cannot alias the reassigned body PASS
+FM6 pool: unadmitted ninth state refuses instead of overwriting another track PASS
+FM6 pool: 5000 mixed-patch steals retain unique bounded state PASS
+FM6 pool: operator-envelope release ends all voices PASS
+FM6 pool: reset recreates eight independent operator bodies PASS
+FM6 pool: one track retains its original six-voice cap PASS
+FM6 state pool: 0 failures, 56960 shared heavy-pool host bytes

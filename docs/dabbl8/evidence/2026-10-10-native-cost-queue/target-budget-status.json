@@ -1,0 +1,11 @@
+{
+  "default_exit": 0,
+  "native_exit": 1,
+  "parent74_exit": 1,
+  "native_overruns": [
+    "uac_tap48 570/504",
+    "rev_room 303/218",
+    "rev_spring 200/126"
+  ],
+  "comparison": "Combined native report byte-identical to actual PR74 queue parent; standalone non-queue PR73 was wrong comparator. Initial assertion failure preserved. No timing qualification."
+}

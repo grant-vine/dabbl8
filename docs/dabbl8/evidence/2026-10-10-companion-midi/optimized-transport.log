@@ -1,0 +1,86 @@
+MIDI session: framed INFO/caps handshake ok
+MIDI session: only bounded handshake frames sent ok
+MIDI session: owned ports reject concurrent connection ok
+MIDI session: notes alien SysEx and WATCH push do not acknowledge request ok
+MIDI session: valid busy refusal remains recoverable ok
+MIDI session: signed parameter framing and acknowledgment ok
+MIDI session: close is idempotent ok
+MIDI session: close invalidates client and releases both ports ok
+MIDI session: closed client never sends ok
+MIDI session: late old-session frame cannot restart traffic ok
+MIDI session: fresh instance negotiates independently ok
+MIDI session: wrong command rejects ok
+MIDI session: wrong command closes session ok
+MIDI session: unknown refusal rejects ok
+MIDI session: unknown refusal closes session ok
+MIDI session: wrong refusal command rejects ok
+MIDI session: wrong refusal command closes session ok
+MIDI session: short refusal rejects ok
+MIDI session: short refusal closes session ok
+MIDI session: wrong refusal schema rejects ok
+MIDI session: wrong refusal schema closes session ok
+MIDI session: non-seven-bit payload rejects ok
+MIDI session: non-seven-bit payload closes session ok
+MIDI session: missing terminator rejects ok
+MIDI session: missing terminator closes session ok
+MIDI session: oversized reply rejects ok
+MIDI session: oversized reply closes session ok
+MIDI session: firmware refusal 1 disables editing ok
+MIDI session: firmware refusal 2 disables editing ok
+MIDI session: firmware refusal 3 disables editing ok
+MIDI session: missing reply rejects in-flight edit ok
+MIDI session: timeout blocks queued edit ok
+MIDI session: timeout never retries uncertain mutation ok
+MIDI session: input disconnect rejects pending request ok
+MIDI session: input disconnect invalidates client ok
+MIDI session: output disconnect rejects pending request ok
+MIDI session: output disconnect invalidates client ok
+MIDI session: send exception rejects ok
+MIDI session: send exception closes session ok
+MIDI session: partial open failure rejects ok
+MIDI session: partial open cleans both ports before any send ok
+MIDI session: failed open releases ownership ok
+MIDI session: abort during open rejects ok
+MIDI session: cancelled opening sends nothing and closes after open settles ok
+MIDI session: abort after connection invalidates session ok
+MIDI session: browser close failure is observable without preventing peer cleanup ok
+MIDI session: unsolicited own reply invalidates idle session ok
+MIDI session: pre-aborted connect sends nothing ok
+MIDI session: invalid signal rejected before ownership ok
+MIDI session: invalid or cancelled options never open ports ok
+MIDI session: invalid options do not retain ownership ok
+MIDI session: abort during handshake rejects and releases ports ok
+MIDI session: cancelled handshake never continues with CAPS ok
+MIDI session: cleanup preserves unrelated MIDI listeners ok
+MIDI session: externally closed port rejects pending request ok
+MIDI session: connected device with closed port requires fresh connection ok
+MIDI session: actual eight-track negotiation through framed transport ok
+MIDI session: actual selection track 1 ok
+MIDI session: actual framed mixer write track 1 ok
+MIDI session: actual mixer readback track 1 ok
+MIDI session: actual selection track 2 ok
+MIDI session: actual framed mixer write track 2 ok
+MIDI session: actual mixer readback track 2 ok
+MIDI session: actual selection track 3 ok
+MIDI session: actual framed mixer write track 3 ok
+MIDI session: actual mixer readback track 3 ok
+MIDI session: actual selection track 4 ok
+MIDI session: actual framed mixer write track 4 ok
+MIDI session: actual mixer readback track 4 ok
+MIDI session: actual selection track 5 ok
+MIDI session: actual framed mixer write track 5 ok
+MIDI session: actual mixer readback track 5 ok
+MIDI session: actual selection track 6 ok
+MIDI session: actual framed mixer write track 6 ok
+MIDI session: actual mixer readback track 6 ok
+MIDI session: actual selection track 7 ok
+MIDI session: actual framed mixer write track 7 ok
+MIDI session: actual mixer readback track 7 ok
+MIDI session: actual selection track 8 ok
+MIDI session: actual framed mixer write track 8 ok
+MIDI session: actual mixer readback track 8 ok
+MIDI session: actual signed parameter round trip ok
+MIDI session: actual four-track negotiation through framed transport ok
+MIDI session: actual four-track edit refused locally ok
+MIDI session: actual four-track handshake sends no track edits ok
+MIDI session: 85 checks passed; no real MIDI access or hardware qualification

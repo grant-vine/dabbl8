@@ -24,6 +24,9 @@ static void audio_silence(void)                 /* IRQs off: the DMA would loop 
     uint32_t i;
     for (i = 0; i < sizeof abuf / sizeof abuf[0]; i++)
         abuf[i] = 0;
+#if NTRK == 8
+    audio_nonzero[0]=audio_nonzero[1]=0; /* account the existing explicit silence */
+#endif
 }
 static int st_erase(uint32_t off)
 {
@@ -31,6 +34,9 @@ static int st_erase(uint32_t off)
     int rc;
     if (!FL_STORE_OK(off, 0x1000u))
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     f = irq_save();
     audio_silence();
     rc = FL_FAR(fl_erase4k_ram)(off, &took);
@@ -41,5 +47,8 @@ static int st_prog(uint32_t off, const void *src, uint32_t n)
 {
     if (!FL_STORE_OK(off, n))                   /* only inside the storage areas */
         return -8;
+#if NTRK > 4
+    d8_capture_store_changed();
+#endif
     return fl_write(off, src, n);
 }

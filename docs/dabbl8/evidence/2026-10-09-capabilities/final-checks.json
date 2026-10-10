@@ -1,0 +1,14 @@
+[
+  {
+    "name": "editor-final-compile",
+    "exit_code": 0
+  },
+  {
+    "name": "editor-final",
+    "exit_code": 0
+  },
+  {
+    "name": "web-final",
+    "exit_code": 0
+  }
+]

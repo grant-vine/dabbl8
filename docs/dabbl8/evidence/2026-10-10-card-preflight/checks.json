@@ -1,0 +1,30 @@
+[
+  {
+    "name": "profile-cli",
+    "exit": 0
+  },
+  {
+    "name": "optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "optimized",
+    "exit": 0
+  },
+  {
+    "name": "sanitizers-compile",
+    "exit": 0
+  },
+  {
+    "name": "sanitizers",
+    "exit": 0
+  },
+  {
+    "name": "target-and-default",
+    "exit": 0
+  },
+  {
+    "name": "full-upstream-suite",
+    "exit": 0
+  }
+]

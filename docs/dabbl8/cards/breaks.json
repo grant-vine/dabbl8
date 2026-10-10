@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "name": "breaks",
+  "engines": ["ANALOG", "FM6", "SAMPLE", "SLICE", "DRUM"]
+}

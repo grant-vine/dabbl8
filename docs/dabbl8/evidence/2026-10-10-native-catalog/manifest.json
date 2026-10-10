@@ -1,0 +1,40 @@
+{
+  "parent": "4b18db8f6c0b9ba5f436f0d30342f4e1c530dc47",
+  "functional_source": "649c6ac9fd2000076854f8161864c514aa6e260d",
+  "final_test_source": "b344d5c3a715f4c762955bb4af671d31d0983ba2",
+  "scope": "Target and initial sanitizer builds at 649c6ac; subsequent test-only protected-state coverage at 026ab73 and independent-review additions at b344d5c rerun optimized/sanitized. Full suite optimized runtime case ran 188908 checks before the review additions; full-suite sanitizer and final focused optimized/sanitizer runs cover the 425811-check version. No executable firmware changes after target build.",
+  "source_files": {
+    "firmware/src/d8p1_pool_runtime.c": "7e5e1eb017706727aed61938b69f94e43e723e955f3cdc574b7ed14c1e8e2a48",
+    "firmware/src/d8p1_pool_runtime.h": "d99a1fa471591afe76f108fb963184bcf7e42835ff45006f4d9fc76bb8364bba",
+    "firmware/src/d8p1_flash_runtime.c": "ceab60cfc0201865fba1fe5e739b551f799306ef75c421fd1fc15f8c665c6137",
+    "tests/d8p1_pool_runtime_test.c": "f5477ef3b3ec81b2fc54bc63c62056d8f21a6e5cd32316ee61cf86e4b88c7a20",
+    "tests/d8p1_flash_runtime_test.c": "2bbe864ac7e770efea245b85c69385cfd4169738ed5ba525cdcefb934deaf800",
+    "tests/run_tests.sh": "bc2bdbf4efce37fb20800c3d56d63bae553fd200ccf9d7fb96499d0354b53d7a"
+  },
+  "logs": {
+    "pool-final-san.log": "f24f423daaeba28a9536978b17bd2f146d7ce1a29a5c77bc307eae3413b956e4",
+    "pool-reviewed-san.log": "8749cddfa402821ae4647952f455a869955b625abf1b7bc50280e4cebcede4b5",
+    "full-suite-summary.log": "1f8cae4cbbbefd3161be2637622067bcc726032a17a16c689d8fb2c18d1ab521",
+    "checks.json": "4417f9e2f617c37b33cb6f537f720b5b6b7ccb7ee4f42e24e595b51bf873c8e4",
+    "target-entry-frames.txt": "f05493714387c4e17ba0344305a14b81add1a8c3941ccd349b90096421ebf6d0",
+    "pool-final.log": "f24f423daaeba28a9536978b17bd2f146d7ce1a29a5c77bc307eae3413b956e4",
+    "flash-san.log": "64a8791b574fb6506c3bff21776788ba75c90dc8f50e65cd53aad9f1e912af11",
+    "target-default-and-eight.log": "16990ab5a41219e3a41077f7d8ff01f8deacbbc5d82ee9335c3ee8fb769dac66",
+    "target-4.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-8.json": "b5539af36183f73210b9b7237124f63b0e6f8ea8ca4501d0513c5d382019bd43",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "pool-reviewed.log": "8749cddfa402821ae4647952f455a869955b625abf1b7bc50280e4cebcede4b5",
+    "flash.log": "64a8791b574fb6506c3bff21776788ba75c90dc8f50e65cd53aad9f1e912af11",
+    "parallel-review.txt": "febae297d009668985026a3208e77503776103ba6c3c60d58d369be0014d6957"
+  },
+  "full_private_log_sha256": "88c26610bc7f43a91ce69f81ed38b38cb75e26e8f328f3678fa7aca0d3ff5817",
+  "environment": "Pinned baseline Python 3.14.8, Pillow 12.3.0, fonttools 4.66.1, JieLi clang 4.0.1/toolchain archive SHA f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958; AC79 SDK d179b4484759423312073f5fbb232501aa491047; Docker linux/amd64 debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "hardware": "SKIP; no flashing, device driver execution, timing, power-loss or qualified restore",
+  "runtime_sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ]
+}

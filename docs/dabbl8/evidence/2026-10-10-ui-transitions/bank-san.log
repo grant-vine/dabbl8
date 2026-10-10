@@ -1,0 +1,39 @@
+ui: ALGORITHM reaches track eight and selects bank 5-8                         ok
+ui: selection cannot exceed track eight                                        ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: four global knobs edit only the selected four-track bank                   ok
+ui: global undo restores all eight levels/mutes and BPM without overlap        ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: four global knobs edit only the selected four-track bank                   ok
+ui: global undo restores all eight levels/mutes and BPM without overlap        ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: held global solo retains its key-down bank through selection changes       ok
+ui: C4 unmute-all keeps its role in the upper bank                             ok
+ui: F4 remains tap tempo rather than track-eight solo                          ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX white-key LPF role is unchanged on track eight                          ok
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+banked mixer renders: 46720 frames, 0 lint findings, 0 ink errors, 0 neutral-color errors, 0 alignment failures, 0 lost declarations
+bank labels: 1280 rendered checks, 0 failures
+banked mixer: 0 failures; prototype, shipping remains four tracks

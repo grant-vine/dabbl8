@@ -1,0 +1,17 @@
+from pathlib import Path
+import os,subprocess,json,hashlib
+root=Path('/Users/grantv/Code/dabbl8');repo=root/'.local-baseline/main-workspace';e=root/'.local-baseline/native-cost-queue-check'
+head='47db25dbed1057154b4917d13784999c747e2921'
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()==head
+h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+baseline=json.loads((repo/'docs/dabbl8/evidence/2026-10-10-native-integration/unchanged-artifacts.json').read_text());assert all(h(repo/k)==v for k,v in baseline.items())
+checks=json.loads((e/'checks.json').read_text());assert len(checks)==5 and all(x['exit']==0 for x in checks)
+assert (e/'target-instruction-budget-parent74.log').read_bytes()==(e/'target-instruction-budget-8.log').read_bytes()
+(e/'target-budget-status.json').write_text(json.dumps({'default_exit':0,'native_exit':1,'parent74_exit':1,'native_overruns':['uac_tap48 570/504','rev_room 303/218','rev_spring 200/126'],'comparison':'Combined native report byte-identical to actual PR74 queue parent; standalone non-queue PR73 was wrong comparator. Initial assertion failure preserved. No timing qualification.'},indent=2)+'\n')
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
+with (e/'full-upstream-suite.log').open('w') as f:proc=subprocess.run(['sh','tests/run_tests.sh'],cwd=repo,env=env,stdout=f,stderr=subprocess.STDOUT)
+checks.append({'name':'full-upstream-suite','exit':proc.returncode});(e/'checks.json').write_text(json.dumps(checks,indent=2)+'\n');print('full-upstream-suite',proc.returncode,flush=True)
+if proc.returncode:raise SystemExit(proc.returncode)
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()==head
+assert all(h(repo/k)==v for k,v in baseline.items())
+(e/'unchanged-artifacts.json').write_text(json.dumps(baseline,indent=2)+'\n');print('exact source and all six baseline artifacts unchanged',flush=True)

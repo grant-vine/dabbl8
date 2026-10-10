@@ -1,0 +1,23 @@
+ui: typed arena retains full canvas extent                                     ok
+ui: LCD keeps canvas pointer pending after blit                                ok
+ui: project name waits for DMA before overwriting arena                        ok
+ui: consumed pixels match original canvas                                      ok
+ui: blitting a project-owned arena traps before LCD access                     ok
+ui: D8P1 borrow fences pending LCD pixels                                      ok
+ui: decoded state and bounded wire fit unchanged arena                         ok
+ui: actual maximum D8P1 decodes in display arena                               ok
+ui: arena decode retains exact source bytes                                    ok
+ui: corrupt staged wire preserves decoded state                                ok
+ui: D8P1 borrow during drawing traps before writes                             ok
+ui: expanded project captures track eight                                      ok
+ui: historical export refuses eight tracks                                     ok
+ui: historical runtime load works after display ownership                      ok
+ui: project borrow during CPU drawing traps                                    ok
+ui: parent canvas remains valid after rejected borrow                          ok
+ui: an unchanged canvas can still be blitted again                             ok
+ui: partial-row DMA also completes before project borrow                       ok
+ui: empty partial blit ends CPU canvas ownership                               ok
+ui: name-cache expiry cannot import inside a canvas                            ok
+ui: next safe cache refresh consumes pending DMA                               ok
+ui: 2400 slot/song frames preserve asynchronous pixel sources                  ok
+main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors

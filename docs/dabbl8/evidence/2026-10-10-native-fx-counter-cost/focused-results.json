@@ -1,0 +1,12 @@
+{
+  "native_fx_counter_boundary_test-optimized": 0,
+  "native_fx_counter_boundary_test-sanitizer": 0,
+  "native_fx_tail_test-optimized": 0,
+  "native_fx_tail_test-sanitizer": 0,
+  "native_quiet_autosave_test-optimized": 0,
+  "native_quiet_autosave_test-sanitizer": 0,
+  "native_output_queue_test-optimized": 0,
+  "native_output_queue_test-sanitizer": 0,
+  "native_autosave_integration_test-optimized": 0,
+  "native_autosave_integration_test-sanitizer": 0
+}

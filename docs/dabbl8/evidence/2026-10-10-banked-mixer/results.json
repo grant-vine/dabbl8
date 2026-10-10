@@ -1,0 +1,143 @@
+{
+  "optimized-compile": 0,
+  "optimized-runtime": 0,
+  "sanitized-compile": 0,
+  "sanitized-runtime": 0,
+  "four-track-build": 0,
+  "upstream-suite": 0,
+  "eight-track-target": 0,
+  "felucca.bin": {
+    "bytes": 447924,
+    "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+  },
+  "felucca.fwsc": {
+    "bytes": 610086,
+    "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+  },
+  "loader/ota.bin": {
+    "bytes": 6930,
+    "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+  },
+  "banked-mixer/felucca.bin": {
+    "bytes": 444984,
+    "sha256": "7323d92ed33a3ef42822a31282b957c06cb53ca414f31cc1d7f15cd4000560f4"
+  },
+  "source_base": "22b8d9a5e573a990fd6ec7440c99dc9fb2e2246f",
+  "scope": "Preparatory issue #10; shipping four tracks; expanded target compiler image only, no package/physical qualification.",
+  "final_suite": {
+    "exit_code": 0,
+    "scope": "Final permanent renderer/gesture/conflict tests and complete upstream/extended suite"
+  },
+  "date_comparison": {
+    "date_macro": "Oct  9 2026",
+    "normal_build_date": "Oct 10 2026",
+    "normal_vs_prior_differing_offsets": [
+      441380,
+      441381
+    ],
+    "normal_vs_prior_changed_bytes": 2,
+    "date_pinned_check_exit": 0,
+    "scope": "Compiler macro held constant for reproducibility comparison; normal build retained unchanged; no source or golden changes.",
+    "felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    }
+  },
+  "source_sha256": {
+    "firmware/src/ui.c": "907a94c7e638539faa6e6ba3b0cc3a6280abab9207389759d489868e705f6a09",
+    "firmware/src/ui_draw.c": "6e08c1507fa2850976e0620d8e123d156b8772ff84c5b30a3a9c4b37ad50cab8",
+    "firmware/src/ui_graph.c": "13b415c6283dcb953ec2576c705a8fc57e0e40651078fa41e3788a2dafae09b7",
+    "firmware/src/ui_layer.c": "74c159e04f328b5751744a317fc2ffc69e2e3a7b4a3595f81150c1d4f247a108",
+    "tests/run_tests.sh": "5de62cbcc1680ac2c9fcb02e61087321da406281450c0de72eda45f06b84a51c",
+    "tests/ui_render.c": "dad1cbfd95efa496c3f66132125433e2bff1abeff96c7eddbfb8c0c967d0b9ac",
+    "tests/banked_mixer_test.c": "d47db55aca82277742b7c217a38dbd12ddd794d15b804edf5aab6b1236d7dbaf",
+    "tests/quick_layer_conflicts_test.c": "6f9c519c1edbfa1a544bd373a74e09f537f5983404a6a4c03a8825191718c089"
+  },
+  "raw_logs": {
+    "all-screens.log": {
+      "bytes": 3141,
+      "sha256": "ff2542613683c97f26b85052295d94401ab5f8ce583c4369b77a51ac23055d6d"
+    },
+    "date-pinned-build.log": {
+      "bytes": 443,
+      "sha256": "ce29745e16ef3fe44605b5b180ef447fba666b16b39c53e233f60d1f2d29a43b"
+    },
+    "eight-track-target.log": {
+      "bytes": 261,
+      "sha256": "bd1b54cdfe79976f07b01affe89842e9cedbbe3fb85a315fb4f3ad55dc462ac4"
+    },
+    "final-suite-environment-failure.log": {
+      "bytes": 49626,
+      "sha256": "a309028e942dcd0a9365b2b385ebb45df56dbe0d2bd4fd498925ee55354913e9"
+    },
+    "final-upstream-suite.log": {
+      "bytes": 379359,
+      "sha256": "8a464b5b21c2b4872181f0f9a213a6de731723aed0dff573e240be66fe83a249"
+    },
+    "four-track-build.log": {
+      "bytes": 2136,
+      "sha256": "d942c3d5c21fa98d9e7235797655c58bbacc2b9312903e32d0e46392c22ccdd8"
+    },
+    "initial-compile-failure.log": {
+      "bytes": 703,
+      "sha256": "98dd372a257e78f9ef27d554f711f48f2866dd896a677b06fc9d82e11140836a"
+    },
+    "initial-quick-conflicts-failure.log": {
+      "bytes": 460,
+      "sha256": "5c21d5f1ebb5d2428aa1a1fc4474202d7b358d6f6064a9490f3ac41b5c3897ff"
+    },
+    "initial-runtime.log": {
+      "bytes": 3595,
+      "sha256": "8fe83cd6737c55b06c5e091fc7e38200b8dd51f9d26978e0f8fb1e3c64950b6b"
+    },
+    "optimized-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "optimized-runtime.log": {
+      "bytes": 3141,
+      "sha256": "ff2542613683c97f26b85052295d94401ab5f8ce583c4369b77a51ac23055d6d"
+    },
+    "quick-conflicts-final.log": {
+      "bytes": 786,
+      "sha256": "b872b9f239c6a392342d7c69d387b8c998f4857c3d11aa14c07a14075a6a1136"
+    },
+    "quick-conflicts-sanitized.log": {
+      "bytes": 786,
+      "sha256": "b872b9f239c6a392342d7c69d387b8c998f4857c3d11aa14c07a14075a6a1136"
+    },
+    "quick-conflicts.log": {
+      "bytes": 460,
+      "sha256": "5c21d5f1ebb5d2428aa1a1fc4474202d7b358d6f6064a9490f3ac41b5c3897ff"
+    },
+    "sanitized-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sanitized-runtime.log": {
+      "bytes": 3141,
+      "sha256": "ff2542613683c97f26b85052295d94401ab5f8ce583c4369b77a51ac23055d6d"
+    },
+    "transferred-sanitized.log": {
+      "bytes": 3141,
+      "sha256": "ff2542613683c97f26b85052295d94401ab5f8ce583c4369b77a51ac23055d6d"
+    },
+    "transferred.log": {
+      "bytes": 3141,
+      "sha256": "ff2542613683c97f26b85052295d94401ab5f8ce583c4369b77a51ac23055d6d"
+    },
+    "upstream-suite.log": {
+      "bytes": 377660,
+      "sha256": "8d3b0471fe76c8c65306b5d6f83ed61fd06abd2839b2560810c6aec2724bc3cb"
+    }
+  },
+  "references": {
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  }
+}

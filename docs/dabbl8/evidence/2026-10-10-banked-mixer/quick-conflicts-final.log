@@ -1,0 +1,10 @@
+ui: SCL root key owns only track eight and does not become a bank selector     ok
+ui: DRUM black key eight selects lane eight without muting any track           ok
+ui: track-eight DRUM step key edits its lane without lower-track aliasing      ok
+ui: melodic chord key plays its chord on track eight without selecting a bank  ok
+ui: track-eight chord release leaves no held notes                             ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+quick conflicts: 0 failures; host evidence only

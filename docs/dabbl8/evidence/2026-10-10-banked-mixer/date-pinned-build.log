@@ -1,0 +1,13 @@
+In file included from <built-in>:290:
+<command line>:1:9: warning: redefining builtin macro [-Wbuiltin-macro-redefined]
+#define __DATE__ "Oct  9 2026"
+        ^
+1 warning generated.
+size: 744 main-loop functions built for size (7 not in this build; 104 reached from an interrupt kept -Os)
+{
+  "errors": [],
+  "notes": [
+    ".ram_text: 916 insns, no calls",
+    "image 447924 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+  ]
+}

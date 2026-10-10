@@ -1,0 +1,272 @@
+D8: new editor / old firmware is read-only, no unsupported query ok
+D8: read-only mutations refused before any MIDI, including unknown commands ok
+D8: unchanged v1.1.5 editor parses real new firmware INFO identically ok
+D8: supported mock pairing advertises the same capability bytes as real C ok
+D8: real C capabilities negotiate stable IDs and supported four-track writes ok
+D8: a supported pairing permits its write path                   ok
+D8: unsupported capability 0=0 is read-only                      ok
+D8: unsupported capability 1=0 is read-only                      ok
+D8: unsupported capability 2=2 is read-only                      ok
+D8: unsupported capability 3=0 is read-only                      ok
+D8: unsupported capability 3=9 is read-only                      ok
+D8: unsupported capability 4=63 is read-only                     ok
+D8: unsupported capability 5=0 is read-only                      ok
+D8: unsupported capability 5=9 is read-only                      ok
+D8: unsupported capability 6=65 is read-only                     ok
+D8: unsupported capability 7=0 is read-only                      ok
+D8: unsupported capability 10=2 is read-only                     ok
+D8: unsupported capability 11=2 is read-only                     ok
+D8: unsupported capability 12=2 is read-only                     ok
+D8: unsupported capability 13=1 is read-only                     ok
+D8: unsupported capability 14=0 is read-only                     ok
+D8: eight-track firmware never enables this four-track editor by guesswork ok
+D8: malformed capability reply is read-only                      ok
+D8: malformed capability reply is read-only                      ok
+D8: malformed capability reply is read-only                      ok
+D8: malformed capability reply is read-only                      ok
+D8: INFO/capability mismatch is read-only                        ok
+D8: timeout is read-only                                         ok
+D8: appended discovery tag preserves the legacy INFO fields      ok
+D8: explicit unsupported-schema error rejects the pending command immediately ok
+editor: INFO                                                     ok
+editor: DESC for every parameter                                 ok
+editor: SLICER parameters 45..48 over DESC                       ok
+editor: a factory preset keeps the SLICER (the track's)          ok
+editor: matrix parameters 49..60 over DESC (20 DST names)        ok
+editor: a factory preset turns every matrix slot off             ok
+editor: the chord keys 81, 82 over DESC                          ok
+editor: a factory preset keeps CHRD and VOIC (the track's)       ok
+editor: the DRUM lane levels 83..90 over DESC (percent, 100 % default) ok
+editor: a lane level is the sound's: a factory preset sets it back to 100 % ok
+editor: preferences preserve the existing SONG command           ok
+editor: an untagged PR capability cannot masquerade as SONG or preferences ok
+editor: existing SONG firmware remains compatible without preference probes ok
+editor: tagged preference extension advertises its supported controls ok
+editor: queued favorite response is applied while waiting for STOP ok
+editor: preference capabilities (palette, favorites) and palette names ok
+editor: display preference 0 (palette) round trip                ok
+editor: out-of-range palette refused                             ok
+editor: the retired font weight answers not supported            ok
+editor: empty user slot cannot be favorited                      ok
+editor: favorites filter follows device state                    ok
+editor: panel-side favorite changes refresh                      ok
+editor: saved user slot appears as favorite                      ok
+editor: overwrite retains star and refreshes name                ok
+editor: erased slot disappears and loses star                    ok
+editor: engines listed FM6 second, DRUM last (indices kept)      ok
+editor: an unknown engine follows the known ones                 ok
+editor: device presets in the device's engine order              ok
+editor: old firmware receives no unsupported preference requests ok
+editor: MENU settings (this editor has none)                     skip
+editor: all 16 scale names exposed                               ok
+editor: new scale selection is not clamped to the old range      ok
+editor: DUMP                                                     ok
+editor: SET clamps to the range                                  ok
+editor: MIDI IN routing (ROUT CH1-4 / SEL, global id 14)         ok
+editor: REVERB TYPE (ROOM / SPRING, global id 24; 25, 26 still inert) ok
+editor: STEP_SET                                                 ok
+editor: PROJECT save                                             ok
+editor: sample upload (CRC checked by the mock)                  ok
+editor: no reply -> timeout after the retries                    ok
+SAMPLE: TRANH and PERC removed, SET 1 and 4 kept as PIANO aliases, indices unchanged ok
+SAMPLE: an entry named like an earlier one is an alias of it     ok
+SAMPLE: preset 1 and SET 1 / 4 (once TRANH, PERC) land on PIANO  ok
+DRUM: KIT 1..3 (once HAND CYM H+CYM) named 66 10 77, aliases of 6 5 8: hidden, a SET lands there ok
+SAMPLE: factory preset 4 (once PERC) loads DRUM's kit            ok
+SAMPLE: old PERC project loads as DRUM's kit, the rest of the sound and the steps kept ok
+editor: PHYS models MODAL STRNG MEMB SYMP (no DUST, no DRUM), 9 presets ok
+editor: DRUM engine 10 (KIT TUNE TONE DECY SNAP ACC KICK DRV), one kit suggesting BEAT ok
+editor: mock tables == firmware (0 differences)                  ok
+editor: percent values == firmware (105 values)                  ok
+editor: enum lists in the device's knob order (36 lists)         ok
+editor: #48 DIV / RATE / TIME longest first (values unchanged: 2 is still 1/16) ok
+editor: SWG 100 shows 100 % (not 79), 0..127 percents unchanged  ok
+librarian: parameter keys unique (label#n, E0..E7)               ok
+librarian: UP_LIST, 32 slots in 2 frames                         ok
+librarian: capture = DUMP + first 16 steps                       ok
+librarian: UP_PUT -> UP_GET round trip                           ok
+librarian: UP_PUT to a slot past the bank -> rc 1                ok
+librarian: device names (ASCII, 1..12)                           ok
+librarian: UP_STORE keeps the current sound                      ok
+librarian: UP_LOAD applies the sound only (steps and the track's ARP stay) ok
+librarian: UP_ERASE, UP_LOAD of an empty slot -> rc 1            ok
+librarian: audition = G_ENGSEL + SETs of the sound; steps, LEN and ARP stay; no flash write ok
+librarian: a second audition keeps the sequence too              ok
+librarian: pattern ties / rests normalised like the firmware     ok
+librarian: UP_STORE with no name -> automatic name               ok
+library file: versioned, with P_COUNT, labels and engines        ok
+library file: write -> read round trip                           ok
+library file: other ids / engine order mapped by label and name  ok
+library file: a patch for an unknown engine is skipped           ok
+library file: bank export keeps slot numbers                     ok
+library file: 69-parameter files (patch, labelled, unlabelled) map the engine's 8 to 91..98 ok
+library file: 89-parameter files (patch, labelled, unlabelled) map the engine's 8 to 91..98, the chord keys unset ok
+library file: 91-parameter files (1.0.x: patch, labelled, unlabelled) map the engine's 8 to 91..98, the lane levels unset ok
+library file: reads the old "Save to file" format                ok
+library file: unknown format -> error                            ok
+grid: hits as text (lanes, > accent, CYM / CONGA aliases)        ok
+grid: STEP_SET / STEP_GET carry the hits (lane 8 too)            ok
+grid: a STEP_SET without hits (an older editor) keeps them       ok
+grid: TRACK_STEP carries the hits (an older firmware's reply: none) ok
+grid: capture of a DRUM track = its grid (a crash 49 on BELL)    ok
+grid: UP_PUT kind 1 -> UP_GET round trip                         ok
+grid: malformed preset extension rejected without changing saved data ok
+grid: malformed preset extension rejected without changing saved data ok
+grid: malformed preset extension rejected without changing saved data ok
+grid: a library file keeps the grid                              ok
+grid: UP_STORE of a DRUM track stores its grid                   ok
+grid: a note pattern stays a pattern (kind 0)                    ok
+ratchet: INFO 52 01 04, STEP_SET x3 after the chance             ok
+ratchet: a STEP_SET without it (an older editor) keeps the step's ok
+ratchet: never sent without the chance before it                 ok
+ratchet: TRACK_STEP x4 on another track                          ok
+ratchet: INFO 52 01 04 after 50 01 03 and 4E 01 count            ok
+ratchet: the firmware's INFO trailer; 1.0's has none and its steps read x1 ok
+ratchet: a user preset's pattern keeps it in its flags (8 | 16)  ok
+ratchet: firmware without it: no tag, steps x1                   ok
+live: WATCH on                                                   ok
+live: CHANGED while DUMP waits -> push handler, reply still matched ok
+live: RELOAD and STEP_CHANGED routed                             ok
+live: INFO 53 01 03, no RELOAD echo of an editor PRESET, nothing after its STEP_SET ok
+live: firmware before the sync tag echoes the editor's PRESET as RELOAD (the editor skips it) ok
+live: the INFO trailer of 1.0.2: backup, FM6 (a bank), then the sync tag; no FM6 v2 ok
+live: the INFO trailer of 1.0.3: FM6 v2 after the sync tag (no bank, preset patches) ok
+live: PING keeps WATCH on                                        ok
+live: WATCH ends by itself without requests                      ok
+live: drag SETs coalesce (2 frames for 40 values, latest kept)   ok
+live: no timeouts                                                ok
+live: older firmware -> WATCH unanswered (fall back to polling), no bank ok
+preferences: a reply for another setting or favorite cannot finish the request ok
+preferences: the matching reply completes the request            ok
+preferences: a reply for another setting or favorite cannot finish the request ok
+preferences: the matching reply completes the request            ok
+preferences: a reply for another setting or favorite cannot finish the request ok
+preferences: the matching reply completes the request            ok
+preferences: a reply for another setting or favorite cannot finish the request ok
+preferences: the matching reply completes the request            ok
+preferences: stale replies are routed away without leaving requests busy ok
+tracks: INFO NTRK, TRACK lists 4 parts (track 4: DRUM KIT)       ok
+tracks: TRACK selects; DUMP / SET act on it, TRACK_DUMP reads any track ok
+tracks: TRACK_STEP set / get on another track                    ok
+tracks: TRACK_MIX level / mute (track 4: its own LEVEL)          ok
+tracks: track 4 selected -> DUMP engine DRUM, UP_STORE / UP_LOAD rc 0 ok
+tracks: WATCH on                                                 ok
+tracks: RELOAD / STEP_CHANGED carry the selected track           ok
+tracks: PROJECT save / load keeps every track and the selection  ok
+tracks: older firmware parses (no tracks)                        ok
+mixer: read = TRACK + pan of every track (TRACK_DUMP)            ok
+mixer: TRACK_MIX level / mute round trip (clamped)               ok
+mixer: WATCH on                                                  ok
+mixer: pan of any track via SET (other track selected for a moment, then back; no push) ok
+mixer: device-side level (CHANGED push) and REC arm read back    ok
+mixer: track 4's level on the device pushes its LEVEL (P_LEVEL)  ok
+mixer: the mock's track 4 holds the BEAT grid (KICK CHH ... SNARE ... OHH) ok
+mixer: notes parse as numbers or note names (no GM drum names)   ok
+v4: WATCH 1 answers 1 as before (no TRACK_CHANGED pushes)        ok
+v4: WATCH 3 -> 3 (TRACK_PARAM / TRACK_CHANGED known)             ok
+v4: TRACK_PARAM get / set on other tracks (clamped as SET, selection kept, no push) ok
+v4: TRACK_PARAM of track 5: no reply                             ok
+v4: TRACK_CHANGED pushes for the other tracks, CHANGED for the selected one ok
+v4: v3 firmware -> WATCH 1, no TRACK_PARAM (pan by select / restore) ok
+SONG: INFO capability appended                                   ok
+SONG: rows and repeats round trip                                ok
+SONG: missing source rejected before PLAY                        ok
+SONG: PLAY starts from row 1                                     ok
+SONG: editing during PLAY refused, rows kept                     ok
+SONG: zero repeats rejected without changing rows                ok
+SONG: short row list rejected                                    ok
+SONG: project save/load recalls the chain                        ok
+SONG: empty chain does not PLAY                                  ok
+SONG: older firmware has no capability                           ok
+editor: old completion cannot release new connection's busy count ok
+editor: operation release is idempotent and never goes negative  ok
+editor: late reply from an unplugged device is rejected          ok
+editor: captured request cannot write through a replacement connection ok
+editor: interrupted initial load cannot paint or unlock a new session ok
+editor: unplug during library adoption aborts the old load       ok
+editor: a current connection still completes its initial load    ok
+editor: library storage delay cannot send a save to a new device ok
+FM6: pack(unpack(x)) == x for the factory patches and the init voice ok
+FM6: any 128 bytes unpack into range                             ok
+FM6: a 32-voice bank SysEx is 4104 bytes, a single voice 163     ok
+FM6: bank SysEx round trip (names, checksum)                     ok
+FM6: two single-voice messages in one file                       ok
+FM6: a wrong checksum is reported (the voice still read)         ok
+FM6: raw 4096 / 155-byte files read too                          ok
+FM6 import: bank without its checksum (4103 bytes)               ok
+FM6 import: bank without checksum and F7 (EOF)                   ok
+FM6 import: bank with a stray byte before F7 (4105 bytes)        ok
+FM6 import: bank without F7, a single voice right after          ok
+FM6 import: bank cut at EOF: its 31 whole voices                 ok
+FM6 import: single voice cut in its name                         ok
+FM6 import: single voice cut before its voice bytes: none        ok
+FM6 import: byte count written 10 00, device 6                   ok
+FM6 import: single voice with an odd byte count                  ok
+FM6 import: junk and another maker's message around the voices   ok
+FM6 import: two banks in one file: 64 voices                     ok
+FM6 import: raw 3 x 4096 bytes: 96 voices                        ok
+FM6 import: raw 128-byte packed voice                            ok
+FM6 import: supplement / performance blocks skipped, voices kept ok
+FM6 import: a 4-operator 32-voice bank: none, named as such      ok
+FM6 import: another maker's SysEx: none, its id                  ok
+FM6 import: a 3-byte maker id                                    ok
+FM6 import: a universal message: none                            ok
+FM6 import: 1000 bytes, no SysEx: none                           ok
+FM6 import: every voice sanitized (all 7F bank)                  ok
+FM6: carriers and the feedback operator of an algorithm          ok
+FM6: INFO tag (8 factory, no bank; FM6 v2 caps 3)                ok
+FM6: LIST names the factory patches, nbank 0                     ok
+FM6: the bank (target 1): GET / PUT / ERASE answer rc 3, no bank ok
+FM6: send to the track: its own patch, SLOT (P_E0 + 7 = 98) OWN  ok
+FM6: SLOT F2 loads the factory patch                             ok
+FM6: SLOT back to OWN brings the own patch back                  ok
+FM6: PUT to the track: its own patch changed                     ok
+FM6: UP_STORE of an FM6 track keeps its patch (FM6_GET user 21)  ok
+FM6: UP_LOAD plays it again, SLOT OWN                            ok
+FM6: the librarian reads a user preset with its patch            ok
+FM6: the librarian writes a user preset with its patch (UP_PUT, then FM6_PUT user) ok
+FM6: firmware without preset patches (1.0.2): UP_PUT only        ok
+FM6: a library file keeps an FM6 sound's patch (fm6)             ok
+FM6: a user preset of another engine: GET rc 2, PUT rc 1         ok
+FM6: a short record or a fifth track: rc 1                       ok
+FM6: firmware without it: no tag (the tab shows a hint)          ok
+FM6 tab: import, voices, send, factory load and the hint; no store / erase / bank export ok
+FM6 tab: no bank requests                                        ok
+FM6 tab: the hint (send to a track, then SAVE on the device), no B slots in the help ok
+DIGITAL -> FM6: the editor's conversion == the firmware's (48 sounds, 0 differ) ok
+DIGITAL -> FM6: its presets and the FM6 presets covering them == the firmware's ok
+DIGITAL retired: engine 1 reserved ("-", no presets)             ok
+DIGITAL retired: SET G_ENGSEL 1 -> FM6 with E.PIANO converted (its own patch, SLOT OWN, preset TINE EP) ok
+DIGITAL retired: PRESET 1 5 (its PAD) -> FM6, the converted patch named PAD, SLOT OWN, preset FM6 PAD ok
+library file: a DIGITAL patch (99 parameters) imports as FM6 with the converted patch ok
+library file: .. of 91 parameters (1.0.x, no lane levels then)   ok
+library file: .. of 89 parameters (labelled, and a single-patch file): the OP ENV edit carried ok
+library file: .. of 69 parameters (no OP ENV then: the defaults) ok
+library file: the converted patch and its DIGITAL values round trip ok
+library: libAdopt on a device without DIGITAL converts its DIGITAL sounds to FM6 ok
+library: .. also when the layout is unchanged (only those written) ok
+library: libAdopt turns its SAMPLE PERC sounds into DRUM's kit   ok
+library: .. adopted again: as it is (nothing more written)       ok
+library file: a SAMPLE PERC patch imports as DRUM's kit (a single-patch file too) ok
+device slot of a DIGITAL sound (engine 1, its values kept): UP_LOAD plays the converted FM6 patch ok
+editor: 8 tabs, one panel each (sound fm6 sequencer tracks library samples projects settings) ok
+editor: last tab in localStorage (try/catch) and in the URL hash ok
+editor: every string in ja and en (212 used)                     ok
+editor: page script compiles                                     ok
+editor: no colours beyond the black / white tokens in the new styles ok
+editor: every icon name is in GLYPH (36 used)                    ok
+editor: fukiai.ttf and FUKIAI-LICENSE.txt next to editor.html    ok
+editor: icons hidden until the font has loaded                   ok
+samples: editor == sampleio.py (4 WAV formats, 7737 B)           ok
+samples: the whole input == normalize (files load as before); the ends are clamped ok
+samples: autoTrim finds the sound (5403..13671 for 5513..13230: 5 ms before, 20 ms after) ok
+samples: autoTrim of silence keeps all                           ok
+samples: a cut: its length, faded to 0 at both cut ends, peak normalised ok
+samples: trim view: zoom at the pointer, 256 samples at least, inside the input, pan, out to all ok
+fm1pkg.js logicalImage                                           ok
+fm1pkg.js productOf                                              ok
+fm1ota.js: install: running firmware -> loader -> Felucca (11 reads) ok
+fm1ota.js: unplugged during the write -> stops at once           ok
+fm1ota.js: unplugged in step 1 -> error code 'lost'              ok
+fm1ota.js: no device -> error code 'notfound'                    ok
+web tests passed

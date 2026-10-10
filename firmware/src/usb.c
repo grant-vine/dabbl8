@@ -22,7 +22,10 @@
  * SET_CUR (UAC1 sampling frequency control, two discrete rates in the one alt setting). The engines stay
  * at 44.1 kHz; at 48 kHz uac_tap resamples (polyphase FIR 160 / 147, uac_fir.h) into the ring. 44.1 kHz,
  * the rate until a host asks for another, sends the samples as before, bit for bit. */
-#include "../hal/fm1_usb.h"   /* registers; relative, so the loader and the host tests find it too */
+#ifndef FELUCCA_USB_HAL
+#define FELUCCA_USB_HAL "../hal/fm1_usb.h"
+#endif
+#include FELUCCA_USB_HAL /* default hardware; host tests may supply a simulated HAL */
 #ifndef FELUCCA_CDC
 #define FELUCCA_CDC 0
 #endif
@@ -94,6 +97,17 @@ _Static_assert(UA_HI + HALF_FRAMES + UA_MAXF < UA_N, "the ring holds the band, a
 static uint32_t ua_ring[UA_N];
 static volatile uint32_t ua_w, ua_r;
 static uint32_t ep4tx[UA_MAXF] __attribute__((aligned(4)));
+#if NTRK == 8
+/* Producer owns ring/history accounting; TIMER5 owns the packet summary.
+ * Count ALL ring slots conservatively, including consumed/stalled frames.
+ * No consumer RMW counter: TIMER5 can nest in the audio producer. */
+static volatile struct { uint32_t ring, history; uint8_t packet, uncertain; } uq;
+static inline void uq_store(uint32_t *p,uint32_t value)
+{ uq.ring += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
+#define UA_STORE(p,v) uq_store((p),(v))
+#else
+#define UA_STORE(p,v) (*(p)=(v))
+#endif
 static struct {
     volatile uint8_t alt;        /* streaming interface setting: 1 = the host records */
     volatile uint8_t r48;        /* the host's rate (SET_CUR): 1 = 48 kHz, 0 = 44.1 (bus reset) */
@@ -374,25 +388,41 @@ static int get_desc(uint32_t wvalue, const uint8_t **d, uint16_t *l)
 static void sie_wr(uint32_t r, uint32_t v)
 {
     uint32_t n = 20000;
-    if (!fm1_usb_sie_on())
+    if (!fm1_usb_sie_on()) {
+#if NTRK == 8 && FELUCCA_UAC
+        uq.uncertain=1;
+#endif
         return;
+    }
     fm1_usb_sie_wr_start(r, v);
     while (!fm1_usb_sie_done() && --n)
         ;
     if (n)
         usb.timeouts = 0;                               /* consecutive failures only */
-    else if (++usb.timeouts > 50u)
-        usb.up = 0;                                     /* SIE dead (no clock?): stop polling it */
+    else {
+#if NTRK == 8 && FELUCCA_UAC
+        uq.uncertain=1;
+#endif
+        if (++usb.timeouts > 50u)
+            usb.up = 0;                                 /* SIE dead (no clock?): stop polling it */
+    }
 }
 
 static uint32_t sie_rd(uint32_t r)
 {
     uint32_t n = 20000;
-    if (!fm1_usb_sie_on())
+    if (!fm1_usb_sie_on()) {
+#if NTRK == 8 && FELUCCA_UAC
+        uq.uncertain=1;
+#endif
         return 0;
+    }
     fm1_usb_sie_rd_start(r);
     while (!fm1_usb_sie_done())
         if (!--n) {
+#if NTRK == 8 && FELUCCA_UAC
+            uq.uncertain=1;
+#endif
             if (++usb.timeouts > 50u)
                 usb.up = 0;
             return 0;
@@ -409,6 +439,9 @@ static void uac_ep4_reset(void)                         /* drop a queued packet;
     sie_wr(S_TXCSR2, 0);
     sie_wr(S_TXCSR1, 0);
     sie_wr(S_TXCSR2, 0x40);                             /* ISO */
+#if NTRK == 8
+    if(!uq.uncertain)uq.packet=0; /* only the actual successful FIFO reset */
+#endif
 }
 
 static void uac_stream(uint32_t alt)                    /* SET_INTERFACE, configuration, bus reset */
@@ -603,6 +636,9 @@ static void ep0_service(void)
     case 0x0009:                                        /* SET_CONFIGURATION: 0 or 1 only */
         if (s[2] > 1u)
             goto stall;
+#if NTRK > 4
+        if(usb.config!=s[2])d8_capture_store_changed(); /* invalidate even down/up without reset */
+#endif
         usb.config = s[2];
         if (usb.config == 1u)
             ep1_config();
@@ -767,11 +803,21 @@ static void sysex_byte(uint8_t b)
         for (i = 0; ok && i < 6u; i++)
             ok = usb.sysex[i] == UBOOT_KEY[i];
         if (ok)
+        {
+#if NTRK > 4
+            d8_capture_store_changed(); /* request invalidates before update writes */
+#endif
             usb.uboot_req = 1;
+        }
 #if FELUCCA_OTA
         else if (usb.sx_len == 6u && usb.sysex[1] == 0x22 && usb.sysex[2] == 0x24 && usb.sysex[3] == 0x35 &&
                  usb.sysex[4] == 0x7F)
+        {
+#if NTRK > 4
+            d8_capture_store_changed(); /* request invalidates before update writes */
+#endif
             usb.ota_req = 1;
+        }
         else if (sx_collect && sx_pos) {
             sx_frame_len = sx_pos;
             RING_PUBLISH();
@@ -1007,10 +1053,13 @@ static __attribute__((noinline)) void uac_render_start(void)   /* audio ISR, bef
             for (i = 0; i < 2u * RS_H; i++)
                 rs.l[i] = rs.r[i] = 0;
             rs.w = rs.ph = 0;
+#if NTRK == 8
+            uq.history=0; /* follows the complete existing history reset */
+#endif
         }
 #endif
         for (i = 0; i < prime; i++)
-            ua_ring[(r + i) & (UA_N - 1u)] = 0;
+            UA_STORE(&ua_ring[(r + i) & (UA_N - 1u)],0);
         RING_PUBLISH();
         ua_w = r + prime;
         uac.fill_min = prime;
@@ -1045,6 +1094,9 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
     for (i = 0; i < n; i++) {
         uint32_t s = h & (RS_H - 1u);
         int16_t l = (int16_t)uac_s16(out[2u * i]), r = (int16_t)uac_s16(out[2u * i + 1u]);
+#if NTRK == 8
+        uq.history += (uint32_t)(l!=0||r!=0)-(uint32_t)(rs.l[s]!=0||rs.r[s]!=0);
+#endif
         rs.l[s] = rs.l[s + RS_H] = l;
         rs.r[s] = rs.r[s + RS_H] = r;
         h++;
@@ -1078,7 +1130,7 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
                 yr = (int32_t)q2 * 1000 - 25000;
             }
 #endif
-            ua_ring[(w + k++) & (UA_N - 1u)] = (uint32_t)(uint16_t)yl | (uint32_t)(uint16_t)yr << 16;
+            UA_STORE(&ua_ring[(w + k++) & (UA_N - 1u)],(uint32_t)(uint16_t)yl | (uint32_t)(uint16_t)yr << 16);
             ph += UAC_FIR_M;
         } while (ph < UAC_FIR_L);
         ph -= UAC_FIR_L;
@@ -1111,15 +1163,15 @@ static __attribute__((noinline)) void uac_tap(const int32_t *out, uint32_t n)   
         static uint32_t ph;
         for (i = 0; i < n; i++, ph = ph == 99u ? 0u : ph + 1u) {
             uint32_t q = ph < 50u ? ph : 100u - ph, q2 = ph < 50u ? 50u - ph : ph - 50u;
-            ua_ring[(w + i) & (UA_N - 1u)] = (uint32_t)(uint16_t)(int16_t)((int32_t)q * 1000 - 25000) |
-                                             (uint32_t)(uint16_t)(int16_t)((int32_t)q2 * 1000 - 25000) << 16;
+            UA_STORE(&ua_ring[(w + i) & (UA_N - 1u)],(uint32_t)(uint16_t)(int16_t)((int32_t)q * 1000 - 25000) |
+                                             (uint32_t)(uint16_t)(int16_t)((int32_t)q2 * 1000 - 25000) << 16);
         }
         (void)out;
     }
 #else
     for (i = 0; i < n; i++)
-        ua_ring[(w + i) & (UA_N - 1u)] = (uint32_t)(uint16_t)uac_s16(out[2u * i]) |
-                                         (uint32_t)(uint16_t)uac_s16(out[2u * i + 1u]) << 16;
+        UA_STORE(&ua_ring[(w + i) & (UA_N - 1u)],(uint32_t)(uint16_t)uac_s16(out[2u * i]) |
+                                         (uint32_t)(uint16_t)uac_s16(out[2u * i + 1u]) << 16);
 #endif
     RING_PUBLISH();
     ua_w = w + n;
@@ -1176,6 +1228,20 @@ static uint32_t uac_packet(uint32_t *d)
     return n;
 }
 
+#if NTRK == 8
+/* Logical firmware buffers only: peripheral FIFOs/codec/host capture and
+ * IRQ-off deadlines still need device evidence. Never clear audio for a save.
+ * Stalled streams or SIE failures can defer indefinitely. */
+static int uac_output_quiet(void)
+{
+#if FELUCCA_UAC_TONE
+    return 0; /* autonomous benchmark generator, not a musical idle state */
+#else
+    return !uq.ring&&!uq.history&&!uq.packet&&!uq.uncertain&&!uac.last;
+#endif
+}
+#endif
+
 /* TIMER5, 2 kHz, also nested in the render: the host takes one packet per 1 ms frame; queue the
  * next one as soon as the last has gone (TxPktRdy clear). Not paced on SOF-pending (see usb_poll).
  * The ring is fed only while the host reads: it often selects alt 1 long before its first IN token,
@@ -1202,6 +1268,11 @@ static void uac_service(void)
     uac.queued = 1;
     uac.wait = 0;
     n = uac_packet(ep4tx);
+#if NTRK == 8
+    uint32_t nonzero=0;
+    for(unsigned i=0;i<n;i++)nonzero|=ep4tx[i];
+    uq.packet=(uint8_t)(nonzero!=0); /* actual packet replacing the completed one */
+#endif
     fm1_usb_ep4_send(ep4tx, n * 4u);
     sie_wr(S_TXCSR1, 0x01);                             /* TxPktRdy (and UnderRun cleared) */
 }

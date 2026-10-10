@@ -1,0 +1,27 @@
+[
+  {
+    "name": "legacy",
+    "expected": false,
+    "state": {
+      "writable": false,
+      "fallback": "Read-only connection. This editor cannot safely edit this firmware. FELUCCA v1.0 (MOCK) · 4 tracks. This firmware has no supported Dabbl8 handshake.",
+      "tabsHidden": true,
+      "sent": 0,
+      "refused": true
+    },
+    "errors": []
+  },
+  {
+    "name": "supported",
+    "expected": true,
+    "state": {
+      "writable": true,
+      "fallback": "",
+      "tabsHidden": false,
+      "sent": 2,
+      "refused": false,
+      "before": 104
+    },
+    "errors": []
+  }
+]

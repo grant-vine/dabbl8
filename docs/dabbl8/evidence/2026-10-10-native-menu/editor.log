@@ -1,0 +1,195 @@
+editor: expanded capabilities advertise track envelope, refuse legacy writes   ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: unknown envelope schema refuses before mutation                        ok
+editor: empty envelope refuses before mutation                                 ok
+editor: missing operation refuses before mutation                              ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: track eight index is refused without aliasing track zero               ok
+editor: unknown parameter refused before mutation                              ok
+editor: step 64 index is refused without overflow                              ok
+editor: invalid step chance refused before mutation                            ok
+editor: invalid step ratchet refused before mutation                           ok
+editor: trailing step bytes refused before mutation                            ok
+editor: busy song refuses step mutation explicitly                             ok
+editor: busy song refuses timing mutation explicitly                           ok
+editor: busy song still allows live mix parameters                             ok
+editor: legacy parameter write remains denied on expanded firmware             ok
+editor: project query exposes exactly three active identities                  ok
+editor: project query exposes exactly three active identities                  ok
+editor: project query exposes exactly three active identities                  ok
+editor: historical fourth project query is refused without aliasing            ok
+editor: legacy project load/save remains denied with live music intact         ok
+editor: legacy project load/save remains denied with live music intact         ok
+editor: editor slot descriptor reports three while historical descriptor remains four ok
+editor: expanded firmware does not advertise an unimplemented native full backup ok
+editor: versioned editing made no flash erase or write                         ok
+versioned tracks: 194 assertions, 0 failures; host evidence only

@@ -125,7 +125,8 @@ static void pack_fun7_89(project_store_t *out, const project_t *q, const motion_
         }
     }
     memcpy(b + pos, &q->chain, sizeof q->chain); pos += sizeof q->chain;
-    memcpy(b + pos, m, sizeof *m);
+    /* Explicit historical bytes; runtime records now have a wider address. */
+    if (!motion_legacy_encode(b + pos, m)) abort();
     sum = proj_hash(b, PROJ_STORE_SIZE - 4u); memcpy(b + PROJ_STORE_SIZE - 4u, &sum, 4);
 }
 static int fun7_89(void)

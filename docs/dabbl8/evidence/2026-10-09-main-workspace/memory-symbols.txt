@@ -1,0 +1,37 @@
+01c0f1b4 l       .bss		 00005f80 chain
+02001be4 l     F .text		 000000a8 chain_apply
+0200ebc8 l     F .text		 00000022 chain_busy
+01c1d760 l       .bss		 00000024 chain_config
+0200b33e l     F .text		 0000001e chain_defaults
+02017446 l     F .text		 00000058 chain_play_ui
+02010a62 l     F .text		 000001d2 chain_prepare
+0200b0c6 l     F .text		 00000032 chain_valid
+01c1d414 l       .bss		 00000004 cv_canvas_valid
+01c1d418 l       .bss		 00000004 cv_cpu_active
+020259f4 l     F .text		 00002cbc fm1_main
+01c1d428 l       .bss		 00000004 fm1_main.t0
+01c20000 l       .pool		 0000db60 heavy_pool
+01c1d60b l       .bss		 0000001b kb_trk
+02000570 l     F .text		 00000034 lcd_data
+01c619c0 l       .pool		 0000e880 main_workspace
+0200d8fc l     F .text		 00000008 motion_guard
+0200b35c l     F .text		 00000072 proj_trk_from
+0200b3f0 l     F .text		 0000001e proj_trk_from_v2
+01c08944 l       .bss		 00003760 trk
+02002236 l     F .text		 00000034 trk_all_off
+0201d000 l     F .text		 00000016 trk_level
+0200188a l     F .text		 0000010c trk_note_off
+020024aa l     F .text		 00000432 trk_note_on
+01c7a100         *ABS*		 00000000 _sstack_lo
+01c7c000         *ABS*		 00000000 _sstack_top
+01c08140         .bss		 00000000 _bss_start
+01c7a000         *ABS*		 00000000 _guard1
+01c20000         .pool		 00000000 _pool_start
+01c1f5e4         .bss		 00000000 _bss_end
+01c7a000         *ABS*		 00000000 _ustack_top
+01c08000         .data		 00000000 _data_start
+0206d16c         *ABS*		 00000000 _data_load
+01c08134         .data		 00000000 _data_end
+01c71610         .pool		 00000000 _pool_end
+01c74000         *ABS*		 00000000 _guard0
+01c74100         *ABS*		 00000000 _ustack_lo

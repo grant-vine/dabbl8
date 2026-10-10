@@ -1,0 +1,12 @@
+WHEEL pool: eight organ tracks have unique sounding state and audible output PASS
+WHEEL pool: per-track rotor/bar caches remain independent PASS
+WHEEL pool: same-owner retrigger retains running phases and gain ramps PASS
+WHEEL pool: a ninth note preserves other live organ state and rotor PASS
+WHEEL pool: an unadmitted ninth body refuses without aliasing PASS
+WHEEL pool: new owner starts with cleared organ state PASS
+WHEEL pool: unison retains eight sounding organ bodies PASS
+WHEEL pool: single-trigger percussion stays on the first unison body PASS
+WHEEL pool: one organ track keeps its original eight-voice cap PASS
+WHEEL pool: 5000 mixed notes and engine fades preserve unique state PASS
+WHEEL pool: all organ release tails finish PASS
+WHEEL pool result: 0 failures, 56960 host bytes in existing shared pool

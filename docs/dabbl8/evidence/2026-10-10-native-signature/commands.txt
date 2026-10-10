@@ -1,0 +1,4 @@
+cc -O2 -w -Ibuild/gen -Ifirmware/src -o <private>/signature firmware/src/d8p1.c tests/native_signature_test.c -lm; run from repository.
+cc -O1 -g -w -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined -Ibuild/gen -Ifirmware/src -o <private>/signature-san firmware/src/d8p1.c tests/native_signature_test.c -lm; ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 run.
+Same two builds/runs with tests/d8p1_runtime_test.c.
+Pinned target uses tools/build.py build_app/check, separate OUTbuild/native-signature-{4,8}, unchangedCFLAGS then-DNPART=8; assert defaultSHA matches baseline and linked native d8p1_signature_runtime. Target orchestration SHA recorded; target disassembly retained privately. Baseline sixhash comparison against retained resident-tail-check/unchanged-artifacts.json.

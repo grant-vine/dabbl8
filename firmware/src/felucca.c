@@ -54,11 +54,17 @@
 /* ----------------------------------------------------- base, display --- */
 #include "libc.c"
 #include "lcd.c"
+#include "track_limits.h"
+#if NPART < NVOICE
 #include "gfx.c"
+#endif
 
 /* ----------------------------------------------------------- sound --- */
 #include "core.h"
 #include "engines.c"             /* dsp.c, the eng_*.c files, the factory patterns */
+#if NPART >= NVOICE
+#include "gfx.c"
+#endif
 #include "params.c"
 #include "mod.c"               /* the modulation matrix, used by voice.c and fx.c */
 #include "voice.c"
@@ -93,6 +99,18 @@
 #endif
 #include "upreset.c"             /* user presets (RAM mirror; flash with FELUCCA_FLASH) */
 #include "project.c"
+#if NPART >= NVOICE
+#include "d8p1.c"                /* freestanding codec for the in-memory native API */
+#include "d8p1_runtime.c"        /* stopped native adoption */
+#include "d8pool.c"               /* virtual explicitly migrated storage backend */
+#include "d8p1_pool_runtime.c"    /* native runtime persistence; no implicit migration */
+#if FELUCCA_FLASH
+#include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
+#include "d8p1_flash_runtime.c"     /* explicitly authorized existing-driver adapter */
+#include "project_native_flash.c"    /* explicit ownership handoff to menu */
+#include "native_autosave_session.c" /* dormant until explicit session authorization */
+#endif
+#endif
 #if FELUCCA_OTA
 #include "ota.c"
 #include "ota_hw.c"

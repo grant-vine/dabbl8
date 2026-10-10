@@ -1,0 +1,19 @@
+
+build/d8p1-codec.o:	file format ELF32-pi32v2
+
+SYMBOL TABLE:
+00000000         *UND*		 00000000 
+00000000 l    df *ABS*		 00000000 firmware/src/d8p1.c
+00000068         .text.fields_ok		 00000000 .GJTIE4_0_0_
+00000058         .text.fields_ok		 00000000 .GJTIL4_0_0_
+00000000 l       .rodata.str1.1		 00000005 .L.str
+00000005 l       .rodata.str1.1		 00000005 .L.str.1
+00000000 l     F .text.fields_ok		 00000448 fields_ok
+00000000 l     F .text.file_crc		 0000003e file_crc
+00000000 l     F .text.find		 0000001e find
+00000000 l     F .text.name_ok		 00000028 name_ok
+00000000 g     F .text.d8p1_crc32		 00000042 d8p1_crc32
+00000000 g     F .text.d8p1_read		 000001b2 d8p1_read
+00000000 g     F .text.d8p1_refs_available		 0000006c d8p1_refs_available
+00000000 g     F .text.d8p1_write		 00000240 d8p1_write
+00000000         *UND*		 00000000 memcpy

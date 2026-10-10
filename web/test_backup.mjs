@@ -17,11 +17,13 @@ ok(throws(() => bkUnpack([...bkPack(b.subarray(0, 14)), 0], 14)), "backup: trail
 
 /* a device: objects by id, sample slots, the order of writes */
 function device(objs, opt = {}) {
-  const d = { objs: new Map(objs), log: [], staged: null };
+  const d = { objs: new Map(objs), log: [], requests: [], staged: null, sample: new Map() };
   d.request = async ([cmd, a]) => {
+    d.requests.push([cmd, a.slice()]);
     if (cmd === BACKUP_CMD.LIST) {
-      const out = [1, 0, BACKUP_IDS.length];
-      for (const id of BACKUP_IDS) { const v = d.objs.get(id) || new Uint8Array(0); out.push(id, ...bkU32(v.length), ...bkU32(v.length ? bkCrc(v) : 0)); }
+      const ids = opt.listIds || BACKUP_IDS.filter((id) => id >= 32 || id <= (opt.maxId ?? 9));
+      const out = [1, 0, ids.length];
+      for (const id of ids) { const v = d.objs.get(id) || new Uint8Array(0); out.push(id, ...bkU32(v.length), ...bkU32(v.length ? bkCrc(v) : 0)); }
       return out;
     }
     if (cmd === BACKUP_CMD.GET) {
@@ -41,7 +43,19 @@ function device(objs, opt = {}) {
       if (op === 2) { const s = Uint8Array.from(d.staged.bytes); const rc = bkCrc(s) === d.staged.crc ? 0 : 2; if (!rc) { d.objs.set(id, s); d.log.push(id); } return [op, id, rc]; }
       if (op === 3) { d.log.push(`abort ${id}`); return [op, id, 0]; }
     }
-    if (cmd === 11 || cmd === 12 || cmd === 13 || cmd === 14) { if (cmd === 13 || cmd === 14) d.log.push(32 + a[0]); return [a[0], 0]; }
+    if (cmd === 11) { d.sample.set(a[0], []); return [a[0], 0]; }
+    if (cmd === 12) {
+      const p = a.slice(4), n = Math.floor(p.length / 8) * 7 + Math.max(0, p.length % 8 - 1);
+      d.sample.get(a[0]).push({ off: a[1] | a[2] << 7 | a[3] << 14, bytes: bkUnpack(p, n) });
+      return [...a.slice(0, 4), 0];
+    }
+    if (cmd === 13) {
+      const parts = d.sample.get(a[0]);
+      const bytes = new Uint8Array(Math.max(512, ...parts.map((p) => p.off + p.bytes.length)));
+      bytes.set(bkUnpack(a.slice(1), 480)); for (const p of parts) bytes.set(p.bytes, p.off);
+      d.objs.set(32 + a[0], bytes); d.log.push(32 + a[0]); return [a[0], 0];
+    }
+    if (cmd === 14) { d.objs.delete(32 + a[0]); d.log.push(32 + a[0]); return [a[0], 0]; }
     throw new Error(`unexpected ${cmd}`);
   };
   return d;
@@ -76,7 +90,7 @@ ok([0, 1, 2, 6].every((id) => target.objs.get(id).every((v, i) => v === objs.fin
   const odd = JSON.parse(JSON.stringify(file)); odd.objects = odd.objects.filter((o) => o.id !== 33);
   ok(throws(() => readBackup(odd)), "backup: an archive missing another object is refused");
 }
-{   /* 1.0.3: an old archive with a bank restores its id 8 (after 6, 7); a new archive onto 1.0.2 skips id 9 */
+{   /* Older archives remain readable; unsupported newer objects stop before writes. */
   const bankBytes = rnd(3472, 8), patches = rnd(3728, 9);
   const v2dev = device([...objs, [8, bankBytes]]);
   const v2file = await captureBackup(async ([cmd, a]) => {   // (a 1.0.2 device: 12 objects)
@@ -93,12 +107,63 @@ ok([0, 1, 2, 6].every((id) => target.objs.get(id).every((v, i) => v === objs.fin
      to103.objs.get(8).every((v, i) => v === bankBytes[i]), "backup: a 1.0.2 archive (id 8, the bank) restores, its bank after the user presets");
   const newFile = await captureBackup(device([...objs, [9, patches]]).request, "1.0.3");
   const to102 = device([], { maxId: 8 });
-  await restoreBackup(to102.request, newFile);
-  ok(to102.log.includes("refused 9") && !to102.objs.has(9) && to102.log.at(-1) === 0,
-    "backup: a 1.0.3 archive onto older firmware: id 9 skipped, the rest restored");
+  const original = JSON.stringify(newFile);
+  let message = "";
+  try { await restoreBackup(to102.request, newFile); } catch (e) { message = e.message; }
+  ok(/unsupported archive objects 9/.test(message) && to102.log.length === 0 && to102.requests.every(([cmd]) => cmd === BACKUP_CMD.LIST),
+    "backup: unsupported FM6 patches refused before any destructive request");
+  ok(JSON.stringify(newFile) === original, "backup: refused archive retains all original objects and bytes");
   const to103b = device([]);
   await restoreBackup(to103b.request, newFile);
   ok(to103b.objs.get(9).every((v, i) => v === patches[i]), "backup: a 1.0.3 archive restores id 9");
+}
+// An advertised object can still be refused later. Do not skip it or report a
+// successful restore, even if the device lied about support in its manifest.
+const lying = device([], { maxId: 8, listIds: BACKUP_IDS });
+ok(await athrows(() => restoreBackup(lying.request, file)) && lying.log.includes("refused 9") && !lying.log.includes(0),
+  "backup: refusal after preflight stops, never skips object 9 or restores live music");
+const emptyNewer = device([], { maxId: 8 });
+ok(await athrows(() => restoreBackup(emptyNewer.request, file)) && emptyNewer.log.length === 0,
+  "backup: even an empty unsupported object is refused before writes");
+const invalidManifest = device([]);
+ok(await athrows(() => restoreBackup(async ([cmd, a]) => cmd === BACKUP_CMD.LIST ? [1, 0, 3] : invalidManifest.request([cmd, a]), file)) && invalidManifest.log.length === 0,
+  "backup: malformed destination manifest refuses before writes");
+const unavailable = device([]);
+ok(await athrows(() => restoreBackup(async ([cmd, a]) => { if (cmd === BACKUP_CMD.LIST) throw Error("timeout"); return unavailable.request([cmd, a]); }, file)) && unavailable.log.length === 0,
+  "backup: unavailable destination manifest refuses before writes");
+for (const [name, corrupt] of [
+  ["short", (a) => a.slice(0, 2)],
+  ["missing status", (a) => [a[0], a[1], undefined]],
+  ["non-seven-bit status", (a) => [a[0], a[1], 128]],
+  ["wrong operation", (a) => [a[0] + 1, a[1], a[2]]],
+  ["wrong object", (a) => [a[0], a[1] + 1, a[2]]],
+]) {
+  const target = device([]);
+  ok(await athrows(() => restoreBackup(async (r) => { const a = await target.request(r); return r[0] === BACKUP_CMD.PUT ? corrupt(a) : a; }, file)) && !target.log.includes(0),
+    `backup: ${name} write reply is not accepted as success`);
+}
+// A complete synthetic sample exercises real CRC/header validation, multi-chunk
+// packed writes and offset echoes. No private sample or physical device is used.
+const sampleBytes = new Uint8Array(1112), sampleHeader = new DataView(sampleBytes.buffer);
+sampleBytes.set(rnd(600, 17), 512);
+sampleHeader.setUint32(0, 0x504d5346, true); sampleHeader.setUint16(4, 1, true); sampleBytes[6] = 1;
+sampleHeader.setUint32(16, 600, true); sampleHeader.setUint32(20, bkCrc(sampleBytes.subarray(512)), true);
+sampleHeader.setUint32(36, 1200, true); sampleHeader.setUint32(44, 1199, true); sampleHeader.setUint32(48, 22050, true);
+sampleBytes[56] = 60; sampleBytes[57] = 0; sampleBytes[58] = 127;
+const sampleArchive = await captureBackup(device([...objs, [32, sampleBytes]]).request, "TEST");
+const sampleOriginal = JSON.stringify(sampleArchive);
+const sampleTarget = device([]);
+await restoreBackup(sampleTarget.request, sampleArchive);
+ok(sampleTarget.objs.get(32).length === sampleBytes.length && sampleTarget.objs.get(32).every((b, i) => b === sampleBytes[i]), "backup: full sample header and three chunks restore byte for byte");
+ok(JSON.stringify(sampleArchive) === sampleOriginal, "backup: successful sample restore leaves the source archive unchanged");
+for (const [name, corrupt] of [
+  ["wrong offset", (a) => [a[0], a[1] ^ 1, ...a.slice(2)]],
+  ["short", (a) => [a[0], 0]],
+  ["missing status", (a) => [...a.slice(0, 4), undefined]],
+]) {
+  const target = device([]);
+  ok(await athrows(() => restoreBackup(async (r) => { const a = await target.request(r); return r[0] === 12 ? corrupt(a) : a; }, sampleArchive)) && !target.objs.has(32) && !target.log.includes(0),
+    `backup: ${name} sample write reply stops before sample commit or live music`);
 }
 const failing = device([], { failChunk: 2 });
 ok(await athrows(() => restoreBackup(failing.request, file)) && failing.log.includes("abort 2") && !failing.log.includes(0), "backup: a refused chunk aborts that object and stops before the live music");

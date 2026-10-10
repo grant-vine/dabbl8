@@ -56,6 +56,7 @@ void fm1_timer5_irq(void)
 #endif
     owed = 0;
 }
+#ifndef FELUCCA_TIMER5_ONLY /* host tests may exercise the actual IRQ alone */
 extern void isr_timer5(void);
 
 static void timer5_start(void)                 /* OSC /4 = 6 MHz, PRD 600 -> 10 kHz */
@@ -98,6 +99,9 @@ static void fm1_fault(const fm1_crash_t *c)
 /* power-on: the parts with their default sounds (TRK_DEF); the sequencers empty */
 static void felucca_init(void)
 {
+#if NPART >= NVOICE
+    project_native_reset();
+#endif
     uint32_t i;
     chain_defaults(&chain_config);
     for (i = 0; i < G_COUNT; i++)
@@ -327,3 +331,5 @@ void fm1_cstart(void)
     for (;;)
         ;
 }
+
+#endif /* FELUCCA_TIMER5_ONLY */

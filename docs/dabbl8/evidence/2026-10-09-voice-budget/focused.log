@@ -1,0 +1,15 @@
+eight voices: eight protected held notes use eight slots PASS
+eight voices: eight held notes render exactly eight engine voices PASS
+eight voices: ninth note replaces oldest protected bass with no ninth tail PASS
+eight voices: cross-track chord extra yields before another protected bass PASS
+eight voices: release tail yields before protected lead/bass PASS
+eight voices: extra unison yields before its lead PASS
+eight voices: soft unison extras cannot steal eight protected leads PASS
+eight voices: chord non-bass yields before lowest chord note PASS
+eight voices: protected drum has no unlimited premium over synth leads PASS
+eight voices: real MIDI pedal retains ownership and held allocation PASS
+eight voices: pedal-held protected note may yield to ninth event PASS
+eight voices: pedal-up of stolen note clears ownership without releasing another track PASS
+eight voices: all release tails end without hanging voices PASS
+eight voices: 10,000 burst events never exceed eight active/rendered engines PASS
+result: 0 failures; target still four tracks; no deadline/click claim

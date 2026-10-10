@@ -1,0 +1,6 @@
+size: 744 main-loop functions built for size (18 not in this build; 104 reached from an interrupt kept -Os)
+Traceback (most recent call last):
+  File "/private/tmp/native-signature-opt-target.py", line 15, in <module>
+    if tracks==4:assert img==(local/'source/build/felucca.bin').read_bytes(),'default differs from pinned baseline'
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: default differs from pinned baseline

@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-09T22:38:06.136528+00:00",
+  "source_base": "2df2466b0a2826a8adbc26e91ccb779b6fbe966b",
+  "checks": [
+    {
+      "name": "slice-focused",
+      "exit_code": 0
+    },
+    {
+      "name": "mixed-focused",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-build",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-full-suite",
+      "exit_code": 0
+    },
+    {
+      "name": "diff-check",
+      "exit_code": 0
+    }
+  ],
+  "four_track_artifacts": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "source_files": {
+    "firmware/src/eng_slice.c": "cde290b861d9e2bf84f1d81e278caa95f1d97c0b10f190c046386e263e4c0044",
+    "firmware/src/heavy_state.h": "33644daf789a4e57e2afd7d02bd2476f3f732847f699f290fd82e3c2a0b2564c",
+    "tests/slice_pool_test.c": "76e07592aee4ada9164e66f2681a4b76b17ca56b96413539ea979fcf421b556d",
+    "tests/wheel_pool_test.c": "6a1558b93d94281cd53a5a037d4cb7375ad4765400a25a5efb421f9f57987f65"
+  },
+  "memory": {
+    "regions_unchanged": true,
+    "before": {
+      "ram_used": 105508,
+      "pool_used": 333328
+    },
+    "after": {
+      "link_result": "FAIL",
+      "ram_used": 104468,
+      "ram_capacity": 98304,
+      "ram_overflow": 6164,
+      "pool_used": 333328,
+      "pool_capacity": 344064,
+      "pool_free": 10736
+    },
+    "ram_saving": 1040,
+    "heavy_pool_target_bytes": 56160,
+    "heavy_pool_host_bytes": 56960
+  },
+  "skips": [
+    "PHYS reference: no DaisySP checkout",
+    "Official V15 restore: vendor firmware kept outside Git; separate earlier FakeFM1 proof retained",
+    "Editor MENU settings: absent",
+    "Browser emulator: no Emscripten"
+  ],
+  "hardware": {
+    "status": "SKIP",
+    "reason": "No physical qualification or flashing authorized"
+  }
+}

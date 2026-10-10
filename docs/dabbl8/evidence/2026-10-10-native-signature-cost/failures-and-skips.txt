@@ -1,0 +1,6 @@
+Comparator orchestration initially used mutable source/build/felucca.bin (447576 bytes, d05d7de131b31956b2c154a096a78cd853c649be96976b02d026f393886b3524); stopped despite new default matching immutable b69e74e baseline. Corrected authority, no image failure. Raw initial log retained.
+Native DSP target budgets: parent and changed both fail rev_room 303 vs218 and rev_spring200 vs126; reports byte-identical. No recalibration.
+Full repository suite/new-head CI/fresh golden renders not run by this focused deliverable. Physical deadline/IRQ/caller-stack/LCD DMA/worst-case duration/MIDI/recovery remain SKIP. No scheduler activation/flash writes/ownership/installation/release.
+Inherited sanitizer exclusions retained; not strict whole-engine UBSan.
+Initial parent archive extraction used unsupported Python tar filter keyword; extraction retried after member path/symlink checks; no source was changed by failed extraction.
+Evidence manifest writer initially used the wrong parent metadata key (environment instead of target_environment); corrected before completion and all retained hashes verified. No test/target failure from this bookkeeping error.

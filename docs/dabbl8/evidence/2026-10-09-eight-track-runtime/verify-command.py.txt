@@ -1,0 +1,22 @@
+from pathlib import Path
+import subprocess,os,json,hashlib
+root=Path('/Users/grantv/Code/dabbl8'); r=root/'.local-baseline/main-workspace'; e=root/'.local-baseline/eight-runtime-check'
+env=os.environ.copy(); env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0')
+results={}
+def run(name,args):
+ with (e/(name+'.log')).open('w') as log: p=subprocess.run(args,cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT)
+ results[name]=p.returncode; (e/'verification.json').write_text(json.dumps(results,indent=2)+'\n');print(name,p.returncode,flush=True)
+ if p.returncode: raise SystemExit(p.returncode)
+common=['-w','-DNPART=8','-Ibuild/gen','-Ifirmware/src','tests/eight_track_runtime_test.c','-lm']
+run('optimized-compile',['clang','-O2',*common,'-o','/private/tmp/dabbl8-eight-runtime-test'])
+run('optimized-runtime',['/private/tmp/dabbl8-eight-runtime-test'])
+run('sanitized-compile',['clang','-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined',*common,'-o','/private/tmp/dabbl8-eight-runtime-san'])
+run('sanitized-runtime',['/private/tmp/dabbl8-eight-runtime-san'])
+run('four-track-build',['./build.sh'])
+run('upstream-suite',['sh','tests/run_tests.sh'])
+code="import sys,json;sys.path.insert(0,'tools');import build;build.OUT=build.OUT/'eight-runtime';build.OUT.mkdir(exist_ok=True);build.CFLAGS.append('-DNPART=8');img,syms,dis,rt=build.build_app();(build.OUT/'symbols.txt').write_text(syms);errors,notes=build.check(img,syms,dis,rt);print(json.dumps({'errors':errors,'notes':notes},indent=2));sys.exit(bool(errors))"
+run('eight-track-target',[str(root/'.local-baseline/venv/bin/python'),'-c',code])
+for name in ['felucca.bin','felucca.fwsc','loader/ota.bin','eight-runtime/felucca.bin']:
+ p=r/'build'/name; results[name]={'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}
+(e/'verification.json').write_text(json.dumps(results,indent=2)+'\n')
+print('verified',flush=True)

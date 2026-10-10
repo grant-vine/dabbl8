@@ -1,0 +1,82 @@
+{
+  "manifest.json": {
+    "repository": "hugelton/Felucca-WebApp",
+    "commit": "8a8477672b3919f74da9fb33490d78120be3b00b",
+    "observed_files": {
+      "README.md": {
+        "bytes": 1918,
+        "sha256": "60156ec9bb35c7cda9d9080063ecfed41c06f7e0ebb7c9dfe3e17fd16fa9c180"
+      },
+      "LICENSING.md": {
+        "bytes": 887,
+        "sha256": "ee39831228b1df13f8a4d3b3698810a1bd20cc08271abf578b8a808bc3d2c7be"
+      },
+      "package.json": {
+        "bytes": 42,
+        "sha256": "609158e6c5fbc237939fa3ddf7faab80ab690bdc0c8d584414a885130103c4e8"
+      },
+      "bundle.py": {
+        "bytes": 6802,
+        "sha256": "fac25fe0cbbdeb95274a492e0fa7b871dadbd94e669d5dfe86b4d936e441b4ac"
+      },
+      "app/src/proto.js": {
+        "bytes": 161596,
+        "sha256": "2174798f834999d1b7447f6b40b973af2214da179b103f070880a6eeda12c9db"
+      },
+      "app/src/device.js": {
+        "bytes": 41196,
+        "sha256": "2c0a9236f61e2c024abb6026f5fc901a056177c0561d14c66bcd36c0f2b05d80"
+      },
+      "app/src/mix.js": {
+        "bytes": 5283,
+        "sha256": "0f09d04017251888e31b769c8fb32e783ad2463df6a2ef3af7277461cf180f0b"
+      },
+      "app/src/parts.js": {
+        "bytes": 7435,
+        "sha256": "8a8c761f8c4053553324b63674ba5d3d6ccf1b708c2efc0f18f100bdd10be41c"
+      },
+      "app/src/project.js": {
+        "bytes": 8544,
+        "sha256": "f8f4e21fed7645391f97f15d4385e9a3b539dddd38e64522f77a9151de656edb"
+      },
+      "app/src/seq.js": {
+        "bytes": 18145,
+        "sha256": "d7a128af2bf0effc309dd5b0f5cbf178b30ae8eef5444d8b2a73d0aa9c3bbe21"
+      },
+      "test_app.mjs": {
+        "bytes": 70003,
+        "sha256": "daeddd3eee427f690891cde6539a6c1667906c95488a837f2ba516dbd23ea939"
+      }
+    }
+  },
+  "research-baseline/manifest.json": {
+    "repository": "hugelton/Felucca-WebApp",
+    "commit": "05c901d802d14832fd1aedb1a91f661b9d4a329a",
+    "files": {
+      "README.md": {
+        "bytes": 1918,
+        "sha256": "60156ec9bb35c7cda9d9080063ecfed41c06f7e0ebb7c9dfe3e17fd16fa9c180"
+      },
+      "LICENSING.md": {
+        "bytes": 887,
+        "sha256": "ee39831228b1df13f8a4d3b3698810a1bd20cc08271abf578b8a808bc3d2c7be"
+      },
+      "package.json": {
+        "bytes": 42,
+        "sha256": "609158e6c5fbc237939fa3ddf7faab80ab690bdc0c8d584414a885130103c4e8"
+      },
+      "app/src/proto.js": {
+        "bytes": 142457,
+        "sha256": "fc3bf23c457c98bbd7b4fed91b829a75d28badca9cafba311743c2893fb2f9e6"
+      },
+      "app/src/device.js": {
+        "bytes": 36824,
+        "sha256": "ec40becf21278b71ccbdb2f2c2f224de027b3a377a1801fcd9800f9b18463646"
+      },
+      "app/src/mix.js": {
+        "bytes": 5283,
+        "sha256": "0f09d04017251888e31b769c8fb32e783ad2463df6a2ef3af7277461cf180f0b"
+      }
+    }
+  }
+}

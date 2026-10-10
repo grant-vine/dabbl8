@@ -1,0 +1,22 @@
+02008710 l     F .text		 00000028 d8p1_name_ok
+02009154 l     F .text		 00000458 d8p1_project_decode
+01c20000 l       .pool		 00000304 d8p1_runtime_cache
+02035068 l     F .text		 00000008 d8pr_erase
+0200c68a l     F .text		 000000b2 d8pr_preflight
+02035070 l     F .text		 0000000c d8pr_program
+0203505c l     F .text		 0000000c d8pr_read
+0200c65e l     F .text		 0000002c d8pr_stopped
+0200b708 g     F .text		 000008d8 d8p1_capture_runtime
+0200c3ca g     F .text		 00000294 d8pool_save
+0200c21e g     F .text		 000000da d8pool_inventory
+0200c336 g     F .text		 00000094 d8pool_load
+02008f90 g     F .text		 0000006c d8p1_refs_available
+02008b9e g     F .text		 000001b2 d8p1_read
+0200c848 g     F .text		 0000000e d8p1_restore_pool_autosave
+02008ffc g     F .text		 00000014 d8p1_runtime_arrangement
+02008d50 g     F .text		 00000240 d8p1_write
+0200c73c g     F .text		 00000092 d8p1_save_pool
+0200b482 g     F .text		 000000dc d8p1_load_runtime
+0200c7ce g     F .text		 0000007a d8p1_load_pool
+0200c2f8 g     F .text		 0000003e d8pool_current
+02008690 g     F .text		 00000042 d8p1_crc32

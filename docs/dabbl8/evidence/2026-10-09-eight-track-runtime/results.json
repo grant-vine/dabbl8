@@ -1,0 +1,79 @@
+{
+  "optimized-compile": 0,
+  "optimized-runtime": 0,
+  "sanitized-compile": 0,
+  "sanitized-runtime": 0,
+  "four-track-build": 0,
+  "upstream-suite": 0,
+  "eight-track-target": 0,
+  "felucca.bin": {
+    "bytes": 447924,
+    "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+  },
+  "felucca.fwsc": {
+    "bytes": 610086,
+    "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+  },
+  "loader/ota.bin": {
+    "bytes": 6930,
+    "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+  },
+  "eight-runtime/felucca.bin": {
+    "bytes": 446848,
+    "sha256": "ae5910965e12d84db067adf8119fec6a2608ea5693700f064fabe10dde607692"
+  },
+  "source_base": "3f9ccf73e22fe847da06c0c21a309da27e41adae",
+  "scope": "Preparatory issue #9 regression coverage; default remains four tracks; no eight-track package or physical qualification.",
+  "raw_logs": {
+    "eight-track-target.log": {
+      "bytes": 261,
+      "sha256": "aad040c7092bfc0058a215a5357324b81c2d732d9d37fe110cfc0c27f4bf9c9f"
+    },
+    "four-track-build.log": {
+      "bytes": 2136,
+      "sha256": "e483a1b5120e62cf781dca1f181914973b655a2cd0450c7ca83279eff51c587e"
+    },
+    "initial-compile-failure.log": {
+      "bytes": 1118,
+      "sha256": "64b810aa5eb4e56bad1557ae66ed8d2e83becfb728afe4156a665445b93fbcea"
+    },
+    "initial-runtime-failure.log": {
+      "bytes": 2642,
+      "sha256": "4c352e9745b6c2b45e142a8da54e07d7993c3474f0bf720c9354a6c13e5095a8"
+    },
+    "optimized-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "optimized-runtime.log": {
+      "bytes": 2640,
+      "sha256": "34698d806eee66d167ec78ffb3829ad3698d12348618a251f16596457d624123"
+    },
+    "sanitized-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sanitized-runtime.log": {
+      "bytes": 2640,
+      "sha256": "34698d806eee66d167ec78ffb3829ad3698d12348618a251f16596457d624123"
+    },
+    "upstream-suite.log": {
+      "bytes": 371251,
+      "sha256": "375707b1ac5e76bfe7a614113d50863a21ea45d21300dcf7b7cdc7c849879e28"
+    }
+  },
+  "references": {
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  }
+}

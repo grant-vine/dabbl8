@@ -1,0 +1,323 @@
+{
+  "baseline": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "planning_head": "cc31a43737b3f06fb13f3088d1e0b95c272ed8aa",
+  "date": "2026-10-08T14:24:27.685441+00:00",
+  "environment": {
+    "JIELI_TOOLCHAIN": "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1",
+    "AC79_SDK": "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+    "JIELI_DOCKER_IMAGE": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "PYTHON": "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python"
+  },
+  "commands": [
+    {
+      "name": "macos",
+      "argv": [
+        "sw_vers"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "host-compiler",
+      "argv": [
+        "clang",
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "python",
+      "argv": [
+        "python3",
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "node",
+      "argv": [
+        "node",
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "dependencies",
+      "argv": [
+        "python3",
+        "-m",
+        "pip",
+        "freeze",
+        "--all"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "pillow-features",
+      "argv": [
+        "python3",
+        "-m",
+        "PIL"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "docker-version",
+      "argv": [
+        "docker",
+        "version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "docker-image",
+      "argv": [
+        "docker",
+        "image",
+        "inspect",
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "target-compiler",
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--platform",
+        "linux/amd64",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1:/opt/jieli:ro",
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "/opt/jieli/pi32v2/bin/clang",
+        "-target",
+        "pi32v2",
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "baseline-status-before",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "main-delta",
+      "argv": [
+        "git",
+        "diff",
+        "276f72a4e6ea8a12499a7a6819aadf3165126755",
+        "origin/main"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "sdk-status",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "build",
+      "argv": [
+        "sh",
+        "build.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "tests",
+      "argv": [
+        "sh",
+        "tests/run_tests.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "sections",
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--platform",
+        "linux/amd64",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1:/opt/jieli:ro",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/source:/work:ro",
+        "-w",
+        "/work",
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "/opt/jieli/common/bin/objdump",
+        "-h",
+        "build/felucca.elf"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "symbols",
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--platform",
+        "linux/amd64",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1:/opt/jieli:ro",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/source:/work:ro",
+        "-w",
+        "/work",
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "/opt/jieli/common/bin/objdump",
+        "-t",
+        "build/felucca.elf"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "linker-map",
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--platform",
+        "linux/amd64",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1:/opt/jieli:ro",
+        "-v",
+        "/Users/grantv/Code/dabbl8/.local-baseline/source:/work",
+        "-w",
+        "/work",
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "/opt/jieli/pi32v2/bin/ld",
+        "-T",
+        "firmware/app.ld",
+        "build/crt0.o",
+        "build/fm1_vec.o",
+        "build/fm1_isr.o",
+        "build/felucca.o",
+        "-Map",
+        "build/baseline.map",
+        "-o",
+        "build/baseline-map.elf"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "baseline-status-after",
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "artifacts": {
+    "build/felucca.bin": {
+      "bytes": 447576,
+      "sha256": "d05d7de131b31956b2c154a096a78cd853c649be96976b02d026f393886b3524"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "d20a3b044bd10dc3c3adf07563ca0c78db8a9490bc31a8896aca2f7b1434f62b"
+    },
+    "build/felucca.elf": {
+      "bytes": 493716,
+      "sha256": "f09cab2b843cd4a3b2e70c134028d1f81416a4eb6e39d3adfae79933a6eac5ef"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "build/loader/loader.bin": {
+      "bytes": 8216,
+      "sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94"
+    },
+    "build/loader/loader.elf": {
+      "bytes": 10776,
+      "sha256": "f4a5dae479a5aef197ac52d97fc96dd5f93668b6907258de6409c0679bc9fea6"
+    },
+    "build/baseline.map": {
+      "bytes": 61626,
+      "sha256": "59f6c57ed8de5d6f5eca00076422548467810bd9758e80240f36eab539c1f0f4"
+    },
+    "build/felucca.dis": {
+      "bytes": 5264593,
+      "sha256": "9e14d4a9ecc96d6390ee7cb11509cc84c89d9151660ed7bcdf5e9e7ed339dfef"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "host": {
+    "model": "MacBook Pro (MacBookPro18,3)",
+    "chip": "Apple M1 Pro",
+    "cores": 10,
+    "memory_bytes": 34359738368,
+    "macos": "26.7.1 (25G241)",
+    "architecture": "arm64",
+    "docker_desktop": "4.92.0 (240144)",
+    "docker_engine": "29.8.0",
+    "python": "3.14.8",
+    "pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "pip": "26.2.1",
+    "node": "26.11.0",
+    "host_clang": "Apple clang 21.0.0 (clang-2100.1.1.101)",
+    "target_clang": "4.0.1, target pi32v2"
+  },
+  "memory": {
+    "app_bytes": 447576,
+    "ram_data_bss_extent_bytes": 91220,
+    "ram_capacity_bytes": 98304,
+    "ram_remaining_bytes": 7084,
+    "pool_bytes": 331204,
+    "pool_capacity_bytes": 344064,
+    "pool_remaining_bytes": 12860,
+    "ram_text_bytes": 2924,
+    "ram_text_capacity_bytes": 24576,
+    "noinit_bytes": 14796,
+    "noinit_capacity_bytes": 15696,
+    "noinit_remaining_bytes": 900
+  },
+  "skips": [
+    "PHYS float-reference comparison: no DaisySP checkout",
+    "Official V15 restore simulation: no FM-1_v15.fwsc (vendor firmware deliberately not obtained)",
+    "Browser emulator: no emcc (Emscripten)"
+  ],
+  "setup_failures": [
+    "Docker daemon initially stopped; resolved by starting Docker Desktop",
+    "Full SDK clone failed: curl 56 connection reset / early EOF",
+    "HTTP/1.1 full SDK clone failed: curl 18 incomplete transfer / early EOF",
+    "Official GitHub SDK repository not found",
+    "Initial unchanged build exit 1: SDK checkout had not yet materialized required files; retained locally in attempt-01-missing-sdk",
+    "Resolved SDK using --filter=blob:none --no-checkout then sparse checkout of required files and LICENSE/README at d179b4484759423312073f5fbb232501aa491047"
+  ],
+  "baseline_decision": "Retain audited Felucca v1.1.5. Main ac6bfcbd76ee3de79eb461719e8d123b5512aa3c changes screen sleep, settings encoding/default, redraw, version and corresponding tests/docs. The PA2 backlight/key-matrix wake fix is a deliberate follow-up; no baseline upgrade in this session.",
+  "limitations": [
+    "No device connected, installed or flashed; no target runtime or recovery qualification",
+    "One clean Mac environment: no independent two-environment reproducibility claim",
+    "Linker map generated by an additional link using unchanged objects and linker script; original ELF retained",
+    "Host performance timings are measurements on this Mac, not target CPU headroom"
+  ]
+}

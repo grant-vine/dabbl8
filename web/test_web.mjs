@@ -35,7 +35,7 @@ const FW_ROOT = process.env.FELUCCA_ROOT || join(HERE, "..");
 const html = readFileSync(join(HERE, "editor.html"), "utf8");
 const proto = html.slice(html.indexOf("/*PROTO-BEGIN*/"), html.indexOf("/*PROTO-END*/"));
 const E = vm.runInNewContext(proto + `
-;({ frame, unframe, parse, req, Link, parseWav, resample, normalize, takeSample, autoTrim, zoomView, rootFromName, buildSlot, makeMockDevice, CMD, SMP,
+;({ d8ParseCaps, d8Negotiate, d8ReadRequest, d8Request, frame, unframe, parse, req, Link, parseWav, resample, normalize, takeSample, autoTrim, zoomView, rootFromName, buildSlot, makeMockDevice, CMD, SMP,
    UP, bank, capturePatch, auditionPatch, startWatch, libraryFile, readLibraryFile, paramKeys, patternFromSteps, stepsFromPattern, upName,
    mixer, parseNotes, parseHits, hitsText, gridFromSteps, LANE_NOTE, LANE_OF, readDevicePreferences, devicePresetRows, engineOrder, ENGINE_ORDER, aliasOf, fmtValue, FM6, enumShown, F,
    FM4, fromDigital, fromPerc, DRUM_KIT_E,
@@ -1255,6 +1255,7 @@ async function editorSessions() {
     ;({ beginBusy, resetBusy, sessionRequest, load, libOp,
        setDevice: d => { dev = d; }, count: () => busy })`, {
     Date, Error,
+    d8Request: E.d8Request, d8Negotiate: async () => ({writable:true}), /* session tests use a supported pairing */
     $: id => { if (!nodes.has(id)) nodes.set(id, {}); return nodes.get(id); },
     CMD: { INFO: 1, PROJECT: 2, SMP_INFO: 3, DUMP: 4 },
     parse: { 1: r => r, 2: () => ({ used: false }), 3: () => ({}), 4: r => r },
@@ -1273,7 +1274,7 @@ async function editorSessions() {
   ok(S.count() === 0, "editor: operation release is idempotent and never goes negative");
 
   let resolve;
-  const d = { link: { request: () => new Promise(r => { resolve = r; }) } };
+  const d = { protocol: {writable:true}, link: { request: () => new Promise(r => { resolve = r; }) } };
   S.setDevice(d);
   const stale = S.sessionRequest(d, "dump").then(() => null, e => e);
   S.setDevice({}); resolve({});
@@ -1283,7 +1284,7 @@ async function editorSessions() {
   const wrong = await S.sessionRequest(d, "write").then(() => null, e => e);
   ok(wrong?.message === "closed" && sent === 0, "editor: captured request cannot write through a replacement connection");
 
-  const old = { link: { request: () => new Promise(r => { resolve = r; }) } };
+  const old = { protocol: {writable:true}, link: { request: () => new Promise(r => { resolve = r; }) } };
   S.setDevice(old);
   const loadingOld = S.load(old).then(() => null, e => e);
   S.resetBusy(); S.setDevice({});
@@ -1295,7 +1296,7 @@ async function editorSessions() {
 
   adopted = new Promise(r => { resolve = r; });
   const reachedAdoption = new Promise(r => { adoptStarted = r; });
-  const next = { pdesc: [], gdesc: [], names: [], slotUsed: [], link: { request: async kind =>
+  const next = { protocol: {writable:true}, pdesc: [], gdesc: [], names: [], slotUsed: [], link: { request: async kind =>
     kind === "info" ? { pcount: 0, gcount: 0, nengines: 0 } : {} } };
   S.setDevice(next);
   const loadingNext = S.load(next).then(() => null, e => e);
@@ -1523,6 +1524,7 @@ async function updater() {
   ok(e2 && e2.code === "notfound", "fm1ota.js: no device -> error code 'notfound'");
 }
 
+await d8Pairings();
 await editorMock();
 await editorSamplePresets();
 mockTables();
@@ -1546,3 +1548,68 @@ await packages();
 await updater();
 console.log(failed ? `WEB TESTS FAILED (${failed})` : "web tests passed");
 process.exit(failed ? 1 : 0);
+
+async function d8Pairings() {
+  const mock = E.makeMockDevice(), inp = [...mock.access.inputs.values()][0], out = [...mock.access.outputs.values()][0];
+  const link = new E.Link(d => out.send(d), { timeout: 300 }); inp.onmidimessage = e => link.receive(e.data);
+  const legacy = E.parse[E.CMD.INFO](await link.request(E.req.info()));
+  let sent = 0;
+  const old = await E.d8Negotiate(legacy, async () => { sent++; throw Error("unexpected command"); });
+  ok(!old.writable && sent === 0, "D8: new editor / old firmware is read-only, no unsupported query");
+  const mutations = [[E.CMD.SET,[0,0,0,64]], [E.CMD.PRESET,[0,0]], [E.CMD.PROJECT,[1,0]],
+    [E.CMD.TRACK,[1]], [E.CMD.TRACK_MIX,[1,0,64,0]], [E.CMD.TRACK_STEP,[1,0,60,0,64,1,1,0,0,0]],
+    [E.CMD.TRACK_PARAM,[1,0,0,64]], [E.CMD.SONG,[1,1,0,1]], [E.CMD.MOTION,[0,2]],
+    [E.CMD.BACKUP_PUT,[0]], [E.CMD.SMP_BEGIN,[0]], [E.CMD.FM6_PUT,[0]], [127,[]]];
+  let refused = 0;
+  for (const r of mutations) { try { await E.d8Request(old, async () => { sent++; }, r); } catch(e) { refused++; } }
+  ok(refused === mutations.length && sent === 0, "D8: read-only mutations refused before any MIDI, including unknown commands");
+  const capFile = join(FW_ROOT, "build/host/d8caps.json");
+  if (!existsSync(capFile)) console.log("D8: real C capability comparison skipped (run editor_test with D8CAPS_JSON)");
+  const caps = existsSync(capFile) ? JSON.parse(readFileSync(capFile, "utf8")) : [68,56,1,4,64,8,64,99,27,14,1,1,1,9,3];
+  const infoFile = join(FW_ROOT, "build/host/d8info.json");
+  const observerFile = join(FW_ROOT, "tests/fixtures/protocol/legacy-info-parser.js");
+  if (existsSync(infoFile) && existsSync(observerFile)) {
+    const oldParse = vm.runInNewContext(readFileSync(observerFile,"utf8") + "\nparse[1]");
+    const realInfo = JSON.parse(readFileSync(infoFile,"utf8"));
+    const observed = oldParse(realInfo), original = oldParse(realInfo.slice(0,-3));
+    ok(JSON.stringify(observed) === JSON.stringify(original) && observed.ntrk === 4 && observed.pcount === 99 && observed.nengines === 14,
+       "D8: unchanged v1.1.5 editor parses real new firmware INFO identically");
+  } else console.log("D8: old parser / real C INFO comparison skipped (run editor_test with D8INFO_JSON)");
+  const d8mock = E.makeMockDevice({dabbl8:true,auto:false});
+  const d8out = [...d8mock.access.outputs.values()][0], d8inp = [...d8mock.access.inputs.values()][0];
+  const d8link = new E.Link(d => d8out.send(d), {timeout:300}); d8inp.onmidimessage = e => d8link.receive(e.data);
+  const d8info = E.parse[E.CMD.INFO](await d8link.request(E.req.info()));
+  const d8caps = await d8link.request([E.CMD.D8_CAPS,[]]);
+  ok(eq(d8caps,caps) && (await E.d8Negotiate(d8info,r=>d8link.request(r))).writable,
+    "D8: supported mock pairing advertises the same capability bytes as real C");
+  d8link.close();
+  const info = {...legacy, d8Schema:1};
+  const mode = await E.d8Negotiate(info, async r => { sent++; return caps; });
+  ok(mode.writable && mode.caps.tracks === 4 && mode.caps.voices === 8 && mode.caps.params === 99,
+    "D8: real C capabilities negotiate stable IDs and supported four-track writes");
+  const before = sent;
+  await E.d8Request(mode, async () => { sent++; }, mutations[0]);
+  ok(sent === before+1, "D8: a supported pairing permits its write path");
+  for (const [index,value] of [[0,0],[1,0],[2,2],[3,0],[3,9],[4,63],[5,0],[5,9],[6,65],[7,0],[10,2],[11,2],[12,2],[13,1],[14,0]]) {
+    const bad = [...caps]; bad[index] = value;
+    ok(!(await E.d8Negotiate(info, async () => bad)).writable, `D8: unsupported capability ${index}=${value} is read-only`);
+  }
+  const eight = [...caps]; eight[3] = 8; eight[14] = 1;
+  ok(!(await E.d8Negotiate({...info,ntrk:8}, async () => eight)).writable,
+    "D8: eight-track firmware never enables this four-track editor by guesswork");
+  for (const bad of [caps.slice(0,-1), [...caps,0], caps.map((v,i)=>i===7?128:v), caps.map((v,i)=>i===7?1.5:v)]) {
+    ok(!(await E.d8Negotiate(info, async () => bad)).writable, "D8: malformed capability reply is read-only");
+  }
+  ok(!(await E.d8Negotiate({...info,ntrk:3}, async () => caps)).writable, "D8: INFO/capability mismatch is read-only");
+  ok(!(await E.d8Negotiate(info, async () => { throw Error("timeout"); })).writable, "D8: timeout is read-only");
+  const infoReply = await link.request(E.req.info());
+  const tagged = E.parse[E.CMD.INFO]([...infoReply,68,56,1]);
+  ok(tagged.d8Schema === 1 && tagged.ntrk === legacy.ntrk && tagged.pcount === legacy.pcount,
+    "D8: appended discovery tag preserves the legacy INFO fields");
+  let errorLink;
+  errorLink = new E.Link(d => { const f = E.unframe(d); errorLink.receive(E.frame(E.CMD.D8_ERROR,[1,f.cmd,2])); }, { timeout:1000 });
+  let explicit = false;
+  try { await errorLink.request([E.CMD.D8_MOTION,[2,0]]); } catch(e) { explicit = /refused.*2/.test(e.message); }
+  ok(explicit, "D8: explicit unsupported-schema error rejects the pending command immediately");
+  errorLink.close(); link.close();
+}

@@ -1,0 +1,1 @@
+Initial test-only fixture reuse used a main macro, but nested upstream fixtures undefine it. Compile refused duplicate main definitions; no executable ran. Corrected with an explicit D8_AUTOSAVE_SESSION_NO_MAIN guard around only the fixture test entry point; production source unchanged.

@@ -1,0 +1,52 @@
+FAIL: coherent full eight-track baseline
+FAIL: actual runtime save matches complete snapshot
+FAIL: manual slot publishes after commit; autosave retains current slot
+FAIL: coherent full eight-track baseline
+FAIL: actual runtime save matches complete snapshot
+FAIL: manual slot publishes after commit; autosave retains current slot
+FAIL: coherent full eight-track baseline
+FAIL: actual runtime save matches complete snapshot
+FAIL: manual slot publishes after commit; autosave retains current slot
+FAIL: coherent full eight-track baseline
+FAIL: actual runtime save matches complete snapshot
+FAIL: entire live project round trips, including track eight
+FAIL: actual runtime recalls selected stored object
+FAIL: entire live project round trips, including track eight
+FAIL: autosave restore has no saved-project identity
+FAIL: actual runtime recalls selected stored object
+FAIL: entire live project round trips, including track eight
+FAIL: autosave restore has no saved-project identity
+FAIL: actual runtime recalls selected stored object
+FAIL: entire live project round trips, including track eight
+FAIL: autosave restore has no saved-project identity
+FAIL: allowed autosave restores real music
+FAIL: pool preflight fences pending LCD pixels before staging
+FAIL: decode saved state for native metadata
+FAIL: native three-project arrangement loads
+FAIL: pool preserves complete arrangement without starting playback
+FAIL: drawing retains recalled native metadata
+FAIL: retain current wires for cut proofs
+FAIL: retain current wires for cut proofs
+FAIL: retain current wires for cut proofs
+FAIL: replacement snapshot
+FAIL: each interrupted runtime save preserves full live state and slot
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save preserves full live state and slot
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save preserves full live state and slot
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: each interrupted runtime save retains every current stored object
+FAIL: late transport request gates every subsequent pool mutation
+FAIL: late request retains all committed objects
+FAIL: late request retains all committed objects
+FAIL: late request retains all committed objects
+FAIL: late transport request gates every subsequent pool mutation
+FAIL: late request retains all committed objects
+FAIL: late request retains all committed objects
+FAIL: late request retains all committed objects
+D8P1 runtime pool: 2330 checks, 51 failures; 3 save cuts and 2 late-start cuts; actual eight-track runtime, virtual NOR only

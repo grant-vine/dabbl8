@@ -1,0 +1,5 @@
+policy 0 motion count=0 place=0 value=0
+FAIL: incompatible retired-engine automation drops while unrelated track-eight signed automation survives
+policy 1 motion count=0 place=0 value=0
+FAIL: incompatible retired-engine automation drops while unrelated track-eight signed automation survives
+D8P1 runtime: 8569 checks, 2 failures; stopped in-memory adoption only, no flash/playback/physical qualification

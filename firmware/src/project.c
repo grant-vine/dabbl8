@@ -84,27 +84,9 @@
 #define PROJ_NP_V3 57u                         /* P_COUNT of format 3 (P_E0 was 49) */
 #define PROJ_NP_V4 69u                         /* P_COUNT of format 4 (P_E0 61) */
 #define PROJ_PHYS 2u                           /* project_t.phys: PHYS without DUST and DRUM (see the top) */
-#define PROJ_NAME_LEN 12u                      /* the name: FUN7 bytes PROJ_NAME_OFF.. (the reserved tail's end) */
-typedef struct {                               /* one track */
-    int16_t p[P_COUNT];
-    uint8_t engine, preset;
-    step_t step[NSTEP];
-} proj_trk_t;
-typedef struct {
-    uint32_t magic, size;
-    int16_t g[G_COUNT];
-    uint8_t sel;                               /* the selected track */
-    uint8_t parts;                             /* NPART; 0: track 4 is the old GM drum part (see the top) */
-    uint8_t phys;                              /* PROJ_PHYS: PHYS MODEL values as today; 1: MODEL 4 was DRUM;
-                                                * 0 (a reserved byte before 1.0): MODEL 2 was DUST */
-    uint8_t rsv;
-    proj_trk_t t[NTRK];
-    chain_config_t chain;
-    motion_store_t motion;
-    uint8_t fm6[NTRK][FM6_PACKED];             /* each track's FM6 patch, packed (eng_fm6.c) */
-    char name[PROJ_NAME_LEN];                  /* the project's name: upper-case ASCII 32..126, 0-padded; "" = none */
-    uint32_t sum;
-} project_t;
+#define PROJ_LEGACY_NTRK 4u                    /* FUN2..FUN9 always store four tracks, regardless of NTRK */
+_Static_assert(NTRK >= PROJ_LEGACY_NTRK, "legacy imports need four destination tracks");
+#include "project_types.h"
 /* Historical FUN5/6 types are frozen, independent of today's P_COUNT/step_t. */
 typedef struct { uint8_t note[4], n, time, flags, vel, hit, acc; } step10_t;
 typedef struct { int16_t p[69]; uint8_t engine, preset; step10_t step[NSTEP]; uint8_t lane[NLANE][5]; } proj_trk_v5_t;
@@ -112,11 +94,11 @@ typedef struct {                               /* format 5, before the song chai
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, phys, rsv;
-    proj_trk_v5_t t[NTRK];
+    proj_trk_v5_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v5_t;
 typedef struct { uint32_t magic, size; int16_t g[G_COUNT]; uint8_t sel, parts, phys, rsv;
-    proj_trk_v5_t t[NTRK]; chain_config_t chain; uint32_t sum; } project_v6_t;
+    proj_trk_v5_t t[PROJ_LEGACY_NTRK]; chain_config_t chain; uint32_t sum; } project_v6_t;
 _Static_assert(sizeof(project_v5_t) == 3352u && sizeof(project_v6_t) == 3388u, "frozen formats 5 / 6 sizes");
 /* Serialized FUN7 keeps the retained cache's exact extent. Params are biased
  * bytes, steps pack n/time/flags. Reserved tail is zero and covered by hash.
@@ -129,7 +111,7 @@ _Static_assert(sizeof(project_v5_t) == 3352u && sizeof(project_v6_t) == 3388u, "
 #define PROJ_STORE_V8 3584u                    /* FUN8 */
 #define PROJ_STORE_V7 3388u                    /* FUN7 */
 #define PROJ_NAME_OFF (PROJ_STORE_SIZE - 4u - PROJ_NAME_LEN)
-#define PROJ_FM6_OFF (PROJ_NAME_OFF - NTRK * FM6_PACKED)
+#define PROJ_FM6_OFF (PROJ_NAME_OFF - PROJ_LEGACY_NTRK * FM6_PACKED)
 typedef union { uint32_t align; uint8_t raw[PROJ_STORE_SIZE]; } project_store_t;
 _Static_assert(G_COUNT == 27u, "FUN7 globals retain original IDs");
 _Static_assert(sizeof(project_store_t) == 3648u && PROJ_STORE_V7 == sizeof(project_v6_t), "FUN9 / FUN7 sizes");
@@ -142,7 +124,7 @@ typedef struct {                               /* format 4 (1.0 development buil
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, phys, rsv;
-    proj_trk_v4_t t[NTRK];
+    proj_trk_v4_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v4_t;
 typedef struct {                               /* a track of format 3, read only */
@@ -154,7 +136,7 @@ typedef struct {                               /* format 3 (0.9 .. 1.0), read on
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, rsv[2];
-    proj_trk_v3_t t[NTRK];
+    proj_trk_v3_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v3_t;
 #define PROJ_DEF_SOUND 0xFFu                   /* preset byte: the track's power-on sound, no steps (format 1) */
@@ -168,7 +150,7 @@ typedef struct {                               /* format 2 (until 0.9), read onl
     uint32_t magic, size;
     int16_t g[PROJ_NG_V2];
     uint8_t sel, rsv[3];
-    proj_trk_v2_t t[NTRK];
+    proj_trk_v2_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v2_t;
 typedef struct {                               /* format 1 (until 0.5 beta), read only */
@@ -248,8 +230,8 @@ static void proj_trk_from_v2(proj_trk_t *d, const proj_trk_v2_t *s)
  * project_load gives it DRUM's kit (PROJ_DEF_KEEP; the SAMPLE PERC sound until 1.0.2). Idempotent */
 static void proj_drums_to_part(project_t *q)
 {
-    proj_trk_t *d = &q->t[NTRK - 1u];
-    if (q->parts == NPART)
+    proj_trk_t *d = &q->t[PROJ_LEGACY_NTRK - 1u];
+    if (q->parts == PROJ_LEGACY_NTRK || q->parts == NPART)
         return;
     d->engine = ENGI_DRUM;                      /* DRUM's first kit: independent of today's power-on drum sound */
     d->preset = PROJ_DEF_KEEP;
@@ -365,7 +347,7 @@ static int proj_from_v4(project_t *q, const project_v4_t *v4, int n)
     q->sel = v4->sel;
     q->parts = v4->parts;
     q->phys = v4->phys;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from(&q->t[i], v4->t[i].p, PROJ_NP_V4, v4->t[i].engine, v4->t[i].preset, v4->t[i].step);
     q->sum = proj_sum(q);
     proj_drums_to_part(q);
@@ -386,7 +368,7 @@ static int proj_from_v3(project_t *q, const project_v3_t *v3, int n)
     proj_rtype_room(q->g);
     q->sel = v3->sel;
     q->parts = v3->parts;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from(&q->t[i], v3->t[i].p, PROJ_NP_V3, v3->t[i].engine, v3->t[i].preset, v3->t[i].step);
     q->sum = proj_sum(q);
     proj_drums_to_part(q);                     /* (a format 3 of firmware before 1.0: parts 0) */
@@ -405,7 +387,7 @@ static int proj_from_v2(project_t *q, const project_v2_t *v2, int n)
     q->size = sizeof *q;
     proj_g_from_v2(q->g, v2->g);
     q->sel = v2->sel;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from_v2(&q->t[i], &v2->t[i]);
     proj_drums_to_part(q);                     /* (format 2 had the drum track: parts 0) */
     return 1;
@@ -425,7 +407,7 @@ static int proj_from_v1(project_t *q, const project_v1_t *v1, int n)
     proj_g_from_v2(q->g, v1->g);
     q->parts = NPART;                          /* (format 1 had no track 4) */
     proj_trk_from_v2(&q->t[0], &v1->t);
-    for (i = 1; i < NTRK; i++) {               /* the other tracks: their defaults, no steps */
+    for (i = 1; i < PROJ_LEGACY_NTRK; i++) {    /* original tracks 2..4: defaults, no steps */
         uint32_t k;
         for (k = 0; k < P_COUNT; k++)
             q->t[i].p[k] = param_desc_of(trk_def_engine(i), k)->def;
@@ -506,7 +488,7 @@ static int proj_import_old(project_t *q, const void *b, int n)
             memcpy(q->g, v->g, sizeof q->g);
             proj_rtype_room(q->g);
             q->sel = v->sel; q->parts = v->parts; q->phys = v->phys;
-            for (i = 0; i < NTRK; i++) {
+            for (i = 0; i < PROJ_LEGACY_NTRK; i++) {
                 int16_t def[P_COUNT];
                 if (v->t[i].engine >= NENGINES) return 0;
                 for (k = 0; k < P_COUNT; k++) def[k] = param_desc_of(v->t[i].engine, k)->def;
@@ -548,14 +530,16 @@ static uint32_t proj_name_get(char *d, const uint8_t *s)   /* its length */
  * np, format flags, then four byte-param tracks and nine-byte steps; FUN8: the patches at PROJ_FM6_OFF. */
 static int proj_pack(project_store_t *out, const project_t *q)
 {
+    /* Eight-track projects need their own format; never truncate them into FUN9. */
+    if (NTRK != PROJ_LEGACY_NTRK) return 0;
     uint8_t *b = out->raw; uint32_t pos = 68u, t, i; uint32_t magic = PROJ_MAGIC, size = PROJ_STORE_SIZE, sum;
-    for (t = 0; t < NTRK; t++)
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++)
         for (i = 0; i < FM6_PACKED; i++)
             if (q->fm6[t][i] > 127u) return 0;
     if (!chain_valid(&q->chain) || !motion_valid(&q->motion) || P_COUNT > 127u) return 0;
     memset(out, 0, sizeof *out); memcpy(b, &magic, 4); memcpy(b + 4, &size, 4);
     memcpy(b + 8, q->g, sizeof q->g); b[62] = q->sel; b[63] = q->parts; b[64] = q->phys; b[66] = P_COUNT;
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         for (i = 0; i < P_COUNT; i++) {
             if (q->t[t].p[i] < -64 || q->t[t].p[i] > 127) return 0;
             b[pos++] = (uint8_t)(q->t[t].p[i] + 64);
@@ -573,10 +557,10 @@ static int proj_pack(project_store_t *out, const project_t *q)
             b[pos++] = (uint8_t)(s->probability | (r >> 1) << 7);
         }
     }
-    if (pos + sizeof q->chain + sizeof q->motion > PROJ_FM6_OFF) return 0;
+    if (pos + sizeof q->chain + sizeof(motion_legacy_store_t) > PROJ_FM6_OFF) return 0;
     memcpy(b + pos, &q->chain, sizeof q->chain); pos += sizeof q->chain;
-    memcpy(b + pos, &q->motion, sizeof q->motion);
-    memcpy(b + PROJ_FM6_OFF, q->fm6, sizeof q->fm6);
+    if (!motion_legacy_encode(b + pos, &q->motion)) return 0;
+    memcpy(b + PROJ_FM6_OFF, q->fm6, PROJ_LEGACY_NTRK * FM6_PACKED);
     {   /* the name (0-padded; stops at the first 0) */
         char n[PROJ_NAME_LEN + 1u];
         memcpy(b + PROJ_NAME_OFF, n, proj_name_get(n, (const uint8_t *)q->name));
@@ -605,16 +589,16 @@ static int proj_motion_ids(motion_store_t *m, uint32_t np)
 static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
 {
     uint32_t pos = 68u, t, i, magic, size, sum, np = b[66], v7 = st == PROJ_STORE_V7;
-    uint32_t name_off = st - 4u - PROJ_NAME_LEN, end = v7 ? name_off : name_off - NTRK * FM6_PACKED;
+    uint32_t name_off = st - 4u - PROJ_NAME_LEN, end = v7 ? name_off : name_off - PROJ_LEGACY_NTRK * FM6_PACKED;
     memcpy(&magic, b, 4); memcpy(&size, b + 4, 4); memcpy(&sum, b + st - 4u, 4);
     if (magic != (v7 ? PROJ_MAGIC_V7 : st == PROJ_STORE_V8 ? PROJ_MAGIC_V8 : PROJ_MAGIC) || size != st || sum != proj_hash(b, st - 4u) ||
-        np < 8u || np > P_COUNT || 68u + NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof q->motion > end)
+        np < 8u || np > P_COUNT || 68u + PROJ_LEGACY_NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof(motion_legacy_store_t) > end)
         return 0;
     memset(q, 0, sizeof *q); q->magic = PROJ_MAGIC; q->size = sizeof *q;
     memcpy(q->g, b + 8, sizeof q->g); q->sel = b[62]; q->parts = b[63]; q->phys = b[64];
     if (v7 && (q->g[G_RTYPE] < 0 || q->g[G_RTYPE] > 1))   /* a FUN7 may still hold the old drum channel there */
         proj_rtype_room(q->g);
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         int16_t values[P_COUNT], def[P_COUNT];
         for (i = 0; i < np; i++) { if (b[pos] > 191u) return 0; values[i] = (int16_t)b[pos++] - 64; }
         q->t[t].engine = b[pos++]; q->t[t].preset = b[pos++];
@@ -635,9 +619,9 @@ static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
         }
     }
     memcpy(&q->chain, b + pos, sizeof q->chain); pos += sizeof q->chain;
-    memcpy(&q->motion, b + pos, sizeof q->motion);
+    if (!motion_legacy_decode(&q->motion, b + pos)) return 0;
     if (!proj_motion_ids(&q->motion, np) || !chain_valid(&q->chain) || !motion_valid(&q->motion)) return 0;
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         if (v7)
             memcpy(q->fm6[t], FM6_INIT, FM6_PACKED);
         else
@@ -677,12 +661,94 @@ static void proj_legacy_drums(track_t *t)
         t->p[P_DIST + i] = (int16_t)(pr->fx[i] ? pr->fx[i] - 1 : FX_DEF[i]);
 }
 
+#if NPART >= NVOICE
+#define proj_scratch (*main_project_workspace())
+#else
 static project_t proj_scratch;              /* decoded main-loop work, never audio ISR */
+#endif
 static char proj_name[PROJ_NAME_LEN + 1u]    /* the name of the music as it is now (loaded, saved, the editor's */
     __attribute__((section(".pool")));       /* runtime restore); "" = none. A save takes it unless one is given */
 #define PROJ_NO_SLOT 0xFFu
 static uint8_t proj_cur = PROJ_NO_SLOT;      /* the slot the music was loaded from or last saved to (a rename of it
                                               * renames the music too); PROJ_NO_SLOT none (the editor's restore) */
+#if NPART >= NVOICE
+#include "project_native_frontend.h"
+/* Host fixture enables only the native route, never legacy flash/MMIO. */
+#if FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST)
+#include "native_autosave_session.h"
+#endif
+static struct {
+    project_native_ops ops;
+    d8p1_project_catalog catalog;
+    uint8_t mode, ready; /* 0 historical read-only; 1 bound native; 2 native offline */
+} project_native __attribute__((section(".pool")));
+static int project_native_owns_storage(void) { return project_native.mode!=0; }
+static void project_native_reset(void) { memset(&project_native,0,sizeof project_native); }
+static int project_native_status(void)
+{ return !project_native.mode?0:project_native.mode==1&&project_native.ready?1:2; }
+static int pn_quiet(void) { return !cv_cpu_active&&!transport_busy()&&!transport_req; }
+static int pn_catalog_valid(const d8p1_project_catalog *c)
+{
+    if(c->present&~7u)return 0;
+    for(unsigned s=0;s<3;s++) {
+        if(c->name[s][12])return 0;
+        unsigned zero=0;
+        for(unsigned i=0;i<12;i++) {
+            unsigned ch=(uint8_t)c->name[s][i];
+            if(!ch)zero=1;else if(zero||ch<32||ch>126)return 0;
+        }
+        if(!(c->present&(1u<<s))&&c->name[s][0])return 0;
+    }
+    return 1;
+}
+static int project_native_refresh(void)
+{
+    if(project_native.mode!=1)return D8POOL_UNSUPPORTED;
+    if(!pn_quiet())return D8POOL_BUSY;
+    d8p1_project_catalog c;memset(&c,0,sizeof c);
+    int rc=project_native.ops.catalog(project_native.ops.context,&c);
+    if(!rc&&!pn_catalog_valid(&c))rc=D8POOL_INVALID;
+    project_native.ready=(uint8_t)!rc;
+    if(!rc)project_native.catalog=c;
+    ui.force=1;return rc;
+}
+static int project_native_bind(const project_native_ops *ops,int authorized)
+{
+    if(!authorized)return D8POOL_UNSUPPORTED;
+    if(!pn_quiet())return D8POOL_BUSY;
+    /* Copy before invalidating an existing binding (ops may refer to it). */
+    project_native_ops next={0};if(ops)next=*ops;
+    project_native.mode=2;project_native.ready=0;ui.force=1;
+    if(!next.catalog||!next.save||!next.load||!next.rename)return D8POOL_INVALID;
+    project_native.ops=next;project_native.mode=1;
+    int rc=project_native_refresh();
+    if(rc)project_native.mode=2;
+    return rc;
+}
+static int pn_result(int rc,const char *done)
+{
+    if(!rc) { ui_message(done);return 0; }
+    ui_message(rc==D8POOL_BUSY?"STOP TO SAVE":rc==D8POOL_EMPTY?"EMPTY SLOT":
+               rc==D8POOL_UNSUPPORTED?"MIGRATION REQUIRED":"STORAGE ERROR");
+    return rc==D8POOL_BUSY||rc==D8POOL_EMPTY||rc==D8POOL_UNSUPPORTED?1:2;
+}
+static int pn_action(unsigned op,uint32_t slot,const char *name)
+{
+    if(slot>=3)return pn_result(D8POOL_INVALID,"");
+    if(!pn_quiet())return pn_result(D8POOL_BUSY,"");
+    if(project_native.mode!=1)return pn_result(D8POOL_UNSUPPORTED,"");
+    /* Hidden/stale inventory must never bypass overwrite confirmation.
+     * Recovery requires a separate successful catalog refresh first. */
+    if(op!=1&&!project_native.ready)return pn_result(D8POOL_IO,"");
+    int rc=op==0?project_native.ops.save(project_native.ops.context,slot,name):
+           op==1?project_native.ops.load(project_native.ops.context,slot):
+                 project_native.ops.rename(project_native.ops.context,slot,name);
+    /* Even an error can follow a committed record. Invalidate first, then
+     * rescan; never display stale inventory as current after a write attempt. */
+    if(op!=1) { project_native.ready=0;(void)project_native_refresh(); }
+    return pn_result(rc,op==0?"SAVED":op==1?"LOADED":"RENAMED");
+}
+#endif
 static union {                               /* serialized main-loop work; no retained expansion */
     project_store_t s;
     uint8_t raw[3840];                         /* (the staging of a backup object, up to a storage object: editor_backup.c) */
@@ -769,6 +835,9 @@ static void project_capture(project_t *p)
  * The current name becomes the saved one */
 static int project_save_as(uint32_t slot, const char *name)
 {
+#if NPART >= NVOICE
+    return pn_action(0,slot,name);
+#endif
     project_t *p = &proj_scratch;
     if (transport_busy()) {                            /* a flash erase silences the audio and stalls the */
         ui_message("STOP TO SAVE");                     /* sequencer (storage_hw.c): only while stopped */
@@ -807,6 +876,14 @@ static void project_cur_name(char *b) { str_cpy(b, proj_name, PROJ_NAME_LEN + 1u
 /* slot's name -> b (PROJ_NAME_LEN + 1 bytes); 0 = an empty slot (b ""). Uses proj_scratch */
 static int project_name(uint32_t slot, char *b)
 {
+#if NPART >= NVOICE
+    b[0]=0;if(slot>=3)return 0;
+    if(project_native.mode) {
+        if(!project_native.ready)return 0;
+        memcpy(b,project_native.catalog.name[slot],13);
+        return (project_native.catalog.present>>slot)&1u;
+    }
+#endif
     b[0] = 0;
     if (!proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t)))
         return 0;
@@ -819,6 +896,9 @@ static int project_name(uint32_t slot, char *b)
  * an empty slot), 2 failed (the slot as it was) */
 static int project_rename(uint32_t slot, const char *name)
 {
+#if NPART >= NVOICE
+    return pn_action(2,slot,name);
+#endif
     project_t *p = &proj_scratch;
     if (transport_busy()) {
         ui_message("STOP TO SAVE");
@@ -848,7 +928,17 @@ static int project_rename(uint32_t slot, const char *name)
     return 0;
 }
 
+#if NPART >= NVOICE
+/* Live metadata survives display/project arena reuse. Main loop only; playback
+ * does not consume these proposed banks/scenes until separately implemented. */
+static struct {
+    d8p1_arrangement arrangement;
+    uint8_t valid;
+} d8p1_runtime_cache __attribute__((section(".pool")));
+static int project_restore_runtime_mode(const project_t *input, int require_stopped)
+#else
 static int project_restore_runtime(const project_t *input)
+#endif
 {
     project_t *p = &proj_scratch;
     uint32_t i, k;
@@ -858,9 +948,21 @@ static int project_restore_runtime(const project_t *input)
     proj_phys(p);                                       /* .. before PHYS lost DUST and DRUM */
     proj_fm4(p);                                        /* .. that had DIGITAL tracks */
     proj_perc(p);                                       /* .. or SAMPLE PERC tracks */
+#if NPART >= NVOICE
+    fm1_irq_off();
+    /* Final coherent guard: a pending start/count-in may arrive during decode.
+     * Refuse before changing transport, panic, runtime or retained metadata. */
+    if (require_stopped && (song.playing || chain_busy() || transport_req || seq_counting())) {
+        fm1_irq_on();
+        return 2;
+    }
+    d8p1_runtime_cache.valid = 0; /* a successful historical load replaces D8P1 metadata */
+#endif
     transport_req = 2;
     panic_req = (1u << NTRK) - 1u;
+#if NPART < NVOICE
     fm1_irq_off();                                      /* the audio ISR must not see half a project */
+#endif
     seq_stop();
     transport_req = 0;
     chain_config = p->chain;
@@ -892,7 +994,11 @@ static int project_restore_runtime(const project_t *input)
         }
     }
     song.sel = (uint8_t)(p->sel < NTRK ? p->sel : 0u);
+#if NPART >= NVOICE
+    if (!require_stopped) fm1_irq_on(); /* native adoption also covers legacy default sounds */
+#else
     fm1_irq_on();
+#endif
     proj_name_get(proj_name, (const uint8_t *)p->name);
     proj_cur = PROJ_NO_SLOT;                            /* (project_load: its slot) */
     undo.trk = 0;                                       /* (ui.c) the undo copy belongs to the old project */
@@ -910,7 +1016,11 @@ static int project_restore_runtime(const project_t *input)
             t->p[P_REV] = keep[P_REV];                  /* and the drums' reverb send */
             for (i = P_AMODE; i <= P_TRANS; i++)        /* the drum part had no arp or scale */
                 t->p[i] = TP[i].def;
+#if NPART >= NVOICE
+            if (!require_stopped) fm1_irq_on();
+#else
             fm1_irq_on();
+#endif
         }
         pat_sig[k] = ~steps_sig(t);                     /* a project's steps are the user's */
     }
@@ -919,10 +1029,23 @@ static int project_restore_runtime(const project_t *input)
     ui.force = 1;
     ui_message("LOADED");
     memset(snd_said, 0, sizeof snd_said);               /* a missing sample is said again, after LOADED */
+#if NPART >= NVOICE
+    if (require_stopped) fm1_irq_on();
+#endif
     return 0;
 }
+#if NPART >= NVOICE
+static int project_restore_runtime(const project_t *input)
+{
+    return project_restore_runtime_mode(input, 0);
+}
+#endif
 static void project_load(uint32_t slot)
 {
+#if NPART >= NVOICE
+    if(slot>=3) { (void)pn_result(D8POOL_INVALID,"");return; }
+    if(project_native.mode) { (void)pn_action(1,slot,NULL);return; }
+#endif
 #if FELUCCA_FLASH
     if (flash_ok && !proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t))) proj_fetch(slot);
 #endif
@@ -978,11 +1101,20 @@ static void persist_boot(void)                    /* before settings_init / pane
 #endif
 }
 
-static int project_used(uint32_t slot) { return proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t)); }
+static int project_used(uint32_t slot) {
+#if NPART >= NVOICE
+    if(slot>=3)return 0;
+    if(project_native.mode)return project_native.ready&&((project_native.catalog.present>>slot)&1u);
+#endif
+    return proj_import(&proj_scratch, &proj_slot[slot & 3u], sizeof(project_store_t));
+}
 
 /* Main loop only: no flash access or copies when the ISR changes rows. */
 static uint32_t chain_prepare(void)
 {
+#if NPART >= NVOICE
+    if(project_native.mode)return 1; /* native arrangement playback is issue #15 */
+#endif
     uint32_t i, k, j, used = 0;
     if (transport_busy())
         return 2;
@@ -1131,11 +1263,24 @@ static int autosave_quiet(void)
     return 1;
 }
 
-static void autosave_hold(void) { as.t = fm1_ms; }   /* the editor's transfers: their staging RAM is proj_wire */
+static void autosave_hold(void) {
+#if NPART >= NVOICE && (FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST))
+    if(project_native_owns_storage()){d8p1_autosave_session_hold();return;}
+#endif
+    as.t = fm1_ms;
+}   /* the editor's transfers: their staging RAM is proj_wire */
 
 /* main loop, every pass (after settings_poll) */
 static void autosave_poll(void)
 {
+#if NPART >= NVOICE
+    if(project_native_owns_storage()) {
+#if FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST)
+        (void)d8p1_autosave_session_poll();
+#endif
+        return;
+    }
+#endif
 #if FELUCCA_FLASH
     uint32_t sig;
     if (!flash_ok || fm1_ms - as.poll < AS_POLL_MS)
@@ -1169,7 +1314,11 @@ static int autosave_boot(int allowed)
 {
     int rc = 0;
 #if FELUCCA_FLASH
-    if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)) {
+    if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)
+#if NPART >= NVOICE
+        && !project_native_owns_storage()
+#endif
+       ) {
         int n;
         proj_wire_gen++;
         n = st_load(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire);

@@ -29,7 +29,9 @@
  * State: per voice an fm6_note_t (fm6_note, 244 bytes, a side array as PHYS's slots: voice_t.s[] is too
  * small), per part the patch, the patch through the macros (fm6_eff, rebuilt in the audio ISR when either
  * changes) and the LFO (once a block). */
+#if NPART < NVOICE
 #include "fm6_core.c"
+#endif
 #include "felucca_fm6.h"         /* tools/gen_fm6_patches.py: FM6_INIT, FM6_FACTORY[] */
 
 #define ENGI_FM6 12u             /* engines.c ENGINES[] (append-only) */
@@ -50,7 +52,9 @@ static struct {                                  /* the patch through the macros
 } fm6_eff[NTRK];
 static fm6_lfo_t fm6_lfo[NTRK];
 static int32_t fm6_lfo_v[NTRK], fm6_lfo_d[NTRK]; /* this block's LFO value and delay (Q24) */
+#if NPART < NVOICE
 static fm6_note_t fm6_note[NTRK][FM6_POLY];
+#endif
 
 /* ------------------------------------------------------- patch formats --- */
 /* the highest value of each byte of the 155-byte voice */
@@ -296,7 +300,16 @@ static fm6_note_t *fm6_note_of(track_t *t, voice_t *v)
     if (t < &trk[0] || t >= &trk[NPART])
         return 0;
     i = (uint32_t)(v - t->v);
-    return i < FM6_POLY ? &fm6_note[t - trk][i] : 0;
+    if (i >= FM6_POLY)
+        return 0;
+#if NPART >= NVOICE
+    {
+        heavy_state_t *state = heavy_get(12u, (uint32_t)(t - trk), i);
+        return state ? &state->fm6 : 0;
+    }
+#else
+    return &fm6_note[t - trk][i];
+#endif
 }
 
 static void fm6_note_on(track_t *t, voice_t *v)

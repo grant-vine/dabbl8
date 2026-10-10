@@ -1,0 +1,97 @@
+{
+  "drums": [
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Kick"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Snare"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Clap"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Closed hat"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Open hat"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Tom"
+    },
+    {
+      "accent": false,
+      "hit": true,
+      "name": "Rim"
+    },
+    {
+      "accent": true,
+      "hit": true,
+      "name": "Bell"
+    }
+  ],
+  "notes": [
+    60,
+    64,
+    67,
+    72
+  ],
+  "pan": -32,
+  "parameterCount": 99,
+  "status": "Step 64 loaded.",
+  "stepCount": 64,
+  "stepIndex": 63,
+  "tracks": [
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 1"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 2"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 3"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 4"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 5"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 6"
+    },
+    {
+      "level": 104,
+      "mute": false,
+      "name": "Track 7"
+    },
+    {
+      "level": 73,
+      "mute": true,
+      "name": "Track 8"
+    }
+  ]
+}

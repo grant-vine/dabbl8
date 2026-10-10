@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "source_base": "23cbe472da9d8daa17ecba5f83fe93e272caac4b",
+  "normalization": "Ignore blank preprocessor lines; initial strict comparison differed by one blank line only",
+  "normalized_preprocessed_sha256": "30d5f66d596170fff0a90efa230b0a963c38be42bf3e1d3e432a632a7b608a74"
+}

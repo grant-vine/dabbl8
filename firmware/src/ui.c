@@ -5,6 +5,9 @@
  * named by their numbers 1..4 on a cushion (icons.c trk_icon). Four columns <-> KNOB 1..4. Rendering is lazy:
  * every element remembers what it last drew and is redrawn only on change. */
 static int project_save(uint32_t slot);
+#if NPART >= NVOICE
+static int project_native_status(void);
+#endif
 static void panel_setup(void);
 static void project_load(uint32_t slot);
 static int project_used(uint32_t slot);
@@ -1094,12 +1097,20 @@ static void set_engine_of(track_t *t, uint32_t ei)
     }
 #endif
     load_begin(t, UNDO_SOUND);
+#if NPART >= NVOICE
+    uint32_t guard = motion_guard(); /* preserve a native project's outer interrupt guard */
+#else
     fm1_irq_off();
+#endif
     t->eng_req = (uint8_t)(ei % NENGINES);
     for (i = 0; i < 8u; i++)
         t->p[P_E0 + i] = e->edit[i].def;
     apply_preset_to(t, 0);
+#if NPART >= NVOICE
+    motion_unguard(guard);
+#else
     fm1_irq_on();
+#endif
     load_end(t);
 }
 
@@ -1299,6 +1310,11 @@ static const param_desc_t *home_param(uint32_t k, int16_t **vp)
     *vp = &TSEL->p[id];
     return track_desc(TSEL, id);
 }
+
+#if NTRK == 8
+/* Four physical knobs follow the selected track's group; SEQ ui.bank stays separate. */
+static uint32_t mixer_bank(void) { return song.sel & 4u; }
+#endif
 
 /* select track i (KNOB 1 on TRACKS, the editor): its sound, pages and pattern from now on */
 static void track_select(uint32_t i)
