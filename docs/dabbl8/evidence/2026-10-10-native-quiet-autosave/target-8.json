@@ -1,0 +1,11 @@
+{
+  "track_count": 8,
+  "sha256": "f824dbdb8ce55671e9976d67aab7837e47f2cd78863b784a8327f32120cb5617",
+  "bytes": 456556,
+  "notes": [
+    ".ram_text: 916 insns, no calls",
+    "image 456556 B; RAM .data+.bss 95716 B of 98304; pool 334164 B of 344064"
+  ],
+  "errors": [],
+  "hardware": "SKIP"
+}

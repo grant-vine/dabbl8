@@ -1,0 +1,47 @@
+{
+  "expanded_fixture_failure": {
+    "optimized_checks": 20401,
+    "failures": 640,
+    "activity_kinds": 19,
+    "cause": "Immutable minimal fixture enabled STUT on tracks 1,3,5,7; idle positive writes refused by correct new policy. Explicitly construct idle synthetic runtime and capture it before seeding; fixture unchanged.",
+    "raw_log_status": "Original failing optimized and sanitizer logs were overwritten by final reruns; terminal transcript and diagnostic below retained. Do not treat absent raw logs as passing evidence."
+  },
+  "diagnostic": {
+    "autosave_quiet": 1,
+    "pending_midi": 0,
+    "performance_fields": 0,
+    "pf_next": 18,
+    "PF_N": 18,
+    "track_SLCR": [
+      0,
+      2,
+      0,
+      2,
+      0,
+      2,
+      0,
+      2
+    ],
+    "slicer_w": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "slicer_loop": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "final_expected": "See current test.log and quiet-san.log; original fixture/goldens unchanged."
+}
