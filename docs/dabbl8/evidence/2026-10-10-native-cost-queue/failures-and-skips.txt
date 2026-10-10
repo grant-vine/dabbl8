@@ -1,0 +1,8 @@
+Initial orchestration terminal failure: equality assertion used standalone non-queue PR73 report instead of actual queue PR74 parent. Raw verification.log and verify.py retained. Correct parent report equals new report. Previously unstarted full suite continued by resume.py.
+Native instruction test exit1 remains an explicit failure: uac_tap48 570/504; ROOM303/218; SPRING200/126. Default instruction test exit0. No timing qualification or changed thresholds.
+All recorded focused compile/run/build/full-suite phases exit0.
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)
+editor: MENU settings (this editor has none)                     skip
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
+Inherited engine/runtime sanitizer exclusions: signed overflow, shift, bounds, object size, pointer overflow; leak detection disabled. No hardware, native whole stack/deadline, migration or recovery qualification.
