@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-09T21:42:34.353131+00:00",
+  "source_base": "4dbb02a55cba05b45b08958602c32d8ccb5fe6d3",
+  "checks": [
+    {
+      "name": "fm6-pool-focused",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-build",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-full-suite",
+      "exit_code": 0
+    },
+    {
+      "name": "diff-check",
+      "exit_code": 0
+    }
+  ],
+  "four_track_artifacts": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "source_files": {
+    "firmware/src/eng_fm6.c": "e4234b254e83651d6b63448742f05ca9d22518553943ba75f6e5dd5b230f23a3",
+    "tests/fm6_pool_test.c": "4090be6ba906a4da95daa723d500d3777f306124b1ec68324c795686d3cc4518",
+    "tests/run_tests.sh": "c28dcdf671fb6366262f8d26f3eff6760517591bcbbd16321e65af6102ee44bd"
+  },
+  "memory": {
+    "regions_unchanged": true,
+    "before": {
+      "ram_used": 132756,
+      "pool_used": 382288
+    },
+    "after": {
+      "link_result": "FAIL",
+      "ram_used": 120932,
+      "ram_capacity": 98304,
+      "pool_used": 382288,
+      "pool_capacity": 344064
+    },
+    "fm6_body_bytes_before": 14208,
+    "fm6_body_bytes_after": 2368,
+    "new_owner_bytes": 16,
+    "net_ram_saving": 11824
+  },
+  "skips": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "hardware": {
+    "status": "SKIP",
+    "reason": "No target physical qualification or flashing authorized"
+  }
+}

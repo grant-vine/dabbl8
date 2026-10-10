@@ -50,7 +50,13 @@ static struct {                                  /* the patch through the macros
 } fm6_eff[NTRK];
 static fm6_lfo_t fm6_lfo[NTRK];
 static int32_t fm6_lfo_v[NTRK], fm6_lfo_d[NTRK]; /* this block's LFO value and delay (Q24) */
+#if NPART >= NVOICE
+/* Expanded tracks share the eight sounding operator-envelope states. */
+static fm6_note_t fm6_note[NVOICE];
+static uint16_t fm6_owner[NVOICE]; /* logical track/voice + 1, zero = free */
+#else
 static fm6_note_t fm6_note[NTRK][FM6_POLY];
+#endif
 
 /* ------------------------------------------------------- patch formats --- */
 /* the highest value of each byte of the 155-byte voice */
@@ -296,7 +302,29 @@ static fm6_note_t *fm6_note_of(track_t *t, voice_t *v)
     if (t < &trk[0] || t >= &trk[NPART])
         return 0;
     i = (uint32_t)(v - t->v);
-    return i < FM6_POLY ? &fm6_note[t - trk][i] : 0;
+    if (i >= FM6_POLY)
+        return 0;
+#if NPART >= NVOICE
+    {
+        uint32_t id = (uint32_t)(t - trk) * NVOICE + i + 1u, k;
+        for (k = 0; k < NVOICE; k++)
+            if (fm6_owner[k] == id)
+                return &fm6_note[k];                   /* retrigger retains operator state */
+        for (k = 0; k < NVOICE; k++) {
+            uint32_t old = fm6_owner[k];
+            if (!old || old > NPART * NVOICE ||
+                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
+                trk[(old - 1u) / NVOICE].engine != ENGI_FM6) {
+                fm6_owner[k] = (uint16_t)id;
+                memset(&fm6_note[k], 0, sizeof fm6_note[k]); /* new owner starts from silence */
+                return &fm6_note[k];
+            }
+        }
+        return 0;                                     /* refuse rather than alias a live note */
+    }
+#else
+    return &fm6_note[t - trk][i];
+#endif
 }
 
 static void fm6_note_on(track_t *t, voice_t *v)
