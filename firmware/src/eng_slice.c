@@ -43,6 +43,7 @@
 #define SLC_GRID_LOG2 7
 #define SLC_AUTO 32u                 /* AUTO slices at most */
 #define SLC_SEGS 16u                 /* zones of a user slot */
+#define ENGI_SLICE 13u               /* append-only ENGINES index */
 #define SLC_RB 64u                   /* reverse: samples decoded per window */
 #define SLC_BASE 60                  /* note of slice 0 (+ the track's ROOT) */
 #define SLC_HOP 32u                  /* AUTO detector: samples per hop */
@@ -61,7 +62,12 @@ typedef struct {
 static const slc_src_t SLC_BREAK = SLC_BREAK_INIT;
 static const slc_src_t SLC_PIANO = SLC_PIANO_INIT;
 static slc_src_t slc_usr[SMP_USER_SLOTS];
+#if NPART >= NVOICE
+static int16_t slc_rbuf[NVOICE][SLC_RB];             /* eight shared sounding reverse windows */
+static uint16_t slc_owner[NVOICE];                  /* logical track/voice + 1, zero = free */
+#else
 static int16_t slc_rbuf[NPART][NVOICE][SLC_RB];       /* reverse windows, one per part voice */
+#endif
 /* append-only: stored sounds keep their SRC numbers (1.0.4 added PIANO) */
 static const char *const N_SLC_SRC[] = {"BREAK", "USR1", "USR2", "USR3", "PIANO"};
 #define SLC_SRC_PIANO 4u
@@ -432,7 +438,29 @@ static int slc_man_restore(uint32_t k, uint32_t n, uint32_t end, const uint32_t 
 static int16_t *slc_rb(track_t *t, voice_t *v)
 {
     uint32_t p = (uint32_t)(t - trk), i = (uint32_t)(v - t->v);
+#if NPART >= NVOICE
+    if (p >= NPART || i >= NVOICE)
+        return 0;
+    {
+        uint32_t id = p * NVOICE + i + 1u, k;
+        for (k = 0; k < NVOICE; k++)
+            if (slc_owner[k] == id)
+                return slc_rbuf[k];                    /* the cached window still belongs to this voice */
+        for (k = 0; k < NVOICE; k++) {
+            uint32_t old = slc_owner[k];
+            if (!old || old > NPART * NVOICE ||
+                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
+                trk[(old - 1u) / NVOICE].engine != ENGI_SLICE) {
+                slc_owner[k] = (uint16_t)id;
+                v->s[0] = 0x7FFFFFFF;                 /* force a decode before reading another owner's data */
+                return slc_rbuf[k];
+            }
+        }
+        return 0;                                     /* refuse rather than alias an active window */
+    }
+#else
     return p < NPART && i < NVOICE ? slc_rbuf[p][i] : 0;
+#endif
 }
 
 static void slice_note_on(track_t *t, voice_t *v)
@@ -554,7 +582,11 @@ static void slice_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const
     int32_t lp = 4000 + ((clamp((p[P_E7] << 8) + m->cutoff, 0, 127 << 8) * 28767) >> 15), x;
     int loop = p[P_E4] == SLC_LOOP && v->gate;
     const slc_src_t *s = v->s[6] == 2 || (pk & 7u) == SLC_SINE ? 0 : slc_get(pk & 7u);
+#if NPART >= NVOICE
+    int16_t *rb = rev ? slc_rb(t, v) : 0;              /* forward ADPCM predictor must remain untouched */
+#else
     int16_t *rb = slc_rb(t, v);
+#endif
     slc_dec_t d;
     if ((pk & 7u) == SLC_SINE && v->s[6] != 2) {        /* no material: the sine at the key's pitch + PTCH */
         smp_sine(out, n, m, p[P_E3] * 16, lp, &v->ph[0], &v->s[7]);
@@ -564,6 +596,12 @@ static void slice_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const
         v->active = 0;
         return;
     }
+#if NPART >= NVOICE
+    if (rev && !rb) {
+        v->active = 0;
+        return;
+    }
+#endif
     stepq = (pow2_q16(clamp(m->pitch16 - v->pitch_cur + p[P_E3] * 16, -1536, 576)) >> 8) * (s->rate >> 8);
     d.pos = v->ph[0];
     d.pred = v->s[0];
