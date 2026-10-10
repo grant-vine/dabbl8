@@ -1,0 +1,26 @@
+line 21: writes&&native_as.writes==1&&!native_as.pending
+DIAG q=0 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+DIAG q=1 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+DIAG q=2 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+DIAG q=3 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+DIAG q=5 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+DIAG q=6 now=20250 idle=0 writes=0 seen=3991383144 current=1856749085 saved=3991383144 wanted=1856749085 pending=0 err=0 quiet=1
+line 39: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 40: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 43: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+Native combined main-loop autosave: 189580 checks, 19 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification

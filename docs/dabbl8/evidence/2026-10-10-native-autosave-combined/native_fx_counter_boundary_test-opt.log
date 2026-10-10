@@ -1,0 +1,1 @@
+Native FX publication: 227895 checks, 0 failures; 112448 actual nested TIMER5 IRQs, 899 stale-in-flight comb observations, 80 real audio halves with complete counter oracles; main-loop-only reader contract, no device timing claim

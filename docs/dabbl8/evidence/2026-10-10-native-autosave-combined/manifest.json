@@ -1,0 +1,92 @@
+{
+  "source_commit": "377e66ee12abdc38a36ab63ce88f0d8a2a84ff02",
+  "base": "653e2613f37da2bc4621ef2c79234873d1e1ef9e",
+  "source_sha256": {
+    "firmware/src/d8p1_flash_runtime.c": "b7eb5e510414270f7c271158f99b7d328fed57f86a848720ce4c5b7a56198f0a",
+    "firmware/src/d8p1_pool_runtime.c": "aceea8779f868094b838ab0615295ad4379f970420be45f4ee27c4561ffee686",
+    "firmware/src/d8p1_pool_runtime.h": "0589989d92271700f49561917e19b2d9c99781dcc76f39b44d6090eaca27c89f",
+    "firmware/src/felucca.c": "1614826916eb9536186474ae2c50e8aa310d3457aa7996e4a7931b518b1fa8d9",
+    "firmware/src/native_autosave_session.c": "13f81960f91fa14f6b2b4048491de844b538c707f1e4a93431cdacc7c820364a",
+    "firmware/src/native_autosave_session.h": "31c3fef4d33f5c6d3ef3b671a591dc8d1811b750a1814f8da9d11596a5bc946c",
+    "firmware/src/project.c": "cea41b17c8f93f04b65d2cc8b47f522d15ce23c2e444314193fd3de21cb3382c",
+    "tests/d8p1_flash_runtime_test.c": "09c3c1d15c886475420fcc9ef96669939b43281c7e5e2606108daeb20ac00ed7",
+    "tests/native_autosave_combined_test.c": "02a5c7979da706c28a214fc8821f551d59f0f614d3a150bb5dffb5241726942e",
+    "tests/native_autosave_session_test.c": "4f572d0561c1b221a9d6c6876c8fb50d87e75771a78c3bbd36bfc75a7b68971d",
+    "tests/run_tests.sh": "4285fd74f8f9ce96ded9cf8d30bbb302beca40d7d9a5bfd8af6e45a59e2f878f",
+    "firmware/src/fx.c": "44f0f7c517a144582ac466a8a63ecafb4108024a2c5a8378581835fc422be714",
+    "firmware/src/d8p1_runtime.c": "b96b5bd46c66104ffb6619c283eb9b57cc23705e1fb3309488860b8719788cce",
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "firmware/src/d8pool_mapped.c": "493e58cb3841477197f14615091afbc91c8731039a0d65067b9e083905fc4e89",
+    "firmware/src/usb.c": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033"
+  },
+  "evidence_sha256": {
+    "README.md": "a0979b6cb1efb21ad86500b0668a89034146d91103df10f0fad2aa270dd5c7a6",
+    "actual-coverage-omissions.json": "48a929e086d839c6407619a4a07a1d1b34b650cfb8593ad33be593ae831400f4",
+    "before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "checks.json": "1dd0d5dd34dd06cf68303a97f8c5bbcfd7fc59f768d84fdde31133efdd901929",
+    "environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589",
+    "full-suite.log": "c87154bf2f52af8437be19776e3db4cdfa78f9e53cc58676668aa2b3cd85f25b",
+    "generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "initial-mainloop-compile-failure.log": "e865055237777867778d15cf4461c0e68d6a4edce80daad213ed6c6832104757",
+    "mainloop-diag.log": "a32078428966c3b3fc826e6cb29a42d7215c1a2aa888381d7686a0a3fe86f135",
+    "mainloop-opt-compile-routed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mainloop-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mainloop-opt-routed.log": "5881a5c81f4569940aeaa27d0d3d410a74476148886702844a9944467124ef48",
+    "mainloop-opt.log": "66906cd1d01fbd97734e8f32879e010634318a5c4aeb8d2c009ba7b49aca4166",
+    "mainloop-san-compile-routed.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mainloop-san-routed.log": "5881a5c81f4569940aeaa27d0d3d410a74476148886702844a9944467124ef48",
+    "native_autosave_combined_test-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_combined_test-opt.log": "5881a5c81f4569940aeaa27d0d3d410a74476148886702844a9944467124ef48",
+    "native_autosave_combined_test-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_combined_test-san.log": "5881a5c81f4569940aeaa27d0d3d410a74476148886702844a9944467124ef48",
+    "native_autosave_integration_test-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_integration_test-opt.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "native_autosave_integration_test-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_integration_test-san.log": "908a7baa632dcb76ae660834ffabf26717c6a2d497983c1e9d4008bd4b157b9a",
+    "native_autosave_session_test-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_session_test-opt.log": "726682c1afe5b7e56f8de0dd937db849e36d4177e4b60f13584c85116ac6f2c9",
+    "native_autosave_session_test-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_autosave_session_test-san.log": "726682c1afe5b7e56f8de0dd937db849e36d4177e4b60f13584c85116ac6f2c9",
+    "native_fx_counter_boundary_test-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_fx_counter_boundary_test-opt.log": "083da26def45dc5fe285461a525e1f7914b4a0f8e068d7ff509fcf911a773e06",
+    "native_fx_counter_boundary_test-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_fx_counter_boundary_test-san.log": "083da26def45dc5fe285461a525e1f7914b4a0f8e068d7ff509fcf911a773e06",
+    "native_signature_equivalence_test-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_signature_equivalence_test-opt.log": "5723a00dfb743806092d13b48fbd64d025b95fbfa88919cc8fe20bf801471315",
+    "native_signature_equivalence_test-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native_signature_equivalence_test-san.log": "5723a00dfb743806092d13b48fbd64d025b95fbfa88919cc8fe20bf801471315",
+    "source-head.txt": "17611a38843d79041038d2bf3f031d4d015ec8a0de0ee1a5a7bc012ade1888e7",
+    "target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "target-budget-8.log": "86f7b6e0d86d792eb3ca0eabc98c83ae97c95ac3fd775ab5ad916b1c444a591c",
+    "target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target-results.json": "b76153c7c47fcda38d8151f12f5af0cebd7f0fd47fe4f461fb449dc44f004904",
+    "terminal.json": "f9af2891a3276471e8dbc24b9f9dde14e7e71106d15904a6a87b06de8f153f38",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "verify.py": "925898504984c1561a57eee18b3c6b906d7238b3970a15f6adfca2cd0258ff2b"
+  },
+  "targets": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447924 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ]
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 458472,
+      "sha256": "ed2bd102d4d522c4c6dff8fdba93d2c74e4287abf609cee4ea52ed07df8fb97e",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 458472 B; RAM .data+.bss 95764 B of 98304; pool 334204 B of 344064"
+      ]
+    }
+  },
+  "hardware": "SKIP",
+  "remote_CI": "PENDING",
+  "native_instruction_budget": "FAIL; retained exit1"
+}
