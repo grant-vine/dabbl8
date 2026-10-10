@@ -1,0 +1,36 @@
+{
+  "parent": "a686c29a7acb298ed38ab85b486e7a7b6c7f2b5f",
+  "executable_and_test_source": "e8a759f9e4bea2a56f6a11f11b913d81fd905145",
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "source_files": {
+    "firmware/src/d8p1_runtime.c": "b43752fb75e2a15bf56cddf43381a12af625367d721b94ec8b8ab686140eb4be",
+    "tests/native_signature_test.c": "2e97bdc6ef08d895fd9d610e15c5b2ca8e8434366c94559cad76a212017f57c7",
+    "tests/run_tests.sh": "7aeae9013c51b411058b4dcb1153d83cb0d0a948911ef8cac7b50e6380d19b0a"
+  },
+  "evidence_files": {
+    "README.md": "81c359b36b1964b6d3834af701e1c20c280535a49bd6e4c009b0de780a2d9337",
+    "commands.txt": "e0794f16393dabd0c3879da2f41b2efb8cb5fdf9022bb406cbb7ff51945ab856",
+    "failures-and-skips.txt": "082ca41d251a429cc60a39a1850e84e2f18902dd7c159f1d06ef86d900516eb9",
+    "initial-invalid-name-mutation.log": "697582bf7eb47354cdff8fc2dd23ee3e93f6e34786bc341279e4c48bf55dc66e",
+    "optimized-final.log": "d5ff763a599319506e862324c10cb32821df5d2c99c84b210895f140e7508a46",
+    "review.txt": "dd0b57f3af4ed224b1342ba160c6e126d26990501406f527bd1287b6e00b5292",
+    "runtime-optimized.log": "8c736e623783e3fe16608a68fb39e857ba9b0112700f437551160931795dd239",
+    "runtime-sanitizer.log": "8c736e623783e3fe16608a68fb39e857ba9b0112700f437551160931795dd239",
+    "sanitizer-final.log": "d5ff763a599319506e862324c10cb32821df5d2c99c84b210895f140e7508a46",
+    "target-4.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-8.json": "c9158004fef261efd70facdab60e027b49301134e5a35cfd390aaed31b647e25",
+    "target-default-and-eight.log": "c6afb3358397ac089936356a74f5489ba48448ce64791b513eb4f4d854549e77",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc"
+  },
+  "target_orchestration_sha256": "219981d3d171ea94c9603ec9bed09fe2b395bb3436329c945ac511d7eb9c48d0",
+  "target_environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "scope": "Focused signature/adjacent runtime and pinned target builds; full new-head CI pending; no scheduler/flash writes/device qualification"
+}
