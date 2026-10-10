@@ -5,11 +5,15 @@
 #include "d8pool_mapped.h"
 static int df_read(void *context,uint32_t off,void *out,uint32_t n)
 { (void)context;return flash_ok?st_read(off,out,n):-1; }
-/* Known replay and resident DSP histories. Queued USB/DAC audio and hardware
- * timing remain further scheduler gates; this is not an inaudibility claim. */
+/* Known replay, resident DSP and logical output-buffer histories. Peripheral
+ * FIFOs/codec and hardware timing remain caller gates, not an inaudibility claim. */
 static int df_automatic_quiet(void)
 {
-    if(!autosave_quiet()||!fx_resident_quiet()||mi_r!=mi_w||midi_in_overflow||perf_held||
+    if(!autosave_quiet()||!fx_resident_quiet()||!audio_output_quiet()||
+#if FELUCCA_UAC
+       !uac_output_quiet()||
+#endif
+       mi_r!=mi_w||midi_in_overflow||perf_held||
        perf_latched||perf_act||pf.busy||pf.w||pf.tw||pf.next!=PF_N)return 0;
     for(unsigned t=0;t<NTRK;t++)
         if(trk[t].p[P_SLCR]==SL_STUT||slicer_busy(&trk[t])||

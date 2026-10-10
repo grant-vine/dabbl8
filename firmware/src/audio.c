@@ -11,6 +11,12 @@
 #define OUT_SHIFT 7               /* Q15 -> 24-bit, -6 dBFS ceiling (M0f ran clean at -18 dBFS) */
 
 static int32_t abuf[2u * HALF_WORDS] __attribute__((aligned(4)));
+#if NTRK == 8
+/* Publish after rendering each complete DMA half, including DAC-only click.
+ * Both summaries must be zero: a free half can contain stale future audio. */
+static volatile uint8_t audio_nonzero[2];
+static int audio_output_quiet(void) { return !audio_nonzero[0]&&!audio_nonzero[1]; }
+#endif
 
 /* diagnostics, kept across resets and UBOOT entry: read with `fm1t memr` */
 #define DBG_MAGIC 0x44424731u                       /* "DBG1" */
@@ -27,9 +33,17 @@ static uint32_t audio_cpu_rem;                         /* keep the fractional II
 static int16_t scope_buf[SCOPE_N];
 static uint32_t scope_w;
 
-static void audio_block(int32_t *out, uint32_t n)       /* mix (fx.c), then Q15 -> 24 bit */
+#if NTRK == 8
+static uint32_t
+#else
+static void
+#endif
+ audio_block(int32_t *out, uint32_t n)       /* mix (fx.c), then Q15 -> 24 bit */
 {
     uint32_t i;
+#if NTRK == 8
+    uint32_t nonzero=0;
+#endif
     mix_block(out, n);
 #if FELUCCA_UAC
     uac_tap(out, n);                                    /* the USB audio input: the same master output */
@@ -42,7 +56,13 @@ static void audio_block(int32_t *out, uint32_t n)       /* mix (fx.c), then Q15 
     for (i = 0; i < n; i++) {
         out[2u * i] *= 1 << OUT_SHIFT;
         out[2u * i + 1u] *= 1 << OUT_SHIFT;
+#if NTRK == 8
+        nonzero|=(uint32_t)out[2u*i]|(uint32_t)out[2u*i+1u];
+#endif
     }
+#if NTRK == 8
+    return nonzero;
+#endif
 }
 
 /* Overload: two halves in a row above 85 % (the render plus TIMER5 nested in it), fade one voice over the
@@ -115,12 +135,22 @@ void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) 
 #if FELUCCA_UAC
         uac_render_start();
 #endif
+#if NTRK == 8
+        uint32_t nonzero=0;
+#endif
         for (b = 0; b < HALF_FRAMES; b += CTL) {
 #ifdef FM1_INPUT_LAT
             kb_out_tick = t0 + (HALF_FRAMES + b) * DAC_TICKS;   /* when this block plays (seq.c kb_lat) */
 #endif
+#if NTRK == 8
+            nonzero|=audio_block(o + 2u * b, CTL);
+#else
             audio_block(o + 2u * b, CTL);
+#endif
         }
+#if NTRK == 8
+        audio_nonzero[half]=(uint8_t)(nonzero!=0);
+#endif
         fm1_audio_ack_half();
         audio_halves++;
         us = shed_check(fm1_ticks() - t0);
@@ -148,5 +178,8 @@ static void audio_init(void)                   /* codec and ALNK0 bring-up (fm1_
     uint32_t i;
     for (i = 0; i < 2u * HALF_WORDS; i++)
         abuf[i] = 0;
+#if NTRK == 8
+    audio_nonzero[0]=audio_nonzero[1]=0;
+#endif
     fm1_audio_init(abuf, HALF_WORDS, isr_alnk0, 3);
 }
