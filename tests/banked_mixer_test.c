@@ -63,7 +63,7 @@ static int bank_gestures(void)
 static int bank_renders(const char *out)
 {
     int scenes[S_COUNT]; for (uint32_t i = 0; i < S_COUNT; i++) scenes[i] = (int)i;
-    uint32_t frames_checked = 0;
+    uint32_t frames_checked = 0, bank_labels_checked = 0, bank_labels_bad = 0;
     nfind = nink = mono_bad = al_fail = al_lost = al_n = al_count = 0;
     for (uint32_t large = 0; large < 2u; large++) for (uint32_t style = 0; style < 2u; style++)
     for (uint32_t p = 0; p < NPALETTES; p++) for (uint32_t tr = 0; tr < NTRK; tr++)
@@ -90,13 +90,28 @@ static int bank_renders(const char *out)
             for (uint32_t i = 0; i < NTRK; i++) { trk[i].p[P_MUTE] = (int16_t)(i & 1u); trk[i].peak = (int32_t)(i+1)*3500; }
         }
         draw(scenes[j]); lint(); mono_check(); frames_checked++;
+        if (scenes[j] == S_MIXER || scenes[j] == S_MIXER_PAN || scenes[j] == S_GLO_ACTIVE || scenes[j] == S_FX_HELD) {
+            const char *expected = tr < 4u ? "1-4" : "5-8";
+            const char *wrong = tr < 4u ? "5-8" : "1-4";
+            uint32_t found = 0, stale = 0;
+            for (uint32_t i = 0; i < nscr; i++) {
+                found += !strcmp(scr[i].s, expected);
+                stale += !strcmp(scr[i].s, wrong);
+            }
+            bank_labels_checked++;
+            if (found != 1u || stale) {
+                fprintf(rep, "bank label mismatch %s: expected %s once, found %u, stale %u\n", name, expected, found, stale);
+                bank_labels_bad++;
+            }
+        }
         if (out && p == UI_GREY_INDEX && tr == 7u && style == 0 && (scenes[j] == S_MIXER || scenes[j] == S_GLO_ACTIVE || scenes[j] == S_FX_HELD)) {
             char tag[24]; snprintf(tag,sizeof tag,"large%u",large); write_ppm(out,tag,S_NAME[scenes[j]]);
         }
     }
     printf("banked mixer renders: %u frames, %u lint findings, %u ink errors, %u neutral-color errors, %u alignment failures, %u lost declarations\n",
            frames_checked,nfind,nink,mono_bad,al_fail,al_lost);
-    return !!(nfind || nink || mono_bad || al_fail || al_lost);
+    printf("bank labels: %u rendered checks, %u failures\n", bank_labels_checked, bank_labels_bad);
+    return !!(nfind || nink || mono_bad || al_fail || al_lost || bank_labels_bad);
 }
 
 int main(int argc,char **argv)
