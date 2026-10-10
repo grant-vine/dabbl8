@@ -1,0 +1,19 @@
+from pathlib import Path
+import os,subprocess,json,hashlib
+root=Path('/Users/grantv/Code/dabbl8');repo=root/'.local-baseline/main-workspace';e=root/'.local-baseline/native-integration-check'
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
+checks=[];head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip();(e/'source-head.txt').write_text(head+'\n')
+files=['build/felucca.bin','build/felucca.fwsc','build/loader/ota.bin','tests/golden.txt','tests/cpu_baseline.txt','tests/target_budget.txt'];h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();before={p:h(repo/p) for p in files}
+def run(name,args):
+ with (e/(name+'.log')).open('w') as f:proc=subprocess.run(args,cwd=repo,env=env,stdout=f,stderr=subprocess.STDOUT)
+ checks.append({'name':name,'exit':proc.returncode});(e/'checks.json').write_text(json.dumps(checks,indent=2)+'\n');print(name,proc.returncode,flush=True)
+ if proc.returncode:raise SystemExit(proc.returncode)
+for mode,flags in [('optimized',['-O2']),('san',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined'])]:
+ run('integration-'+mode+'-compile',['cc',*flags,'-w','-Ibuild/gen','-Ifirmware/src','-o',str(e/('integration-'+mode)),'firmware/src/d8p1.c','firmware/src/d8pool.c','firmware/src/d8pool_mapped.c','tests/native_autosave_integration_test.c','-lm']);run('integration-'+mode,[str(e/('integration-'+mode))])
+targetcode=(root/'.local-baseline/output-queue-check/targets.py').read_text().replace("repo=root/'.local-baseline/output-queue-gate'","repo=root/'.local-baseline/main-workspace'").replace('build/output-queue-','build/native-integration-')
+(e/'targets.py').write_text(targetcode)
+run('target-default-and-eight',[str(root/'.local-baseline/venv/bin/python'),str(e/'targets.py')])
+run('full-upstream-suite',['sh','tests/run_tests.sh'])
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()==head
+assert {p:h(repo/p) for p in files}==before
+(e/'unchanged-artifacts.json').write_text(json.dumps(before,indent=2)+'\n');print('exact source and all six baseline artifacts unchanged',flush=True)

@@ -1,0 +1,6 @@
+All six recorded phases exited0; no test failure.
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)
+editor: MENU settings (this editor has none)                     skip
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
+Inherited engine/runtime sanitizer exclusions: signed overflow, shift, bounds, object size, pointer overflow; leak detection disabled. No strict whole-engine sanitizer claim. Hardware, native timing/stack and physical recovery not qualified. No browser conversion parity claim from this local suite.
