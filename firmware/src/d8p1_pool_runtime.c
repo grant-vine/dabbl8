@@ -125,3 +125,21 @@ int d8p1_rename_pool(const d8pool *s,unsigned object,const char *name)
     if(!rc&&proj_cur==object)memcpy(proj_name,renamed,sizeof renamed);
     return rc;
 }
+
+int d8p1_autosave_snapshot_pool(const d8pool *s,uint32_t *signature,d8pool_record *record)
+{
+    if(!signature||!record||d8ps_overlap(signature,sizeof *signature,&main_workspace,sizeof main_workspace)||
+       d8ps_overlap(record,sizeof *record,&main_workspace,sizeof main_workspace)||
+       d8ps_overlap(signature,sizeof *signature,record,sizeof *record))return D8POOL_INVALID;
+    d8pool_index index;d8p1_stage_workspace *stage;size_t n=0;
+    int rc=d8pr_preflight(s,&index,&stage,NULL);if(rc)return rc;
+    if(!(index.present&8u))return D8POOL_EMPTY;
+    rc=d8pool_load(s,3,stage->wire,sizeof stage->wire,&n,index.present&7u);if(rc)return rc;
+    if(!d8p1_project_decode(&stage->state,stage->wire,n,index.present&7u))return D8POOL_INVALID;
+    stage->state.project.sel=0;
+    stage->state.project.g[G_SLOT]=stage->state.project.g[G_NAME]=
+        stage->state.project.g[G_LOAD]=stage->state.project.g[G_SAVE]=0;
+    if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&n,&stage->state))return D8POOL_INVALID;
+    *signature=as_mix(2166136261u,stage->wire,(uint32_t)n);*record=index.object[3];
+    return D8POOL_OK;
+}

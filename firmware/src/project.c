@@ -673,6 +673,9 @@ static uint8_t proj_cur = PROJ_NO_SLOT;      /* the slot the music was loaded fr
                                               * renames the music too); PROJ_NO_SLOT none (the editor's restore) */
 #if NPART >= NVOICE
 #include "project_native_frontend.h"
+#if FELUCCA_FLASH
+#include "native_autosave_session.h"
+#endif
 static struct {
     project_native_ops ops;
     d8p1_project_catalog catalog;
@@ -1259,13 +1262,23 @@ static int autosave_quiet(void)
     return 1;
 }
 
-static void autosave_hold(void) { as.t = fm1_ms; }   /* the editor's transfers: their staging RAM is proj_wire */
+static void autosave_hold(void) {
+#if NPART >= NVOICE && FELUCCA_FLASH
+    if(project_native_owns_storage()){d8p1_autosave_session_hold();return;}
+#endif
+    as.t = fm1_ms;
+}   /* the editor's transfers: their staging RAM is proj_wire */
 
 /* main loop, every pass (after settings_poll) */
 static void autosave_poll(void)
 {
 #if NPART >= NVOICE
-    if(project_native_owns_storage())return; /* native scheduler is separate integration */
+    if(project_native_owns_storage()) {
+#if FELUCCA_FLASH
+        (void)d8p1_autosave_session_poll();
+#endif
+        return;
+    }
 #endif
 #if FELUCCA_FLASH
     uint32_t sig;
