@@ -110,6 +110,15 @@ int main(void){
   proof(d8p1_rename_pool(&pool,2,"LATE")==D8POOL_BUSY&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"late start blocks subsequent rename mutation without live adoption");
   reset();for(unsigned o=0;o<4;o++)proof(stored(o),"late rename start retains every committed snapshot");
  }
+ /* Refuse every read boundary, including after names have been collected. */
+ memcpy(nor,baseline,sizeof nor);reset();proof(!d8p1_catalog_pool(&pool,&catalog),"count all reads for transactional catalog proof");unsigned catalog_reads=reads;prior=catalog;
+ for(unsigned c=0;c<catalog_reads;c++) {
+  reset();read_error=(int)c;snapshot();
+  proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_IO&&!memcmp(&catalog,&prior,sizeof catalog)&&unchanged()&&!writes,"every catalog read failure retains the complete prior cache");
+ }
+ reset();memcpy(main_workspace.d8p1.wire,"ARENA NAME",11);proj_cur=1;snapshot();memcpy(live_name,proj_name,sizeof live_name);
+ proof(!d8p1_rename_pool(&pool,2,(const char *)main_workspace.d8p1.wire)&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"arena-sourced rename is copied before staging reuse");
+ renamed_n=0;proof(!d8pool_load(&pool,2,out,sizeof out,&renamed_n,7)&&d8p1_project_decode(&renamed,out,renamed_n,7)&&!memcmp(renamed.project.name,"ARENA NAME",10),"arena-sourced name reaches the saved snapshot");
  /* Blank/legacy catalogs never authorize rename or replace a cached view. */
  blank();prior=catalog;reset();snapshot();
  proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_EMPTY&&d8p1_rename_pool(&pool,0,"BLANK")==D8POOL_EMPTY&&!memcmp(&catalog,&prior,sizeof catalog)&&unchanged()&&!writes,"blank native storage never initializes through names or rename");
