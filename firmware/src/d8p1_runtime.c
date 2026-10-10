@@ -24,9 +24,10 @@ int d8p1_load_runtime(const void *raw, size_t n, unsigned available_projects)
     if (!raw || n>D8P1_LIMIT || available_projects>15 ||
         (raw != main_workspace.d8p1.wire && d8ps_overlap(raw,n,&main_workspace,sizeof main_workspace)))
         return D8RT_BAD;
-    if (cv_cpu_active || transport_busy() || transport_req) return D8RT_BUSY;
+    if (cv_cpu_active || migration_owner || transport_busy() || transport_req) return D8RT_BUSY;
     if (d8p1_read(&view,raw,n)!=1 || !d8p1_refs_available(&view,available_projects)) return D8RT_BAD;
-    d8p1_stage_workspace *stage=main_d8p1_workspace();
+    d8p1_stage_workspace *stage=main_d8p1_workspace_try();
+    if (!stage) return D8RT_BUSY;
     if (raw != stage->wire) memcpy(stage->wire,raw,n);
     if (!d8p1_project_decode(&stage->state,stage->wire,n,available_projects)) return D8RT_BAD;
     int rc=project_restore_runtime_mode(&stage->state.project,1);
@@ -41,8 +42,9 @@ int d8p1_load_runtime(const void *raw, size_t n, unsigned available_projects)
  * Wire encoding/validation belongs to each caller; no snapshot survives drawing. */
 static int d8p1_capture_state_runtime(void)
 {
-    if (cv_cpu_active || transport_busy() || transport_req) return D8RT_BUSY;
-    d8p1_stage_workspace *stage=main_d8p1_workspace();
+    if (cv_cpu_active || migration_owner || transport_busy() || transport_req) return D8RT_BUSY;
+    d8p1_stage_workspace *stage=main_d8p1_workspace_try();
+    if (!stage) return D8RT_BUSY;
     fm1_irq_off();
     if (song.playing || chain_busy() || transport_req || seq_counting()) {
         fm1_irq_on();
