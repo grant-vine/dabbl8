@@ -2,8 +2,8 @@
   "source": "381537968d16da8f911f4d1ee0ae579f42ca1c3c",
   "files": {
     "README.md": {
-      "bytes": 5179,
-      "sha256": "fa24b3a977a0fbb21796601c0669065ffeadb499462d79eb873fd65e79c12517"
+      "bytes": 3623,
+      "sha256": "6b8d89c8163cd77aa000eb0f6366b96d9e1ad4caf6cffb4cc5b2cbc3781367a8"
     },
     "before-artifacts.json": {
       "bytes": 563,
@@ -49,42 +49,6 @@
       "bytes": 162,
       "sha256": "5a83da3ffa32e79368aac7d57f218403f9c28da458d1bf3ee92d3ead3b336cb8"
     },
-    "target-scope-correction/README.md": {
-      "bytes": 1470,
-      "sha256": "0ebb89475dcdb97cba19329f3e274e327795380032e366d0ef795e76b2a3f481"
-    },
-    "target-scope-correction/disassembly-consumers.txt": {
-      "bytes": 1207,
-      "sha256": "a6c47bfac7940b5fa0bc68c0711cd776acc6f98515370aa0779356170b7788bc"
-    },
-    "target-scope-correction/initial-README.md": {
-      "bytes": 3623,
-      "sha256": "6b8d89c8163cd77aa000eb0f6366b96d9e1ad4caf6cffb4cc5b2cbc3781367a8"
-    },
-    "target-scope-correction/initial-manifest.json": {
-      "bytes": 2259,
-      "sha256": "bd604309faa309419613419051c49b35664e20d1e7f1abe7b1ec98c63957b22e"
-    },
-    "target-scope-correction/parent-default4-target-budget.log": {
-      "bytes": 5787,
-      "sha256": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4"
-    },
-    "target-scope-correction/parent-target-results.json": {
-      "bytes": 631,
-      "sha256": "7bcb80d0a7b25716e28a55ee277fd99d11c2bf62538a4c26110ad86937c7a13f"
-    },
-    "target-scope-correction/parent-terminal.json": {
-      "bytes": 402,
-      "sha256": "bf368a4c50cf59f2f60595cacc81fb010bc51d7857c74e12c94787993060cdd2"
-    },
-    "target-scope-correction/result.json": {
-      "bytes": 1488,
-      "sha256": "72638bf8a3a51926625a30bc52d512fe6e246b25d584b3ee04651e7dfbedd26c"
-    },
-    "target-scope-correction/verify-correction.py": {
-      "bytes": 3554,
-      "sha256": "6e34893bad085f2a89710da7800ab4d6182dd9cc099282eedbb8ce1adf62c338"
-    },
     "unchanged-artifacts.json": {
       "bytes": 563,
       "sha256": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc"
@@ -98,8 +62,6 @@
       "sha256": "08721f11f178e94f40eac38466139d2e20be405c32c3c2bf557a2b24143c8def"
     }
   },
-  "initial_evidence_head": "3ddb05439c0245eb20754f7dff83dc79d7255e20",
-  "target_scope_corrected": true,
   "private_archives_included": false,
   "binaries_included": false,
   "fresh_target_build": false
