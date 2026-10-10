@@ -1,0 +1,25 @@
+diff --git a/firmware/src/usb.c b/firmware/src/usb.c
+index b76040a..ddf00d8 100644
+--- a/firmware/src/usb.c
++++ b/firmware/src/usb.c
+@@ -1082,7 +1082,7 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
+         uint32_t s = h & (RS_H - 1u);
+         int16_t l = (int16_t)uac_s16(out[2u * i]), r = (int16_t)uac_s16(out[2u * i + 1u]);
+ #if NTRK == 8
+-        uq.history += (uint32_t)(l!=0||r!=0)-(uint32_t)(rs.l[s]!=0||rs.r[s]!=0);
++
+ #endif
+         rs.l[s] = rs.l[s + RS_H] = l;
+         rs.r[s] = rs.r[s + RS_H] = r;
+@@ -1124,6 +1124,11 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
+     }
+     rs.w = h;
+     rs.ph = ph;
++#if NTRK == 8
++    uint32_t history=0;
++    for(i=0;i<RS_H;i++)history+=(uint32_t)(rs.l[i]!=0||rs.r[i]!=0);
++    uq.history=history;
++#endif
+     RING_PUBLISH();
+     ua_w = w + k;
+ }
