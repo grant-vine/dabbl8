@@ -686,7 +686,7 @@ static int project_native_owns_storage(void) { return project_native.mode!=0; }
 static void project_native_reset(void) { memset(&project_native,0,sizeof project_native); }
 static int project_native_status(void)
 { return !project_native.mode?0:project_native.mode==1&&project_native.ready?1:2; }
-static int pn_quiet(void) { return !cv_cpu_active&&!transport_busy()&&!transport_req; }
+static int pn_quiet(void) { return !cv_cpu_active&&!migration_owner&&!transport_busy()&&!transport_req; }
 static int pn_catalog_valid(const d8p1_project_catalog *c)
 {
     if(c->present&~7u)return 0;
