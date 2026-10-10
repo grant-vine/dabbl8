@@ -143,7 +143,7 @@
   "trusted_migration_unlock": "NOT_IMPLEMENTED",
   "dynamic_revocation": "NOT_TESTED: production policy is constant closed",
   "OTA": "Unchanged and outside application quarantine; no low-level flash gate or boundary changes",
-  "parent_default_four_target": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5; exactly matches7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+  "parent_default_four_target": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5; exactly matches 7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
   "audited_historical_measurement": "276f72a4e6ea8a12499a7a6819aadf3165126755; six canonical artifacts retained separately, not substituted with candidate outputs",
   "published_evidence_sha256": {
     "capture-opt.log": "0d7722b2b520d943c8bae0787b3702a875d10a6ff7dbf21480af92d00fafa480",
@@ -165,5 +165,7 @@
     "target-command.py": "af41ccad98d486123edea38457bdc3aa737735bd8f8d7e1365a04645c9e8b9a9",
     "target-environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589",
     "target-results.json": "68c26b11f4724ce36aed45b07ef1a5158c128deba4efc6f14931a7defdab0b3f"
-  }
+  },
+  "source_sha256_scope": "Files at exact frozen functional commit179e41a; documentation was subsequently extended with terminal evidence, no firmware/test/runner changes",
+  "documentation_sha256_as_recorded": "1337f9068a7950fc60e2f8c34df83e4348a9b5da70d505b5eeddbbbd05d69b91"
 }
