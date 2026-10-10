@@ -45,4 +45,8 @@ int d8p1_save_flash(unsigned object,int native_authorized);
 int d8p1_autosave_flash(int native_authorized);
 int d8p1_load_flash(unsigned object,int native_authorized);
 int d8p1_restore_flash_autosave(int native_authorized,int allowed);
+/* Read/verify canonical shared-autosave identity without runtime adoption.
+ * Outputs publish only on OK; caller owns both outside the staging arena. */
+int d8p1_autosave_snapshot_pool(const d8pool *,uint32_t *,d8pool_record *);
+int d8p1_autosave_snapshot_flash(uint32_t *,d8pool_record *,int native_authorized);
 #endif

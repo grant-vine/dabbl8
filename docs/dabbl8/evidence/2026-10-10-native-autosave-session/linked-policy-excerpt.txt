@@ -1,0 +1,398 @@
+d8p1_autosave_session_begin:
+ 200d7cc:    76 04             	[--sp] = {rets, r6-r4}
+ 200d7ce:    e2 9a             	sp += -24
+ 200d7d0:    02 16             	r2 = r0
+ 200d7d2:    40 25             	r0 = 5
+ 200d7d4:    02 51             	if (r2 == 0) goto 34 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d7d6:    c2 ff 7c 05 c7 01 	r2 = 29820284 <project_native : 1c7057c >
+ 200d7dc:    50 ee 2c 33       	r3 = b[r2+60] (u)
+ 200d7e0:    83 f8 0a 02       	if (r3 != 1) goto 20 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d7e4:    50 ee 2d 23       	r2 = b[r2+61] (u)
+ 200d7e8:    02 47             	if (r2 == 0) goto 14 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d7ea:    c4 ff 94 eb c2 01 	r4 = 29551508 <native_as : 1c2eb94 >
+ 200d7f0:    50 ee 40 22       	r2 = b[r4+32] (u)
+ 200d7f4:    40 24             	r0 = 4
+ 200d7f6:    02 42             	if (r2 == 0) goto 4 <d8p1_autosave_session_begin+0x30 : 200d7fc >
+ 200d7f8:    02 86             	sp += 24
+ 200d7fa:    56 04             	{pc, r6-r4} = [sp++]
+ 200d7fc:    c5 ff d0 d2 c1 01 	r5 = 29479632 <shed_req : 1c1d2d0 >
+ 200d802:    58 42             	r0 = b[r5+2] (u)
+ 200d804:    00 5e             	if (r0 == 0) goto 60 <d8p1_autosave_session_begin+0x76 : 200d842 >
+ 200d806:    c6 ff 44 89 c0 01 	r6 = 29395268 <favorites : 1c08944 >
+ 200d80c:    01 4d             	if (r1 == 0) goto 26 <d8p1_autosave_session_begin+0x5C : 200d828 >
+ 200d80e:    40 e0 fe 01       	r0 = 510 <build/native-session-8/felucca_size.ll+0x1FE : 1fe >
+ 200d812:    d8 ee 62 00       	r0 = b[r6+r0] (s)
+ 200d816:    80 fd 07 00       	ifs (r0 < 0) goto 14 <d8p1_autosave_session_begin+0x5C : 200d828 >
+ 200d81a:    40 23             	r0 = 3
+ 200d81c:    41 21             	r1 = 1
+ 200d81e:    bf ea 18 fe       	call -976 <d8p1_load_flash : 200d452 >
+ 200d822:    00 f8 01 06       	if (r0 == 3) goto 2 <d8p1_autosave_session_begin+0x5C : 200d828 >
+ 200d826:    f0 48             	if (r0 != 0) goto -48 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d828:    40 20             	r0 = 0
+ 200d82a:    80 25             	[sp+20] = r0
+ 200d82c:    80 24             	[sp+16] = r0
+ 200d82e:    88 94             	r0 = sp + 20
+ 200d830:    bf ea b2 f4       	call -5788 <d8p1_signature_runtime : 200c198 >
+ 200d834:    01 16             	r1 = r0
+ 200d836:    01 47             	if (r1 == 0) goto 14 <d8p1_autosave_session_begin+0x7A : 200d846 >
+ 200d838:    40 24             	r0 = 4
+ 200d83a:    b1 e8 02 00       	if (r1 != 2) {
+ 200d83e:    40 21             		r0 = 1
+                               	}
+ 200d840:    e7 9b             	goto -74 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d842:    40 22             	r0 = 2
+ 200d844:    e7 99             	goto -78 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d846:    88 90             	r0 = sp + 16
+ 200d848:    89 80             	r1 = sp + 0
+ 200d84a:    42 21             	r2 = 1
+ 200d84c:    bf ea d5 fe       	call -598 <d8p1_autosave_snapshot_flash : 200d5fa >
+ 200d850:    00 f8 01 06       	if (r0 == 3) goto 2 <d8p1_autosave_session_begin+0x8A : 200d856 >
+ 200d854:    e0 51             	if (r0 != 0) goto -94 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+ 200d856:    41 20             	r1 = 0
+ 200d858:    42 20             	r2 = 0
+ 200d85a:    d8 ee 21 14       	b[r2+r4] = r1
+ 200d85e:    c2 21             	r2 += 1
+ 200d860:    82 f8 fb 51       	if (r2 != 40) goto -10 <d8p1_autosave_session_begin+0x8E : 200d85a >
+ 200d864:    01 25             	r1 = [sp+20]
+ 200d866:    c1 61             	[r4+4] = r1
+ 200d868:    c1 60             	[r4+0] = r1
+ 200d86a:    d0 ec 54 16       	r1 = [r5+100]
+ 200d86e:    42 e0 fe 01       	r2 = 510 <build/native-session-8/felucca_size.ll+0x1FE : 1fe >
+ 200d872:    d8 ee 60 22       	r2 = b[r6+r2] (u)
+ 200d876:    c1 63             	[r4+12] = r1
+ 200d878:    c1 62             	[r4+8] = r1
+ 200d87a:    a1 a7             	r1 = r2 >> 7
+ 200d87c:    39 20             	r1 ^= 1
+ 200d87e:    52 ee 41 12       	b[r4+33] = r1
+ 200d882:    80 45             	if (r0 != 0) goto 10 <d8p1_autosave_session_begin+0xC2 : 200d88e >
+ 200d884:    00 20             	r0 = [sp]
+ 200d886:    41 21             	r1 = 1
+ 200d888:    52 ee 45 12       	b[r4+37] = r1
+ 200d88c:    c0 67             	[r4+28] = r0
+ 200d88e:    40 21             	r0 = 1
+ 200d890:    52 ee 40 02       	b[r4+32] = r0
+ 200d894:    40 20             	r0 = 0
+ 200d896:    d7 90             	goto -160 <d8p1_autosave_session_begin+0x2C : 200d7f8 >
+
+
+
+d8p1_autosave_session_poll:
+ 200d924:    77 04             	[--sp] = {rets, r7-r4}
+ 200d926:    e2 9a             	sp += -24
+ 200d928:    c7 ff d0 d2 c1 01 	r7 = 29479632 <shed_req : 1c1d2d0 >
+ 200d92e:    d0 ec 74 66       	r6 = [r7+100]
+ 200d932:    c5 ff 94 eb c2 01 	r5 = 29551508 <native_as : 1c2eb94 >
+ 200d938:    50 ee 50 02       	r0 = b[r5+32] (u)
+ 200d93c:    44 25             	r4 = 5
+ 200d93e:    00 f8 83 00       	if (r0 == 0) goto 262 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d942:    c0 ff 7c 05 c7 01 	r0 = 29820284 <project_native : 1c7057c >
+ 200d948:    50 ee 0c 13       	r1 = b[r0+60] (u)
+ 200d94c:    81 f8 7c 02       	if (r1 != 1) goto 248 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d950:    50 ee 0d 03       	r0 = b[r0+61] (u)
+ 200d954:    30 59             	if (r0 == 0) goto 242 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d956:    50 63             	r0 = [r5+12] 
+ 200d958:    60 1e             	r0 = r6 - r0
+ 200d95a:    44 20             	r4 = 0
+ 200d95c:    90 f9 74 f4       	if (r0 < 250) goto 232 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d960:    40 e0 fe 01       	r0 = 510 <build/native-session-8/felucca_size.ll+0x1FE : 1fe >
+ 200d964:    c1 ff 44 89 c0 01 	r1 = 29395268 <favorites : 1c08944 >
+ 200d96a:    d8 ee 10 00       	r0 = b[r1+r0] (u)
+ 200d96e:    d6 63             	[r5+12] = r6
+ 200d970:    50 ee 51 22       	r2 = b[r5+33] (u)
+ 200d974:    81 a7             	r1 = r0 >> 7
+ 200d976:    39 20             	r1 ^= 1
+ 200d978:    08 17             	r0 = r0.b0 (s)
+ 200d97a:    91 e8 00 42       	if (r1 != r2) {
+ 200d97e:    52 ee 51 12       		b[r5+33] = r1
+ 200d982:    d6 62             		[r5+8] = r6
+                               	}
+ 200d984:    f0 fe 5f fe       	ifs (r0 <= -1) goto 190 <d8p1_autosave_session_poll+0x122 : 200da46 >
+ 200d988:    78 42             	r0 = b[r7+2] (u)
+ 200d98a:    00 4b             	if (r0 == 0) goto 22 <d8p1_autosave_session_poll+0x7E : 200d9a2 >
+ 200d98c:    50 ee 70 06       	r0 = b[r7+96] (u)
+ 200d990:    80 45             	if (r0 != 0) goto 10 <d8p1_autosave_session_poll+0x78 : 200d99c >
+ 200d992:    bf ea c6 fb       	call -2164 <df_automatic_quiet : 200d122 >
+ 200d996:    00 42             	if (r0 == 0) goto 4 <d8p1_autosave_session_poll+0x78 : 200d99c >
+ 200d998:    78 41             	r0 = b[r7+1] (u)
+ 200d99a:    00 46             	if (r0 == 0) goto 12 <d8p1_autosave_session_poll+0x84 : 200d9a8 >
+ 200d99c:    d6 62             	[r5+8] = r6
+ 200d99e:    44 24             	r4 = 4
+ 200d9a0:    24 93             	goto 166 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9a2:    d6 62             	[r5+8] = r6
+ 200d9a4:    44 22             	r4 = 2
+ 200d9a6:    24 90             	goto 160 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9a8:    50 ee 54 02       	r0 = b[r5+36] (u)
+ 200d9ac:    00 4a             	if (r0 == 0) goto 20 <d8p1_autosave_session_poll+0x9E : 200d9c2 >
+ 200d9ae:    50 65             	r0 = [r5+20] 
+ 200d9b0:    60 1e             	r0 = r6 - r0
+ 200d9b2:    80 a4             	r0 = r0 >> 4
+ 200d9b4:    03 ff 53 07 47 00 	if (r0 < 1875) goto 142 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9ba:    bf ea 6d ff       	call -294 <nas_reconcile : 200d898 >
+ 200d9be:    04 16             	r4 = r0
+ 200d9c0:    a4 43             	if (r4 != 0) goto 134 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9c2:    40 20             	r0 = 0
+ 200d9c4:    80 25             	[sp+20] = r0
+ 200d9c6:    88 94             	r0 = sp + 20
+ 200d9c8:    bf ea e6 f3       	call -6196 <d8p1_signature_runtime : 200c198 >
+ 200d9cc:    00 46             	if (r0 == 0) goto 12 <d8p1_autosave_session_poll+0xB6 : 200d9da >
+ 200d9ce:    d6 62             	[r5+8] = r6
+ 200d9d0:    44 24             	r4 = 4
+ 200d9d2:    b0 e8 02 00       	if (r0 != 2) {
+ 200d9d6:    44 21             		r4 = 1
+                               	}
+ 200d9d8:    14 97             	goto 110 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9da:    51 61             	r1 = [r5+4] 
+ 200d9dc:    00 25             	r0 = [sp+20]
+ 200d9de:    81 e8 36 00       	if (r0 != r1) goto 108 <d8p1_autosave_session_poll+0x12A : 200da4e >
+ 200d9e2:    51 60             	r1 = [r5+0] 
+ 200d9e4:    44 20             	r4 = 0
+ 200d9e6:    01 e8 2f 00       	if (r0 == r1) goto 94 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9ea:    50 62             	r0 = [r5+8] 
+ 200d9ec:    60 1e             	r0 = r6 - r0
+ 200d9ee:    80 a4             	r0 = r0 >> 4
+ 200d9f0:    c0 f9 2a e2       	if (r0 < 625) goto 84 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200d9f4:    50 ee 52 02       	r0 = b[r5+34] (u)
+ 200d9f8:    00 4c             	if (r0 == 0) goto 24 <d8p1_autosave_session_poll+0xEE : 200da12 >
+ 200d9fa:    50 ee 53 12       	r1 = b[r5+35] (u)
+ 200d9fe:    40 e0 30 75       	r0 = 30000 <build/native-session-8/felucca_size.ll+0x7530 : 7530 >
+ 200da02:    81 43             	if (r1 != 0) goto 6 <d8p1_autosave_session_poll+0xE6 : 200da0a >
+ 200da04:    c0 ff 60 ea 00 00 	r0 = 60000 <build/native-session-8/felucca_size.ll+0xEA60 : ea60 >
+ 200da0a:    51 64             	r1 = [r5+16] 
+ 200da0c:    69 1e             	r1 = r6 - r1
+ 200da0e:    80 e9 1b 10       	if (r1 < r0) goto 54 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200da12:    40 20             	r0 = 0
+ 200da14:    80 24             	[sp+16] = r0
+ 200da16:    88 90             	r0 = sp + 16
+ 200da18:    89 80             	r1 = sp + 0
+ 200da1a:    42 21             	r2 = 1
+ 200da1c:    47 21             	r7 = 1
+ 200da1e:    bf ea ec fd       	call -1064 <d8p1_autosave_snapshot_flash : 200d5fa >
+ 200da22:    04 16             	r4 = r0
+ 200da24:    04 42             	if (r4 == 0) goto 4 <d8p1_autosave_session_poll+0x106 : 200da2a >
+ 200da26:    84 f8 0e 06       	if (r4 != 3) goto 28 <d8p1_autosave_session_poll+0x122 : 200da46 >
+ 200da2a:    04 41             	if (r4 == 0) goto 2 <d8p1_autosave_session_poll+0x10A : 200da2e >
+ 200da2c:    47 20             	r7 = 0
+ 200da2e:    52 ee 55 72       	b[r5+37] = r7
+ 200da32:    84 51             	if (r4 != 0) goto 34 <d8p1_autosave_session_poll+0x132 : 200da56 >
+ 200da34:    01 20             	r1 = [sp]
+ 200da36:    00 24             	r0 = [sp+16]
+ 200da38:    02 25             	r2 = [sp+20]
+ 200da3a:    d1 67             	[r5+28] = r1
+ 200da3c:    82 e8 0b 00       	if (r0 != r2) goto 22 <d8p1_autosave_session_poll+0x132 : 200da56 >
+ 200da40:    d0 60             	[r5+0] = r0
+ 200da42:    44 20             	r4 = 0
+ 200da44:    04 81             	goto 2 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200da46:    d6 62             	[r5+8] = r6
+ 200da48:    40 16             	r0 = r4
+ 200da4a:    02 86             	sp += 24
+ 200da4c:    57 04             	{pc, r7-r4} = [sp++]
+ 200da4e:    d0 61             	[r5+4] = r0
+ 200da50:    d6 62             	[r5+8] = r6
+ 200da52:    44 20             	r4 = 0
+ 200da54:    f7 99             	goto -14 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200da56:    01 f1 20 50       	r1 = r5 + 32  #
+ 200da5a:    d6 64             		 [r5+16] = r6
+ 200da5c:    40 21             	r0 = 1
+ 200da5e:    98 42             	b[r1+2] = r0
+ 200da60:    98 44             	b[r1+4] = r0
+ 200da62:    98 43             	b[r1+3] = r0
+ 200da64:    bf ea 94 fd       	call -1240 <d8p1_autosave_flash : 200d590 >
+ 200da68:    04 16             	r4 = r0
+ 200da6a:    bf ea 15 ff       	call -470 <nas_reconcile : 200d898 >
+ 200da6e:    70 4c             	if (r0 == 0) goto -40 <d8p1_autosave_session_poll+0x124 : 200da48 >
+ 200da70:    04 16             	r4 = r0
+ 200da72:    f7 8a             	goto -44 <d8p1_autosave_session_poll+0x124 : 200da48 >
+
+
+
+nas_reconcile:
+ 200d898:    77 04             	[--sp] = {rets, r7-r4}
+ 200d89a:    e2 9b             	sp += -20
+ 200d89c:    c6 ff d0 d2 c1 01 	r6 = 29479632 <shed_req : 1c1d2d0 >
+ 200d8a2:    d0 ec 64 06       	r0 = [r6+100]
+ 200d8a6:    50 ee 60 16       	r1 = b[r6+96] (u)
+ 200d8aa:    c5 ff 94 eb c2 01 	r5 = 29551508 <native_as : 1c2eb94 >
+ 200d8b0:    d0 65             	[r5+20] = r0
+ 200d8b2:    44 24             	r4 = 4
+ 200d8b4:    91 54             	if (r1 != 0) goto 104 <nas_reconcile+0x86 : 200d91e >
+ 200d8b6:    bf ea 34 fc       	call -1944 <df_automatic_quiet : 200d122 >
+ 200d8ba:    10 51             	if (r0 == 0) goto 98 <nas_reconcile+0x86 : 200d91e >
+ 200d8bc:    68 41             	r0 = b[r6+1] (u)
+ 200d8be:    90 4f             	if (r0 != 0) goto 94 <nas_reconcile+0x86 : 200d91e >
+ 200d8c0:    40 20             	r0 = 0
+ 200d8c2:    80 24             	[sp+16] = r0
+ 200d8c4:    88 90             	r0 = sp + 16
+ 200d8c6:    89 80             	r1 = sp + 0
+ 200d8c8:    42 21             	r2 = 1
+ 200d8ca:    47 21             	r7 = 1
+ 200d8cc:    bf ea 95 fe       	call -726 <d8p1_autosave_snapshot_flash : 200d5fa >
+ 200d8d0:    04 16             	r4 = r0
+ 200d8d2:    04 49             	if (r4 == 0) goto 18 <nas_reconcile+0x4E : 200d8e6 >
+ 200d8d4:    84 f8 23 06       	if (r4 != 3) goto 70 <nas_reconcile+0x86 : 200d91e >
+ 200d8d8:    40 20             	r0 = 0
+ 200d8da:    52 ee 55 02       	b[r5+37] = r0
+ 200d8de:    40 21             	r0 = 1
+ 200d8e0:    52 ee 53 02       	b[r5+35] = r0
+ 200d8e4:    04 99             	goto 50 <nas_reconcile+0x80 : 200d918 >
+ 200d8e6:    00 f1 20 50       	r0 = r5 + 32  #
+ 200d8ea:    04 24             		 r4 = [sp+16]
+ 200d8ec:    01 20             	r1 = [sp]
+ 200d8ee:    0b 45             	r3 = b[r0+5] (u)
+ 200d8f0:    52 67             	r2 = [r5+28] 
+ 200d8f2:    d4 60             	[r5+0] = r4
+ 200d8f4:    d1 67             	[r5+28] = r1
+ 200d8f6:    8f 45             	b[r0+5] = r7
+ 200d8f8:    44 21             	r4 = 1
+ 200d8fa:    91 e8 00 02       	if (r1 != r2) {
+ 200d8fe:    44 20             		r4 = 0
+                               	}
+ 200d900:    83 41             	if (r3 != 0) goto 2 <nas_reconcile+0x6C : 200d904 >
+ 200d902:    37 16             	r7 = r3
+ 200d904:    f4 19             	r4 &= r7
+ 200d906:    8c 43             	b[r0+3] = r4
+ 200d908:    03 42             	if (r3 == 0) goto 4 <nas_reconcile+0x76 : 200d90e >
+ 200d90a:    02 e8 05 10       	if (r1 == r2) goto 10 <nas_reconcile+0x80 : 200d918 >
+ 200d90e:    c6 eb 01 50       	[r5+24] += 1
+ 200d912:    d0 ec 64 06       	r0 = [r6+100]
+ 200d916:    d0 64             	[r5+16] = r0
+ 200d918:    44 20             	r4 = 0
+ 200d91a:    52 ee 54 42       	b[r5+36] = r4
+ 200d91e:    40 16             	r0 = r4
+ 200d920:    02 85             	sp += 20
+ 200d922:    57 04             	{pc, r7-r4} = [sp++]
+
+
+
+d8p1_autosave_snapshot_flash:
+ 200d5fa:    77 04             	[--sp] = {rets, r7-r4}
+ 200d5fc:    e2 90             	sp += -64
+ 200d5fe:    26 16             	r6 = r2
+ 200d600:    14 16             	r4 = r1
+ 200d602:    05 16             	r5 = r0
+ 200d604:    06 59             	if (r6 == 0) goto 50 <d8p1_autosave_snapshot_flash+0x3E : 200d638 >
+ 200d606:    c0 ff d0 d2 c1 01 	r0 = 29479632 <shed_req : 1c1d2d0 >
+ 200d60c:    08 42             	r0 = b[r0+2] (u)
+ 200d60e:    00 56             	if (r0 == 0) goto 44 <d8p1_autosave_snapshot_flash+0x42 : 200d63c >
+ 200d610:    8f 80             	r7 = sp + 0
+ 200d612:    c1 ff 7c 82 03 02 	r1 = 33784444 <NM_SET+0x75C : 203827c >
+ 200d618:    42 34             	r2 = 20
+ 200d61a:    70 16             	r0 = r7
+ 200d61c:    bf ea 7a 9d       	call -50444 <memcpy : 2001114 >
+ 200d620:    88 94             	r0 = sp + 20
+ 200d622:    71 16             	r1 = r7
+ 200d624:    62 16             	r2 = r6
+ 200d626:    bf ea fe fb       	call -2052 <d8pool_mapped_open : 200ce26 >
+ 200d62a:    80 49             	if (r0 != 0) goto 18 <d8p1_autosave_snapshot_flash+0x44 : 200d63e >
+ 200d62c:    88 94             	r0 = sp + 20
+ 200d62e:    51 16             	r1 = r5
+ 200d630:    42 16             	r2 = r4
+ 200d632:    bf ea 5a fb       	call -2380 <d8p1_autosave_snapshot_pool : 200ccea >
+ 200d636:    04 83             	goto 6 <d8p1_autosave_snapshot_flash+0x44 : 200d63e >
+ 200d638:    40 25             	r0 = 5
+ 200d63a:    04 81             	goto 2 <d8p1_autosave_snapshot_flash+0x44 : 200d63e >
+ 200d63c:    40 22             	r0 = 2
+ 200d63e:    02 90             	sp += 64
+ 200d640:    57 04             	{pc, r7-r4} = [sp++]
+
+
+
+d8p1_autosave_snapshot_pool:
+ 200ccea:    79 04             	[--sp] = {rets, r9-r4}
+ 200ccec:    e2 8b             	sp += -84
+ 200ccee:    24 16             	r4 = r2
+ 200ccf0:    15 16             	r5 = r1
+ 200ccf2:    07 16             	r7 = r0
+ 200ccf4:    46 21             	r6 = 1
+ 200ccf6:    25 40             	if (r5 == 0) goto 128 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200ccf8:    14 5f             	if (r4 == 0) goto 126 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200ccfa:    c0 ff 04 03 c2 01 	r0 = 29491972 <main_workspace : 1c20304 >
+ 200cd00:    15 ec 00 60       	if (r5 > r0) {
+ 200cd04:    51 1e             		r1 = r5 - r0
+ 200cd06:    c2 ff 80 e8 00 00 		r2 = 59520
+                               	} else { <build/native-session-8/felucca_size.ll+0xE880 : e880 >
+ 200cd0c:    09 1f             		r1 = r0 - r5
+ 200cd0e:    42 24             		r2 = 4
+                               	}
+ 200cd10:    82 e9 32 10       	if (r1 < r2) goto 100 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd14:    14 ec 00 60       	if (r4 > r0) {
+ 200cd18:    40 1e             		r0 = r4 - r0
+ 200cd1a:    c1 ff 80 e8 00 00 		r1 = 59520
+                               	} else { <build/native-session-8/felucca_size.ll+0xE880 : e880 >
+ 200cd20:    00 1f             		r0 = r0 - r4
+ 200cd22:    41 30             		r1 = 16
+                               	}
+ 200cd24:    81 e9 28 00       	if (r0 < r1) goto 80 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd28:    94 e9 00 65       	if (r4 < r5) {
+ 200cd2c:    50 1f             		r0 = r5 - r4
+ 200cd2e:    41 30             		r1 = 16
+                               	} else {
+ 200cd30:    48 1f             		r0 = r4 - r5
+ 200cd32:    41 24             		r1 = 4
+                               	}
+ 200cd34:    81 e9 20 00       	if (r0 < r1) goto 64 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd38:    40 20             	r0 = 0
+ 200cd3a:    70 d6             	r0 = r7  #
+ 200cd3c:    80 22             		 [sp+8] = r0
+ 200cd3e:    89 90             	r1 = sp + 16
+ 200cd40:    8a 8c             	r2 = sp + 12
+ 200cd42:    43 20             	r3 = 0
+ 200cd44:    bf ea de fd       	call -1092 <d8pr_preflight : 200c904 >
+ 200cd48:    06 16             	r6 = r0
+ 200cd4a:    86 56             	if (r6 != 0) goto 44 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd4c:    00 24             	r0 = [sp+16]
+ 200cd4e:    46 23             	r6 = 3
+ 200cd50:    50 e8 12 18       	if ((r0 & 8) == 0) goto 36 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd54:    d4 e9 0c 90       	r9 = [sp+12]
+ 200cd58:    60 e1 07 00       	r0 = r0 & 0x7
+ 200cd5c:    e8 f0 15 9d       	r8 = r9 + 0x2540  #
+ 200cd60:    80 21             		 [sp+4] = r0
+ 200cd62:    88 88             	r0 = sp + 8
+ 200cd64:    41 23             	r1 = 3
+ 200cd66:    43 f0 00 1f       	r3 = 7936  # <build/native-session-8/felucca_size.ll+0x1F00 : 1f00 >
+ 200cd6a:    80 20             		 [sp] = r0
+ 200cd6c:    70 16             	r0 = r7
+ 200cd6e:    82 16             	r2 = r8
+ 200cd70:    bf ea ff fb       	call -2050 <d8pool_load : 200c572 >
+ 200cd74:    06 16             	r6 = r0
+ 200cd76:    06 43             	if (r6 == 0) goto 6 <d8p1_autosave_snapshot_pool+0x94 : 200cd7e >
+ 200cd78:    60 16             	r0 = r6
+ 200cd7a:    02 95             	sp += 84
+ 200cd7c:    59 04             	{pc, r9-r4} = [sp++]
+ 200cd7e:    00 24             	r0 = [sp+16]
+ 200cd80:    63 f1 07 00       	r3 = r0 & 0x7  #
+ 200cd84:    02 22             		 r2 = [sp+8]
+ 200cd86:    90 16             	r0 = r9
+ 200cd88:    81 16             	r1 = r8
+ 200cd8a:    bf ea c3 e2       	call -14970 <d8p1_project_decode : 2009314 >
+ 200cd8e:    46 21             	r6 = 1
+ 200cd90:    70 53             	if (r0 == 0) goto -26 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cd92:    40 20             	r0 = 0
+ 200cd94:    52 ee 9e 03       	b[r9+62] = r0
+ 200cd98:    41 20             	r1 = 0
+ 200cd9a:    50 ec 99 02       	d[r9+40] = r1_r0
+ 200cd9e:    8a 88             	r2 = sp + 8
+ 200cda0:    41 e0 00 1f       	r1 = 7936 <build/native-session-8/felucca_size.ll+0x1F00 : 1f00 >
+ 200cda4:    80 16             	r0 = r8
+ 200cda6:    93 16             	r3 = r9
+ 200cda8:    bf ea 8e f5       	call -5348 <d8p1_project_encode : 200b8c8 >
+ 200cdac:    70 45             	if (r0 == 0) goto -54 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+ 200cdae:    00 22             	r0 = [sp+8]
+ 200cdb0:    00 4d             	if (r0 == 0) goto 26 <d8p1_autosave_snapshot_pool+0xE2 : 200cdcc >
+ 200cdb2:    c1 ff c5 9d 1c 81 	r1 = 2166136261 <_data_load+0x7F159E68 : 811c9dc4 >
+ 200cdb8:    c2 ff 93 01 00 01 	r2 = 16777619 <build/native-session-8/felucca_size.ll+0x1000192 : 1000192 >
+ 200cdbe:    d0 ee 81 30       	r3 = b[r8++=1] (u)
+ 200cdc2:    39 19             	r1 ^= r3
+ 200cdc4:    21 1b             	r1 *= r2
+ 200cdc6:    00 ea fa ff       	if (--r0 != 0) goto -12 <d8p1_autosave_snapshot_pool+0xD4 : 200cdbe >
+ 200cdca:    04 83             	goto 6 <d8p1_autosave_snapshot_pool+0xE8 : 200cdd2 >
+ 200cdcc:    c1 ff c5 9d 1c 81 	r1 = 2166136261 <_data_load+0x7F159E68 : 811c9dc4 >
+ 200cdd2:    88 90             	r0 = sp + 16
+ 200cdd4:    01 f1 34 00       	r1 = r0 + 52  #
+ 200cdd8:    d1 60             		 [r5+0] = r1
+ 200cdda:    42 30             	r2 = 16
+ 200cddc:    40 16             	r0 = r4
+ 200cdde:    bf ea 99 a1       	call -48334 <memcpy : 2001114 >
+ 200cde2:    46 20             	r6 = 0
+ 200cde4:    e7 89             	goto -110 <d8p1_autosave_snapshot_pool+0x8E : 200cd78 >
+
+
