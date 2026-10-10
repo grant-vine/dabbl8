@@ -33,3 +33,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Shared storage pool implementation and remaining migration gates](shared-storage-pool.md)
 
 - [Real eight-track runtime through shared-pool persistence](runtime-shared-persistence.md)
+
+- [Offline converter developer-preview kit](offline-preview-kit.md): local host-specific tooling package, complete corresponding source and original-preserving conversion; device migration and release gates remain open.
