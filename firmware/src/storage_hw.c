@@ -24,6 +24,9 @@ static void audio_silence(void)                 /* IRQs off: the DMA would loop 
     uint32_t i;
     for (i = 0; i < sizeof abuf / sizeof abuf[0]; i++)
         abuf[i] = 0;
+#if NTRK == 8
+    audio_nonzero[0]=audio_nonzero[1]=0; /* account the existing explicit silence */
+#endif
 }
 static int st_erase(uint32_t off)
 {

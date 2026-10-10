@@ -37,8 +37,10 @@ int d8p1_save_flash(unsigned object,int native_authorized);
  * Rechecks stopped transport, inactive canvas, released panel and silent
  * voices, pending MIDI and known performance/slicer/held-arp state before each
  * physical mutation, including under IRQ-off. Resident DSP tail state is
- * checked without scanning audio buffers. Queued USB/DAC audio and physical
- * timing remain required caller gates: this does not prove inaudible output.
+ * checked without scanning audio buffers. Logical DAC halves/USB ring, FIR,
+ * pending packet and underrun frame are also checked. Peripheral FIFOs/codec,
+ * host capture and physical timing remain caller gates, not an inaudibility
+ * proof. Stalled streams or uncertain SIE state may defer indefinitely.
  * This is not a scheduler; caller must apply RESTORE LAST/idle/wear policy. */
 int d8p1_autosave_flash(int native_authorized);
 int d8p1_load_flash(unsigned object,int native_authorized);

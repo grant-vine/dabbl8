@@ -22,6 +22,12 @@ static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;if
 static int mutate(void){CHECK(irq_disabled&&!transport_req&&!transport_busy()&&!cv_cpu_active);if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
 static int st_erase(uint32_t a){CHECK(allowed(a,4096)&&a%4096==0);uint32_t f=irq_save();int rc=mutate();if(!rc)memset(nor+a,255,4096);irq_restore(f);return rc;}
 static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);uint32_t f=irq_save();int rc=mutate();if(!rc)for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];irq_restore(f);if(!rc&&post_commit_io==1&&n==32&&a%8192==0x1000)post_commit_io=2;if(!rc&&post_commit_start&&n==32&&a%8192==0x1000)transport_req=1;if(!rc&&after_commit&&n==32&&a%8192==0x1000)after_commit();return rc;}
+#ifdef D8FLASH_QUEUE_TEST
+#include "native_queue_audio_fixture.h"
+#else
+/* Storage-only fixtures have no audio DMA or USB peripheral. */
+static int audio_output_quiet(void){return 1;}
+#endif
 #include "../firmware/src/d8p1_flash_runtime.c"
 static void reset(void){reads=writes=irq_disabled=0;cut=late_irq=-1;post_commit_start=post_commit_io=0;transport_req=0;inject_at=-1;irq_inject=after_commit=NULL;}
 static void blank(void){memset(nor,0xa5,sizeof nor);for(unsigned b=0;b<5;b++)memset(nor+d8pool_mapped_address(b),255,8192);reset();}
