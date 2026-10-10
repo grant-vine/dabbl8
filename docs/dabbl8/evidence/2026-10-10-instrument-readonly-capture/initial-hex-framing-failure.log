@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/tests/instrument_capture_collector_test.py", line 59, in <module>
+    check(result['accepted'], result.get('reason', mode + ' real capture'))
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/tests/instrument_capture_collector_test.py", line 22, in check
+    raise AssertionError(label)
+AssertionError: Adapter ended before a complete reply
