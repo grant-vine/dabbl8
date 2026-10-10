@@ -636,6 +636,9 @@ static void ep0_service(void)
     case 0x0009:                                        /* SET_CONFIGURATION: 0 or 1 only */
         if (s[2] > 1u)
             goto stall;
+#if NTRK > 4
+        if(usb.config!=s[2])d8_capture_store_changed(); /* invalidate even down/up without reset */
+#endif
         usb.config = s[2];
         if (usb.config == 1u)
             ep1_config();
@@ -800,11 +803,21 @@ static void sysex_byte(uint8_t b)
         for (i = 0; ok && i < 6u; i++)
             ok = usb.sysex[i] == UBOOT_KEY[i];
         if (ok)
+        {
+#if NTRK > 4
+            d8_capture_store_changed(); /* request invalidates before update writes */
+#endif
             usb.uboot_req = 1;
+        }
 #if FELUCCA_OTA
         else if (usb.sx_len == 6u && usb.sysex[1] == 0x22 && usb.sysex[2] == 0x24 && usb.sysex[3] == 0x35 &&
                  usb.sysex[4] == 0x7F)
+        {
+#if NTRK > 4
+            d8_capture_store_changed(); /* request invalidates before update writes */
+#endif
             usb.ota_req = 1;
+        }
         else if (sx_collect && sx_pos) {
             sx_frame_len = sx_pos;
             RING_PUBLISH();

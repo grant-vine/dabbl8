@@ -17,7 +17,11 @@ static void (*irq_inject)(void),(*after_commit)(void);
 /* Match actual fm1_flash.h: cli, return 0; csync/sti always enables. */
 static uint32_t irq_save(void){if(!irq_disabled){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;if(inject_at==0&&irq_inject){inject_at=-1;irq_inject();}if(inject_at>0)inject_at--;}irq_disabled=1;return 0;}
 static void irq_restore(uint32_t was){(void)was;irq_disabled=0;}
-static int allowed(uint32_t a,uint32_t n){for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
+static int allowed(uint32_t a,uint32_t n){
+#ifdef D8FLASH_INSTRUMENT_TEST
+return a<=sizeof nor&&n<=sizeof nor-a;
+#endif
+for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
 static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;
 #ifdef D8FLASH_READ_HOOK
 D8FLASH_READ_HOOK();

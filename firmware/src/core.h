@@ -10,6 +10,13 @@
 /* ------------------------------------------------------------ sizes --- */
 #include "track_limits.h"
 #define NSTEP 64
+#if NTRK > 4
+/* Observation only: any attempted store/update mutation invalidates a capture.
+ * Sticky changed survives epoch rollover; no new mutation authority. */
+static struct { uint32_t epoch; uint8_t changed; } d8_capture_change;
+static void d8_capture_store_changed(void)
+{ d8_capture_change.epoch++; d8_capture_change.changed=1; }
+#endif
 #define HALF_FRAMES 128          /* I2S half buffer: 2.9 ms at 44.1 kHz (a key waits 0..1 half, then plays 1 half later) */
 #ifndef FELUCCA_SLICE
 #define FELUCCA_SLICE 1          /* the SLICE engine (eng_slice.c), engine 13; FELUCCA_SLICE=0 builds without it */
