@@ -1,0 +1,2 @@
+line 62: !uq.packet&&!uac.last&&uac_output_quiet()
+Native output queues: 29340 checks, 1 failures; 654 real audio/UAC full-buffer oracles, 29 late mutation cuts; simulated controller, no physical pipeline/timing claim

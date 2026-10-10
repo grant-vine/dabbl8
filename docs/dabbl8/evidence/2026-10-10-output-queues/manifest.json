@@ -1,0 +1,71 @@
+{
+  "source_commit": "43b413cb99955f231c4f31db0f2265b38efd391d",
+  "parent": "a686c29a7acb298ed38ab85b486e7a7b6c7f2b5f",
+  "branch": "dabbl8/native-output-queue-gate",
+  "source_sha256": {
+    "docs/dabbl8/native-output-queues.md": "90301d40c30e590d2a3bad57330e444cabd6b3ff4dc209e3b8d5de57264c62a6",
+    "firmware/src/audio.c": "22ff55fee43acccc2d93adad5e7e05769df0f95e885e69ff6c425b3f192429ca",
+    "firmware/src/core.h": "523b9a454268f2cf04c3b11ae067c58bec25bd36de6a4a9ca3a3375295ff52cc",
+    "firmware/src/d8p1_flash_runtime.c": "d78306f550ae3deb05d97496ff120299e0125e590f0f552475e03b69b82c3ae3",
+    "firmware/src/d8p1_pool_runtime.h": "b3ade03ccc702bbb8377c958fa2a58c9b3823983a29f0284efaacb0e5922c62d",
+    "firmware/src/storage_hw.c": "103956ea65903d78c8f120dfeec719079b9a6f573e99f31a6cbbfbee9382d900",
+    "firmware/src/usb.c": "0f18110fc0bb89bda6d0256db015cfc1c388f1bc129e0e21bc072b44f0924033",
+    "tests/d8p1_flash_runtime_test.c": "7b9eb07fb201ccd47cb0690de8943086d8879bae88187edcaed2c2dbd9fa25c9",
+    "tests/native_output_queue_test.c": "2de7f361cb0e39f03e3b1b809326e1120c820150da34e7d4a4a6f928b0fe9e2a",
+    "tests/native_queue_audio_fixture.h": "0c387ca18a77fc5f1718925e9713e69879b75874a7eede6e2e2ea5ef1bbf213c",
+    "tests/native_queue_usb_hal.h": "1c54d64c0af19a056720ff03cfc590c443959f325c4181edb5a4ec25c4b02237",
+    "tests/run_tests.sh": "c005b98c548e789d54391d6ee58c5c7bb8449968f7f1ecc3895d5921227e5a87"
+  },
+  "evidence_sha256": {
+    "README.md": "ae939eec5df6e661b3121cac993b2b356925882bca53b56c77155a31796a50a8",
+    "audio-upstream.log": "87c692aaab2a7acd3aea45f1f6ab37c96cedbc196c9663fff15a92a41a8849fb",
+    "checks.json": "ad14655a074a1be524234f6bb1186a7d35e91672bb539b4ec52606b6c8142704",
+    "commands.txt": "1d72e4b97faed690351101c7d9b23ccb0f583ac9adeac84a1b2b42328fc47fb5",
+    "linked-guard-excerpt.txt": "50bd419b31c9e662e24b5cbf3cb2727295de53c1a634e95ea969201989ba69ef",
+    "physical-optimized.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "physical-san.log": "60cb95bc326c2372776a49c1c7dde8386b0b72df17099dc8d5834c215cd4c744",
+    "queue-first.log": "1cc9e2b098a898c9a74db0a27839d821b7e0bba083ce19408829c8e3986c2469",
+    "queue-nested-initial.log": "7c9d08e7ce2df7ef4f99b31b2c1938b10562aceb40a6db8f127eabafa546d44b",
+    "queue-optimized.log": "24f4522e6c9f54508d4014f88fa7c45f4bb85a8bc45843120e9cf8d3730594d8",
+    "queue-san.log": "24f4522e6c9f54508d4014f88fa7c45f4bb85a8bc45843120e9cf8d3730594d8",
+    "queue-tone-optimized.log": "2c39286b072072bafa30774ad46943c581f4a3a9cf59abceb59e8af15faa6b61",
+    "queue-tone-san.log": "2c39286b072072bafa30774ad46943c581f4a3a9cf59abceb59e8af15faa6b61",
+    "quiet-optimized.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "quiet-san.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "tails-optimized.log": "e645dffe7846112bf6073025a3e62489385394d90e811b2bd3b1451bf8627275",
+    "tails-san.log": "e645dffe7846112bf6073025a3e62489385394d90e811b2bd3b1451bf8627275",
+    "target-4.json": "c68e0157b4e7f1fc47a24535ed364df46943f89f9cc338a8a2b56967dbd7ecd9",
+    "target-8.json": "ee0707857819e8eacd96f6f1715bf930c9dbe1de7f5007acf881af4f61958d2e",
+    "target-default-eight.log": "e5db7c294aa78d28b28f889a2c249169e8772ff3ad3fbd7e6e6dd5996eba7c41",
+    "uac-native.log": "2b882ec162031ec357da7db1f2ad3b3492aa690cbf037d4479c88335291a2b6d",
+    "uac-upstream.log": "f9f229618c642f7ab6e6d7a5b077a6b16d0d5d785be83aafd9f90dab0adeb6a4",
+    "wave-identity.json": "b8eda2b0be08f0b680043fe7f332b7e747d6d2180590d6c3ec70ea60787f92f7"
+  },
+  "environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "private_orchestration_sha256": {
+    "verify.py": "575f29656e55f65d7dc252da0c85d94cf61a55953a6f3c5c6ef4f46bff2d0987",
+    "targets.py": "b8b7b3b4f2d324b4b2242d8e3a9d5228a7fccb5f61000325583c09b88c425984",
+    "wave-verify.py": "47bb6f4db696abc21953514d068165c108a92a51600733736fdb376a1a76c7d7"
+  },
+  "private_linked_evidence_sha256": {
+    "build/output-queue-4/linked-symbols.txt": "80fdc97cdbaae195fe1525e2c605759a2cccf423d1c56e310ddecebc122aa708",
+    "build/output-queue-4/linked-disassembly.txt": "770b458937d84a2f5d3d874b473523cc14d7665d84e174c70baf28aa202dcdd4",
+    "build/output-queue-8/linked-symbols.txt": "91c5ef16f8fa361e941b1c44e721a3b7c983ee09b92cb317328e594ddeb05125",
+    "build/output-queue-8/linked-disassembly.txt": "bd7067ee0fe79d0ddc390a87ecb5643e2247c0a08c2b82b05dd122474a4a19bc"
+  },
+  "goldens_unchanged_sha256": {
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "scope": "Focused logical firmware-buffer gate; no full new-head CI or physical pipeline/timing qualification",
+  "documentation_sha256_as_recorded": "a90fbebd4f7bda1eeac3689d36bf223a8fca127e2c0da18b6ad2789b04df154c"
+}

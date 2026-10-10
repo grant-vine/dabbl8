@@ -1,0 +1,54 @@
+-- USB audio input, CDC on
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class misc / IAD (EF 02 01)                               ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: audio IF 0-2, CDC IF 3-4                                   ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 71..145 (band 80..128)              ok
+1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+FIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok
+1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok
+  frames out / in: 48031 / 44128 (160 / 147)                     ok
+     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok
+    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok
+   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok
+   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok
+  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok
+  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok
+  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok
+  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok
+  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok
+  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.2 ns / 44.1 kHz frame
+48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok
+  every frame = the resampled render, in order (0 off); no underrun / overrun ok
+  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok
+  1000 packets, 2.5 ms renders: no glitch                        ok
+48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok
+switch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok
+switch to 48 mid-stream: silence, primed again, every frame in order ok
+uac: all ok

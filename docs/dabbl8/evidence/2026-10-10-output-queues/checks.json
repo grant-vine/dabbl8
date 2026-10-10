@@ -1,0 +1,82 @@
+[
+  {
+    "name": "queue-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "queue-optimized",
+    "exit": 0
+  },
+  {
+    "name": "queue-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "queue-san",
+    "exit": 0
+  },
+  {
+    "name": "queue-tone-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "queue-tone-optimized",
+    "exit": 0
+  },
+  {
+    "name": "queue-tone-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "queue-tone-san",
+    "exit": 0
+  },
+  {
+    "name": "quiet-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "quiet-optimized",
+    "exit": 0
+  },
+  {
+    "name": "quiet-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "quiet-san",
+    "exit": 0
+  },
+  {
+    "name": "tails-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "tails-optimized",
+    "exit": 0
+  },
+  {
+    "name": "tails-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "tails-san",
+    "exit": 0
+  },
+  {
+    "name": "physical-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "physical-optimized",
+    "exit": 0
+  },
+  {
+    "name": "physical-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "physical-san",
+    "exit": 0
+  }
+]
