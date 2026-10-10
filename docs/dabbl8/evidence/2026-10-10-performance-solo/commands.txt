@@ -1,0 +1,3 @@
+cc -O2 -w -Ibuild/gen -Ifirmware/src tests/eight_track_performance_test.c -lm; exactparent gitarchive58944ef +samecorrectedtest.
+Focused verifier retained privately: optimized/sanitizer newperformance andquietguard, required normal upstreamperform_test, pinned4/8tools/build.py build_app/check in isolated OUT build/performance-solo-{4,8}, freshregress against originalgoldens/CPUbaseline.
+SAN -O1 -g -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined; ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1.

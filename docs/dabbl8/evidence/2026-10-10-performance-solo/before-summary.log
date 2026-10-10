@@ -1,0 +1,13 @@
+Corrected final test compiled against git archive parent58944ef427494173388a71f1f5cb4d7fee21d1cd with unchanged generated headers.
+line 66: cold.mg[t]==32768
+line 66: cold.mg[t]==32768
+line 66: cold.mg[t]==32768
+line 66: cold.mg[t]==32768
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+line 74: !memcmp(reference[k],bus[k],sizeof reference[k])
+... full raw log retained privately, SHA in manifest ...
+Eight-track performance audio: 11328 checks, 2708 failures; 2240 dry/stereo/send cases, cold first-block parity and solo release; host mixer only

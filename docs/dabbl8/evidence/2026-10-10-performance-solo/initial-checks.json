@@ -1,0 +1,34 @@
+[
+  {
+    "name": "performance-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "performance-optimized",
+    "exit": 0
+  },
+  {
+    "name": "performance-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "performance-san",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-optimized",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-san",
+    "exit": 1
+  }
+]

@@ -1,0 +1,69 @@
+perform: REPEAT 1/16: live until the 1/16 after the press + one 1/16 (exact)       ok
+perform:   then the 1/16 from that 1/16, looped (error L 25 R 9, 2nd pass 25 of 12000) ok
+perform:   let go: the live signal again after the ramp, bit for bit               ok
+perform:   the buffer given back, nothing left running                             ok
+perform: REVERSE: live until the 1/16 after the press + a 1/8 (exact)              ok
+perform:   then that 1/8 backwards (error L 25 R 9 of 12000)                       ok
+perform:   let go: live again                                                      ok
+perform: stopped: a 1/16 effect starts at once                                     ok
+perform: LPF starts at once (not on the 1/16)                                      ok
+perform: REPEAT 1/8: a silent right side stays silent (L 11978, R 0)               ok
+perform:   each side keeps its own pitch (lag-1 correlation L 0.998, R 0.982)      ok
+perform: REVERSE: a silent right side stays silent (L 11978, R 0)                  ok
+perform:   each side keeps its own pitch (lag-1 correlation L 0.998, R 0.982)      ok
+perform: TAPE STOP: a silent right side stays silent (L 11994, R 0)                ok
+perform:   each side keeps its own pitch (lag-1 correlation L 0.998, R 0.983)      ok
+perform: FREEZE: a silent right side stays silent (L 11978, R 0)                   ok
+perform:   each side keeps its own pitch (lag-1 correlation L 0.998, R 0.982)      ok
+perform: FREEZE: the input gone, it holds what it caught (L 11975 R 8988)          ok
+perform: TAPE STOP: silent a beat after the press (peak 0), live again after       ok
+perform: REPEAT 1/8 at 72 BPM (417 ms, the loop holds 371): nothing happens, bit for bit ok
+perform: REPEAT 1/8 at 120 BPM (250 ms): it plays                                  ok
+perform:   REPEAT 1/8 and REVERSE (1/8) fit from 81 BPM, 1/16 from 41              ok
+perform:   a REPEAT 1/8 held while the tempo drops below its fit: it ends, no click ok
+perform: SLICER STUT: live (no recording, no repeat) while REPEAT has the buffer, dropped after ok
+perform: a key pressed while FX is held: no voice, no MIDI, the layer's, its effect held ok
+perform:   FX let go first: the key still holds its effect                         ok
+perform:   let go: no note-off, the effect off                                     ok
+perform: a key held before FX stays a note (note-on and note-off sent)             ok
+perform: no layer (kb_mask 0): FX held, keys are notes                             ok
+perform: the keys without an effect (6 white from B4, 7 black from D#4): silent, nothing held ok
+perform: idle (FX held, no key): the song bit for bit as without the layer         ok
+perform:   after an effect is let go and its ramp is over: skipped again           ok
+perform: no clicks: REPEAT 1/8 on a 110 Hz sine, in and out: largest step 330 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: REPEAT 1/16 on a 110 Hz sine, in and out: largest step 377 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: REPEAT 1/32 on a 110 Hz sine, in and out: largest step 258 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: REVERSE on a 110 Hz sine, in and out: largest step 401 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: TAPE STOP on a 110 Hz sine, in and out: largest step 251 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: FREEZE on a 110 Hz sine, in and out: largest step 267 (sine 251) ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: LPF on a 110 Hz sine, in and out: largest step 272 (sine 251)  ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: no clicks: HPF on a 110 Hz sine, in and out: largest step 308 (sine 251)  ok
+perform:   back to the live signal, bit for bit                                    ok
+perform: LPF held a bar: a 5 kHz sine down to 508 of 30000                         ok
+perform: HPF held a bar: an 80 Hz sine down to 32 of 30000                         ok
+perform: 4x full scale through LPF + HPF + KNOB 2 CRUSH + REPEAT: peak 148480 (no wrap) ok
+perform: KNOB 1 FILTER all the way left: a 5 kHz sine down to 508                  ok
+perform: KNOB 3 THROW at 100: the dry mix into both sends, full, the dry mix untouched ok
+perform: black key 1: track 1 muted while held (peak 16494 -> 64), P_MUTE untouched ok
+perform: OCT UP: 215.33 / 344.53 Hz in, out at 430.66 / 689.06 Hz (-0.00 / +0.00 cents) ok
+perform: OCT DN: 215.33 / 344.53 Hz in, out at 107.67 / 172.27 Hz (-0.00 / -0.00 cents) ok
+perform:   220 / 330 Hz: the strongest splice line -4.7 / +14.5 Hz from 440 / 660 (within 21.5) ok
+perform:   220 / 330 Hz: the strongest splice line +2.3 / -7.3 Hz from 110 / 165 (within 21.5) ok
+perform: OCT UP: a silent right side stays silent (L 15109, R 0)                   ok
+perform: no clicks: OCT UP on a 110 Hz sine, in and out: largest step 491 (sine 251) ok
+perform:   back to the live signal, bit for bit; the buffer given back             ok
+perform: no clicks: OCT DN on a 110 Hz sine, in and out: largest step 297 (sine 251) ok
+perform:   back to the live signal, bit for bit; the buffer given back             ok
+perform: OCT UP shimmer 0.82 on 4x full-scale squares: peak 119590, 2.5 s after they stop 0 ok
+perform: OCT UP, KNOB 4 at 0: no shimmer (the delay holds the input alone)         ok
+perform: cost: the song 1355 instructions / sample idle, 1625 with REPEAT+LPF+HPF+MUTE, K2 CRUSH, K3 THROW: +269 ok
+perform: cost: over the idle song: REPEAT 1/16 alone +165 (the layer's own stage), OCT UP +247, with the shimmer +282
+perform:   OCT UP over REPEAT 1/16 (the harmonizer itself): +82, with the shimmer +117 (device ~1.4 / 2.0 %, about 2 %) ok
+perform test passed
