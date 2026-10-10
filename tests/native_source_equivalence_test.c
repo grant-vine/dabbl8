@@ -8,7 +8,7 @@ static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES],sv_raw[4096];
 static unsigned sv_reads,sv_allowed,sv_fault,sv_action,sv_at;
 static uint32_t sv_g,sv_crc[5];
 static d8p1_project_state sv_state;
-static int sv_rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;sv_reads++;CHECK(n==256&&a%256==0);if(sv_fault&&sv_reads==sv_fault)return -1;memcpy(p,nor+a,n);if(sv_action&&sv_reads==sv_at){unsigned action=sv_action;sv_action=0;if(action==1)sv_allowed=0;else if(action==2)d8_capture_store_changed();else if(action==3)usb.resets++;else if(action==4){CHECK(!d8mp_end(sv_g));uint32_t other;CHECK(!d8mp_begin(&other));}else if(action==5)nor[0x97000]^=1;else if(action==6)main_migration_workspace(sv_g)->plan[40959]^=1;else if(action==7)track[0].p[P_LEVEL]^=1;else if(action==8)fm1_ms+=EDC_TIMEOUT+1;}
+static int sv_rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;sv_reads++;CHECK(n==256&&a%256==0);if(sv_fault&&sv_reads==sv_fault)return -1;memcpy(p,nor+a,n);if(sv_action&&sv_reads==sv_at){unsigned action=sv_action;sv_action=0;if(action==1)sv_allowed=0;else if(action==2)d8_capture_store_changed();else if(action==3)usb.resets++;else if(action==4){CHECK(!d8mp_end(sv_g));uint32_t other;CHECK(!d8mp_begin(&other));}else if(action==5)nor[0x97000]^=1;else if(action==6)main_migration_workspace(sv_g)->plan[40959]^=1;else if(action==7)trk[0].p[P_LEVEL]^=1;else if(action==8)fm1_ms+=EDC_TIMEOUT+1;}
  return 0;}
 static int sv_valid(void *c,uint32_t g){(void)c;return sv_allowed&&g==sv_g;}
 static int sv_pr(void *c,uint32_t a,void *p,uint32_t n){(void)c;if(a>D8POOL_BYTES||n>D8POOL_BYTES-a)return -1;memcpy(p,sv_plan+a,n);return 0;}
