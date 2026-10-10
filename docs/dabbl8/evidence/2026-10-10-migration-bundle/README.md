@@ -2,11 +2,12 @@
 
 Parent firmware source: `50cf903e67cd7cad6642f02acc729f9aedb648b1` (draft PR #60). This change adds host tools/tests only; all inputs in these logs are synthetic. No user backup, vendor firmware, device operation, firmware build or physical migration was performed.
 
-- Optimized: 121 checks, zero failures.
-- Sanitized: 121 checks, zero failures.
+- Optimized: 127 checks, zero failures.
+- Sanitized: 127 checks, zero failures.
 - Actual existing C legacy importer/native checks plus actual shared-pool writer/reader, not a duplicated pool encoder.
 - Complete 13-object archive and valid synthetic ADPCM sample, all decoded originals, fourth project and both raw autosave sectors retained; inputs unchanged.
 - Distinct live/persisted content, modular wrap, identical-generation selection, payload-corruption fallback, proven-erased initialization and zero native projects.
+- Accepted original third-slot references retain identity 2 and distinct scenes in every native candidate; independent read-only review found no preservation/refusal defect.
 - Explicit refusal for missing/truncated/oversized-length snapshot, committed foreign identity, divergent equal/half-range generation, corruption, fourth-slot/missing references, damaged candidate/fourth project, malformed sample, archive CRC and incomplete archive.
 - Native pool headers/payloads, spare erased, hashes and deterministic bytes checked; initializer refuses bad masks/objects and existing output.
 

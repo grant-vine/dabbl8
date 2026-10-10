@@ -156,6 +156,15 @@ with tempfile.TemporaryDirectory() as directory:
         check(result['accepted'], name + ': recoverable proposal')
         check((dest / 'original-selected-autosave.bin').read_bytes() == expected, name + ': exact selected snapshot')
         check(result['autosave_selection'].get('copy') == copy, name + ': source reported')
+    # Original third-slot references keep identity 2; they must never alias to 1/3.
+    third = bytearray(project); third[2776 + 6] = 2; third = sum_project(third)
+    src.write_text(json.dumps(archive({2: third, 3: third, 4: third}, current=third)))
+    raw.write_bytes(sector(0, 8, third) + b'\xff' * 4096)
+    result = migration.prepare(src, raw, temp / 'third-slot', converter, initializer)
+    check(result['accepted'], result.get('reason', 'third native slot accepted'))
+    for name in ['live.d8p', 'project-0.d8p', 'project-1.d8p', 'project-2.d8p', 'autosave.d8p']:
+        meta = result['conversions'][name]
+        check(meta['referenced_project_mask'] == 5 and meta['slot_to_scene'][2] != meta['slot_to_scene'][0], 'third original identity remains independently referenced')
     # Initializer itself refuses unavailable references, invalid masks, bad wire
     # and existing output rather than bypassing the bundle validator.
     valid_wire = dst / 'project-0.d8p'
