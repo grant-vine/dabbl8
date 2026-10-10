@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-09T19:52:36.760413+00:00",
+  "checks": [
+    {
+      "name": "build",
+      "exit_code": 0
+    },
+    {
+      "name": "tests",
+      "exit_code": 0
+    },
+    {
+      "name": "fixture-sanitizer-compile-4",
+      "exit_code": 0
+    },
+    {
+      "name": "fixture-sanitizer-4",
+      "exit_code": 0
+    },
+    {
+      "name": "fixture-sanitizer-compile-8",
+      "exit_code": 0
+    },
+    {
+      "name": "fixture-sanitizer-8",
+      "exit_code": 0
+    },
+    {
+      "name": "diff-check",
+      "exit_code": 0
+    }
+  ],
+  "artifacts": {
+    "build/felucca.bin": {
+      "sha256": "f4bf45b28f5dba210186defeadcf4a02089c8833a37dc62bd5922c49f9013c9c",
+      "bytes": 447576
+    },
+    "build/felucca.fwsc": {
+      "sha256": "82edf89eaff35f747b9b09d69a5400b1a8e48b5105865036e7cbd85df475c89f",
+      "bytes": 610086
+    },
+    "build/loader/ota.bin": {
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+      "bytes": 6930
+    },
+    "tests/golden.txt": {
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+      "bytes": 3754
+    },
+    "tests/cpu_baseline.txt": {
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+      "bytes": 2116
+    },
+    "tests/target_budget.txt": {
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e",
+      "bytes": 992
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "source_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "provenance": "Synthetic test songs encoded with unchanged upstream historical structs and serializer/importers; captured before modifying implementation. Not device recordings or private backups.",
+  "files": {
+    "fun1-digital.bin": {
+      "bytes": 688,
+      "sha256": "44c07376e2cd639777646ff6b9b6aa6f62ec4f2da69c468ccff22b93eec9f4e8"
+    },
+    "fun1-digital.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "7e7f1f3081fe5733b70dd29ef302134c82f3aaa8fb4d99bfe2a2510137121e4f"
+    },
+    "fun1.bin": {
+      "bytes": 688,
+      "sha256": "8638ed1982753113ed6f91a5d3736f8d18222f6024ef98c5b11aec448b328d60"
+    },
+    "fun1.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "742088f9fb541ef166a000d640c65e85e2538194b48ec4dffa229ff52213bad9"
+    },
+    "fun2.bin": {
+      "bytes": 2552,
+      "sha256": "e64991e1fff3e826008491314d173c97bb5cd1f6d17c4db6e49831eb1d5dfce9"
+    },
+    "fun2.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "9f547875e38abadf6d5168ba9cd9e2083e171331b288514bd498ba1dc561f869"
+    },
+    "fun3.bin": {
+      "bytes": 2584,
+      "sha256": "ce7b80605101b1062f245c3bc1a37284d5b91ff1e5699e7a6b72b11ba4c51a7a"
+    },
+    "fun3.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "bf457141754a006038d94adea6d8bf7ad2128c1466c8bfb9f1b6033c35d9b786"
+    },
+    "fun4-phys-drum.bin": {
+      "bytes": 2680,
+      "sha256": "64c223b3226e12a64c9cbd7b0c5cb455bbe49633bdb71b9ce6235d904d72467c"
+    },
+    "fun4-phys-drum.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "45fbdc4dcc9d6fc37c7b67a80fa8acb002e8ddad35ee8655d1c3d0ca4a13a5aa"
+    },
+    "fun4.bin": {
+      "bytes": 2680,
+      "sha256": "2833d6696a77be4617886d630543a718881c74c80c32bd00a97a8e7547eacdf8"
+    },
+    "fun4.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "bf457141754a006038d94adea6d8bf7ad2128c1466c8bfb9f1b6033c35d9b786"
+    },
+    "fun5.bin": {
+      "bytes": 3352,
+      "sha256": "bfe330cf21bd4d0d38f0b06177c2366165f8f485ee5bb6b3a31e7fb743db3b9e"
+    },
+    "fun5.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "e086c78ecd808ea71b5b67b9d7729fe06b4ee484edfbc049524d7d150f72b08f"
+    },
+    "fun6.bin": {
+      "bytes": 3388,
+      "sha256": "925b5a3011da3c638d2311a758b6e7286b928108e7e67c51b18d7e3cac47971c"
+    },
+    "fun6.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "15bfe84dbad704728f6e637f89e23dbbb12de7fe88e99fbfc3656bd123fadca5"
+    },
+    "fun7.bin": {
+      "bytes": 3388,
+      "sha256": "c3e04d9e8468394bb66b3babcb5cbcff45ccc336470b474cee82d121b087b7d5"
+    },
+    "fun7.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "fun8-perc.bin": {
+      "bytes": 3584,
+      "sha256": "0e204cb15acb9e72ce193eb379e70e186b523306a14e72a43820e5859002c23b"
+    },
+    "fun8-perc.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "25ec77ce42639b9cf64e48015ea3cc01719222b3c7961e5b21c9b39331c1ce66"
+    },
+    "fun8.bin": {
+      "bytes": 3584,
+      "sha256": "a38f9ea6f283dc1a22364503f647a7a00c29a73688db736aa064d8795261474a"
+    },
+    "fun8.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "fun9-digital.bin": {
+      "bytes": 3648,
+      "sha256": "5cf1d801a83fc1aa617ba6bdaa5addc4564b78a305d132c80e6de3cab959b733"
+    },
+    "fun9-digital.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "e72632eff961a03ef22b8bdc9e37d24b80ea8c8dfa637fd79c5484ee57c773db"
+    },
+    "fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "fun9.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    }
+  }
+}

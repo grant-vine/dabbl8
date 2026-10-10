@@ -84,6 +84,8 @@
 #define PROJ_NP_V3 57u                         /* P_COUNT of format 3 (P_E0 was 49) */
 #define PROJ_NP_V4 69u                         /* P_COUNT of format 4 (P_E0 61) */
 #define PROJ_PHYS 2u                           /* project_t.phys: PHYS without DUST and DRUM (see the top) */
+#define PROJ_LEGACY_NTRK 4u                    /* FUN2..FUN9 always store four tracks, regardless of NTRK */
+_Static_assert(NTRK >= PROJ_LEGACY_NTRK, "legacy imports need four destination tracks");
 #define PROJ_NAME_LEN 12u                      /* the name: FUN7 bytes PROJ_NAME_OFF.. (the reserved tail's end) */
 typedef struct {                               /* one track */
     int16_t p[P_COUNT];
@@ -112,11 +114,11 @@ typedef struct {                               /* format 5, before the song chai
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, phys, rsv;
-    proj_trk_v5_t t[NTRK];
+    proj_trk_v5_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v5_t;
 typedef struct { uint32_t magic, size; int16_t g[G_COUNT]; uint8_t sel, parts, phys, rsv;
-    proj_trk_v5_t t[NTRK]; chain_config_t chain; uint32_t sum; } project_v6_t;
+    proj_trk_v5_t t[PROJ_LEGACY_NTRK]; chain_config_t chain; uint32_t sum; } project_v6_t;
 _Static_assert(sizeof(project_v5_t) == 3352u && sizeof(project_v6_t) == 3388u, "frozen formats 5 / 6 sizes");
 /* Serialized FUN7 keeps the retained cache's exact extent. Params are biased
  * bytes, steps pack n/time/flags. Reserved tail is zero and covered by hash.
@@ -129,7 +131,7 @@ _Static_assert(sizeof(project_v5_t) == 3352u && sizeof(project_v6_t) == 3388u, "
 #define PROJ_STORE_V8 3584u                    /* FUN8 */
 #define PROJ_STORE_V7 3388u                    /* FUN7 */
 #define PROJ_NAME_OFF (PROJ_STORE_SIZE - 4u - PROJ_NAME_LEN)
-#define PROJ_FM6_OFF (PROJ_NAME_OFF - NTRK * FM6_PACKED)
+#define PROJ_FM6_OFF (PROJ_NAME_OFF - PROJ_LEGACY_NTRK * FM6_PACKED)
 typedef union { uint32_t align; uint8_t raw[PROJ_STORE_SIZE]; } project_store_t;
 _Static_assert(G_COUNT == 27u, "FUN7 globals retain original IDs");
 _Static_assert(sizeof(project_store_t) == 3648u && PROJ_STORE_V7 == sizeof(project_v6_t), "FUN9 / FUN7 sizes");
@@ -142,7 +144,7 @@ typedef struct {                               /* format 4 (1.0 development buil
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, phys, rsv;
-    proj_trk_v4_t t[NTRK];
+    proj_trk_v4_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v4_t;
 typedef struct {                               /* a track of format 3, read only */
@@ -154,7 +156,7 @@ typedef struct {                               /* format 3 (0.9 .. 1.0), read on
     uint32_t magic, size;
     int16_t g[G_COUNT];
     uint8_t sel, parts, rsv[2];
-    proj_trk_v3_t t[NTRK];
+    proj_trk_v3_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v3_t;
 #define PROJ_DEF_SOUND 0xFFu                   /* preset byte: the track's power-on sound, no steps (format 1) */
@@ -168,7 +170,7 @@ typedef struct {                               /* format 2 (until 0.9), read onl
     uint32_t magic, size;
     int16_t g[PROJ_NG_V2];
     uint8_t sel, rsv[3];
-    proj_trk_v2_t t[NTRK];
+    proj_trk_v2_t t[PROJ_LEGACY_NTRK];
     uint32_t sum;
 } project_v2_t;
 typedef struct {                               /* format 1 (until 0.5 beta), read only */
@@ -248,8 +250,8 @@ static void proj_trk_from_v2(proj_trk_t *d, const proj_trk_v2_t *s)
  * project_load gives it DRUM's kit (PROJ_DEF_KEEP; the SAMPLE PERC sound until 1.0.2). Idempotent */
 static void proj_drums_to_part(project_t *q)
 {
-    proj_trk_t *d = &q->t[NTRK - 1u];
-    if (q->parts == NPART)
+    proj_trk_t *d = &q->t[PROJ_LEGACY_NTRK - 1u];
+    if (q->parts == PROJ_LEGACY_NTRK || q->parts == NPART)
         return;
     d->engine = ENGI_DRUM;                      /* DRUM's first kit: independent of today's power-on drum sound */
     d->preset = PROJ_DEF_KEEP;
@@ -365,7 +367,7 @@ static int proj_from_v4(project_t *q, const project_v4_t *v4, int n)
     q->sel = v4->sel;
     q->parts = v4->parts;
     q->phys = v4->phys;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from(&q->t[i], v4->t[i].p, PROJ_NP_V4, v4->t[i].engine, v4->t[i].preset, v4->t[i].step);
     q->sum = proj_sum(q);
     proj_drums_to_part(q);
@@ -386,7 +388,7 @@ static int proj_from_v3(project_t *q, const project_v3_t *v3, int n)
     proj_rtype_room(q->g);
     q->sel = v3->sel;
     q->parts = v3->parts;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from(&q->t[i], v3->t[i].p, PROJ_NP_V3, v3->t[i].engine, v3->t[i].preset, v3->t[i].step);
     q->sum = proj_sum(q);
     proj_drums_to_part(q);                     /* (a format 3 of firmware before 1.0: parts 0) */
@@ -405,7 +407,7 @@ static int proj_from_v2(project_t *q, const project_v2_t *v2, int n)
     q->size = sizeof *q;
     proj_g_from_v2(q->g, v2->g);
     q->sel = v2->sel;
-    for (i = 0; i < NTRK; i++)
+    for (i = 0; i < PROJ_LEGACY_NTRK; i++)
         proj_trk_from_v2(&q->t[i], &v2->t[i]);
     proj_drums_to_part(q);                     /* (format 2 had the drum track: parts 0) */
     return 1;
@@ -425,7 +427,7 @@ static int proj_from_v1(project_t *q, const project_v1_t *v1, int n)
     proj_g_from_v2(q->g, v1->g);
     q->parts = NPART;                          /* (format 1 had no track 4) */
     proj_trk_from_v2(&q->t[0], &v1->t);
-    for (i = 1; i < NTRK; i++) {               /* the other tracks: their defaults, no steps */
+    for (i = 1; i < PROJ_LEGACY_NTRK; i++) {    /* original tracks 2..4: defaults, no steps */
         uint32_t k;
         for (k = 0; k < P_COUNT; k++)
             q->t[i].p[k] = param_desc_of(trk_def_engine(i), k)->def;
@@ -506,7 +508,7 @@ static int proj_import_old(project_t *q, const void *b, int n)
             memcpy(q->g, v->g, sizeof q->g);
             proj_rtype_room(q->g);
             q->sel = v->sel; q->parts = v->parts; q->phys = v->phys;
-            for (i = 0; i < NTRK; i++) {
+            for (i = 0; i < PROJ_LEGACY_NTRK; i++) {
                 int16_t def[P_COUNT];
                 if (v->t[i].engine >= NENGINES) return 0;
                 for (k = 0; k < P_COUNT; k++) def[k] = param_desc_of(v->t[i].engine, k)->def;
@@ -548,14 +550,16 @@ static uint32_t proj_name_get(char *d, const uint8_t *s)   /* its length */
  * np, format flags, then four byte-param tracks and nine-byte steps; FUN8: the patches at PROJ_FM6_OFF. */
 static int proj_pack(project_store_t *out, const project_t *q)
 {
+    /* Eight-track projects need their own format; never truncate them into FUN9. */
+    if (NTRK != PROJ_LEGACY_NTRK) return 0;
     uint8_t *b = out->raw; uint32_t pos = 68u, t, i; uint32_t magic = PROJ_MAGIC, size = PROJ_STORE_SIZE, sum;
-    for (t = 0; t < NTRK; t++)
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++)
         for (i = 0; i < FM6_PACKED; i++)
             if (q->fm6[t][i] > 127u) return 0;
     if (!chain_valid(&q->chain) || !motion_valid(&q->motion) || P_COUNT > 127u) return 0;
     memset(out, 0, sizeof *out); memcpy(b, &magic, 4); memcpy(b + 4, &size, 4);
     memcpy(b + 8, q->g, sizeof q->g); b[62] = q->sel; b[63] = q->parts; b[64] = q->phys; b[66] = P_COUNT;
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         for (i = 0; i < P_COUNT; i++) {
             if (q->t[t].p[i] < -64 || q->t[t].p[i] > 127) return 0;
             b[pos++] = (uint8_t)(q->t[t].p[i] + 64);
@@ -576,7 +580,7 @@ static int proj_pack(project_store_t *out, const project_t *q)
     if (pos + sizeof q->chain + sizeof q->motion > PROJ_FM6_OFF) return 0;
     memcpy(b + pos, &q->chain, sizeof q->chain); pos += sizeof q->chain;
     memcpy(b + pos, &q->motion, sizeof q->motion);
-    memcpy(b + PROJ_FM6_OFF, q->fm6, sizeof q->fm6);
+    memcpy(b + PROJ_FM6_OFF, q->fm6, PROJ_LEGACY_NTRK * FM6_PACKED);
     {   /* the name (0-padded; stops at the first 0) */
         char n[PROJ_NAME_LEN + 1u];
         memcpy(b + PROJ_NAME_OFF, n, proj_name_get(n, (const uint8_t *)q->name));
@@ -605,16 +609,16 @@ static int proj_motion_ids(motion_store_t *m, uint32_t np)
 static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
 {
     uint32_t pos = 68u, t, i, magic, size, sum, np = b[66], v7 = st == PROJ_STORE_V7;
-    uint32_t name_off = st - 4u - PROJ_NAME_LEN, end = v7 ? name_off : name_off - NTRK * FM6_PACKED;
+    uint32_t name_off = st - 4u - PROJ_NAME_LEN, end = v7 ? name_off : name_off - PROJ_LEGACY_NTRK * FM6_PACKED;
     memcpy(&magic, b, 4); memcpy(&size, b + 4, 4); memcpy(&sum, b + st - 4u, 4);
     if (magic != (v7 ? PROJ_MAGIC_V7 : st == PROJ_STORE_V8 ? PROJ_MAGIC_V8 : PROJ_MAGIC) || size != st || sum != proj_hash(b, st - 4u) ||
-        np < 8u || np > P_COUNT || 68u + NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof q->motion > end)
+        np < 8u || np > P_COUNT || 68u + PROJ_LEGACY_NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof q->motion > end)
         return 0;
     memset(q, 0, sizeof *q); q->magic = PROJ_MAGIC; q->size = sizeof *q;
     memcpy(q->g, b + 8, sizeof q->g); q->sel = b[62]; q->parts = b[63]; q->phys = b[64];
     if (v7 && (q->g[G_RTYPE] < 0 || q->g[G_RTYPE] > 1))   /* a FUN7 may still hold the old drum channel there */
         proj_rtype_room(q->g);
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         int16_t values[P_COUNT], def[P_COUNT];
         for (i = 0; i < np; i++) { if (b[pos] > 191u) return 0; values[i] = (int16_t)b[pos++] - 64; }
         q->t[t].engine = b[pos++]; q->t[t].preset = b[pos++];
@@ -637,7 +641,7 @@ static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
     memcpy(&q->chain, b + pos, sizeof q->chain); pos += sizeof q->chain;
     memcpy(&q->motion, b + pos, sizeof q->motion);
     if (!proj_motion_ids(&q->motion, np) || !chain_valid(&q->chain) || !motion_valid(&q->motion)) return 0;
-    for (t = 0; t < NTRK; t++) {
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         if (v7)
             memcpy(q->fm6[t], FM6_INIT, FM6_PACKED);
         else

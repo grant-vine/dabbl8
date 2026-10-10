@@ -169,6 +169,10 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "TRACKS: 4-track pattern, live recording (lengths, swing), voice budget, engine switch, cost" env TRACKS=build/tracks_demo "$OUT/hostsim" 0 0 1 "$OUT/tracks.wav"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/project_test" tests/project_test.c -lm
     run "project formats (FUN1..FUN5 -> FUN6, the grid and song chain; DIGITAL tracks -> FM6, SAMPLE PERC -> DRUM)" "$OUT/project_test"
+    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test" tests/legacy_fixture_test.c -lm
+    run "immutable FUN1..FUN9 imports and canonical round trips" "$OUT/legacy_fixture_test" tests/fixtures/projects
+    $CC -O1 -w -DLEGACY_DEST_TRACKS=8 -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test_8" tests/legacy_fixture_test.c -lm
+    run "historical layouts/imports with an eight-track destination; refuse FUN9 truncation" "$OUT/legacy_fixture_test_8" tests/fixtures/projects
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
     run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
