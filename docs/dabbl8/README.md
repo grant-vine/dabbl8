@@ -27,3 +27,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Relative multi-sector save engine](multisector-record-engine.md): simulated A/B record preparation; approved map and physical integration remain gated.
 
 - [Software voice cards](software-voice-cards.md): resource research, test matrix and standalone profile/project preflight; runtime exclusion and released variants remain gated.
+
+- [Selected three-project shared storage](three-project-shared-storage.md): three projects and one shared autosave, all samples retained, commit-last write spare; replaces the per-object A/B proposal for initial integration.

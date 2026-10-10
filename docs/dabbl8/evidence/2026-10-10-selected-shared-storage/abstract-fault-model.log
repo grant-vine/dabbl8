@@ -1,0 +1,17 @@
+{
+  "abstract_model_only": true,
+  "blocks": 5,
+  "block_bytes": 8192,
+  "payload_capacity": 7936,
+  "objects": "three saved projects plus autosave",
+  "total_bytes": 40960,
+  "cut_states_checked": 15933,
+  "sequential_saves_checked": 1000,
+  "assertions_passed": true,
+  "limitations": [
+    "Not target firmware or NOR driver test",
+    "No physical address map selected",
+    "No migration, unknown-format handling, callback errors, media wear or hardware timing qualification",
+    "One current copy per object plus shared write spare; not permanent per-object A/B fallback"
+  ]
+}
