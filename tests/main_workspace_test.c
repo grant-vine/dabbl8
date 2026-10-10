@@ -10,6 +10,9 @@
 #define UI_TEST_NO_MAIN 1
 #define UI_ASYNC_LCD 1
 #include "ui_test.c"
+#include "../firmware/src/d8p1_project.h"
+static d8p1_project_state staged_before;
+static uint8_t staged_encoded[D8P1_LIMIT];
 _Static_assert(NPART >= NVOICE, "test the expanded main workspace");
 int main(int argc,char **argv) {
     int bad=0; char name[13]; setvbuf(stdout,0,_IONBF,0);
@@ -28,6 +31,24 @@ int main(int argc,char **argv) {
     if(!stale){cv_blit(0,0);_exit(99);}
     int stale_status=0;waitpid(stale,&stale_status,0);
     bad+=check("blitting a project-owned arena traps before LCD access",WIFSIGNALED(stale_status) && (WTERMSIG(stale_status)==SIGILL || WTERMSIG(stale_status)==SIGTRAP));
+    cv_begin(240,124,T_BG);cv_rect(1,1,23,29,T_ACCENT);
+    hash=pixels_hash(cv_px,CV_MAX);cv_blit(0,20);before=dma_consumed;
+    d8p1_stage_workspace *staging=main_d8p1_workspace();
+    bad+=check("D8P1 borrow fences pending LCD pixels",dma_consumed==before+1 && !dma.p && !dma_errors && pixels_hash(host_screen+20*240,CV_MAX)==hash);
+    bad+=check("decoded state and bounded wire fit unchanged arena",sizeof *staging==17472u && sizeof main_workspace==59520u && sizeof staging->state==9536u);
+    f=fopen("tests/fixtures/d8p1/maximum.d8p","rb");if(!f)return 2;
+    size_t wire_n=fread(staging->wire,1,sizeof staging->wire,f);if(fgetc(f)!=EOF)return 2;fclose(f);
+    bad+=check("actual maximum D8P1 decodes in display arena",wire_n==7705u && d8p1_project_decode(&staging->state,staging->wire,wire_n,15));
+    size_t encoded_n=0;
+    bad+=check("arena decode retains exact source bytes",d8p1_project_encode(staged_encoded,sizeof staged_encoded,&encoded_n,&staging->state) && encoded_n==wire_n && !memcmp(staged_encoded,staging->wire,wire_n));
+    memcpy(&staged_before,&staging->state,sizeof staged_before);staging->wire[wire_n-1]^=1;
+    bad+=check("corrupt staged wire preserves decoded state",!d8p1_project_decode(&staging->state,staging->wire,wire_n,15) && !memcmp(&staged_before,&staging->state,sizeof staged_before));
+    cv_begin(8,8,T_BG);
+    pid_t d8child=fork();if(d8child<0)return 2;
+    if(!d8child){main_d8p1_workspace();_exit(99);}
+    int d8status=0;waitpid(d8child,&d8status,0);
+    bad+=check("D8P1 borrow during drawing traps before writes",WIFSIGNALED(d8status) && (WTERMSIG(d8status)==SIGILL || WTERMSIG(d8status)==SIGTRAP));
+    cv_blit(0,0);(void)main_project_workspace();
     trk[7].p[P_LEVEL]=83;project_capture(&proj_scratch);
     bad+=check("expanded project captures track eight",proj_scratch.t[7].p[P_LEVEL]==83);
     project_store_t wire;

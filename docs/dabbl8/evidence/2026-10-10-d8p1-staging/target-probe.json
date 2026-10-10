@@ -1,0 +1,8 @@
+{
+  "workspace_bytes": 17472,
+  "wire_offset": 9536,
+  "result": "PASS",
+  "target_staged_state_bytes": 9536,
+  "IR_sha256": "d7d995da82b85c796ae9eaa9fb93959e7519a2afc3fdc0206de67f688845d333",
+  "scope": "eight-track native adapter compiler IR only; no target linking, arena/cache adoption, stack/timing or physical proof"
+}

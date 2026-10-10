@@ -1,0 +1,13 @@
+from pathlib import Path
+import importlib.util,os,shutil,json,re,hashlib
+root=Path('/Users/grantv/Code/dabbl8');r=root/'.local-baseline/main-workspace';e=root/'.local-baseline/d8p1-staging-check'
+os.environ.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587')
+spec=importlib.util.spec_from_file_location('dabbl8_build',r/'tools/build.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+assert not m.mmio_check(),m.mmio_check()
+p=r/'build/d8p1-project-probe.c';p.write_text('#define NPART 8\n#include "../firmware/src/felucca.c"\n#include "../firmware/src/d8p1_project.h"\nconst unsigned d8p1_probe_state_bytes=sizeof(d8p1_project_state);\nconst unsigned d8p1_probe_workspace_bytes=sizeof(d8p1_stage_workspace);\nconst unsigned d8p1_probe_wire_offset=__builtin_offsetof(d8p1_stage_workspace,wire);\nint d8p1_probe_encode(uint8_t *out,size_t cap,size_t *n,const d8p1_project_state *s){return d8p1_project_encode(out,cap,n,s); }\nint d8p1_probe_decode(d8p1_project_state *out,const void *raw,size_t n,unsigned mask){return d8p1_project_decode(out,raw,n,mask); }\nint d8p1_probe_legacy(d8p1_project_state *out,d8p1_project_state *work,d8p1_legacy_report *report,const void *raw,size_t n,unsigned mask){return d8p1_legacy_convert(out,work,report,raw,n,mask); }\n')
+ir=r/'build/d8p1-project-probe.ll'
+m.tc('cc',*m.CFLAGS,'-Ifirmware/hal','-Ifirmware/src','-Ibuild/gen','-S','-emit-llvm','-c',p,'-o',ir)
+x=re.search(r'@d8p1_probe_state_bytes =[^\n]*constant i32 ([0-9]+)',ir.read_text());assert x,'missing target sizeof constant'
+w=re.search(r'@d8p1_probe_workspace_bytes =[^\n]*constant i32 ([0-9]+)',ir.read_text());o=re.search(r'@d8p1_probe_wire_offset =[^\n]*constant i32 ([0-9]+)',ir.read_text());assert w and o and int(w.group(1))==17472 and int(o.group(1))==9536
+result={'workspace_bytes':int(w.group(1)),'wire_offset':int(o.group(1)),'result':'PASS','target_staged_state_bytes':int(x.group(1)),'IR_sha256':hashlib.sha256(ir.read_bytes()).hexdigest(),'scope':'eight-track native adapter compiler IR only; no target linking, arena/cache adoption, stack/timing or physical proof'}
+(e/'target-probe.json').write_text(json.dumps(result,indent=2)+'\n');shutil.copy2(p,e/'target-probe-source.c.txt');shutil.copy2(__file__,e/'target-probe-command.py.txt');print(json.dumps(result),flush=True)

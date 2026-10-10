@@ -48,7 +48,7 @@ try:
     command('native-build',[os.environ.get('CC','cc'),'-O1','-w','-Ibuild/gen','-Ifirmware/src','firmware/src/d8p1.c','tools/dabbl8_project_convert.c','-lm','-o',str(native)])
     command('browser-parity',[node,'tests/browser_project_conversion_test.mjs','build/d8converter/dabbl8_project_convert.mjs',str(native)],env)
     report['source']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
-    report['source_hashes']={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in ['firmware/src/d8p1.c','firmware/src/d8p1_project.h','tools/dabbl8_project_convert.c','web/build-d8converter.sh','web/d8project-conversion.js','web/d8project-conversion-page.js','tests/browser_project_conversion_test.mjs']}
+    report['source_hashes']={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in ['firmware/src/d8p1.c','firmware/src/d8p1_project.h','firmware/src/d8p1_project_types.h','tools/dabbl8_project_convert.c','web/build-d8converter.sh','web/d8project-conversion.js','web/d8project-conversion-page.js','tests/browser_project_conversion_test.mjs']}
     report['generated_artifacts']={p.name:{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in (ROOT/'build/d8converter').iterdir() if p.is_file()}
     report['result']='PASS'
 except Exception as error:report['reason']=str(error)

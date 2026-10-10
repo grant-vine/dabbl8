@@ -1,0 +1,90 @@
+{
+  "result": "PASS",
+  "base_commit": "44c1af7d9d2933ff6f320eb7126dd40ed55c684a",
+  "ownership_checks_each_mode": 22,
+  "consumed_DMA_sources_each_mode": 16806,
+  "slot_song_frames_each_mode": 2400,
+  "complete_suite_exit_code": 0,
+  "browser_parity_checks": 218,
+  "target": {
+    "build_check_exit_code": 0,
+    "source_base": "44c1af7d9d2933ff6f320eb7126dd40ed55c684a",
+    "scope": "Uncommitted D8P1 state plus bounded wire staging in unchanged display arena; no package, flashing or hardware qualification.",
+    "experimental_image": {
+      "bytes": 445104,
+      "sha256": "9b2b3c4446eb52cee3f02484eacb7c548ba1868f8ea9e0082d9eb6913901a05d"
+    }
+  },
+  "target_IR_probe": {
+    "workspace_bytes": 17472,
+    "wire_offset": 9536,
+    "result": "PASS",
+    "target_staged_state_bytes": 9536,
+    "IR_sha256": "d7d995da82b85c796ae9eaa9fb93959e7519a2afc3fdc0206de67f688845d333",
+    "scope": "eight-track native adapter compiler IR only; no target linking, arena/cache adoption, stack/timing or physical proof"
+  },
+  "main_arena_bytes": 59520,
+  "RAM": {
+    "used": 95732,
+    "capacity": 98304,
+    "free": 2572
+  },
+  "pool": {
+    "used": 333328,
+    "capacity": 344064,
+    "free": 10736,
+    "required_reserve": 8192
+  },
+  "default_artifacts_unchanged": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "tested_source_hashes": {
+    "firmware/src/gfx.c": "4e08be277c4d5555521be470a32158c7dd0684c28e9085f955229c5d65a65510",
+    "firmware/src/d8p1_project.h": "bc8ba87e3754c765701b9830a982ff06e9abb1c4378abb383ecc61efa43e4a24",
+    "firmware/src/d8p1_project_types.h": "dd2f9fa799a2eb6ff78f0bd977695bb30cf03676c2ab1f2c3c4e8290f49624b2",
+    "tests/main_workspace_test.c": "863a0166b478c50e4f3e48005a597228379f5029ce9aa48a3e5072b652879d63",
+    "tests/run_tests.sh": "3da1143f37d4f6f1c87633bc345c61f56d2d943c3d8551a7518838afc83b379f",
+    "ci/run_browser_conversion.py": "d95392621d391c0cad24f4ce2f2915395e59fcad8fb6cd5c8fe4e9fd273494a0"
+  },
+  "raw_log_hashes": {
+    "wasm-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "default-build.log": "3d1d00ec4b1f5bfb3c1957cb94c902a54d7b0ce713384249c2fc81c7fe92e1d1",
+    "final-upstream-suite.log": "76ebe3d1b7dfafd8c886954b5c653aaf4d57ca8afa95fb837242646882b40056",
+    "ownership-asan.log": "84e50177d90ac6b875cacc5d0d70a98339544e418762c24373901ebca788f5f3",
+    "eight-track-probe.log": "315461644676712ff91aff14be6d9aeaff2ba27ca4e0de2d9125f7031e66104a",
+    "ownership-o2.log": "84e50177d90ac6b875cacc5d0d70a98339544e418762c24373901ebca788f5f3",
+    "browser-parity.log": "3238482e324176201a5bff7a1e988ca221080e5c9c6cf2f88f807dabc5231268"
+  },
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally outside Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP",
+  "hosted_CI": "pending draft",
+  "scope": "Bounded typed allocation and actual host LCD/decode ownership only; unused accessor/codec not adopted by shipping firmware; no runtime/cache/stack/physical/flash qualification"
+}

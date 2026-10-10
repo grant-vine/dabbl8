@@ -197,7 +197,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades" "$OUT/heavy_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/wheel_pool_test" tests/wheel_pool_test.c -lm
     run "WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership" "$OUT/wheel_pool_test"
-    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/main_workspace_test" tests/main_workspace_test.c -lm
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/main_workspace_test" firmware/src/d8p1.c tests/main_workspace_test.c -lm
     run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
@@ -372,7 +372,7 @@ else
     run "ASan/UBSan: companion editor model through actual C handlers" node web/test_d8companion.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     $SCC -o "$A/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
     run "ASan/UBSan: offline import preservation, migrations and refusal" python3 tests/offline_import_test.py "$A/dabbl8_import_preview"
-    $SCC -DNPART=8 -o "$A/main_workspace_test" tests/main_workspace_test.c -lm
+    $SCC -DNPART=8 -o "$A/main_workspace_test" firmware/src/d8p1.c tests/main_workspace_test.c -lm
     run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7

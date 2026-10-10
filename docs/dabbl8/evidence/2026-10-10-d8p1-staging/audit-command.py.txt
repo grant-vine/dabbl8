@@ -1,0 +1,27 @@
+from pathlib import Path
+import json,hashlib,shutil,re
+r=Path('/Users/grantv/Code/dabbl8/.local-baseline/main-workspace');e=r.parent/'d8p1-staging-check';pub=r/'docs/dabbl8/evidence/2026-10-10-d8p1-staging'
+log=(e/'final-upstream-suite.log').read_text()
+assert json.loads((e/'final-suite-result.json').read_text())['exit_code']==0 and 'ALL HOST TESTS PASSED' in log
+markers=['main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors','D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption','D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption','Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes','D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine']
+for marker in markers:assert log.count(marker)==2,(marker,log.count(marker))
+for name in ['ownership-o2.log','ownership-asan.log']:
+    s=(e/name).read_text();assert len(re.findall(r'^ui:.*\bok$',s,re.M))==22 and '0 ownership errors' in s
+assert '218 checks passed' in (e/'browser-parity.log').read_text()
+assert json.loads((e/'default-build-result.json').read_text())['exit_code']==0
+previous=json.loads((r/'docs/dabbl8/evidence/2026-10-10-offline-conversion/results.json').read_text())
+artifacts={}
+for name,expected in previous['default_artifacts_unchanged'].items():
+    p=r/name;actual={'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()};assert actual==expected;(artifacts.update({name:actual}))
+target=json.loads((e/'results.json').read_text());assert target['build_check_exit_code']==0 and target['experimental_image']=={'bytes':445104,'sha256':'9b2b3c4446eb52cee3f02484eacb7c548ba1868f8ea9e0082d9eb6913901a05d'}
+probe=json.loads((e/'target-probe.json').read_text());assert probe['result']=='PASS' and probe['workspace_bytes']==17472 and probe['wire_offset']==9536 and probe['target_staged_state_bytes']==9536
+symbols=(r/'build/d8p1-staging-eight/symbols.txt').read_text();assert re.search(r'\.pool\s+0000e880 main_workspace',symbols)
+source=['firmware/src/gfx.c','firmware/src/d8p1_project.h','firmware/src/d8p1_project_types.h','tests/main_workspace_test.c','tests/run_tests.sh','ci/run_browser_conversion.py']
+out={'result':'PASS','base_commit':'44c1af7d9d2933ff6f320eb7126dd40ed55c684a','ownership_checks_each_mode':22,'consumed_DMA_sources_each_mode':16806,'slot_song_frames_each_mode':2400,'complete_suite_exit_code':0,'browser_parity_checks':218,'target':target,'target_IR_probe':probe,'main_arena_bytes':59520,'RAM':{'used':95732,'capacity':98304,'free':2572},'pool':{'used':333328,'capacity':344064,'free':10736,'required_reserve':8192},'default_artifacts_unchanged':artifacts,'tested_source_hashes':{n:hashlib.sha256((r/n).read_bytes()).hexdigest() for n in source},'raw_log_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in e.glob('*.log')},'omissions':previous['omissions'],'hardware':'SKIP','hosted_CI':'pending draft','scope':'Bounded typed allocation and actual host LCD/decode ownership only; unused accessor/codec not adopted by shipping firmware; no runtime/cache/stack/physical/flash qualification'}
+pub.mkdir(exist_ok=True);(pub/'results.json').write_text(json.dumps(out,indent=2)+'\n');(e/'audit.json').write_text(json.dumps(out,indent=2)+'\n')
+for name in ['ownership-o2.log','ownership-asan.log','browser-parity.log','eight-track-probe.log','target-probe.json','probe-command.py.txt','target-probe-source.c.txt','target-probe-command.py.txt','final-suite-command.py.txt','default-build-command.py.txt']:
+    shutil.copy2(e/name,pub/name)
+(pub/'suite-summary.txt').write_text('\n'.join(l for l in log.splitlines() if any(m in l for m in markers) or 'ALL HOST TESTS PASSED' in l or '== skip' in l)+'\n')
+shutil.copy2(__file__,pub/'audit-command.py.txt')
+p=pub/'README.md';s=p.read_text().replace('Default build and full-suite verification are recorded separately when complete.','Default build and the complete optimized/sanitizer suite pass. All preceding default firmware/package/loader/audio/CPU/target-reference hashes match. The 22 ownership assertions pass in both modes, alongside 18,193 native-adapter and 17,490 byte-codec assertions twice, 314 offline conversion checks twice, thirteen pristine originals/canonical references twice, and all upstream/companion tests. The actual browser/native parity rerun also passes all 218 checks. Four suite omissions remain explicit: DaisySP, the official V15 CLI fixture outside Git, absent embedded-editor MENU, and Emscripten absent from this suite’s PATH (the separate converter check does not qualify the upstream emulator).');p.write_text(s)
+print('Staging audit PASS: 22 ownership assertions twice, unchanged target memory/default hashes, complete suite and 218 browser checks; hardware SKIP')

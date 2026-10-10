@@ -1,0 +1,6 @@
+from pathlib import Path
+import subprocess,os,json,shutil
+root=Path('/Users/grantv/Code/dabbl8');r=root/'.local-baseline/main-workspace';e=root/'.local-baseline/d8p1-staging-check'
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0')
+with (e/'default-build.log').open('w') as log:p=subprocess.run(['sh','build.sh'],cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT)
+(e/'default-build-result.json').write_text(json.dumps({'exit_code':p.returncode,'scope':'Default four-track upstream firmware build with isolated pinned dependencies'},indent=2)+'\n');shutil.copy2(__file__,e/'default-build-command.py.txt');print('default build exit:',p.returncode,flush=True);raise SystemExit(p.returncode)
