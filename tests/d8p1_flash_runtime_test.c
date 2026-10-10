@@ -18,7 +18,11 @@ static void (*irq_inject)(void),(*after_commit)(void);
 static uint32_t irq_save(void){if(!irq_disabled){if(late_irq==0)transport_req=1;if(late_irq>0)late_irq--;if(inject_at==0&&irq_inject){inject_at=-1;irq_inject();}if(inject_at>0)inject_at--;}irq_disabled=1;return 0;}
 static void irq_restore(uint32_t was){(void)was;irq_disabled=0;}
 static int allowed(uint32_t a,uint32_t n){for(unsigned b=0;b<5;b++){uint32_t base=d8pool_mapped_address(b);if(a>=base&&a-base<=8192&&n<=8192-(a-base))return 1;}return 0;}
-static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;if(post_commit_io==2)return -1;memcpy(p,nor+a,n);return 0;}
+static int st_read(uint32_t a,void *p,uint32_t n){CHECK(allowed(a,n));reads++;
+#ifdef D8FLASH_READ_HOOK
+D8FLASH_READ_HOOK();
+#endif
+if(post_commit_io==2)return -1;memcpy(p,nor+a,n);return 0;}
 static int mutate(void){CHECK(irq_disabled&&!transport_req&&!transport_busy()&&!cv_cpu_active);if(cut==0)return -1;if(cut>0)cut--;writes++;return 0;}
 static int st_erase(uint32_t a){CHECK(allowed(a,4096)&&a%4096==0);uint32_t f=irq_save();int rc=mutate();if(!rc)memset(nor+a,255,4096);irq_restore(f);return rc;}
 static int st_prog(uint32_t a,const void *p,uint32_t n){const uint8_t *q=p;CHECK(allowed(a,n)&&n&&n<=256&&(a&255)+n<=256);uint32_t f=irq_save();int rc=mutate();if(!rc)for(unsigned i=0;i<n;i++)nor[a+i]&=q[i];irq_restore(f);if(!rc&&post_commit_io==1&&n==32&&a%8192==0x1000)post_commit_io=2;if(!rc&&post_commit_start&&n==32&&a%8192==0x1000)transport_req=1;if(!rc&&after_commit&&n==32&&a%8192==0x1000)after_commit();return rc;}

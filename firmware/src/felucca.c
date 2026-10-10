@@ -108,6 +108,7 @@
 #include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
 #include "d8p1_flash_runtime.c"     /* explicitly authorized existing-driver adapter */
 #include "project_native_flash.c"    /* explicit ownership handoff to menu */
+#include "native_autosave_session.c" /* dormant until explicit session authorization */
 #endif
 #endif
 #if FELUCCA_OTA

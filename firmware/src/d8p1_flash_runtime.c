@@ -114,3 +114,14 @@ int d8p1_autosave_flash(int native_authorized)
     if(!rc)rc=d8p1_save_pool(&mapped.pool,3);
     d8pool_mapped_close(&mapped);return rc;
 }
+
+int d8p1_autosave_snapshot_flash(uint32_t *signature,d8pool_record *record,int authorized)
+{
+    if(!authorized)return D8POOL_UNSUPPORTED;
+    if(!flash_ok)return D8POOL_IO;
+    d8pool_mapped mapped;
+    d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
+    int rc=d8pool_mapped_open(&mapped,&io,authorized);
+    if(!rc)rc=d8p1_autosave_snapshot_pool(&mapped.pool,signature,record);
+    d8pool_mapped_close(&mapped);return rc;
+}
