@@ -1,0 +1,3344 @@
+{
+  "source_commit": "b2466bf9bc1c675ed8b8f667d37af8f5e4e4b377",
+  "upstream_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "scope": "Immutable tracked code blobs and explicit notice/asset pins; no generated headers, external SDK or release bundle audit",
+  "summary": {
+    "code_files": 296,
+    "new_files": 114,
+    "modified_files": 45,
+    "without_literal_spdx": [],
+    "upstream_notice_lines_preserved": true,
+    "three_port_headers_byte_preserved": true,
+    "license_text_blobs_unchanged": true
+  },
+  "notice_asset_pins": {
+    "LICENSE": {
+      "git_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    "LICENSING.md": {
+      "git_blob": "d6a0f5129465ec0f2b2342255978732a9f11d3a7",
+      "sha256": "89c487f3dc19218cc0d1ec0d73466092a5cbc5ab842a98b9a2f625a215cb0e5e"
+    },
+    "assets/samples-cc0/ATTRIBUTION.txt": {
+      "git_blob": "7659f46d479be8b7567b56d3ebf95ba5dda53096",
+      "sha256": "d9b6171396bce707eb16836c1abf82651fae8b1d3eeda3365f5baacf33c1ae59"
+    },
+    "assets/fonts/OFL.txt": {
+      "git_blob": "18d0da5dfcf4b1703293ed87f8e3efcf34aa643f",
+      "sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58"
+    },
+    "assets/fonts/InterTight[wght].ttf": {
+      "git_blob": "7d64212163dc15e7f3de5487672668dbde589365",
+      "sha256": "b81b73dcb64df3c230cabade7df6c5773bf863233f24c9ee51087519f1f88b6f"
+    },
+    "web/fukiai.ttf": {
+      "git_blob": "d028f736b3c602443e3322fc754fe18eb64e713b",
+      "sha256": "312bc6abd697ba7783e3ce36250b819659998b0a778bcab259941856472be37a"
+    },
+    "web/FUKIAI-LICENSE.txt": {
+      "git_blob": "62971fe4f14949448b7295c389bc042644700440",
+      "sha256": "fddeab17d69ab85a8e9c593beb0e93c279a9d74ff9504e1804bba123cb63e08e"
+    },
+    "web/emu/fonts/OFL.txt": {
+      "git_blob": "e2837674128a3f2c2495ad97c43d87662ef62e51",
+      "sha256": "5e59cab6d61d59a5b3110ed900dce715383cb2626a473dcf77c13c116aa839eb"
+    },
+    "web/emu/fonts/DotGothic16-subset.woff": {
+      "git_blob": "9b1454627498c4198609c3acb1f06af3e6134d41",
+      "sha256": "64f5bf21134bb81ed79b6ab1f65e0a8c75d55cfd68b08a2501e21e571a3cc61f"
+    },
+    "LICENSES/Apache-2.0-msfa.txt": {
+      "git_blob": "75b5bab21f7b4e150b4be5ca224663af08101483",
+      "sha256": "27dd23b62bc11d0806562397a1e782f86fc7dcacd1ba7a1b58d3c78a54795e62"
+    },
+    "LICENSES/Apache-2.0.txt": {
+      "git_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    "LICENSES/MIT-DaisySP.txt": {
+      "git_blob": "5c0d660e810f60275c80680d43ecda1750b1dca8",
+      "sha256": "7fa755aede5b5c2a8131a6db692f5818ed8d21dcbe632f41618af03b6d698126"
+    },
+    "LICENSES/MIT-Fukiai.txt": {
+      "git_blob": "62971fe4f14949448b7295c389bc042644700440",
+      "sha256": "fddeab17d69ab85a8e9c593beb0e93c279a9d74ff9504e1804bba123cb63e08e"
+    },
+    "LICENSES/MIT-Rings.txt": {
+      "git_blob": "696e17659579e47181bdc7b027a3e8a9fc850a30",
+      "sha256": "60cd097bf74b2a3a0cadadeddec5d80b6806f83039e6ce9cb0ba511a1f17a2be"
+    },
+    "LICENSES/OFL-DotGothic16.txt": {
+      "git_blob": "e2837674128a3f2c2495ad97c43d87662ef62e51",
+      "sha256": "5e59cab6d61d59a5b3110ed900dce715383cb2626a473dcf77c13c116aa839eb"
+    },
+    "LICENSES/OFL-InterTight.txt": {
+      "git_blob": "18d0da5dfcf4b1703293ed87f8e3efcf34aa643f",
+      "sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58"
+    }
+  },
+  "code_files": [
+    {
+      "path": "build.sh",
+      "git_mode": "100755",
+      "git_blob": "dda5a5d802cd3e9a9d780e415b3cdded84a903bf",
+      "sha256": "abd7d97f65e2fb63a33d485263770127dadaa374cdb81ff8963ef660ebec2c5b",
+      "upstream_blob": "dda5a5d802cd3e9a9d780e415b3cdded84a903bf",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_adc.h",
+      "git_mode": "100644",
+      "git_blob": "19b253640c2aebe24dfb6acc37fe53d5596e54b4",
+      "sha256": "1917870bd802de9134d33335efbcf886b296705dff06688925fd7325589c0c1a",
+      "upstream_blob": "19b253640c2aebe24dfb6acc37fe53d5596e54b4",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_audio.h",
+      "git_mode": "100644",
+      "git_blob": "02e2cc32dd1cd9f00aad1e92fc87cb45771bc40a",
+      "sha256": "22351440699748546e932098e3016c618d6137dd0ae34557e08a107641d4e62e",
+      "upstream_blob": "02e2cc32dd1cd9f00aad1e92fc87cb45771bc40a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_cc.h",
+      "git_mode": "100644",
+      "git_blob": "948e81dfbb32b15cd4c1bdfed9d44d1e290a5f0c",
+      "sha256": "46c533a0926ba9298ae36705f857ed609a61b95511ba7f0d1800857b4760dd73",
+      "upstream_blob": "948e81dfbb32b15cd4c1bdfed9d44d1e290a5f0c",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_flash.h",
+      "git_mode": "100644",
+      "git_blob": "0fe74c1f4a18869c1bf1e6fe1d2484a5cdac74be",
+      "sha256": "38dd17eb48139f051f2f9eb0144cdc6172aa8f11a405949c413a10d5f2f9995d",
+      "upstream_blob": "0fe74c1f4a18869c1bf1e6fe1d2484a5cdac74be",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_gpio.h",
+      "git_mode": "100644",
+      "git_blob": "cb7db8cc0cacf9878d997cfb00d6fe38780f5e63",
+      "sha256": "5e3937e32a3b4b9b9ae622c5b42c8819ec8a16f2d76dbddec91654703c77a216",
+      "upstream_blob": "cb7db8cc0cacf9878d997cfb00d6fe38780f5e63",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_guard.h",
+      "git_mode": "100644",
+      "git_blob": "f9e8c65c0f057f918ce22f66dffa02a82f5c907a",
+      "sha256": "6a5ddde30c97ff094ba7f843be53eeafc820caf451fe3270c06a17be178a4608",
+      "upstream_blob": "f9e8c65c0f057f918ce22f66dffa02a82f5c907a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_input.h",
+      "git_mode": "100644",
+      "git_blob": "7b33faba667438059ebb51fff512b6b1d36c30ef",
+      "sha256": "7c3239642816e7cfe75a93518cb7a2d5880d722901d4e9bf88cb7f25bc2d6090",
+      "upstream_blob": "7b33faba667438059ebb51fff512b6b1d36c30ef",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_irq.h",
+      "git_mode": "100644",
+      "git_blob": "e370c81d85a31257f75acd7482fd6db508f4b082",
+      "sha256": "0b2191dd30b5b992782bc334ec542e1027947124be469e9270962f5ce9e857a8",
+      "upstream_blob": "e370c81d85a31257f75acd7482fd6db508f4b082",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_lcd_hw.h",
+      "git_mode": "100644",
+      "git_blob": "356a2c4245257721027741ba5aca197a649225dd",
+      "sha256": "9e78a5f9b75fe881d3e90529f39876a322e311d2ae317d068c782bd528b96cff",
+      "upstream_blob": "356a2c4245257721027741ba5aca197a649225dd",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_led_anim.h",
+      "git_mode": "100644",
+      "git_blob": "0597301e4b05ab5eb60e8ad43d407f7209f343e9",
+      "sha256": "8f595531f57101176ad20836f5388400158c439a7c10da0c15b70800be9a0e4d",
+      "upstream_blob": "0597301e4b05ab5eb60e8ad43d407f7209f343e9",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_sys.h",
+      "git_mode": "100644",
+      "git_blob": "66e510907d28ef456e6557fba08c289bf06db09e",
+      "sha256": "037bc64e65650fb2c8d3a23b218992fad347e9098352aae4938738622af2c224",
+      "upstream_blob": "66e510907d28ef456e6557fba08c289bf06db09e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_time.h",
+      "git_mode": "100644",
+      "git_blob": "3ca37a9ab52638cdd879090e9546e2e31fdbd2ef",
+      "sha256": "22116c4b6a365c8510ba1dab12f0e8a452343a82435abff7640648c630b740fa",
+      "upstream_blob": "3ca37a9ab52638cdd879090e9546e2e31fdbd2ef",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_timer.h",
+      "git_mode": "100644",
+      "git_blob": "8f8d48605b756af73f51cb38abd68970166bfeab",
+      "sha256": "d5e89b90035018207264fd89ea2b0988d5d716506df07233c9dd2c39741b71e8",
+      "upstream_blob": "8f8d48605b756af73f51cb38abd68970166bfeab",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_uart.h",
+      "git_mode": "100644",
+      "git_blob": "2323e0f0844719d921468a09b862bf3c9b11ccdf",
+      "sha256": "0df7266a58996c688a4279c6b7edbaa7921e18805c8a65f1ff156680b03fcff6",
+      "upstream_blob": "2323e0f0844719d921468a09b862bf3c9b11ccdf",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_usb.h",
+      "git_mode": "100644",
+      "git_blob": "9950dddf5a90d869e85a284ca22f6b15f79464b2",
+      "sha256": "12b9b31bde0dbb15fa15379a215eaec11e882bd33c18f4b250fa9e3a47c202f0",
+      "upstream_blob": "9950dddf5a90d869e85a284ca22f6b15f79464b2",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/hal/fm1_xip.h",
+      "git_mode": "100644",
+      "git_blob": "45830c04bb8463ee27d40ccda2d5317757723872",
+      "sha256": "dcba6ddb9cd2403e1d97c4db49d836110ef2805d2369db7ed323e3fbe26c56ed",
+      "upstream_blob": "45830c04bb8463ee27d40ccda2d5317757723872",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/loader/ldr_core.c",
+      "git_mode": "100644",
+      "git_blob": "50bde45a387a104707140509ef6c84ec146dfbf5",
+      "sha256": "e1f755641477079470d780fae3a3460dcf96da9384ae3a81437aef8b6247c6d9",
+      "upstream_blob": "50bde45a387a104707140509ef6c84ec146dfbf5",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/loader/loader.c",
+      "git_mode": "100644",
+      "git_blob": "b74dfa16f89619b68758474fc3d5982a8c514858",
+      "sha256": "88e553333c567fc2af4e7ec4bd6e13b9b3d731b80329a707a04b48cf33ac093b",
+      "upstream_blob": "b74dfa16f89619b68758474fc3d5982a8c514858",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/audio.c",
+      "git_mode": "100644",
+      "git_blob": "3a5cfea4c1d5fc15e475057e8b1d6bfa884d372f",
+      "sha256": "22ff55fee43acccc2d93adad5e7e05769df0f95e885e69ff6c425b3f192429ca",
+      "upstream_blob": "c0238e4fd3accb16e68440bf1d4da8ae03a5cd25",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/chord.c",
+      "git_mode": "100644",
+      "git_blob": "6dbab991d842144d09a529de8dfe7837f79275b3",
+      "sha256": "c1e7e7a1e62015a1ae1a357bdfad3fea4c5d47762adb4a1ac8dbb51937d1e4c1",
+      "upstream_blob": "6dbab991d842144d09a529de8dfe7837f79275b3",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/click.c",
+      "git_mode": "100644",
+      "git_blob": "1eec509eabbf9d03d6c555933ca346b674392d47",
+      "sha256": "6c22d8313a0429d03f86e28cdfa7918ab70e1e5f1f6ddffe6addeb9b8fae04c8",
+      "upstream_blob": "1eec509eabbf9d03d6c555933ca346b674392d47",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/console.c",
+      "git_mode": "100644",
+      "git_blob": "5269bcbacbc78123ce7774e8ee1aab1ecec76d8c",
+      "sha256": "22164dd4dfdfe1760465111f6c5f7e43e7eeba17716688f24a0cacbd4bedf892",
+      "upstream_blob": "5269bcbacbc78123ce7774e8ee1aab1ecec76d8c",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/core.h",
+      "git_mode": "100644",
+      "git_blob": "8a9a045efaa088585c3b960e55968ee245c7a1c1",
+      "sha256": "ba9294f72d9d06da494819efe56afbcf1f98a577e3630ea3684b0b44fae5cb72",
+      "upstream_blob": "c592f3b371a071f37e5916fe468b15f4f7b75910",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8card.c",
+      "git_mode": "100644",
+      "git_blob": "02a6eccb89f2f64fd95a24cafabd87b5eb55573e",
+      "sha256": "6590ba07ed27c429b0bfc1d688362db664bcc46bd474dff0e8d3b82d9406b94c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8card.h",
+      "git_mode": "100644",
+      "git_blob": "3e2f01aeec870630c024f63aa301585ef49ec102",
+      "sha256": "294c452097af5eab5b38585ffd508f789c6bee2ff1519e971500d0a8be9c9243",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1.c",
+      "git_mode": "100644",
+      "git_blob": "1664cf01301b85faaf3574ad003a6609d713a870",
+      "sha256": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1.h",
+      "git_mode": "100644",
+      "git_blob": "2726f68dc028db5bd8aea6c8a87e2abcf6d1ccee",
+      "sha256": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_flash_runtime.c",
+      "git_mode": "100644",
+      "git_blob": "caf07c57e4aaceb5fb601b0bfe564005d8dbe11f",
+      "sha256": "b7eb5e510414270f7c271158f99b7d328fed57f86a848720ce4c5b7a56198f0a",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_pool_runtime.c",
+      "git_mode": "100644",
+      "git_blob": "bf62a0fcb77a55319c3dc7e9ae865bc1967aa9c1",
+      "sha256": "aceea8779f868094b838ab0615295ad4379f970420be45f4ee27c4561ffee686",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_pool_runtime.h",
+      "git_mode": "100644",
+      "git_blob": "94a020dfcf9525bc40f9c90dceb4e70cb988b8e6",
+      "sha256": "0589989d92271700f49561917e19b2d9c99781dcc76f39b44d6090eaca27c89f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_project.h",
+      "git_mode": "100644",
+      "git_blob": "675235215432d845a9fa76a6eeda2fa9fd4d2c04",
+      "sha256": "bc8ba87e3754c765701b9830a982ff06e9abb1c4378abb383ecc61efa43e4a24",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_project_types.h",
+      "git_mode": "100644",
+      "git_blob": "48c18bb27a773c021e28f8df052e55335f96f03e",
+      "sha256": "dd2f9fa799a2eb6ff78f0bd977695bb30cf03676c2ab1f2c3c4e8290f49624b2",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8p1_runtime.c",
+      "git_mode": "100644",
+      "git_blob": "f3bb5631171e7e8badb25ef910dd66cca2bd38bc",
+      "sha256": "b96b5bd46c66104ffb6619c283eb9b57cc23705e1fb3309488860b8719788cce",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/d8pool.c",
+      "git_mode": "100644",
+      "git_blob": "dbe2b3ae6ab721943ae7c7279434b0ddf2b59f35",
+      "sha256": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8pool.h",
+      "git_mode": "100644",
+      "git_blob": "1b8e9987177d91747801ecff828c3d8b9c57e344",
+      "sha256": "ce008b58ca544dfbc867c77ce5f9b2b85a32a8779f714e91afba7787e4c9b1d1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8pool_mapped.c",
+      "git_mode": "100644",
+      "git_blob": "946ddafb8893631e396f43cb6b80bec32554a0a7",
+      "sha256": "493e58cb3841477197f14615091afbc91c8731039a0d65067b9e083905fc4e89",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8pool_mapped.h",
+      "git_mode": "100644",
+      "git_blob": "b493f5fb3ac2f3d4f0a9e07ffa6d620048693aab",
+      "sha256": "b28239e4bb6e8314ebadd3b256f8ca7e2eab4b53759322527555238ec39b8060",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8store.c",
+      "git_mode": "100644",
+      "git_blob": "95999e4373079a0a4ae66105a55fd167d7fc0692",
+      "sha256": "839a31d98132512dd513fcafdb1683af38bb53863bd521b3ce879db08c0996c9",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/d8store.h",
+      "git_mode": "100644",
+      "git_blob": "6dee132164675f8915d3280966575c498ead4f6b",
+      "sha256": "5e33009d47f6dd0f01af62467a4b035b0f437c99eda9de563376d86b4b932bea",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/drum_voice.c",
+      "git_mode": "100644",
+      "git_blob": "5a1b67b48c50c2dc45fdd4cc015ebef905820021",
+      "sha256": "ea56db5b417c80dbcfefe12c543677f9a0f889d5ea1d89d64500e4fb42cee589",
+      "upstream_blob": "5a1b67b48c50c2dc45fdd4cc015ebef905820021",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/dsp.c",
+      "git_mode": "100644",
+      "git_blob": "0b0ab39581fd33e3173e88254b586063246bf7d5",
+      "sha256": "f3bb643947d1d80e46aeb23985f0f61cefc02c222952a06d79f79153acdf01e7",
+      "upstream_blob": "0b0ab39581fd33e3173e88254b586063246bf7d5",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/editor.c",
+      "git_mode": "100644",
+      "git_blob": "e70cb60cc56215a349b3d0cd5e3b7f4c2f0ef504",
+      "sha256": "95d07c1a3f7db211f6bd84b858fddf223cf563ef07cbb26d60ec02e4ae799614",
+      "upstream_blob": "3efed66e33ec884e564a59d7cd192573100c9277",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/editor_backup.c",
+      "git_mode": "100644",
+      "git_blob": "fb630f44b690ab16b2c9c4d69418d0caa99122cf",
+      "sha256": "7d1aee8da3a2b285207aca1a733319c92528828c1d61cfb67e3e7c80ea9ce78d",
+      "upstream_blob": "fb630f44b690ab16b2c9c4d69418d0caa99122cf",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/editor_capture.c",
+      "git_mode": "100644",
+      "git_blob": "6145720de94ce0f74f9b036f88854f5de347151b",
+      "sha256": "c7ce61d9668f15c413e8a7cbc9b847ebf832f826a4c4e88ce0200bd5aea96e82",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/editor_fm6.c",
+      "git_mode": "100644",
+      "git_blob": "50c8c3528534b3dbaac99375ed1123a6918161e9",
+      "sha256": "52ec53224e586674e75fef00abf7e68da58ed812ac0720fd3b21a05a1634ed78",
+      "upstream_blob": "50c8c3528534b3dbaac99375ed1123a6918161e9",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/editor_menu.c",
+      "git_mode": "100644",
+      "git_blob": "71d325537344ae3d520df1c44a7184b33106dc05",
+      "sha256": "a93bbc26c688ec6c4a330d110c6d9e7936c1dd329dead6d3004950d19bf87258",
+      "upstream_blob": "71d325537344ae3d520df1c44a7184b33106dc05",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/editor_preferences.c",
+      "git_mode": "100644",
+      "git_blob": "6d73b4d4b0168d0950082ea8bbf85fa4ec365dbe",
+      "sha256": "e1b3169476d6f7499eff24bfe6104d4a959a768c16624d6c81168bbf2308683e",
+      "upstream_blob": "6d73b4d4b0168d0950082ea8bbf85fa4ec365dbe",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_analog.c",
+      "git_mode": "100644",
+      "git_blob": "d7bea0c1939287707c4648302105f5966962bdc2",
+      "sha256": "dc93a7a1f1669b088a7f5bd23a47a8e737ef37cd9d4f807b8021120634e5ddf7",
+      "upstream_blob": "d7bea0c1939287707c4648302105f5966962bdc2",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_digital.c",
+      "git_mode": "100644",
+      "git_blob": "10010b87b815042b23e3ee83bf8d2605effbc507",
+      "sha256": "d1bff3595454d9e22a166d81fd92bcb4f78b798688e57cc831de52fedf63c0cd",
+      "upstream_blob": "10010b87b815042b23e3ee83bf8d2605effbc507",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_drum.c",
+      "git_mode": "100644",
+      "git_blob": "6dc2ccda584f2da2c26070fcb97edd452c179ffd",
+      "sha256": "2f3ff37c6fc0a5e4a169ced8562876c07ab8a1beaf2a9101f9b73b0ac197ae08",
+      "upstream_blob": "bcd54cd08101823c88081e73675dd2ec375b40ce",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_fm6.c",
+      "git_mode": "100644",
+      "git_blob": "fe1e2d76e7f593ca74331d12b5cce755a729bd15",
+      "sha256": "4c71db761dcc7ce2c35642f341725bd8bdf8e939e6ec540b96d51b43ce5111c3",
+      "upstream_blob": "4e379940078db5502e7c11bb36bfa87459997f21",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_formant.c",
+      "git_mode": "100644",
+      "git_blob": "5f4cf932ee51e6e9590216782188d9d7c4b9f9fb",
+      "sha256": "bada7712521bb982f95a8bde0b0ed544f12d9aa72ba9a9b881d1a5ff82940511",
+      "upstream_blob": "5f4cf932ee51e6e9590216782188d9d7c4b9f9fb",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_grain.c",
+      "git_mode": "100644",
+      "git_blob": "0940c053ba0b71d6366cf2f5e016c145684cae75",
+      "sha256": "92ed26f4ed9c1b34af077a88ea5dff717b1fd13e92da9f0d64a3a137ac2cf92e",
+      "upstream_blob": "b9f13bd7aa9d57a7868453d2b53f4ce493fdcba2",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_lofi.c",
+      "git_mode": "100644",
+      "git_blob": "891517bf5cb8ab55b4270541c82cbdb9b22aa666",
+      "sha256": "c0f36264951950d5ad374d2e466eadf36836daa6a1e8cf10e9bf49de56bddf4d",
+      "upstream_blob": "891517bf5cb8ab55b4270541c82cbdb9b22aa666",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_noise.c",
+      "git_mode": "100644",
+      "git_blob": "8a60fc0d1dd94fe7f42531831ccbe2768c22b1d4",
+      "sha256": "db5761651cd606a3e40cf277cc6fd2a37e38613512f4edf18725ffb4656106c1",
+      "upstream_blob": "8a60fc0d1dd94fe7f42531831ccbe2768c22b1d4",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_phase.c",
+      "git_mode": "100644",
+      "git_blob": "c543983ef234341436c0be592239600169367098",
+      "sha256": "172dc2beab85c618068d58eaf06ac4c757b3fa07ed8f918d2523e992bccfe204",
+      "upstream_blob": "c543983ef234341436c0be592239600169367098",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_phys.c",
+      "git_mode": "100644",
+      "git_blob": "b7656e3c234b805ea19d7fd794842c327f2549fd",
+      "sha256": "6c7af93ab76bf0f873a573e30e368536314d25a118b3c8fd5465ae2370941505",
+      "upstream_blob": "d4c34642058954e2e21582f4355a595d22318630",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_sample.c",
+      "git_mode": "100644",
+      "git_blob": "b6245f464a0d132101c3f789347fbb48597c349f",
+      "sha256": "59a1ecce6d1c5ee190beceec32bc61bc221270fa5624dae85d393adc6453a5fd",
+      "upstream_blob": "b6245f464a0d132101c3f789347fbb48597c349f",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_slice.c",
+      "git_mode": "100644",
+      "git_blob": "f61c394c505cedb0de297bae05a5dc912c176883",
+      "sha256": "cde290b861d9e2bf84f1d81e278caa95f1d97c0b10f190c046386e263e4c0044",
+      "upstream_blob": "8d9bf33ac66b12b7420bbf97731b6e430fe9a522",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_trio.c",
+      "git_mode": "100644",
+      "git_blob": "45fc5601de8c83d6485b998a91ee9c576155732a",
+      "sha256": "7bf65c3662f72dfb893dd8897ef26025ffe551a664c70256e374d826f1fd163a",
+      "upstream_blob": "45fc5601de8c83d6485b998a91ee9c576155732a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/eng_wheel.c",
+      "git_mode": "100644",
+      "git_blob": "f3bb113568a86db92f9ccfb25561382d579926da",
+      "sha256": "f98b0fa831032588074d6ef20be4521ac135ffaab94b63d283c74834818479be",
+      "upstream_blob": "57f95d239ede7fed73faf4c606b267e8cd41567d",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/engines.c",
+      "git_mode": "100644",
+      "git_blob": "d7f4f28b8917d59c6a5537d647f4d2e36d256fbf",
+      "sha256": "96c92e18d0f427145e46f1315b804a2e78ceace667683bc161ff8fc7af820b85",
+      "upstream_blob": "d7f4f28b8917d59c6a5537d647f4d2e36d256fbf",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/favorites.c",
+      "git_mode": "100644",
+      "git_blob": "8d790452644203075afcaa86c8839859aea267fd",
+      "sha256": "7506c3454bdfd5982e747cf0c671bc410a27d2baf0fc8b7032fc4788408220e3",
+      "upstream_blob": "8d790452644203075afcaa86c8839859aea267fd",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/felucca.c",
+      "git_mode": "100644",
+      "git_blob": "31093f73a4a44250b2fed7fae42fa08bfbc273b0",
+      "sha256": "57fd0e2042164c580d3219795a891521cf3be02293ce88452415d2792be1699a",
+      "upstream_blob": "dc166f6505bd7d85b243e74c486d4c59b20b8b23",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/fm4_convert.c",
+      "git_mode": "100644",
+      "git_blob": "2fecadc5a47155790bb49063773487c86dda2bf1",
+      "sha256": "d711d4cf65bc4ac7e01e007045d461cc9f382b7b66118cae92e21e889dc8d633",
+      "upstream_blob": "2fecadc5a47155790bb49063773487c86dda2bf1",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/fm6_core.c",
+      "git_mode": "100644",
+      "git_blob": "cbbcb6d3426c502ccd877aa5468b61a0c4d4953d",
+      "sha256": "1ced3d7398be5968be7a37d8ad062bdad6aad8004d3d4ac002e58a8e88728325",
+      "upstream_blob": "cbbcb6d3426c502ccd877aa5468b61a0c4d4953d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: Apache-2.0"
+      ]
+    },
+    {
+      "path": "firmware/src/fx.c",
+      "git_mode": "100644",
+      "git_blob": "7ff855a4e54ffebe8fdb640344eb0a430a7ed3ce",
+      "sha256": "44f0f7c517a144582ac466a8a63ecafb4108024a2c5a8378581835fc422be714",
+      "upstream_blob": "970eca37041076cf75ccf2d401f56059574cf19f",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/gfx.c",
+      "git_mode": "100644",
+      "git_blob": "f2b00c3a436efa8336dd47b0938a952d295ab883",
+      "sha256": "4e08be277c4d5555521be470a32158c7dd0684c28e9085f955229c5d65a65510",
+      "upstream_blob": "cd4ac552db9d7c4e504dec6a054d963db6009470",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/heavy_state.h",
+      "git_mode": "100644",
+      "git_blob": "f0e387882cd166a7b83dcb14dc8a7bae7a5255ae",
+      "sha256": "33644daf789a4e57e2afd7d02bd2476f3f732847f699f290fd82e3c2a0b2564c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/icons.c",
+      "git_mode": "100644",
+      "git_blob": "223cd37b6c6fbc5e37e71a6d3dc4a2ae243bb115",
+      "sha256": "9fd71489c849eeb7344a3ec5e87b60c012361ca4f88bb562bddcf59bf2b371c0",
+      "upstream_blob": "223cd37b6c6fbc5e37e71a6d3dc4a2ae243bb115",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/lcd.c",
+      "git_mode": "100644",
+      "git_blob": "46beb7b56000a0995dbf04e2161b0eb9989c5959",
+      "sha256": "bd2e7421d1e309ba3addd3e7071ef41694fc2083ccf23467cf1b6b99a19bb50b",
+      "upstream_blob": "027ba128212e624c1c820a0ece1aa56fb442586e",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/libc.c",
+      "git_mode": "100644",
+      "git_blob": "3a5637f4ca09eeced805d309be17f92ead99b0f7",
+      "sha256": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a",
+      "upstream_blob": "3a5637f4ca09eeced805d309be17f92ead99b0f7",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/main.c",
+      "git_mode": "100644",
+      "git_blob": "ab26537207f9cd4b0e159eeb21173a57397c5f30",
+      "sha256": "8443f51254d1d65a4b641315606032012af043dc029c0563290a771ab1579889",
+      "upstream_blob": "fde44581e3a766b2dea16740be40718f282f10ee",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/master.c",
+      "git_mode": "100644",
+      "git_blob": "3d905fb93ed2c8d852242fb309bd37006f12caff",
+      "sha256": "14ec3bd8c33455efa3c7ca8d703072ac62deedaf4750da7da5335ed41196b66d",
+      "upstream_blob": "3d905fb93ed2c8d852242fb309bd37006f12caff",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/menu_items.c",
+      "git_mode": "100644",
+      "git_blob": "3e568b10997ec0816744166bccd023797bcf19d3",
+      "sha256": "04b880c07266c602e387f4f1c007ded8102f19574e1d22dd20e8eaf8e95196fb",
+      "upstream_blob": "c71a27ce38aa1e63696b307eb356f37ecd8abb84",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/midi_clock.c",
+      "git_mode": "100644",
+      "git_blob": "5c3b4a9ff7e1089fd789bc258a8db9052f212a3d",
+      "sha256": "19b880b92e0da609f8128fc7f3cfcc2528d952efb6d650a51e1addc27aff68fc",
+      "upstream_blob": "5c3b4a9ff7e1089fd789bc258a8db9052f212a3d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/midi_control.c",
+      "git_mode": "100644",
+      "git_blob": "09f435fae17e992d094ae000c7192e99fa6577f8",
+      "sha256": "fa55ee4bde7b1327182d3b45d7e1e191e521a64b35a3a28001f95f76abdcf3c5",
+      "upstream_blob": "a0b2f62d78c302043711760b51a749e2f899166a",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/midi_uart.c",
+      "git_mode": "100644",
+      "git_blob": "3ac90aa3094eb360b07641f258d2434546ee8388",
+      "sha256": "459cf47e648a91523713b27886448d8992ab8629288c76f6e5d317be54c4435f",
+      "upstream_blob": "3ac90aa3094eb360b07641f258d2434546ee8388",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/mod.c",
+      "git_mode": "100644",
+      "git_blob": "6a49302b2e2e2900d702aafca0008e63eb822280",
+      "sha256": "7d2f5efcad1f437208d0ca51a433a53340cc0500a9d0802fc1763a22dcfef0b6",
+      "upstream_blob": "6a49302b2e2e2900d702aafca0008e63eb822280",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/motion.c",
+      "git_mode": "100644",
+      "git_blob": "56eaf2fef36b6dc1cc4e8899c86fe81f6de36cd0",
+      "sha256": "da6ad6c309073111442e24cf6b563a9c6e4307e530fd536df8dc3d929b65856c",
+      "upstream_blob": "91e16ebbbd9519f7a2112944cf79d0178a42a815",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/motion_codec.h",
+      "git_mode": "100644",
+      "git_blob": "ec8b588be7e508d5ccd24ecdc5b1f987a8aede64",
+      "sha256": "35ff24880a06975c7e953e05567cc46cce92d5f46c6d7efcb145a7f1c451b669",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/native_autosave_session.c",
+      "git_mode": "100644",
+      "git_blob": "e979bb19e65dd92d882281b484c5bf18a20e8bde",
+      "sha256": "13f81960f91fa14f6b2b4048491de844b538c707f1e4a93431cdacc7c820364a",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/native_autosave_session.h",
+      "git_mode": "100644",
+      "git_blob": "08aca7cef11efc6f5f185b6be111267fabaaf49b",
+      "sha256": "31c3fef4d33f5c6d3ef3b671a591dc8d1811b750a1814f8da9d11596a5bc946c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/ota.c",
+      "git_mode": "100644",
+      "git_blob": "b2a5a1a0fec44e83525548737ba28ee1d8b1d1a1",
+      "sha256": "9ebbac3ddd8db939951a7d28958d85d43aaaf04191464bea0803f1ade5bb40ab",
+      "upstream_blob": "b2a5a1a0fec44e83525548737ba28ee1d8b1d1a1",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ota_hw.c",
+      "git_mode": "100644",
+      "git_blob": "07610001697544abd4027778ed413d8b99d9e1d9",
+      "sha256": "9bf6ff8eef0c1d0a430efcc99f5ab7a270b7537e96afd259c5c9dc49dd6c53b7",
+      "upstream_blob": "6e5c6098d41ba1937ed00a8d383664ddbca4ed6e",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/panel.c",
+      "git_mode": "100644",
+      "git_blob": "70aed7242ce117ca8b8c15e3a1a191aeeb998139",
+      "sha256": "4ab1fdb3300edce1bae16675ea2bdd76a00efb71fe1ec7d7734b6a03eeefe414",
+      "upstream_blob": "70aed7242ce117ca8b8c15e3a1a191aeeb998139",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/params.c",
+      "git_mode": "100644",
+      "git_blob": "3b58073cd9e25b6145cac4316ef89058d45b8a0a",
+      "sha256": "ba58e0be02a96a9fd93c5e893c766f57b4cb1b852bbdc22a02cb72cc2ad63a4a",
+      "upstream_blob": "179a9c51acea5733fe733974f89c5902369e8fc1",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/perform.c",
+      "git_mode": "100644",
+      "git_blob": "fab057dddba4b013e6000418dabb96b4c86f6cfb",
+      "sha256": "9072f0694a4bfc0de13a84287bbe73ac23f4a3540379afed5af3462ab06d904f",
+      "upstream_blob": "533b0d72b181c0c261b03f5bb0db1d7d19f52bba",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/phys_dsp.c",
+      "git_mode": "100644",
+      "git_blob": "dab1fdc7837634dbf2320dd0d5b083feb3adc499",
+      "sha256": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c",
+      "upstream_blob": "dab1fdc7837634dbf2320dd0d5b083feb3adc499",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: MIT"
+      ]
+    },
+    {
+      "path": "firmware/src/phys_symp.c",
+      "git_mode": "100644",
+      "git_blob": "780abf4ba6a8e941087b05c68244851491f28db8",
+      "sha256": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47",
+      "upstream_blob": "780abf4ba6a8e941087b05c68244851491f28db8",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: MIT"
+      ]
+    },
+    {
+      "path": "firmware/src/project.c",
+      "git_mode": "100644",
+      "git_blob": "4c6beb65ec7179c0a2a6a71b91be8008dbeb60dd",
+      "sha256": "cea41b17c8f93f04b65d2cc8b47f522d15ce23c2e444314193fd3de21cb3382c",
+      "upstream_blob": "6c6cce018a70ca8e1cde944776e3419909bb44a4",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/project_native_flash.c",
+      "git_mode": "100644",
+      "git_blob": "ac8716243e7522ff2aac4f52a646d940bb0fc78a",
+      "sha256": "5afbade4afa01921b84ec6d515206196c08183f15ef0c97a7cc1452f8c6f78e9",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/project_native_frontend.h",
+      "git_mode": "100644",
+      "git_blob": "4225324f4b1e4e7f6b8d25f5da43970d93274252",
+      "sha256": "f97c9783dd0ecbd01647efa6aee92d513a237b7613826603e6c6b040ab61d193",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/project_types.h",
+      "git_mode": "100644",
+      "git_blob": "240627775709e3743e0e0da50d41d027065afde8",
+      "sha256": "7d2c726e5d35931d9d641bbd0d71a685e83a8d81f8059e20344292151e91d013",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/seq.c",
+      "git_mode": "100644",
+      "git_blob": "4fae4dfe6685474b4a4a5be1170eda9153b0e3d1",
+      "sha256": "2e940e39f358a73f7a651f10b27344727f98ab8f20eb368113c43ed6f9b91e56",
+      "upstream_blob": "56d04b7fc8f1c7e8130b74e0b59154ea0fcd16c5",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/settings_persist.c",
+      "git_mode": "100644",
+      "git_blob": "718346066b58cec94f66710866b3bf3c8e0591d3",
+      "sha256": "0ed380b004554fd91ec5b1e504c93e48bf0edb3b6f8d1e326939ca68bec55edb",
+      "upstream_blob": "71f461222629898327e5fa2e788ad81687d1335c",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "firmware/src/slice_store.c",
+      "git_mode": "100644",
+      "git_blob": "39c274267f79dacfd61581e6b0e5a1ee35416405",
+      "sha256": "bfbaaea0c9a6b1d618e28862b98004c31b6e93633a1a896d0bd970946c884d61",
+      "upstream_blob": "39c274267f79dacfd61581e6b0e5a1ee35416405",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/slicer.c",
+      "git_mode": "100644",
+      "git_blob": "10bbac3f7bb52c88b7ca715b837f2c83dbfdda39",
+      "sha256": "3d28592799f12cee99bf9a11cbf24a371e1389ad349dd3ee61959b47c36e233b",
+      "upstream_blob": "10bbac3f7bb52c88b7ca715b837f2c83dbfdda39",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/song_chain.c",
+      "git_mode": "100644",
+      "git_blob": "28147efb1171d02fbb8a7897f5ff4f052367dca8",
+      "sha256": "d46e89d1c4191e5d8b3450d8bd9a595f4f8ff04ba39fd63a7079275a6ed67f44",
+      "upstream_blob": "28147efb1171d02fbb8a7897f5ff4f052367dca8",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/storage.c",
+      "git_mode": "100644",
+      "git_blob": "2ee245b8a4a436cd58376a7d4a4f3264a001141f",
+      "sha256": "0a57e117cfb7808e9585120cccc2e63848ddc86f5103e5049cdf83079e11b582",
+      "upstream_blob": "d64271b8bf912280a0f71dd06952b03b3c751cab",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/storage_hw.c",
+      "git_mode": "100644",
+      "git_blob": "2314e6079eb1fa8fe5824119a51b54a0d984e796",
+      "sha256": "48213464b409dd3a677f865fdf94c9277fdfde400ad8bf14528f71b23a4ab00a",
+      "upstream_blob": "71915ac4f4a77436c0890c2eea0698f857bd2d98",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/track_limits.h",
+      "git_mode": "100644",
+      "git_blob": "51dafb78242839ae85b42ee98f1c22f0a4436dfe",
+      "sha256": "859531183b2ccdb5d376364802e9691e6570de7598d264c2619c38a787b9fb6a",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/uac_fir.h",
+      "git_mode": "100644",
+      "git_blob": "638166b2f4d6026c12ba2a193b0fdda7a07b5aa8",
+      "sha256": "063535c30132a6731d01975ed35c39cb78c33f9a4aef825ce943f9999e4b5f1b",
+      "upstream_blob": "638166b2f4d6026c12ba2a193b0fdda7a07b5aa8",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui.c",
+      "git_mode": "100644",
+      "git_blob": "7d2208d24ac9fa06607a5a27c8d464e083ea618e",
+      "sha256": "97cf9e4c107d0b4a16bd629c86606c291ebfcf35cd3d2965b0ca9e141c352c77",
+      "upstream_blob": "c74d5bd822b13740943dc65a15ff1721f2cdd21f",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_draw.c",
+      "git_mode": "100644",
+      "git_blob": "287fa1f08c63d5cf0bcad750da33d108f1366615",
+      "sha256": "6e08c1507fa2850976e0620d8e123d156b8772ff84c5b30a3a9c4b37ad50cab8",
+      "upstream_blob": "875e4c3e98b7a288dc03ba83e4e9264bb2149484",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_events.c",
+      "git_mode": "100644",
+      "git_blob": "28bf148ae9a22b861a0551a6ee2f52ae149788cf",
+      "sha256": "7147806f43d72734944f661183ad580c7bd578851acfe5afa105a8e84ab7e31e",
+      "upstream_blob": "28bf148ae9a22b861a0551a6ee2f52ae149788cf",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_graph.c",
+      "git_mode": "100644",
+      "git_blob": "e30b6f2acc726279293765e53ac69af1aac71b42",
+      "sha256": "c158bafe80c2a47cd83c2820abf28858db71de71949827bccd4c7cf9404e3298",
+      "upstream_blob": "70b27f122561559347f7a4c48e6bc68f8d4bcdc9",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_input.c",
+      "git_mode": "100644",
+      "git_blob": "4c446c3abe8cb021b024cfff6d3b3b0f365dfc7b",
+      "sha256": "6732435f91fbe8c38eed42ae2699a70b8cbb3f41f607d6e596560abcbad38227",
+      "upstream_blob": "2ee45715b37bd67fd6be0e86f39f203bfdac59ce",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_layer.c",
+      "git_mode": "100644",
+      "git_blob": "4ce830b5dc9aba8c5c756df783a93a970776e85e",
+      "sha256": "74c159e04f328b5751744a317fc2ffc69e2e3a7b4a3595f81150c1d4f247a108",
+      "upstream_blob": "68c6486c64de240af2b5cd59b8c73964599aabee",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_menu.c",
+      "git_mode": "100644",
+      "git_blob": "f6a3828607b8336f1e5605164cfc03d5a85c9c22",
+      "sha256": "03c16d885dc4f442cbb1282d91853460f35a8e8abb4ef3593c4e05defc5627b2",
+      "upstream_blob": "7bad9456badc991d92bf17218b5ed89c140fc5dc",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_name.c",
+      "git_mode": "100644",
+      "git_blob": "961dde09e738a4ac47b91806da4bd7fb9340f992",
+      "sha256": "f7b9e398fbcc5f06080fa02cb1d8e835380769b5207b46f9be38293f573e34d1",
+      "upstream_blob": "961dde09e738a4ac47b91806da4bd7fb9340f992",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_slice.c",
+      "git_mode": "100644",
+      "git_blob": "64634a065fa13356fce26fe9611862077b42bb21",
+      "sha256": "6f1a44a7b12cae7ff89da32b3793a2c9d959b4c6c9a95fd868d7e8b9c67a66bb",
+      "upstream_blob": "64634a065fa13356fce26fe9611862077b42bb21",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/ui_tools.c",
+      "git_mode": "100644",
+      "git_blob": "de1d124b83dacac48b155466a769ea37b3f4b6a7",
+      "sha256": "f6f560906392d2c1a39869ead9988fa235a4a5e96848691b8656569d486713c6",
+      "upstream_blob": "e4b502aea85c8553d57cb7ddf8b65a951f00c0e6",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/up_fm6.c",
+      "git_mode": "100644",
+      "git_blob": "8e9c80b9ed51692475fb4da443bd636beec04efe",
+      "sha256": "86a927b31bd0abb1b2658b9d5ffc39514cff004cc2dc7150e4475200bf24bc2a",
+      "upstream_blob": "8e9c80b9ed51692475fb4da443bd636beec04efe",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/upreset.c",
+      "git_mode": "100644",
+      "git_blob": "89f3cdffbf497273e8773866cac1b838b4dea394",
+      "sha256": "86ac3a09705e843fedf8f5ae01c133e2037a1df97d3590dbde11825653e482ff",
+      "upstream_blob": "89f3cdffbf497273e8773866cac1b838b4dea394",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/usb.c",
+      "git_mode": "100644",
+      "git_blob": "8ab6368011a12c663f2d7a23a5989e88f1155f85",
+      "sha256": "9351107a8dae1e05845b63d9afe336d1c76edfdf605be05d4b7419721f8d0402",
+      "upstream_blob": "4573ba733425ba7cda92927f134c8cb2482f3f51",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "firmware/src/voice.c",
+      "git_mode": "100644",
+      "git_blob": "d9183d99d27ca9aee21cec0a73e7c31b2016880d",
+      "sha256": "0875d8de2bdca0254e045da7bf63d8c86d135091745041d5955ae28546617b07",
+      "upstream_blob": "d9998cd49211448a1d6ae4a88a025331807d810b",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/audio_test.c",
+      "git_mode": "100644",
+      "git_blob": "1a138bb0f4b9773f6bc2e7322b2d147219dc472e",
+      "sha256": "b2c6c34b8bb0d35003fa27a0502040583dc530442f401d81223b6e55119d7a6c",
+      "upstream_blob": "1a138bb0f4b9773f6bc2e7322b2d147219dc472e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/backup_test.c",
+      "git_mode": "100644",
+      "git_blob": "6b18cf8f841971148ac9820a04203013bb4e25d8",
+      "sha256": "13b43060e0ff0a698f8cf857c6c22efd575f0060223b694985d4ca99fee11ac7",
+      "upstream_blob": "ea4be1209b6f5750fe6184e130f82787071e622a",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/banked_mixer_test.c",
+      "git_mode": "100644",
+      "git_blob": "daca29c9affeb5794a94a370fc0e7f64e6035a37",
+      "sha256": "87b462af1f9f7c59e78f7f5dcc51ae4ed3fd26a30fbd7b278df0c232233883e3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/browser-project-conversion-fixture.html",
+      "git_mode": "100644",
+      "git_blob": "cf078dbea459095a8083c6e27290e51f77ed2ce6",
+      "sha256": "3e83fd74488501ee50c4af6b1a58dfceb5870467736607e2e0ee6ea9d0df708a",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "<!-- SPDX-License-Identifier: GPL-3.0-only -->"
+      ]
+    },
+    {
+      "path": "tests/browser_project_conversion_test.mjs",
+      "git_mode": "100644",
+      "git_blob": "0413beb82fd97b6b0a5018a6804069e377ddc265",
+      "sha256": "4e9d5a756fc9e9120db47db3e9bc29aa4d729f699937da534757326873ad6e0e",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/chord_test.c",
+      "git_mode": "100644",
+      "git_blob": "217879bd04cc027da102fdbfcd0ae678bc7da4a6",
+      "sha256": "faab4a50f070120fed604d2e4d3ca823cb125cf6dffdc9f0b5a3d1a2a0d87387",
+      "upstream_blob": "217879bd04cc027da102fdbfcd0ae678bc7da4a6",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/click_test.c",
+      "git_mode": "100644",
+      "git_blob": "ba64c73adf234732edfc9b8329b25b7957cddb8e",
+      "sha256": "b6845f8aff58ffd5cdf76ba8621b832c11ea46514e4271d7e5175c54d2cf089a",
+      "upstream_blob": "ba64c73adf234732edfc9b8329b25b7957cddb8e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/d8card_test.c",
+      "git_mode": "100644",
+      "git_blob": "50aea77b0b1e42b29c69490dab3d15df3398648d",
+      "sha256": "33558e6a265c464b6ff33e68cbf914fed19c0de8a7d10aed55c7e3303261848f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8card_test.py",
+      "git_mode": "100644",
+      "git_blob": "20221436f9567969eaf2e87fc908a2431d3e0251",
+      "sha256": "09e6516b2965c9be6a8fff8b2d25e38b42d0a075d03319796669e23e617daf8e",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/d8p1_fixtures_test.py",
+      "git_mode": "100644",
+      "git_blob": "034fbf0487c6ca3566211225cbf6eb8c59191ac5",
+      "sha256": "10fac70d5738d213496752d14034cb021ad3fa7a0100d0127d7807be75e59043",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/d8p1_flash_runtime_test.c",
+      "git_mode": "100644",
+      "git_blob": "ccd7315b0886c70211687b9d2f84329ce93c9e8f",
+      "sha256": "4c1a2f505a3d6ec07339d4a95366e38d91c189efcfceb869cda8b74983b3c635",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8p1_motion_policy_test.c",
+      "git_mode": "100644",
+      "git_blob": "635b06ec9f3835006e2959fbe69381353bfc318b",
+      "sha256": "218b34293a7cc6a3fc645b9b60758c3bb275adbdd791a573ba9fda287ca2b116",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8p1_pool_runtime_test.c",
+      "git_mode": "100644",
+      "git_blob": "c4ac84c93fa514eeb3c02a4453505246f041a2e9",
+      "sha256": "8a9cf123b9e039d5f20d88c14d0efe310e87a208ca7259a01f95cc25c8c119dc",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8p1_project_test.c",
+      "git_mode": "100644",
+      "git_blob": "4c89c5e013ec3657bb767aa72de2ccb40acee970",
+      "sha256": "2f89388c3e73b1f9bcf2470602b0003f6e5ab155183d78743ed2649c3272f6e0",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8p1_project_test.py",
+      "git_mode": "100644",
+      "git_blob": "65ec1ba94d026b0fff31bc934ae74e7ced8b6b8f",
+      "sha256": "4054b290437c7fa3103fa09cabd7ed59a86b73ac08a63216995d890689d89c3f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/d8p1_runtime_test.c",
+      "git_mode": "100644",
+      "git_blob": "46ebfd94fc6cac64fe5aaa5078252b1c5128a99c",
+      "sha256": "eeda4ead635c60c47b9157b157d07d555e54303c74ae8b4196498214cb6ea5f5",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8p1_test.c",
+      "git_mode": "100644",
+      "git_blob": "0e819c2598abbe6b7f0e5a5fa952d783db3d38aa",
+      "sha256": "d9256026c5ab31cf607f16eca90896ba696bbefff7e0d76d1738be6a3730a7d2",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8pool_mapped_test.c",
+      "git_mode": "100644",
+      "git_blob": "c66cfd3dacc85c2d3bc9d9194191173e1537a191",
+      "sha256": "f3fc853c06adc83f995167ab85dd4d213f6867d6b106d90d97013b179c3a5287",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "d06c479916db9e7e92787dbe0c9317003ddb6128",
+      "sha256": "e1d49f1d041d33cb7402772ff22fe9393f381177436229cf078201674282214c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/d8store_test.c",
+      "git_mode": "100644",
+      "git_blob": "c46167212798b5f7f3f05e83bc493216112de15c",
+      "sha256": "e8a2a87ac13915cfaa425aff7c289c0af61d4e1470687d496bc4ccd5eae07566",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/descdump.c",
+      "git_mode": "100644",
+      "git_blob": "b41e816336747af466ad216e2427ba77f36efe2a",
+      "sha256": "79e1b4f3ff5e0e76e6a3692f49ffebd25715d6b4fb2f7d048fed2fd429e52997",
+      "upstream_blob": "b41e816336747af466ad216e2427ba77f36efe2a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/digital_test.c",
+      "git_mode": "100644",
+      "git_blob": "ec4e82c4e95219fa67c92a5c46d8485f5983b4a9",
+      "sha256": "eaf289fb79d990f3499f6738e8e08bdc3f82015bf78c60c27a02448b2e422ac5",
+      "upstream_blob": "ec4e82c4e95219fa67c92a5c46d8485f5983b4a9",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/drum_test.c",
+      "git_mode": "100644",
+      "git_blob": "b0f443adcf2ecad1de035955b65eaa5b4240b237",
+      "sha256": "483ab28fc949b95c138be0d8f89b8a5689f8d9be696d617c62e933c2c529dc59",
+      "upstream_blob": "b0f443adcf2ecad1de035955b65eaa5b4240b237",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/editor_test.c",
+      "git_mode": "100644",
+      "git_blob": "ea1750de9c9b7f81a34374fe36ded509d539cf3b",
+      "sha256": "ff6ebb4297750739775373331bf6b886129066ec913c68006da0120fd442ff29",
+      "upstream_blob": "8acdd381d82f93c9fe17f85d34b4900d9f5d358a",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/eight_track_performance_test.c",
+      "git_mode": "100644",
+      "git_blob": "ebf7aa3c8e40575d53bff3ab5c21564745b82ebb",
+      "sha256": "9d411978cba00d7ad2176f070f60960d5389b8b141e4f02cce687fcb9d755bc1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/eight_track_runtime_test.c",
+      "git_mode": "100644",
+      "git_blob": "cc3e1e39bac1712e306dd297e292c833e8e60115",
+      "sha256": "36c5b0411d927a09beaa1875332da79444f867683ea83f5c855c04dcd1ee9bb4",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fixtures/projects/capture_reference.c",
+      "git_mode": "100644",
+      "git_blob": "913fb5413b48fb7ad24d5c7cf50f999034d95ee0",
+      "sha256": "62f83a918e9f89c493c1e56fddd12fca7e399da0793add3e91b53249ebc9d9ef",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fixtures/protocol/legacy-info-parser.js",
+      "git_mode": "100644",
+      "git_blob": "b1891e82700f2be86c537a10e9b9f81cbb4c3b30",
+      "sha256": "547100a1a477441654f087f644dde10d18d6f79683c49c764067b462afb3f506",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fm4_div0_test.c",
+      "git_mode": "100644",
+      "git_blob": "4220d6f8c98794bfd09dd3518a8b89024266bc19",
+      "sha256": "859aa2bcd2cebef13d7a1fe16a5ea098d061ed01428287cc91a30f2d0a33cbdf",
+      "upstream_blob": "4220d6f8c98794bfd09dd3518a8b89024266bc19",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fm4_test.c",
+      "git_mode": "100644",
+      "git_blob": "e85d46d942ab06adbbd33acb53b6c657ba5f5be9",
+      "sha256": "6625c7706e737335c0f15ee49e3294c57894f4338bf5a496279737148e579952",
+      "upstream_blob": "e85d46d942ab06adbbd33acb53b6c657ba5f5be9",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fm6_pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "503eb33eaba19cd48b16ab8ed7528d9b4d72203c",
+      "sha256": "6583485614b669979f59aed15cde6cd2474ab7d524142f6ec1157dac4dca5c47",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fm6_test.c",
+      "git_mode": "100644",
+      "git_blob": "a0faaa6deb81b57eda331bafc9c25420358d5ff8",
+      "sha256": "cc3f4b86ebfee11d153f83dfcac4fc9a6dd31388c498d5dfb244f847081d76be",
+      "upstream_blob": "a0faaa6deb81b57eda331bafc9c25420358d5ff8",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fuzz_ed.c",
+      "git_mode": "100644",
+      "git_blob": "56f886db1a66f11987dc897381814a22e2fdda97",
+      "sha256": "358d36392dcca31d576bbef8b564fb51a98653a1d7f5239736614ddf1034b3ac",
+      "upstream_blob": "56f886db1a66f11987dc897381814a22e2fdda97",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fuzz_proj.c",
+      "git_mode": "100644",
+      "git_blob": "60ba86e551d78681d131177776a78bb5d8c0f2fd",
+      "sha256": "62c92020742ac1243e061b97d21f86e41e371c62d892c4166ecefbff327d98d4",
+      "upstream_blob": "60ba86e551d78681d131177776a78bb5d8c0f2fd",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/fuzz_smp.c",
+      "git_mode": "100644",
+      "git_blob": "6e8d2b75256399263093a05336f9de552df901e6",
+      "sha256": "a589abde251dac69d1ef70091f91263661b32f7034345f1722372a5c042e518e",
+      "upstream_blob": "6e8d2b75256399263093a05336f9de552df901e6",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/heavy_pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "ce800bd91183cd0f9c6f7e773cf9e94dd198ed84",
+      "sha256": "407b5d2fc756d4661936013f86a79cecee564972dca1713c75f4754c4a3f2c54",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/hostsim.c",
+      "git_mode": "100644",
+      "git_blob": "75afb8700fc960ded8820fb73b3f2bb6e3e5ec8e",
+      "sha256": "ff30dfafdeeb5a8fb02a66eb070e4f520803e989294ee779b781c27c8fb3d41a",
+      "upstream_blob": "75afb8700fc960ded8820fb73b3f2bb6e3e5ec8e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/input_test.c",
+      "git_mode": "100644",
+      "git_blob": "524536cc08f36839e0ba459acabbba17f8ff839b",
+      "sha256": "5f05121ff816fc09a23b3a1d80a3b859f3da8a7da78de66dc8ad30df82b505dc",
+      "upstream_blob": "524536cc08f36839e0ba459acabbba17f8ff839b",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/install_test.py",
+      "git_mode": "100755",
+      "git_blob": "2ab1f35172baf81232905a01c422e8cff5f72d71",
+      "sha256": "c01145715717bb2b2390abda6f9dac6c5854e33e6176dcb617f74d4f1fd2e3dd",
+      "upstream_blob": "2ab1f35172baf81232905a01c422e8cff5f72d71",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/instrument_capture_collector_test.py",
+      "git_mode": "100644",
+      "git_blob": "68228f392421c0338576cc0f50be6f780546e4ff",
+      "sha256": "44770b60614f323cd4da969811d390917e107e1d90e0df09b1a0d46e7c8ab37e",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/instrument_capture_test.c",
+      "git_mode": "100644",
+      "git_blob": "73c49b71dd100433c94cb8e081aec146a2fa63d9",
+      "sha256": "d2a87075f77ee7905070e69720f10d8b8e03e38496c9583972d003b3db194099",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/instrument_migration_executor_test.c",
+      "git_mode": "100644",
+      "git_blob": "6fae47f29b42e8fa87f85c76bf8aa38ac6cc4538",
+      "sha256": "145e23e713c7c7679d1284e4ecdfc6f570010dc72f67ec79424b19a2c9968b66",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/instrument_migration_host_test.py",
+      "git_mode": "100644",
+      "git_blob": "edf7df8c641060ca3b1bf054f676efa7962e68ab",
+      "sha256": "9e46ba529d503eec3fbd37acc5e2b4c4a2d332172923267eadb42029d4541e04",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/instrument_plan_test.py",
+      "git_mode": "100644",
+      "git_blob": "a2d663ce861e09a94bf15d4d4255c87768c40892",
+      "sha256": "ea43a96e41fdbf05e1c407b34ee3706ac6e81689ecc03f494eafad0c69ef86d9",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/ldr_test.c",
+      "git_mode": "100644",
+      "git_blob": "401fe9405f3b504dbb05e071033f3f92681c9500",
+      "sha256": "2469b2b8a087a643e31be84df4f014b4cbc44fdd39bfa9e762afa3279a875c7f",
+      "upstream_blob": "401fe9405f3b504dbb05e071033f3f92681c9500",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/legacy_fixture_test.c",
+      "git_mode": "100644",
+      "git_blob": "e888885a5da2f5535862ac37e6a5ce98ff6fa529",
+      "sha256": "9f1f48bb2527dfa59ad5f51ab39e06330a91a719e339620a4aa17b740c6f234f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/main_workspace_test.c",
+      "git_mode": "100644",
+      "git_blob": "7e5262c183de555fffd494813de977f5a9b5c016",
+      "sha256": "863a0166b478c50e4f3e48005a597228379f5029ce9aa48a3e5072b652879d63",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/make_d8p1_fixtures.py",
+      "git_mode": "100644",
+      "git_blob": "98754f5da8261527abce853581aa5def602111bf",
+      "sha256": "703473443635d963d85682854bb55ecd1a882c6d840b1d2cc523673dfb812cc1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/midi_control_test.c",
+      "git_mode": "100644",
+      "git_blob": "f886a38341237e0761dc6e8c87c6270351b43136",
+      "sha256": "b931fa9b36076b3ccc7630eea79ae5b8da91a1f7084792efd0416ec70cb5d095",
+      "upstream_blob": "f886a38341237e0761dc6e8c87c6270351b43136",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/midi_uart_test.c",
+      "git_mode": "100644",
+      "git_blob": "ccc40cd0b2c5220ba77b1f02f8fa4403ab346a11",
+      "sha256": "bbff52d87bebd68fbe3e7d6244ae2df5560c3220bfe93d944832d16c84e4095c",
+      "upstream_blob": "ccc40cd0b2c5220ba77b1f02f8fa4403ab346a11",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/migration_bundle_test.py",
+      "git_mode": "100644",
+      "git_blob": "710bb5ea5159da8f73f5e30f42bc0fda4becd58a",
+      "sha256": "280c04edf7cb084c7f26034bdac492f9b7225346181f088c1b20673721a3ca4f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/mod_test.c",
+      "git_mode": "100644",
+      "git_blob": "2dd565e2ee1f58a9d8667ab3862c6cef91c11be0",
+      "sha256": "7094a4296bf7d963301cffb0d1330cef6ba1dc0ed26b2ad093c1952834d7d63c",
+      "upstream_blob": "2dd565e2ee1f58a9d8667ab3862c6cef91c11be0",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/motion_test.c",
+      "git_mode": "100644",
+      "git_blob": "59b45693537082f54015464ac356b56783673bec",
+      "sha256": "82a358f9f95aef2c1cc0c743f2a1ebe96705bb18f30fe78945d11be472a30c49",
+      "upstream_blob": "97114aa8e71d4f70e3a374e3deb92fc41de2accf",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/motion_v1_test.c",
+      "git_mode": "100644",
+      "git_blob": "1dba03cc0d3357263eb0a12ae9e4f31a45b115a5",
+      "sha256": "fd0535d001b9ea62a7d903826199221c0464c37884ffb2023b92e81cac494ef1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_autosave_combined_test.c",
+      "git_mode": "100644",
+      "git_blob": "40bfc5794709d9df580563b21ae40bbb930a1399",
+      "sha256": "02a5c7979da706c28a214fc8821f551d59f0f614d3a150bb5dffb5241726942e",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_autosave_integration_test.c",
+      "git_mode": "100644",
+      "git_blob": "3997fd61a09b400ae93fcf68527e1a61a16fa24b",
+      "sha256": "311772d0ce4a0f191bdad31014e30678a1b9215cadb2d9b66de506920dea7c39",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_autosave_session_test.c",
+      "git_mode": "100644",
+      "git_blob": "518bd9c6a24851f85a2ff175169964372510e04c",
+      "sha256": "4f572d0561c1b221a9d6c6876c8fb50d87e75771a78c3bbd36bfc75a7b68971d",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_fx_counter_boundary_test.c",
+      "git_mode": "100644",
+      "git_blob": "6c57336bf5cb548b23b3f02e53b217ae0411e56f",
+      "sha256": "1de9169d6f18ef89d7b5268a9daea4332ec426f99fecfc5f182ac14cc5e287ab",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_fx_counter_cost_probe.c",
+      "git_mode": "100644",
+      "git_blob": "bbb70c6eead372771510c572f5b9231b447973e9",
+      "sha256": "192701913ed5fc9f2e1765cbdc0365f7cfde60807c25122b514045a03a2608f3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_fx_tail_test.c",
+      "git_mode": "100644",
+      "git_blob": "0e352f1a6c1188f96b798ec6680bc9b60177ca78",
+      "sha256": "7c5d95bc547670f8d268db0b2f447d7c903264bc76292f0a4cdeaa6466cd8cfe",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_output_queue_test.c",
+      "git_mode": "100644",
+      "git_blob": "3556c335b43fb96818d3dd969c3ea4375f9881a2",
+      "sha256": "8e37f8f7b2bc4df74c35cbb0627c71252ffe01a734c1cd5ad29a84edd9c65eff",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_project_archive_test.py",
+      "git_mode": "100644",
+      "git_blob": "d449d2aac912a80651cd52231d28adf841569615",
+      "sha256": "5801d045a7ee6c53a5f336d879e04ba37b638442fa9a7da72909b6b56d1436be",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/native_project_menu_test.c",
+      "git_mode": "100644",
+      "git_blob": "529317f3a07f70cd72cdfed73240f5c685e4c10a",
+      "sha256": "bebbbd2d4d0aceef7346e95a00cce8e45daa6398ddf548d27bd6e397358b61cc",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_queue_audio_fixture.h",
+      "git_mode": "100644",
+      "git_blob": "6e1b49ba468a00556fb759ffce2ee0f2f1e95f5f",
+      "sha256": "0c387ca18a77fc5f1718925e9713e69879b75874a7eede6e2e2ea5ef1bbf213c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_queue_usb_hal.h",
+      "git_mode": "100644",
+      "git_blob": "ab32374cde6bec619d0ea47445be9cd61e9f4b1d",
+      "sha256": "1c54d64c0af19a056720ff03cfc590c443959f325c4181edb5a4ec25c4b02237",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_quiet_autosave_test.c",
+      "git_mode": "100644",
+      "git_blob": "e8c6628b659db3c2683eda74ba8ee42e155256cd",
+      "sha256": "6de80d7a466c3d81da93f02d836dbdf0df67b742e0dd2f627194792be3e96c8a",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_signature_cost_probe.c",
+      "git_mode": "100644",
+      "git_blob": "1ab7b29f315509efa35b5d883bef9d7336dbcc68",
+      "sha256": "407ae0953e0e3692126c1ebee1f322774f8eba6d90709768c2740907edac8ba3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_signature_equivalence_test.c",
+      "git_mode": "100644",
+      "git_blob": "61c1f2095ad8d155cd879670e03ca972c6613ebe",
+      "sha256": "74677a98006eb3c6c97bcd917512615e05aebad247e2caa856b1a70a0ca57c19",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_signature_test.c",
+      "git_mode": "100644",
+      "git_blob": "e05b42d3167b7a3af86f532929e53ecfc026be25",
+      "sha256": "2e97bdc6ef08d895fd9d610e15c5b2ca8e8434366c94559cad76a212017f57c7",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/native_storage_gate_test.c",
+      "git_mode": "100644",
+      "git_blob": "a30931db24a435e73f8e8159ce6bd26795ad639e",
+      "sha256": "4cfbff024e6a88d076a283c7fc0f520328625951df2b851cf049dd89d2353217",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/noise_test.c",
+      "git_mode": "100644",
+      "git_blob": "3f82de0513d38ae182f4458da82744b75f84af5b",
+      "sha256": "0baca4d59298212a81ce118ab68b580cd7032b76b96807166ad394c67c8933e2",
+      "upstream_blob": "3f82de0513d38ae182f4458da82744b75f84af5b",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/offline_import_test.py",
+      "git_mode": "100644",
+      "git_blob": "220d74c78340ea3e4ef2d35d1a0fd9ee36da5937",
+      "sha256": "63822083956c3a9383fb5c6c9d9108c78f0680b4915d479aa8c0002cccbccfc7",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/ota_test.c",
+      "git_mode": "100644",
+      "git_blob": "01c4ae3c5488c5a294cf5f263a7e668318016f5c",
+      "sha256": "7a2687ec7f20156f5ff118171b3cd90d75a0653e82225f908a4072a991d22d7f",
+      "upstream_blob": "01c4ae3c5488c5a294cf5f263a7e668318016f5c",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/perform_test.c",
+      "git_mode": "100644",
+      "git_blob": "cb6e2c2cd34fcb0d8a261e0b482c66f930ebb3b8",
+      "sha256": "fc1779724909517d9f35a2d34d5f029a5b3720321c8a5a6baf65aeba28f3e35a",
+      "upstream_blob": "cb6e2c2cd34fcb0d8a261e0b482c66f930ebb3b8",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/persistence_test.c",
+      "git_mode": "100644",
+      "git_blob": "9ce53997828ea8947d66bada061a680188a717e4",
+      "sha256": "c73c7b50d77162a36358fd3e0f8df4ce9d5c27d5d8e97368063f5435768dedd7",
+      "upstream_blob": "9ce53997828ea8947d66bada061a680188a717e4",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/phys_fixed.c",
+      "git_mode": "100644",
+      "git_blob": "67c091a3ee5705a45bfa6a9c2de9f6574613bc4e",
+      "sha256": "f7ee2d9efeecdecdee01127231cec4b1cda04f57da3b2dbab02ec809c4b92e82",
+      "upstream_blob": "67c091a3ee5705a45bfa6a9c2de9f6574613bc4e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/phys_pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "0af78da56b7a17152a05337e259ddb66833c18b5",
+      "sha256": "1f80b11bf4e0e0148b28f35b937d1059a347a51030b1f354be6d246a5b212b00",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/phys_test.c",
+      "git_mode": "100644",
+      "git_blob": "e5afba383e69d017b87861a465665a3711753353",
+      "sha256": "ce68974362e139dd5800530d7efc045504dc3c864b5ad552affbf51cefa1021c",
+      "upstream_blob": "e5afba383e69d017b87861a465665a3711753353",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/pitch.py",
+      "git_mode": "100644",
+      "git_blob": "e923b26b31acaa75cdabff9fc0b39860b30f1a50",
+      "sha256": "4c1205db804ddb1208a72ef63dc7f6958798883013aa4917b0542fda419f2f3e",
+      "upstream_blob": "e923b26b31acaa75cdabff9fc0b39860b30f1a50",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/preview_kit_test.py",
+      "git_mode": "100644",
+      "git_blob": "1c8d84447dcb04b6a1fb231fabf86be09f3456cd",
+      "sha256": "8f5c76c82e94aca1f0a6013391227fae7caaa66d94afe396d3fd7100fd2750ef",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/project_conversion_test.py",
+      "git_mode": "100644",
+      "git_blob": "fb0e9d311958c041bf984dbd00b7392b92cd63b2",
+      "sha256": "f4c7ff33f142ef5ee7d8947600427eb3399cd1cbb2deaf06c4a48119095e59c3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/project_test.c",
+      "git_mode": "100644",
+      "git_blob": "2c2222c149297cc06562747efe7916211f2aa56f",
+      "sha256": "a632aca25292603663db4e8f810069f6afcae8f878d28497265b7ffc4d6416aa",
+      "upstream_blob": "7ffbb56342f36cd1af54dc17bef4588dd49c2cdb",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/quick_layer_conflicts_test.c",
+      "git_mode": "100644",
+      "git_blob": "fb573450d8bc48220aee94a9d82364610c4c80bd",
+      "sha256": "881679e0e8b2a1ca37ff63585004e32c2044c5ca9a6abb82628cca04f799fda2",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/ratchet_test.c",
+      "git_mode": "100644",
+      "git_blob": "76ec06d98af135e8b3c3f1964461be1ea220b37a",
+      "sha256": "ef76b02fc610054f92e32f920699f4e9bcd1975c0ccaf6df70d8885d293ded56",
+      "upstream_blob": "76ec06d98af135e8b3c3f1964461be1ea220b37a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/regress.c",
+      "git_mode": "100644",
+      "git_blob": "2b9e58a94d1096210fd46a6ec2adb8ff3ba4b3b4",
+      "sha256": "40bf2e836bb65af0116f7abbaa83eef7e8fb9fb2d87794f71d370d8abef0ee9b",
+      "upstream_blob": "2b9e58a94d1096210fd46a6ec2adb8ff3ba4b3b4",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/reverb_test.c",
+      "git_mode": "100644",
+      "git_blob": "70708adce34fbc6014c6d5ce0ab7ab774a6cfe2d",
+      "sha256": "d6ccd9ff2759ef327cd89698aae006f4f30180107486b099429150b0719bd92b",
+      "upstream_blob": "70708adce34fbc6014c6d5ce0ab7ab774a6cfe2d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/robust_test.c",
+      "git_mode": "100644",
+      "git_blob": "0b0948bdd65f9e3b11c186927a1d6e5be930b9e3",
+      "sha256": "8ec7a3a7e9a9e5129dcaf7cd531f50860531fb73986b5b0e82a3d036a999bc6c",
+      "upstream_blob": "0b0948bdd65f9e3b11c186927a1d6e5be930b9e3",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/run_tests.sh",
+      "git_mode": "100755",
+      "git_blob": "d353e8b2964e231647f6fb358b751985b6f30039",
+      "sha256": "f5e10ea87e43fa6129382069ec0ff739b1591b3e6ddd8c2492dc4668c5b45f32",
+      "upstream_blob": "146e256e65b9fd5b8d0407be07944b8b435ec385",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/scale_test.c",
+      "git_mode": "100644",
+      "git_blob": "055e628252820c4f4a9b803c1dc95883d531df15",
+      "sha256": "0ccf4d9318b1d66d295ce24cbddb92be30019120ad7ccd91d8cf1388198eaea8",
+      "upstream_blob": "055e628252820c4f4a9b803c1dc95883d531df15",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/settings_test.c",
+      "git_mode": "100644",
+      "git_blob": "f68982fab234a13a66a289e5d25031a54f9f4b8e",
+      "sha256": "c297eacdf7406546199716f11e75968c1d7cb0db9b78f0493b27c9722130cb0a",
+      "upstream_blob": "f68982fab234a13a66a289e5d25031a54f9f4b8e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/slice_loop.py",
+      "git_mode": "100644",
+      "git_blob": "16328c09eae1edb06bd636044e24a26bd549cb4d",
+      "sha256": "96508d80d36b9fa7a0ba8c04eef745043abdc2b2ff96d406a08c46f78a79ddfd",
+      "upstream_blob": "16328c09eae1edb06bd636044e24a26bd549cb4d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/slice_pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "01fb10ac8e75fb0e2fd36e14e7d297927c4783db",
+      "sha256": "76e07592aee4ada9164e66f2681a4b76b17ca56b96413539ea979fcf421b556d",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/slice_test.c",
+      "git_mode": "100644",
+      "git_blob": "8644dc2813030da369653e67132e83d133997a53",
+      "sha256": "657838d52b30ca3b31be6207ac8629953d80080b8b0064fb82fd6a909b7a7e44",
+      "upstream_blob": "8644dc2813030da369653e67132e83d133997a53",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/slicer_test.c",
+      "git_mode": "100644",
+      "git_blob": "663f5d6d163c1ca5d2a2fd967acb83707e7d45d3",
+      "sha256": "1de744a5afaae2ccfc16757ce3614870482efc96191a2ce3767e7886c82cdfa0",
+      "upstream_blob": "663f5d6d163c1ca5d2a2fd967acb83707e7d45d3",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/speaker_test.c",
+      "git_mode": "100644",
+      "git_blob": "f684ea9ff9e4b3fd56b81a2a1286e3b6ff62801f",
+      "sha256": "4625cdfda3dade469ca771cfc3f1ea4514e466513eca6a156518e7c767637ef7",
+      "upstream_blob": "f684ea9ff9e4b3fd56b81a2a1286e3b6ff62801f",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/storage_test.c",
+      "git_mode": "100644",
+      "git_blob": "8bc629bbf029d736321d6b8a42b34b30d611bb72",
+      "sha256": "b17226f8bdae92f954b8d7261c37b7420fc3d4f493c0c0b8e0188e32d95f639b",
+      "upstream_blob": "8bc629bbf029d736321d6b8a42b34b30d611bb72",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/swing_test.c",
+      "git_mode": "100644",
+      "git_blob": "29c104747058eb1c35d834c61ad4461a8d59d4a9",
+      "sha256": "25c2167bd50fc4d0da05f3d10afd099d1b1607403c3093d8aa8467a911f2d4f4",
+      "upstream_blob": "29c104747058eb1c35d834c61ad4461a8d59d4a9",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/target_budget.py",
+      "git_mode": "100644",
+      "git_blob": "c9f33e237df09aac4405fe8e6a37482639d74ae5",
+      "sha256": "136bf8cbeb47c4e768b0610cb8a97f609c9b007a1f13021238592eb8df0496d8",
+      "upstream_blob": "c9f33e237df09aac4405fe8e6a37482639d74ae5",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/text_ref_test.c",
+      "git_mode": "100644",
+      "git_blob": "f82eb1b91045f2bc74c7ab9ba30068d1831fc8bd",
+      "sha256": "b4ce5d9491fedb8e35df0382351d558da11a134c028d332899d1897fd3138c1d",
+      "upstream_blob": "f82eb1b91045f2bc74c7ab9ba30068d1831fc8bd",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/text_spacing_test.py",
+      "git_mode": "100644",
+      "git_blob": "e845d535bed3e8d28065179de36965e79067f9eb",
+      "sha256": "f19e72c7426d9fc1ba372f47ed9cd1e2602e23144fe205297f7d762d99797e8f",
+      "upstream_blob": "e845d535bed3e8d28065179de36965e79067f9eb",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/theme_test.c",
+      "git_mode": "100644",
+      "git_blob": "46465475d7348e93f7c804ac99b201059a675ace",
+      "sha256": "b05b6b983f500ea9599510a536589193fa4e7ce27baa09f61861b180bfdac547",
+      "upstream_blob": "46465475d7348e93f7c804ac99b201059a675ace",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/track_client_bridge.c",
+      "git_mode": "100644",
+      "git_blob": "82beb0264aac9597eb94263620418d8bb4946c87",
+      "sha256": "68d0f0eb8461b7cee5fdbade8adbc0e4a1ab7947d1dc9e20968a1456fc2e5a19",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/uac_test.c",
+      "git_mode": "100644",
+      "git_blob": "e2083effd65af4644dbc88e09fd3c1f6ff393037",
+      "sha256": "af4f8841e7bbf12e9fa9809145251d446e56d9260179416938b6163487bdf041",
+      "upstream_blob": "e2083effd65af4644dbc88e09fd3c1f6ff393037",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/ui_render.c",
+      "git_mode": "100644",
+      "git_blob": "bf303a894ab25e1e418436e4728e96aca77bcfdf",
+      "sha256": "dad1cbfd95efa496c3f66132125433e2bff1abeff96c7eddbfb8c0c967d0b9ac",
+      "upstream_blob": "0f2d86506f40a34fb02451c55a06c1e5119c4de9",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/ui_render.py",
+      "git_mode": "100644",
+      "git_blob": "e6ac15a0bcb5aa75e15a84da3b271909d900d801",
+      "sha256": "aa2b28391e40ead96a5dd61f71e52e693e1818c1d4f7f50d3448e3262f13d679",
+      "upstream_blob": "e6ac15a0bcb5aa75e15a84da3b271909d900d801",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/ui_test.c",
+      "git_mode": "100644",
+      "git_blob": "b270ff3640a0d675aa28b97133417a4fe7654b45",
+      "sha256": "9c0b0f850380dcc0eee3748e9f775b2807ad9e15e2719c4f94195426e562d556",
+      "upstream_blob": "661ffc42e1d665934632efc0539df98a77c0ab6a",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/upreset_test.c",
+      "git_mode": "100644",
+      "git_blob": "8de198808ddbee601844a6c0677441ffe76d838f",
+      "sha256": "d8847138212876ac7982a0aad4c9fceac762a452bbb4fcfdb5469c6e063c1351",
+      "upstream_blob": "8de198808ddbee601844a6c0677441ffe76d838f",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/usb_desc_test.c",
+      "git_mode": "100644",
+      "git_blob": "942cd16be72d7c7de81ad12d77b1858ef5fd0798",
+      "sha256": "18afbba9203e043f401774aa6beb8b1c199d1a77a7c32c64cb39b31fbc8814d2",
+      "upstream_blob": "942cd16be72d7c7de81ad12d77b1858ef5fd0798",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/usb_desc_v10.h",
+      "git_mode": "100644",
+      "git_blob": "36b83dcbea766ad6e779d8e43a6babae401b39a6",
+      "sha256": "8477b38db3d238cbca300bbdf126053875241b152a312983c929df46a8f4368b",
+      "upstream_blob": "36b83dcbea766ad6e779d8e43a6babae401b39a6",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/versioned_track_test.c",
+      "git_mode": "100644",
+      "git_blob": "8fb11f840d052576cb2f027d21fb8f3ca0375778",
+      "sha256": "db54ca465fa79399d715f5bda7b64c8be53ba37c4a9bf3828ce70534d652722b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tests/voice_budget_test.c",
+      "git_mode": "100644",
+      "git_blob": "8ce80fa01630b97054bccdbdf90de6e9f0ba98c6",
+      "sha256": "d9451fe685b0a0d3b8222a1c5a267c75ffe4de1ad97b25cace57bf99817c6aff",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tests/wheel_pool_test.c",
+      "git_mode": "100644",
+      "git_blob": "ad2fa09838fdebee54a295359e054f17b5fd7a35",
+      "sha256": "6a1558b93d94281cd53a5a037d4cb7375ad4765400a25a5efb421f9f57987f65",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/aa_raster.py",
+      "git_mode": "100644",
+      "git_blob": "16121d962dcd8051507a72d9a4bae90b46dc0b43",
+      "sha256": "5280df2b15e4dfceaad7f062c733c1e40e626667eeae580effd88f5747395360",
+      "upstream_blob": "16121d962dcd8051507a72d9a4bae90b46dc0b43",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/build.py",
+      "git_mode": "100755",
+      "git_blob": "ad260dfa3d7b7d4a8efb477d70e4d5bb9480edf1",
+      "sha256": "3c1586352029f209cef170fb5b3d77fe226edb8df31532e97a894849670bf8fd",
+      "upstream_blob": "ad260dfa3d7b7d4a8efb477d70e4d5bb9480edf1",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_backup_inspect.mjs",
+      "git_mode": "100644",
+      "git_blob": "96605dedde4c57bf98ca082be12a699ab594dd9c",
+      "sha256": "d057f799ddbf9e5ae35b8f3d2b0c41d532a7b6e7fb83af500c793c0951a1f75f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_card.py",
+      "git_mode": "100644",
+      "git_blob": "5b53fdf6d8a126d83c9b85fbbdaaeec65d509b61",
+      "sha256": "15602e163d0f9289001cf3e53e8d68397cc0c6932d4c192d753377a04dcdaf5c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only",
+        "'/* SPDX-License-Identifier: GPL-3.0-only */\\n'"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_descriptors.py",
+      "git_mode": "100644",
+      "git_blob": "ae3bed380272ea8533e4522c9b992b2bd95b3908",
+      "sha256": "67aa1629d5b97f82ac2edde10724db723cc03ede38a8662fcd92ed8b4ca2954c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only",
+        "target.write_text('// SPDX-License-Identifier: GPL-3.0-only\\n'"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_import_preview.c",
+      "git_mode": "100644",
+      "git_blob": "d5100a8ae15345d978d75641bca9e5de09edcb8f",
+      "sha256": "13efce7d8f71f83217376ff894f05ac210e09d7738a4b785d7a8c05c0161a5c3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_import_preview.py",
+      "git_mode": "100644",
+      "git_blob": "9442b17368ff9c6ac34a47bbf872045aa91c095c",
+      "sha256": "519201baff0b2ef344976250e84ea6180049b7d518b1b65c2b7d871cec91b1f1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_instrument_capture.py",
+      "git_mode": "100644",
+      "git_blob": "b12b8ff2eac5033c14250b31f1d1e8e33d669775",
+      "sha256": "2923c794d34a65d3a24de71ecc5813ec6c2f17c40e610ce588bc1b45ab907560",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_instrument_executor.c",
+      "git_mode": "100644",
+      "git_blob": "d038d16ca77ced9570c3ddc678924023c8322a2c",
+      "sha256": "7e30a20dfe5e4ca9c2310c4a9f0317b5310bec7eb32c23d1ee6dbf6d040f7c27",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_instrument_migrate.py",
+      "git_mode": "100644",
+      "git_blob": "c485ac740408e06a12505d74eb99202f3f820359",
+      "sha256": "da2f07571cec705ddf1bc8964ece3ff1f6d8dac81b683f85f44553283bf224d0",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_instrument_plan.py",
+      "git_mode": "100644",
+      "git_blob": "659886c610fe015c0a5277833d3efe992bbfaa02",
+      "sha256": "1b57837cec8d62b5c5aa8a1748dd3c000a2909c7147e4792ed5650bcd6b13a0b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_migration_bundle.py",
+      "git_mode": "100644",
+      "git_blob": "11e7851b50ebb9c597b9c640b0b19f41e1ca5bde",
+      "sha256": "ad4c81cc8628ef1f9eb70f9830c623049da543004cc1ddf92861d3876a141e69",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_pool_initialize.c",
+      "git_mode": "100644",
+      "git_blob": "a681d9829cb5c74ff8c293f332cffb4416cf3673",
+      "sha256": "621e888240ab4ecaa47981038f148dff39cbdcdc37af420fea8d3acb4b3345d6",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_preview_kit.py",
+      "git_mode": "100644",
+      "git_blob": "e938eb4965b7b2d2779ddda2983392a5e552bae4",
+      "sha256": "cec3394aa399e507afe84f39ea8d1474a6fbf1cdc8cadc16b4559687879a00b3",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only",
+        "# SPDX-License-Identifier: GPL-3.0-only",
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_project_archive.c",
+      "git_mode": "100644",
+      "git_blob": "e906a3088d9c0fe66abb4cb5fb9b809afb00726e",
+      "sha256": "8ebad5a448999a9d0534ed42333c60f77907b8eeec2e152e5b8241e8aef60fa5",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_project_archive.py",
+      "git_mode": "100644",
+      "git_blob": "a994b2fd05bb2ad3087d9385d1b84a81fb66d3ed",
+      "sha256": "fc22c18a0b09ce58d73ab6f2994e1203d4c3853b4537b0f59fb444eee04b0471",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_project_convert.c",
+      "git_mode": "100644",
+      "git_blob": "aa5bd9a4937a7e4f20edcdc51b4deb5e4660530b",
+      "sha256": "bc799c191d248c07c08d69ea62b79fc0b48046b22c8b342e0ec284b688705241",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_project_convert.py",
+      "git_mode": "100644",
+      "git_blob": "25b290260b6a7e4084b53790da129f23ac3bbea9",
+      "sha256": "da9c40af0bc5da47b66ba2b153a7446803b2e94ca61a4d8c82898e70a392566b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_storage_model.py",
+      "git_mode": "100644",
+      "git_blob": "cf3f477fd155ad6bfb2539d18c2686cad85cf874",
+      "sha256": "22aea6dff0991dbdf00ffa19e5c3d37bdd5d14ae5a36686b748e16aea168885b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/dabbl8_storage_plan.py",
+      "git_mode": "100644",
+      "git_blob": "f7eefabf49f5b5e3cc4ea1c1aac6c8e3d9c72f75",
+      "sha256": "7cad8fbe422388d86ec58f8f76f4fb8b754b52d1691b1b306cc567885f9a1a4d",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/fetch_cc0.py",
+      "git_mode": "100755",
+      "git_blob": "15b3f5be73b9f313eb3587a09244a3a40d32812a",
+      "sha256": "2c27eb085104a2d9b656fbce3766b9843a6f0a10ee840947f712a36ca385c4de",
+      "upstream_blob": "15b3f5be73b9f313eb3587a09244a3a40d32812a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/fm1_install.py",
+      "git_mode": "100755",
+      "git_blob": "39fa60815a036a6bfec3109ccc6ec341f98a6cd6",
+      "sha256": "d8a8374931f0506b5e9fde1ead154eae0341390578dc92a5a0a4f9c16cfa7d63",
+      "upstream_blob": "39fa60815a036a6bfec3109ccc6ec341f98a6cd6",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/fm1_sample_upload.py",
+      "git_mode": "100755",
+      "git_blob": "ff0b264d561469ae42dd4f8a5a8f2f3d6fa3bb67",
+      "sha256": "e00c78d1798ed593683702863204b583f2dc553768255e218bbcaff8f4581fff",
+      "upstream_blob": "ff0b264d561469ae42dd4f8a5a8f2f3d6fa3bb67",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/fm1pkg_make.py",
+      "git_mode": "100755",
+      "git_blob": "ac7a7d1819b5e9d1d4257b9d7da832d16268d3c3",
+      "sha256": "443803b77bf3647a65d89c5c27f64a9c57823048c61d51f536abfb36d765baf6",
+      "upstream_blob": "ac7a7d1819b5e9d1d4257b9d7da832d16268d3c3",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_aa_font.py",
+      "git_mode": "100644",
+      "git_blob": "f5f839f898046f2520d672533f203d5465e8f26e",
+      "sha256": "1de3a33278457b08efb53ff601d1854d2b8d438638254592532267cd80191bcd",
+      "upstream_blob": "f5f839f898046f2520d672533f203d5465e8f26e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_aa_icons.py",
+      "git_mode": "100644",
+      "git_blob": "5aa90c5bb03fa60a9de0e44c69290c6830018b47",
+      "sha256": "76d601a418fcf95c78ebc0696be4b94134a6c4afc141b9d5912377138ca04447",
+      "upstream_blob": "5aa90c5bb03fa60a9de0e44c69290c6830018b47",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_aa_keycaps.py",
+      "git_mode": "100644",
+      "git_blob": "b0ec20209cc98ea2491940512da24951dafb4e0d",
+      "sha256": "09d0871ea5a774f4e7798f61bc296fee8335a235d300e8ba5e2bd48095d858c4",
+      "upstream_blob": "b0ec20209cc98ea2491940512da24951dafb4e0d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_fm6_patches.py",
+      "git_mode": "100644",
+      "git_blob": "94801ba2b24c83e7a1d938d1f99cebfb4e9ae33b",
+      "sha256": "3956c375a86f63692f7ee55a4610362f428d9c001d03763b5183e9e37614d9f4",
+      "upstream_blob": "94801ba2b24c83e7a1d938d1f99cebfb4e9ae33b",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_panel_diagram.py",
+      "git_mode": "100644",
+      "git_blob": "7e829ab9af5abd7b228cd242e80c0f34648cd2c2",
+      "sha256": "a92b287d95948442f8b3615e85a2705ee6c5e651948d9e59b448961b6a800f91",
+      "upstream_blob": "7e829ab9af5abd7b228cd242e80c0f34648cd2c2",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_samples.py",
+      "git_mode": "100755",
+      "git_blob": "f6c8dcc5ee5a36803890cc9378a4d15dad15169d",
+      "sha256": "7596c5b2ca858f58728b13f0ecd224a0e63aaf9c54b70326851dad0fe59694b8",
+      "upstream_blob": "f6c8dcc5ee5a36803890cc9378a4d15dad15169d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_tables.py",
+      "git_mode": "100755",
+      "git_blob": "2081905fe2ae2464c2a96f3b9cf6d34ea9f9d55d",
+      "sha256": "a1896486ffa6605c5ccb1dfbccac2e5c79e96e3a65cc938a5df52a99c15e3ad8",
+      "upstream_blob": "2081905fe2ae2464c2a96f3b9cf6d34ea9f9d55d",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_uac_fir.py",
+      "git_mode": "100644",
+      "git_blob": "dbf0aef53ef53aa38a38b79133057199208588c4",
+      "sha256": "f419a4ffc6ea01e76f3294155c44e78b4edb64b78e3b69e96fbcd874604990b3",
+      "upstream_blob": "dbf0aef53ef53aa38a38b79133057199208588c4",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only",
+        "\"/* SPDX-License-Identifier: GPL-3.0-only\","
+      ]
+    },
+    {
+      "path": "tools/gen_ui_palettes.py",
+      "git_mode": "100644",
+      "git_blob": "8cd08ae0369bd0cd221e718241708aa11c29489c",
+      "sha256": "56f125c5910912c997eb54220d04254407cfde1205559e54cda3b22d9dd735d2",
+      "upstream_blob": "8cd08ae0369bd0cd221e718241708aa11c29489c",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/gen_waves.py",
+      "git_mode": "100755",
+      "git_blob": "d03d6cbd0ba351cb2ef9566ec5bf440135ff41b1",
+      "sha256": "da02f7dceec2ee80d8b6ad3917d1913c4450096bdead1d35b4941e7794a0c402",
+      "upstream_blob": "d03d6cbd0ba351cb2ef9566ec5bf440135ff41b1",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/get_toolchain.sh",
+      "git_mode": "100755",
+      "git_blob": "ff2eed500ed4604526a57a0e394b5063096437da",
+      "sha256": "01c997cf377aa964eceaaaa05f6e75c0df92a863297ca7d3cc4a71472764f5f3",
+      "upstream_blob": "ff2eed500ed4604526a57a0e394b5063096437da",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/lz4blk.py",
+      "git_mode": "100644",
+      "git_blob": "43fbdaaa0d5c4ac1d321464d77fec702ca983818",
+      "sha256": "bede501ca8774ba6942b35ad2c43823e9f48f13d0fb001ef9b73cdaf41460e16",
+      "upstream_blob": "43fbdaaa0d5c4ac1d321464d77fec702ca983818",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/sampleio.py",
+      "git_mode": "100644",
+      "git_blob": "f0fd80094b19c8febe357cca29b4933fcedb6522",
+      "sha256": "ccf72715ffde1f3571006c17acba13a1e860d78f09530773edbf85d015f94a6e",
+      "upstream_blob": "f0fd80094b19c8febe357cca29b4933fcedb6522",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/size_fns.py",
+      "git_mode": "100644",
+      "git_blob": "4fea435434b42c75f31de0d5f36423be5da63b5f",
+      "sha256": "20573a94488e39b4fadce444b184e2f522eb921635808e8b9b492676766a85ff",
+      "upstream_blob": "4fea435434b42c75f31de0d5f36423be5da63b5f",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "tools/uac_tone_check.py",
+      "git_mode": "100644",
+      "git_blob": "e5c84869edd774dba49e85ba08ce18f5adebdd3a",
+      "sha256": "6e8f5b0beb8ab23d208de3008a7671e5fbfcd08f119a1a0cf9db324129cd8d82",
+      "upstream_blob": "e5c84869edd774dba49e85ba08ce18f5adebdd3a",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/build-d8converter.sh",
+      "git_mode": "100644",
+      "git_blob": "114e035dfad11ca15d688860016eab71b81915d5",
+      "sha256": "7bf5a28048b0004e71c21b310a751ef10e9537000302fc68d0689205a0dfa8b1",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8companion-model.js",
+      "git_mode": "100644",
+      "git_blob": "150d60f4b18ebd1794bd815e48c5b740708e4e32",
+      "sha256": "cf030340bf2f02ef5863b2c4a7780071e5cdc802c936a423fcef67c1d61d2a5c",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8companion.css",
+      "git_mode": "100644",
+      "git_blob": "2877f5e54a68481fa798418fea406b0db358c00b",
+      "sha256": "a0a27a4ce66931a761efe109b72949af818f8662792c784a03d39e0b989777fd",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only */"
+      ]
+    },
+    {
+      "path": "web/d8companion.html",
+      "git_mode": "100644",
+      "git_blob": "749216d0e13e15459c7560b72f6c0bdbb37232bd",
+      "sha256": "213e1c5fc41ece4da87beef007789a6bd1b8b9d2e8af115849d28aa1609fbe6b",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "<!-- SPDX-License-Identifier: GPL-3.0-only -->"
+      ]
+    },
+    {
+      "path": "web/d8companion.js",
+      "git_mode": "100644",
+      "git_blob": "b452bd4c2ad6f7b49ef39014acad8833d37e08f6",
+      "sha256": "0ab4df2dbc2916ca103e72eef2b8fe60cad3f65008e8b9c85303db5b5064ff27",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8descriptors.js",
+      "git_mode": "100644",
+      "git_blob": "51e363799faacd6bc73666979a037a89be7f5d56",
+      "sha256": "36bab95596c4856ccbad283e1816fddcc4b09ffc44ccd27d07c7a23be40de28d",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8midi.js",
+      "git_mode": "100644",
+      "git_blob": "92f95537fa6c57125155b17863ad31d513ec7241",
+      "sha256": "8d1d2b4148867b0604f910ca1287765593d4a05dc434374ea9daa068268be0ed",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8project-conversion-page.js",
+      "git_mode": "100644",
+      "git_blob": "7b6fdd7a2d4a0fc0d9150fa0a48d1522f06d29f1",
+      "sha256": "392ff155a6855d403daebc6d87bf244da5868336fc8570a217edd3a48a3ccba4",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8project-conversion.js",
+      "git_mode": "100644",
+      "git_blob": "cb78cba7eb0846d246dab2c0ea8927795dcf4104",
+      "sha256": "9f19baf3af8a2820e03e9dcecd69220b095965d933fcf548cd0dd0ec4bae924f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/d8tracks.js",
+      "git_mode": "100644",
+      "git_blob": "5ac47e84cb1203e22b5a7cc23ffbb5522e54f542",
+      "sha256": "00b336556b9aef925d5af3d8f7f9425249b0adfb033613fe734a3775fcdafe44",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/editor.html",
+      "git_mode": "100644",
+      "git_blob": "b2a89fdfc86adeace272d8e6d3b01bfbd0b4779f",
+      "sha256": "d18e6509fb929ea5ca5fa9666cd4c457c4b16bd5c34a70a14837f01f6590dd29",
+      "upstream_blob": "7b61af86f1e4e8b3b59fa81cf83fac779928da08",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "<!-- SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/build.sh",
+      "git_mode": "100644",
+      "git_blob": "a559913a429d9f6ed8bf40a726985fe519d02f84",
+      "sha256": "5cce875ca36054a33d9ef32677d50061f5022034d1f0c864a3a13f441e5e29e2",
+      "upstream_blob": "a559913a429d9f6ed8bf40a726985fe519d02f84",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/emu_test.mjs",
+      "git_mode": "100644",
+      "git_blob": "d682b236fd95081259f5726f7784f4e4f6e5a563",
+      "sha256": "4c3f0852736393e53df5f9de5cdab275459d89677b5f07ef05b36b3334c4446a",
+      "upstream_blob": "d682b236fd95081259f5726f7784f4e4f6e5a563",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/felucca_web.c",
+      "git_mode": "100644",
+      "git_blob": "ef8db7b933a962eeeab2eecdd15a97ac0bd1f9bd",
+      "sha256": "b266a08782a8e2c59e2c4edab8de8ee5ff533e37ad412ed270bc6e04d055752a",
+      "upstream_blob": "ef8db7b933a962eeeab2eecdd15a97ac0bd1f9bd",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/index.html",
+      "git_mode": "100644",
+      "git_blob": "7dfe68da5911e6cc35218d7aab7b99e15bf19d80",
+      "sha256": "bb3515c969af178bb751b1cdcb38761d4c51bdf3da7f8e330a6c33b28b430bea",
+      "upstream_blob": "7dfe68da5911e6cc35218d7aab7b99e15bf19d80",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "<!-- SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/native_check.c",
+      "git_mode": "100644",
+      "git_blob": "c8a58347e68805ef0c88de6974e9209eeaf23e3e",
+      "sha256": "85fb63e9d3265ba3430ffae80c4ca1577d1e11ee12c51d0673fee1a64bb6d180",
+      "upstream_blob": "c8a58347e68805ef0c88de6974e9209eeaf23e3e",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "/* SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/emu/worklet.js",
+      "git_mode": "100644",
+      "git_blob": "88e1db5a25b768a8a365cd0830a98e0a2e44d723",
+      "sha256": "dfd7d6cd149efc8110b563ee425da6506b534d6fc3d224b4b7b83d474a8d1a0e",
+      "upstream_blob": "88e1db5a25b768a8a365cd0830a98e0a2e44d723",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/fm1backup.js",
+      "git_mode": "100644",
+      "git_blob": "689d0a73b218f3fa49670de6cc03a696cddccb6b",
+      "sha256": "f46e07ffd9571752c811fc4aed4873a87325f02669a0e1ad9b6de7c6a9a6db16",
+      "upstream_blob": "17995d56a700a3054472d1bffe22969b0ea5eaf2",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/fm1ota.js",
+      "git_mode": "100644",
+      "git_blob": "d31980a5db62e287dc8a2db3c3f13df2d3af04c0",
+      "sha256": "4d9fb9962ee0c2ac33e94ffd551eed577776e3705597e422b0eed8be21008c66",
+      "upstream_blob": "d31980a5db62e287dc8a2db3c3f13df2d3af04c0",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/fm1pkg.js",
+      "git_mode": "100644",
+      "git_blob": "82d35ce63e16c3a80769dadd32f234f02b33fa04",
+      "sha256": "0ad2257f83b2a55627d684556f7e285faa638365e2892802692ec7a1943bf2aa",
+      "upstream_blob": "82d35ce63e16c3a80769dadd32f234f02b33fa04",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/index_pkg.html",
+      "git_mode": "100644",
+      "git_blob": "8d4efffc3a073a0e0abb252969fbb44192ebee2c",
+      "sha256": "fe32278f64e61781aec218b7aef104bc68b45304ecd984871031b5f055a09a42",
+      "upstream_blob": "8d4efffc3a073a0e0abb252969fbb44192ebee2c",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "<!-- SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/make_site.py",
+      "git_mode": "100644",
+      "git_blob": "75331546c549e7abfc955f1442440471bc20bfc3",
+      "sha256": "3b38a83eac08744d5eeaed6fe9ec16e3c986da5dc4a35f72d870b57d420dee40",
+      "upstream_blob": "75331546c549e7abfc955f1442440471bc20bfc3",
+      "relative_to_upstream": "unchanged",
+      "literal_spdx_lines": [
+        "# SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/test_backup.mjs",
+      "git_mode": "100644",
+      "git_blob": "45ae400a7d9e0ad3d1cf656b61ba697332ea13fd",
+      "sha256": "8e5eb4ca6ab9287004265e034cd951cb4c89c4cff644f72fc80036bb1a0e3a1d",
+      "upstream_blob": "7788efe1aa245e3af6ab5c8ed719834e74b56417",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/test_d8companion.mjs",
+      "git_mode": "100644",
+      "git_blob": "c2c7a675a2449c7771096b0b5f9957fb0b64d104",
+      "sha256": "97c8b1f0cd7131edd599458025b54b7d9e813375a056126bef15cd4a21bbb94f",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/test_d8midi.mjs",
+      "git_mode": "100644",
+      "git_blob": "08505f8bf68608d6d9d17c497af142d81c7403a2",
+      "sha256": "f572c456fa962bc08dd2b1e5f5735922a6c132351d6ec4fb83d7f6a643ea42a2",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/test_d8tracks.mjs",
+      "git_mode": "100644",
+      "git_blob": "42f29eb4a155212539aa0de916533b0897250328",
+      "sha256": "b06e4f52ae650b28e126eaee0b90e0dd9e62a3dea0041e8ae26939a2b1f69c27",
+      "upstream_blob": null,
+      "relative_to_upstream": "new",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    },
+    {
+      "path": "web/test_web.mjs",
+      "git_mode": "100644",
+      "git_blob": "d41250eb69ee37bc5f41da24e8e813d7084f9dd7",
+      "sha256": "88184ecdfa040588696f23ee62e169776f35987468dc6d0a47cf03feda12ab34",
+      "upstream_blob": "10edbdfd47e7a4dbaf78c118e268061dfb079ec2",
+      "relative_to_upstream": "modified",
+      "literal_spdx_lines": [
+        "// SPDX-License-Identifier: GPL-3.0-only"
+      ]
+    }
+  ],
+  "release_qualification": "NOT_ESTABLISHED"
+}

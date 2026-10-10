@@ -1,0 +1,9 @@
+{
+  "source_commit": "b2466bf9bc1c675ed8b8f667d37af8f5e4e4b377",
+  "files_sha256": {
+    "inventory.py": "b277cc37080dfd5a8f80b670ae8eb1edbefd61d552bb8fe8daf3f80c95354d46",
+    "inventory.json": "2f836f21ef2246ebb9103caa37a4cc82b79629b6fce0d105c7606e225c3876e3",
+    "README.md": "4f08dbc6c29df2a9d2fdbbf0ff91040c94815347ab652ffef76ccdf20b48a6d4"
+  },
+  "qualification": "source provenance only"
+}
