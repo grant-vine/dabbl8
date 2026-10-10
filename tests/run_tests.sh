@@ -120,6 +120,9 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 $CC -o "$OUT/storage_test" tests/storage_test.c
 run "flash storage (A/B, torn writes)" "$OUT/storage_test"
 
+$CC -o "$OUT/native_storage_gate_test" tests/native_storage_gate_test.c
+run "eight-track refusal of all legacy project/autosave writers" "$OUT/native_storage_gate_test"
+
 $CC -o "$OUT/upreset_test" tests/upreset_test.c
 run "user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)" "$OUT/upreset_test"
 
@@ -212,6 +215,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
+    run "actual native three-slot project menu/cache/ownership" "$OUT/native_project_menu_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
@@ -403,6 +408,10 @@ else
     run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
     $SCC -o "$A/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/native_storage_gate_test" tests/native_storage_gate_test.c
+    run "ASan/UBSan: strict eight-track legacy sector write refusal" "$A/native_storage_gate_test"
+    $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
+    run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"
     $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm

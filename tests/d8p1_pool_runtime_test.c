@@ -85,6 +85,7 @@ static void save_as_cases(void){
  proof(d8p1_save_as_pool(&pool,2,"MISSING")==D8POOL_INVALID&&unchanged()&&!writes&&!memcmp(previous_name,proj_name,sizeof previous_name),"save-as target availability cannot authorize another missing identity");
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8p1_load_pool(&pool,2),"restore complete native set after isolated new-slot checks");mix_block((int32_t[CTL*2]){0},CTL);reset();
 }
+#ifndef D8POOL_RUNTIME_NO_MAIN
 int main(void){
  ui_power_on();int32_t audio[2u*CTL];mix_block(audio,CTL);size_t n=fixture("tests/fixtures/d8p1/minimal.d8p");
  proof(!d8p1_load_runtime(wire,n,0),"valid initial native music");mix_block(audio,CTL);
@@ -213,3 +214,5 @@ int main(void){
  for(unsigned i=0;i<256;i++)proof(nor[i]==0xa5&&nor[256+D8POOL_BYTES+i]==0xa5,"NOR guards retained");
  printf("D8P1 runtime pool: %u checks, %u failures; %u save cuts and %u late-start cuts; actual eight-track runtime, virtual NOR only\n",checks,failures,ops,ops-1);return !!failures;
 }
+
+#endif

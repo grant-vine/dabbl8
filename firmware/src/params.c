@@ -153,6 +153,19 @@ static const param_desc_t GP[G_COUNT] = {
     [G_DRREV] = PD("-", F_INT, 0, 0, 0),
 };
 
+/* Active UI range differs from the frozen historical global descriptor. */
+#if NPART >= NVOICE
+#define PROJECT_UI_SLOTS 3u
+static const param_desc_t native_slot_desc=PD("SLOT",F_INT,1,3,1);
+static const param_desc_t *global_desc(uint32_t id)
+{
+    if(id==G_SLOT)return &native_slot_desc;
+    return &GP[id];
+}
+#else
+#define PROJECT_UI_SLOTS 4u
+#define global_desc(id) (&GP[(id)])
+#endif
 static const param_desc_t *track_desc(const track_t *t, uint32_t id)
 {
     if (id >= P_E0 && id <= P_E7) {                   /* the engine asked for (t->engine follows after a fade) */
@@ -408,7 +421,7 @@ static const param_desc_t *page_desc(const page_t *pg, uint32_t slot, int16_t **
     }
     if (pg->scope == SC_GLOBAL) {
         *valp = &song.g[id];
-        return &GP[id];
+        return global_desc(id);
     }
     if (pg->graph == GR_MOD)                          /* SRC DST AMT of the slot shown */
         id += 3u * mod_ui_slot;

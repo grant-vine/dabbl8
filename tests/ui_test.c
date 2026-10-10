@@ -170,6 +170,9 @@ static int check(const char *what, int ok)
 /* main.c felucca_init */
 static void ui_power_on(void)
 {
+#if NPART >= NVOICE
+    project_native_reset();
+#endif
     uint32_t i;
     memset(trk, 0, sizeof trk);
     memset(&song, 0, sizeof song);

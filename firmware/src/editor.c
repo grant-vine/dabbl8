@@ -287,7 +287,7 @@ static const param_desc_t *ed_desc(uint32_t scope, uint32_t id, int16_t **vp)
     }
     if (scope == 1 && id < G_COUNT) {
         *vp = &song.g[id];
-        return &GP[id];
+        return global_desc(id);
     }
     return 0;
 }
@@ -536,7 +536,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         ed_b(CHAIN_ROWS);                                  /* v6 */
         ed_b(0x55); ed_b(1); ed_b(ed_ui_caps());             /* tagged preferences v1: commands 34..38 */
         ed_b(0x4d); ed_b(1); ed_b(MOTION_MAX); ed_b(1); /* motion + chance v1 */
-        ed_b(0x42); ed_b(1); ed_b(3); /* bounded full-backup read + restore */
+        ed_b(0x42); ed_b(1); ed_b(NTRK>4?0:3); /* native full backup not yet implemented */
         ed_b(0x46); ed_b(1); ed_b(FM6_NFACTORY); ed_b(0);   /* FM6 patches: cmds 68..71 (no bank since 1.0.3) */
         ed_b(0x53); ed_b(1); ed_b(3);   /* live sync: bit 0 WATCH while on keeps the shadow, bit 1 no RELOAD echo */
         ed_b(0x50); ed_b(1); ed_b(3);   /* FM6 patches v2: bit 0 no bank (SLOT F1..F8, 8 OWN), bit 1 user preset
@@ -632,7 +632,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         break;
     }
     case ED_PROJECT:                                       /* 0 = load, 1 = save, 2 = query; slot 0..3 */
-        if (na < 2u || a[0] > 2u || a[1] >= 4u)
+        if (na < 2u || a[0] > 2u || a[1] >= PROJECT_UI_SLOTS)
             return;
         if (a[0] == 1u) {
             if (ed_flash_stop() || project_save(a[1]))

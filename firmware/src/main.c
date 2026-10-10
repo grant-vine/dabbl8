@@ -98,6 +98,9 @@ static void fm1_fault(const fm1_crash_t *c)
 /* power-on: the parts with their default sounds (TRK_DEF); the sequencers empty */
 static void felucca_init(void)
 {
+#if NPART >= NVOICE
+    project_native_reset();
+#endif
     uint32_t i;
     chain_defaults(&chain_config);
     for (i = 0; i < G_COUNT; i++)

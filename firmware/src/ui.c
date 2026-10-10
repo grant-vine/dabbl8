@@ -5,6 +5,9 @@
  * named by their numbers 1..4 on a cushion (icons.c trk_icon). Four columns <-> KNOB 1..4. Rendering is lazy:
  * every element remembers what it last drew and is redrawn only on change. */
 static int project_save(uint32_t slot);
+#if NPART >= NVOICE
+static int project_native_status(void);
+#endif
 static void panel_setup(void);
 static void project_load(uint32_t slot);
 static int project_used(uint32_t slot);
