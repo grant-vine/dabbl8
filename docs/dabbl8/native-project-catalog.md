@@ -1,0 +1,25 @@
+# Native three-project catalog and rename
+
+The experimental eight-track controller now provides a small caller-owned catalog and stored-snapshot rename APIs. These are preparation for replacing the historical four-slot menu/cache, not a completed menu, editor-transfer, migration, boot or autosave-scheduler integration. Issues #11/#13/#14 remain open.
+
+`d8p1_catalog_pool(backend, output)` validates every current project and shared autosave, then publishes three names and a present mask. The catalog is 40 bytes: three 13-byte terminated names and one mask. Successful refresh clears missing entries; any refusal retains the previous output. Refresh must run while stopped outside rendering; subsequent UI reads need no flash access or borrowed display arena. Output must be caller-owned and outside the shared arena. No retained allocation or complete-project cache is added.
+
+`d8p1_rename_pool(backend, slot, name)` accepts exactly slots 0–2 and printable ASCII names up to 12 characters, including empty names. It reads and validates the saved snapshot, changes its name, encodes and commits it through the same shared write spare. It never captures live edits or changes the stored arrangement/tracks to match live state. Only after successful commit does it change the live name when that saved identity is current. Other projects and shared autosave are preserved. The input name must be NUL-terminated and stable during the call; it is copied before borrowing the shared arena.
+
+`d8p1_catalog_flash` and `d8p1_rename_flash` connect the APIs to the guarded existing-driver adapter. Explicit completed migration ownership is still required. No current boot/menu/editor caller grants authorization. Blank, legacy, unknown/future, ambiguous or damaged current data refuse; recognizing native magic never authorizes migration or erase. These APIs must run serially in the main loop with IRQs enabled, with editor/backup/drawing ownership enforced by the future frontend. Upstream IRQ helpers do not preserve nested critical sections.
+
+Cache contents describe the last successful refresh. A frontend must track refresh errors/staleness and refresh after commits or transfer/migration; a failed refresh must not be advertised as current inventory. A postcommit verification failure can leave a valid new record even though the operation returns an error. Rescan before retry and reconcile the cache; an error is not proof that the old name remains on flash.
+
+## Verification
+
+The actual eight-track runtime tests compare complete decoded snapshots and active state. They verify names, partial catalogs, transactional output, drawing/busy/arena-alias refusal, empty/invalid identities, name limits, preservation of unsaved track-eight edits and arrangement, current identity publication and every rename mutation/late-start boundary. Legacy, unknown and future current objects prohibit both APIs. Every catalog read boundary is cut, including after partial collection; an arena-sourced name is copied before staging reuse. Simulated physical hooks exercise the actual mapped driver wrappers and IRQ-entry late starts; they do not execute SPI/device code.
+
+Final focused optimized and upstream ASan/UBSan runtime tests each pass 425811 checks. Physical-adapter tests each pass 147716 checks. The runtime configurations retain upstream DSP sanitizer exclusions for signed overflow, shifts, bounds, object-size and pointer overflow; these results do not establish strict whole-engine undefined-behavior freedom. Existing standalone codec/storage tests retain their strict sanitizer configuration.
+
+The full upstream suite passes: 92 golden renders, zero changed/gone hashes, zero health/voice-routing/CPU-budget failures (two existing timing notes). Four explicit Mac omissions remain: DaisySP reference, private vendor fixture, editor MENU settings, and browser emulator without local Emscripten. The optimized pool case ran 188908 checks before the review additions; the full-suite sanitizer and final focused optimized/sanitizer runs cover the final 425811-check version. Target executable source is unchanged by those test refinements.
+
+The pinned JieLi target build passes: eight-track app 455212 bytes, RAM 95716/98304 and pool 334100/344064, `.ram_text` 916 instructions with no calls. The app grows 596 bytes over PR #64 with no retained RAM/pool increase. Default four-track app remains byte-identical at 447924 bytes. Static fit is not stack/deadline qualification. Local allocation plus saved-register frames: catalog pool 124 bytes, rename pool 144, catalog flash 80, rename flash 84; descendants/caller/driver/IRQ chains remain unbounded and unmeasured on hardware.
+
+Evidence is in `evidence/2026-10-10-native-catalog/`. Firmware binaries remain private local build artifacts; no installation, release or recovery claim is made. Native save-as naming, persistent menu/cache ownership, editor protocol, boot restore and shared quiet-time autosave integration remain next work.
+
+SPDX-License-Identifier: GPL-3.0-only. Preserve Felucca and dependency credits/notices.

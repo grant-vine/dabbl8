@@ -1,0 +1,154 @@
+== flash storage (A/B, torn writes)
+== user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)
+== keys and buttons: fast press, long release, bouncy contacts (one note each), glitches, encoders
+== TRS MIDI parser
+== USB audio input: descriptors (with CDC), ring and packets, 44.1 -> 48 kHz resampler, 48 kHz stream
+== USB audio input: descriptors (without CDC), ring and packets, resampler, 48 kHz stream
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 0
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 1
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 2
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 3
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 0
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 2
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 1), layout 0
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 0
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 0), layout 0
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 2
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 0), layout 0
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 0
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 1
+== USB descriptors: CDC 1 (presented 0), UAC 0 (48 kHz 1), layout 0
+== USB descriptors: CDC 0 (presented 1), UAC 0 (48 kHz 1), layout 0
+== M-UPGRADE entry (own loader)
+== update loader: other app -> this build
+== D8P1 independent synthetic reference files
+== Dabbl8 card configurations: all subsets and bounded CLI
+== Dabbl8 card dependencies and non-mutating project preflight
+== D8P1 bounded byte codec and malformed input refusal
+== D8P1 relative multi-sector records and every program-byte cut
+== D8P1 three projects, shared autosave and interrupted pool writes
+== D8P1 mapped existing allocations, session policy and physical cut guards
+== offline D8P1 bundle: original snapshots, migration reports and verified references
+== offline migration: complete originals, persisted autosave and real shared-pool proposal
+== D8P1 native state and all frozen legacy round trips
+== D8P1 motion bytes and actual upstream eligibility
+== parameter and engine tables as JSON (for the editor mock test)
+== eight-track chord, DRUM, SCL and selected automation ownership
+== eight-track bank controls, quick-layer ownership and all screen layouts
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+== versioned eight-track editor: bounds, ownership, busy errors and legacy refusal
+== companion track client: real C four/eight-track negotiation, edits and stale reply guards
+== companion MIDI session: framing, lifecycle and actual C handlers
+== companion editor model: musical schema and all-track actual C controls
+== eight-track recording, playback, USB/TRS routing and bounds
+== eight actual parts: ninth note, held/sustain/release, stealing and render budget
+== PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal
+== FM6 eight-part operator state: ownership, retriggers, release and full-pool refusal
+== SLICE eight-part reverse windows: ownership, exact decode and render isolation
+== GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades
+== WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership
+== eight-part display/project workspace: asynchronous DMA and drawing ownership
+== D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal
+== D8P1 actual runtime shared-pool save, recall and autosave policy
+D8P1 runtime pool: 188908 checks, 0 failures; 30 save cuts and 29 late-start cuts; actual eight-track runtime, virtual NOR only
+== actual runtime through guarded existing-driver adapter
+D8P1 flash runtime: 147716 checks, 0 failures; 29 driver cuts, 29 atomic late-start cuts; actual runtime, simulated physical hooks only
+== scales: white-key mapping and note lifecycle
+== chord keys: diatonic and fixed chords, voicings, MONO root, releases, recording, ARP, MIDI IN, kits
+== SPEAKER EQ: FLAT / LOWCUT / BASS+ responses, BASS+ harmonics of the bass, the sub cut, no offset after
+== DSP render (ANALOG preset 0)
+== TRACKS: 4-track pattern, live recording (lengths, swing), voice budget, engine switch, cost
+== project formats (FUN1..FUN5 -> FUN6, the grid and song chain; DIGITAL tracks -> FM6, SAMPLE PERC -> DRUM)
+== immutable FUN1..FUN9 imports and canonical round trips
+== historical layouts/imports with an eight-track destination; refuse FUN9 truncation
+== offline legacy import preview: preserve originals, report migrations and refuse unknown data
+== D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal
+== motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes
+== RATCH: x1..x4 in a step (notes, chords, drum hits), gates, chance, swing, projects, user presets, CHANCE page
+== USB/TRS clock, bend, sustain, ownership and panic recovery
+== DIGITAL (retired, built here with FELUCCA_FM4=1): operator envelopes/levels
+== DIGITAL -> FM6: the conversion against DIGITAL (FELUCCA_FM4=1): pitch, centroid, RMS envelope; demos
+== DIGITAL -> FM6 without a divide by zero (#61): the same values as before, a 0.9 ORGAN project (UBSan)
+== themes: contrast, text blending and font metrics
+== text: pens, kerning and pixels equal the reference renderer
+== text spacing: glyph gaps against the font's own (16x supersampled), S M <= 0.25 px, L <= 0.5 px
+== settings: PER1..PER4 migration, palette ids and preference preservation
+== UI: sounds keep steps, undo, recording, MIDI overflow, pending saves, panel recovery, drum grid, song chain, GREY gray, MONO neutral
+== UI renders: layout lint (every screen and palette, every page, engine and column value), GREY gray, MONO neutral, alignment by ink (1 px fails), draw cost
+ui_render: the splash shows the version v1.1.5 (FELUCCA_VERSION) and its lines
+ui_render: 146 screens x 10 palettes + the page/value sweep; 0 lint findings, 244 ellipsised free texts (13 distinct), 0 inks on their own colour, 0 GREY / MONO pixels off gray / neutral; report build/ui_new/report.txt
+ui_render: alignment: 2321428 measurements of 78 places, 0 off by 1 px or more
+ui_render: PNGs in build/ui_new/<palette>/ and build/ui_new/sheet_<palette>.png
+ui_render: rolling-digit filmstrips in build/ui_slot/*.png
+== UI built with FELUCCA_FM4=1 (DIGITAL, kept in the tree): its OP pages, EDIT cycle, algorithm charts
+== UI renders with FELUCCA_FM4=1: DIGITAL's screens (EDIT, OP ENV, the 8 algorithm charts), lint, GREY gray, MONO neutral
+ui_render: the splash shows the version v1.1.5 (FELUCCA_VERSION) and its lines
+ui_render: 156 screens x 10 palettes + the page/value sweep; 0 lint findings, 248 ellipsised free texts (13 distinct), 0 inks on their own colour, 0 GREY / MONO pixels off gray / neutral; report build/ui_fm4/report.txt
+ui_render: alignment: 2564637 measurements of 79 places, 0 off by 1 px or more
+== audio: overload protection, bounded fades and DMA diagnostics
+== metronome and count-in: beats sample for sample (internal and external clock), accent, level, MASTER, not in USB, count-in timing, notes onto step 1
+== persistence: deferred settings, retry and failed-save rollback
+== full backup: CRC before writes, stale runtime, USB reset / timeout, malformed objects, older projects
+== editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)
+== robustness: crafted sample slots, engine numbers, retained old projects, preset patterns, malformed requests
+== modulation matrix: off = bit-identical, the math, MIDI CC1 / CC11 / aftertouch, cost, demos
+== SLICER: no clicks, timing, sync with the sequencer, STUT, cost, demos
+== SWING: track + global at most 100, sequencer and SLICER step lengths, the SWG display
+== FX layer effects: on the 1/16, stereo, too-long REPEAT, SLICER, silent keys, idle bit-identical, clicks, OCT UP / DN, cost, demos
+== REVERB TYPE: ROOM bit-identical, SPRING decay / chirp / stability / level, model change, cost, demos
+== regression: golden renders, health, voices, CPU budget
+regress: CPU note  cpu/SAMPLE/00_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/01_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: 92 golden renders (0 changed, 0 gone), 0 health failures, 0 voice / routing checks failed, 0 CPU entries over budget (2 notes), 0 crashes; 0.8 s
+== PHYS: stability C-1..G9 over the parameter corners, worst-case cost against PHASE WIRE, demos
+== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)
+== DRUM: voice targets, controls, no clipping, retrigger, hat choke, the kick on a small speaker, keys, 8 lanes, cost, demos
+== NOISE: colour slopes, key-tracked filter and clock, META period, DC, clipping, retrigger, cost, demos
+== FM6: algorithms, envelopes, retrigger, DC, clipping, macros, patch formats, voices, cost, demos
+== SLICE: tables, onsets, reverse, keys, modes, MAN slices and their store, demos
+== ASan/UBSan: D8P1 strict bounded byte codec
+== ASan/UBSan: strict card dependencies and project preflight
+== ASan/UBSan: strict relative multi-sector storage and exhaustive cuts
+== ASan/UBSan: strict shared pool cuts, rotation and refusal
+== ASan/UBSan: mapped physical bounds, session revocation and cuts
+== ASan/UBSan: offline D8P1 bundle and original/reference preservation
+== ASan/UBSan: original-preserving migration and real shared-pool proposal
+== ASan/UBSan: D8P1 native state and all frozen legacy round trips
+== ASan/UBSan: D8P1 motion bytes and actual upstream eligibility
+== ASan/UBSan: update loader (other app -> this build)
+== ASan/UBSan: M-UPGRADE entry (own loader)
+== ASan/UBSan: editor_test
+== ASan/UBSan: project_test
+== ASan/UBSan: backup_test
+== ASan/UBSan: robust_test
+== ASan/UBSan: actual eight parts versioned_track_test
+== ASan/UBSan: actual eight parts quick_layer_conflicts_test
+== ASan/UBSan: actual eight parts banked_mixer_test
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+== ASan/UBSan: actual eight parts eight_track_runtime_test
+== ASan/UBSan: actual eight parts voice_budget_test
+== ASan/UBSan: actual eight parts phys_pool_test
+== ASan/UBSan: actual eight parts fm6_pool_test
+== ASan/UBSan: actual eight parts slice_pool_test
+== ASan/UBSan: actual eight parts heavy_pool_test
+== ASan/UBSan: actual eight parts wheel_pool_test
+== ASan/UBSan: companion client through actual C four/eight-track handlers
+== ASan/UBSan: companion MIDI session through actual C handlers
+== ASan/UBSan: companion editor model through actual C handlers
+== ASan/UBSan: offline import preservation, migrations and refusal
+== ASan/UBSan: eight-part asynchronous display/project workspace
+== ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation
+== ASan/UBSan: actual native runtime shared-pool persistence and refusals
+D8P1 runtime pool: 425811 checks, 0 failures; 30 save cuts and 29 late-start cuts; actual eight-track runtime, virtual NOR only
+== ASan/UBSan: actual runtime through atomic physical adapter
+D8P1 flash runtime: 147716 checks, 0 failures; 29 driver cuts, 29 atomic late-start cuts; actual runtime, simulated physical hooks only
+== ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)
+== ASan/UBSan fuzz: project stores -> import -> restore -> render (5000, seed 13)
+== ASan/UBSan fuzz: user sample slot headers -> scan -> SAMPLE / GRAIN / SLICE (1000, seed 17)
+== regression: target cost of the render loops (pi32v2 disassembly)
+== installer CLI (fm1_install.py) against a simulated FM-1
+== web pages: editor protocol + samples, package builder, update protocol
+== web backup: capture, validation before writes, restore order
+== skip the browser emulator (no emcc: Emscripten builds web/emu)
