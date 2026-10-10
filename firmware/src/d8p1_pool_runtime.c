@@ -44,21 +44,45 @@ static int d8pr_preflight(const d8pool *s,d8pool_index *index,d8p1_stage_workspa
 }
 static int d8pr_runtime_status(int rc)
 { return rc==D8RT_OK?D8POOL_OK:rc==D8RT_BUSY?D8POOL_BUSY:D8POOL_INVALID; }
-int d8p1_save_pool(const d8pool *s,unsigned object)
+/* Copy UI/editor names before any arena borrow. NULL is handled separately
+ * by save-as as "keep the current name"; rename always requires a name. */
+static int d8pr_name_copy(char out[13],const char *name)
+{
+    if(!name)return 0;
+    memset(out,0,13);unsigned i=0;
+    for(;i<12&&name[i];i++) {
+        if((uint8_t)name[i]<32||(uint8_t)name[i]>126)return 0;
+        out[i]=name[i];
+    }
+    return !name[i];
+}
+static int d8pr_save(const d8pool *s,unsigned object,const char *name)
 {
     d8pool_index index;d8p1_stage_workspace *stage;size_t n=0;int rc;
-    if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
+    char named[13];
+    if(object>=D8POOL_OBJECTS||(name&&!d8pr_name_copy(named,name)))return D8POOL_INVALID;
     rc=d8pr_preflight(s,&index,&stage,NULL);if(rc)return rc;
     rc=d8p1_capture_runtime(stage->wire,sizeof stage->wire,&n);
     if(rc)return d8pr_runtime_status(rc);
+    if(name) {
+        memcpy(stage->state.project.name,named,12);
+        if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&n,&stage->state))return D8POOL_INVALID;
+    }
     /* A newly committed project makes its own identity available; other
      * references still require the validated preexisting stored set. */
     unsigned mask=(index.present&7u)|(object<3?1u<<object:0u);
     d8pool guarded=d8pr_guard(s);
     rc=d8pool_save(&guarded,object,stage->wire,n,mask);
-    if(!rc&&object<3)proj_cur=(uint8_t)object;
+    if(!rc&&object<3) {
+        proj_cur=(uint8_t)object;
+        if(name)memcpy(proj_name,named,sizeof named);
+    }
     return rc;
 }
+int d8p1_save_pool(const d8pool *s,unsigned object)
+{ return d8pr_save(s,object,NULL); }
+int d8p1_save_as_pool(const d8pool *s,unsigned object,const char *name)
+{ return object<3?d8pr_save(s,object,name):D8POOL_INVALID; }
 int d8p1_load_pool(const d8pool *s,unsigned object)
 {
     d8pool_index index;d8p1_stage_workspace *stage;size_t n=0;int rc;
@@ -88,13 +112,7 @@ int d8p1_rename_pool(const d8pool *s,unsigned object,const char *name)
     if(object>=3||!name)return D8POOL_INVALID;
     /* Copy before borrowing the shared display/project arena. The caller may
      * provide a name from that arena, but it must remain stable while read. */
-    char renamed[13];memset(renamed,0,sizeof renamed);
-    unsigned i=0;
-    for(;i<12&&name[i];i++) {
-        if((uint8_t)name[i]<32||(uint8_t)name[i]>126)return D8POOL_INVALID;
-        renamed[i]=name[i];
-    }
-    if(name[i])return D8POOL_INVALID;
+    char renamed[13];if(!d8pr_name_copy(renamed,name))return D8POOL_INVALID;
     d8pool_index index;d8p1_stage_workspace *stage;size_t n=0;
     int rc=d8pr_preflight(s,&index,&stage,NULL);if(rc)return rc;
     if(!(index.present&(1u<<object)))return D8POOL_EMPTY;

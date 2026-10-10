@@ -38,6 +38,53 @@ static void blank(void){memset(nor,0xa5,sizeof nor);memset(nor+256,255,D8POOL_BY
 static void put(uint8_t *p,uint32_t n){for(unsigned i=0;i<4;i++)p[i]=(uint8_t)(n>>(8*i));}
 static size_t fixture(const char *name){FILE *f=fopen(name,"rb");if(!f)exit(2);size_t n=fread(wire,1,sizeof wire,f);if(fgetc(f)!=EOF||ferror(f))exit(2);fclose(f);return n;}
 static int stored(unsigned o){size_t n=0;return !d8pool_load(&pool,o,out,sizeof out,&n,7)&&n==saved_n[o]&&!memcmp(out,saved[o],n);}
+static void save_as_cases(void){
+ size_t n=0;d8p1_project_state expected;char previous_name[sizeof proj_name];
+ trk[7].p[P_LEVEL]=102;trk[7].step[63].note[0]=83;
+ proof(!d8p1_capture_runtime(wire,sizeof wire,&n)&&d8p1_project_decode(&expected,wire,n,7),"save-as expected captures real unsaved eight-track music");
+ memcpy(expected.project.name,"TWELVE CHARS",12);size_t expected_n=0;
+ proof(d8p1_project_encode(out,sizeof out,&expected_n,&expected),"encode proposed save-as name without publishing live name");
+ snapshot();reset();proof(!d8p1_save_as_pool(&pool,1,"TWELVE CHARS")&&proj_cur==1&&!strcmp(proj_name,"TWELVE CHARS"),"save-as publishes proposed name and chosen manual identity after success");
+ before.slot=1;proof(unchanged(),"save-as leaves all active tracks/arrangement/transport/UI/undo intact");
+ size_t got=0;proof(!d8pool_load(&pool,1,wire,sizeof wire,&got,7)&&got==expected_n&&!memcmp(wire,out,got),"save-as commits entire live snapshot with only its name changed");
+ /* NULL preserves name; empty clears it; a shared-arena input is copied early. */
+ proof(!d8p1_save_as_pool(&pool,2,NULL)&&proj_cur==2&&!strcmp(proj_name,"TWELVE CHARS"),"NULL save-as name retains current name");
+ proof(!d8p1_save_as_pool(&pool,2,"")&&!proj_name[0],"explicit empty save-as name clears it");
+ memcpy(main_workspace.d8p1.wire,"ARENA SAVE",11);
+ proof(!d8p1_save_as_pool(&pool,2,(const char *)main_workspace.d8p1.wire)&&!strcmp(proj_name,"ARENA SAVE"),"save-as copies shared-arena name before validation/capture");
+ reset();snapshot();memcpy(previous_name,proj_name,sizeof previous_name);
+ proof(d8p1_save_as_pool(&pool,3,"AUTO")==D8POOL_INVALID&&d8p1_save_as_pool(&pool,4,NULL)==D8POOL_INVALID&&
+       d8p1_save_as_pool(&pool,0,"THIRTEENCHARS")==D8POOL_INVALID&&d8p1_save_as_pool(&pool,0,"BAD\n")==D8POOL_INVALID&&unchanged()&&!reads&&!writes&&!memcmp(previous_name,proj_name,sizeof previous_name),"save-as invalid identities/names perform no access or publication");
+ memcpy(baseline,nor,sizeof nor);
+ for(unsigned o=0;o<4;o++){saved_n[o]=0;proof(!d8pool_load(&pool,o,saved[o],sizeof saved[o],&saved_n[o],7),"retain every current snapshot for save-as failure proof");}
+ n=0;proof(!d8p1_capture_runtime(wire,sizeof wire,&n),"save-as replacement length");unsigned ops=2+(unsigned)((n+255)/256)+1;
+ for(unsigned c=0;c<ops;c++){
+  memcpy(nor,baseline,sizeof nor);reset();snapshot();cut=(int)c;
+  proof(d8p1_save_as_pool(&pool,0,"CUT SAVE")==D8POOL_IO&&unchanged()&&!memcmp(previous_name,proj_name,sizeof previous_name),"every interrupted save-as preserves live name/slot and music");reset();
+  for(unsigned o=0;o<4;o++)proof(stored(o),"interrupted save-as retains every preceding save");
+ }
+ for(unsigned c=1;c<ops;c++){
+  memcpy(nor,baseline,sizeof nor);reset();snapshot();request_after=(int)c;
+  proof(d8p1_save_as_pool(&pool,0,"LATE SAVE")==D8POOL_BUSY&&unchanged()&&!memcmp(previous_name,proj_name,sizeof previous_name),"late start blocks save-as without temporary live publication");reset();
+  for(unsigned o=0;o<4;o++)proof(stored(o),"late save-as retains every preceding save");
+ }
+ memcpy(nor,baseline,sizeof nor);reset();read_error=0;snapshot();
+ proof(d8p1_save_as_pool(&pool,0,"READ FAIL")==D8POOL_IO&&unchanged()&&!writes&&!memcmp(previous_name,proj_name,sizeof previous_name),"save-as read error never publishes proposed name");reset();
+ blank();snapshot();proof(d8p1_save_as_pool(&pool,0,"BLANK")==D8POOL_EMPTY&&unchanged()&&!writes,"save-as never initializes a blank pool");
+ memcpy(nor+256,"FELU",4);reset();proof(d8p1_save_as_pool(&pool,0,"LEGACY")==D8POOL_UNSUPPORTED&&unchanged()&&!writes,"save-as protects legacy storage");
+ /* Creation into an absent manual slot adds only its own reference bit. */
+ blank();n=fixture("tests/fixtures/d8p1/minimal.d8p");proof(!d8pool_save(&pool,0,wire,n,7),"explicit partial pool for save-as new identity");
+ proof(d8p1_project_decode(&expected,wire,n,0),"new identity native fixture");
+ memset(&expected.arrangement,0,sizeof expected.arrangement);expected.arrangement.banks=expected.arrangement.scenes=expected.arrangement.rows=1;expected.arrangement.row[0].repeat=1;
+ for(unsigned t=0;t<8;t++){expected.arrangement.bank[0].project[t]=2;expected.arrangement.bank[0].track[t]=(uint8_t)t;}
+ proof(d8p1_project_encode(wire,sizeof wire,&n,&expected)&&!d8p1_load_runtime(wire,n,4),"live self-reference remains representable before save-as creates its target");mix_block((int32_t[CTL*2]){0},CTL);reset();
+ proof(!d8p1_save_as_pool(&pool,2,"SELF")&&proj_cur==2&&!strcmp(proj_name,"SELF"),"save-as creates absent slot with valid self-reference");
+ d8p1_project_catalog catalog;proof(!d8p1_catalog_pool(&pool,&catalog)&&catalog.present==5&&!strcmp(catalog.name[2],"SELF"),"new stored identity becomes available without claiming another missing slot");
+ for(unsigned t=0;t<8;t++)expected.arrangement.bank[0].project[t]=1;
+ proof(d8p1_project_encode(wire,sizeof wire,&n,&expected)&&!d8p1_load_runtime(wire,n,2),"different missing-reference live fixture");mix_block((int32_t[CTL*2]){0},CTL);reset();snapshot();memcpy(previous_name,proj_name,sizeof previous_name);
+ proof(d8p1_save_as_pool(&pool,2,"MISSING")==D8POOL_INVALID&&unchanged()&&!writes&&!memcmp(previous_name,proj_name,sizeof previous_name),"save-as target availability cannot authorize another missing identity");
+ memcpy(nor,baseline,sizeof nor);reset();proof(!d8p1_load_pool(&pool,2),"restore complete native set after isolated new-slot checks");mix_block((int32_t[CTL*2]){0},CTL);reset();
+}
 int main(void){
  ui_power_on();int32_t audio[2u*CTL];mix_block(audio,CTL);size_t n=fixture("tests/fixtures/d8p1/minimal.d8p");
  proof(!d8p1_load_runtime(wire,n,0),"valid initial native music");mix_block(audio,CTL);
@@ -69,6 +116,7 @@ int main(void){
  n=0;proof(d8p1_project_encode(wire,sizeof wire,&n,&native)&&!d8p1_load_runtime(wire,n,7),"native three-project arrangement loads");
  proof(!d8p1_save_pool(&pool,2)&&!d8p1_load_pool(&pool,2)&&d8p1_runtime_arrangement()&&!memcmp(d8p1_runtime_arrangement(),&native.arrangement,sizeof native.arrangement)&&!chain_busy(),"pool preserves complete arrangement without starting playback");
  cv_begin(8,8,T_BG);cv_blit(0,0);proof(d8p1_runtime_arrangement()&&!memcmp(d8p1_runtime_arrangement(),&native.arrangement,sizeof native.arrangement),"drawing retains recalled native metadata");mix_block(audio,CTL);
+ save_as_cases();
  /* Small native menu catalog and snapshot-only rename. */
  d8p1_project_catalog catalog,prior;memset(&catalog,0xa5,sizeof catalog);reset();snapshot();
  proof(!d8p1_catalog_pool(&pool,&catalog)&&catalog.present==7&&unchanged()&&!writes,"catalog validates all objects without adopting live music");
@@ -144,7 +192,7 @@ int main(void){
  memcpy(nor,baseline,sizeof nor);reset();snapshot();read_error=0;proof(d8p1_load_pool(&pool,0)==D8POOL_IO&&unchanged()&&!writes,"read error cannot adopt or write");reset();
  for(unsigned b=0;b<8;b++){
   if(b==0)song.playing=1;if(b==1)chain.armed=1;if(b==2)chain.running=1;if(b==3)cin_left=1;if(b==4)transport_req=1;if(b==5)backend_busy=1;if(b==6)cv_begin(8,8,T_BG);if(b==7)transport_req=3;
-  reads=writes=0;snapshot();proof(d8p1_save_pool(&pool,0)==D8POOL_BUSY&&d8p1_load_pool(&pool,0)==D8POOL_BUSY&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_BUSY&&d8p1_rename_pool(&pool,0,"BUSY")==D8POOL_BUSY&&unchanged()&&!reads&&!writes,"busy transport/backend/drawing refuses before I/O");
+  reads=writes=0;snapshot();proof(d8p1_save_pool(&pool,0)==D8POOL_BUSY&&d8p1_load_pool(&pool,0)==D8POOL_BUSY&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_BUSY&&d8p1_rename_pool(&pool,0,"BUSY")==D8POOL_BUSY&&d8p1_save_as_pool(&pool,0,"BUSY")==D8POOL_BUSY&&unchanged()&&!reads&&!writes,"busy transport/backend/drawing refuses before I/O");
   song.playing=chain.armed=chain.running=cin_left=transport_req=0;backend_busy=0;if(b==6)cv_blit(0,0);
  }
  reset();snapshot();proof(d8p1_save_pool(NULL,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,4)==D8POOL_INVALID&&unchanged()&&!reads&&!writes,"invalid backend/object refused without alias");
@@ -156,12 +204,12 @@ int main(void){
   * different object. CRC-valid wire is not automatically writable/adoptable. */
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"locate unknown payload target");n=fixture("tests/fixtures/d8p1/unknown-optional.d8p");uint8_t *unknown=nor+256+index.object[1].block*8192;
  memcpy(unknown+256,wire,n);put(unknown+16,(uint32_t)n);put(unknown+20,d8p1_crc32(wire,n));put(unknown+28,d8p1_crc32(unknown,28));reset();snapshot();
- proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,0)==D8POOL_INVALID&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_INVALID&&d8p1_rename_pool(&pool,0,"UNKNOWN")==D8POOL_INVALID&&unchanged()&&!writes,"unknown optional current object protects all persistence operations");
+ proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,0)==D8POOL_INVALID&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_INVALID&&d8p1_rename_pool(&pool,0,"UNKNOWN")==D8POOL_INVALID&&d8p1_save_as_pool(&pool,0,"UNKNOWN")==D8POOL_INVALID&&unchanged()&&!writes,"unknown optional current object protects all persistence operations");
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"locate required project target");nor[256+index.object[1].block*8192+256+300]^=1;reset();snapshot();
  proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&unchanged()&&!writes,"missing damaged project reference is not counted as available");
  /* A future current object must not be overwritten or used as a reference. */
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"future test locates current block");uint8_t *h=nor+256+index.object[1].block*8192;h[4]=2;put(h+28,d8p1_crc32(h,28));reset();snapshot();
- proof(d8p1_save_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_load_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_UNSUPPORTED&&d8p1_rename_pool(&pool,0,"FUTURE")==D8POOL_UNSUPPORTED&&unchanged()&&!writes,"future metadata anywhere protects the pool and live music");
+ proof(d8p1_save_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_load_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_UNSUPPORTED&&d8p1_rename_pool(&pool,0,"FUTURE")==D8POOL_UNSUPPORTED&&d8p1_save_as_pool(&pool,0,"FUTURE")==D8POOL_UNSUPPORTED&&unchanged()&&!writes,"future metadata anywhere protects the pool and live music");
  for(unsigned i=0;i<256;i++)proof(nor[i]==0xa5&&nor[256+D8POOL_BYTES+i]==0xa5,"NOR guards retained");
  printf("D8P1 runtime pool: %u checks, %u failures; %u save cuts and %u late-start cuts; actual eight-track runtime, virtual NOR only\n",checks,failures,ops,ops-1);return !!failures;
 }

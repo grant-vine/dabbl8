@@ -1,0 +1,30 @@
+[
+  {
+    "name": "pool-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "pool-san",
+    "exit": 0
+  },
+  {
+    "name": "flash-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "flash-san",
+    "exit": 0
+  },
+  {
+    "name": "target-default-and-eight",
+    "exit": 0
+  },
+  {
+    "name": "audio-regression-compile",
+    "exit": 0
+  },
+  {
+    "name": "audio-regression",
+    "exit": 0
+  }
+]
