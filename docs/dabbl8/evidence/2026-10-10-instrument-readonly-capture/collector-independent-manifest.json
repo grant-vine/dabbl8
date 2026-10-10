@@ -1,0 +1,77 @@
+{
+  "recorded_utc": "2026-10-10T21:00:57.193404+00:00",
+  "worktree": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture",
+  "head_at_recording": "a660427945c28bc8f95eb0606ad9d41602b64378",
+  "source_state": "coordinated functional source frozen; tracked working tree clean; two collector files unchanged throughout final bridge tests",
+  "results": {
+    "normal": {
+      "exit_code": 0,
+      "checks": 287
+    },
+    "inherited_sanitizer": {
+      "exit_code": 0,
+      "checks": 287,
+      "ASAN_OPTIONS": "detect_leaks=0",
+      "excluded_undefined_checks": [
+        "signed-integer-overflow",
+        "shift",
+        "bounds",
+        "object-size",
+        "pointer-overflow"
+      ]
+    }
+  },
+  "scope": "actual C request dispatch using virtual NOR; full 17 roles and explicit incomplete raw 12-role mode; hostile frames and real USB/reset/timeout/OTA/current-state interruption; no physical device qualification, recovery, restore, migration ownership, preboot original or full physical flash claim",
+  "all_nor_fixture_equality": true,
+  "device_write_calls_in_nominal_tests": 0,
+  "whole_suite_run_by_this_agent": false,
+  "files": [
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/tools/dabbl8_instrument_capture.py",
+      "bytes": 15793,
+      "sha256": "2923c794d34a65d3a24de71ecc5813ec6c2f17c40e610ce588bc1b45ab907560"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/tests/instrument_capture_collector_test.py",
+      "bytes": 11151,
+      "sha256": "44770b60614f323cd4da969811d390917e107e1d90e0df09b1a0d46e7c8ab37e"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/firmware/src/editor_capture.c",
+      "bytes": 8274,
+      "sha256": "c7ce61d9668f15c413e8a7cbc9b847ebf832f826a4c4e88ce0200bd5aea96e82"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-readonly-capture/tests/instrument_capture_test.c",
+      "bytes": 10119,
+      "sha256": "7ed3d2730ef6e620ab3fa8d9607777f53eeb062cf2df813944a5911a973edf93"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-capture-collector-check/bridge-normal",
+      "bytes": 535992,
+      "sha256": "46d98a8698032eaf4eb54dbad213d0c6bac1931e0a291ece641b96220ee3ec95"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-capture-collector-check/bridge-sanitizer",
+      "bytes": 1213112,
+      "sha256": "c8982804136b89cd6f04307b5122c7cf555855f92f6708e5f89a0f28b44824d9"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-capture-collector-check/final-pinned-normal.log",
+      "bytes": 120,
+      "sha256": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-capture-collector-check/final-pinned-sanitizer.log",
+      "bytes": 120,
+      "sha256": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49"
+    },
+    {
+      "path": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-capture-collector-check/initial-hex-framing-failure.log",
+      "bytes": 558,
+      "sha256": "68efba99ba18c7d5ad4133a96226031032c23db19711f581049188530815f556"
+    }
+  ],
+  "functional_commit": "a660427945c28bc8f95eb0606ad9d41602b64378",
+  "functional_parent": "2c20a784d3defb7c1b247e0c82ca7099b0c5890f"
+}
