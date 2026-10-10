@@ -1,0 +1,3 @@
+tests/native_migration_preflight_test.c:88:145: error: call to undeclared function 'd8_instrument_write_allowed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+1 error generated.
+Fixture omitted instrument_write_gate.h; corrected explicit policy include before retry. No production policy changed.
