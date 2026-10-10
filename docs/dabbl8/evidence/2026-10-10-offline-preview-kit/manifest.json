@@ -1,0 +1,137 @@
+{
+  "bytes": 8242667,
+  "kit_manifest": {
+    "compile_flags": [
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "tools/dabbl8_project_convert.c",
+      "-lm"
+    ],
+    "compiler_version": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "device_writes": false,
+    "files": {
+      "LICENSE": {
+        "bytes": 35149,
+        "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+      },
+      "LICENSES/Apache-2.0-msfa.txt": {
+        "bytes": 11024,
+        "sha256": "27dd23b62bc11d0806562397a1e782f86fc7dcacd1ba7a1b58d3c78a54795e62"
+      },
+      "LICENSES/Apache-2.0.txt": {
+        "bytes": 11357,
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      "LICENSES/MIT-DaisySP.txt": {
+        "bytes": 3172,
+        "sha256": "7fa755aede5b5c2a8131a6db692f5818ed8d21dcbe632f41618af03b6d698126"
+      },
+      "LICENSES/MIT-Fukiai.txt": {
+        "bytes": 1166,
+        "sha256": "fddeab17d69ab85a8e9c593beb0e93c279a9d74ff9504e1804bba123cb63e08e"
+      },
+      "LICENSES/MIT-Rings.txt": {
+        "bytes": 1758,
+        "sha256": "60cd097bf74b2a3a0cadadeddec5d80b6806f83039e6ce9cb0ba511a1f17a2be"
+      },
+      "LICENSES/OFL-DotGothic16.txt": {
+        "bytes": 4401,
+        "sha256": "5e59cab6d61d59a5b3110ed900dce715383cb2626a473dcf77c13c116aa839eb"
+      },
+      "LICENSES/OFL-InterTight.txt": {
+        "bytes": 4383,
+        "sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58"
+      },
+      "LICENSING.md": {
+        "bytes": 6722,
+        "sha256": "89c487f3dc19218cc0d1ec0d73466092a5cbc5ab842a98b9a2f625a215cb0e5e"
+      },
+      "README.txt": {
+        "bytes": 2558,
+        "sha256": "135eac65b8d3f5a9e5040efbb54f64413da287bf21c916dde3440406a647308a"
+      },
+      "bin/dabbl8_project_convert": {
+        "bytes": 394408,
+        "sha256": "227427fa013c1eee98217984b853a7bccc92bc2a8168685a5bbeb4ae494afb68"
+      },
+      "convert.py": {
+        "bytes": 358,
+        "sha256": "8f5ecb9252939f24faeafc99d2b11d5533c8c7b8efbd3407a3abd2b9c529f453"
+      },
+      "dabbl8_project_convert.py": {
+        "bytes": 6233,
+        "sha256": "da9c40af0bc5da47b66ba2b153a7446803b2e94ca61a4d8c82898e70a392566b"
+      },
+      "source.tar": {
+        "bytes": 18524160,
+        "sha256": "4be3b311c90e34a8b8eb208a584042acbaff7d470b80eda20fc17eb90cc6f5ef"
+      },
+      "verify.py": {
+        "bytes": 640,
+        "sha256": "ffe47f51ddca1922223c462609dd38ff1a36477ec072ed00db66c12b29298a11"
+      }
+    },
+    "firmware_package": false,
+    "format": "dabbl8-offline-preview-kit",
+    "generated_tables": {
+      "felucca_fm6.h": {
+        "bytes": 6503,
+        "sha256": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791"
+      },
+      "felucca_samples.h": {
+        "bytes": 460065,
+        "sha256": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc"
+      },
+      "felucca_tables.h": {
+        "bytes": 36280,
+        "sha256": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb"
+      },
+      "ui_fonts.h": {
+        "bytes": 233259,
+        "sha256": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54"
+      },
+      "ui_icons.h": {
+        "bytes": 50962,
+        "sha256": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882"
+      },
+      "ui_keycaps.h": {
+        "bytes": 33987,
+        "sha256": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008"
+      },
+      "ui_palettes.h": {
+        "bytes": 1698,
+        "sha256": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+      }
+    },
+    "host": {
+      "machine": "arm64",
+      "system": "Darwin"
+    },
+    "smoke_check": {
+      "accepted": true,
+      "available_project_mask": 15,
+      "banks": 0,
+      "chain_rows": 0,
+      "device_writes": false,
+      "firmware_package": false,
+      "format": "dabbl8-project-conversion",
+      "motion_records": 0,
+      "scenes": 0,
+      "shared_voices": 8,
+      "track_count": 8,
+      "version": 1
+    },
+    "source_commit": "031fc6f1ea31b68c1f4a1ef32742b60656c4f720",
+    "version": 1
+  },
+  "patch_sources": {
+    "docs/dabbl8/offline-preview-kit.md": "12d3571d841f00bd03ba006e231c128595ea35fca5f7ad97fef5a234db9d6577",
+    "tests/preview_kit_test.py": "8f5c76c82e94aca1f0a6013391227fae7caaa66d94afe396d3fd7100fd2750ef",
+    "tools/dabbl8_preview_kit.py": "cec3394aa399e507afe84f39ea8d1474a6fbf1cdc8cadc16b4559687879a00b3"
+  },
+  "sha256": "0172f58309c46f9cdcd02ae62a9a2db932363869a99b54beb4b4cc00ec0b0afe",
+  "source_commit": "031fc6f1ea31b68c1f4a1ef32742b60656c4f720"
+}
