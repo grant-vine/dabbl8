@@ -52,5 +52,48 @@ int main(void)
  CHECK(sv_build(base,7,D8SV_PERSISTED,0));sv_record(0,1,1,sv_raw,sv_load(base));sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_UNSUPPORTED);sv_end();
  CHECK(sv_build(base,7,D8SV_PERSISTED,0));sv_record(0,1,0x80000001u,sv_raw,sv_load(base));sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_UNSUPPORTED);sv_end();
  CHECK(sv_build(base,7,D8SV_PERSISTED,0));sv_record(0,1,0,sv_raw,sv_load(base));sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_COMPLETE);sv_end();
+ /* Archived fourth slot and unselected persisted autosave are imported with
+  * the ORIGINAL four-slot mask, even when CURRENT supplies the native auto. */
+ for(unsigned f=0;f<13;f++){
+  CHECK(sv_build(base,15,D8SV_CURRENT,0));char path[128];snprintf(path,sizeof path,"tests/fixtures/projects/%s",names[f]);size_t n=sv_load(path);sv_record(3,0,1,sv_raw,n);sv_record(4,0,1,sv_raw,n);sv_refresh();memcpy(baseline,nor,sizeof nor);CHECK(sv_run(D8SV_CURRENT)==D8SV_COMPLETE);CHECK(!memcmp(nor,baseline,sizeof nor));sv_end();
+ }
+ /* An unselected stored chain referring to absent historical slot4 refuses,
+  * despite CURRENT being valid and not needing that autosave body. */
+ CHECK(sv_build(base,7,D8SV_CURRENT,0));size_t n=sv_load("tests/fixtures/projects/fun9.bin");sv_record(4,0,1,sv_raw,n);sv_refresh();CHECK(sv_run(D8SV_CURRENT)==D8SV_UNSUPPORTED);sv_end();
+ /* Both valid generations receive semantic import, including the older body;
+  * actual byte differences make sequence selection a meaningful oracle. */
+ CHECK(sv_build(base,7,D8SV_PERSISTED,0));n=sv_load("tests/fixtures/projects/fun2.bin");sv_record(0,1,0,sv_raw,n);sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_COMPLETE&&d8sv.selected[0]==0);sv_end();
+ CHECK(sv_build(base,7,D8SV_PERSISTED,0));n=sv_load("tests/fixtures/projects/fun2.bin");sv_record(0,1,2,sv_raw,n);sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_CHANGED);sv_end();
+ CHECK(sv_build("tests/fixtures/projects/fun2.bin",7,D8SV_PERSISTED,0));n=sv_load(base);sv_record(0,0,0xfffffffeu,sv_raw,n);n=sv_load("tests/fixtures/projects/fun2.bin");sv_record(0,1,1,sv_raw,n);sv_refresh();CHECK(sv_run(D8SV_PERSISTED)==D8SV_COMPLETE&&d8sv.selected[0]==1);sv_end();
+ /* Torn, foreign, header/body/FUN corruption refuses without fallback even
+  * when a different committed generation remains available. */
+ for(unsigned kind=0;kind<7;kind++){
+  CHECK(sv_build(base,7,D8SV_CURRENT,0));uint8_t*b=nor+edc_roles[3].a;
+  if(kind==0)b[200]=0;else {n=sv_load(base);sv_record(0,1,0,sv_raw,n);b=nor+edc_roles[0].a+4096;st_hdr_t*h=(st_hdr_t*)b;
+   if(kind==1)h->magic^=1;else if(kind==2)h->hcrc^=1;else if(kind==3)b[256+80]^=1;else if(kind==4){h->type=OBJ_UPFM6;h->hcrc=st_crc32(h,28);}else if(kind==5){b[256+4]^=1;h->crc=st_crc32(b+256,h->len);h->hcrc=st_crc32(h,28);}else {b[256+n-1]^=1;h->crc=st_crc32(b+256,h->len);h->hcrc=st_crc32(h,28);}}
+  sv_refresh();CHECK(sv_run(D8SV_CURRENT)==D8SV_UNSUPPORTED);sv_end();
+ }
+ /* Boundaries after initial scan/import/selected-current snapshot/final scan:
+  * the actual callback can invalidate owner, USB, epoch, time, current or raw. */
+ const unsigned cuts[]={1,16,32,160,161,320,321,400,401,559};
+ for(unsigned choice=0;choice<2;choice++)for(unsigned action=1;action<=8;action++)for(unsigned cut=0;cut<sizeof cuts/sizeof cuts[0];cut++){
+  if(action==7&&choice==D8SV_PERSISTED)continue;
+  CHECK(sv_build(base,7,choice,0));sv_action=action;sv_at=cuts[cut];int result=sv_run(choice);
+  if(sv_reads>=sv_at){CHECK(result==D8SV_CHANGED||result==D8SV_STALE);}else CHECK(result==D8SV_COMPLETE);
+  sv_end();
+ }
+ /* Once complete, actual current mutation, USB reset, lifetime end/newbegin,
+  * and plan-byte corruption invalidate consumption, never create authority. */
+ for(unsigned kind=0;kind<4;kind++){
+  CHECK(sv_build(base,7,D8SV_CURRENT,0));CHECK(sv_run(D8SV_CURRENT)==D8SV_COMPLETE);
+  if(kind==0)trk[7].p[P_LEVEL]^=1;else if(kind==1)usb.resets++;else if(kind==2){CHECK(!d8mp_end(sv_g));uint32_t other;CHECK(!d8mp_begin(&other));}else main_migration_workspace(sv_g)->plan[40959]^=1;
+  CHECK(d8sv_completed(sv_g)==(kind==2?D8SV_STALE:D8SV_CHANGED));sv_end();
+ }
+ CHECK(sv_build(base,7,D8SV_CURRENT,0));d8sv_io io={NULL,sv_rd,sv_valid};uint32_t arena_before=d8p1_crc32(&main_workspace,sizeof main_workspace);
+ CHECK(d8sv_begin(sv_g,NULL,sv_crc,D8SV_CURRENT)==D8SV_BAD);
+ CHECK(d8sv_begin(sv_g,&io,(uint32_t*)&main_workspace,D8SV_CURRENT)==D8SV_BAD);
+ CHECK(d8sv_begin(sv_g,(d8sv_io*)&main_workspace,sv_crc,D8SV_CURRENT)==D8SV_BAD);
+ CHECK(d8sv_begin(sv_g,&io,sv_crc,2)==D8SV_BAD);
+ CHECK(d8p1_crc32(&main_workspace,sizeof main_workspace)==arena_before);sv_end();
  printf("Native source equivalence: %u checks, %u failures; fixed physical originals, explicit autosave source, canonical byte equality, no retention/consent/authority/device qualification\n",checks,failures);return failures?1:0;
 }
