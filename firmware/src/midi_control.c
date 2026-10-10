@@ -82,6 +82,9 @@ static void d8arr_held_build(uint32_t out[8][4])
 {
     memset(out,0,128);
     for(unsigned ch=0;ch<16;ch++)for(unsigned note=0;note<128;note++){
+#ifdef D8ARR_HELD_BUILD_TEST_HOOK
+        if(ch==8&&note==0)D8ARR_HELD_BUILD_TEST_HOOK();
+#endif
         unsigned id=midi_notes[ch][note]&127u;
         if(id&&id<=8&&!mchord_of(ch,note,id))out[id-1][note/32u]|=1u<<(note%32u);
     }

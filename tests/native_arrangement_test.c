@@ -1,8 +1,15 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Actual sequencer, clock and motion with explicitly seeded virtual NOR. */
 #define D8POOL_RUNTIME_NO_MAIN 1
+static void held_build_hook(void);
+#define D8ARR_HELD_BUILD_TEST_HOOK() held_build_hook()
 #include "d8p1_pool_runtime_test.c"
 #include "../firmware/src/d8arr_prepare.c"
+static unsigned build_inject;
+static void held_build_hook(void)
+{
+ if(build_inject){build_inject=0;midi_note_event(0,111,100);midi_note_event(0,111,0);}
+}
 static d8p1_project_state source;
 static int32_t audio[2*CTL];
 static unsigned inject_at,inject_kind,inject_reads;
@@ -224,6 +231,9 @@ int main(void)
  proof(chain_prepare()==1&&!transport_req&&!song.playing,"failed SONG preparation never requests editable fallback playback");events_block(1);
  proof(!song.playing,"failed SONG request remains stopped");
  cache_cases();
+ arrange();reset();build_inject=1;snapshot();
+ proof(d8arr_prepare_pool(&arr_pool)==D8POOL_BUSY&&!chain.armed&&!chain.native.policy.valid,"ownership mutate-and-revert during initial cache build refuses publication");
+ proof(build_inject==0,"mixed cache guard case executes actual builder midpoint hook");
  /* Native row count/name/repeats are real loaded metadata, not stale legacy. */
  arrange();char name[13];unsigned repeat=0;
  proof(d8arr_ui_rows()==3&&d8arr_ui_row(2,name,&repeat)&&!strcmp(name,"SCENE3")&&repeat==1,"native UI reads actual arrangement metadata");
