@@ -1,0 +1,18 @@
+tails-optimized-compile 0
+tails-optimized 0
+tails-san-compile 0
+tails-san 0
+performance-optimized-compile 0
+performance-optimized 0
+performance-san-compile 0
+performance-san 0
+upstream-perform-optimized-compile 0
+upstream-perform-optimized 0
+quiet-optimized-compile 0
+quiet-optimized 0
+quiet-san-compile 0
+quiet-san 0
+target-default-and-eight 0
+audio-regression-compile 0
+audio-regression 0
+default package/loader/goldens and budgets unchanged

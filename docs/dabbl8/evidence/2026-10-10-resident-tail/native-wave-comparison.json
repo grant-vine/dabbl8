@@ -1,0 +1,13 @@
+{
+  "parent": "eb3e8ffb07d16b44d8d5baa875a694b2aa08745e",
+  "blocks": 1200,
+  "variable_block_samples": "1..32",
+  "models": "ROOM/SPRING, change every75blocks",
+  "varying": "RSIZE,RDAMP,DTIME,BPM and deterministic input",
+  "parent_bytes": 78688,
+  "current_bytes": 78688,
+  "parent_sha256": "c82a2183370123dd2e8e4c8a7a16fda3dbe6489e52f4442ad71708d3a6c6896e",
+  "current_sha256": "c82a2183370123dd2e8e4c8a7a16fda3dbe6489e52f4442ad71708d3a6c6896e",
+  "byte_equal": true,
+  "scope": "Host actual native fx_buses samples; no CPU/target deadline claim"
+}

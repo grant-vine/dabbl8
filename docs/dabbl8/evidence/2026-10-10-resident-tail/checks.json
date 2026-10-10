@@ -1,0 +1,70 @@
+[
+  {
+    "name": "tails-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "tails-optimized",
+    "exit": 0
+  },
+  {
+    "name": "tails-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "tails-san",
+    "exit": 0
+  },
+  {
+    "name": "performance-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "performance-optimized",
+    "exit": 0
+  },
+  {
+    "name": "performance-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "performance-san",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-perform-optimized",
+    "exit": 0
+  },
+  {
+    "name": "quiet-optimized-compile",
+    "exit": 0
+  },
+  {
+    "name": "quiet-optimized",
+    "exit": 0
+  },
+  {
+    "name": "quiet-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "quiet-san",
+    "exit": 0
+  },
+  {
+    "name": "target-default-and-eight",
+    "exit": 0
+  },
+  {
+    "name": "audio-regression-compile",
+    "exit": 0
+  },
+  {
+    "name": "audio-regression",
+    "exit": 0
+  }
+]
