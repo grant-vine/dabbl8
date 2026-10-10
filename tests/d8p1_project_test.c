@@ -6,6 +6,10 @@
 #define PROJ_HOST 1
 #include "../firmware/src/project.c"
 #include "../firmware/src/d8p1_project.h"
+#include "../firmware/src/native_migration_preflight.h"
+static d8mp_workspace source_arena;
+static uint8_t sealed_before[D8POOL_BYTES];
+_Static_assert(sizeof(source_arena)<=59520,"source staging and complete plan fit existing arena");
 static uint8_t raw[D8P1_LIMIT],encoded[D8P1_LIMIT],before[D8P1_LIMIT];
 static d8p1_project_state state,old,workspace,roundtrip,reference;
 static project_t legacy_expected;
@@ -94,8 +98,26 @@ int main(int argc,char **argv){
   memset(&workspace,0xA5,sizeof workspace);
   check(d8p1_legacy_convert(&state,&workspace,&report,raw,n,15),"real frozen legacy fixture converts with available references");
   check(!memcmp(before,raw,n),"legacy source remains byte-exact through migration");
+  d8p1_legacy_report staged_report;
+  memset(&reference,0xA6,sizeof reference);
+  check(d8p1_legacy_stage(&reference,&staged_report,raw,n,15)&&!memcmp(&reference,&state,sizeof state)&&!memcmp(&staged_report,&report,sizeof report),"single owned stage equals independently validated frozen conversion");
+  check(!memcmp(before,raw,n),"single-stage conversion preserves exact original bytes");
+  d8p1_legacy_report unchanged_report=staged_report;
+  for(size_t cut=0;cut<n;cut++) {
+   check(!d8p1_legacy_stage(&reference,&staged_report,raw,cut,15)&&!memcmp(&staged_report,&unchanged_report,sizeof staged_report),"every truncated original refuses staged conversion without publishing a report");
+  }
+  reference=state;
+  check(!d8p1_legacy_stage(&reference,(d8p1_legacy_report *)&reference,raw,n,15)&&!memcmp(&reference,&state,sizeof state),"single-stage report alias refuses before scratch mutation");
+  check(!d8p1_legacy_stage(&reference,&staged_report,&reference,n,15)&&!memcmp(&reference,&state,sizeof state),"single-stage source alias refuses before scratch mutation");
+  check(!d8p1_legacy_stage(&reference,(d8p1_legacy_report *)raw,raw,n,15)&&!memcmp(raw,before,n),"single-stage report cannot overwrite original bytes");
   check(d8p1_project_encode(encoded,sizeof encoded,&written,&state)&&d8p1_project_decode(&roundtrip,encoded,written,15),"legacy state round-trips through the new file codec");
   check(!memcmp(&state,&roundtrip,sizeof state),"all native fields and new arrangement semantics survive round trip");
+  memset(source_arena.plan,0xA7,sizeof source_arena.plan);memcpy(sealed_before,source_arena.plan,sizeof sealed_before);
+  memcpy(source_arena.stage.wire,raw,n);
+  check(d8p1_legacy_stage(&source_arena.stage.state,&staged_report,source_arena.stage.wire,n,15),"actual complete-plan arena stages frozen source with one state buffer");
+  size_t staged_written=0;
+  check(d8p1_project_encode(source_arena.stage.wire,sizeof source_arena.stage.wire,&staged_written,&source_arena.stage.state)&&staged_written==written&&!memcmp(source_arena.stage.wire,encoded,written),"source wire scratch can be reused for exact canonical output after decode");
+  check(!memcmp(source_arena.plan,sealed_before,sizeof sealed_before),"whole sealed plan remains byte-identical beside conversion and encoding");
   check(state.project.parts==8&&state.project.phys==2&&state.project.chain.count==0,"legacy conversion normalizes metadata without using old disk layouts");
   for(unsigned t=4;t<8;t++)for(unsigned i=0;i<64;i++)check(!state.project.t[t].step[i].n&&!state.project.t[t].step[i].hit&&state.project.t[t].step[i].time==ST_REST,"upper legacy tracks initialize empty rests");
   check(state.arrangement.rows==legacy_expected.chain.count,"converted chain keeps original row count");
