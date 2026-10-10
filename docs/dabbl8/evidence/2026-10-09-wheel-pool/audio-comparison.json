@@ -1,0 +1,40 @@
+{
+  "previous": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_WHEEL=0",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/wheel-pool-check/audio-previous",
+      "/private/tmp/dabbl8-wheel-audio-probe.c",
+      "-lm"
+    ],
+    "bytes": 5242880,
+    "sha256": "d1654d3caa9dd286ecc612e851026c9fa284081c609de4c163289c6e023cbf99"
+  },
+  "shared": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_WHEEL=1",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/wheel-engine-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/wheel-pool-check/audio-shared",
+      "/private/tmp/dabbl8-wheel-audio-probe.c",
+      "-lm"
+    ],
+    "bytes": 5242880,
+    "sha256": "d1654d3caa9dd286ecc612e851026c9fa284081c609de4c163289c6e023cbf99"
+  },
+  "result": "PASS: exact sample byte comparison",
+  "scope": "Every WHEEL factory preset, POLY/MONO/LEGATO (eight active tracks) and UNISON (one track/eight voices),256 blocks,same-note retriggers at100/200; does not cover reclaimed-owner startup or all parameters."
+}

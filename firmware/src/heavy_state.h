@@ -56,6 +56,7 @@ typedef struct {
 
 /* A typed union preserves alignment and avoids byte-buffer aliasing. */
 typedef union {
+    drw_vc_t wheel;
     gr_part_t grain;
     phys_slot_t phys;
     drum_lane_t drum[DV_NLANE];
@@ -68,7 +69,7 @@ static int heavy_live(uint32_t engine, uint32_t part, uint32_t voice)
     uint32_t i;
     if (part >= NPART || voice >= NVOICE || trk[part].engine != engine)
         return 0;
-    if (engine == 9u)                                  /* PHYS: one body per sounding voice */
+    if (engine == 7u || engine == 9u)                                  /* WHEEL/PHYS: one body per sounding voice */
         return trk[part].v[voice].active != 0;
     if (engine != 8u && engine != 10u)
         return 0;
@@ -80,22 +81,34 @@ static int heavy_live(uint32_t engine, uint32_t part, uint32_t voice)
 static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
 {
     uint32_t key, k;
-    if (engine < 8u || engine > 10u || (engine != 9u && voice != 0u) || !heavy_live(engine, part, voice))
+    if (engine < 7u || engine > 10u || (engine != 7u && engine != 9u && voice != 0u) || !heavy_live(engine, part, voice))
         return 0;                                     /* idle block callbacks must not reserve memory */
-    key = ((engine - 8u) * NPART + part) * NVOICE + voice + 1u;
+    key = ((engine - 7u) * NPART + part) * NVOICE + voice + 1u;
     for (k = 0; k < NVOICE; k++)
         if (heavy_owner[k] == key)
             return &heavy_pool[k];                     /* retrigger retains the active engine's body */
     for (k = 0; k < NVOICE; k++) {
         uint32_t old = heavy_owner[k], index = old ? old - 1u : 0;
-        if (!old || !heavy_live(8u + index / (NPART * NVOICE), (index / NVOICE) % NPART, index % NVOICE)) {
+        if (!old || !heavy_live(7u + index / (NPART * NVOICE), (index / NVOICE) % NPART, index % NVOICE)) {
             heavy_owner[k] = (uint16_t)key;
-            if (engine == 8u) memset(&heavy_pool[k].grain, 0, sizeof heavy_pool[k].grain);
+            if (engine == 7u) memset(&heavy_pool[k].wheel, 0, sizeof heavy_pool[k].wheel);
+            else if (engine == 8u) memset(&heavy_pool[k].grain, 0, sizeof heavy_pool[k].grain);
             else if (engine == 9u) memset(&heavy_pool[k].phys, 0, sizeof heavy_pool[k].phys);
             else memset(heavy_pool[k].drum, 0, sizeof heavy_pool[k].drum);
             return &heavy_pool[k];                     /* another engine cannot inherit stale state */
         }
     }
     return 0;                                         /* no admitted slot: fail closed */
+}
+/* WHEEL is compiled before the shared types; its typed declaration lives there. */
+static drw_vc_t *wheel_state_of(track_t *t, voice_t *v)
+{
+    uint32_t i;
+    heavy_state_t *state;
+    if (t < &trk[0] || t >= &trk[NPART]) return 0;
+    i = (uint32_t)(v - t->v);
+    if (i >= NVOICE) return 0;
+    state = heavy_get(7u, (uint32_t)(t - trk), i);
+    return state ? &state->wheel : 0;
 }
 #endif

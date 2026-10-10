@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-09T22:18:51.876381+00:00",
+  "source_base": "6fb5f86da923e174b63e529b7f24c1412656e3ce",
+  "checks": [
+    {
+      "name": "wheel-pool-focused",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-build",
+      "exit_code": 0
+    },
+    {
+      "name": "four-track-full-suite",
+      "exit_code": 0
+    },
+    {
+      "name": "diff-check",
+      "exit_code": 0
+    }
+  ],
+  "four_track_artifacts": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "54fd12f590b2838435cd0623052df00401211aab1c8fb2cbaec7c692999c42bb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  }
+}

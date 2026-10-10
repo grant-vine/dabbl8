@@ -20,7 +20,7 @@ static uint32_t occupied(void)
     uint32_t n=0;
     for(uint32_t i=0;i<NVOICE;i++)if(heavy_owner[i]){
         uint32_t k=heavy_owner[i]-1u;
-        n+=heavy_live(8u+k/(NPART*NVOICE),(k/NVOICE)%NPART,k%NVOICE);
+        n+=heavy_live(7u+k/(NPART*NVOICE),(k/NVOICE)%NPART,k%NVOICE);
     }
     return n;
 }

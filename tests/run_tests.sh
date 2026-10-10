@@ -168,6 +168,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "SLICE eight-part reverse windows: ownership, exact decode and render isolation" "$OUT/slice_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/heavy_pool_test" tests/heavy_pool_test.c -lm
     run "GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades" "$OUT/heavy_pool_test"
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/wheel_pool_test" tests/wheel_pool_test.c -lm
+    run "WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership" "$OUT/wheel_pool_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -322,7 +324,7 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
-    for t in voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test; do
+    for t in voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
     done
