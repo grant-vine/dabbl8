@@ -140,6 +140,9 @@ static int upf_save(void)
     int to = -1;
     if (!flash_ok)
         return 3;
+#if NTRK > 4
+    if(!d8_instrument_write_allowed())return 2;
+#endif
     if (st_current(OBJ_UPFM6, &h) < 0)
         to = st_current(OBJ_FM6BANK, &h) == 0 ? 1 : 0;
     return st_save_to(OBJ_UPFM6, &upf, sizeof upf, to) ? 2 : 0;
@@ -179,7 +182,9 @@ static void upf_boot(void)                       /* up_boot, after the user pres
     if (flash_ok && st_current(OBJ_FM6BANK, &h) >= 0 && h.len == sizeof(fm6_bank_t) &&
         fm6_bank_valid((const fm6_bank_t *)st_buf)) {
         upf_migrate((const fm6_bank_t *)st_buf);   /* (st_buf holds the bank until upf_save) */
-        upf_save();
+#if NTRK <= 4
+        upf_save();                              /* eight-track boot is RAM-only until trusted migration */
+#endif
     }
 #else
     upf_empty();

@@ -1,0 +1,171 @@
+{
+  "functional_commit": "179e41a91440469242f72af7f266d54bebbd3761",
+  "parent": "3bc404435b8c95453726d41fd550e6eccbcdceac",
+  "source_sha256": {
+    "docs/dabbl8/pre-migration-write-quarantine.md": "073d26191872334b98625338edda53fe8b3a18614c97d3a5b6cd42c251f8ecb0",
+    "firmware/src/editor.c": "f48d3ebc690c8904788fab2514089eddf0d814a0d90dcc6ed53fcc61464c435c",
+    "firmware/src/instrument_write_gate.h": "44f4c821c90f851981c8396f9776276b8c2aef4de36ee88b2fa446550b80fe32",
+    "firmware/src/slice_store.c": "bccb9f2937e3366c8234b079f2be7fb9c883559f07093713719f767cf043cf06",
+    "firmware/src/storage.c": "07f0a0dd8349bccb709ae1480b9d80b813a82f6630e443a2b3c2beae95e98908",
+    "firmware/src/storage_hw.c": "3f90a6e4501bb9653536504711260ef685e570b80fe91b419c936fd0c23f8dca",
+    "firmware/src/up_fm6.c": "4daf50c2914ddd1b89f67f0beae7d6f66fe908564b884b6daadf4f0960600b81",
+    "tests/instrument_capture_test.c": "ff96bee1340da4299dd4b6b6034733c042556358b89c338f7275fa9b37ec0f9b",
+    "tests/instrument_write_quarantine_test.c": "57d997b9b504e937484bbee8e86300614bfe6087ab80f752eeef8e9c960f8d02",
+    "tests/native_storage_gate_test.c": "789362aac1dac7e5f8d88b3725b75923679250e62e0bdb1de78b4f5de601d26c",
+    "tests/run_tests.sh": "71f94efc5c97a59c77feabb963c87571010f3aee1d63a7cd1ceec57edf64a19b"
+  },
+  "focused_checks": {
+    "quarantine_opt_san": 220,
+    "capture_opt_san": 407518,
+    "collector_opt_san": 287,
+    "standalone_object_gate": "0 failures normal and strict SAN"
+  },
+  "logs_sha256": {
+    "quarantine-first.log": "1b8614c28b89dd29fdddd65d6d29b1c94815b04ef794600e5e12c20f72dbabce",
+    "compile-second.log": "1e942963f1ac6bbd87127592abfa5862ce23b9be67a3991ea771db3835d995d2",
+    "compile-third.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compile-fifth.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compile-first.log": "9cd73dd0eb020052775d07e4acc64bd5c4ba9d60f5e2314ee3eec8423ef655bc",
+    "compile-fourth.log": "b4fda404022cbd78c355e81cb6f35c21d20cef767a645d19c77b4b54783b457a",
+    "storage-opt.log": "95f8e1acd26e371bfd102cc3cd724829ee44aeac2da963704773f5dae1da7398",
+    "collector-opt.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "collector-san.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "storage-san.log": "95f8e1acd26e371bfd102cc3cd724829ee44aeac2da963704773f5dae1da7398",
+    "capture-opt.log": "0d7722b2b520d943c8bae0787b3702a875d10a6ff7dbf21480af92d00fafa480",
+    "quarantine-opt.log": "a9a5c88061091380ccc03d1a3f115522b4847cb477912935c58ead0266e166f8",
+    "quarantine-san.log": "a9a5c88061091380ccc03d1a3f115522b4847cb477912935c58ead0266e166f8",
+    "capture-san.log": "0d7722b2b520d943c8bae0787b3702a875d10a6ff7dbf21480af92d00fafa480"
+  },
+  "target": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "actual_6f73_four_track_hash_matches": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460376,
+      "sha256": "1712c7a4a1b6d218226a2c8d376a13c6352ddd29bbe70ceea326c03b346338b8",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460376 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ]
+    }
+  },
+  "full_suite": {
+    "head": "179e41a91440469242f72af7f266d54bebbd3761",
+    "exit": 0,
+    "elapsed_seconds": 703.1629409790039,
+    "head_and_six_baselines_unchanged": true,
+    "generated_29_inputs_unchanged": true,
+    "actual_coverage_omissions": [
+      "PHYS DaisySP reference checkout absent",
+      "Official V15 restore fixture FM-1_v15.fwsc absent; no private vendor firmware committed",
+      "Reduced sanitizer editor has no MENU settings; normal editor MENU tested",
+      "Emscripten browser emulator unavailable"
+    ],
+    "browser_conversion_parity": "Not separately run locally; Node web and backup suites passed",
+    "full_suite_log_sha256": "c11cc92441bcda626ce34f6dcb6fc10687c9e17c4dd50c03fe22d69b2364cbd8",
+    "actual_four_disassembly_sha256": "7e7f2d4f1d5c4949e50f61d1211985b7bb936f3285be484f11cfe1b3ce339c6f",
+    "golden_sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "golden_result": "92 renders, 0 changed, 0 gone"
+  },
+  "hardware": "NOT_RUN",
+  "policy": "constant-closed pre-migration; no unlock/dynamic revocation test",
+  "target_logs_sha256": {
+    "target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "session.log": "5e709d32473d7cd79294b2525da4df2937983c45a7a49f79c724586da7b81861",
+    "target-budget-8.log": "dbb2d47adebc6311ee20f9aefb25a0ad3278dfe4fb80c33fef13ff4931e8af43"
+  },
+  "target_evidence_sha256": {
+    "before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "checks.json": "7f3f9afd8cc5b2148a6922e19b9459e3a276e9ea0ad6a5255cef2ffe6e8a9579",
+    "generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "terminal.json": "8d69381efb41443d9727041c619a710f249a66f853c44d82564b503e939b4b1f",
+    "target-results.json": "68c26b11f4724ce36aed45b07ef1a5158c128deba4efc6f14931a7defdab0b3f",
+    "environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589"
+  },
+  "actual_default_four_disassembly_sha256": "7e7f2d4f1d5c4949e50f61d1211985b7bb936f3285be484f11cfe1b3ce339c6f",
+  "canonical_baseline_artifacts": {
+    "build/felucca.bin": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b",
+    "build/felucca.fwsc": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb",
+    "build/loader/ota.bin": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "generated_inputs": {
+    "build/gen/felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "build/gen/felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "build/gen/felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "build/gen/ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "build/gen/ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "build/gen/ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "build/gen/ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05",
+    "build/genwav/D CHAT.wav": "2d1d6b912d51463e2a673403e9dfdf5c26db31e8b255f0577358f84867919110",
+    "build/genwav/D CLAP.wav": "259a30e710726ee4d84bd5981662b4ab8549ef00e131fdf10117ea882826eb8f",
+    "build/genwav/D COWBELL.wav": "d00d79290209d51916aa17ef2d3da37371430468e1387a65d9d9c556a550269d",
+    "build/genwav/D CRASH.wav": "86dba714e62ae37bb5419a783f692519dd8e8ecaf940b425021968519dbce9d2",
+    "build/genwav/D KICK.wav": "279856d5818fa78c8ab5fa6999737a42f7bd6e121c826e22670bd5a9d7012fa2",
+    "build/genwav/D OHAT.wav": "d44471f44c1280058a36192a9e5574a1bc32c443dd21bebdea00c82dcd9cc00c",
+    "build/genwav/D RIDE.wav": "29cd69c70817fd74c2a40e87feb61836041920def2c9dc5d53ef92255edf9c38",
+    "build/genwav/D RIM.wav": "9c7634e1b9be5dee9a3180f3194d0b59101a93803d55a04bf2ea73e07291036f",
+    "build/genwav/D SNARE.wav": "b5ac665a957505128bcae606552eef56f021aefc572ef0ced66e1e1e226060a6",
+    "build/genwav/D TOM HI.wav": "e4b4e7d889f872fc6f38f84974bcce7d432eb45a44a22a3b560f4dcfd43a6269",
+    "build/genwav/D TOM LO.wav": "b10e3c3dad50c0788262e18c3f729cce082b7bfaa4b765fe958894ba242f6671",
+    "build/genwav/P PLUCK C2.wav": "68553dd965b5c4de5b384f7c203545a95a819b051ea32e06195f65de90b8ef9a",
+    "build/genwav/P PLUCK C3.wav": "5d9b3df3f7bfdadbbfccfca2e6c442985cf691b45215a0ad181dcc3b14bdf28f",
+    "build/genwav/P PLUCK C4.wav": "13fde0ee63b5275269f82deb673f53a2199f63d7bf9805b1441b5a559fbb7524",
+    "build/genwav/W BRASS.wav": "2fe4ae98eb100490fd145fd0e565fe8ffa22a107233ac2954ce6cbf23d50d414",
+    "build/genwav/W DIGI1.wav": "32e6332e61280831e96e3f4fcf9a988fe45c4108a4a24ab5786fbc54ca65214b",
+    "build/genwav/W DIGI2.wav": "f2cc0e9900a09c34c938af493b3f996ab885311c2e74a8f486e0bdd2cfc02f10",
+    "build/genwav/W DIGI3.wav": "4dfc631ff23653e63e888ab721cf6de1759a4fc1bc2a25cdf57f96cd7fded5d4",
+    "build/genwav/W GLASS.wav": "81140694c761d77416fff6c208f47f66fe5613c5471a4f542021e4d6b1c41a2c",
+    "build/genwav/W ORGAN.wav": "e5d63eddd93bcaa175293b330efcbe9f8b3ed04be9375d432ef415be428635e9",
+    "build/genwav/W REED.wav": "3db22bc7d73d86c7d692a25b127de02068433367a25747a802c5d1d1aa7622d6",
+    "build/genwav/W VOX.wav": "2358d0f9efcec3f1e61082439484f1dd17a99ddb4734146dcbe90351b06c7463"
+  },
+  "initial_harness_failures": [
+    "First compile: missing test-only audio quiet declaration, redundant OTA symbols and menu constants",
+    "Second compile: test-only version macro absent",
+    "Fourth compile: reply-buffer identifier typo",
+    "Subsequent link: real native autosave hold routine absent from harness, resolved by including actual session source; tool output retained in chat, no raw private linker log"
+  ],
+  "physical_qualification": "NOT_RUN",
+  "trusted_migration_unlock": "NOT_IMPLEMENTED",
+  "dynamic_revocation": "NOT_TESTED: production policy is constant closed",
+  "OTA": "Unchanged and outside application quarantine; no low-level flash gate or boundary changes",
+  "parent_default_four_target": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5; exactly matches 7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+  "audited_historical_measurement": "276f72a4e6ea8a12499a7a6819aadf3165126755; six canonical artifacts retained separately, not substituted with candidate outputs",
+  "published_evidence_sha256": {
+    "capture-opt.log": "0d7722b2b520d943c8bae0787b3702a875d10a6ff7dbf21480af92d00fafa480",
+    "capture-san.log": "0d7722b2b520d943c8bae0787b3702a875d10a6ff7dbf21480af92d00fafa480",
+    "collector-opt.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "collector-san.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "compile-first.log": "9cd73dd0eb020052775d07e4acc64bd5c4ba9d60f5e2314ee3eec8423ef655bc",
+    "compile-fourth.log": "b4fda404022cbd78c355e81cb6f35c21d20cef767a645d19c77b4b54783b457a",
+    "compile-second.log": "1e942963f1ac6bbd87127592abfa5862ce23b9be67a3991ea771db3835d995d2",
+    "full-suite-command.py": "5e40c229258264b6e22c7bcd54edb7e618fcee9479da2840485a16cec0ca8856",
+    "full-suite.log": "c11cc92441bcda626ce34f6dcb6fc10687c9e17c4dd50c03fe22d69b2364cbd8",
+    "quarantine-opt.log": "a9a5c88061091380ccc03d1a3f115522b4847cb477912935c58ead0266e166f8",
+    "quarantine-san.log": "a9a5c88061091380ccc03d1a3f115522b4847cb477912935c58ead0266e166f8",
+    "root-independent-check.json": "fcf9211c749141b7f9468d77eaabde313043ef36e0e1eee43ce079a1b9db8352",
+    "storage-opt.log": "95f8e1acd26e371bfd102cc3cd724829ee44aeac2da963704773f5dae1da7398",
+    "storage-san.log": "95f8e1acd26e371bfd102cc3cd724829ee44aeac2da963704773f5dae1da7398",
+    "target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "target-budget-8.log": "dbb2d47adebc6311ee20f9aefb25a0ad3278dfe4fb80c33fef13ff4931e8af43",
+    "target-command.py": "af41ccad98d486123edea38457bdc3aa737735bd8f8d7e1365a04645c9e8b9a9",
+    "target-environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589",
+    "target-results.json": "68c26b11f4724ce36aed45b07ef1a5158c128deba4efc6f14931a7defdab0b3f"
+  },
+  "source_sha256_scope": "Files at exact frozen functional commit179e41a; documentation was subsequently extended with terminal evidence, no firmware/test/runner changes",
+  "documentation_sha256_as_recorded": "1337f9068a7950fc60e2f8c34df83e4348a9b5da70d505b5eeddbbbd05d69b91"
+}

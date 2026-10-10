@@ -1,0 +1,8 @@
+tests/instrument_write_quarantine_test.c:102:39: error: use of undeclared identifier 'ed_rn'; did you mean 'ed_n'?
+  102 |  usb.config=1;uint8_t begin[]={1,1,1};ed_rn=0;ed_capture_handle(begin,sizeof begin);
+      |                                       ^~~~~
+      |                                       ed_n
+tests/../firmware/src/editor.c:26:17: note: 'ed_n' declared here
+   26 | static uint32_t ed_n;
+      |                 ^
+1 error generated.

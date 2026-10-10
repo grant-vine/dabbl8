@@ -8,6 +8,7 @@
  * Every request gets a reply with the same cmd; 23/24/26 are also pushed
  * while watched. Frames arrive through sx_frame (usb.c), replies leave
  * through ota_wire_send(). */
+#include "instrument_write_gate.h"
 #define ED_HDR0 0x7D
 #define ED_HDR1 0x46
 #define ED_HDR2 0x4C
@@ -88,10 +89,16 @@ static int ed_smp_erase(uint32_t k, uint32_t all)  /* header sector, or the whol
 {
     uint32_t i, took;
     int rc = 0;
+#if NTRK > 4
+    if(!d8_instrument_write_allowed())return D8_INSTRUMENT_QUARANTINED;
+#endif
     usr_nz[k] = 0;
     for (i = 0; i < 16u; i++)
         usr_zone[k][i].n = 0;                     /* a sounding voice ends instead of reading 0xFF */
     for (i = 0; i < (all ? SMP_USER_SIZE / 0x1000u : 1u) && !rc; i++) {
+#if NTRK > 4
+        if(!d8_instrument_write_allowed())return D8_INSTRUMENT_QUARANTINED;
+#endif
         audio_silence();
 #if NTRK > 4
         d8_capture_store_changed();
@@ -113,13 +120,17 @@ static int ed_smp_end(uint32_t k, const uint8_t *a, uint32_t na)
         return 2;
     if (usr_nz[k])                                     /* published zones may still be read by live voices */
         return memcmp(h, smp_user_xip(k), sizeof *h) ? 2 : 0;
+#if NTRK > 4
+    if(!d8_instrument_write_allowed())return 4;
+#endif
     if (ed_flash_stop())                               /* (only a header that will be written stops the transport) */
         return 1;
     ed_smp_inval(k);
     if (st_crc32(smp_user_xip(k) + SMP_USER_DATA, h->data_len) != h->crc)
         return 3;
 #if NTRK > 4
-        d8_capture_store_changed();
+    if(!d8_instrument_write_allowed())return 4;
+    d8_capture_store_changed();
 #endif
     if (fl_write(ed_smp_slot(k), ed_smp_buf, sizeof(smp_user_hdr_t)))
         return 4;
@@ -686,20 +697,32 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         len = ed_unpack7(a + 4, na - 4u, ed_smp_buf, 256u);
         if (off < SMP_USER_DATA || (off & 0xFFu) || !len || off + len > SMP_USER_SIZE)
             rc = 1;
+#if NTRK > 4
+        else if (!d8_instrument_write_allowed())
+            rc = 3;                                        /* refused before transport/sample mutation */
+#endif
         else if (usr_nz[a[0]])
             rc = 4;                                        /* slot in use: SMP_BEGIN first (voices read it) */
         else if (ed_flash_stop())
             rc = 1;
         else {
             if (!(off & 0xFFFu)) {                         /* first write into a sector: erase it */
+#if NTRK > 4
+                if(!d8_instrument_write_allowed())rc=2;
+                if(!rc) {
+#endif
                 audio_silence();
 #if NTRK > 4
-        d8_capture_store_changed();
+                d8_capture_store_changed();
 #endif
                 rc = fl_erase4k(ed_smp_slot(a[0]) + off, &took) ? 2u : 0u;
+#if NTRK > 4
+                }
+#endif
             }
 #if NTRK > 4
-        d8_capture_store_changed();
+            if(!d8_instrument_write_allowed())rc=3;
+            if(!rc)d8_capture_store_changed();
 #endif
             if (!rc && fl_write(ed_smp_slot(a[0]) + off, ed_smp_buf, len))
                 rc = 3;
