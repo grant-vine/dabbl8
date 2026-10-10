@@ -89,7 +89,7 @@ static int d8sv_current(void)
 }
 static int d8sv_step(void)
 {
- if(d8sv.phase==SV_IDLE||d8sv.phase==SV_FAILED)return D8SV_BAD;
+ if(d8sv.phase==SV_IDLE||d8sv.phase==SV_START||d8sv.phase==SV_FAILED)return D8SV_BAD;
  int rc=d8sv_guard();if(rc)return d8sv_fail(rc);
  if(d8sv.phase==SV_DONE)return d8sv_completed(d8sv.generation);
  d8mp_workspace *w=main_migration_workspace(d8sv.generation);

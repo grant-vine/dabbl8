@@ -252,6 +252,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "readonly migration staging: complete native set and exclusive LCD arena" "$OUT/native_migration_preflight_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_execute_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_execute_test.c -lm
     run "bounded native migration: complete canonical plan, partial cuts and physical scope" "$OUT/native_migration_execute_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_source_equivalence_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_source_equivalence_test.c -lm
+    run "readonly native source equivalence: physical generations, explicit autosave and exact proposal" "$OUT/native_source_equivalence_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
@@ -480,6 +482,8 @@ else
     run "ASan/UBSan: complete migration preflight and exclusive LCD arena" "$A/native_migration_preflight_test"
     $SCC -o "$A/native_migration_execute_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_execute_test.c -lm
     run "ASan/UBSan: bounded migration partial cuts and complete readback" "$A/native_migration_execute_test"
+    ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_source_equivalence_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_source_equivalence_test.c -lm
+    run "strict ASan/UBSan: readonly source equivalence and explicit concurrent-NOR limits" "$A/native_source_equivalence_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"
