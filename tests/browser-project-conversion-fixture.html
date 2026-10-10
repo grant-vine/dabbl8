@@ -1,0 +1,14 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dabbl8 conversion lifecycle fixture</title><link rel="stylesheet" href="../web/d8companion.css"></head><body><main><h1>Conversion lifecycle test</h1><p>Public synthetic fixtures only. This page never requests MIDI or writes a device.</p><div class="row"><button id="hold">Hold converter</button><button id="release">Release converter</button><button id="hide">Simulate page exit</button><button id="destroy">Destroy conversion view</button></div><p id="test-status" role="status">Converter runs immediately.</p><section id="conversion"></section></main><script type="module">
+import {mountProjectConversion} from '../web/d8project-conversion-page.js';
+import {nativeConverter} from '../web/d8project-conversion.js';
+import factory from '../build/d8converter/dabbl8_project_convert.mjs';
+let held=false,release=null,settled=0;
+const status=document.getElementById('test-status');
+const view=mountProjectConversion(document.getElementById('conversion'),{onSettled:()=>{status.textContent=`Operation settled: ${++settled}.`;},loadConverter:async()=>{const convert=await nativeConverter(factory);if(held){status.textContent='Converter waiting for release.';await new Promise(resolve=>release=resolve);}return convert;}});
+document.getElementById('hold').onclick=()=>{held=true;status.textContent='Next conversion will wait.';};
+document.getElementById('release').onclick=()=>{held=false;release?.();release=null;status.textContent='Converter released.';};
+document.getElementById('hide').onclick=()=>{window.dispatchEvent(new Event('pagehide'));status.textContent='Page exit simulated.';};
+document.getElementById('destroy').onclick=()=>{view.destroy();status.textContent='View destroyed.';};
+</script></body></html>
