@@ -217,6 +217,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
     run "native coherent canonical dirty signature: arrangement, music and UI exclusions" "$OUT/native_signature_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
+    run "native signature optimization: canonical wire and pre-normalization refusals" "$OUT/native_signature_equivalence_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
     run "actual native three-slot project menu/cache/ownership" "$OUT/native_project_menu_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
@@ -424,6 +426,8 @@ else
     run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
     $SCC -o "$A/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
     run "ASan/UBSan: native coherent canonical dirty signature" "$A/native_signature_test"
+    $SCC -o "$A/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
+    run "ASan/UBSan: native signature canonical wire equivalence and refusals" "$A/native_signature_equivalence_test"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/native_storage_gate_test" tests/native_storage_gate_test.c
     run "ASan/UBSan: strict eight-track legacy sector write refusal" "$A/native_storage_gate_test"
     $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
