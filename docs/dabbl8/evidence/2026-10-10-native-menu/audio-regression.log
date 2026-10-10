@@ -1,0 +1,33 @@
+regress: voices: budget of 8 across 4 parts: 4 POLY parts, random notes: at most 8 voices active (budget 8), VOICE part at most 4 (cap 4), 791 voices taken, 0 still fading after their block, all free 1.41 s after the note-offs ok
+regress: voices: reuse before the stolen tail fades: same-note retrigger and full local-cap replacement before the fade: at most 8 voices, both MONO parts kept, all released ok
+regress: voices: budget after a live mode change: POLY / UNISON chord -> MONO / LEGATO / UNISON: extra voices reclaimed, leads kept, budget 8 ok
+regress: voices: budget after voice mode changes: POLY -> MONO / LEGATO and lower UNISON cap: at most 8 voices, all four leads kept, all released ok
+regress: voices: note-offs after live voice mode changes: 76 cases: all 16 VCE pairs, both key-up orders and caps 8 / 4; no stale fallback, MONO / LEGATO / UNISON priority leads and fallback preserved ok
+regress: samples: high-rate one-shot ends: 80 one-shot ends, both polarities and full scale, 1x..8x rate: terminal interpolation bounded ok
+regress: voices: a stolen voice fades: 5 takes; largest sample step at a take 669 vs 1192 before it (0.56 x, limit 1.50 x) ok
+regress: voices: MONO keeps its note: MONO part held its note through 868 voices taken from the others: lost in 0 blocks ok
+regress: voices: LEGATO keeps its note: LEGATO part held its note through 868 voices taken from the others: lost in 0 blocks ok
+regress: voices: UNISON keeps its note: UNISON part held its note through 875 voices taken from the others: lost in 0 blocks ok
+regress: voices: VOICE engine cap: VOICE engine, 8 keys: at most 4 voices in POLY, 4 in UNISON (cap 4); freed after release ok
+regress: routing: no hanging notes: 14133 random MIDI / key events on ch 1-4, 5, 10, 16 and the keys, track selection changing, 3 rounds (ROUT CH1-4, SEL, switching): no gate left on, every voice free ok
+regress: CPU note  cpu/SAMPLE/00_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU note  cpu/SAMPLE/01_PIANO: 184 instructions / sample, baseline 331 (-44 %): faster? BUDGET_UPDATE=1 to keep it
+regress: CPU, one part with 8 notes held (VOICE 4), heaviest preset per engine (instructions / ns per sample):
+regress:   ANALOG   RAVE             1507 instr    90.5 ns
+regress:   PHASE    WIRE             1604 instr    90.1 ns
+regress:   LOFI     WAVE LEAD         855 instr    46.9 ns
+regress:   SAMPLE   SAX               964 instr    66.0 ns
+regress:   VOICE    CHOIR AAH        1014 instr    67.4 ns
+regress:   TRIO     CHIP CHOIR       1473 instr   101.9 ns
+regress:   WHEEL    FULL ORGAN       1456 instr   109.2 ns
+regress:   GRAIN    SHIMMER           969 instr    56.9 ns
+regress:   PHYS     BOWED METAL      1246 instr    98.2 ns
+regress:   DRUM     DRUM KIT         1219 instr    78.6 ns
+regress:   NOISE    WIND             1389 instr   103.0 ns
+regress:   FM6      PAD              1407 instr   114.9 ns
+regress:   SLICE    STUTTER          1029 instr    60.0 ns
+regress:   idle                       310 instr    18.4 ns
+regress:   idle_drums                 558 instr    33.9 ns
+regress:   3parts_full_drums         1575 instr   107.2 ns
+regress:   idle_click                 334 instr    21.1 ns
+regress: 92 golden renders (0 changed, 0 gone), 0 health failures, 0 voice / routing checks failed, 0 CPU entries over budget (2 notes), 0 crashes; 0.8 s

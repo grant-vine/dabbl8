@@ -41,3 +41,5 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Native three-project names and stored-snapshot rename preparation](native-project-catalog.md)
 
 - [Native staged save-as naming and commit-only publication](native-save-as.md)
+
+- [Three-project native menu, cached inventory and legacy-writer refusal](native-project-menu.md)

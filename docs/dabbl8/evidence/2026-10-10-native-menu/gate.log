@@ -1,0 +1,20 @@
+eight-track legacy write refused before native binding ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+refusal is before reads/erase/program, all physical bytes retained ok
+settings and presets remain separately writable ok
+cold/unbound context cannot write the fourth legacy pair ok
+Native storage gate: 0 failures; simulated legacy driver only

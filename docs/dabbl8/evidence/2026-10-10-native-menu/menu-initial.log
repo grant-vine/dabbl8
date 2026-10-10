@@ -1,0 +1,2 @@
+FAIL: menu interrupted write preserves live state/name/identity
+Native project menu: 8218 checks, 1 failures; actual UI/runtime, virtual storage only

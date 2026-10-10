@@ -1,0 +1,8 @@
+From the firmware worktree with isolated Python dependencies, the recorded JieLi toolchain/SDK and pinned Docker linux/amd64 image:
+- Optimized actual native menu test: cc -O2 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm; execute test.
+- Actual editor dispatcher: cc -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src tests/versioned_track_test.c -lm; execute test.
+- Focused UI/physical-hook runtime: cc -O1 -g -w -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined with same include paths and relevant sources; ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1.
+- Pinned tools/build.py build_app and check for default and CFLAGS+=-DNPART=8; separate build/native-menu-4 and build/native-menu-8 output directories. Compare default SHA256 to b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b; verify linked guarded flash and project_native_bind_flash symbols.
+- sh tests/run_tests.sh with sanitizer enabled, same isolated environment.
+- Newly compile tests/regress.c and run against unchanged tests/golden.txt tests/cpu_baseline.txt.
+Full orchestration, raw suite log, binaries and linked symbols/disassembly are retained privately in .local-baseline/native-menu-check and the isolated build outputs.
