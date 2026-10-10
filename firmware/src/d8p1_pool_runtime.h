@@ -9,12 +9,24 @@
  * Validate all current objects before capture/adoption. A postcommit I/O
  * failure can leave a new save; rescan before retry. No automatic scheduler,
  * project-menu binding or legacy migration is provided. */
+/* Caller-owned menu cache: refresh while stopped, render without flash/arena
+ * access. Refusal leaves the output unchanged; successful refresh clears
+ * absent entries. No retained project-sized cache is added. */
+typedef struct { char name[3][13]; uint8_t present; } d8p1_project_catalog;
+int d8p1_catalog_pool(const d8pool *,d8p1_project_catalog *);
+/* name points to a NUL-terminated printable ASCII name, at most 12 bytes.
+ * Rename the stored snapshot, never capture unsaved live edits. Successful
+ * rename updates live name only if this is the current saved identity.
+ * As with save, a postcommit failure requires rescan before retry. */
+int d8p1_rename_pool(const d8pool *,unsigned object,const char *name);
 int d8p1_save_pool(const d8pool *,unsigned object);
 int d8p1_load_pool(const d8pool *,unsigned object);
 /* Caller supplies the boot/recovery policy and RESTORE LAST decision. */
 int d8p1_restore_pool_autosave(const d8pool *,int allowed);
 /* Existing-driver adapter, only with FELUCCA_FLASH in an eight-track build.
  * Explicit approved migration ownership required; no boot/menu call grants it. */
+int d8p1_catalog_flash(d8p1_project_catalog *,int native_authorized);
+int d8p1_rename_flash(unsigned object,const char *name,int native_authorized);
 int d8p1_save_flash(unsigned object,int native_authorized);
 int d8p1_load_flash(unsigned object,int native_authorized);
 int d8p1_restore_flash_autosave(int native_authorized,int allowed);

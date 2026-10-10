@@ -69,6 +69,52 @@ int main(void){
  n=0;proof(d8p1_project_encode(wire,sizeof wire,&n,&native)&&!d8p1_load_runtime(wire,n,7),"native three-project arrangement loads");
  proof(!d8p1_save_pool(&pool,2)&&!d8p1_load_pool(&pool,2)&&d8p1_runtime_arrangement()&&!memcmp(d8p1_runtime_arrangement(),&native.arrangement,sizeof native.arrangement)&&!chain_busy(),"pool preserves complete arrangement without starting playback");
  cv_begin(8,8,T_BG);cv_blit(0,0);proof(d8p1_runtime_arrangement()&&!memcmp(d8p1_runtime_arrangement(),&native.arrangement,sizeof native.arrangement),"drawing retains recalled native metadata");mix_block(audio,CTL);
+ /* Small native menu catalog and snapshot-only rename. */
+ d8p1_project_catalog catalog,prior;memset(&catalog,0xa5,sizeof catalog);reset();snapshot();
+ proof(!d8p1_catalog_pool(&pool,&catalog)&&catalog.present==7&&unchanged()&&!writes,"catalog validates all objects without adopting live music");
+ for(unsigned o=0;o<3;o++) {
+  size_t length=0;d8p1_project_state state;
+  proof(!d8pool_load(&pool,o,out,sizeof out,&length,7)&&d8p1_project_decode(&state,out,length,7),"catalog reference decoded");
+  proof(!memcmp(catalog.name[o],state.project.name,12)&&!catalog.name[o][12],"catalog retains exact bounded stored names");
+ }
+ prior=catalog;reset();read_error=0;snapshot();
+ proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_IO&&!memcmp(&catalog,&prior,sizeof catalog)&&unchanged()&&!writes,"failed catalog refresh preserves prior cache and live music");reset();
+ cv_begin(8,8,T_BG);snapshot();reads=writes=0;
+ proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_BUSY&&unchanged()&&!reads&&!writes&&!memcmp(&catalog,&prior,sizeof catalog),"drawing never borrows the catalog staging arena");cv_blit(0,0);
+ reset();snapshot();
+ proof(d8p1_catalog_pool(&pool,NULL)==D8POOL_INVALID&&d8p1_catalog_pool(&pool,(void *)&main_workspace)==D8POOL_INVALID&&unchanged()&&!reads&&!writes,"catalog refuses null and arena-aliased outputs");
+ memcpy(baseline,nor,sizeof nor);
+ for(unsigned o=0;o<4;o++){saved_n[o]=0;proof(!d8pool_load(&pool,o,saved[o],sizeof saved[o],&saved_n[o],7),"rename baseline preserves all original snapshots");}
+ /* Deliberately diverge live track eight and arrangement from the saved slot. */
+ trk[7].p[P_LEVEL]=9;d8p1_runtime_cache.arrangement.row[0].repeat=7;proj_cur=1;
+ char live_name[sizeof proj_name];memcpy(live_name,proj_name,sizeof live_name);snapshot();reset();
+ proof(!d8p1_rename_pool(&pool,2,"TWELVE CHARS")&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"renaming another identity preserves unsaved live music and name");
+ d8p1_project_state renamed,original;size_t renamed_n=0;
+ proof(!d8pool_load(&pool,2,out,sizeof out,&renamed_n,7)&&d8p1_project_decode(&renamed,out,renamed_n,7)&&d8p1_project_decode(&original,saved[2],saved_n[2],7),"renamed stored snapshot decodes");
+ memcpy(original.project.name,"TWELVE CHARS",12);original.project.sum=proj_sum(&original.project);
+ proof(!memcmp(&renamed,&original,sizeof original),"rename changes only stored name and derived checksum; all eight tracks and arrangement retained");
+ for(unsigned o=0;o<4;o++)if(o!=2)proof(stored(o),"rename retains other projects and shared autosave");
+ proj_cur=2;snapshot();reset();proof(!d8p1_rename_pool(&pool,2,"")&&unchanged()&&!proj_name[0],"current identity rename updates only live name after successful commit");
+ snapshot();reset();
+ proof(d8p1_rename_pool(&pool,3,"NO")==D8POOL_INVALID&&d8p1_rename_pool(&pool,4,"NO")==D8POOL_INVALID&&d8p1_rename_pool(&pool,0,NULL)==D8POOL_INVALID&&
+       d8p1_rename_pool(&pool,0,"THIRTEENCHARS")==D8POOL_INVALID&&d8p1_rename_pool(&pool,0,"BAD\n")==D8POOL_INVALID&&unchanged()&&!reads&&!writes,"rename refuses autosave, invalid identities and invalid names before access");
+ /* Every mutation cut and late start keeps old records/current live name. */
+ unsigned rename_ops=2+(unsigned)((saved_n[2]+255)/256)+1;
+ for(unsigned c=0;c<rename_ops;c++) {
+  memcpy(nor,baseline,sizeof nor);reset();snapshot();memcpy(live_name,proj_name,sizeof live_name);cut=(int)c;
+  proof(d8p1_rename_pool(&pool,2,"CUT")==D8POOL_IO&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"rename cut preserves live state and name");
+  reset();for(unsigned o=0;o<4;o++)proof(stored(o),"rename cut retains every committed snapshot");
+ }
+ for(unsigned c=1;c<rename_ops;c++) {
+  memcpy(nor,baseline,sizeof nor);reset();snapshot();memcpy(live_name,proj_name,sizeof live_name);request_after=(int)c;
+  proof(d8p1_rename_pool(&pool,2,"LATE")==D8POOL_BUSY&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"late start blocks subsequent rename mutation without live adoption");
+  reset();for(unsigned o=0;o<4;o++)proof(stored(o),"late rename start retains every committed snapshot");
+ }
+ /* A valid native pool may contain fewer than three manual saves. */
+ blank();n=fixture("tests/fixtures/d8p1/minimal.d8p");proof(!d8pool_save(&pool,0,wire,n,7),"partial catalog explicit test seed");reset();
+ memset(&catalog,0xa5,sizeof catalog);proof(!d8p1_catalog_pool(&pool,&catalog)&&catalog.present==1&&!catalog.name[1][0]&&!catalog.name[2][0]&&!writes,"successful catalog clears absent identities");
+ reset();snapshot();proof(d8p1_rename_pool(&pool,1,"ABSENT")==D8POOL_EMPTY&&unchanged()&&!writes,"empty slot rename never captures live music");
+ memcpy(nor,baseline,sizeof nor);reset();
  /* Faults after each mutation leave all previous saves and full live music. */
  memcpy(baseline,nor,sizeof nor);d8pool_index index;proof(!d8pool_inventory(&pool,&index),"complete current pool");
  for(unsigned o=0;o<4;o++){saved_n[o]=0;proof(!d8pool_load(&pool,o,saved[o],sizeof saved[o],&saved_n[o],7),"retain current wires for cut proofs");}
