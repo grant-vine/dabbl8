@@ -1,0 +1,260 @@
+{
+  "parent": {
+    "(0, 0)": {
+      "ns": 660.65,
+      "instructions": 8520.33435,
+      "overruns": 0
+    },
+    "(0, 1)": {
+      "ns": 673.55,
+      "instructions": 8720.01045,
+      "overruns": 0
+    },
+    "(1, 0)": {
+      "ns": 662.15,
+      "instructions": 8456.3463,
+      "overruns": 0
+    },
+    "(1, 1)": {
+      "ns": 677.35,
+      "instructions": 8650.4746,
+      "overruns": 0
+    },
+    "(2, 0)": {
+      "ns": 660.55,
+      "instructions": 8472.58585,
+      "overruns": 0
+    },
+    "(2, 1)": {
+      "ns": 675.75,
+      "instructions": 8672.02495,
+      "overruns": 0
+    },
+    "(3, 0)": {
+      "ns": 662.8,
+      "instructions": 8456.57975,
+      "overruns": 0
+    },
+    "(3, 1)": {
+      "ns": 665.45,
+      "instructions": 8650.9381,
+      "overruns": 0
+    },
+    "native": {
+      "memory": {
+        "bytes": 457560,
+        "sha256": "d4acf29031cfad8ee51318d8bc7ffe7e0cd4fa019a7a9e24a679a5d30f0b2964",
+        "errors": [],
+        "notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 457560 B; RAM .data+.bss 95748 B of 98304; pool 334164 B of 344064"
+        ]
+      },
+      "tap": {
+        "insns": 158,
+        "loop": 126,
+        "div": 0,
+        "call": 0,
+        "cost": 570
+      },
+      "roots": {
+        "fm1_alnk0_irq": {
+          "instruction_sum": 9687,
+          "loop_weight_sum": 47931,
+          "root": {
+            "insns": 2140,
+            "loop": 2013,
+            "div": 16,
+            "call": 71,
+            "cost": 40238
+          },
+          "unresolved": []
+        },
+        "fm1_timer5_irq": {
+          "instruction_sum": 2252,
+          "loop_weight_sum": 35520,
+          "root": {
+            "insns": 1706,
+            "loop": 1357,
+            "div": 2,
+            "call": 65,
+            "cost": 35375
+          },
+          "unresolved": []
+        }
+      }
+    }
+  },
+  "history-scan": {
+    "(0, 0)": {
+      "ns": 633.85,
+      "instructions": 8395.48855,
+      "overruns": 0
+    },
+    "(0, 1)": {
+      "ns": 646.75,
+      "instructions": 8595.2157,
+      "overruns": 0
+    },
+    "(1, 0)": {
+      "ns": 629.55,
+      "instructions": 8299.8057,
+      "overruns": 0
+    },
+    "(1, 1)": {
+      "ns": 644.9,
+      "instructions": 8494.171,
+      "overruns": 0
+    },
+    "(2, 0)": {
+      "ns": 635.0,
+      "instructions": 8323.5798,
+      "overruns": 0
+    },
+    "(2, 1)": {
+      "ns": 648.3,
+      "instructions": 8523.07755,
+      "overruns": 0
+    },
+    "(3, 0)": {
+      "ns": 629.4,
+      "instructions": 8299.60865,
+      "overruns": 0
+    },
+    "(3, 1)": {
+      "ns": 642.1,
+      "instructions": 8493.36355,
+      "overruns": 0
+    },
+    "native": {
+      "memory": {
+        "bytes": 457572,
+        "sha256": "9caf426de845923140e930c849907a123ea3dafd4dc947a138cda778f90f278a",
+        "errors": [],
+        "notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 457572 B; RAM .data+.bss 95748 B of 98304; pool 334164 B of 344064"
+        ]
+      },
+      "tap": {
+        "insns": 162,
+        "loop": 124,
+        "div": 0,
+        "call": 0,
+        "cost": 571
+      },
+      "roots": {
+        "fm1_alnk0_irq": {
+          "instruction_sum": 9691,
+          "loop_weight_sum": 47932,
+          "root": {
+            "insns": 2140,
+            "loop": 2013,
+            "div": 16,
+            "call": 71,
+            "cost": 40238
+          },
+          "unresolved": []
+        },
+        "fm1_timer5_irq": {
+          "instruction_sum": 2252,
+          "loop_weight_sum": 35520,
+          "root": {
+            "insns": 1706,
+            "loop": 1357,
+            "div": 2,
+            "call": 65,
+            "cost": 35375
+          },
+          "unresolved": []
+        }
+      }
+    }
+  },
+  "owned-counts": {
+    "(0, 0)": {
+      "ns": 622.4,
+      "instructions": 8487.7378,
+      "overruns": 0
+    },
+    "(0, 1)": {
+      "ns": 636.25,
+      "instructions": 8687.2534,
+      "overruns": 0
+    },
+    "(1, 0)": {
+      "ns": 621.7,
+      "instructions": 8423.765,
+      "overruns": 0
+    },
+    "(1, 1)": {
+      "ns": 634.7,
+      "instructions": 8617.62985,
+      "overruns": 0
+    },
+    "(2, 0)": {
+      "ns": 620.95,
+      "instructions": 8439.6698,
+      "overruns": 0
+    },
+    "(2, 1)": {
+      "ns": 636.3,
+      "instructions": 8639.4417,
+      "overruns": 0
+    },
+    "(3, 0)": {
+      "ns": 620.75,
+      "instructions": 8423.91315,
+      "overruns": 0
+    },
+    "(3, 1)": {
+      "ns": 635.35,
+      "instructions": 8617.7039,
+      "overruns": 0
+    },
+    "native": {
+      "memory": {
+        "bytes": 457608,
+        "sha256": "63bc9b11b78c905507dd9c1cfa2fa21749c586be67ac7f4986054cd1f9fc1126",
+        "errors": [],
+        "notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 457608 B; RAM .data+.bss 95748 B of 98304; pool 334164 B of 344064"
+        ]
+      },
+      "tap": {
+        "insns": 168,
+        "loop": 128,
+        "div": 0,
+        "call": 0,
+        "cost": 566
+      },
+      "roots": {
+        "fm1_alnk0_irq": {
+          "instruction_sum": 9698,
+          "loop_weight_sum": 47924,
+          "root": {
+            "insns": 2140,
+            "loop": 2013,
+            "div": 16,
+            "call": 71,
+            "cost": 40238
+          },
+          "unresolved": []
+        },
+        "fm1_timer5_irq": {
+          "instruction_sum": 2252,
+          "loop_weight_sum": 35520,
+          "root": {
+            "insns": 1706,
+            "loop": 1357,
+            "div": 2,
+            "call": 65,
+            "cost": 35375
+          },
+          "unresolved": []
+        }
+      }
+    }
+  }
+}
