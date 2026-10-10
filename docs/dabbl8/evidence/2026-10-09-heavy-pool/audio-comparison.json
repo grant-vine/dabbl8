@@ -1,0 +1,37 @@
+{
+  "previous": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_HEAVY=0",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/slice-voice-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/slice-voice-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/slice-voice-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/heavy-pool-check/audio-previous",
+      "/private/tmp/dabbl8-heavy-audio-probe.c",
+      "-lm"
+    ],
+    "output": "engine 8 audio 707a76bb nonzero 239330\nengine 9 audio dd8e4e23 nonzero 255949\nengine 10 audio c8686785 nonzero 255384\n"
+  },
+  "shared": {
+    "compile_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DTEST_SHARED_HEAVY=1",
+      "-DHOSTSIM_PATH=\"/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/tests/hostsim.c\"",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/heavy-engine-state/firmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/heavy-pool-check/audio-shared",
+      "/private/tmp/dabbl8-heavy-audio-probe.c",
+      "-lm"
+    ],
+    "output": "engine 8 audio 707a76bb nonzero 239330\nengine 9 audio dd8e4e23 nonzero 255949\nengine 10 audio c8686785 nonzero 255384\n"
+  },
+  "comparison": "PASS: continuously active engine renders and same-note retriggers match the previous actual-eight-part implementation"
+}

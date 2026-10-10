@@ -1,0 +1,17 @@
+heavy pool: inactive GRAIN blocks reserve no shared bodies PASS
+heavy pool: all inactive destination requests refuse allocation PASS
+heavy pool: mixed engines own eight distinct bodies PASS
+heavy pool: mixed engines render within eight sounding voices PASS
+heavy pool: a PHYS steal preserves another track's GRAIN state PASS
+heavy pool: eight GRAIN tracks retain their complete state PASS
+heavy pool: eight PHYS tracks retain distinct bodies PASS
+heavy pool: eight DRUM tracks retain complete kits PASS
+heavy pool: new engine reuses only retired state and clears its complete member PASS
+heavy pool: DRUM cannot inherit prior physical or grain body fields PASS
+heavy pool: an unadmitted ninth body fails closed PASS
+heavy pool: three GRAIN voices share one complete twelve-grain state PASS
+heavy pool: PHYS keeps its three-body per-track cap PASS
+heavy pool: eight drum lanes share one complete kit PASS
+fade timeout i=0 p=1 old=9 wanted=10 xf=0 voices=8
+heavy pool: 10000 mixed notes and actual engine fades preserve bounded ownership FAIL
+heavy pool result: 1 failures; 56960 host bytes, 8 shared bodies

@@ -1,0 +1,18 @@
+from pathlib import Path
+import subprocess,os,json,hashlib,datetime
+root=Path('/Users/grantv/Code/dabbl8');r=root/'.local-baseline/heavy-engine-state';e=root/'.local-baseline/heavy-pool-check';e.mkdir(exist_ok=True)
+env=os.environ.copy()
+for k in list(env):
+ if k.startswith(('FELUCCA_','GOLDEN_','BUDGET_','JIELI_')):env.pop(k)
+env.update(JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PYTHON=str(root/'.local-baseline/venv/bin/python'),PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'])
+m={'date':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source_base':subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip(),'checks':[]}
+def save():(e/'results.json').write_text(json.dumps(m,indent=2)+'\n')
+def run(name,args):
+ print(name,flush=True)
+ with (e/(name+'.log')).open('w') as log:p=subprocess.run(args,cwd=r,env=env,stdout=log,stderr=subprocess.STDOUT)
+ m['checks'].append({'name':name,'exit_code':p.returncode});save();return p.returncode
+run('heavy-pool-focused',['build/host/heavy_pool_test'])
+if run('four-track-build',['sh','build.sh'])==0:
+ run('four-track-full-suite',['sh','tests/run_tests.sh'])
+ m['four_track_artifacts']={name:{'bytes':(r/name).stat().st_size,'sha256':hashlib.sha256((r/name).read_bytes()).hexdigest()} for name in ['build/felucca.bin','build/felucca.fwsc','build/loader/ota.bin','tests/golden.txt','tests/cpu_baseline.txt','tests/target_budget.txt']}
+run('diff-check',['git','diff','--check']);save();print(json.dumps(m,indent=2),flush=True)

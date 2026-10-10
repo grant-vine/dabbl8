@@ -71,6 +71,9 @@ static const int16_t GR_HANN[257] = {
 static const int16_t GR_NORM[GR_NG + 1] = {32767, 32767, 23170, 18918, 16384, 14654, 13377,
                                            12385, 11585, 10922, 10362, 9880, 9459};
 
+#if NPART >= NVOICE
+#include "heavy_state.h"
+#else
 typedef struct {
     const smp_zone_t *z;
     uint32_t pos;                /* forward: the next sample to decode; reverse: the index of a */
@@ -98,7 +101,10 @@ typedef struct {
     uint8_t src;                 /* SRC + 1 the index holds, 0 = none */
     uint8_t nz;
 } gr_part_t;
+#endif
+#if NPART < NVOICE
 static gr_part_t gr_p[NPART] __attribute__((section(".pool")));
+#endif
 
 static uint32_t gr_part(const track_t *t) { return (uint32_t)(t - trk) % NPART; }
 static uint32_t gr_nz(uint32_t src) { return src < SMP_NSETS ? SMP_SETS[src].nz : usr_nz[(src - SMP_NSETS) % SMP_USER_SLOTS]; }
@@ -352,8 +358,16 @@ static int gr_run(gr_part_t *P, gr_grain_t *g, int32_t *acc, uint32_t n)
 
 static void grain_note_on(track_t *t, voice_t *v)
 {
+#if NPART >= NVOICE
+    heavy_state_t *state = heavy_get(8u, (uint32_t)(t - trk), 0);
+    gr_part_t *P = state ? &state->grain : 0;
+#else
     gr_part_t *P = &gr_p[gr_part(t)];
+#endif
     uint32_t vi = (uint32_t)(v - t->v) % NVOICE, i;
+#if NPART >= NVOICE
+    if (!P) { v->active = 0; return; }
+#endif
     v->s[0] = gr_find((uint32_t)t->p[P_E0] % SMP_NALL, v->note);
     v->s[1] = 0;                                    /* the first grain at once */
     v->ph[0] = 0;                                   /* (the sine's phase: no data) */
@@ -369,8 +383,16 @@ static void grain_note_on(track_t *t, voice_t *v)
  * one index entry is built */
 static void grain_block(track_t *t)
 {
+#if NPART >= NVOICE
+    heavy_state_t *state = heavy_get(8u, (uint32_t)(t - trk), 0);
+    gr_part_t *P = state ? &state->grain : 0;
+#else
     gr_part_t *P = &gr_p[gr_part(t)];
+#endif
     uint32_t src = (uint32_t)t->p[P_E0] % SMP_NALL, st = gr_stamp(src), i;
+#if NPART >= NVOICE
+    if (!P) return;
+#endif
     if (!P->rng)
         P->rng = 0x2545F491;
     if (P->src != src + 1u || P->stamp != st) {
@@ -387,10 +409,18 @@ static void grain_block(track_t *t)
 
 static void grain_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const vmod_t *m)
 {
+#if NPART >= NVOICE
+    heavy_state_t *state = heavy_get(8u, (uint32_t)(t - trk), 0);
+    gr_part_t *P = state ? &state->grain : 0;
+#else
     gr_part_t *P = &gr_p[gr_part(t)];
+#endif
     const int16_t *p = t->p;
     uint32_t vi = (uint32_t)(v - t->v) % NVOICE, i, mine = 0, nact = 0, iv;
     int32_t zl = v->s[0], acc[CTL], lp, y = v->s[2];
+#if NPART >= NVOICE
+    if (!P) { v->active = 0; return; }
+#endif
     if (n > CTL)
         n = CTL;
     if (zl == GR_SINE) {                            /* no data: a plain sine at the note's pitch + PTCH, TONE */

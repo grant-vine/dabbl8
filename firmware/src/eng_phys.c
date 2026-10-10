@@ -39,8 +39,10 @@
  * builds use eight shared slots with bounded ownership lookup. Voice amplitude: the track's ADSR as for every
  * engine; the presets hold SUS at 127 so the model's own decay is heard and REL damps it after the key.
  * Cost (host, 8 notes asked = 3 voices): see the README and cpu_baseline.txt. */
+#if NPART < NVOICE
 #include "phys_dsp.c"
 #include "phys_symp.c"
+#endif
 
 enum { PM_MODAL, PM_STRING, PM_MEMB, PM_SYMP, PM_COUNT };
 #define PHYS_POLY 3
@@ -48,6 +50,7 @@ enum { PM_MODAL, PM_STRING, PM_MEMB, PM_SYMP, PM_COUNT };
  * phase peaks high but is short) */
 static const int32_t PHYS_GAIN[PM_COUNT] = {28000, 12000, 90000, 12000};
 
+#if NPART < NVOICE
 typedef struct {
     uint8_t model;               /* PM_* the state belongs to */
     union {
@@ -57,11 +60,8 @@ typedef struct {
     } u;
 } phys_slot_t;
 
-#if NPART >= NVOICE
-/* Eight sounding voices share state; inactive destinations reserve no buffers. */
-static phys_slot_t phys_slot[NVOICE] __attribute__((section(".pool")));
-static uint16_t phys_owner[NVOICE]; /* logical destination index + 1, zero = free */
-#else
+#endif
+#if NPART < NVOICE
 static phys_slot_t phys_slot[NPART][PHYS_POLY] __attribute__((section(".pool")));
 #endif
 
@@ -109,20 +109,8 @@ static phys_slot_t *phys_slot_of(track_t *t, voice_t *v)
         return 0;
 #if NPART >= NVOICE
     {
-        uint32_t id = (uint32_t)(t - trk) * NVOICE + i + 1u, k;
-        for (k = 0; k < NVOICE; k++)
-            if (phys_owner[k] == id)
-                return &phys_slot[k];                  /* retrigger keeps its ringing body */
-        for (k = 0; k < NVOICE; k++) {
-            uint32_t old = phys_owner[k];
-            if (!old || old > NPART * NVOICE ||
-                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
-                trk[(old - 1u) / NVOICE].engine != ENGI_PHYS) {
-                phys_owner[k] = (uint16_t)id;
-                return &phys_slot[k];
-            }
-        }
-        return 0;                                     /* no state: refuse instead of aliasing */
+        heavy_state_t *state = heavy_get(9u, (uint32_t)(t - trk), i);
+        return state ? &state->phys : 0;
     }
 #else
     return &phys_slot[t - trk][i];
