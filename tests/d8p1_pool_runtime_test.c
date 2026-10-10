@@ -110,6 +110,11 @@ int main(void){
   proof(d8p1_rename_pool(&pool,2,"LATE")==D8POOL_BUSY&&unchanged()&&!memcmp(live_name,proj_name,sizeof live_name),"late start blocks subsequent rename mutation without live adoption");
   reset();for(unsigned o=0;o<4;o++)proof(stored(o),"late rename start retains every committed snapshot");
  }
+ /* Blank/legacy catalogs never authorize rename or replace a cached view. */
+ blank();prior=catalog;reset();snapshot();
+ proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_EMPTY&&d8p1_rename_pool(&pool,0,"BLANK")==D8POOL_EMPTY&&!memcmp(&catalog,&prior,sizeof catalog)&&unchanged()&&!writes,"blank native storage never initializes through names or rename");
+ memcpy(nor+256,"FELU",4);reset();
+ proof(d8p1_catalog_pool(&pool,&catalog)==D8POOL_UNSUPPORTED&&d8p1_rename_pool(&pool,0,"LEGACY")==D8POOL_UNSUPPORTED&&!memcmp(&catalog,&prior,sizeof catalog)&&unchanged()&&!writes,"legacy storage prohibits catalog publication and rename writes");
  /* A valid native pool may contain fewer than three manual saves. */
  blank();n=fixture("tests/fixtures/d8p1/minimal.d8p");proof(!d8pool_save(&pool,0,wire,n,7),"partial catalog explicit test seed");reset();
  memset(&catalog,0xa5,sizeof catalog);proof(!d8p1_catalog_pool(&pool,&catalog)&&catalog.present==1&&!catalog.name[1][0]&&!catalog.name[2][0]&&!writes,"successful catalog clears absent identities");
@@ -130,7 +135,7 @@ int main(void){
  memcpy(nor,baseline,sizeof nor);reset();snapshot();read_error=0;proof(d8p1_load_pool(&pool,0)==D8POOL_IO&&unchanged()&&!writes,"read error cannot adopt or write");reset();
  for(unsigned b=0;b<8;b++){
   if(b==0)song.playing=1;if(b==1)chain.armed=1;if(b==2)chain.running=1;if(b==3)cin_left=1;if(b==4)transport_req=1;if(b==5)backend_busy=1;if(b==6)cv_begin(8,8,T_BG);if(b==7)transport_req=3;
-  reads=writes=0;snapshot();proof(d8p1_save_pool(&pool,0)==D8POOL_BUSY&&d8p1_load_pool(&pool,0)==D8POOL_BUSY&&unchanged()&&!reads&&!writes,"busy transport/backend/drawing refuses before I/O");
+  reads=writes=0;snapshot();proof(d8p1_save_pool(&pool,0)==D8POOL_BUSY&&d8p1_load_pool(&pool,0)==D8POOL_BUSY&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_BUSY&&d8p1_rename_pool(&pool,0,"BUSY")==D8POOL_BUSY&&unchanged()&&!reads&&!writes,"busy transport/backend/drawing refuses before I/O");
   song.playing=chain.armed=chain.running=cin_left=transport_req=0;backend_busy=0;if(b==6)cv_blit(0,0);
  }
  reset();snapshot();proof(d8p1_save_pool(NULL,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,4)==D8POOL_INVALID&&unchanged()&&!reads&&!writes,"invalid backend/object refused without alias");
@@ -142,12 +147,12 @@ int main(void){
   * different object. CRC-valid wire is not automatically writable/adoptable. */
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"locate unknown payload target");n=fixture("tests/fixtures/d8p1/unknown-optional.d8p");uint8_t *unknown=nor+256+index.object[1].block*8192;
  memcpy(unknown+256,wire,n);put(unknown+16,(uint32_t)n);put(unknown+20,d8p1_crc32(wire,n));put(unknown+28,d8p1_crc32(unknown,28));reset();snapshot();
- proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,0)==D8POOL_INVALID&&unchanged()&&!writes,"unknown optional current object protects all persistence operations");
+ proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&d8p1_load_pool(&pool,0)==D8POOL_INVALID&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_INVALID&&d8p1_rename_pool(&pool,0,"UNKNOWN")==D8POOL_INVALID&&unchanged()&&!writes,"unknown optional current object protects all persistence operations");
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"locate required project target");nor[256+index.object[1].block*8192+256+300]^=1;reset();snapshot();
  proof(d8p1_save_pool(&pool,0)==D8POOL_INVALID&&unchanged()&&!writes,"missing damaged project reference is not counted as available");
  /* A future current object must not be overwritten or used as a reference. */
  memcpy(nor,baseline,sizeof nor);reset();proof(!d8pool_inventory(&pool,&index),"future test locates current block");uint8_t *h=nor+256+index.object[1].block*8192;h[4]=2;put(h+28,d8p1_crc32(h,28));reset();snapshot();
- proof(d8p1_save_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_load_pool(&pool,0)==D8POOL_UNSUPPORTED&&unchanged()&&!writes,"future metadata anywhere protects the pool and live music");
+ proof(d8p1_save_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_load_pool(&pool,0)==D8POOL_UNSUPPORTED&&d8p1_catalog_pool(&pool,&catalog)==D8POOL_UNSUPPORTED&&d8p1_rename_pool(&pool,0,"FUTURE")==D8POOL_UNSUPPORTED&&unchanged()&&!writes,"future metadata anywhere protects the pool and live music");
  for(unsigned i=0;i<256;i++)proof(nor[i]==0xa5&&nor[256+D8POOL_BYTES+i]==0xa5,"NOR guards retained");
  printf("D8P1 runtime pool: %u checks, %u failures; %u save cuts and %u late-start cuts; actual eight-track runtime, virtual NOR only\n",checks,failures,ops,ops-1);return !!failures;
 }
