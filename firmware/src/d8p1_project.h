@@ -9,25 +9,7 @@
 #include "d8p1.h"
 typedef char d8ps_schema_check[(NTRK==8 && P_COUNT==99 && G_COUNT==27 && NSTEP==64) ? 1 : -1];
 
-typedef struct {
-    char name[12];
-    uint8_t project[8], track[8];
-} d8p1_bank_state;
-typedef struct {
-    char name[12];
-    uint8_t bank, apply, mute, level[8];
-    int8_t pan[8], transpose[8];
-} d8p1_scene_state;
-typedef struct {
-    uint8_t banks, scenes, rows;
-    d8p1_bank_state bank[4];
-    d8p1_scene_state scene[16];
-    struct { uint8_t scene, repeat; } row[16];
-} d8p1_arrangement;
-typedef struct {
-    project_t project;             /* chain is empty; arrangement owns new rows */
-    d8p1_arrangement arrangement;
-} d8p1_project_state;
+#include "d8p1_project_types.h"
 
 static unsigned d8ps_u16(const uint8_t *p) { return p[0] | (unsigned)p[1] << 8; }
 static void d8ps_w16(uint8_t *p,unsigned x) { p[0]=(uint8_t)x;p[1]=(uint8_t)(x>>8); }

@@ -1,0 +1,9 @@
+#define NPART 8
+#include "../firmware/src/felucca.c"
+#include "../firmware/src/d8p1_project.h"
+const unsigned d8p1_probe_state_bytes=sizeof(d8p1_project_state);
+const unsigned d8p1_probe_workspace_bytes=sizeof(d8p1_stage_workspace);
+const unsigned d8p1_probe_wire_offset=__builtin_offsetof(d8p1_stage_workspace,wire);
+int d8p1_probe_encode(uint8_t *out,size_t cap,size_t *n,const d8p1_project_state *s){return d8p1_project_encode(out,cap,n,s); }
+int d8p1_probe_decode(d8p1_project_state *out,const void *raw,size_t n,unsigned mask){return d8p1_project_decode(out,raw,n,mask); }
+int d8p1_probe_legacy(d8p1_project_state *out,d8p1_project_state *work,d8p1_legacy_report *report,const void *raw,size_t n,unsigned mask){return d8p1_legacy_convert(out,work,report,raw,n,mask); }

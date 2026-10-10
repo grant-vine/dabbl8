@@ -73,12 +73,15 @@ typedef struct { uint16_t off; uint8_t w; const char *label; } kc_t;
 #include "project_types.h"
 /* Main-loop phases only. LCD DMA retains pixels until lcd_sync returns.
  * Project calls are synchronous and may not retain this pointer across drawing.
- * The audio ISR owns neither member. No project data is a live display cache. */
+ * The audio ISR owns none of these members. No project data is a live display cache. */
+#include "d8p1_project_types.h"
 static union {
     uint16_t pixels[CV_MAX];
     project_t project;
+    d8p1_stage_workspace d8p1;
 } main_workspace __attribute__((section(".pool")));
 _Static_assert(sizeof(project_t) <= sizeof main_workspace.pixels, "project workspace fits canvas arena");
+_Static_assert(sizeof(d8p1_stage_workspace) <= sizeof main_workspace.pixels, "D8P1 staging fits canvas arena");
 static uint8_t cv_cpu_active, cv_canvas_valid;
 #define cv_px (main_workspace.pixels)
 static project_t *main_project_workspace(void)
@@ -89,6 +92,12 @@ static project_t *main_project_workspace(void)
     cv_canvas_valid = 0; /* any future blit needs a fresh cv_begin */
     return &main_workspace.project;
 }
+static d8p1_stage_workspace *main_d8p1_workspace(void)
+{
+    (void)main_project_workspace(); /* same CPU ownership guard and LCD DMA fence */
+    return &main_workspace.d8p1;
+}
+
 #else
 static uint16_t cv_px[CV_MAX] __attribute__((section(".pool")));
 #endif
