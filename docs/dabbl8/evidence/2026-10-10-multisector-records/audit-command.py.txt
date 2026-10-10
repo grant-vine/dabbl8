@@ -1,0 +1,40 @@
+from pathlib import Path
+import json,hashlib,subprocess,shutil
+root=Path('/Users/grantv/Code/dabbl8');repo=root/'.local-baseline/main-workspace';e=root/'.local-baseline/d8store-check'
+m=json.loads((e/'suite-result.json').read_text());assert m['exit_code']==0
+log=(e/'host-tests.log').read_text()
+assert log.count('D8P1 multi-sector records: 884086 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts; relative simulator only')==2
+assert log.count('D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification')==2
+assert log.count('D8P1 project adapter: 18193 checks, 0 failures; staged state only, no runtime/flash adoption')==2
+assert log.count('D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine')==2
+assert log.count('D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption')==2
+assert log.count('Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes')==2
+assert log.count('main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors')==2
+assert 'ALL HOST TESTS PASSED' in log
+old=(e/'preceding-store-source.c').read_text()
+expected=old.replace('#include <string.h>\n','').replace('    memset(h,0,sizeof h); ds_put(h,DS_MAGIC);','    for (unsigned i=0;i<sizeof h;++i) h[i]=0;\n    ds_put(h,DS_MAGIC);')
+assert (repo/'firmware/src/d8store.c').read_text()==expected
+assert hashlib.sha256(old.encode()).hexdigest()==m['source_hashes']['firmware/src/d8store.c']
+for n,digest in m['source_hashes'].items():
+    if n!='firmware/src/d8store.c':assert hashlib.sha256((repo/n).read_bytes()).hexdigest()==digest
+for name in ['final-storage-optimized.log','final-storage-sanitizer.log']:
+    assert (e/name).read_text().strip()=='D8P1 multi-sector records: 884086 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts; relative simulator only'
+assert (e/'portable-target-object.log').read_bytes()==b'' and (e/'d8store-portable.o').stat().st_size>0
+assert (e/'d8store-portable.c').read_bytes()==(repo/'firmware/src/d8store.c').read_bytes()
+unchanged=['firmware/src/felucca.c','firmware/src/storage.c','firmware/src/storage_hw.c','firmware/src/project.c','firmware/src/d8p1.c','firmware/src/d8p1_runtime.c','firmware/hal/fm1_flash.h','tests/golden.txt','tests/cpu_baseline.txt','tests/target_budget.txt','LICENSING.md']
+for n in unchanged:assert (repo/n).read_bytes()==subprocess.check_output(['git','show','400b939:'+n],cwd=repo)
+public=repo/'docs/dabbl8/evidence/2026-10-10-multisector-records';public.mkdir(parents=True,exist_ok=True)
+summary={'result':'PASS','base':'400b939df0b96e111f6b0027d311faceebaa57da','scope':'Address-independent simulated NOR only; engine is not linked into device firmware','storage_assertions_each_mode':884086,'operation_cuts':34,'program_byte_cuts':7737,'partial_erase_positions_each_sector':len(range(0,4097,17)),'modes':['optimized','strict ASan/UBSan (no DSP exclusions for storage)'],'source_hashes':m['source_hashes'],'existing_runtime_checks_each_mode':8911,'full_existing_suite':'PASS','unchanged_device_sources_and_references':unchanged,'hardware':'SKIP','map_binding':'NOT IMPLEMENTED','raw_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in e.iterdir() if p.is_file()}}
+summary['failures']=[{'file':'initial-missing-sdk-host-tests.log','reason':'First new wrapper omitted AC79_SDK; upstream packaging check refused. Corrected wrapper restores previously pinned environment. No source assertions or golden hashes weakened.'}]
+summary['failures'].append({'file':'target-object.log','reason':'Pinned JieLi compiler has no string.h; final source removes that include and replaces the sole 32-byte memset with a bounded zero loop. Corrected target object compile and final focused optimized/strict sanitizer runs PASS.'})
+summary['full_suite_source_hashes']=summary.pop('source_hashes')
+summary['final_source_hashes']={n:hashlib.sha256((repo/n).read_bytes()).hexdigest() for n in m['source_hashes']}
+summary['verification_scope']='Full suite passed at preceding header-clear implementation; final change is solely removal of string.h and replacement of 32-byte memset with bounded zero loop, verified by exact source diff, both final focused modes and pinned target object compile. Complete final-source Linux validation is pending draft PR.'
+summary['target_object']={'bytes':(e/'d8store-portable.o').stat().st_size,'sha256':hashlib.sha256((e/'d8store-portable.o').read_bytes()).hexdigest(),'compiler':'Pinned JieLi pi32v2 clang 4.0.1','container':'debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587','scope':'standalone object only, no device link/map/stack proof'}
+(public/'results.json').write_text(json.dumps(summary,indent=2)+'\n')
+(public/'storage-checks.log').write_text('\n'.join(line for line in log.splitlines() if 'multi-sector' in line or 'D8P1 runtime: 8911' in line or 'ALL HOST TESTS PASSED' in line)+'\n')
+shutil.copy2(e/'suite-command.py.txt',public/'suite-command.py.txt');shutil.copy2(__file__,public/'audit-command.py.txt')
+shutil.copy2(e/'initial-missing-sdk-host-tests.log',public/'initial-missing-sdk-host-tests.log')
+for name in ['target-object.log','portable-target-object.log','final-storage-optimized.log','final-storage-sanitizer.log']:shutil.copy2(e/name,public/name)
+(e/'audit.json').write_text(json.dumps(summary,indent=2)+'\n')
+print('PASS: source-stable complete suite, 884086 storage checks twice, strict storage sanitizers; device sources/goldens unchanged; physical SKIP')

@@ -1,0 +1,21 @@
+# Relative multi-sector save engine
+
+`firmware/src/d8store.c` implements an address-independent A/B record engine. It is tested against simulated NOR and has **no firmware call site or physical address binding**. It does not change the existing `storage.c`, loader, sample map, project map or autosave. Issue #13 remains open: the approved map and physical memory/recovery evidence are prerequisites for device integration.
+
+Each caller-owned region is exactly 16 KiB: two 8 KiB copies, each consisting of two 4 KiB sectors. Payload begins at byte 256 and is bounded to 7,936 bytes. The current maximum known D8P1 fixture is 7,705 bytes. Callbacks receive offsets relative to this region; a future backend must validate ownership and translate them into an approved map. This code supplies no such translation.
+
+The 32-byte little-endian commit header is: `D8AB` magic (0), version 1/copy/reserved-zero bytes (4), object identity (8), sequence (12), length (16), payload CRC-32 (20), reserved `0xffffffff` (24), header CRC-32 over bytes 0–27 (28). Unknown CRC-valid envelope versions refuse selection/saving. Future incompatible payload writers must use a new envelope version; this is not a generic backup reader for arbitrary vendor or future data.
+
+Selection verifies both headers and streams both payload CRCs through a 256-byte local buffer. It chooses the newer valid sequence using unsigned wrap comparison; A wins ties and the exactly half-range ambiguity. Corruption in a newer copy falls back to the older valid one. An I/O error aborts selection and never authorizes an erase. CRC-valid unknown envelope versions preserve both copies and refuse.
+
+Save validates known writable D8P1 and the caller's verified reference mask before accessing storage. It selects the other copy, erases both of its sectors, programs page-bounded payload chunks, then programs the commit header last. It verifies the complete committed copy before returning success. The current copy is never mutated. Full occupied regions remain reusable by overwriting the other copy. There is no forced-copy escape hatch, allocator or automatic format migration.
+
+The stopped callback must report stopped, with no pending start, chain or count-in. Save checks it before selection and before each erase/program callback. A refusal after partial writes keeps the previous committed copy. The actual device must prevent transport from starting during a synchronous flash operation; boundary checks alone do not prove that physical exclusion or interrupt latency. Callback errors after a complete commit can leave a valid new copy even though the API reports I/O failure. Recovery selects the newest valid record; callers must not treat a failure as proof that nothing was saved.
+
+Load requires caller-owned output and separate length storage. It rechecks CRC and actual D8P1 format/reference context after copying. Failure preserves the length, but output bytes can change after a read or format failure. Load into staged wire and publish through the existing stopped runtime API only after success. Callbacks and caller-owned RAM input remain valid/immutable throughout synchronous calls, and must not reenter the engine. CRC is corruption detection, not authentication.
+
+Tests use real independent minimal/maximum/unknown-optional D8P1 fixtures, bounded NOR callbacks and guard bytes around the region. They cut before every erase/program operation and after every payload/commit byte; sample partial erases in both sectors; stop at every mutation boundary; inject every selection-read error and a post-commit verification error; exercise write protection, corrupt headers/bodies, wrong identities, overflow, sequence wrap/ties, missing reference context, busy/invalid input and occupied-region reuse. The standalone storage test uses strict ASan/UBSan without the legacy DSP exclusions.
+
+Remaining work includes approved address binding, actual runtime/editor save/load integration, backups, target compilation/link/memory/stack measurements for this engine, physical IRQ/transport exclusion, flash-driver behavior, every-boundary device power cuts and verified restoration. Simulator results do not close those gates or authorize flashing.
+
+[Recorded local verification and failures](evidence/2026-10-10-multisector-records/README.md).

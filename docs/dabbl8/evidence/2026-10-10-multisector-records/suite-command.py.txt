@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess,os,json,hashlib,shutil
+root=Path('/Users/grantv/Code/dabbl8'); repo=root/'.local-baseline/main-workspace'; evidence=root/'.local-baseline/d8store-check'
+evidence.mkdir(exist_ok=True)
+env=os.environ.copy();env.update(PATH=str(root/'.local-baseline/venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0',JIELI_TOOLCHAIN=str(root/'.local-baseline/deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(root/'.local-baseline/deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587')
+files=['firmware/src/d8store.h','firmware/src/d8store.c','tests/d8store_test.c','tests/run_tests.sh']
+before={n:hashlib.sha256((repo/n).read_bytes()).hexdigest() for n in files}
+with (evidence/'host-tests.log').open('w') as log:
+    p=subprocess.run(['sh','tests/run_tests.sh'],cwd=repo,env=env,stdout=log,stderr=subprocess.STDOUT)
+assert before=={n:hashlib.sha256((repo/n).read_bytes()).hexdigest() for n in files}
+(evidence/'suite-result.json').write_text(json.dumps({'exit_code':p.returncode,'source_hashes':before},indent=2)+'\n')
+shutil.copy2(__file__,evidence/'suite-command.py.txt')
+print('storage integrated suite exit',p.returncode,flush=True)
+raise SystemExit(p.returncode)
