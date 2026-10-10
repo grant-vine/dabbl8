@@ -4,7 +4,8 @@
 #include "instrument_capture_test.c"
 #include "../firmware/src/native_migration_preflight.c"
 #include "../firmware/src/native_source_equivalence.c"
-static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES],sv_raw[4096];
+static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES];
+static _Alignas(4) uint8_t sv_raw[4096]; /* Frozen importer requires aligned legacy input. */
 static unsigned sv_reads,sv_allowed,sv_fault,sv_action,sv_at,sv_valid_action,sv_valid_nested;
 static uint32_t sv_g,sv_crc[5];
 static d8p1_project_state sv_state;
