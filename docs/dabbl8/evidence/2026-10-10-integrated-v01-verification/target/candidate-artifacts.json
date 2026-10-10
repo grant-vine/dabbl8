@@ -1,0 +1,18 @@
+{
+  "build/native-capture-4/felucca.bin": {
+    "bytes": 447928,
+    "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b"
+  },
+  "build/native-capture-4/felucca.fwsc": {
+    "bytes": 610086,
+    "sha256": "faf291152e83cd58dbdb16cb7cf6c4fda65885436b2232828f871d1ea20e1afc"
+  },
+  "build/native-capture-8/felucca.bin": {
+    "bytes": 461312,
+    "sha256": "34091caeec7d9b2bdd06d65844e313fa4b23a6e8a7a78a8e6121de61e7ab11db"
+  },
+  "build/loader/ota.bin": {
+    "bytes": 6930,
+    "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+  }
+}
