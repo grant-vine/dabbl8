@@ -32,7 +32,7 @@ static int overlaps(const void *a,size_t na,const void *b,size_t nb) {
     uintptr_t x=(uintptr_t)a,y=(uintptr_t)b;
     return na&&nb&&(x<=y?y-x<na:x-y<nb);
 }
-static int name_ok(const uint8_t *p) {
+static int d8p1_name_ok(const uint8_t *p) {
     unsigned zero=0;for(unsigned i=0;i<12;i++){if(!p[i])zero=1;else if(zero||p[i]<32||p[i]>126)return 0;}return 1;
 }
 /* Pinned schema-1 sound-only policy, checked against real motion_param in tests. */
@@ -68,17 +68,17 @@ static int chunk_ok(const d8p1_chunk *c) {
     case 5:
         if(n<1||p[0]>16||n!=1u+p[0]*2u)return 0;
         for(unsigned i=0;i<p[0];i++)if(p[1+i*2]>=16||!p[2+i*2]||p[2+i*2]>16)return 0;return 1;
-    case 6:return n==16&&name_ok(p)&&p[12]<8&&p[13]==2&&!p[14]&&!p[15];
+    case 6:return n==16&&d8p1_name_ok(p)&&p[12]<8&&p[13]==2&&!p[14]&&!p[15];
     case 7:
         if(n<1||p[0]>4||n!=1u+p[0]*28u)return 0;
         for(unsigned i=0;i<p[0];i++){
-            const uint8_t *b=p+1+i*28;if(!name_ok(b))return 0;
+            const uint8_t *b=p+1+i*28;if(!d8p1_name_ok(b))return 0;
             for(unsigned t=0;t<8;t++)if(b[12+t*2]>=4||b[13+t*2]>=8)return 0;
         }return 1;
     case 8:
         if(n<1||p[0]>16||n!=1u+p[0]*39u)return 0;
         for(unsigned i=0;i<p[0];i++){
-            const uint8_t *b=p+1+i*39;if(!name_ok(b)||b[12]>=4||(b[13]&~7u))return 0;
+            const uint8_t *b=p+1+i*39;if(!d8p1_name_ok(b)||b[12]>=4||(b[13]&~7u))return 0;
             for(unsigned t=0;t<8;t++)if(b[15+t*3]>127||b[16+t*3]>127||b[17+t*3]>48)return 0;
         }return 1;
     default:return !(c->type&D8P1_REQUIRED); /* Bounded, CRC-checked inspect-only. */

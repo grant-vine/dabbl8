@@ -1,0 +1,88 @@
+{
+  "result": "PASS",
+  "base_commit": "1ee9e1d055e3b2570a723f5ede3f2859c2c43793",
+  "runtime_checks_each_mode": 8911,
+  "complete_suite_exit_code": 0,
+  "source_unchanged_during_suite": true,
+  "source_hashes": {
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/d8p1_runtime.c": "9cd3492d34cc5025eea2cca152942f66a29f3ce3552e7c81ef87ec94cf99817b",
+    "firmware/src/project.c": "83eaf3d02b8d615d1eb1687817240f49de03f50c9b6140ee1a27fc001d9772a0",
+    "firmware/src/ui.c": "1a993913d1b0ba403fe8eb97974ca9043d34b0dd9aa3936c72f3f8939626c021",
+    "firmware/src/felucca.c": "f2a24fdbde367091752633648acfb52b06bfb9c1ec07cf15f9006cd580dfa2b2",
+    "tests/d8p1_runtime_test.c": "eeda4ead635c60c47b9157b157d07d555e54303c74ae8b4196498214cb6ea5f5",
+    "tests/ui_test.c": "a4e45e086a27291a40afc56651f3822f76edf16d20bf65f022ae97d58923dd66",
+    "tests/run_tests.sh": "0f5f43a7fa7430f72a8a2971575d4c82215817bc4d73a73bf9135ec87c6539fe"
+  },
+  "browser_checks": 218,
+  "target": {
+    "build_check_exit_code": 0,
+    "source_base": "1ee9e1d055e3b2570a723f5ede3f2859c2c43793",
+    "scope": "Uncommitted linked D8P1 stopped native runtime API and persistent arrangement cache; no package, flashing or hardware qualification.",
+    "experimental_image": {
+      "bytes": 451432,
+      "sha256": "dafa33427a5e530294e0a0f7392a2fbeac454fafdaff211b7a18297863609fb1"
+    }
+  },
+  "linked_native_symbols_verified": true,
+  "RAM": {
+    "used": 95716,
+    "capacity": 98304,
+    "free": 2588
+  },
+  "pool": {
+    "used": 334100,
+    "capacity": 344064,
+    "free": 9964,
+    "required_reserve": 8192
+  },
+  "cache_bytes": 772,
+  "arena_bytes": 59520,
+  "static_local_reservations_excluding_saved_registers": {
+    "load": 932,
+    "capture": 60,
+    "restore": 364
+  },
+  "default_artifacts_unchanged": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "raw_log_hashes": {
+    "wasm-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "default-build.log": "3d1d00ec4b1f5bfb3c1957cb94c902a54d7b0ce713384249c2fc81c7fe92e1d1",
+    "final-upstream-suite.log": "033b6e8177d66c4d355ae1ed2a0851533410e12e35130348c3eb171e5f908eff",
+    "eight-track-probe.log": "e4861c6ba9c8e3cf5ef75bbdc8816c72734a82a741205f11c6bcc43ee50e1e57",
+    "browser-parity.log": "3238482e324176201a5bff7a1e988ca221080e5c9c6cf2f88f807dabc5231268"
+  },
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally outside Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP",
+  "hosted_CI": "pending draft",
+  "scope": "Actual linked stopped native load/capture and retained metadata; host control-flow/engine ownership only; no device protocol/flash/playback/physical stack or timing qualification"
+}

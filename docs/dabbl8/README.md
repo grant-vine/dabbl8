@@ -21,3 +21,5 @@ Initial scope preserves eight shared sounding voices while adding eight logical 
 The [staged D8P1 adapter](d8p1-project-state.md) uses explicit project fields and preserves the pinned legacy importer. The [offline conversion workflow](offline-project-conversion.md) saves original snapshots and migration reports, validates complete saved-slot reference bundles, and emits proposed project data. Neither adds qualified device upload, runtime adoption or flash persistence.
 
 The [browser conversion workflow](browser-project-conversion.md) uses the same C importer and produces a local original/report/project-data ZIP without MIDI access. Its device upload and recovery gates remain open.
+
+The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eight-track runtime state and retains arrangement metadata outside the display arena. Device transfer, persistence, playback and physical qualification remain open.

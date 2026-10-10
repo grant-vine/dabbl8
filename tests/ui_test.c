@@ -70,7 +70,11 @@ static int32_t fm1_enc_take(uint32_t e)
 static void (*host_wdt_hook)(void);                /* (a test's: time passing in a blocking loop, as panel_setup's) */
 static void fm1_wdt_feed(void) { if (host_wdt_hook) host_wdt_hook(); }
 static void fm1_irq_off(void) {}
-static void fm1_irq_on(void) {}
+static void fm1_irq_on(void) {
+#ifdef UI_IRQ_ON_HOOK
+    UI_IRQ_ON_HOOK();
+#endif
+}
 static uint16_t host_screen[240 * 240];
 #ifdef UI_ASYNC_LCD
 static void lcd_sync(void);
@@ -97,6 +101,9 @@ static uint32_t pixels_hash(const uint16_t *p, uint32_t n) {
 }
 static void lcd_sync(void) {
     sync_calls++;
+#ifdef UI_LCD_SYNC_HOOK
+    UI_LCD_SYNC_HOOK(); /* test an event arriving after the initial transport check */
+#endif
     if (!dma.p) return;
     if (pixels_hash(dma.p,dma.w*dma.h)!=dma.hash) dma_errors++;
     for(uint32_t j=0;j<dma.h && dma.y+j<240u;j++)
