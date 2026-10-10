@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "scope": "unlinked codec compilation only; not shipping firmware RAM/stack fit",
+  "object_bytes": 3908,
+  "object_sha256": "67c108ad3d9b9b679ad47c1c112a712727a30946452c9239cbea1c8831c884ff"
+}

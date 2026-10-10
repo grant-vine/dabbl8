@@ -1,0 +1,82 @@
+{
+  "result": "PASS",
+  "base_head": "060a5f3855b1f6afc1b53cb5e93d7ede3abd138c",
+  "format_specification_commit": "ea624c78bff602ba5edb17e3ec5acf1a59c76241",
+  "parser_writer_checks_each_mode": 17490,
+  "independent_fixtures": {
+    "maximum.d8p": {
+      "bytes": 7705,
+      "sha256": "d6820f3bf04a1d8f0544ba4d9171c7e718a63134978ad4c08c5055c7a7223c48"
+    },
+    "minimal.d8p": {
+      "bytes": 6599,
+      "sha256": "a8cb53dabf1bd6b054822d100d8c76b38ee66a7093f3d29c559b23d3e6438fa7"
+    },
+    "unknown-optional.d8p": {
+      "bytes": 6621,
+      "sha256": "48ee9a6ee77e794d8337b0fa3d4801d6f0905106f7192ea407e66cfb8f109e82"
+    }
+  },
+  "motion_policy_ID_lock_combinations_each_mode": 198,
+  "maximum_known_file_bytes": 7705,
+  "independent_parser_bound_bytes": 7936,
+  "strict_codec_sanitizers": "address,undefined; no DSP exclusions; no recover",
+  "target": {
+    "result": "PASS",
+    "scope": "unlinked codec compilation only; not shipping firmware RAM/stack fit",
+    "object_bytes": 3908,
+    "object_sha256": "67c108ad3d9b9b679ad47c1c112a712727a30946452c9239cbea1c8831c884ff"
+  },
+  "complete_suite_exit_code": 0,
+  "full_log_sha256": "f2b66c7c2347d376bf23f91066bc881fbc089e24c0b2e1b18dc99258a17a0188",
+  "tested_source_hashes": {
+    "firmware/src/d8p1.c": "71c4ef0a8cc402de357f9a03a43141e3c0cbc9a31627b373eba8ac5445406a35",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "tests/d8p1_test.c": "d9256026c5ab31cf607f16eca90896ba696bbefff7e0d76d1738be6a3730a7d2",
+    "tests/d8p1_motion_policy_test.c": "218b34293a7cc6a3fc645b9b60758c3bb275adbdd791a573ba9fda287ca2b116",
+    "tests/d8p1_fixtures_test.py": "10fac70d5738d213496752d14034cb021ad3fa7a0100d0127d7807be75e59043",
+    "tests/make_d8p1_fixtures.py": "703473443635d963d85682854bb55ecd1a882c6d840b1d2cc523673dfb812cc1",
+    "tests/run_tests.sh": "9c1af9496744db63aee007211af9a8d620a4cfade7be40bd348080aa9f065353"
+  },
+  "default_artifacts_unchanged": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally outside Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP",
+  "hosted_CI": "pending draft PR",
+  "unimplemented": [
+    "project-state adapter and legacy-to-new semantic round trips",
+    "browser new-format backup/upload/download",
+    "target-linked cache/RAM/stack fit",
+    "flash map and A/B publication/power cuts",
+    "runtime adoption and arrangement playback"
+  ]
+}
