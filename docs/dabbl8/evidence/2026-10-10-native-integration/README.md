@@ -1,0 +1,7 @@
+# Combined native signature/output guard evidence
+
+Exact executable/test source: 309b761f5807e443a905a3beccfb4a3cf1d5c932, combining PR71 and unchanged PR72 commits plus the integration fixture. Pinned full local suite passed; 92 audio goldens unchanged; all six protected baseline artifacts unchanged. Combined test:130295 checks/0 failures in optimized and inherited sanitizer builds. Independent read-only review found no concrete defect.
+
+Actual coherent signature calculation does no NOR I/O and preserves injected queue summaries/full-buffer oracles. Track8 and native arrangement edits remain dirty through queue refusal; existing USB producers/service and two audio ISR halves drain ordinary states, then actual shared-pool save/restore recovers canonical state. Sticky USB uncertainty stays refused. Synthetic injection and simulated physical storage prove logical integration, not FIFO/DMA/host drain or device timing. Individual dirty sensitivity is separately covered by PR71.
+
+Default pinned image stays byte-identical. Combined eight-track image457528 bytes, RAM95748/98304, pool334164/344064, RAM-text916/no calls. See target JSON for exact hashes. Build/memory checks do not qualify native instruction budgets or whole caller/IRQ stack. Four explicit local omissions and inherited sanitizer limits are retained. No scheduler, migration ownership grant, install, release or loader/boundary change. GPL-3.0-only; preserve upstream and dependency notices.

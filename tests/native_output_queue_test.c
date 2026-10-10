@@ -58,6 +58,7 @@ static void queue_disturb(void){
  case 6:abuf[HALF_WORDS]=128;audio_nonzero[1]=1;break;
  }
 }
+#ifndef D8OUTPUT_QUEUE_NO_MAIN
 int main(void){
  cold();
 #if FELUCCA_UAC_TONE
@@ -107,3 +108,5 @@ int main(void){
  printf("Native output queues: %u checks, %u failures; %u real audio/UAC full-buffer oracles, 7 queue states x %u late mutation cuts plus postcommit restore; simulated controller, no physical pipeline/timing claim\n",checks,failures,oracles,ops);return failures!=0;
 #endif
 }
+
+#endif /* D8OUTPUT_QUEUE_NO_MAIN */
