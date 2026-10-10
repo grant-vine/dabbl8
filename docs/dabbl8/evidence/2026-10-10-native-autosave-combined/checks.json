@@ -1,0 +1,164 @@
+[
+  {
+    "name": "target-budget-4",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-8",
+    "exit": 1,
+    "allowed_exits": [
+      0,
+      1
+    ]
+  },
+  {
+    "name": "native_autosave_session_test-opt-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_session_test-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_integration_test-opt-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_integration_test-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_fx_counter_boundary_test-opt-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_fx_counter_boundary_test-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_signature_equivalence_test-opt-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_signature_equivalence_test-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_combined_test-opt-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_combined_test-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_session_test-san-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_session_test-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_integration_test-san-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_integration_test-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_fx_counter_boundary_test-san-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_fx_counter_boundary_test-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_signature_equivalence_test-san-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_signature_equivalence_test-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_combined_test-san-compile",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "native_autosave_combined_test-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "full-suite",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  }
+]

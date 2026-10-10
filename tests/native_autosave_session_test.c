@@ -34,6 +34,7 @@ static void begin(void){CHECK(!d8p1_autosave_session_begin(1,0));reset();}
 static void dirty(void){trk[7].p[P_LEVEL]=100;CHECK(!tick(AS_POLL_MS));CHECK(native_as.seen==current_signature());}
 static void due(void){CHECK(!tick(AS_IDLE_MS));}
 static void identity(void){CHECK(proj_cur==2&&!strcmp(proj_name,"POLICY"));}
+#ifndef D8_AUTOSAVE_SESSION_NO_MAIN
 int main(void)
 {
  idle_fixture();CHECK(d8p1_autosave_session_begin(0,1)==D8POOL_UNSUPPORTED&&!reads&&!writes);
@@ -112,3 +113,5 @@ int main(void)
  printf("Native autosave session: %u checks, %u failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant\n",checks,failures);
  return failures!=0;
 }
+
+#endif /* D8_AUTOSAVE_SESSION_NO_MAIN */

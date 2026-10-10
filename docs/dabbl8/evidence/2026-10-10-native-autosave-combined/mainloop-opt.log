@@ -1,0 +1,20 @@
+line 21: writes&&native_as.writes==1&&!native_as.pending
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+line 38: writes&&native_as.writes==1&&!native_as.pending&&!native_as.err
+line 39: !d8p1_autosave_snapshot_flash(&stored,&record,1)&&stored==wanted&&native_as.saved==stored
+line 42: current_signature()==wanted&&d8p1_runtime_cache.arrangement.scene[0].level[7]==99&&d8p1_runtime_cache.arrangement.row[0].repeat==2
+Native combined main-loop autosave: 189574 checks, 19 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification

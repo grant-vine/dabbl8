@@ -1,0 +1,9 @@
+{
+  "actual_omissions": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "note": "terminal.json also retains a substring search that includes passed assertions about skipped retired features; those are not coverage omissions. External vendor simulation is supplemental and not this missing root fixture."
+}

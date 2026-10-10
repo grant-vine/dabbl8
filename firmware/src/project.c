@@ -673,7 +673,8 @@ static uint8_t proj_cur = PROJ_NO_SLOT;      /* the slot the music was loaded fr
                                               * renames the music too); PROJ_NO_SLOT none (the editor's restore) */
 #if NPART >= NVOICE
 #include "project_native_frontend.h"
-#if FELUCCA_FLASH
+/* Host fixture enables only the native route, never legacy flash/MMIO. */
+#if FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST)
 #include "native_autosave_session.h"
 #endif
 static struct {
@@ -1263,7 +1264,7 @@ static int autosave_quiet(void)
 }
 
 static void autosave_hold(void) {
-#if NPART >= NVOICE && FELUCCA_FLASH
+#if NPART >= NVOICE && (FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST))
     if(project_native_owns_storage()){d8p1_autosave_session_hold();return;}
 #endif
     as.t = fm1_ms;
@@ -1274,7 +1275,7 @@ static void autosave_poll(void)
 {
 #if NPART >= NVOICE
     if(project_native_owns_storage()) {
-#if FELUCCA_FLASH
+#if FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST)
         (void)d8p1_autosave_session_poll();
 #endif
         return;

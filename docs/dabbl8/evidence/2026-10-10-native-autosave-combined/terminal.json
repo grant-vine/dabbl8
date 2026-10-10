@@ -1,0 +1,25 @@
+{
+  "source": "377e66ee12abdc38a36ab63ce88f0d8a2a84ff02",
+  "full_suite": "PASS",
+  "six_baseline_hashes_unchanged": true,
+  "native_budget_is_qualification": false,
+  "hardware": "SKIP",
+  "skips": [
+    "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+    "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+    "ui: PRESETS KNOB 2: the engines in order, DIGITAL skipped, back to the first   ok",
+    "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+    "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+    "perform:   after an effect is let go and its ramp is over: skipped again           ok",
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "drum_test: KIT 1..3 (HAND CYM H+CYM until 1.0.4) play 66 10 77 (the same samples), the knob skips them, a stored value and motion land on the kit: ok",
+    "--port picks a port the default match skips                      ok",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "library file: a patch for an unknown engine is skipped           ok",
+    "live: firmware before the sync tag echoes the editor's PRESET as RELOAD (the editor skips it) ok",
+    "FM6 import: supplement / performance blocks skipped, voices kept ok",
+    "backup: refusal after preflight stops, never skips object 9 or restores live music ok",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ]
+}
