@@ -1,0 +1,7 @@
+{
+  "tools/dabbl8_import_preview.c": "13efce7d8f71f83217376ff894f05ac210e09d7738a4b785d7a8c05c0161a5c3",
+  "tools/dabbl8_import_preview.py": "519201baff0b2ef344976250e84ea6180049b7d518b1b65c2b7d871cec91b1f1",
+  "tests/offline_import_test.py": "63822083956c3a9383fb5c6c9d9108c78f0680b4915d479aa8c0002cccbccfc7",
+  "tests/run_tests.sh": "197e2141cf39adeeb7ed304f737cca3152b0c2547cac1faaf7c1c353f973adb4",
+  "docs/dabbl8/offline-import-preview.md": "85b1e4b560a2a6df36d972137e724677adb7a8d1c4dd322c75a799f7e57eebc4"
+}
