@@ -189,5 +189,10 @@
     "competing-callers-full-suite/result.json": "4daa2c0411ecad61848b178c6c5df398a44aebd2808ac558033eba73fd6233e0",
     "competing-callers-full-suite/session.log": "a30890d308b44f94bafc62677ed23b609773b319af9f5ea04d46038ba9e52bda",
     "competing-callers-full-suite/run.py": "27f322f95e958b4d6639fc37f77ec91e075b0ab8d0bd9a73122adbaf98da4c58"
-  }
+  },
+  "integration_limitations": [
+    "Isolated parent lacks later PR84 instrument executor tools/runner scopes",
+    "Isolated parent lacks later PR85 source-derived plan tools/runner scopes",
+    "Actual combined-main merge CI remains required"
+  ]
 }
