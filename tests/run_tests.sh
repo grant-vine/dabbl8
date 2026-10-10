@@ -171,6 +171,8 @@ run "D8P1 three projects, shared autosave and interrupted pool writes" "$OUT/d8p
 if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
+    ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
+    run "offline migration: complete originals, persisted autosave and real shared-pool proposal" python3 tests/migration_bundle_test.py "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
     run "D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$OUT/d8p1_project_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
@@ -366,6 +368,8 @@ else
     run "ASan/UBSan: strict shared pool cuts, rotation and refusal" "$A/d8pool_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
     $SCC -o "$A/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "ASan/UBSan: offline D8P1 bundle and original/reference preservation" python3 tests/project_conversion_test.py "$A/dabbl8_project_convert"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
+    run "ASan/UBSan: original-preserving migration and real shared-pool proposal" python3 tests/migration_bundle_test.py "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize"
     $SCC -o "$A/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
     run "ASan/UBSan: D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$A/d8p1_project_test"
     $SCC -o "$A/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
