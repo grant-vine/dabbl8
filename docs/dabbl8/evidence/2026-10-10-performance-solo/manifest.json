@@ -1,0 +1,58 @@
+{
+  "parent": "58944ef427494173388a71f1f5cb4d7fee21d1cd",
+  "executable_and_test_source": "3c93eb35abf7dc91a919168d5b35323d94457104",
+  "source_files": {
+    "firmware/src/perform.c": "9072f0694a4bfc0de13a84287bbe73ac23f4a3540379afed5af3462ab06d904f",
+    "tests/eight_track_performance_test.c": "5f9c2563c378eb69ca9046cc3b3643f2d4c41bb167d1beb0c33fe058a579fdc1",
+    "tests/run_tests.sh": "b518066af06053d9465c4a0f7aeed957a5a52ad8b0603c4a2a56f3ef94d1c923"
+  },
+  "evidence_files": {
+    "after.log": "2c0ebef3a082fea79e7815f3e968a7ba226b211143ddde8d3c03834da6e87f6c",
+    "audio-regression.log": "90ff5cee86b856b2ecec608d633ab3dfd5c65f5b3cc073da1510fc6f5636f874",
+    "before-summary.log": "a998cc55bf39f00ec1548298be8bd1884963efecf01ed4d7c814fff262e7db5e",
+    "checks.json": "1bbf445b0b741d358ea6d4c68f080aaab23f9d408c1883c72f7736f78f70fa35",
+    "commands.txt": "66823575ba94e3d74c26f060ff1ea58cc1749ee8f87f0111f211ebf44afce815",
+    "failures-and-skips.txt": "63487e67f897f4ce91b8ed55b6e60fc291be4565bc39e731d2b4e0569e460821",
+    "initial-checks.json": "05249abf878363fd6b4244313f4bba7cbde026f3d088a48714d2d04ecd774391",
+    "parallel-review.txt": "ee855b263f107c6efa8fbd6f1ed101ddba68d57172668d62fb065832cba36a16",
+    "performance-optimized.log": "2c0ebef3a082fea79e7815f3e968a7ba226b211143ddde8d3c03834da6e87f6c",
+    "performance-san.log": "2c0ebef3a082fea79e7815f3e968a7ba226b211143ddde8d3c03834da6e87f6c",
+    "quiet-optimized.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "quiet-san.log": "b5478d4e3de342160b06606a940361bfcd8634d1cd88b39de577eaf1e3c3b528",
+    "target-4.json": "e4e40f8a346f6b62a0b3c6c4008ce977c8d74e0baae696cb665b9c1ae072de32",
+    "target-8.json": "e743c79e23540171805d4e48838dacbd9d87970d35c3beddad6d3aae557889ed",
+    "target-default-and-eight.log": "027eaf829129cf31430f14e91f4d6e1d76a9d5bfb35cae76480e953a7ae49db1",
+    "unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "upstream-parent-san.log": "6984cb3a218115d131941fb01bc8ad22ea807f13d9d1b37a469247159b583363",
+    "upstream-perform-optimized.log": "ac0d7ed8fdc4b3ac000b45ae7c045d762a9faae56eb4e29aead6deb97c4496d6",
+    "upstream-perform-san.log": "58f7feb0a839c1e2143afd1c17917e855ea5ec6cb681365497866b4bad018098",
+    "verification.log": "56c92ff3ed656efaefe8b50fd30f32d9de0d7f38ac851bd2ee986d4c90759c14"
+  },
+  "private_logs": {
+    "before.log": "a09e1ab456dd042691f2edcaed9170319d8b1ea73d708877006df21d90e1948b",
+    "initial-before-harness-failure.log": "483e54071d8d3cc3f8ec56453d81fec10c6bce3aa82fa047f2b59827fbab60f0",
+    "initial-after-harness-failure.log": "37128c9459b610457b7865ff91eba3360aadccc3eb4b808bc99edd18abbcff26",
+    "second-after-harness-failure.log": "1d1a0a0b5033d4f2c4dfbba96524fd68b0e0f7e0a1f06e206d1352530cde7c4a",
+    "initial-verification.log": "a4b6e0f15470919a1c9a64c5e4a13cc9ee853c10fe440d88f121ffbd5e6b322b"
+  },
+  "private_orchestration_sha256": "b1dc27db7871fdd56f3294dd825f1da9e2f5b99ec59c6e0f8ee3790b31cd5b8f",
+  "verification_scope": "Focused actual UI and pre-wet/master production audio stages, upstream effects/cost, autosave guard, pinned target builds and fresh92renderregression. FullnewheadCIpending; no hardware.",
+  "hardware": "SKIP; panel/audio/wholechainstack/deadlines/recovery notqualified",
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "target_environment": {
+    "python": "3.14.8",
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1",
+    "compiler": "JieLi clang 4.0.1",
+    "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+    "docker_linux_amd64": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+  },
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755"
+}
