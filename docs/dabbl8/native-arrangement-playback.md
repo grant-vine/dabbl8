@@ -120,3 +120,13 @@ behind a noinline boundary. A test-only query-site counter (absent from target)
 covers editable/historical/native/suspended/tombstone states, alongside actual
 clock/carry/transport tests. Target metrics and hardware timing remain separate
 qualification gates; all earlier failed evidence is retained.
+
+## Automatic native row-boundary experiment
+
+Only the implicit next-row/final-row action uses a narrow cold helper. Native
+validity, period/phase/bar computation, explicit pending row requests and repeat
+checks remain inlined; this is not a whole tick hidden from the interrupt cost
+check. Existing all-row, master-carry, end-stop and held-ownership tests execute
+the real helper. Cleanup/restore work remains synchronous and must be included
+through its tail callees and frames, even if the IRQ proxy improves. Earlier
+failed candidate reports remain retained; device timing is still unqualified.

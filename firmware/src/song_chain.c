@@ -151,6 +151,13 @@ static int d8arr_continue(void)
     a->generation++;a->pending=D8ARR_NONE;a->suspended=0;
     chain.running=1;chain.armed=0;song.rec=0;d8arr_timing();return 1;
 }
+/* Only an automatic next/final-row boundary reaches this seam. Its synchronous
+ * cleanup/restore work and tail callees remain part of timing qualification. */
+static __attribute__((noinline)) void d8arr_advance_auto(uint32_t carry)
+{
+    if((unsigned)chain.row+1>=chain.native.policy.rows){seq_stop();return;}
+    d8arr_apply((unsigned)chain.row+1,carry);
+}
 static void d8arr_tick(uint32_t n,uint32_t pos,uint32_t step,uint32_t period)
 {
     d8arr_state *a=&chain.native.policy;
@@ -162,8 +169,7 @@ static void d8arr_tick(uint32_t n,uint32_t pos,uint32_t step,uint32_t period)
     }
     a->pending=D8ARR_NONE;
     if(chain.remaining>1){chain.remaining--;return;}
-    if((unsigned)chain.row+1>=a->rows){seq_stop();return;}
-    d8arr_apply((unsigned)chain.row+1,total-bar);
+    d8arr_advance_auto(total-bar);
 }
 #endif
 
