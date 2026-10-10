@@ -231,6 +231,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native logical output queues: actual DMA/USB service, drain and late writes" "$OUT/native_output_queue_test"
     $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
     run "native output queues: autonomous USB benchmark refuses autosave" "$OUT/native_output_queue_tone_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
+    run "native signature and output-queue integration: natural drain/save/restore" "$OUT/native_autosave_integration_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
     run "native automatic write: quiet guard at every physical mutation" "$OUT/native_quiet_autosave_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
@@ -438,6 +440,8 @@ else
     run "ASan/UBSan: actual logical audio/USB queues and late refusal" "$A/native_output_queue_test"
     $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
     run "ASan/UBSan: autonomous USB benchmark refuses autosave" "$A/native_output_queue_tone_test"
+    $SCC -o "$A/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
+    run "ASan/UBSan: native signature and natural output-drain integration" "$A/native_autosave_integration_test"
     $SCC -o "$A/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
     run "ASan/UBSan: automatic write quiet guard and late activity" "$A/native_quiet_autosave_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
