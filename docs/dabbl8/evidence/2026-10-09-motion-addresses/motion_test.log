@@ -1,0 +1,124 @@
+ui: motion records the selected armed track at its current step                ok
+ui: same step/parameter overwrites rather than consuming capacity              ok
+ui: sounding values never replace the original patch base                      ok
+ui: project snapshot saves base + independent events while sounding            ok
+ui: stop before another step restores the original parameter                   ok
+ui: recorded motion plays back at step zero                                    ok
+ui: bypass restores base without deleting automation                           ok
+ui: manual edits outside recording become the new base                         ok
+ui: only the selected track captures knob motion                               ok
+ui: transport and engine-switch parameters cannot be captured                  ok
+ui: clearing then recording mid-play keeps the correct new base                ok
+ui: full event pool refuses append without overwriting earlier events          ok
+ui: full pool still permits a targeted overwrite                               ok
+ui: deleting one event releases one slot                                       ok
+ui: invalid restore leaves the pool intact                                     ok
+ui: track clear keeps every other track's events                               ok
+ui: zero-initialized probability remains legacy 100 percent                    ok
+ui: zero percent suppresses the whole chord and drum hits                      ok
+ui: 100 percent plays all chord notes and drum hits                            ok
+ui: chance is evaluated each repeat with one decision per step                 ok
+ui: FUN9 fits the retained and flash extent                                    ok
+ui: FUN9 round trip preserves signed values/FM params/probability/motion       ok
+ui: FUN7 torn or corrupted payload is refused                                  ok
+ui: compact parameter range is validated even with a correct hash              ok
+ui: invalid probability is refused even with a correct hash                    ok
+ui: real FUN6 disk image migrates with FM defaults/100% chance/no motion       ok
+ui: migrated FUN6 can be written as fixed-size FUN7                            ok
+ui: actual project save/load restores motion, chance and operator settings     ok
+ui: 89 parameters: E0..E7 at P_E0.., the chord keys OFF / CLOSE, lanes 100 %, the rest in place ok
+ui:   its motion: E0 (81) -> P_E0, REV and FM OP1 ATK (61) kept                ok
+ui:   written again (P_COUNT parameters): the same project                     ok
+ui:   SONG: an 89-parameter slot's motion plays at today's ids (E0 at P_E0)    ok
+ui:   E1 (82) -> P_E1                                                          ok
+ui: 1.1.5: a sound load of the same engine keeps the motion (both kinds, the engine's own E1 too), the pattern ok
+ui:   another engine: the motion on the common parameters (REV) stays, the engine's own (E1) goes, PLAY ON ok
+ui: sound undo restores the original motion pool and base                      ok
+ui: sound redo restores the loaded motion state                                ok
+ui: song preparation imports saved motion alongside steps                      ok
+ui: song plays saved automation with current instruments                       ok
+ui: song stop restores current base and editable pattern                       ok
+ui: REPEAT retriggers the last played note without octave traversal            ok
+ui: REPEAT remains on the same note on the next pulse                          ok
+ui: REPEAT releases after the last held key is released                        ok
+ui: REPEAT supports ARP HOLD                                                   ok
+ui: ARP modes: OFF..REPEAT keep their numbers, DNUP UP+8 CONV DIVG PINKY THUMB WALK CHORD appended (<= 6 chars) ok
+ui: ARP UP, DN, UPDN, ORD as before                                            ok
+ui: ARP DNUP: G E C E; B G E C E G for 4; across OCT 2                         ok
+ui: ARP UP+8: C E G C'; C E G B C'; OCT 2 ends on C''; ORD PLAY: the first played an octave over the top ok
+ui: ARP CONV: C G E, C B E G (outside in), OCT 2; DIVG: E G C, G E B C (inside out) ok
+ui: ARP PINKY: C G E G, C B E B G B, the OCT 2 top; THUMB: C E C G, C E C G C B; one note ok
+ui: ARP CHORD: C E G together, then an octave up (OCT 2); 5 held: the first 4; the gate and a release end them all ok
+ui: ARP WALK: from the bottom, a step up or down each time inside the list; the same seed the same walk ok
+ui: ARP HOLD: PINKY keeps playing the latched C E G; D F A replaces it         ok
+ui: ARP REPEAT switched to THUMB and back, CHORD to REPEAT: each plays its own ok
+ui: ARP CHORD recorded: C E G into one step                                    ok
+ui: a lock is one of the shared 64 records, bit 7 of its id (MOTION_LOCK)      ok
+ui: lock: its value on its step only, back after it (the sound's own, or the automation held) ok
+ui:   a lock sounding: the sound's own value is the base, a project saves that ok
+ui:   AUTOMATION PLAY OFF: the sound's own value at once, the locks kept       ok
+ui:   STOP while a lock sounds puts the sound's own value back                 ok
+ui:   with SWING 100: the same values step by step                             ok
+ui:   CHANCE 0 %: the step does not play, nor its lock                         ok
+ui:   CHANCE 100 %: its lock                                                   ok
+ui:   CHANCE 50 %: the lock applies exactly when the step's notes play         ok
+ui:   RATCH x3: its 3 parts all with the lock, back at the next step           ok
+ui:   an engine parameter: set at the step's start (before its notes), in its range ok
+ui:   .. and back at the next step                                             ok
+ui: a lock replaces an automation event of its step and id (one record, either kind) ok
+ui:   .. and back (an automation event over a lock)                            ok
+ui: clear a step's locks: its automation and the other steps' and tracks' stay ok
+ui: clear every step's locks (NSTEP)                                           ok
+ui: delete an event deletes a lock too (either kind)                           ok
+ui: a project without locks: the bytes as before (ids < 128), the same round trip ok
+ui: FUN9 round trip keeps the locks (bit 7 of the id byte), their values and steps ok
+ui:   saved and loaded: the locks play again                                   ok
+ui:   FUN7 of 89: a lock's id moves up with P_E0 (85 -> P_E4), still a lock    ok
+ui:     an id that store could not name (np): refused                          ok
+ui:   FUN8 of 91: a lock's id moves up with P_E0 (87 -> P_E4), still a lock    ok
+ui:     an id that store could not name (np): refused                          ok
+ui: SONG: a slot's locks come with its motion                                  ok
+ui:   a song plays them on their step, back after it                           ok
+ui: the grid on SEQ > STEP; the locks' knobs: HOME's (DRUM: E2..E5)            ok
+ui: a step key down: its step held (an empty one gets its hit at once)         ok
+ui:   KNOB 1 turned: step 5 gets a lock of E2 (TUNE), from the sound's own value ok
+ui:   let go: the hit stays, the lock is there, the sound unchanged            ok
+ui: a key pressed on a hit and held for a lock: the hit stays                  ok
+ui:   tapped alone: the hit goes (when let go), its lock stays                 ok
+ui: two step keys held: both get the lock                                      ok
+ui: a step held + [EDIT]: its locks go, the step and the others' locks stay    ok
+ui: the steps with a lock (the grid marks them): step 1                        ok
+ui: from FX: the knobs lock DIST CHO DLY REV                                   ok
+ui:   step 5 gets a REV lock                                                   ok
+ui: AUTOMATION: EVENT 0, LOCK 3                                                ok
+ui: the roll, not armed: a key held writes no step and holds none; KNOB 3 locks nothing ok
+ui: the roll, armed (step recording): a note key held (the entry) is the step held; KNOB 3 locks ATK, TIME untouched ok
+ui:   let go: the note and the lock on step 1, the cursor on                   ok
+ui:   [EDIT] alone clears the step and its locks                               ok
+ui:   a song playing: STOP TO EDIT, no lock                                    ok
+ui: lock undo: a step held, KNOB 1 turned twice: one lock                      ok
+ui:   SAVE held: the lock is gone (one undo for the whole turn), the step's hit stays ok
+ui:   held again (redo): the lock is back at its value                         ok
+ui:   a step held + [EDIT] clears it                                           ok
+ui:   SAVE held brings it back                                                 ok
+ui:   [EDIT] on a step without locks takes no undo copy (the clear before stays undoable) ok
+ui: AUTO LIST: empty, + ADD LOCK selected on the SEQ cursor's step, the first knob of the sound page ok
+ui:   OCT+: a lock on step 5 at the sound's own value, its row selected        ok
+ui:   KNOB 4: its value                                                        ok
+ui:   KNOB 2: its step (5 -> 7), the value kept                                ok
+ui:   KNOB 3: the next parameter, from the sound's own value                   ok
+ui:   OCT+ on the row: LOCK -> AUTO                                            ok
+ui:   and back (AUTO -> LOCK -> AUTO)                                          ok
+ui:   KNOB 1: + ADD LOCK; KNOB 2 there: its step                               ok
+ui:   OCT+: a second lock on step 3, first in the list (by step)               ok
+ui:   OCT+ on + ADD LOCK where one is: ALREADY LISTED, that row selected       ok
+ui:   EDIT: the row's record goes                                              ok
+ui:   SAVE held: it is back                                                    ok
+ui:   held again: gone again                                                   ok
+ui:   KNOB 4 turned on (three turns): one undo                                 ok
+ui:   a song playing: STOP TO EDIT                                             ok
+ui:   the 64 used: OCT+ adds nothing, AUTOMATION FULL                          ok
+ui:   KNOB 3's list: what motion records and the sound has (no OP ENV, no DRUM lanes off DRUM) ok
+ui:   names: ENV FLT / LFO FLT                                                 ok
+ui:   MENU > LARGE: the list layout with labels in M (as the other lists)      ok
+motion/chance/compact storage tests passed

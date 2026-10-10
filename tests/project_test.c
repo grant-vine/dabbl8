@@ -417,7 +417,7 @@ int main(void)
         uint32_t i, zero = 1;
         bad += check("FUN9 name at the end of the reserved tail, the FM6 patches before it, after the data (48 spare)",
                      PROJ_NAME_OFF == 3632u && PROJ_FM6_OFF == 3120u && 68u + NTRK * (P_COUNT + 2u + NSTEP * 9u) +
-                     sizeof(chain_config_t) + sizeof(motion_store_t) + 48u == PROJ_FM6_OFF);
+                     sizeof(chain_config_t) + sizeof(motion_legacy_store_t) + 48u == PROJ_FM6_OFF);
         memset(&a, 0, sizeof a);
         a.magic = PROJ_MAGIC; a.size = sizeof a; a.parts = NPART; a.phys = PROJ_PHYS;
         chain_defaults(&a.chain);
@@ -507,7 +507,7 @@ int main(void)
                 memcpy(v8 + pos, st.raw + pos9, 2u + NSTEP * 9u);
                 pos += 2u + NSTEP * 9u; pos9 += 2u + NSTEP * 9u;
             }
-            memcpy(v8 + pos, st.raw + pos9, sizeof(chain_config_t) + sizeof(motion_store_t));
+            memcpy(v8 + pos, st.raw + pos9, sizeof(chain_config_t) + sizeof(motion_legacy_store_t));
             v8[pos + sizeof(chain_config_t) + 4u + 1u] = 83u + 3u;   /* its E3 then */
             v8[pos + sizeof(chain_config_t) + 4u + 8u + 1u] = (83u + 5u) | MOTION_LOCK;   /* its E5 then, a lock */
             memcpy(v8 + 3056u, st.raw + PROJ_FM6_OFF, NTRK * FM6_PACKED);

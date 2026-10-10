@@ -173,6 +173,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "immutable FUN1..FUN9 imports and canonical round trips" "$OUT/legacy_fixture_test" tests/fixtures/projects
     $CC -O1 -w -DLEGACY_DEST_TRACKS=8 -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test_8" tests/legacy_fixture_test.c -lm
     run "historical layouts/imports with an eight-track destination; refuse FUN9 truncation" "$OUT/legacy_fixture_test_8" tests/fixtures/projects
+    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
+    run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
     run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm

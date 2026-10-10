@@ -137,6 +137,16 @@ static int motion_locks(void)
     a[2] = 127; request(ED_MOTION, a, 3);
     bad += check("MOTION op 6, 127: every lock goes, the automation stays", host_wire[6] == 0 && host_wire[8] == 1 &&
         host_wire[14] == 0 && !motion_lock_count(&trk[1]));
+    /* A distinct command carries an explicit schema. Old command replies stay unchanged. */
+    uint8_t v1[7] = {1, 1, 5, 63, P_REV, (100 + 8192) & 127, (100 + 8192) >> 7};
+    n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION schema 1: explicit track/step lock, version-prefixed reply",
+        n && host_wire[5] == 1 && host_wire[6] == 1 && host_wire[7] == 0 && motion_lock_get(&trk[1], 63, P_REV, &(int16_t){0}));
+    motion_store_t saved = motion;
+    v1[0] = 2; n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION unknown schema refuses without mutation", !n && !memcmp(&saved, &motion, sizeof saved));
+    v1[0] = 1; v1[1] = NTRK; n = request(ED_D8_MOTION, v1, 7);
+    bad += check("D8 MOTION unavailable track refuses without aliasing", !n && !memcmp(&saved, &motion, sizeof saved));
     motion_clear(&trk[1]);
     return bad;
 }

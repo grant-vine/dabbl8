@@ -244,15 +244,19 @@ static void step_set_ratchet(step_t *s, uint32_t hits)
     s->flags = (uint8_t)((s->flags & ~SF_RATCH) | ((hits < 1u ? 0u : hits > 4u ? 3u : hits - 1u) << SF_RATCH_SH));
 }
 #define MOTION_MAX 64u
-/* Four tracks x64 steps fit one byte. Values retain their signed parameter range.
+/* Runtime addresses use nine bits for eight tracks x64 steps. Historical disk
+ * records remain one-byte addresses and are converted explicitly. Values retain their signed parameter range.
  * param: the P_* id (< 128: P_COUNT is at most 127, project.c), bit 7 (MOTION_LOCK, 1.1) a parameter lock: the value
  * sounds on that step only and goes back after it (motion.c motion_step); without it an automation event, the
  * value holds until another one changes it. One record per (track, step, id), of either kind */
 #define MOTION_LOCK 0x80u
 #define MOTION_ID(e) ((uint32_t)(e)->param & 0x7Fu)
-typedef struct { uint8_t place, param; int16_t value; } motion_event_t;
+typedef struct { uint16_t place; uint8_t param; int16_t value; } motion_event_t;
 typedef struct { uint8_t count, on, rsv[2]; motion_event_t event[MOTION_MAX]; } motion_store_t;
-_Static_assert(sizeof(motion_store_t) == 260u, "motion disk layout");
+/* Frozen FUN7–FUN9 wire records; never memcpy runtime motion into these. */
+typedef struct { uint8_t place, param; int16_t value; } motion_legacy_event_t;
+typedef struct { uint8_t count, on, rsv[2]; motion_legacy_event_t event[MOTION_MAX]; } motion_legacy_store_t;
+_Static_assert(sizeof(motion_legacy_store_t) == 260u, "legacy motion disk layout");
 #define CHAIN_ROWS 16u
 typedef struct { uint8_t slot, repeat; } chain_row_t;
 typedef struct {

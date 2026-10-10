@@ -577,9 +577,9 @@ static int proj_pack(project_store_t *out, const project_t *q)
             b[pos++] = (uint8_t)(s->probability | (r >> 1) << 7);
         }
     }
-    if (pos + sizeof q->chain + sizeof q->motion > PROJ_FM6_OFF) return 0;
+    if (pos + sizeof q->chain + sizeof(motion_legacy_store_t) > PROJ_FM6_OFF) return 0;
     memcpy(b + pos, &q->chain, sizeof q->chain); pos += sizeof q->chain;
-    memcpy(b + pos, &q->motion, sizeof q->motion);
+    if (!motion_legacy_encode(b + pos, &q->motion)) return 0;
     memcpy(b + PROJ_FM6_OFF, q->fm6, PROJ_LEGACY_NTRK * FM6_PACKED);
     {   /* the name (0-padded; stops at the first 0) */
         char n[PROJ_NAME_LEN + 1u];
@@ -612,7 +612,7 @@ static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
     uint32_t name_off = st - 4u - PROJ_NAME_LEN, end = v7 ? name_off : name_off - PROJ_LEGACY_NTRK * FM6_PACKED;
     memcpy(&magic, b, 4); memcpy(&size, b + 4, 4); memcpy(&sum, b + st - 4u, 4);
     if (magic != (v7 ? PROJ_MAGIC_V7 : st == PROJ_STORE_V8 ? PROJ_MAGIC_V8 : PROJ_MAGIC) || size != st || sum != proj_hash(b, st - 4u) ||
-        np < 8u || np > P_COUNT || 68u + PROJ_LEGACY_NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof q->motion > end)
+        np < 8u || np > P_COUNT || 68u + PROJ_LEGACY_NTRK * (np + 2u + NSTEP * 9u) + sizeof q->chain + sizeof(motion_legacy_store_t) > end)
         return 0;
     memset(q, 0, sizeof *q); q->magic = PROJ_MAGIC; q->size = sizeof *q;
     memcpy(q->g, b + 8, sizeof q->g); q->sel = b[62]; q->parts = b[63]; q->phys = b[64];
@@ -639,7 +639,7 @@ static int proj_unpack(project_t *q, const uint8_t *b, uint32_t st)
         }
     }
     memcpy(&q->chain, b + pos, sizeof q->chain); pos += sizeof q->chain;
-    memcpy(&q->motion, b + pos, sizeof q->motion);
+    if (!motion_legacy_decode(&q->motion, b + pos)) return 0;
     if (!proj_motion_ids(&q->motion, np) || !chain_valid(&q->chain) || !motion_valid(&q->motion)) return 0;
     for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         if (v7)
