@@ -3,8 +3,8 @@
 Preparatory issue #11 client stage. `web/d8tracks.js` implements the versioned
 in-memory track operations from [command 77](versioned-track-editing.md).
 The separate [MIDI transport stage](companion-midi-transport.md) provides framing
-and port lifecycle handling. A user-facing companion page and physical
-qualification remain to be completed.
+and port lifecycle handling. The [visible companion page](companion-editor-page.md) supplies musical controls
+and host-simulator browser evidence; physical qualification remains unfinished.
 This module alone is not the completed editor or a firmware release.
 
 ## Negotiation and limits
@@ -74,8 +74,7 @@ cancellation. The source/bridge use no real MIDI, device backup or flash; all
 real-handler replies assert zero simulated flash writes/erases. Both bridge
 modes are integrated into the standard repository suite.
 
-Remaining work: musical controls and labels in a responsive companion page,
-physical transport qualification, browser mock previews,
+Remaining work: physical transport qualification,
 new-format project and backup conversion/round trips, and storage/runtime and
 hardware acceptance gates. Do not close issue #11 or advertise a hardware-tested
 editor from these host tests. No firmware, loader, flash map or reference hashes
