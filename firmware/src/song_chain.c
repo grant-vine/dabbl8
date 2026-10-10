@@ -222,6 +222,18 @@ static void chain_stop(void)
     song.rec = chain.rec;
     chain.running = 0;
 }
+#if NTRK == 8
+/* Historical row changes are rare boundaries. Keep their actual work separate
+ * from the audio fragment loop; helper cost/stack remain part of qualification. */
+static __attribute__((noinline)) void chain_advance_legacy(uint32_t carry)
+{
+    if (chain.row + 1u >= chain.config.count) { seq_stop(); return; }
+    chain.carry = carry;
+    chain.row++;
+    chain.remaining = chain.config.row[chain.row].repeat;
+    chain_apply();
+}
+#endif
 static void chain_tick(uint32_t n)
 {
 #if NTRK == 8
@@ -238,6 +250,9 @@ static void chain_tick(uint32_t n)
         chain.remaining--;
         return;
     }
+#if NTRK == 8
+    chain_advance_legacy(t->seq_pos + n - length);
+#else
     if (chain.row + 1u >= chain.config.count) {
         seq_stop();
         return;
@@ -246,4 +261,5 @@ static void chain_tick(uint32_t n)
     chain.row++;
     chain.remaining = chain.config.row[chain.row].repeat;
     chain_apply();
+#endif
 }

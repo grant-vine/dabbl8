@@ -102,6 +102,31 @@ static void prepare_start(void)
 {proof(!chain_prepare()&&chain.armed&&chain.native.policy.valid&&!writes,"actual frontend read-only preparation arms");transport_req=0;seq_start();proof(d8arr_running()&&song.playing&&chain.row==0&&chain.remaining==d8p1_runtime_cache.arrangement.row[0].repeat,"actual sequencer starts native row zero");}
 static void boundary(uint32_t carry)
 {uint32_t p=div_samples(2);clk_step=15;clk_pos=p-4;events_block(4+carry);}
+static void legacy_boundaries(void)
+{
+ reset();memset(&chain,0,sizeof chain);song.g[G_CLOCK]=0;transport_req=0;
+ uint8_t timing[sizeof chain.timing];
+ for(unsigned t=0;t<8;t++)memcpy(chain.timing[t],&trk[t].p[P_SLEN],sizeof chain.timing[t]);
+ memcpy(timing,chain.timing,sizeof timing);
+ chain.config.count=2;chain.config.row[0].slot=0;chain.config.row[0].repeat=2;
+ chain.config.row[1].slot=1;chain.config.row[1].repeat=1;
+ for(unsigned o=0;o<2;o++)for(unsigned t=0;t<8;t++){
+  memcpy(chain.source[o].timing[t],&trk[t].p[P_SLEN],sizeof chain.source[o].timing[t]);
+  chain.source[o].timing[t][0]=(int16_t)(o?5:3);chain.source[o].timing[t][1]=2;
+  chain.source[o].step[t][0]=(step_t){.time=ST_NOTE,.n=1,.note={60+o+t},.vel=99};
+ }
+ chain.armed=1;seq_start();proof(chain.running&&!chain.native_mode&&chain.row==0&&chain.remaining==2,"actual historical Start retains first row/repeat");
+ track_t *t=&trk[0];t->seq_idx=2;
+ uint32_t len=step_samples(t,div_samples((uint32_t)t->p[P_SDIV]),t->seq_idx);
+ t->seq_pos=len-5;chain_tick(4);proof(chain.row==0&&chain.remaining==2,"historical pre-boundary fragment cannot advance");
+ chain_tick(8);proof(chain.row==0&&chain.remaining==1,"historical first repeat keeps source/row");
+ chain_tick(8);proof(chain.row==1&&chain.slot==1&&chain.carry==3&&chain.remaining==1,"actual historical row boundary preserves carry and source");
+ for(unsigned i=0;i<8;i++)proof(trk[i].p[P_SLEN]==5&&seq_steps(&trk[i])[0].note[0]==61+i,"historical row publishes all eight source tracks/timing");
+ seq_tick(t,0);proof(t->seq_idx==0&&t->seq_pos==3,"actual sequencer consumes historical transition carry");
+ t->seq_idx=4;len=step_samples(t,div_samples((uint32_t)t->p[P_SDIV]),t->seq_idx);t->seq_pos=len-1;chain_tick(4);
+ proof(!song.playing&&!chain.running&&!chain.armed,"actual historical final boundary stops");
+ for(unsigned i=0;i<8;i++)proof(!memcmp(&trk[i].p[P_SLEN],timing+i*sizeof chain.timing[i],sizeof chain.timing[i]),"historical Stop restores editable timing");
+}
 int main(void)
 {
  seed();snapshot();proof(!chain_prepare()&&live_same()&&!writes,"preparation preserves editable music, undo and FM6");
@@ -241,6 +266,7 @@ int main(void)
  reset();prepare_start();ui.song_row=1;edit_param(3,1);proof(chain.native.policy.pending==1,"actual fourth SONG knob queues selected row");
  unsigned rows_before=d8arr_ui_rows();edit_param(1,1);proof(d8arr_ui_rows()==rows_before&&msg_is("NATIVE ROW READ ONLY"),"actual native scene editor refuses unsupported mutation");seq_stop();transport_req=0;
  project_native.ops.prepare_arrangement=NULL;proof(chain_prepare()==1,"missing optional prepare callback explicitly refuses");
+ legacy_boundaries();
  proof(!writes,"arrangement path never writes NOR");
  printf("Native arrangement: %u checks, %u failures; actual runtime/sequencer/clock/motion, virtual NOR only\n",checks,failures);return !!failures;
 }

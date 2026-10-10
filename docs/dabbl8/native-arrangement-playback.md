@@ -95,3 +95,17 @@ is inferred from host or virtual-NOR tests. Golden audio hashes are unchanged.
 The next increment implements actual mute/mix/transpose scene overlays and
 bounded fill behavior, preserving transient versus saved state and held-note
 semantics. This first slice provides real playback rather than a dormant plan.
+
+## Cold historical transition experiment
+
+This candidate separates only the eight-track historical row-advance boundary
+from the inlined audio-fragment path. The four-track source path remains
+unchanged. The hot check still computes track-zero step length, checks phase
+and decrements repeats; only an actual next-row/final-row transition calls
+`chain_advance_legacy`. Its work is not removed: final stop or row selection,
+up to 96 sequence releases, eight motion restorations and timing/phase resets
+still execute synchronously. Calls, direct helper costs/frames and the reachable
+path must be reported alongside the static IRQ metric; a lower IRQ proxy alone
+is not a device deadline or stack qualification. Actual historical boundary,
+repeat, carry, source routing and final-stop tests supplement the native tests.
+The failed dd20173 and 110c1ae target reports remain retained.
