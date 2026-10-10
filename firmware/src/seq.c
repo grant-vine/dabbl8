@@ -1066,9 +1066,17 @@ static void events_block(uint32_t n)
         }
     }
 #if NTRK == 8
-    d8arr_tick(seq_n,clk_pos,clk_step,div_samples(2));
+    /* Inactive native routes need neither a period query nor historical tick.
+     * Historical and native timing paths remain mutually exclusive. */
+    if(d8arr_running()) {
+#ifdef D8ARR_PERIOD_TEST_HOOK
+        D8ARR_PERIOD_TEST_HOOK();
 #endif
+        d8arr_tick(seq_n,clk_pos,clk_step,div_samples(2));
+    } else if(!chain.native_mode) chain_tick(seq_n);
+#else
     chain_tick(seq_n);
+#endif
     for (i = 0; i < NTRK; i++)
         seq_tick(&trk[i], seq_n);
     if (cin_flush)

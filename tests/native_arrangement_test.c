@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Actual sequencer, clock and motion with explicitly seeded virtual NOR. */
 #define D8POOL_RUNTIME_NO_MAIN 1
+static unsigned period_queries;
+#define D8ARR_PERIOD_TEST_HOOK() (++period_queries)
 static void held_build_hook(void);
 #define D8ARR_HELD_BUILD_TEST_HOOK() held_build_hook()
 #include "d8p1_pool_runtime_test.c"
@@ -126,6 +128,19 @@ static void legacy_boundaries(void)
  t->seq_idx=4;len=step_samples(t,div_samples((uint32_t)t->p[P_SDIV]),t->seq_idx);t->seq_pos=len-1;chain_tick(4);
  proof(!song.playing&&!chain.running&&!chain.armed,"actual historical final boundary stops");
  for(unsigned i=0;i<8;i++)proof(!memcmp(&trk[i].p[P_SLEN],timing+i*sizeof chain.timing[i],sizeof chain.timing[i]),"historical Stop restores editable timing");
+}
+static void period_cases(void)
+{
+ unsigned n=period_queries;events_block(1);
+ proof(period_queries==n,"inactive editable playback does not request native period");
+ chain.armed=1;seq_start();events_block(1);
+ proof(chain.running&&!chain.native_mode&&period_queries==n,"actual historical playback does not request native period");seq_stop();
+ project_native.ops.prepare_arrangement=prep_cb;arrange();reset();prepare_start();n=period_queries;events_block(1);
+ proof(period_queries==n+1,"actual native playback requests one master-bar period per fragment");
+ seq_stop();n=period_queries;events_block(1);
+ proof(period_queries==n,"suspended native playback does not request period");
+ chain.native_mode=2;chain.native.policy.valid=0;events_block(1);
+ proof(period_queries==n&&!song.playing&&!chain.running,"invalid-resume native tombstone executes neither timing path");
 }
 int main(void)
 {
@@ -266,7 +281,7 @@ int main(void)
  reset();prepare_start();ui.song_row=1;edit_param(3,1);proof(chain.native.policy.pending==1,"actual fourth SONG knob queues selected row");
  unsigned rows_before=d8arr_ui_rows();edit_param(1,1);proof(d8arr_ui_rows()==rows_before&&msg_is("NATIVE ROW READ ONLY"),"actual native scene editor refuses unsupported mutation");seq_stop();transport_req=0;
  project_native.ops.prepare_arrangement=NULL;proof(chain_prepare()==1,"missing optional prepare callback explicitly refuses");
- legacy_boundaries();
+ legacy_boundaries();period_cases();
  proof(!writes,"arrangement path never writes NOR");
  printf("Native arrangement: %u checks, %u failures; actual runtime/sequencer/clock/motion, virtual NOR only\n",checks,failures);return !!failures;
 }

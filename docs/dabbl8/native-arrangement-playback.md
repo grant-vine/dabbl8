@@ -109,3 +109,14 @@ path must be reported alongside the static IRQ metric; a lower IRQ proxy alone
 is not a device deadline or stack qualification. Actual historical boundary,
 repeat, carry, source routing and final-stop tests supplement the native tests.
 The failed dd20173 and 110c1ae target reports remain retained.
+
+## Explicit timing dispatch experiment
+
+Native-running playback now queries its master-bar period and uses the native
+clock hook; historical mode0 uses its original track-zero timing. Inactive or
+invalid-resume native modes use neither path. This removes the real eager
+period computation outside native playback, without moving an entire tick
+behind a noinline boundary. A test-only query-site counter (absent from target)
+covers editable/historical/native/suspended/tombstone states, alongside actual
+clock/carry/transport tests. Target metrics and hardware timing remain separate
+qualification gates; all earlier failed evidence is retained.
