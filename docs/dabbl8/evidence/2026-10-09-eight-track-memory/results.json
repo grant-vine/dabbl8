@@ -1,0 +1,17 @@
+{
+  "source_commit": "981262a91b924db3aa2ad0a481d8dc7da75bd5c3",
+  "override": "-DNPART=8 via imported build.CFLAGS; no source edits",
+  "build_exit_code": 1,
+  "purpose": "Compile-only preflight; no runtime/storage/hardware acceptance claim",
+  "object-sections_exit_code": 0,
+  "object-symbols_exit_code": 127,
+  "probe_worktree_status": "",
+  "object_symbols_objdump_exit_code": 0,
+  "general_ram_required": 132740,
+  "general_ram_capacity": 98304,
+  "general_ram_overflow": 34436,
+  "pool_required": 451024,
+  "pool_capacity": 344064,
+  "pool_overflow": 106960,
+  "four_track_binary_sha256": "651b8654c092df70289cd159bb7462d8fce0699772e24d0be80ed9093c563d6f"
+}

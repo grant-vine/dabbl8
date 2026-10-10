@@ -1,0 +1,366 @@
+[
+  {
+    "symbol": "phys_slot",
+    "section": ".pool",
+    "four": 51552,
+    "eight": 103104,
+    "delta": 51552
+  },
+  {
+    "symbol": "sl_buf",
+    "section": ".pool",
+    "four": 32768,
+    "eight": 65536,
+    "delta": 32768
+  },
+  {
+    "symbol": "gr_p",
+    "section": ".pool",
+    "four": 28080,
+    "eight": 56160,
+    "delta": 28080
+  },
+  {
+    "symbol": "chain",
+    "section": ".bss",
+    "four": 13024,
+    "eight": 24448,
+    "delta": 11424
+  },
+  {
+    "symbol": "drum_kit",
+    "section": ".pool",
+    "four": 7296,
+    "eight": 14592,
+    "delta": 7296
+  },
+  {
+    "symbol": "fm6_note",
+    "section": ".bss",
+    "four": 7104,
+    "eight": 14208,
+    "delta": 7104
+  },
+  {
+    "symbol": "trk",
+    "section": ".bss",
+    "four": 7088,
+    "eight": 14176,
+    "delta": 7088
+  },
+  {
+    "symbol": "proj_scratch",
+    "section": ".bss",
+    "four": 4636,
+    "eight": 8764,
+    "delta": 4128
+  },
+  {
+    "symbol": "slc_rbuf",
+    "section": ".bss",
+    "four": 4096,
+    "eight": 8192,
+    "delta": 4096
+  },
+  {
+    "symbol": "drw_v",
+    "section": ".bss",
+    "four": 2944,
+    "eight": 5888,
+    "delta": 2944
+  },
+  {
+    "symbol": "fm6_eff",
+    "section": ".bss",
+    "four": 800,
+    "eight": 1600,
+    "delta": 800
+  },
+  {
+    "symbol": "motion_base",
+    "section": ".bss",
+    "four": 792,
+    "eight": 1584,
+    "delta": 792
+  },
+  {
+    "symbol": "fm6_patch",
+    "section": ".bss",
+    "four": 624,
+    "eight": 1248,
+    "delta": 624
+  },
+  {
+    "symbol": "fm6_own",
+    "section": ".bss",
+    "four": 512,
+    "eight": 1024,
+    "delta": 512
+  },
+  {
+    "symbol": "drw_t",
+    "section": ".bss",
+    "four": 384,
+    "eight": 768,
+    "delta": 384
+  },
+  {
+    "symbol": ".L_MergedGlobals.12",
+    "section": ".bss",
+    "four": 256,
+    "eight": 492,
+    "delta": 236
+  },
+  {
+    "symbol": "sl",
+    "section": ".bss",
+    "four": 160,
+    "eight": 320,
+    "delta": 160
+  },
+  {
+    "symbol": "fm6_lfo",
+    "section": ".bss",
+    "four": 96,
+    "eight": 192,
+    "delta": 96
+  },
+  {
+    "symbol": "midi_ch",
+    "section": ".bss",
+    "four": 224,
+    "eight": 288,
+    "delta": 64
+  },
+  {
+    "symbol": "motion_active",
+    "section": ".bss",
+    "four": 64,
+    "eight": 128,
+    "delta": 64
+  },
+  {
+    "symbol": "motion_locked",
+    "section": ".bss",
+    "four": 64,
+    "eight": 128,
+    "delta": 64
+  },
+  {
+    "symbol": "chord_last",
+    "section": ".bss",
+    "four": 40,
+    "eight": 80,
+    "delta": 40
+  },
+  {
+    "symbol": "ed_w.12",
+    "section": ".bss",
+    "four": 24,
+    "eight": 48,
+    "delta": 24
+  },
+  {
+    "symbol": "ed_w.13",
+    "section": ".bss",
+    "four": 24,
+    "eight": 48,
+    "delta": 24
+  },
+  {
+    "symbol": ".L_MergedGlobals.3",
+    "section": ".bss",
+    "four": 468,
+    "eight": 484,
+    "delta": 16
+  },
+  {
+    "symbol": "cin_note",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "cin_vel",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "fm6_lfo_d",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "fm6_lfo_v",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "midi_bend_q8",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "midi_bend_target",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "pat_sig",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "perf_ord",
+    "section": ".bss",
+    "four": 56,
+    "eight": 72,
+    "delta": 16
+  },
+  {
+    "symbol": "ts.0",
+    "section": ".bss",
+    "four": 16,
+    "eight": 32,
+    "delta": 16
+  },
+  {
+    "symbol": "midi_owners",
+    "section": ".bss",
+    "four": 8,
+    "eight": 16,
+    "delta": 8
+  },
+  {
+    "symbol": "cin_n",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "cin_up",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "fm6_pgen",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "fm6_slot",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "pat_last",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "snd_said",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "ts.1",
+    "section": ".bss",
+    "four": 4,
+    "eight": 8,
+    "delta": 4
+  },
+  {
+    "symbol": "as.7",
+    "section": ".pool",
+    "four": 1,
+    "eight": 4,
+    "delta": 3
+  },
+  {
+    "symbol": ".L_MergedGlobals.2",
+    "section": ".bss",
+    "four": 492,
+    "eight": 488,
+    "delta": -4
+  },
+  {
+    "symbol": ".L_MergedGlobals.4",
+    "section": ".bss",
+    "four": 448,
+    "eight": 440,
+    "delta": -8
+  },
+  {
+    "symbol": ".L_MergedGlobals.5",
+    "section": ".bss",
+    "four": 420,
+    "eight": 404,
+    "delta": -16
+  },
+  {
+    "symbol": ".L_MergedGlobals.8",
+    "section": ".bss",
+    "four": 416,
+    "eight": 384,
+    "delta": -32
+  },
+  {
+    "symbol": ".L_MergedGlobals.10",
+    "section": ".bss",
+    "four": 420,
+    "eight": 384,
+    "delta": -36
+  },
+  {
+    "symbol": ".L_MergedGlobals.11",
+    "section": ".bss",
+    "four": 460,
+    "eight": 420,
+    "delta": -40
+  },
+  {
+    "symbol": ".L_MergedGlobals.9",
+    "section": ".bss",
+    "four": 384,
+    "eight": 320,
+    "delta": -64
+  },
+  {
+    "symbol": ".L_MergedGlobals.23",
+    "section": ".bss",
+    "four": 388,
+    "eight": 320,
+    "delta": -68
+  },
+  {
+    "symbol": ".L_MergedGlobals.22",
+    "section": ".bss",
+    "four": 372,
+    "eight": 288,
+    "delta": -84
+  }
+]
