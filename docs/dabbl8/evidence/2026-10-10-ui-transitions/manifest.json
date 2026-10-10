@@ -1,0 +1,55 @@
+{
+  "format": "dabbl8-ui-transition-evidence",
+  "version": 1,
+  "source_parent": "50cf903e67cd7cad6642f02acc729f9aedb648b1",
+  "compiler": "Apple clang 21.0.0 (clang-2100.1.1.101)",
+  "track_count": 8,
+  "sounding_voices": 8,
+  "generated_assets": {
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "sources": {
+    "tests/quick_layer_conflicts_test.c": "881679e0e8b2a1ca37ff63585004e32c2044c5ca9a6abb82628cca04f799fda2",
+    "tests/banked_mixer_test.c": "87b462af1f9f7c59e78f7f5dcc51ae4ed3fd26a30fbd7b278df0c232233883e3"
+  },
+  "logs": {
+    "bank-san.log": "d8ab2e1f89a122bf0e4c5dc8884219c2b5526b4736c21586001c106930e58b6b",
+    "bank.log": "d8ab2e1f89a122bf0e4c5dc8884219c2b5526b4736c21586001c106930e58b6b",
+    "quick-san.log": "c51ae41d2dc9e57892524899913f65ba8d01e77185ce8acf2636f0297e33fa12",
+    "quick.log": "c51ae41d2dc9e57892524899913f65ba8d01e77185ce8acf2636f0297e33fa12"
+  },
+  "compile_commands": [
+    "clang -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o OUTPUT tests/TEST.c -lm",
+    "clang -O1 -g -w -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow -fno-sanitize-recover=undefined -DNPART=8 -Ibuild/gen -Ifirmware/src -o OUTPUT tests/TEST.c -lm"
+  ],
+  "tests": [
+    "quick_layer_conflicts_test",
+    "banked_mixer_test"
+  ],
+  "sanitizer_environment": {
+    "ASAN_OPTIONS": "detect_leaks=0"
+  },
+  "results": {
+    "optimized": "PASS",
+    "sanitized": "PASS",
+    "held_track_pairs": 64,
+    "chord_solo_fx_cases": 192,
+    "drum_track_lane_cases": 64,
+    "rendered_frames_per_mode": 46720,
+    "rendered_bank_checks_per_mode": 1280,
+    "layout_findings": 0,
+    "bank_label_failures": 0
+  },
+  "initial_fixture_failure": "8 melodic chord cases failed because factory track four is DRUM; explicit melodic preset fixed the fixture. Diagnostic log retained privately.",
+  "hardware_tested": false,
+  "target_timing_measured": false,
+  "stack_high_water_measured": false,
+  "full_suite_repeated": false,
+  "firmware_installed": false
+}
