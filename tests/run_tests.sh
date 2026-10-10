@@ -167,6 +167,8 @@ ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8store_tes
 run "D8P1 relative multi-sector records and every program-byte cut" "$OUT/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8pool_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8pool_test.c
 run "D8P1 three projects, shared autosave and interrupted pool writes" "$OUT/d8pool_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8pool_mapped_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8pool_mapped_test.c
+run "D8P1 mapped existing allocations, session policy and physical cut guards" "$OUT/d8pool_mapped_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p
 
 if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
@@ -212,6 +214,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+    run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
     run "scales: white-key mapping and note lifecycle" "$OUT/scale_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/chord_test" tests/chord_test.c -lm
@@ -366,6 +370,8 @@ else
     run "ASan/UBSan: strict relative multi-sector storage and exhaustive cuts" "$A/d8store_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8pool_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8pool_test.c
     run "ASan/UBSan: strict shared pool cuts, rotation and refusal" "$A/d8pool_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8pool_mapped_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8pool_mapped_test.c
+    run "ASan/UBSan: mapped physical bounds, session revocation and cuts" "$A/d8pool_mapped_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p
     $SCC -o "$A/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "ASan/UBSan: offline D8P1 bundle and original/reference preservation" python3 tests/project_conversion_test.py "$A/dabbl8_project_convert"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
@@ -399,6 +405,8 @@ else
     run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
     $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
+    $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+    run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
     run "ASan/UBSan fuzz: editor SysEx and raw USB-MIDI packets (20000, seed 7)" "$A/fuzz_ed" 20000 7
     $SCC -o "$A/fuzz_proj" tests/fuzz_proj.c -lm

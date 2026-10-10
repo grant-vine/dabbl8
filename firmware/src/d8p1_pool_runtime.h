@@ -13,4 +13,9 @@ int d8p1_save_pool(const d8pool *,unsigned object);
 int d8p1_load_pool(const d8pool *,unsigned object);
 /* Caller supplies the boot/recovery policy and RESTORE LAST decision. */
 int d8p1_restore_pool_autosave(const d8pool *,int allowed);
+/* Existing-driver adapter, only with FELUCCA_FLASH in an eight-track build.
+ * Explicit approved migration ownership required; no boot/menu call grants it. */
+int d8p1_save_flash(unsigned object,int native_authorized);
+int d8p1_load_flash(unsigned object,int native_authorized);
+int d8p1_restore_flash_autosave(int native_authorized,int allowed);
 #endif
