@@ -35,7 +35,8 @@
  *
  * Polyphony 3 per part (engine_t.poly): each part's voices 0..2 own a state slot in the pool
  * section (phys_slot: SYMP's, the largest: the string's 512 + 128 sample lines, Q20, and three
- * 256-sample sympathetic lines, 16-bit), 12 slots in all. Voice amplitude: the track's ADSR as for every
+ * 256-sample sympathetic lines, 16-bit), 12 slots in the four-part build. Expanded
+ * builds use eight shared slots with bounded ownership lookup. Voice amplitude: the track's ADSR as for every
  * engine; the presets hold SUS at 127 so the model's own decay is heard and REL damps it after the key.
  * Cost (host, 8 notes asked = 3 voices): see the README and cpu_baseline.txt. */
 #include "phys_dsp.c"
@@ -56,7 +57,13 @@ typedef struct {
     } u;
 } phys_slot_t;
 
+#if NPART >= NVOICE
+/* Eight sounding voices share state; inactive destinations reserve no buffers. */
+static phys_slot_t phys_slot[NVOICE] __attribute__((section(".pool")));
+static uint16_t phys_owner[NVOICE]; /* logical destination index + 1, zero = free */
+#else
 static phys_slot_t phys_slot[NPART][PHYS_POLY] __attribute__((section(".pool")));
+#endif
 
 static const char *const N_PHYS_MODEL[] = {"MODAL", "STRNG", "MEMB", "SYMP"};
 static const char *const N_PHYS_CHORD[] = {"OCT", "5TH", "4TH", "MAJ", "MIN", "SUS", "7TH", "ROOT", 0};
@@ -98,7 +105,28 @@ static phys_slot_t *phys_slot_of(track_t *t, voice_t *v)
     if (t < &trk[0] || t >= &trk[NPART])
         return 0;
     i = (uint32_t)(v - t->v);
-    return i < PHYS_POLY ? &phys_slot[t - trk][i] : 0;
+    if (i >= PHYS_POLY)
+        return 0;
+#if NPART >= NVOICE
+    {
+        uint32_t id = (uint32_t)(t - trk) * NVOICE + i + 1u, k;
+        for (k = 0; k < NVOICE; k++)
+            if (phys_owner[k] == id)
+                return &phys_slot[k];                  /* retrigger keeps its ringing body */
+        for (k = 0; k < NVOICE; k++) {
+            uint32_t old = phys_owner[k];
+            if (!old || old > NPART * NVOICE ||
+                !trk[(old - 1u) / NVOICE].v[(old - 1u) % NVOICE].active ||
+                trk[(old - 1u) / NVOICE].engine != ENGI_PHYS) {
+                phys_owner[k] = (uint16_t)id;
+                return &phys_slot[k];
+            }
+        }
+        return 0;                                     /* no state: refuse instead of aliasing */
+    }
+#else
+    return &phys_slot[t - trk][i];
+#endif
 }
 
 /* a clean state for model md */

@@ -1,0 +1,5 @@
+{
+  "tests/run_tests.sh_sha256": "83de3a43e3f7154c8008dacc1d6872be61788d3441f89ac15db0e105219377cc",
+  "verification": "same previously passing focused sanitizer flags/commands added to standard ASan/UBSan block",
+  "full_suite_log": "predates runner-only integration; no firmware source change"
+}

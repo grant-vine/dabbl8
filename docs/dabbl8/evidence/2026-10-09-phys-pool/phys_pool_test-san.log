@@ -1,0 +1,13 @@
+PHYS pool: eight independent track notes own distinct state slots PASS
+PHYS pool: eight sounding states render within the shared budget PASS
+PHYS pool: buffer bound is eight states, not eight times the track cap PASS
+PHYS pool: another track's retrigger cannot overwrite the first body PASS
+PHYS pool: same destination retrigger retains its body PASS
+PHYS pool: ninth note reclaims retired state without aliasing live bodies PASS
+PHYS pool: stale ownership on another engine is reusable PASS
+PHYS pool: returning to PHYS cannot alias the reassigned owner PASS
+PHYS pool: full state pool fails closed for an unadmitted ninth voice PASS
+PHYS pool: 5000 mixed-model steals retain unique bounded ownership PASS
+PHYS pool: release completes and all states can be reused PASS
+PHYS pool: reset after a session recreates eight independent bodies PASS
+PHYS state pool: 0 failures, 34368 bytes for eight states
