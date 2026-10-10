@@ -1,0 +1,136 @@
+{
+  "format": "dabbl8-native-project-archive-host-evidence",
+  "version": 1,
+  "functional_commit": "e50e479290cf537330cf5c61ee3db748c411e51c",
+  "parent": "47db25dbed1057154b4917d13784999c747e2921",
+  "scope": "Host-only offline project-set archive; no physical capture/import, full-instrument backup or firmware change",
+  "source": [
+    {
+      "path": "tools/dabbl8_project_archive.c",
+      "bytes": 6247,
+      "sha256": "8ebad5a448999a9d0534ed42333c60f77907b8eeec2e152e5b8241e8aef60fa5"
+    },
+    {
+      "path": "tools/dabbl8_project_archive.py",
+      "bytes": 11417,
+      "sha256": "fc22c18a0b09ce58d73ab6f2994e1203d4c3853b4537b0f59fb444eee04b0471"
+    },
+    {
+      "path": "tests/native_project_archive_test.py",
+      "bytes": 14542,
+      "sha256": "5801d045a7ee6c53a5f336d879e04ba37b638442fa9a7da72909b6b56d1436be"
+    },
+    {
+      "path": "tests/run_tests.sh",
+      "bytes": 47146,
+      "sha256": "3e2dec12790b48e43e6ea494ae06f0060302be1b0698f222a06eaf7299dbcb87"
+    },
+    {
+      "path": "docs/dabbl8/native-project-archive.md",
+      "bytes": 4565,
+      "sha256": "5e160688d414567d90533dab42d4295534c74bc02a942b9f3369aea89dc134f9"
+    }
+  ],
+  "environment": {
+    "platform": "macOS arm64",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "python": "3.14.8",
+    "node": "26.11.0"
+  },
+  "results": {
+    "normal_archive_checks": 374,
+    "strict_sanitized_archive_checks": 374,
+    "full_host_suite_exit": 0,
+    "full_host_suite": "ALL HOST TESTS PASSED",
+    "golden_renders": 92,
+    "changed_goldens": 0,
+    "normal_and_SAN_migration_checks_each": 127,
+    "native_target_budget": "PASS against retained unchanged default-four disassembly; no new target build",
+    "web_editor_and_backup": "PASS"
+  },
+  "sanitizer_scope": {
+    "archive_adapter": "Full address,undefined; fno-sanitize-recover=undefined; detect_leaks=0; no DSP exclusions",
+    "inherited_engine_tests": "Existing signed-integer-overflow,shift,bounds,object-size,pointer-overflow exclusions retained"
+  },
+  "optional_skips": [
+    "PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "baseline_artifacts": [
+    {
+      "path": "build/felucca.bin",
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    {
+      "path": "build/felucca.fwsc",
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    {
+      "path": "tests/golden.txt",
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    {
+      "path": "tests/cpu_baseline.txt",
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    {
+      "path": "tests/target_budget.txt",
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    },
+    {
+      "path": "build/loader/ota.bin",
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    }
+  ],
+  "pinned_input_count": 39,
+  "pinned_inputs_manifest_sha256": "c6ef243a0d15f247a6af4ce593b9185d3b5812d27fe326ff41db02ef5e0bb9d6",
+  "all_pinned_inputs_unchanged_after_suite": true,
+  "logs": [
+    {
+      "path": "focused.log",
+      "sha256": "7430b042bbee9c84304d28d678abc7ff989b773c7702b8930ff390d22019ba8b",
+      "result": "Native project-set archive: 374 checks, zero failures; all16 sparse masks, actual C exact-byte pool readback; no device or full-instrument backup claim"
+    },
+    {
+      "path": "sanitized.log",
+      "sha256": "7430b042bbee9c84304d28d678abc7ff989b773c7702b8930ff390d22019ba8b",
+      "result": "Native project-set archive: 374 checks, zero failures; all16 sparse masks, actual C exact-byte pool readback; no device or full-instrument backup claim"
+    },
+    {
+      "path": "full-suite.log",
+      "bytes": 457609,
+      "sha256": "615cbc6fc6c327c06df11c5cf2805e0409c8346fdf032497ccb99cdc9f1b8e1e",
+      "exit": 0
+    },
+    {
+      "path": "full-suite-attempt01-missing-ota.log",
+      "sha256": "dc175caf3f295c22b79adbb54744f05b3632ce8208b033a43d54e3e6d1ab9979",
+      "exit": 1,
+      "reason": "Missing isolated packaging input build/loader/ota.bin; baseline copied and pinned without source changes"
+    }
+  ],
+  "limitations": [
+    "No physical capture/import, full-instrument backup, ownership or migration execution qualification.",
+    "No firmware, protocol, device-capability, loader or mapped-flash changes.",
+    "Browser emulator and browser-WASM converter parity were not run by this Mac host suite.",
+    "Virtual current-set byte equivalence is not full raw-history pool equivalence; originals remain exact.",
+    "No issue acceptance closure, firmware package release, flash or installation claimed."
+  ],
+  "coverage_omissions": [
+    "PHYS reference comparison: DaisySP dependency absent.",
+    "Browser emulator: emcc absent; no browser-WASM converter parity run by this runner.",
+    "Official V15 restore simulation: vendor FM-1_v15.fwsc absent from repository root.",
+    "Web editor MENU settings check: this editor has no MENU settings."
+  ],
+  "additional_loader_artifact": {
+    "path": "build/loader/loader.bin",
+    "bytes": 8216,
+    "sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94"
+  }
+}

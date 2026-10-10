@@ -77,3 +77,11 @@ runner; the adapter has no inherited DSP sanitizer exclusions.
 Physical capture/import, migration execution, ownership, native full instrument
 backup, recovery qualification and installation remain open. This preview does
 not close issue #11 or authorize flashing.
+
+Frozen functional source `e50e479290cf537330cf5c61ee3db748c411e51c` passed
+the Mac host runner: 374 archive checks in each normal/strict sanitizer mode and
+92 unchanged golden renders. See [scoped evidence](evidence/native-project-archive-host.json)
+for source/input/log hashes, preserved missing-OTA setup failure and all four
+coverage omissions (DaisySP reference, browser emulator, official V15 restore
+simulation without the vendor fixture, and this web editor’s absent MENU settings).
+No new firmware build or browser-WASM converter parity is claimed by this host-only change.
