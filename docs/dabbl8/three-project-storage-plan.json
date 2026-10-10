@@ -1,0 +1,48 @@
+{
+  "schema": "dabbl8-selected-storage-plan",
+  "version": 1,
+  "selected_date": "2026-10-10",
+  "projects": 3,
+  "user_samples": 3,
+  "logical_autosaves": 1,
+  "shared_write_spares": 1,
+  "per_object_ab_pairs": false,
+  "total_bytes": 40960,
+  "block_bytes": 8192,
+  "payload_offset": 256,
+  "payload_capacity": 7936,
+  "maximum_d8p1_bytes": 7705,
+  "project_reference_mask": 7,
+  "blocks": [
+    {
+      "index": 0,
+      "existing_address": 618496,
+      "bytes": 8192
+    },
+    {
+      "index": 1,
+      "existing_address": 626688,
+      "bytes": 8192
+    },
+    {
+      "index": 2,
+      "existing_address": 634880,
+      "bytes": 8192
+    },
+    {
+      "index": 3,
+      "existing_address": 643072,
+      "bytes": 8192
+    },
+    {
+      "index": 4,
+      "existing_address": 937984,
+      "bytes": 8192
+    }
+  ],
+  "block_ownership": "dynamic object ID/generation, not fixed per-object addresses",
+  "save_policy": "stopped; payload first, commit header last; reclaim previous only after validation",
+  "migration_required": true,
+  "flash_backend_implemented": false,
+  "hardware_qualified": false
+}

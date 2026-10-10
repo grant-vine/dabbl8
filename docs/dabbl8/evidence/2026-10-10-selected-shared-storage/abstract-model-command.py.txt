@@ -1,0 +1,52 @@
+import struct,zlib,json,pathlib
+out=pathlib.Path('/Users/grantv/Code/dabbl8/.local-baseline/grooveos-storage-research')
+SIZE=8192;OFFSET=256;N=5;OBJECTS=4
+raw=(out/'dense-seed-00.d8p').read_bytes()
+def hdr(obj,seq,payload):
+ h=struct.pack('<4sIIIIII',b'TEST',obj,seq,len(payload),zlib.crc32(payload),0,0)
+ return h+struct.pack('<I',zlib.crc32(h))
+def scan(blocks):
+ winners={}
+ for i,b in enumerate(blocks):
+  h=b[:32]
+  if h[:4]!=b'TEST' or zlib.crc32(h[:28])!=struct.unpack_from('<I',h,28)[0]:continue
+  _,obj,seq,n,crc,a,c=struct.unpack('<4sIIIIII',h[:28])
+  if obj>=OBJECTS or n>7936 or a or c:continue
+  payload=bytes(b[OFFSET:OFFSET+n])
+  if zlib.crc32(payload)!=crc:continue
+  if obj not in winners or 0<(seq-winners[obj][1])&0xffffffff<0x80000000:winners[obj]=(i,seq,payload)
+ return winners
+
+def save(blocks,obj,payload):
+ current=scan(blocks);taken={v[0] for v in current.values()};dest=next(i for i in range(N) if i not in taken)
+ seq=(current.get(obj,(0,0,b''))[1]+1)&0xffffffff
+ blocks[dest][:]=b'\xff'*SIZE;blocks[dest][OFFSET:OFFSET+len(payload)]=payload;blocks[dest][:32]=hdr(obj,seq,payload)
+ return dest,seq
+blocks=[bytearray(b'\xff'*SIZE) for _ in range(N)]
+for obj in range(4):save(blocks,obj,b'old'+bytes([obj])*7702)
+save(blocks,0,b'prior'+b'P'*7700) # all blocks occupied; one obsolete, not an erased spare
+initial=[bytes(b) for b in blocks];before=scan(blocks);taken={v[0] for v in before.values()};dest=next(i for i in range(N) if i not in taken);seq=before[0][1]+1;header=hdr(0,seq,raw)
+checks=0
+# A partial erase can only touch the non-current destination. Sweep every byte
+# prefix of each sector, then every payload/header programming prefix.
+for sector in range(2):
+ for cut in range(4097):
+  state=[bytearray(b) for b in initial]
+  if sector:state[dest][:4096]=b'\xff'*4096
+  start=sector*4096;state[dest][start:start+cut]=b'\xff'*cut
+  assert scan(state)==before;checks+=1
+for cut in range(len(raw)+1):
+ state=[bytearray(b) for b in initial];state[dest][:]=b'\xff'*SIZE;state[dest][OFFSET:OFFSET+cut]=raw[:cut]
+ assert scan(state)==before;checks+=1
+for cut in range(33):
+ state=[bytearray(b) for b in initial];state[dest][:]=b'\xff'*SIZE;state[dest][OFFSET:OFFSET+len(raw)]=raw;state[dest][:cut]=header[:cut]
+ found=scan(state)
+ assert all(found[o]==before[o] for o in [1,2,3])
+ assert found[0]==(dest,seq,raw) if cut==32 else found[0]==before[0]
+ checks+=1
+for iteration in range(1000):
+ obj=iteration%4;p=raw if iteration%2 else bytes([iteration%256])*7705;save(blocks,obj,p)
+ found=scan(blocks);assert len(found)==4 and found[obj][2]==p and len({v[0] for v in found.values()})==4
+ checks+=1
+report={'abstract_model_only':True,'blocks':5,'block_bytes':8192,'payload_capacity':7936,'objects':'three saved projects plus autosave','total_bytes':40960,'cut_states_checked':checks-1000,'sequential_saves_checked':1000,'assertions_passed':True,'limitations':['Not target firmware or NOR driver test','No physical address map selected','No migration, unknown-format handling, callback errors, media wear or hardware timing qualification','One current copy per object plus shared write spare; not permanent per-object A/B fallback']}
+(out/'shared-spare-model.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))

@@ -1,0 +1,18 @@
+{
+  "base_commit": "8a52e28892cfbe5a74aa8c406e6e62d2b7d7d133",
+  "source_sha256": {
+    "tools/dabbl8_storage_plan.py": "5be05a8b6e3ff16d85c4cbb6cf9d9ef58c1fdfa85ec6da98111f5969694192c4",
+    "docs/dabbl8/three-project-shared-storage.md": "dd25e33a14c1dbda6a0acd805b9ca21e66a407dc491b4f0c73b4ceb3a4f7ac0d",
+    "docs/dabbl8/three-project-storage-plan.json": "02328b3c2eea49fb263f371f8f11a6cfb4ba6ade0fa058e98b211bbbba6ba903",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "firmware/src/storage.c": "cd345479cacc11f56626cef83d01788f4fe431c3c501488d6ca5acb22d16164e",
+    "firmware/src/d8store.c": "839a31d98132512dd513fcafdb1683af38bb53863bd521b3ce879db08c0996c9",
+    "firmware/src/d8store.h": "5e33009d47f6dd0f01af62467a4b035b0f437c99eda9de563376d86b4b932bea"
+  },
+  "evidence_sha256": {
+    "abstract-fault-model.log": "67e23fb0a53eccdc1d85926b112076c275d9d617738491f491dd5ba137c4b5ca",
+    "geometry-output.json": "02328b3c2eea49fb263f371f8f11a6cfb4ba6ade0fa058e98b211bbbba6ba903",
+    "abstract-model-command.py.txt": "93edbea0144a29d4f2a12c077d5294fc8ea106a10473145eae54e6220445eaa1",
+    "README.md": "085a38733d8b72174227565f82ec7736b23dad2d1730ff840d272f6c035d3f9d"
+  }
+}

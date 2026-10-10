@@ -8,7 +8,7 @@
 | Keep OTA/loader and boot boundaries unchanged initially | Accepted | Minimize recovery changes |
 | New automation and project formats | Required | Existing addresses and payload cannot represent eight tracks |
 | D8P1 chunked bounded encoding | Proposed | Maximum-size model and migration tests first |
-| Project count versus sample capacity | Open | Decide from flash and retained RAM measurements |
+| Three projects, shared autosave, three samples | Accepted design, 2026-10-10 | Five existing two-sector blocks; one shared write spare, no per-object A/B; [decision and migration gates](three-project-shared-storage.md). Physical implementation remains gated |
 | Track selection and bank gesture | Open | Prototype around four knobs and existing shortcuts |
 | Companion editor repository strategy | Open | Inspect Felucca-WebApp licensing/build/protocol before choosing |
 | Baseline upgrade from v1.1.5 to v1.1.5.1 | Open | Review delta and record baseline build evidence |
