@@ -1,6 +1,6 @@
 # Dabbl8 plan
 
-Status: source research and task planning; no target build or flash performed here. GitHub Issues are authoritative for progress. All 19 implementation tasks and roadmap issue #2 have been created. Start with the unchanged baseline build in issue #3. This folder records scope and source evidence, not completed implementation.
+The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately; draft implementation PRs do not establish a hardware-qualified eight-track release. No device flashing has been performed in this work. All 19 implementation tasks and roadmap issue #2 have been created.
 
 ## Reading order
 
@@ -15,3 +15,7 @@ The numbered research documents are the original 8 October audit snapshot. Any â
 M0â€“M5 are phase identifiers used in issue titles and bodies. They are not configured GitHub milestone objects. Dependency links are explicit planning gates; they do not enforce merge or close operations automatically.
 
 Initial scope preserves eight shared sounding voices while adding eight logical tracks. Weighted budgets, new engines and multichannel USB are experiments or later work. Do not advertise them as delivered. Source planning material is GPL-3.0-only; original dependency notices remain in force.
+
+## Project conversion preparation
+
+The [staged D8P1 adapter](d8p1-project-state.md) uses explicit project fields and preserves the pinned legacy importer. The [offline conversion workflow](offline-project-conversion.md) saves original snapshots and migration reports, validates complete saved-slot reference bundles, and emits proposed project data. Neither adds qualified device upload, runtime adoption or flash persistence.

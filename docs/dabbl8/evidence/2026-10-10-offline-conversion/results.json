@@ -1,0 +1,177 @@
+{
+  "fixtures": {
+    "tests/fixtures/projects/fun9-digital.bin": {
+      "bytes": 3648,
+      "sha256": "5cf1d801a83fc1aa617ba6bdaa5addc4564b78a305d132c80e6de3cab959b733"
+    },
+    "tests/fixtures/projects/fun3.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "bf457141754a006038d94adea6d8bf7ad2128c1466c8bfb9f1b6033c35d9b786"
+    },
+    "tests/fixtures/projects/fun6.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "15bfe84dbad704728f6e637f89e23dbbb12de7fe88e99fbfc3656bd123fadca5"
+    },
+    "tests/fixtures/projects/fun2.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "9f547875e38abadf6d5168ba9cd9e2083e171331b288514bd498ba1dc561f869"
+    },
+    "tests/fixtures/projects/fun7.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "tests/fixtures/projects/fun4-phys-drum.bin": {
+      "bytes": 2680,
+      "sha256": "64c223b3226e12a64c9cbd7b0c5cb455bbe49633bdb71b9ce6235d904d72467c"
+    },
+    "tests/fixtures/projects/fun8-perc.bin": {
+      "bytes": 3584,
+      "sha256": "0e204cb15acb9e72ce193eb379e70e186b523306a14e72a43820e5859002c23b"
+    },
+    "tests/fixtures/projects/fun1.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "742088f9fb541ef166a000d640c65e85e2538194b48ec4dffa229ff52213bad9"
+    },
+    "tests/fixtures/projects/fun4.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "bf457141754a006038d94adea6d8bf7ad2128c1466c8bfb9f1b6033c35d9b786"
+    },
+    "tests/fixtures/projects/fun8.bin": {
+      "bytes": 3584,
+      "sha256": "a38f9ea6f283dc1a22364503f647a7a00c29a73688db736aa064d8795261474a"
+    },
+    "tests/fixtures/projects/fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "tests/fixtures/projects/fun4-phys-drum.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "45fbdc4dcc9d6fc37c7b67a80fa8acb002e8ddad35ee8655d1c3d0ca4a13a5aa"
+    },
+    "tests/fixtures/projects/fun5.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "e086c78ecd808ea71b5b67b9d7729fe06b4ee484edfbc049524d7d150f72b08f"
+    },
+    "tests/fixtures/projects/fun7.bin": {
+      "bytes": 3388,
+      "sha256": "c3e04d9e8468394bb66b3babcb5cbcff45ccc336470b474cee82d121b087b7d5"
+    },
+    "tests/fixtures/projects/fun6.bin": {
+      "bytes": 3388,
+      "sha256": "925b5a3011da3c638d2311a758b6e7286b928108e7e67c51b18d7e3cac47971c"
+    },
+    "tests/fixtures/projects/fun4.bin": {
+      "bytes": 2680,
+      "sha256": "2833d6696a77be4617886d630543a718881c74c80c32bd00a97a8e7547eacdf8"
+    },
+    "tests/fixtures/projects/fun8-perc.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "25ec77ce42639b9cf64e48015ea3cc01719222b3c7961e5b21c9b39331c1ce66"
+    },
+    "tests/fixtures/projects/fun5.bin": {
+      "bytes": 3352,
+      "sha256": "bfe330cf21bd4d0d38f0b06177c2366165f8f485ee5bb6b3a31e7fb743db3b9e"
+    },
+    "tests/fixtures/projects/fun9.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "tests/fixtures/projects/fun1.bin": {
+      "bytes": 688,
+      "sha256": "8638ed1982753113ed6f91a5d3736f8d18222f6024ef98c5b11aec448b328d60"
+    },
+    "tests/fixtures/projects/fun1-digital.bin": {
+      "bytes": 688,
+      "sha256": "44c07376e2cd639777646ff6b9b6aa6f62ec4f2da69c468ccff22b93eec9f4e8"
+    },
+    "tests/fixtures/projects/fun2.bin": {
+      "bytes": 2552,
+      "sha256": "e64991e1fff3e826008491314d173c97bb5cd1f6d17c4db6e49831eb1d5dfce9"
+    },
+    "tests/fixtures/projects/fun3.bin": {
+      "bytes": 2584,
+      "sha256": "ce7b80605101b1062f245c3bc1a37284d5b91ff1e5699e7a6b72b11ba4c51a7a"
+    },
+    "tests/fixtures/projects/fun8.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "0bff1cd3319442a3f7a54cb43ea176e2ab939a6acfd554f53308eab369a11fa5"
+    },
+    "tests/fixtures/projects/fun9-digital.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "e72632eff961a03ef22b8bdc9e37d24b80ea8c8dfa637fd79c5484ee57c773db"
+    },
+    "tests/fixtures/projects/fun1-digital.expected-fun9.bin": {
+      "bytes": 3648,
+      "sha256": "7e7f1f3081fe5733b70dd29ef302134c82f3aaa8fb4d99bfe2a2510137121e4f"
+    },
+    "tests/fixtures/d8p1/maximum.d8p": {
+      "bytes": 7705,
+      "sha256": "d6820f3bf04a1d8f0544ba4d9171c7e718a63134978ad4c08c5055c7a7223c48"
+    },
+    "tests/fixtures/d8p1/minimal.d8p": {
+      "bytes": 6599,
+      "sha256": "a8cb53dabf1bd6b054822d100d8c76b38ee66a7093f3d29c559b23d3e6438fa7"
+    },
+    "tests/fixtures/d8p1/unknown-optional.d8p": {
+      "bytes": 6621,
+      "sha256": "48ee9a6ee77e794d8337b0fa3d4801d6f0905106f7192ea407e66cfb8f109e82"
+    }
+  },
+  "result": "PASS",
+  "base_commit": "a6a32892a8c2ac6cfd963ffc39cba3e360879a74",
+  "offline_checks_each_mode": 314,
+  "legacy_originals": 13,
+  "complete_suite_exit_code": 0,
+  "full_log_sha256": "024d39e2ea308dca6fb4a04f9665cd6223055001f7a262dbf8db1f90595f57fd",
+  "tested_source_hashes": {
+    "tools/dabbl8_project_convert.c": "bc799c191d248c07c08d69ea62b79fc0b48046b22c8b342e0ec284b688705241",
+    "tools/dabbl8_project_convert.py": "da9c40af0bc5da47b66ba2b153a7446803b2e94ca61a4d8c82898e70a392566b",
+    "tests/project_conversion_test.py": "f4c7ff33f142ef5ee7d8947600427eb3399cd1cbb2deaf06c4a48119095e59c3",
+    "tests/run_tests.sh": "a6d9c078052c3a2fc2d620567fbc832988667fbde7eef3241f3c50dff1577d1e",
+    "firmware/src/d8p1.c": "71c4ef0a8cc402de357f9a03a43141e3c0cbc9a31627b373eba8ac5445406a35",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "firmware/src/d8p1_project.h": "64c540b8c5263d0abbdd3fd2dffd7f9c899bac250b573ab3a3ab79ce4b143fad"
+  },
+  "default_artifacts_unchanged": {
+    "build/felucca.bin": {
+      "bytes": 447924,
+      "sha256": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b"
+    },
+    "build/felucca.fwsc": {
+      "bytes": 610086,
+      "sha256": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb"
+    },
+    "build/loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "tests/golden.txt": {
+      "bytes": 3754,
+      "sha256": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500"
+    },
+    "tests/cpu_baseline.txt": {
+      "bytes": 2116,
+      "sha256": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf"
+    },
+    "tests/target_budget.txt": {
+      "bytes": 992,
+      "sha256": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+    }
+  },
+  "omissions": [
+    "DaisySP absent",
+    "Official V15 CLI fixture intentionally outside Git",
+    "Embedded-editor MENU absent",
+    "Emscripten absent"
+  ],
+  "hardware": "SKIP",
+  "hosted_CI": "pending draft",
+  "scope": "Host-only original snapshots, migration reports, complete reference bundles and actual C decode/re-encode verification; no firmware, device writes or crash-consistency qualification",
+  "unimplemented": [
+    "browser file workflow",
+    "new-format companion backup/upload/download",
+    "runtime adoption/arrangement playback",
+    "qualified state/cache allocation and target stack fit",
+    "approved flash map/A B commit-last/power cuts"
+  ]
+}
