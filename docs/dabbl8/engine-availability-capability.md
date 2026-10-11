@@ -70,8 +70,7 @@ membership inspection. The helper validates both optional SLICE slot counts and
 does not infer permissions from schema-1 feature bits. The schema-1 feature
 byte is intentionally ignored by this read-only helper; existing track-client
 feature/write validation is unchanged. Every indexed reply byte must be a
-seven-bit integer, including rejection of sparse-array holes. Existing companion/editor
-connection and transport behavior is unchanged: this helper is explicitly opt-in.
+seven-bit integer, including rejection of sparse-array holes. This independent helper remains explicitly opt-in. The visible companion now opts into the same observational exchange through its own single serialized session; see [companion-editor-page.md](companion-editor-page.md). Other session users retain the original default handshake.
 
 ## Evidence and remaining integration review
 
@@ -88,9 +87,7 @@ FM4-enabled and SLICE-disabled configurations; hostile/old replies and timeouts
 use mocks. This is module execution in Node, not a rendered Chrome page or real
 Web MIDI session. Existing track-client regression tests remain required.
 
-Before claiming complete stage-2 integration, review how the visible companion
-obtains this optional exchange through its owned/serialized transport, filters
-engine choices and preserves unavailable stored records. Separate startup/default,
+The visible companion now displays availability through its owned transport with separate [host evidence](companion-engine-availability-evidence.md). It offers no engine-choice writes. Before claiming complete stage-2 integration, review all engine selection/filtering and unavailable stored-record preservation paths. Separate startup/default,
 all publication/ref-project guards, true exclusion, target reserves and physical
 performance/recovery gates remain. This exchange alone does not complete #53 or
 #11 and provides no firmware download/install authorization.

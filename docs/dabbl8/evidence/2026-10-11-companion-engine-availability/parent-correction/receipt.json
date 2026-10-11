@@ -1,0 +1,81 @@
+{
+  "delivered_commit": "1e67ef29733c6f34addf7033f867110118969230",
+  "delivered_receipt_sha256": "bb3447a47f235077a930809a300dd2783d405e3dbecee0e472d6bd5edf8949ca",
+  "parent_correction": "c337b49c5321784fbc660a5110f3c9ab97388ec1",
+  "production_web_sha256": {
+    "web/d8midi.js": "7520c3ceefe0a7da02fb242b0db31b0047a60a87ae84264b21e343ee14626765",
+    "web/d8engines.js": "1ab5ff8dc300c8f74ce8ce27d55f390bb33669bfd4341f912def354cceb1e8dd",
+    "web/d8companion.js": "b1e17b42bff44a90507a42b4fe6f663350ab8ad30786131712b372100dc3c618"
+  },
+  "integrated_commit": "adf1e4b0bb51e56cb3652e49813e8e1ce854aed3",
+  "post_integrate_test_source_sha256": "39dba5bfd337d10a1fb131f51202d4499221d3aad1b8c0d8508082f770edcdd5",
+  "no_production_changes": true,
+  "executed_check_scope": "Companion149 and default MIDI85 each normal/sanitized. Existing pinned pre-correction host bridges reused: the changed d8_capabilities assertion body is not called by EDITOR_TEST_NO_MAIN bridge main. No new bridge or full editor build; parent independently recorded 18 editor executions.",
+  "logs": {
+    "companion-normal.log": {
+      "sha256": "9b7b708c01ca916f7b69ec402f1a90401d3cd9ea7d4a1569bc4122bdd191bbc9",
+      "last_line": "companion engine integration: 149 checks PASS; simulated ports/DOM and supplied host C only"
+    },
+    "default-midi-normal.log": {
+      "sha256": "97cdf6c7f7f6982a6c2b3e1558f640532d1c1d83d60b03604a80c89b7ce4ddef",
+      "last_line": "MIDI session: 85 checks passed; no real MIDI access or hardware qualification"
+    },
+    "companion-san.log": {
+      "sha256": "9b7b708c01ca916f7b69ec402f1a90401d3cd9ea7d4a1569bc4122bdd191bbc9",
+      "last_line": "companion engine integration: 149 checks PASS; simulated ports/DOM and supplied host C only"
+    },
+    "default-midi-san.log": {
+      "sha256": "97cdf6c7f7f6982a6c2b3e1558f640532d1c1d83d60b03604a80c89b7ce4ddef",
+      "last_line": "MIDI session: 85 checks passed; no real MIDI access or hardware qualification"
+    }
+  },
+  "current_diff_names": [
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/README.md",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/driver.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/editor_test.c.snapshot",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/final-driver.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/full-editor-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/full-editor-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/full-editor-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/full-editor-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/manifest.json",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/results.json",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/run.py",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-0-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-0-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-0-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-0-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-1-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-1-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-1-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-0-1-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-0-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-0-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-0-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-0-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-1-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-1-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-1-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-4-1-1-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-0-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-0-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-0-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-0-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-1-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-1-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-1-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-0-1-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-0-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-0-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-0-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-0-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-1-normal-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-1-normal-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-1-san-build.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-8-1-1-san-run.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/schema-only.c",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/setup-four-track-flags-assumption.log",
+    "docs/dabbl8/evidence/2026-10-11-engine-availability-capability/editor-contract-fix/setup-missing-main-guard.log",
+    "tests/editor_test.c"
+  ]
+}
