@@ -1,0 +1,7 @@
+/Users/grantv/Code/dabbl8/.local-baseline/complete-migration-session-evidence/ready-policy-regression.c:18:5: error: conflicting types for 'main'
+   18 | int main(void){
+      |     ^
+/Users/grantv/Code/dabbl8/.local-baseline/complete-migration-session/tests/native_migration_session_test.c:188:5: note: previous definition is here
+  188 | int main(int argc,char**argv){
+      |     ^
+1 error generated.

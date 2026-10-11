@@ -1,0 +1,9 @@
+{
+  "firmware/src/native_migration_session.c": "14e949f64ce6e91e7f61de1e79f132e5ecee3098f474771a888c9be3d3090843",
+  "tests/native_migration_session_test.c": "444ef41bd2ad15423893e282070f8486c50e0e779b956519ef348dab5257f194",
+  "docs/dabbl8/native-migration-session.md": "4ada297eeafbe5712f9e4f9c10f49d92c7d6c3a310002b6814a90d0c73cd7dca",
+  "tools/dabbl8_instrument_session.py": "749d04f301ccee50f68c5900110e46c85be1230584bfc0a5012f959ad0c419bd",
+  "tools/dabbl8_instrument_capture.py": "9c4985d968974ad6d2528869bdb82323ddae0593d7a5104744b46d8fc02d4cfa",
+  "tests/native_migration_session_host_test.py": "0cde883dbbbba037a2338974417d7c59e50974d762f8328184668152052bb100",
+  "tests/run_tests.sh": "ce5a6d857172fbde8678e42ef96afdf70950872983493ee2bcb8ff654e4895b3"
+}

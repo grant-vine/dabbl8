@@ -23,15 +23,23 @@ static int df_automatic_quiet(void)
 static int df_stopped(void *context);
 static int df_erase(void *context,uint32_t off)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return df_stopped(context)?d8mc_driver_erase(off):-1;
+#else
     uint32_t flags=irq_save();
     int rc=df_stopped(context)?st_erase(off):-1;
     irq_restore(flags);return rc;
+#endif
 }
 static int df_program(void *context,uint32_t off,const void *in,uint32_t n)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return df_stopped(context)?d8mc_driver_program(off,in,n):-1;
+#else
     uint32_t flags=irq_save();
     int rc=df_stopped(context)?st_prog(off,in,n):-1;
     irq_restore(flags);return rc;
+#endif
 }
 static int df_stopped(void *context)
 { return flash_ok&&!cv_cpu_active&&!transport_busy()&&!transport_req&&
@@ -42,17 +50,31 @@ int d8p1_save_flash(unsigned object,int native_authorized)
 {
     if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
+    #if NTRK == 8 && D8_MIGRATION_SESSION
+    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
     int rc=d8pool_mapped_open(&mapped,&io,native_authorized);
     if(!rc)rc=d8p1_save_pool(&mapped.pool,object);
-    d8pool_mapped_close(&mapped);return rc;
+    d8pool_mapped_close(&mapped);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return d8mc_native_finish(rc);
+#else
+    return rc;
+#endif
 }
 int d8p1_load_flash(unsigned object,int native_authorized)
 {
     if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
@@ -67,6 +89,9 @@ int d8p1_catalog_flash(d8p1_project_catalog *catalog,int native_authorized)
 {
     if(!catalog)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
@@ -78,24 +103,46 @@ int d8p1_rename_flash(unsigned object,const char *name,int native_authorized)
 {
     if(object>=3||!name)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
+    #if NTRK == 8 && D8_MIGRATION_SESSION
+    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
     int rc=d8pool_mapped_open(&mapped,&io,native_authorized);
     if(!rc)rc=d8p1_rename_pool(&mapped.pool,object,name);
-    d8pool_mapped_close(&mapped);return rc;
+    d8pool_mapped_close(&mapped);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return d8mc_native_finish(rc);
+#else
+    return rc;
+#endif
 }
 
 int d8p1_save_as_flash(unsigned object,const char *name,int native_authorized)
 {
     if(object>=3)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
+    #if NTRK == 8 && D8_MIGRATION_SESSION
+    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
     int rc=d8pool_mapped_open(&mapped,&io,native_authorized);
     if(!rc)rc=d8p1_save_as_pool(&mapped.pool,object,name);
-    d8pool_mapped_close(&mapped);return rc;
+    d8pool_mapped_close(&mapped);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return d8mc_native_finish(rc);
+#else
+    return rc;
+#endif
 }
 
 /* Dedicated automatic-write policy: unlike an explicit manual save, never
@@ -105,19 +152,33 @@ int d8p1_save_as_flash(unsigned object,const char *name,int native_authorized)
 int d8p1_autosave_flash(int native_authorized)
 {
     if(!native_authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
     uint8_t quiet_policy=1;
     if(!df_stopped(&quiet_policy))return D8POOL_BUSY;
+    #if NTRK == 8 && D8_MIGRATION_SESSION
+    int ticket=d8mc_native_begin(3);if(ticket)return ticket;
+    #endif
     d8pool_mapped mapped;
     d8pool_physical io={&quiet_policy,df_read,df_erase,df_program,df_stopped};
     int rc=d8pool_mapped_open(&mapped,&io,native_authorized);
     if(!rc)rc=d8p1_save_pool(&mapped.pool,3);
-    d8pool_mapped_close(&mapped);return rc;
+    d8pool_mapped_close(&mapped);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    return d8mc_native_finish(rc);
+#else
+    return rc;
+#endif
 }
 
 int d8p1_autosave_snapshot_flash(uint32_t *signature,d8pool_record *record,int authorized)
 {
     if(!authorized)return D8POOL_UNSUPPORTED;
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+#endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};

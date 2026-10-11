@@ -9,6 +9,7 @@
 
 /* ------------------------------------------------------------ sizes --- */
 #include "track_limits.h"
+#include "native_migration_session.h"
 #define NSTEP 64
 #if NTRK > 4
 /* Observation only: any attempted store/update mutation invalidates a capture.

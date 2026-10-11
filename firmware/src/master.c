@@ -7,6 +7,9 @@
 static int32_t master_knob = 512 * 16;
 static void master_poll(void)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8mc_blocked())return;
+#endif
     int32_t a = fm1_adc_read(FM1_ADC_MASTER);
     if (a >= 0) {
         master_knob += (a * 16 - master_knob) / 8;

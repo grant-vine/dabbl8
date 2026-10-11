@@ -1,0 +1,4 @@
+line 301: project_native_status()==2&&!native_as.ready&&!d8mc_session_valid()
+line 303: mc_op(3)==MC_BAD
+line 304: d8mc.phase==MC_READY&&d8mc_session_valid()&&project_native_status()==1&&native_as.ready
+Frozen READY policy regression: 1626286 checks, 3 failures
