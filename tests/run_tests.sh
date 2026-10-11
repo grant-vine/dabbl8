@@ -149,6 +149,8 @@ EOF
     run "USB descriptors: CDC $t_cdc (presented $t_on), UAC $t_uac (48 kHz $t_48), layout $t_lay" "$OUT/usb_desc_test"
 done
 
+run "USB AC collection order: complete rate/layout/console matrix and exact descriptor deltas" python3 tests/uac_collection_order_test.py
+
 [ -f build/felucca.fwsc ] || { echo "run ./build.sh first"; exit 1; }
 
 $CC -DOWN_PKG=1 -o "$OUT/ota_test" tests/ota_test.c
@@ -421,6 +423,7 @@ elif [ ! -f build/gen/felucca_tables.h ]; then
 elif ! san_ok; then
     echo "== skip the sanitizer runs (the compiler has no ASan / UBSan)"
 else
+    run "ASan/UBSan: strict USB AC collection-order descriptor matrix" python3 tests/uac_collection_order_test.py --sanitize
     mkdir -p "$OUT/asan"
     A="$OUT/asan"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
