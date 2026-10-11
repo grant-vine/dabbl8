@@ -7,7 +7,11 @@ static void read_inject(void);
 #include "../firmware/src/project_native_flash.c"
 #include "../firmware/src/native_autosave_session.c"
 static unsigned change_during_read;
-static void read_inject(void){if(change_during_read&&native_as.pending){change_during_read=0;trk[7].p[P_LEVEL]=113;}}
+static void read_inject(void){
+#ifdef D8FLASH_EXTRA_READ_HOOK
+ D8FLASH_EXTRA_READ_HOOK();
+#endif
+ if(change_during_read&&native_as.pending){change_during_read=0;trk[7].p[P_LEVEL]=113;}}
 static void late_current(void){trk[7].p[P_LEVEL]=114;}
 static uint32_t current_signature(void){uint32_t s=0;CHECK(d8p1_signature_runtime(&s)==D8RT_OK);return s;}
 static int tick(uint32_t delta){fm1_ms+=delta;return d8p1_autosave_session_poll();}
