@@ -1,0 +1,128 @@
+editor: D8 capabilities: family/schema and actual track/step/voice/event limits ok
+editor: INFO appends D8 discovery without replacing the legacy reply           ok
+editor: malformed capability query has an explicit bounds error, no mutation   ok
+editor: eight-track protocol policy denies old editor sound/project/preset writes ok
+editor: eight-track policy permits identity and bounded reads; schema command remains distinct ok
+editor: four-track new firmware keeps old editor commands compatible           ok
+editor: INFO explicitly tags display capabilities after SONG without changing command 33 ok
+editor: UI_SET updates the actual palette and reports RAM-only saving          ok
+editor: out-of-range palette leaves the display unchanged                      ok
+editor: the retired font weight is not supported (rc 2), UI_STATE says 127     ok
+editor: unsupported preference is reported without applying it                 ok
+editor: FAV_SET marks DRUM as a normal engine                                  ok
+editor: FAV_GET reads the bounded favorite range                               ok
+editor: empty user slot cannot be starred                                      ok
+editor: saved user slot can be starred without changing its sound              ok
+editor: favorite range cannot cross the end of user slots                      ok
+editor: short favorite writes return an error without reading absent bytes     ok
+editor: UI_STATE rejects unexpected request bytes                              ok
+editor: SONG still responds through its original command                       ok
+editor: MOTION op 5 sets a lock: rc 0, two records, then their kinds 0 1       ok
+editor: MOTION query as before 1.1: no kinds, the lock's id without bit 7      ok
+editor: MOTION op 7: the query with the kinds                                  ok
+editor: MOTION op 5 refuses step 64 (rc 1)                                     ok
+editor: MOTION op 6 on step 2: its automation event stays                      ok
+editor: MOTION op 6, 127: every lock goes, the automation stays                ok
+editor: D8 MOTION schema 1: explicit track/step lock, version-prefixed reply   ok
+editor: D8 MOTION unknown schema error refuses without mutation                ok
+editor: D8 MOTION unavailable track error refuses without aliasing             ok
+editor: realtime bytes interleaved in SysEx do not enter the editor frame      ok
+editor: a non-realtime status aborts SysEx without changing parameters         ok
+editor: a valid request works after an aborted frame                           ok
+editor: a channel event in another USB packet aborts an unfinished SysEx       ok
+editor: USB channel packets reject mismatched CIN and high data bits           ok
+editor: USB program and channel pressure keep their one-byte payload           ok
+editor: USB MIDI ring stops at capacity across counter wrap                    ok
+editor: USB rejects new messages until the audio consumer clears overflow      ok
+editor: USB resumes after the audio consumer clears overflow                   ok
+editor: UART DMA overrun never combines a stale partial note with new data     ok
+editor: UART receives a complete fresh note after DMA recovery                 ok
+editor: UART discards running-status data after lost bytes until a new status  ok
+editor: UART recovers immediately on a complete channel message                ok
+editor: UART queue overflow latches the same recovery flag as USB              ok
+editor: UART rejects a new stream until audio clears overflow                  ok
+editor: UART resumes valid running status after audio clears overflow          ok
+editor: legacy 8-byte step writes preserve lane data                           ok
+editor: full grid step writes preserve high lane bits and constrain accents    ok
+editor: partial or oversized step payloads never mutate a valid step           ok
+editor: TRACK_STEP accepts its legacy payload on an unselected track           ok
+editor: TRACK_STEP rejects an incomplete grid extension                        ok
+editor: STEP_SET with the ratchet: x3 kept, replied after the chance, flags without it ok
+editor: STEP_SET without the ratchet (an older editor) keeps the step's own    ok
+editor: STEP_SET refuses a ratchet outside 1..4 and leaves the step            ok
+editor: TRACK_STEP sets the ratchet of any track (x4, then back to x1)         ok
+editor: sample erase waits for STOP and refuses a stalled audio ISR            ok
+editor: sample erase stops transport before touching flash                     ok
+editor: 257 decoded sample bytes are rejected without a truncated write        ok
+editor: a dangling packed-data mask is rejected                                ok
+editor: sample writes cancel a pending PLAY before flash access                ok
+editor: an oversized sample header is rejected without programming flash       ok
+editor: complete sample header and CRC publish a valid slot                    ok
+editor: repeated END of the same published header does not rewrite live zones  ok
+editor: END cannot change published sample zones without BEGIN                 ok
+editor: user-preset STORE does not mutate RAM when audio cannot stop           ok
+editor: user-preset ERASE reports failure when audio cannot stop               ok
+editor: SONG sets and queries the complete chain without changing selection    ok
+editor: SONG invalid repeats leave the chain unchanged                         ok
+editor: SONG cannot replace a chain while its start is pending                 ok
+editor: SONG PLAY refuses extra argument bytes                                 ok
+editor: PROJECT refuses an invalid slot instead of wrapping to slot 0          ok
+editor: UP_STORE rejects bytes after its name terminator without saving        ok
+editor: a successful PROJECT save confirms its slot                            ok
+editor: PROJECT never confirms an old used slot when STOP timed out            ok
+editor: FM6_GET factory 4: the packed record                                   ok
+editor: FM6_PUT track 3: rc 0, the track's patch, SLOT OWN (not F4: the name differs) ok
+editor:   .. the main loop keeps it                                            ok
+editor: FM6_GET track 3: as sent                                               ok
+editor: FM6_PUT of a factory patch unchanged: SLOT shows it (F6)               ok
+editor: SLOT OWN -> F2 loads the factory patch                                 ok
+editor:   .. and back to OWN brings the own patch back                         ok
+editor: a SLOT past OWN is OWN: the patch stays, nothing reloads               ok
+editor: FM6_GET of the bank: rc 3, no bank                                     ok
+editor: FM6_PUT to the bank: rc 3, no bank                                     ok
+editor: FM6_ERASE: rc 3, no bank                                               ok
+editor: FM6_LIST: 8 factory names, nbank 0                                     ok
+editor: UP_STORE of an FM6 track: FM6_GET user 6 gives its patch               ok
+editor: FM6_PUT user 6, then GET: stored in range (a level of 120 -> 99)       ok
+editor:   .. UP_LOAD 6 plays it, SLOT OWN                                      ok
+editor:   .. a rename keeps it                                                 ok
+editor: a DRUM user preset has no patch: GET rc 2, PUT rc 1                    ok
+editor: an empty user slot: PUT rc 1; past the slots: GET rc 1                 ok
+editor: an erased preset's patch is gone (GET rc 2)                            ok
+editor: FM6_PUT: a fifth track or a short record: rc 1                         ok
+editor: FM6_GET of an unknown target: rc 1                                     ok
+editor: UP_PUT stores a v4 record (no flash here: kept in RAM)                 ok
+editor: UP_PUT keeps every value (PAN -20, FLT -40, min and max)               ok
+editor: UP_GET returns the values and the pattern UP_PUT sent                  ok
+editor: WATCH 1 starts watching                                                ok
+editor: WATCH 1 while watching keeps a pending change: CHANGED still goes out  ok
+editor: WATCH 0 then WATCH 1 starts from the values as they are (no push)      ok
+editor: WATCH 3 while watching: CHANGED kept, TRACK_CHANGED from the mix as it is ok
+editor: WATCH after a USB reset starts over                                    ok
+editor: the editor's own PRESET: no RELOAD, no CHANGED for what it loaded, a pending CHANGED stays ok
+editor: PRESET of other engines: no push at all                                ok
+editor: SET of G_ENGSEL: no RELOAD                                             ok
+editor: a RELOAD due before the editor's PRESET still goes out                 ok
+editor: not watching: PRESET as before, WATCH then starts from it              ok
+editor: BACKUP_PUT begin through ep1_take                                      ok
+editor: 256-byte pieces in 64-byte USB packets at full speed: every piece taken (rc 0) ok
+editor: abort through ep1_take                                                 ok
+editor: pipelined: the first piece is taken, the second (sent before its reply) dropped whole ok
+editor: ... so the next piece is refused (rc 1, offset), as a host that waits never sees ok
+editor: MENU_DESC: 18 items (1.0.4's 12 in the menu's order, then 1.1's CLICK, CLICK LEVEL, COUNT-IN, 1.2's RESTORE LAST, SCALE LEDS, SCREEN OFF), ids 0..17, names, defaults ok
+editor: MENU_DESC (1.0.5): after the names each item's tab, index and name (DISPLAY CONTROL AUDIO SYSTEM) ok
+editor: MENU_DESC: the tab comes after every byte of the 1.0.4 reply (older editors ignore it) ok
+editor: MENU_DESC: no CALIBRATION / ABOUT; an index past the list answers index, 127 (no item) ok
+editor: MENU_DESC / MENU_SET with the wrong length: no reply                   ok
+editor: MENU_SET: every setting applied as the menu does (palette, EQ, USB LEVEL, CLICK, COUNT-IN at once, RESTORE LAST, SCALE LEDS, SCREEN OFF), read back ok
+editor: MENU_SET: a flag back to its default leaves the other flags            ok
+editor: MENU_SET: out-of-range values clamped, the reply says the value the device took ok
+editor: MENU_SET: an unknown id answers rc 1, id and value echoed, nothing changed ok
+editor: MENU_SET while the MENU page is shown: the page redraws (ui.force)     ok
+editor: MENU_SET USB SERIAL OFF: reply first, applied ~200 ms later (the device re-enumerates) ok
+editor: MENU_SET USB SERIAL ON: applied later (with the MENU open: when it closes); unchanged: no drop ok
+editor: DESC of DRUM KIT: STD 66 10 77 80 10 66 55 77 (1..3 as the kits they play) ok
+editor: SET of DRUM KIT 1..3 lands on 66 10 77 (and replies it)                ok
+editor: a user preset of DRUM KIT 3 (H+CYM) loads as 77                        ok
+editor: a project of DRUM KIT 1..3 loads as 66 10 77 (STD stays)               ok
+editor test passed

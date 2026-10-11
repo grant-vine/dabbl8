@@ -1,0 +1,1 @@
+FAIL line 68: !memcmp(&before.pending_dma,&dma,sizeof dma) && before.fences==lcd_fences
