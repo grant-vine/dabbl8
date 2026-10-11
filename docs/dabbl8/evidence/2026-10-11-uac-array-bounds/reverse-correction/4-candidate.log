@@ -1,0 +1,3 @@
+App only; identical copied generated headers; no loader/package/install.
+CFLAGS ['-Os', '-ffunction-sections', '-fno-builtin', '-Wall', '-Wno-unused-function', '-DNPART=4']
+CHECK [] ['.ram_text: 916 insns, no calls', 'image 447968 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064']

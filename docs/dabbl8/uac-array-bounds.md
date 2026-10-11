@@ -1,4 +1,4 @@
-# Resampler channel-array bounds
+# Resampler array bounds
 
 The USB48 FIR previously formed a pointer into `rs.l` and read right-channel
 samples with `x[2 * RS_H]`. Left and right histories are distinct arrays in a
@@ -20,7 +20,7 @@ CDC on/off, normally and under strict ASan/UBSan, including independent floating
 resampling/response/SNR and packet/rate tests. The native DSP suites retain their
 existing sanitizer exclusions; the frozen historical reference is unchanged.
 
-Pinned vendor app-only builds at four and eight tracks have byte-identical
+Historical channel-only qualification at `a46324a` produced byte-identical
 application, ELF and disassembly to main. Four-track app: 447,952 bytes, SHA-256
 `a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096`,
 RAM 92,116/98,304, pool 331,332/344,064. Eight-track app: 480,284 bytes, SHA-256
@@ -36,3 +36,27 @@ host logs, target/compiler provenance, memory results and unchanged failures.
 Complete target products/source snapshots remain in the ignored local baseline
 folder. Golden hashes, loader and flash boundaries are untouched. Hardware timing,
 recovery and release gates remain open.
+
+## Reverse coefficient correction
+
+Review also found that the inherited reverse `*c--` traversal formed a pointer
+before its coefficient row after the final tap. The revised loop starts at the
+legal one-past position and reads `*--c`, visiting coefficients N-1 through zero
+without forming a pointer outside the permitted range. Forward traversal may end
+at one-past; it does not dereference it. The stale history-layout comment is corrected.
+
+All eight focused runs above pass again with the revised source. The target
+compiler produces an extra 16 application bytes; RAM and pool sizes remain unchanged.
+Four-track app is 447,968 bytes, SHA-256
+`f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4`;
+eight-track app is 480,300 bytes, SHA-256
+`5e076906a3698395425de08c707b5cbe56097b7c00d3fa988bbbeb6485ebce66`.
+Four-track static checks pass. Eight-track whole-IRQ cost remains 55,767;
+UAC static cost increases from 555 to 562 and still fails the unchanged 504
+budget with its 10% tolerance. This source correction is not a timing optimisation.
+An indexed reverse traversal was tested first and produced the same target
+hashes and costs; its failed timing estimates remain in the private evidence.
+
+[Revised-source logs and hashes](evidence/2026-10-11-uac-array-bounds/reverse-correction/)
+are separate from the historical channel-only evidence. Complete hosted checks
+of the revised source and physical timing qualification remain pending.
