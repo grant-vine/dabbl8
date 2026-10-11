@@ -344,21 +344,26 @@ static void layer_tap(uint32_t l)
 /* EDIT: a sound load in the layer. The first one takes the undo copy as the track is now (when the layer
  * opened, unless KNOB 2 / 3 had loaded already), so OCT- and SAVE held go back to it */
 static uint32_t snd_id(void) { return TSEL->eng_req | (uint32_t)TSEL->preset << 8 | (uint32_t)TSEL->user << 16; }
-static void edit_load(uint32_t e, int32_t step)
+static int edit_load_mask(uint32_t e, int32_t step, unsigned mask)
 {
     uint32_t id = snd_id();
-    if (!lys.loaded)
-        undo.keep = 0;
+    int rc;
     if (e < NENGINES) {
-        if (e == TSEL->eng_req % NENGINES)
-            return;                                     /* its engine already: the sound stays */
-        select_engine(e);
+        rc = factory_ready(e, 0, mask);
+        if (rc) return rc;
+        if (e == TSEL->eng_req) return D8ENGINE_OK;
+        if (!lys.loaded) undo.keep = 0;
+        rc = select_engine_mask(e, mask);
+        if (rc) return rc;
         preset_hinted();
-    } else {
-        eng_list_step(step);
-    }
+    } else if (e == NENGINES) {
+        rc = eng_list_step_mask(step, mask, !lys.loaded);
+        if (rc) return rc;
+    } else return D8ENGINE_INVALID_REQUEST;
     lys.loaded |= snd_id() != id;
+    return D8ENGINE_OK;
 }
+static int edit_load(uint32_t e, int32_t step) { return edit_load_mask(e, step, D8ENGINE_EFFECTIVE_MASK); }
 
 /* GLO TAP: from the third tap the tempo of the taps (the last 4); 2 s without one starts over. INT clock only */
 static void glo_tap(void)

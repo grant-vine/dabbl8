@@ -392,15 +392,21 @@ static int up_rename(uint32_t k, const char *name)
 
 /* slot k -> the selected part's sound: engine and every parameter except the track's own (param_kept:
  * the mix, ARP, SCL, the pattern parameters, the SLICER). The steps stay: the record's pattern is
- * loaded only from SEQ > PATTERNS (up_pat_load). 0 ok, 1 empty */
-static int up_load(uint32_t k)
+ * loaded only from SEQ > PATTERNS (up_pat_load). 0 success, D8ENGINE_* refusal */
+static int up_ready(uint32_t k, unsigned mask)
+{
+    unsigned target;
+    if (!up_used(k)) return D8ENGINE_INVALID_REQUEST;
+    return eng_runtime_target(&target, mask, up_rec(k)->engine, 0, D8ENGINE_LEGACY_SELECT);
+}
+static int up_load_mask(uint32_t k, unsigned mask)
 {
     const up_rec_t *r;
     int16_t v[P_COUNT];
     uint32_t i;
     track_t *t = TSEL;
-    if (!up_used(k))
-        return 1;
+    int rc = up_ready(k, mask);
+    if (rc) return rc;
     r = up_rec(k);
     up_values(r, v);
     load_begin(t, UNDO_SOUND);                          /* (ui.c: the copy for SAVE held = undo) */
@@ -429,6 +435,7 @@ static int up_load(uint32_t k)
     ui.force = 1;
     return 0;
 }
+static int up_load(uint32_t k) { return up_load_mask(k, D8ENGINE_EFFECTIVE_MASK); }
 
 /* the patterns of the user presets (SEQ > PATTERNS lists them after the factory ones, ui.c pat_count) */
 static int up_has_pat(uint32_t k) { return up_used(k) && !up_pat_empty(up_rec(k)); }
@@ -507,7 +514,7 @@ static uint32_t up_rank(uint32_t slot)         /* used slots before it */
 }
 
 /* SAVE > USER page actions, with the message in the top bar. name: the save's or the rename's (0 or "": automatic) */
-static void up_ui_named(uint32_t op, uint32_t k, const char *name)   /* 0 load, 1 erase, 2 save, 3 rename */
+static void up_ui_named_mask(uint32_t op, uint32_t k, const char *name, unsigned mask)   /* 0 load, 1 erase, 2 save, 3 rename */
 {
     char l[4];
     int rc;
@@ -521,7 +528,7 @@ static void up_ui_named(uint32_t op, uint32_t k, const char *name)   /* 0 load, 
         return;
     }
     if (op == 0u) {
-        up_load(k);
+        if (up_load_mask(k, mask)) return;
         if (up_has_pat(k))                              /* SEQ > PATTERNS starts at its pattern */
             ui.ppick = (uint8_t)(NPATTERNS + up_pat_rank(k));
         ui_say("LOADED ", l);
@@ -536,5 +543,6 @@ static void up_ui_named(uint32_t op, uint32_t k, const char *name)   /* 0 load, 
         ui_say(op == 1u ? "ERASED " : op == 3u ? "RENAMED " : "SAVED ", l);
     ui.force = 1;
 }
+static void up_ui_named(uint32_t op, uint32_t k, const char *name) { up_ui_named_mask(op, k, name, D8ENGINE_EFFECTIVE_MASK); }
 static void up_ui(uint32_t op, uint32_t k) { up_ui_named(op, k, 0); }
 #endif

@@ -1,0 +1,4 @@
+Mutation firmware/src/upreset.c
+if (up_load_mask(k, mask)) return;
+ -> (void)up_load_mask(k, mask);
+FAIL line 46: !memcmp(&before.ui, &(ui), sizeof(ui))
