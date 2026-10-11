@@ -120,6 +120,17 @@ int main(void)
     fresh();input.phys=1;input.t[0].engine=ENGI_PHYS;input.t[0].p[P_E0]=4;
     refuse(mask&~(1u<<ENGI_DRUM),PROJ_RUNTIME_MISSING_ENGINE);
     accept(mask&~(1u<<ENGI_PHYS),ENGI_DRUM);
+    fresh();input.phys=0;input.t[0].engine=ENGI_PHYS;input.t[0].p[P_E0]=2;
+    refuse(mask&~(1u<<ENGI_PHYS),PROJ_RUNTIME_MISSING_ENGINE);
+    accept(mask&~(1u<<ENGI_DRUM),ENGI_PHYS);
+    REQUIRE(trk[0].p[P_E0]==PM_MODAL && trk[0].p[P_E0+6]==64); /* historical DUST */
+    fresh();input.phys=0;input.t[0].engine=ENGI_PHYS;input.t[0].p[P_E0]=4;
+    refuse(mask&~(1u<<ENGI_DRUM),PROJ_RUNTIME_MISSING_ENGINE);
+    accept(mask&~(1u<<ENGI_PHYS),ENGI_DRUM); /* revision-0 MODEL DRUM */
+#if NTRK == 8
+    fresh();input.t[7].engine=ENGI_DRUM;
+    refuse(mask&~(1u<<ENGI_DRUM),PROJ_RUNTIME_MISSING_ENGINE); /* only track 8 unavailable */
+#endif
     fresh();input.parts=0;refuse(mask&~(1u<<ENGI_DRUM),PROJ_RUNTIME_MISSING_ENGINE);
     fresh();input.t[0].preset=PROJ_DEF_KEEP;refuse(mask&~(1u<<ENGI_DRUM),PROJ_RUNTIME_MISSING_ENGINE);
     fresh();input.t[0].engine=ENGI_SAMPLE;input.t[0].p[P_E0]=0;input.t[0].preset=PROJ_DEF_SOUND;
@@ -148,6 +159,10 @@ int main(void)
     REQUIRE(d8p1_load_runtime_mask(raw,n,15,mask&~1u)==D8RT_MISSING_ENGINE);
     unchanged();REQUIRE(!memcmp(raw,saved,n));
     REQUIRE(d8p1_load_runtime(raw,n,15)==D8RT_OK); /* actual immutable production wrapper */
+    fresh();input.t[7].engine=ENGI_DRUM;input.sum=proj_sum(&input);native.project=input;n=0;
+    REQUIRE(d8p1_project_encode(raw,sizeof raw,&n,&native));memcpy(saved,raw,n);snapshot();
+    REQUIRE(d8p1_load_runtime_mask(raw,n,15,mask&~(1u<<ENGI_DRUM))==D8RT_MISSING_ENGINE);
+    unchanged();REQUIRE(!memcmp(raw,saved,n)); /* wire track 8 alone unavailable */
     fresh();input.t[0].engine=ENGI_SAMPLE;input.t[0].p[P_E0]=SMP_SET_PERC;input.sum=proj_sum(&input);
     native.project=input;n=0;REQUIRE(d8p1_project_encode(raw,sizeof raw,&n,&native));memcpy(saved,raw,n);snapshot();
     REQUIRE(d8p1_load_runtime_mask(raw,n,15,mask&~(1u<<ENGI_DRUM))==D8RT_MISSING_ENGINE);
