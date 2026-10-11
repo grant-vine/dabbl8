@@ -142,16 +142,43 @@ static void shed_voice(void)
     }
 }
 
+#if DABBL8_TIMING_DIAGNOSTIC
+static struct d8_timing_snapshot audio_timing_sample(void)
+{
+    struct d8_timing_snapshot s;
+    const volatile uint32_t *boots = &felucca_dbg.boots, *late = &felucca_dbg.late;
+#if FELUCCA_UAC
+    const volatile uint32_t *under = &uac.underruns, *over = &uac.overruns;
+#endif
+    s.boots = *boots; s.late = *late;
+#if FELUCCA_UAC
+    s.under = *under; s.over = *over;
+#else
+    s.under = s.over = 0;
+#endif
+#ifdef D8_TIMING_SNAPSHOT_TEST_HOOK
+    D8_TIMING_SNAPSHOT_TEST_HOOK();
+#endif
+    s.ticks = fm1_ticks();
+    s.unstable = (s.boots != *boots || s.late != *late);
+#if FELUCCA_UAC
+    s.unstable |= (s.under != *under || s.over != *over);
+#endif
+    return s; /* bounded double-read: no retry, masking, allocation or IRQ print */
+}
+#endif
+
 void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) */
 {
     uint8_t p;
     uint32_t t0;
     felucca_dbg.in_audio = 1;                   /* keep TIMER5 on its bounded nested path through collection */
 #if DABBL8_TIMING_DIAGNOSTIC
-    uint32_t diagnostic_start = 0, diagnostic_render = 0;
+    struct d8_timing_snapshot diagnostic_start = {0}, diagnostic_end;
+    uint32_t diagnostic_render = 0;
     uint32_t diagnostic_enabled = audio_timing.enabled, diagnostic_half = 0;
     if (diagnostic_enabled)
-        diagnostic_start = fm1_ticks();
+        diagnostic_start = audio_timing_sample();
 #endif
     p = fm1_audio_pending();
     t0 = fm1_ticks();
@@ -206,8 +233,12 @@ void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) 
         felucca_dbg.cpu_q8 = song.cpu_q8;
     }
 #if DABBL8_TIMING_DIAGNOSTIC
-    if (diagnostic_enabled && diagnostic_half)
-        audio_timing_record(diagnostic_render, fm1_ticks() - diagnostic_start, audio_halves);
+    if (diagnostic_enabled && diagnostic_half) {
+        diagnostic_end = audio_timing_sample();
+        audio_timing_record_window(diagnostic_render, audio_halves,
+                                  &diagnostic_start, &diagnostic_end, p);
+    } else if (diagnostic_enabled)
+        audio_timing_aux(p);
 #endif
     felucca_dbg.in_audio = 0;
 }
