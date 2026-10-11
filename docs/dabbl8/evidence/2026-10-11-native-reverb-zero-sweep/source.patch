@@ -1,0 +1,355 @@
+diff --git a/firmware/src/fx.c b/firmware/src/fx.c
+index 7ff855a..e64b859 100644
+--- a/firmware/src/fx.c
++++ b/firmware/src/fx.c
+@@ -19,10 +19,50 @@ static union {                          /* ROOM's allpasses; SPRING's allpass ch
+  * The reverb union counts current-model entries; rev_clear resets both views. */
+ #if NTRK == 8
+ static volatile struct { uint32_t delay, chorus, comb, ap; } fx_tail;
++/* Audio-owned conservative certificates, published only at render exit.
++ * A zero wait proves every active entry was overwritten by zero. The original
++ * comb/ap tracked-store guards remain separate, so an external tracked test
++ * write cannot be forgotten by an active-model sweep. */
++static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
++static inline void fx_sweep_model(uint8_t model)
++{
++    /* A caller that changes domains without the required rev_clear cannot
++     * prove inactive union/line entries silent. Keep that misuse quarantined. */
++    if(fx_rev_wait.model && fx_rev_wait.model!=model)fx_tail.comb=fx_tail.ap=1;
++    fx_rev_wait.model=model;
++}
++static inline uint32_t fx_zero_sweep(uint32_t wait,uint32_t dirty,uint32_t samples,uint32_t span)
++{ return dirty ? span : samples >= wait ? 0u : wait-samples; }
++/* A pre-store nonzero value may conservatively retain a wait even if its
++ * truncation stores zero; a zero summary always means actual zero stores. */
++#define FTR16(d,p,v) do { int32_t fv=(v); *(p)=(int16_t)fv; (d)|=(uint32_t)fv; \
++    FT_RENDER_STORE_HOOK(); } while(0)
++#define FTR32(d,p,v) do { int32_t fv=(v); *(p)=fv; (d)|=(uint32_t)fv; \
++    FT_RENDER_STORE_HOOK(); } while(0)
++#ifdef FT_LOCAL_STORE_HOOK
++#define FT_RENDER_STORE_HOOK() FT_LOCAL_STORE_HOOK()
++#else
++#define FT_RENDER_STORE_HOOK() do {} while(0)
++#endif
++
+ static inline void ft_store16(volatile uint32_t *count,int16_t *p,int16_t value)
+-{ *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
++{
++    /* Reverb rendering uses sweep certificates, not this occupancy counter.
++     * Every external tracked update latches until the existing full clear;
++     * mixed render/external stores can never underflow or wrap it to zero. */
++    if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
++    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
++    *p=value;
++}
+ static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
+-{ *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
++{
++    /* Reverb rendering uses sweep certificates, not this occupancy counter.
++     * Every external tracked update latches until the existing full clear;
++     * mixed render/external stores can never underflow or wrap it to zero. */
++    if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
++    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
++    *p=value;
++}
+ #define FT16(c,p,v) ft_store16(&fx_tail.c,(p),(int16_t)(v))
+ #define FT32(c,p,v) ft_store32(&fx_tail.c,(p),(v))
+ /* Production render owns local totals until its bounded synchronous call ends.
+@@ -49,6 +89,8 @@ static inline void ft_local32(uint32_t *count,int32_t *p,int32_t value,int32_t o
+ #define FTL16(c,p,v) (*(p)=(int16_t)(v))
+ #define FTLO16(c,p,v,o) (*(p)=(int16_t)(v))
+ #define FTLO32(c,p,v,o) (*(p)=(v))
++#define FTR16(d,p,v) (*(p)=(int16_t)(v))
++#define FTR32(d,p,v) (*(p)=(v))
+ #endif
+ static struct {
+     uint32_t dly_w, cho_w, cho_ph;
+@@ -231,35 +273,58 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
+     uint32_t i, k;
+     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
+ #if NTRK == 8
+-    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
++    uint32_t comb_dirty=0,ap_dirty=0;
++    fx_sweep_model(1);
+ #endif
+     for (i = 0; i < n; i++) {
+         int32_t a = 0;
+         int16_t *c = rev_comb;
+         int32_t in = mulq15(rev_in[i], 2580);           /* 1/8 at -4 dB: level as before the allpass fix */
+         for (k = 0; k < 4u; k++) {
++#if NTRK == 8
++            uint32_t position=fx.comb_i[k];
++            int32_t o = c[position];
++#else
+             int32_t o = c[fx.comb_i[k]];
++#endif
+             fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
+-            FTLO16(comb_nz,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767),o);
++#if NTRK == 8
++            FTR16(comb_dirty,&c[position],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
++            fx.comb_i[k]=(uint16_t)(position+1u>=REV_COMB[k]?0u:position+1u);
++#else
++            FTR16(comb_dirty,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
+             if (++fx.comb_i[k] >= REV_COMB[k])
+                 fx.comb_i[k] = 0;
++#endif
+             a += o;
+             c += REV_COMB[k];
+         }
+         c = rev_ap;
+         for (k = 0; k < 2u; k++) {
++#if NTRK == 8
++            uint32_t position=fx.ap_i[k];
++            int32_t o = c[position];
++#else
+             int32_t o = c[fx.ap_i[k]];
++#endif
+             int32_t v = a + (o >> 1);
+-            FTLO16(ap_nz,&c[fx.ap_i[k]],clamp(v, -32768, 32767),o);
++#if NTRK == 8
++            FTR16(ap_dirty,&c[position],clamp(v, -32768, 32767));
++            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
++            fx.ap_i[k]=(uint16_t)(position+1u>=REV_AP[k]?0u:position+1u);
++#else
++            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
+             a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
+             if (++fx.ap_i[k] >= REV_AP[k])
+                 fx.ap_i[k] = 0;
++#endif
+             c += REV_AP[k];
+         }
+         out[i] += a;
+     }
+ #if NTRK == 8
+-    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
++    fx_rev_wait.comb=fx_zero_sweep(fx_rev_wait.comb,comb_dirty,n,1356u);
++    fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,556u);
+ #endif
+ }
+ 
+@@ -273,7 +338,8 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t
+     int16_t *ln = rev_comb;
+     int32_t *ap = rev_u.sp;
+ #if NTRK == 8
+-    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
++    uint32_t comb_dirty=0,ap_dirty=0;
++    fx_sweep_model(2);
+ #endif
+     if (!fx.sp_size)
+         fx.sp_size = len;
+@@ -296,20 +362,21 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t
+         fx.sp_hp += o >> 6;
+         x -= fx.sp_hp;
+         p = ap[j];                                      /* the chain: ap[j + k], stage k's output 4 samples ago */
+-        FTLO32(ap_nz,&ap[j],x,p);
++        FTR32(ap_dirty,&ap[j],x);
+         for (k = 1; k <= SP_N; k++) {                   /* (lossless: bounded by the loop's input, no clamp) */
+             int32_t v = (x - ap[j + k]) * SP_A;         /* towards 0, as the loop's gain: floors would feed */
+             o = ap[j + k];                              /* the loop a little offset and noise for ever */
+             x = ((v + ((v >> 31) & 4095)) >> 12) + p;
+             p = o;
+-            FTLO32(ap_nz,&ap[j + k],x,o);
++            FTR32(ap_dirty,&ap[j + k],x);
+         }
+-        FTL16(comb_nz,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
++        FTR16(comb_dirty,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
+         fx.sp_w = (uint16_t)(wp + 1u);
+         out[i] += (t0 + (((t1 - t0) * f) >> 8)) * 4 + ln[(wp - (uint32_t)L3) & SP_MASK] * 2;
+     }
+ #if NTRK == 8
+-    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
++    fx_rev_wait.comb=fx_zero_sweep(fx_rev_wait.comb,comb_dirty,n,SP_LEN);
++    fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,4u);
+ #endif
+ }
+ 
+@@ -325,7 +392,7 @@ static void rev_clear(void)
+         fx.comb_lp[i] = 0;
+     fx.sp_lp = fx.sp_hp = fx.sp_he = 0;
+ #if NTRK == 8
+-    fx_tail.comb=fx_tail.ap=0;
++    fx_tail.comb=fx_tail.ap=0;fx_rev_wait.comb=fx_rev_wait.ap=0;fx_rev_wait.model=0;
+ #endif
+ }
+ 
+@@ -397,7 +464,7 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
+  * call this predicate from an interrupt nested inside audio rendering. */
+ static int fx_resident_quiet(void)
+ {
+-    if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx.dly_lp||
++    if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx_rev_wait.comb||fx_rev_wait.ap||fx.dly_lp||
+        fx.sp_lp||fx.sp_hp||(uint32_t)fx.sp_he>=64u||dc_l||dc_r||
+        (uint32_t)dce_l>=4096u||(uint32_t)dce_r>=4096u||
+        lc_l1||lc_l2||lc_r1||lc_r2||sb_lp1||sb_lp2||sb_lp3||sb_lp4||
+diff --git a/tests/native_fx_counter_boundary_test.c b/tests/native_fx_counter_boundary_test.c
+index 6c57336..dc5df2e 100644
+--- a/tests/native_fx_counter_boundary_test.c
++++ b/tests/native_fx_counter_boundary_test.c
+@@ -15,7 +15,7 @@ static void local_store_hook(void){
+  if(!hook_enabled)return;
+  CHECK(queue_audio_dbg.in_audio==1);unsigned rd=reads,wr=writes;
+  hs_regs[4][17]=0;fm1_timer5_irq();CHECK(reads==rd&&writes==wr);
+- if(!(hook_calls%100)){uint32_t c=0;for(unsigned i=0;i<sizeof rev_comb/2;i++)c+=rev_comb[i]!=0;if(c!=fx_tail.comb)stale++;}
++ if(!(hook_calls%100)){uint32_t c=0;for(unsigned i=0;i<sizeof rev_comb/2;i++)c+=rev_comb[i]!=0;if(c&&!fx_tail.comb&&!fx_rev_wait.comb)stale++;}
+  hook_calls++;
+ }
+ static void tails_oracle(void){
+@@ -23,9 +23,13 @@ static void tails_oracle(void){
+  for(unsigned i=0;i<DLY_LEN;i++)d+=dly_buf[i]!=0;
+  for(unsigned i=0;i<CHO_LEN;i++)c+=cho_buf[i]!=0;
+  for(unsigned i=0;i<sizeof rev_comb/2;i++)r+=rev_comb[i]!=0;
+- if(fx.rtype)for(unsigned i=0;i<4*(SP_N+1);i++)a+=rev_u.sp[i]!=0;
+- else for(unsigned i=0;i<sizeof rev_ap/2;i++)a+=rev_ap[i]!=0;
+- CHECK(d==fx_tail.delay&&c==fx_tail.chorus&&r==fx_tail.comb&&a==fx_tail.ap);
++ for(unsigned i=0;i<sizeof rev_ap/2;i++)a+=rev_ap[i]!=0;
++ CHECK(d==fx_tail.delay&&c==fx_tail.chorus);
++    /* Actual full-buffer oracle: eligibility implies silence, independently
++     * of conservative sweep metadata and external tracked-store guards. */
++    CHECK(!r || fx_tail.comb || fx_rev_wait.comb);
++    CHECK(!a || fx_tail.ap || fx_rev_wait.ap);
++    if(fx_resident_quiet())CHECK(!d&&!c&&!r&&!a);
+ }
+ int main(void){
+  cold();tails_oracle();CHECK(fx_resident_quiet());stream(1);host_preset(&trk[0],0,5);trk[0].p[P_SLCR]=0;trk[0].p[P_AMODE]=0;
+@@ -33,6 +37,6 @@ int main(void){
+  hook_enabled=1;
+  for(unsigned b=0;b<80;b++){song.g[G_RTYPE]=(b/10)&1u;qa_half=b&1u;fm1_alnk0_irq();tails_oracle();oracle();CHECK(!queue_audio_dbg.in_audio&&!df_automatic_quiet());}
+  hook_enabled=0;CHECK(hook_calls>1000&&stale>0&&scans==hook_calls&&queue_audio_dbg.nested==hook_calls);CHECK(hs_sends>0);
+- printf("Native FX publication: %u checks, %u failures; %u actual nested TIMER5 IRQs, %u stale-in-flight comb observations, 80 real audio halves with complete counter oracles; main-loop-only reader contract, no device timing claim\n",checks,failures,hook_calls,stale);
++ printf("Native FX publication: %u checks, %u failures; %u actual nested TIMER5 IRQs, %u unpublished in-flight comb observations, 80 real audio halves with complete silence oracles; main-loop-only reader contract, no device timing claim\n",checks,failures,hook_calls,stale);
+  return failures!=0;
+ }
+diff --git a/tests/native_fx_tail_test.c b/tests/native_fx_tail_test.c
+index 0e352f1..737da0f 100644
+--- a/tests/native_fx_tail_test.c
++++ b/tests/native_fx_tail_test.c
+@@ -20,9 +20,13 @@ static void oracle(void)
+     for(unsigned i=0;i<DLY_LEN;i++)d+=dly_buf[i]!=0;
+     for(unsigned i=0;i<CHO_LEN;i++)c+=cho_buf[i]!=0;
+     for(unsigned i=0;i<sizeof rev_comb/sizeof rev_comb[0];i++)r+=rev_comb[i]!=0;
+-    if(fx.rtype)for(unsigned i=0;i<4*(SP_N+1);i++)a+=rev_u.sp[i]!=0;
+-    else for(unsigned i=0;i<sizeof rev_ap/sizeof rev_ap[0];i++)a+=rev_ap[i]!=0;
+-    CHECK(d==fx_tail.delay&&c==fx_tail.chorus&&r==fx_tail.comb&&a==fx_tail.ap);
++    for(unsigned i=0;i<sizeof rev_ap/sizeof rev_ap[0];i++)a+=rev_ap[i]!=0;
++    CHECK(d==fx_tail.delay&&c==fx_tail.chorus);
++    /* Actual full-buffer oracle: eligibility implies silence, independently
++     * of conservative sweep metadata and external tracked-store guards. */
++    CHECK(!r || fx_tail.comb || fx_rev_wait.comb);
++    CHECK(!a || fx_tail.ap || fx_rev_wait.ap);
++    if(fx_resident_quiet())CHECK(!d&&!c&&!r&&!a);
+ }
+ static void disturb_tail(void)
+ {
+diff --git a/tests/native_reverb_zero_sweep_test.c b/tests/native_reverb_zero_sweep_test.c
+new file mode 100644
+index 0000000..2f6d5ea
+--- /dev/null
++++ b/tests/native_reverb_zero_sweep_test.c
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-3.0-only */
++/* Real render stores, independent full-union oracle; no physical timing proof. */
++#define D8FLASH_RUNTIME_NO_MAIN 1
++#include "d8p1_flash_runtime_test.c"
++static unsigned sweep_blocks;
++static uint32_t sweep_rng=0x9abc1234;
++static uint32_t random_sweep(void){sweep_rng^=sweep_rng<<13;sweep_rng^=sweep_rng>>17;sweep_rng^=sweep_rng<<5;return sweep_rng;}
++static void proof(void){
++ unsigned comb=0,ap=0;
++ for(unsigned i=0;i<sizeof rev_comb/sizeof rev_comb[0];i++)comb+=rev_comb[i]!=0;
++ /* Scan the entire union, including unused entries and its odd final int16. */
++ for(unsigned i=0;i<sizeof rev_u.ap/sizeof rev_u.ap[0];i++)ap+=rev_u.ap[i]!=0;
++ if(!fx_tail.comb&&!fx_rev_wait.comb)CHECK(!comb);
++ if(!fx_tail.ap&&!fx_rev_wait.ap)CHECK(!ap);
++ if(fx_resident_quiet())CHECK(!comb&&!ap);
++ CHECK(fx_rev_wait.comb<=SP_LEN&&fx_rev_wait.ap<=556u);
++}
++static void render(unsigned model,const int32_t *input,unsigned n){
++ int32_t output[CTL]={0};
++ if(model)rev_spring(input,output,n);else rev_room(input,output,n);
++ proof();sweep_blocks++;
++}
++static void cold_sweep(unsigned model){
++ memset(&fx,0,sizeof fx);rev_clear();fx.rtype=model;
++ fx.comb_i[0]=1115;fx.comb_i[1]=1187;fx.comb_i[2]=1276;fx.comb_i[3]=1355;
++ fx.ap_i[0]=555;fx.ap_i[1]=440;fx.sp_w=65534;
++}
++int main(void){
++ ui_power_on();int32_t input[CTL]={0};
++ for(unsigned model=0;model<2;model++){
++  cold_sweep(model);proof();render(model,input,0);CHECK(!fx_rev_wait.comb&&!fx_rev_wait.ap);
++  for(unsigned block=0;block<2500;block++){
++   unsigned n=1+random_sweep()%CTL;
++   for(unsigned i=0;i<n;i++)input[i]=(block<400&&(random_sweep()&3))?(int32_t)(random_sweep()%32769)-16384:0;
++   if(block%137==0){song.g[G_RSIZE]=random_sweep()%128;song.g[G_RDAMP]=random_sweep()%128;}
++   render(model,input,n);
++  }
++  /* Synthetic all-zero baseline with retained wait demonstrates bounded
++   * conservative deferral. Production never clears state to gain eligibility. */
++  cold_sweep(model);input[0]=32767;render(model,input,1);CHECK(fx_rev_wait.comb>0);
++  uint32_t wait=fx_rev_wait.comb;
++  memset(rev_comb,0,sizeof rev_comb);memset(&rev_u,0,sizeof rev_u);
++  memset(fx.comb_lp,0,sizeof fx.comb_lp);fx.sp_lp=fx.sp_hp=fx.sp_he=0;
++  memset(input,0,sizeof input);render(model,input,0);CHECK(fx_rev_wait.comb==wait);
++  for(unsigned i=0;i<wait;i++){render(model,input,1);if(i+1<wait)CHECK(fx_rev_wait.comb>0);}
++  CHECK(!fx_rev_wait.comb&&!fx_rev_wait.ap);proof();
++ }
++ /* Actual render nonzeros followed by external zero/nonzero updates once
++  * wrapped counted guards back to zero. Reverb guards now latch until clear. */
++ cold_sweep(1);fx.sp_w=0;int32_t pulse[1]={16384},pulse_out[1]={0};rev_spring(pulse,pulse_out,1);
++ CHECK(rev_comb[0]!=0&&rev_u.sp[0]!=0&&!fx_tail.comb&&!fx_tail.ap);
++ FT16(comb,&rev_comb[0],0);FT16(comb,&rev_comb[sizeof rev_comb/2-1],1);
++ CHECK(fx_tail.comb&&!fx_resident_quiet());
++ FT32(ap,&rev_u.sp[0],0);FT32(ap,&rev_u.sp[sizeof rev_u.sp/4-1],1);
++ CHECK(fx_tail.ap&&!fx_resident_quiet());
++ for(unsigned i=0;i<64;i++){
++  FT16(comb,&rev_comb[sizeof rev_comb/2-1],(int16_t)(i&1));
++  FT32(ap,&rev_u.sp[sizeof rev_u.sp/4-1],(int32_t)(i&1));
++  CHECK(fx_tail.comb&&fx_tail.ap&&!fx_resident_quiet());
++ }
++ rev_clear();proof();CHECK(!fx_tail.comb&&!fx_tail.ap);
++ /* Every entry, including inactive union/line storage, stays refused under
++  * an external tracked disturbance until its explicit clear/reset. */
++ for(unsigned model=0;model<2;model++){
++  cold_sweep(model);FT16(comb,&rev_comb[sizeof rev_comb/2-1],1);
++  for(unsigned b=0;b<140;b++)render(model,input,CTL);
++  CHECK(fx_tail.comb&&!fx_resident_quiet());rev_clear();proof();
++  FT16(ap,&rev_u.ap[sizeof rev_u.ap/2-1],-1);
++  for(unsigned b=0;b<140;b++)render(model,input,CTL);
++  CHECK(fx_tail.ap&&!fx_resident_quiet());rev_clear();proof();
++ }
++ cold_sweep(0);render(0,input,1);render(1,input,1);
++ CHECK(fx_tail.comb&&fx_tail.ap&&!fx_resident_quiet());rev_clear();proof();
++ for(unsigned b=0;b<600;b++){
++  song.g[G_RTYPE]=(b/7)&1u;unsigned n=1+random_sweep()%CTL;int32_t zero[CTL]={0},wet[CTL];
++  fx_buses(zero,zero,input,wet,n);proof();
++ }
++ printf("Native reverb zero sweep: %u checks, %u failures; %u actual render blocks, entire buffer/union silence oracle; conservative latency, simulated only\n",checks,failures,sweep_blocks);
++ return failures!=0;
++}
+diff --git a/tests/run_tests.sh b/tests/run_tests.sh
+index 1345fd3..bd198a3 100755
+--- a/tests/run_tests.sh
++++ b/tests/run_tests.sh
+@@ -238,9 +238,11 @@ if [ -f build/gen/felucca_tables.h ]; then
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
+     run "eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain" "$OUT/eight_track_performance_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
+-    run "native resident tails: real DSP counter oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
++    run "native resident tails: real DSP silence oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
+-    run "native FX publication: actual nested TIMER5 and complete post-block counters" "$OUT/native_fx_counter_boundary_test"
++    run "native FX publication: actual nested TIMER5 and complete post-block silence" "$OUT/native_fx_counter_boundary_test"
++    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_reverb_zero_sweep_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_reverb_zero_sweep_test.c -lm
++    run "native reverb zero sweep: full resident buffers and conservative silence" "$OUT/native_reverb_zero_sweep_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+     run "native logical output queues: actual DMA/USB service, drain and late writes" "$OUT/native_output_queue_test"
+     $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+@@ -483,6 +485,8 @@ else
+     run "ASan/UBSan: resident DSP tails and every late mutation refusal" "$A/native_fx_tail_test"
+     $SCC -o "$A/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
+     run "ASan/UBSan: actual audio/TIMER5 counter publication boundaries" "$A/native_fx_counter_boundary_test"
++    $SCC -o "$A/native_reverb_zero_sweep_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_reverb_zero_sweep_test.c -lm
++    run "ASan/UBSan: actual reverb zero sweep and independent full-buffer oracle" "$A/native_reverb_zero_sweep_test"
+     $SCC -o "$A/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
+     run "ASan/UBSan: actual logical audio/USB queues and late refusal" "$A/native_output_queue_test"
+     $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm

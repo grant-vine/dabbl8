@@ -1,0 +1,11 @@
+{
+  "macos": "26.7.1",
+  "architecture": "arm64",
+  "host_clang": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "node": "v26.11.0",
+  "python_dependencies": {
+    "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+    "Pillow": "12.3.0",
+    "fontTools": "4.66.1"
+  }
+}

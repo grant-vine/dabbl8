@@ -1,0 +1,66 @@
+[
+  {
+    "name": "opt-native_reverb_zero_sweep_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "opt-native_reverb_zero_sweep_test",
+    "exit": 0
+  },
+  {
+    "name": "opt-native_fx_tail_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "opt-native_fx_tail_test",
+    "exit": 0
+  },
+  {
+    "name": "opt-native_fx_counter_boundary_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "opt-native_fx_counter_boundary_test",
+    "exit": 0
+  },
+  {
+    "name": "san-native_reverb_zero_sweep_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "san-native_reverb_zero_sweep_test",
+    "exit": 0
+  },
+  {
+    "name": "san-native_fx_tail_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "san-native_fx_tail_test",
+    "exit": 0
+  },
+  {
+    "name": "san-native_fx_counter_boundary_test-compile",
+    "exit": 0
+  },
+  {
+    "name": "san-native_fx_counter_boundary_test",
+    "exit": 0
+  },
+  {
+    "name": "fixed-mixed-store-compile",
+    "exit": 0
+  },
+  {
+    "name": "fixed-mixed-store",
+    "exit": 0
+  },
+  {
+    "name": "candidate-wave-compile",
+    "exit": 0
+  },
+  {
+    "name": "candidate-wave",
+    "exit": 0
+  }
+]

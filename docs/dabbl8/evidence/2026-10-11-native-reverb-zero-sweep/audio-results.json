@@ -1,0 +1,8 @@
+{
+  "parent": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "candidate": "448a4a625731fe2a2aca80445948cf22d9902057",
+  "parent_evidence": "/Users/grantv/Code/dabbl8/.local-baseline/native-reverb-zero-sweep-check/parent-audio.raw",
+  "bytes": 614400,
+  "sha256": "1fe4e0110763d5c3131d9701503a85d9c68429f8def550d4662320c0021c0c6f",
+  "actual_all8tracks_DAC_USB_identity": true
+}

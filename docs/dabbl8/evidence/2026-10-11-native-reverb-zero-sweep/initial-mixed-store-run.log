@@ -1,0 +1,3 @@
+line 10: fx_tail.comb!=0
+line 13: fx_tail.ap!=0
+Mixed reverb stores: 3 checks, 2 failures; actual production stores then external updates\n

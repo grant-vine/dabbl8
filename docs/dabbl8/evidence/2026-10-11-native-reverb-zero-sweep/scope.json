@@ -1,0 +1,53 @@
+{
+  "measured_source": "448a4a625731fe2a2aca80445948cf22d9902057",
+  "parent": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "integration_source": "9ccdfda9773fa979062192398d9051a87f701313",
+  "integration_reverb_blobs_identical": true,
+  "integration_delta": "Exact PR97 web discovery/source-comment/runner/docs added; complete published-tree CI pending",
+  "source_hashes": {
+    "448a4a625731fe2a2aca80445948cf22d9902057": {
+      "firmware/src/fx.c": "7051a9fc3b5511ab9fa9b9592d084b0861ca91128f9ca72d1414a2c56fab6ffd",
+      "tests/native_fx_tail_test.c": "495752e63cfd146a8e9e8274317c055cd8528b85cefa6bc314cec11757150a95",
+      "tests/native_fx_counter_boundary_test.c": "775f30647bfc33fea356f0da8f926427687239854d1264368db35cc5d0ec1710",
+      "tests/native_reverb_zero_sweep_test.c": "92f4964decceeaceba76d40557aa552f68e989fcf7f1fd8968e21769714bcdd6",
+      "tests/run_tests.sh": "ddebd08f0d698e270de46fc73b40429002fa411f82dafab3cb8b37ee3d2410ed"
+    },
+    "9ccdfda9773fa979062192398d9051a87f701313": {
+      "firmware/src/fx.c": "7051a9fc3b5511ab9fa9b9592d084b0861ca91128f9ca72d1414a2c56fab6ffd",
+      "tests/native_fx_tail_test.c": "495752e63cfd146a8e9e8274317c055cd8528b85cefa6bc314cec11757150a95",
+      "tests/native_fx_counter_boundary_test.c": "775f30647bfc33fea356f0da8f926427687239854d1264368db35cc5d0ec1710",
+      "tests/native_reverb_zero_sweep_test.c": "92f4964decceeaceba76d40557aa552f68e989fcf7f1fd8968e21769714bcdd6",
+      "tests/run_tests.sh": "ec0ae2f9349c29ebe8f8e276589ec5f4b3f52ae8af108433c4601fcbf58f4922"
+    }
+  },
+  "historical_counterexample_source": "f531efb6d7ebc69d0bf0e02a6f318d083e0c806c",
+  "initial_counterexample_failures": 2,
+  "fixed_counterexample_failures": 0,
+  "four_track_image_sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+  "pristine_upstream_reference": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "pristine_upstream_artifacts_unchanged": true,
+  "native_target_budget_failures": [
+    "uac_tap48 570 vs504 (+13%, unchanged +10%limit)"
+  ],
+  "host_skips": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "inherited_DSP_SAN_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "leak_checks": "disabled",
+  "hardware": "NOT_RUN",
+  "release_qualified": false,
+  "shipping_native_write_grant": false,
+  "target_build_warning": "Inherited native_migration_capture_binding.c volatile-pointer qualifier warning observed in tool stderr; target-build.log captures stdout only",
+  "pinned_container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "compiler_version": "clang version 4.0.1",
+  "compiler_version_observation": "Pinned amd64 container pi32v2/bin/clang --version stdout"
+}

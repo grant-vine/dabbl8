@@ -1,0 +1,68 @@
+{
+  "source": "448a4a625731fe2a2aca80445948cf22d9902057",
+  "parent": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "alternating_batches": 3,
+  "mac_measurements_not_target_deadline_proof": true,
+  "results": [
+    {
+      "model": "ROOM",
+      "input": "zero",
+      "rounds_per_source": 27,
+      "ns": {
+        "parent_median": 2665000,
+        "candidate_median": 2011000,
+        "change_percent": -24.540337711069416
+      },
+      "instructions": {
+        "parent_median": 39825932,
+        "candidate_median": 31625932,
+        "change_percent": -20.589599761281164
+      }
+    },
+    {
+      "model": "ROOM",
+      "input": "dense",
+      "rounds_per_source": 27,
+      "ns": {
+        "parent_median": 2659000,
+        "candidate_median": 2011000,
+        "change_percent": -24.370063933809703
+      },
+      "instructions": {
+        "parent_median": 39825932,
+        "candidate_median": 31625932,
+        "change_percent": -20.589599761281164
+      }
+    },
+    {
+      "model": "SPRING",
+      "input": "zero",
+      "rounds_per_source": 27,
+      "ns": {
+        "parent_median": 4554000,
+        "candidate_median": 4632000,
+        "change_percent": 1.7127799736495364
+      },
+      "instructions": {
+        "parent_median": 47885932,
+        "candidate_median": 40700820,
+        "change_percent": -15.004640611359509
+      }
+    },
+    {
+      "model": "SPRING",
+      "input": "dense",
+      "rounds_per_source": 27,
+      "ns": {
+        "parent_median": 5396000,
+        "candidate_median": 4631000,
+        "change_percent": -14.17716827279466
+      },
+      "instructions": {
+        "parent_median": 48165211,
+        "candidate_median": 40700820,
+        "change_percent": -15.49747389251549
+      }
+    }
+  ]
+}
