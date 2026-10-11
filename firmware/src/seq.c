@@ -36,6 +36,11 @@ static const uint16_t SCALE_MASK[] = {
 static uint32_t kb_prev;
 static volatile uint8_t kb_boot_hold;    /* #137: set from power-on to the end of the splash (main.c): the keys sound nothing,
                                           * and one held across its end stays silent until it is let go and pressed again */
+#if NTRK == 8
+/* Runtime-only key provenance; saved four/eight-track structures stay unchanged. */
+static uint8_t in_key, held_key[NTRK][16];
+static int8_t held_dt[NTRK][16];
+#endif
 static uint8_t kb_note[27], kb_trk[27];  /* per key: the note it started and on which track */
 static volatile uint8_t kb_asleep;       /* MENU > SCREEN OFF (ui.c): the screen dark or waking, a key pressed now only
                                           * wakes it (silent, no layer, its release nothing) */
@@ -78,6 +83,52 @@ static int32_t scale_snap(const track_t *t, int32_t n)
 
 enum { QN_OFF, QN_SNAP, QN_WHITE, QN_SEQ };      /* P_QUANT */
 
+#if NTRK == 8
+static int32_t kb_engine(const track_t *t, uint32_t k)
+{
+    const engine_t *e = ENGINES[eng_idx(t->eng_req)];   /* (the engine it switches to) */
+    return e->keys ? e->keys(t, k) : -1;
+}
+
+static uint32_t kb_pitch(const track_t *t, uint32_t k, int32_t oct)
+{
+    static const int8_t DEGREE[12] = {0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6};
+    int32_t n = 53 + (int32_t)k;
+    if (t->p[P_QUANT] == QN_SNAP || t->p[P_QUANT] == QN_SEQ)   /* SNAP (and SEQ): every key, rounded down */
+        return (uint32_t)clamp(scale_snap(t, n + 12 * oct + t->p[P_TRANS]), 0, 127);
+    if (t->p[P_QUANT] == QN_WHITE) {                    /* WHITE: white keys walk the scale, black keys are silent */
+        uint32_t mask = scale_mask(t), i;
+        int32_t count = 0, degree = DEGREE[n % 12], wo;
+        if (degree < 0)
+            return KB_SILENT;
+        /* C4 is the root. Walk scale degrees on successive white keys, including
+         * below C4; scales with 5, 6, 8 or 12 notes still have no duplicated degrees. */
+        degree += (n / 12 - 5) * 7;
+        for (i = 0; i < 12u; i++)
+            count += (mask >> i) & 1u;
+        wo = degree / count;
+        degree %= count;
+        if (degree < 0) {
+            degree += count;
+            wo--;
+        }
+        for (i = 0; i < 12u; i++)
+            if ((mask >> i) & 1u) {
+                if (!degree)
+                    break;
+                degree--;
+            }
+        n = 60 + t->p[P_ROOT] + 12 * wo + (int32_t)i;
+    }
+    return (uint32_t)clamp(n + 12 * oct + t->p[P_TRANS], 0, 127);
+}
+
+static uint32_t kb_map(const track_t *t, uint32_t k)
+{
+    int32_t n = kb_engine(t, k);
+    return n >= 0 ? (uint32_t)n : kb_pitch(t, k, song.octave);
+}
+#else
 static uint32_t kb_map(const track_t *t, uint32_t k)
 {
     static const int8_t DEGREE[12] = {0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6};
@@ -114,10 +165,37 @@ static uint32_t kb_map(const track_t *t, uint32_t k)
     }
     return (uint32_t)clamp(n + 12 * song.octave + t->p[P_TRANS], 0, 127);
 }
+#endif
 
 #include "chord.c"
 
 /* ------------------------------------------------------------- arp --- */
+#if NTRK == 8
+static void arp_add(track_t *t, uint32_t note)
+{
+    uint32_t i, k = in_key - 1u;
+    if (t->p[P_AHOLD] && t->arp_phys == 0u)
+        t->nheld = 0;                               /* new chord replaces the latched one */
+    t->arp_phys++;                                  /* every key-down: arp_remove counts every key-up */
+    for (i = 0; i < t->nheld; i++)
+        if (t->held[i] == note)
+            return;                                 /* repeated note-on: not a new note */
+    if (t->nheld < 16u) {
+        /* #191: a key the track's scale keyboard maps (not the DRUM grid, not an engine's own map) is kept as that
+         * key, so TRN, ROOT, SCALE and QNT reach the notes the arp holds (arp_key_list); the octave stays the one it was
+         * pressed in. Anything else (MIDI IN) plays as it came, as before */
+        uint8_t *hk = held_key[trk_index(t)];
+        hk[t->nheld] = in_key && song.grid != 1u && kb_engine(t, k) < 0
+                           ? (uint8_t)(in_key | (uint32_t)(song.octave + 3) << 5) : 0u;
+        held_dt[trk_index(t)][t->nheld] = (int8_t)(hk[t->nheld] ? (int32_t)note - kb_note[k] : 0);
+        t->held[t->nheld++] = (uint8_t)note;
+    }
+    if (t->nheld == 1u) {
+        t->arp_pos = 0xFFFFFFF;                     /* fire on this block */
+        t->arp_idx = 0xFFFFFFFFu;
+    }
+}
+#else
 static void arp_add(track_t *t, uint32_t note)
 {
     uint32_t i;
@@ -134,7 +212,27 @@ static void arp_add(track_t *t, uint32_t note)
         t->arp_idx = 0xFFFFFFFFu;
     }
 }
+#endif
 
+#if NTRK == 8
+static void arp_remove(track_t *t, uint32_t note)
+{
+    uint32_t i, k = 0;
+    uint8_t *hk = held_key[trk_index(t)];
+    int8_t *dt = held_dt[trk_index(t)];
+    if (t->arp_phys)
+        t->arp_phys--;
+    if (t->p[P_AHOLD])
+        return;
+    for (i = 0; i < t->nheld; i++)
+        if (t->held[i] != note) {
+            hk[k] = hk[i];
+            dt[k] = dt[i];
+            t->held[k++] = t->held[i];
+        }
+    t->nheld = (uint8_t)k;
+}
+#else
 static void arp_remove(track_t *t, uint32_t note)
 {
     uint32_t i, k = 0;
@@ -147,6 +245,7 @@ static void arp_remove(track_t *t, uint32_t note)
             t->held[k++] = t->held[i];
     t->nheld = (uint8_t)k;
 }
+#endif
 
 static void rec_note(track_t *t, uint32_t note, uint32_t vel);
 static void rec_release(track_t *t, uint32_t note);
@@ -290,6 +389,33 @@ static int click_wanted(void)                  /* CLICK REC: while a track is ar
 {
     return click_mode == CLICK_ON || (click_mode == CLICK_REC && song.rec && !chain.running);
 }
+#if NTRK == 8
+/* Map surviving keys, retaining original ordering/duplicate semantics. MIDI
+ * pitches and keys with an engine-specific map remain absolute. */
+static uint32_t arp_key_list(const track_t *t,uint32_t *list,uint32_t *cnt)
+{
+    unsigned i,j,n=0,len=0,last=0;
+    const uint8_t *hk=held_key[trk_index(t)];
+    const int8_t *dt=held_dt[trk_index(t)];
+    for(i=0;i<t->nheld;i++){
+        unsigned x=t->held[i],s=hk[i];
+        if(s){
+            x=kb_pitch(t,(s&31u)-1u,(int32_t)(s>>5)-3);
+            if(x==KB_SILENT)continue;
+            x=(unsigned)clamp((int32_t)x+dt[i],0,127);
+        }
+        list[n++]=x;last=x;
+    }
+    *cnt=n;
+    if(!t->p[P_AORDER])
+        for(i=1;i<n;i++)for(j=i;j>0&&list[j-1]>list[j];j--){unsigned x=list[j];list[j]=list[j-1];list[j-1]=x;}
+    for(unsigned o=0;o<(unsigned)t->p[P_AOCT];o++)
+        for(i=0;i<n&&len<64;i++)list[len++]=clamp((int32_t)list[i]+12*(int32_t)o,0,127);
+    if(n&&t->p[P_AMODE]==AM_REPEAT){list[0]=last;len=1;}
+    return len;
+}
+#endif
+
 static void arp_step(track_t *t, uint32_t n, uint32_t gate_n)
 {
     uint32_t period, cnt, list[64], len = 0, i, j, o;
@@ -311,6 +437,10 @@ static void arp_step(track_t *t, uint32_t n, uint32_t gate_n)
     if (t->arp_pos < period + (uint32_t)((t->arp_idx & 1u) ? sw : -sw) && t->arp_pos != 0xFFFFFFF + n)
         return;
     t->arp_pos = 0;
+#if NTRK == 8
+    len=arp_key_list(t,list,&cnt);
+    if(!len){if(t->arp_note)arp_off(t);return;}
+#else
     /* build the note list: held notes (sorted or as played) over OCT octaves */
     for (i = 0; i < t->nheld; i++)
         list[i] = t->held[i];
@@ -326,6 +456,7 @@ static void arp_step(track_t *t, uint32_t n, uint32_t gate_n)
         for (i = 0; i < cnt && len < 64u; i++)
             list[len++] = clamp((int32_t)list[i] + 12 * (int32_t)o, 0, 127);
     if (t->p[P_AMODE] == AM_REPEAT) { list[0] = t->held[t->nheld - 1u]; len = 1; } /* REPEAT: last played note, no octave traversal */
+#endif
     t->arp_idx++;
     j = t->p[P_AMODE] == AM_CHORD ? 0u : arp_pick(t, list, len);
     if (t->arp_note)
@@ -544,6 +675,9 @@ static void key_on(uint32_t k, track_t *t)
 {
     uint32_t n = chord_build(t, kb_note[k], kb_chord[k]), i, mc = trk_midi_ch(trk_index(t));
     kb_chn[k] = 0;
+#if NTRK == 8
+    in_key=(uint8_t)(k+1u);
+#endif
     for (i = 0; i < n; i++) {
         uint32_t x = kb_chord[k][i];
         if (midi_local_held(t, x))
@@ -551,6 +685,9 @@ static void key_on(uint32_t k, track_t *t)
         input_on(t, x, 100);
         midi_out_event(0x09u | (0x90u | mc) << 8 | x << 16 | 100u << 24);
     }
+    #if NTRK == 8
+    in_key=0;
+#endif
     kb_chn[k] = (uint8_t)n;
 #if NTRK == 8
     for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
