@@ -373,8 +373,8 @@ def app_source_inputs():
 
 
 def app_only_validate(ap, args):
-    if not args.dabbl8 or args.release or args.timing_diagnostic:
-        ap.error("--app-only requires --dabbl8 and cannot combine with --release or --timing-diagnostic")
+    if not args.dabbl8 or args.release:
+        ap.error("--app-only requires --dabbl8 and cannot combine with --release")
     for name in ("FELUCCA_FLASH", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY",
                  "FELUCCA_CDC", "FELUCCA_UART", "FELUCCA_UAC", "FELUCCA_UAC_TONE", "FELUCCA_UAC_48K",
                  "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_FM4", "FELUCCA_CDC_DEFAULT", "FELUCCA_SIZE",
@@ -387,7 +387,24 @@ def app_only_validate(ap, args):
         ap.error("app-only qualification cannot update budgets or goldens")
 
 
-def build_app_only():
+def app_stack_windows(syms):
+    """Linked allocation only; never a stack-use or high-water measurement."""
+    windows = {}
+    for kind, prefix in (("user", "u"), ("supervisor", "s")):
+        bounds = []
+        for suffix in ("lo", "top"):
+            name = "_" + prefix + "stack_" + suffix
+            match = re.search(r"^([0-9a-f]+) .*\s" + name + r"$", syms, re.M)
+            if not match:
+                raise SystemExit("app-only stack allocation symbol missing: " + name)
+            bounds.append(int(match.group(1), 16))
+        if bounds[1] <= bounds[0]:
+            raise SystemExit("app-only invalid stack allocation: " + kind)
+        windows[kind] = {"low": bounds[0], "top": bounds[1], "bytes": bounds[1] - bounds[0]}
+    return windows
+
+
+def build_app_only(requested_version=None):
     """Isolated experimental application evidence, never an installable package."""
     global OUT, GEN, LDR, DOCKER_IMAGE
     source = app_source_inputs()  # validation before creating output
@@ -429,8 +446,12 @@ def build_app_only():
         "host_time_environment": {key: os.environ.get(key) for key in ("TZ", "SOURCE_DATE_EPOCH")},
         "date_influence": "Inherited ui_menu uses __DATE__; compiler clock probe and run timestamps are observations, not cross-date binary reproducibility. Docker tools do not forward host time environment variables.",
         "engine_profile": os.environ.get("DABBL8_ENGINE_PROFILE", "full"),
-        "product": PRODUCT, "version": VERSION, "tracks": 8, "shared_voices": 8,
+        "product": PRODUCT, "version": VERSION, "requested_dabbl8_version": requested_version, "tracks": 8, "shared_voices": 8,
         "hardware_qualified": False, "recovery_qualified": False, "release_qualified": False,
+        "stack_qualified": False, "timing_diagnostic": TIMING_DIAGNOSTIC,
+        "flashing_authorized": False, "timing_collection_initially_enabled": False if TIMING_DIAGNOSTIC else None,
+        "timing_report_schema": "D8T2" if TIMING_DIAGNOSTIC else None,
+        "timing_scope": "Instrumented aligned-window observations require external timer/reset and elapsed evidence; no physical timing qualification" if TIMING_DIAGNOSTIC else "Not instrumented",
         "installable": False, "loader_built": False, "package_built": False,
         "output_directory": OUT.relative_to(SRC).as_posix(),
         "source_inputs": source, "git_source": git_source, "toolchain_inputs": tool_inputs,
@@ -459,6 +480,8 @@ def build_app_only():
         errors, notes = check(img, syms, dis, rt)
         errors.extend(mmio_check())
         manifest["build_checks"] = {"errors": errors, "memory_reports": notes}
+        manifest["stack_windows"] = app_stack_windows(syms)
+        manifest["stack_window_scope"] = "Fixed linked allocations only; no stack-frame/call-depth/interrupt nesting/high-water clearance"
         env = os.environ.copy()
         env.pop("BUDGET_UPDATE", None)
         budget = subprocess.run([sys.executable, SRC / "tests/target_budget.py", OUT / "felucca.dis",
@@ -534,7 +557,10 @@ def main():
     # separate gates. Refuse before SDK reads, generation or loader work.
     profile_flags = engine_profile_flags()
     if APP_ONLY:
-        return build_app_only()
+        if TIMING_DIAGNOSTIC:
+            VERSION = DABBL8_VERSION.split("-", 1)[0] + "-timing"
+            DABBL8_VERSION = VERSION
+        return build_app_only(a.dabbl8)
     if profile_flags:
         raise SystemExit("Curated engine profile packaging is disabled; isolated app-only qualification only")
     diagnostic_manifest = None

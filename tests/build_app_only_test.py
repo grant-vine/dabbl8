@@ -20,6 +20,12 @@ def module():
 
 def main():
     checks = 0
+    b = module()
+    for malformed in ('', '01c7a000 *ABS* 00000000 _ustack_lo\n01c74100 *ABS* 00000000 _ustack_top'):
+        try: b.app_stack_windows(malformed)
+        except SystemExit: pass
+        else: raise AssertionError('missing/reversed stack bounds must refuse')
+        checks += 1
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp)
         cli = root/'cli'; shutil.copytree(SRC/'tools', cli/'tools', ignore=shutil.ignore_patterns('__pycache__'))
@@ -28,7 +34,7 @@ def main():
         clean = {k:v for k,v in os.environ.items() if not k.startswith(('FELUCCA_', 'DABBL8_')) and k not in ('BUDGET_UPDATE','GOLDEN_UPDATE')}
         clean['JIELI_TOOLCHAIN'] = '/deliberately/missing/toolchain'
         cases = [(['--app-only'], {}), (['--app-only','--dabbl8','0.1','--release','0.1'], {}),
-                 (['--app-only','--dabbl8','0.1','--timing-diagnostic'], {}),
+                 (['--app-only','--dabbl8','0.1','--timing-diagnostic'], {'FELUCCA_CDC':'0'}),
                  (['--dabbl8','0.1','--engine-profile','core'], {}),
                  (['--dabbl8','0.1','--engine-profile','breaks','--timing-diagnostic'], {}),
                  (['--app-only','--dabbl8','0.1'], {'DABBL8_ENGINE_PROFILE':'bad'}),
@@ -41,7 +47,7 @@ def main():
                  (['--app-only','--dabbl8','0.1'], {'BUDGET_UPDATE':'1'})]
         # Real CLI can refuse before any dependencies or output; snapshot its own build directory too.
         before = {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (cli/'build').rglob('*') if p.is_file()}
-        expected_errors = [b'--app-only requires', b'--app-only requires', b'--app-only requires',
+        expected_errors = [b'--app-only requires', b'--app-only requires', b'--timing-diagnostic needs',
                            b'Curated engine profile packaging is disabled', b'Curated engine profile packaging is disabled',
                            b'Unsupported DABBL8_ENGINE_PROFILE', b'Curated profiles require FELUCCA_FM4',
                            b'Curated profiles require FELUCCA_FM4', b'Dabbl8 version:',
@@ -56,7 +62,7 @@ def main():
         assert q.returncode and b'JIELI_TOOLCHAIN must' in q.stderr; checks += 1
         after = {str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in (cli/'build').rglob('*') if p.is_file()}
         assert before == after and before_directories == {str(p) for p in (cli/'build').rglob('*') if p.is_dir()}; checks += 1
-        for profile, fault in [('full', None), ('core', None), ('breaks', None), ('core', 'generation'), ('core', 'source_mutation')]:
+        for profile, fault, diagnostic in [('full', None, False), ('core', None, False), ('breaks', None, False), ('full', None, True), ('core', None, True), ('breaks', None, True), ('core', 'generation', True), ('core', 'source_mutation', True)]:
             b = module(); b.SRC = root; b.FW=root/'firmware'; b.OUT=root/'build'; b.GEN=b.OUT/'gen'; b.LDR=b.OUT/'loader'
             tool = root/'tool/pi32v2/bin'; tool.mkdir(parents=True,exist_ok=True); (tool/'clang').write_bytes(b'compiler fixture')
             def gen():
@@ -67,9 +73,9 @@ def main():
             def app():
                 assert 'app-only' in b.OUT.parts and b.OUT.parent.name == profile
                 for name in ('felucca.bin','felucca.elf','felucca.dis'): (b.OUT/name).write_bytes(b'app')
-                return b'app','symbols','dis','ramtext'
+                return b'app','\n'.join(f'{value:08x}         *ABS* 00000000 {name}' for name,value in [('_ustack_lo',0x01c74100),('_ustack_top',0x01c7a000),('_sstack_lo',0x01c7a100),('_sstack_top',0x01c7c000)]),'dis','ramtext'
             with patch.dict(os.environ,{**clean,'DABBL8_ENGINE_PROFILE':profile,'JIELI_DOCKER':'0'},clear=True), \
-                 patch.object(sys,'argv',['build.py','--app-only','--dabbl8','0.1']), \
+                 patch.object(sys,'argv',['build.py','--app-only','--dabbl8','0.1']+(['--timing-diagnostic'] if diagnostic else [])), \
                  patch.object(b,'toolchain',return_value=tool.parents[1]), patch.object(b,'tc',return_value='compiler version'), \
                  patch.object(b,'generate',side_effect=gen),patch.object(b,'build_app',side_effect=app), \
                  patch.object(b,'build_loader',side_effect=AssertionError('loader must not run')), \
@@ -83,7 +89,12 @@ def main():
                 else: assert b.main()==0
             manifest=json.loads((b.OUT/'app-only-manifest.json').read_text()); assert manifest['installable'] is False and manifest['package_built'] is False and manifest['loader_built'] is False and manifest['sdk_used'] is False
             assert manifest['phase']==('failed' if fault else 'application_built_not_hardware_qualified')
-            if not fault: assert manifest['source_unchanged']
+            assert manifest['timing_diagnostic'] is diagnostic and manifest['timing_report_schema']==('D8T2' if diagnostic else None)
+            assert manifest['version']==('v0.1.0-timing' if diagnostic else 'v0.1.0') and manifest['stack_qualified'] is False
+            assert ('-DDABBL8_TIMING_DIAGNOSTIC=1' in manifest['compiler_flags']) is diagnostic
+            if not fault:
+                assert manifest['source_unchanged']
+                assert manifest['stack_windows']['user']['bytes']==0x5f00 and manifest['stack_windows']['supervisor']['bytes']==0x1f00
             if fault == 'source_mutation': assert manifest['source_unchanged'] is False
             if fault == 'generation':
                 assert manifest['failure']=='forced generator failure'; checks += 3; continue
