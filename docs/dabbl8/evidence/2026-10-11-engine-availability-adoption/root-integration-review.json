@@ -1,0 +1,13 @@
+{
+  "current_main_integration_source": "47da5e64e613db05d57175c8f2c4e00860146e0a",
+  "host_matrix_assertions": 5936,
+  "host_matrix_runs": 16,
+  "commands_with_individual_exit_status": 32,
+  "source_hashes_verified": 127,
+  "host_scope": "Exact current-main integration host matrix: 4/8 tracks, FM4 and SLICE off/on, normal and inherited DSP sanitizer flags. Earlier guard-removal controls remain separately source-pinned; no target/device/deadline proof.",
+  "earlier_receipt_changes_after_merge": [
+    "firmware/src/usb.c"
+  ],
+  "independent_source_review": "6cfef34 prior source, implementation unchanged by test/evidence-only b9f6137 and current-main UAC integration",
+  "target_scope": "Separate pinned app-only source6cfef34 vs policy48254: four+700B/eight+740B, RAM/pool unchanged, eight static budget fails. This is not app/ELF proof for the newer UAC source union. Full final-source CI and physical qualification remain pending."
+}

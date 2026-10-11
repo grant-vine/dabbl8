@@ -1,0 +1,68 @@
+[
+  {
+    "name": "uac-normal-cdc0",
+    "build": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DT_CDC=0",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-uac-array-bounds/uac-normal-cdc0"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "uac-normal-cdc1",
+    "build": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DT_CDC=1",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-uac-array-bounds/uac-normal-cdc1"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "uac-strict-san-cdc0",
+    "build": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DT_CDC=0",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-uac-array-bounds/uac-strict-san-cdc0"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "uac-strict-san-cdc1",
+    "build": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DT_CDC=1",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-uac-array-bounds/uac-strict-san-cdc1"
+    ],
+    "exit": 0
+  }
+]

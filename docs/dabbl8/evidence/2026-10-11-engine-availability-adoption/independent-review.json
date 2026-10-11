@@ -1,0 +1,39 @@
+{
+  "commit": "6cfef34a7b1960caa8adf8f3394bcb3c16b2ac48",
+  "base": "48254c2",
+  "scope": "Independent read-only committed source and fixture review. No test/build/CI/device operations; new adoption evidence not yet published when reviewed, earlier policy evidence is not final adoption qualification.",
+  "source_hashes": {
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/project.c": "da93d328d5adec2cbcbf6c785e2e62806a103726d52b7b7e17761f1e7fcdb4df",
+    "firmware/src/d8p1_runtime.c": "e5d3f90c18a4e05aa5d00d6d599bef61a4d85e4d081ef6e06adc3d3153df4c05",
+    "tests/engine_adoption_test.c": "fa09e0de017c4e809bb1ca8ad040fa6c78052bd9b9fa1a1c730c7ba10098dab4",
+    "tests/run_tests.sh": "2a2a8218241e96be04f4e9b95a4076ee4ee5a85b8c4c5d0fa0303f0e9a87bc8e"
+  },
+  "source_matches_commit": {
+    "firmware/src/engines.c": true,
+    "firmware/src/project.c": true,
+    "firmware/src/d8p1_runtime.c": true,
+    "tests/engine_adoption_test.c": true,
+    "tests/run_tests.sh": true
+  },
+  "verdict": "No blocking source defect found in adopted availability guards.",
+  "reasoning": [
+    "Pure preview applies the actual legacy track-four parts rule, PHYS legacy conversion and MODEL DRUM conversion, DIGITAL-to-FM6 when FM4 is absent, and parameter-based SAMPLE PERC-to-DRUM in the same order as normalization. Eight local parameter values cover exactly the migration helper footprint.",
+    "Initial normalized engine and late DEF_SOUND factory target are both checked. DEF_KEEP additionally requires DRUM for proj_legacy_drums. Stored SAMPLE preset number 4 with non-PERC parameters is correctly not treated as a factory alias except for DEF_SOUND.",
+    "FM4 adapter accepts implemented DIGITAL with its actual bit and otherwise applies the same stable target policy; SLICE-disabled ID13 is structurally rejected by NENGINES. Production wrappers use only immutable D8ENGINE_EFFECTIVE_MASK.",
+    "Raw D8P1 preview executes after d8p1_read==1 and refs validation. Validator requires an exact 5416-byte tracks chunk with eight 677-byte rows; preview stride 99+2+64*9=677, engine offset99, preset100 and E values91..98 match decoder. Schema and parameter positions are compile-time pinned.",
+    "Known missing engine returns before workspace acquisition or mutation. Pure preview touches only locals and const input. Normalized final check precedes transport/panic/live/cache/patch/undo publication. Native read preview avoids a fence for external raw or existing borrowed wire."
+  ],
+  "fixture_review": [
+    "Actual project and native adoption test snapshots live track/voice data, song, motion, chain, FM patches/generations, UI/undo, signatures, cache, DMA pointer and fence count. Tests arena project and wire preservation, live notes and pending display DMA.",
+    "Matrix adds four/eight tracks with both FM4 and SLICE configurations, normal and inherited sanitizers. Assertions exercise initial and late targets and production wrappers. This is source inspection only, not confirmation those runs passed.",
+    "No meaningful compiled parent negative controls are present in the reviewed commit. They are useful supplementary evidence but absence does not invalidate direct source/fixture reasoning.",
+    "Suggested follow-up tests: PHYS revision0 DUST and MODEL DRUM, missing engine on the eighth track, and malformed raw tracks length/duplicate chunk with recomputed CRC so refusal is attributed to real structural validation. Existing codec tests may already cover malformed structure."
+  ],
+  "limitations": [
+    "No build-profile gate was opened: core.h still rejects user mask overrides and production uses actual compiled full compatibility masks. UI selectors, startup defaults, editor negotiation and downloadable profiles remain incomplete.",
+    "The normalized check can reject after staging on invalid/changed caller input; immutable input is an explicit runtime API requirement. The claimed no-workspace early missing-engine refusal follows the preview under that requirement.",
+    "No hardware timing, reduced firmware size, stack margin or audio deadline benefit is established. Additional main-loop preview work and source-policy duplication need target/integration evidence.",
+    "d8pr_runtime_status and higher-level callers currently map the new missing-engine status to generic invalid; dedicated user-facing explanation belongs to later negotiation work."
+  ]
+}

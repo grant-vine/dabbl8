@@ -21,3 +21,24 @@ The manifest pins source, generated inputs, test binaries and raw log SHA-256 ha
 The read-only independent source review found no production blocker and requested stronger fixture evidence. Commit `ccb462fcda9b67c456cdc2a568049c79b71960c9` and its original manifest/logs remain preserved. The subsequent test-only fixture starts actual mono notes on every track, renders a host block and asserts `voices_busy() == NTRK` before refusal snapshots. The track snapshots include actual embedded voice states. Singleton-mask expectations now derive legacy identities independently of `eng_runtime_target` and include successful singleton publications.
 
 All 32 normal/sanitized actual UI/editor combinations passed again with this fixture; the four separately compiled negative controls were detected again with live voices. The unchanged native/project fixture's 16 matrix executions and six earlier legacy regressions were not redundantly repeated. All ten reviewed production hashes match the independent review exactly. Original test-fixture hashes in the review and previous manifest refer to the preserved earlier fixture, while `live-voices/manifest.json` pins the strengthened fixture and reruns. These are simulated host voices, not physical audio-timing qualification.
+
+## Pinned target comparison
+
+Root verified production hashes at source `e1bd9ee` against the independent
+review and compiled app-only target images against parent `6cfef34` with the
+pinned JieLi compiler, SDK and linux/amd64 container. Four-track app grows
+356 bytes to 449,008; eight-track grows 384 bytes to 481,408. Static RAM and
+audio pool are unchanged (92,116/331,332 bytes four-track; 96,068/335,240
+eight-track). Four-track static budgets pass; eight-track static budgets fail.
+Target logs, environment, hashes and review are in `target/`. These measurements
+predate the current-main USB correction and do not qualify a later combined
+image, package, stack high-water, physical timing or recovery. Full final-source
+CI remains a separate gate.
+
+## Current prerequisite integration
+
+Exact source `9f8755921c901986e6961a303ef72d9de4a1f697` integrates native
+adoption PR #120 and current-main USB correction. All 48 local normal/sanitized
+UI/editor/native-adoption configurations passed again; raw logs and hashes are
+in `current-union/`. The earlier target measurements do not represent this
+combined source. Final CI and target/device qualification remain separate.

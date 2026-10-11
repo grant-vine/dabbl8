@@ -1,0 +1,242 @@
+[
+  {
+    "name": "normal_4_0_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_0_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_0_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_0_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_0_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_0_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_4_1_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_0_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "normal_8_1_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_0_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_4_1_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_0_1_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_0_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_0_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_0_adoption",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_1_editor",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_1_ui",
+    "compile": 0,
+    "run": 0
+  },
+  {
+    "name": "san_8_1_1_adoption",
+    "compile": 0,
+    "run": 0
+  }
+]
