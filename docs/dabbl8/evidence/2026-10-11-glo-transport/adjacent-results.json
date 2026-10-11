@@ -1,0 +1,56 @@
+[
+  {
+    "test": "ui_test",
+    "tracks": 4,
+    "exit": 0,
+    "compiler_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/adjacent-ui_test",
+      "tests/ui_test.c",
+      "-lm"
+    ],
+    "summary": "ui: all passed"
+  },
+  {
+    "test": "banked_mixer_test",
+    "tracks": 8,
+    "exit": 0,
+    "compiler_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/adjacent-banked_mixer_test",
+      "tests/banked_mixer_test.c",
+      "-lm"
+    ],
+    "summary": "banked mixer: 0 failures; prototype, shipping remains four tracks"
+  },
+  {
+    "test": "quick_layer_conflicts_test",
+    "tracks": 8,
+    "exit": 0,
+    "compiler_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/adjacent-quick_layer_conflicts_test",
+      "tests/quick_layer_conflicts_test.c",
+      "-lm"
+    ],
+    "summary": "quick conflicts: 0 failures; host evidence only"
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "source": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "tracks": 8,
+  "exit": 1,
+  "compiler_command": [
+    "clang",
+    "-O2",
+    "-w",
+    "-DNPART=8",
+    "-Ibuild/gen",
+    "-Ifirmware/src",
+    "-o",
+    "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/parent-8",
+    "tests/glo_transport_test.c",
+    "-lm"
+  ]
+}
