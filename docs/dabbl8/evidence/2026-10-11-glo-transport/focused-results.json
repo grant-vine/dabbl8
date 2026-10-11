@@ -1,0 +1,80 @@
+[
+  {
+    "tracks": 4,
+    "sanitizer": false,
+    "compiler_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/normal-4",
+      "tests/glo_transport_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "summary": "GLO transport: 68 cases, 0 failures, 4 tracks; host input only"
+  },
+  {
+    "tracks": 8,
+    "sanitizer": false,
+    "compiler_command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/normal-8",
+      "tests/glo_transport_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "summary": "GLO transport: 136 cases, 0 failures, 8 tracks; host input only"
+  },
+  {
+    "tracks": 4,
+    "sanitizer": true,
+    "compiler_command": [
+      "clang",
+      "-O1",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/san-4",
+      "tests/glo_transport_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "summary": "GLO transport: 68 cases, 0 failures, 4 tracks; host input only"
+  },
+  {
+    "tracks": 8,
+    "sanitizer": true,
+    "compiler_command": [
+      "clang",
+      "-O1",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/san-8",
+      "tests/glo_transport_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "summary": "GLO transport: 136 cases, 0 failures, 8 tracks; host input only"
+  }
+]

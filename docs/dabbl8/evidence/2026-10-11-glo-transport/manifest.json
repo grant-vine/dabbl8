@@ -1,0 +1,112 @@
+{
+  "functional_source": "ebe1574ce1ce5cfca227cd035dd47c9729a2bb0d",
+  "parent": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "source_sha256": {
+    "firmware/src/ui_layer.c": "e39c3efdb3150676ba80f7602dcf9772a0654b7e0f7ce0781a7da701f31831c6",
+    "tests/glo_transport_test.c": "033affd5caadb8e86bec096dea2698cb51fffe9f3013c7dcc0d489b57b83b5ff",
+    "tests/run_tests.sh": "bc1c9656d752bcab0a109315fd5e5f8b204b1b91e81bde95d2a8b0b497f282a3"
+  },
+  "files": {
+    "parent-compile-4.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "parent-compile-8.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "parent-run-4.log": {
+      "sha256": "84b8953860987e009def6cc3fcda0943142b08e2d224f9ce984b2d694dc35066",
+      "bytes": 5672
+    },
+    "parent-run-8.log": {
+      "sha256": "7ad1ecdfb23bd01336b3c29323a019603b1e96d6c84304afb5dc097ad35413ff",
+      "bytes": 11281
+    },
+    "parent-4-result.json": {
+      "sha256": "885c368a780d2984a51575c9dc5283c5eefb0238afdd2daa8b11eb7924bf5cc1",
+      "bytes": 340
+    },
+    "parent-8-result.json": {
+      "sha256": "ed3892c2bd119b29b7571b2b4d9035c9d7887dd49767c25a6ef1cf379b572ef8",
+      "bytes": 340
+    },
+    "focused-results.json": {
+      "sha256": "43232ca6863701fce1c0b93f0700c594d993a91ddd7de2f622a4a7044040fa5f",
+      "bytes": 1963
+    },
+    "adjacent-results.json": {
+      "sha256": "72aa2f6437a9f9d0eb2245d7934d2a09374fba643ff1dbbde9e557af040f02f0",
+      "bytes": 1284
+    },
+    "independent-review.json": {
+      "sha256": "c0dca47d614a9df0bdca66f76804635adfa2408e8078710dea5966eb8d4a2bf1",
+      "bytes": 7098
+    },
+    "functional-source.json": {
+      "sha256": "f7b7b45140db3548afafed0ef92a70af79e30519de671363737862f46bb3166b",
+      "bytes": 803
+    },
+    "normal-4-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "normal-4-run.log": {
+      "sha256": "c3e34a0d51c5553bbbf8a26c0f4ff88c3556cf232aadb0e0a45608aa6da779bd",
+      "bytes": 5639
+    },
+    "normal-8-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "normal-8-run.log": {
+      "sha256": "67552829e392a22daece7f4018b2110f590647465a5808505fb0e3d527b37f20",
+      "bytes": 11216
+    },
+    "san-4-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "san-4-run.log": {
+      "sha256": "c3e34a0d51c5553bbbf8a26c0f4ff88c3556cf232aadb0e0a45608aa6da779bd",
+      "bytes": 5639
+    },
+    "san-8-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "san-8-run.log": {
+      "sha256": "67552829e392a22daece7f4018b2110f590647465a5808505fb0e3d527b37f20",
+      "bytes": 11216
+    },
+    "ui_test-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "ui_test-run.log": {
+      "sha256": "cb26fbe11811064f298d5dd259807e73e7fbff7ff7c647f6310a427642d34e8d",
+      "bytes": 66940
+    },
+    "banked_mixer_test-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "banked_mixer_test-run.log": {
+      "sha256": "d8ab2e1f89a122bf0e4c5dc8884219c2b5526b4736c21586001c106930e58b6b",
+      "bytes": 3187
+    },
+    "quick_layer_conflicts_test-compile.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "quick_layer_conflicts_test-run.log": {
+      "sha256": "c51ae41d2dc9e57892524899913f65ba8d01e77185ce8acf2636f0297e33fa12",
+      "bytes": 21862
+    },
+    "README.md": {
+      "sha256": "4b167e118daca62cd62f68bddde98c1b0b491d5895df32b394741bcbeef6124d",
+      "bytes": 1973
+    }
+  },
+  "qualification": "FOCUSED SOFTWARE PASS; FULL CI/TARGET/HARDWARE GATES DISTINCT"
+}
