@@ -1,0 +1,13 @@
+# Evidence invocation isolation review
+
+Read-only review of the uncommitted stacked patch in the evidence-invocations worktree, excluding the accepted dependency-integrity parent. No source edits, builds, downloads or test execution. `git diff --check` passes. Adjacent SHA-256 manifest pins all eight reviewed files.
+
+No blocking finding identified. Both drivers now create a fresh atomic `run-*` child directory through tempfile.mkdtemp. All command logs, log hashes and target-driver skip scanning are limited to that new directory. Existing root logs and previous run directories are not read as current evidence, overwritten or deleted. Each JSON receipt records its repository-relative `evidence_directory`, and the terminal prints that location. Earlier logs may still be included as historical files in an upload of a reused local root, but the run-specific receipt makes current provenance unambiguous.
+
+The existing GitHub artifact upload paths are recursive parent folders (`build/ci-evidence/` and `build/browser-conversion-evidence/`), so nested invocation directories remain included without an upload-path change. The workflow integrity step invokes both the eight-test driver/integrity suite and two lifecycle fixtures; its existing D8_SETUP_OK outcome gate continues to block the firmware build if either suite fails. The host runner also invokes both suites.
+
+Tests meaningfully inject a stale root sanitizer-skip log into the target refusal fixture and verify that the original file remains untouched, the new receipt has no old hashes and no stale skip. Repeated browser fixtures inject an old parity log, identify the newly created receipt by set difference, and assert the new receipt hashes only its present wasm-build failure log. The standalone lifecycle fixture preserves old logs/reports and validates refusal without replacing an existing non-directory file. Tests stop before actual compiler execution; reported root PASS results remain fixture evidence, not a target-build claim.
+
+Documentation correctly states that only evidence folders are isolated; ordinary generated build outputs are not isolated by this patch. It updates the current receipt locations to run-*/results.json and accurately preserves setup-failure and hardware limitations. No current source consumer outside historical evidence was found depending on the old root results.json paths.
+
+Non-blocking limitations: retained run histories consume disk space, and mkdtemp failures happen before a driver can create a structured receipt (ordinary GitHub job logs remain authoritative, as documented). Build output concurrency and stale generated tables are deliberately outside this narrow evidence-log change. No firmware, loader, golden or timing-budget behavior changes.
