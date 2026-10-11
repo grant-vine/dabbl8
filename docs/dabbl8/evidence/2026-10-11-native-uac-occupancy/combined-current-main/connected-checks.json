@@ -1,0 +1,112 @@
+[
+  {
+    "name": "opt-compile",
+    "exit": 0,
+    "seconds": 5.4246320724487305
+  },
+  {
+    "name": "opt-connected",
+    "exit": 0,
+    "seconds": 9.33616828918457
+  },
+  {
+    "name": "strict-compile",
+    "exit": 0,
+    "seconds": 8.294581890106201
+  },
+  {
+    "name": "strict-connected",
+    "exit": 0,
+    "seconds": 12.469863176345825
+  },
+  {
+    "name": "shipping-opt-compile",
+    "exit": 0,
+    "seconds": 4.6854588985443115
+  },
+  {
+    "name": "shipping-opt",
+    "exit": 0,
+    "seconds": 0.5699782371520996
+  },
+  {
+    "name": "shipping-strict-compile",
+    "exit": 0,
+    "seconds": 7.595350027084351
+  },
+  {
+    "name": "shipping-strict",
+    "exit": 0,
+    "seconds": 0.6935210227966309
+  },
+  {
+    "name": "converter-compile-opt",
+    "exit": 0,
+    "seconds": 2.217613935470581
+  },
+  {
+    "name": "initializer-compile-opt",
+    "exit": 0,
+    "seconds": 0.20763325691223145
+  },
+  {
+    "name": "archive-compile-opt",
+    "exit": 0,
+    "seconds": 0.21886801719665527
+  },
+  {
+    "name": "connected-host-opt",
+    "exit": 0,
+    "seconds": 7.881576061248779
+  },
+  {
+    "name": "converter-compile-strict",
+    "exit": 0,
+    "seconds": 4.377283096313477
+  },
+  {
+    "name": "initializer-compile-strict",
+    "exit": 0,
+    "seconds": 0.30855512619018555
+  },
+  {
+    "name": "archive-compile-strict",
+    "exit": 0,
+    "seconds": 0.34143900871276855
+  },
+  {
+    "name": "connected-host-strict",
+    "exit": 0,
+    "seconds": 26.937908172607422
+  },
+  {
+    "name": "discovery-capture-compile-opt",
+    "exit": 0,
+    "seconds": 3.127359390258789
+  },
+  {
+    "name": "discovery-four-compile-opt",
+    "exit": 0,
+    "seconds": 2.44339919090271
+  },
+  {
+    "name": "actual-discovery-opt",
+    "exit": 0,
+    "seconds": 1.136016845703125
+  },
+  {
+    "name": "discovery-capture-compile-san",
+    "exit": 0,
+    "seconds": 4.3374199867248535
+  },
+  {
+    "name": "discovery-four-compile-san",
+    "exit": 0,
+    "seconds": 3.5288000106811523
+  },
+  {
+    "name": "actual-discovery-san",
+    "exit": 0,
+    "seconds": 1.1638109683990479
+  }
+]
