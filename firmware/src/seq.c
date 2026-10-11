@@ -552,6 +552,9 @@ static void key_on(uint32_t k, track_t *t)
         midi_out_event(0x09u | (0x90u | mc) << 8 | x << 16 | 100u << 24);
     }
     kb_chn[k] = (uint8_t)n;
+#if NTRK == 8
+    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
+#endif
     last_note = kb_note[k];                         /* (step entry, the SAMPLE zone: the key's note) */
 }
 
@@ -567,6 +570,9 @@ static void key_off(uint32_t k, track_t *t)
         input_off(t, x);
         midi_out_event(0x08u | (0x80u | mc) << 8 | x << 16);
     }
+#if NTRK == 8
+    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
+#endif
 }
 
 #ifdef FM1_INPUT_LAT
@@ -649,6 +655,16 @@ static void keyboard_block(void)
 static void seq_start(void)
 {
     uint32_t i;
+#if NTRK == 8
+    /* A changed source invalidates Continue, but a subsequent fresh HOME/MIDI
+     * Start may play the current editable project. SONG always prepares first. */
+    if(chain.native_mode==2){chain.native_mode=0;chain.armed=0;}
+    else if(chain.native_mode&&(!chain.native.policy.valid||chain.native.policy.store_epoch!=d8_capture_change.epoch)){
+        chain.armed=0;chain.native.policy.preparing=0;
+        if(chain.native.policy.valid){chain.native_mode=2;chain.native.policy.valid=0;}
+        return;
+    }
+#endif
     motion_begin();
     chain_start();
     for (i = 0; i < NTRK; i++) {                   /* every track from its step 0, together */
@@ -671,6 +687,9 @@ static void seq_release(track_t *t)
 {
     uint32_t i;
     for (i = 0; i < t->seq_n; i++)
+#if NTRK == 8
+        if (!d8arr_running() || !((chain.native.policy.held[trk_index(t)][t->seq_notes[i]/32u]>>(t->seq_notes[i]%32u))&1u))
+#endif
         trk_note_off(t, t->seq_notes[i]);
     t->seq_n = 0;
     t->seq_hold = 0;
@@ -832,7 +851,12 @@ static void seq_tick(track_t *t, uint32_t n)
              * automation and the locks before the notes, so a note-on reads them (eng_drum's KIT, ..) */
             if (step_chance(s) < 100u && rng() % 100u >= step_chance(s))
                 skip = SEQ_MISS;
+#if NTRK == 8
+            const motion_store_t *ms=d8arr_running()?d8arr_motion(t):chain.running?&chain.source[chain.slot].motion:&motion;
+            motion_step(t,t->seq_idx,ms,skip==SEQ_ROLLED);
+#else
             motion_step(t, t->seq_idx, chain.running ? &chain.source[chain.slot].motion : &motion, skip == SEQ_ROLLED);
+#endif
             if (t->rskip_n && t->rskip_idx == t->seq_idx) {
                 for (k = 0; k < t->rskip_n; k++) {
                     for (i = 0; i < s->n; i++)
@@ -972,11 +996,17 @@ static void events_block(uint32_t n)
     pr = panic_req;
     panic_req = 0;
     if (midi_in_overflow) {                            /* a lost note-off must never leave a held note */
+#if NTRK == 8
+        if(chain.native_mode){chain.native.policy.pending=D8ARR_NONE;chain.native.policy.preparing=0;chain.native.policy.generation++;}
+#endif
         mi_r = mi_w;
         memset(midi_sel_on, 0, sizeof midi_sel_on);
         memset(midi_ch, 0, sizeof midi_ch);
         memset(midi_owners, 0, sizeof midi_owners);
         memset(mchord, 0, sizeof mchord);
+#if NTRK == 8
+        if(chain.native_mode==1){chain.native.policy.input_generation++;if(!chain.native.policy.preparing)d8arr_held_build(chain.native.policy.held);}
+#endif
         midi_hint = 0;
         for (i = 0; i < NTRK; i++) {
             trk[i].rh_n = trk[i].rskip_n = 0;
@@ -1035,7 +1065,18 @@ static void events_block(uint32_t n)
                 seq_n = midi_clock_advance(fm1_ms);
         }
     }
+#if NTRK == 8
+    /* Inactive native routes need neither a period query nor historical tick.
+     * Historical and native timing paths remain mutually exclusive. */
+    if(d8arr_running()) {
+#ifdef D8ARR_PERIOD_TEST_HOOK
+        D8ARR_PERIOD_TEST_HOOK();
+#endif
+        d8arr_tick(seq_n,clk_pos,clk_step,div_samples(2));
+    } else if(!chain.native_mode) chain_tick(seq_n);
+#else
     chain_tick(seq_n);
+#endif
     for (i = 0; i < NTRK; i++)
         seq_tick(&trk[i], seq_n);
     if (cin_flush)

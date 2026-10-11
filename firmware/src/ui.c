@@ -413,6 +413,10 @@ static void chain_play_ui(void)
     uint32_t rc = chain_prepare();
     if (!rc) {
         ui.force = 1;
+#if NTRK == 8
+    } else if (d8arr_ui_rows()&&rc!=2u) {
+        ui_message("NATIVE SONG UNREADY");
+#endif
     } else if (rc >= 3u) {
         char b[8] = "A EMPTY";
         b[0] = (char)('A' + rc - 3u);
@@ -1411,7 +1415,11 @@ static int act_ready(void)
         return !chain_busy() && (c == 0u ? !seq_is_empty(TSEL) || motion_count(TSEL) : c == 1u ? 1 :
                                  c == 2u ? ui.song_row < chain_config.count : chain_config.count != 0u);
     if (cur_page()->graph == GR_SONG)
+#if NTRK == 8
+        return song.playing || chain_busy() || d8arr_ui_rows() || chain_config.count;
+#else
         return song.playing || chain_busy() || chain_config.count;
+#endif
     if (cur_page()->graph == GR_PATS)
         return pat_last[s] != pat_pick() + 1u || steps_sig(TSEL) != pat_sig[s];
     if (cur_page()->graph == GR_USER)

@@ -1,0 +1,11 @@
+{
+  "source": "eff86a9817a0b8ea5c02cd64ad3d0971bd18f1ba",
+  "session": 90316,
+  "exit": 1,
+  "expected_old_date_sha": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+  "actual_sha": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+  "parent_source": "12199deb3e0dfd5fd71e4ff017cb7612f85332e3",
+  "all_bytes_equal_actual_parent": true,
+  "parent_file": "/Users/grantv/Code/dabbl8/.local-baseline/native-source-equivalence/build/source-equivalence-combined-4/felucca.bin",
+  "reason": "Comparator retained older build-date parent hash; actual current-date parent is byte-identical. No source change or new four-track build."
+}

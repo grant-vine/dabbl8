@@ -11,6 +11,7 @@ typedef struct {
     int (*save)(void *,unsigned,const char *);
     int (*load)(void *,unsigned);
     int (*rename)(void *,unsigned,const char *);
+    int (*prepare_arrangement)(void *); /* optional read-only playback preparation */
 } project_native_ops;
 /* A failed binding that reaches preflight retains native ownership but goes
  * offline, never falls back to stale historical RAM slots. A busy attempt

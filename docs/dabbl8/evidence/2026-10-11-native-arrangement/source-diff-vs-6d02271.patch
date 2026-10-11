@@ -1,0 +1,1245 @@
+diff --git a/docs/dabbl8/native-arrangement-playback.md b/docs/dabbl8/native-arrangement-playback.md
+new file mode 100644
+index 0000000..226fd32
+--- /dev/null
++++ b/docs/dabbl8/native-arrangement-playback.md
+@@ -0,0 +1,132 @@
++# Native reference arrangement: first playback slice
++
++This software slice executes loaded D8P1 rows through the actual sequencer. It
++is not production storage activation, hardware qualification, or completion of
++issue #15. Issue #14 remains the hardware gate. The explicit trusted native
++frontend binding must already represent completed migration; recognizing a
++record, loading wire, or preparing playback grants no storage authority. The
++production boot path remains unbound and refuses SONG preparation.
++
++## Implemented behavior
++
++Stopped SONG PLAY validates the whole current native pool and all live
++arrangement references, then copies patterns, four timing parameters and sparse
++motion from at most three manual sources into the existing chain cache.
++Project reference 3 refuses; it never aliases shared autosave or the historical
++fourth project. The editable project, instruments, FM6 patches, mixer and undo
++remain intact. Eight destinations may independently reference the same source
++track. Automation and parameter-lock unlock use source owner/place and current
++engine compatibility; destination bases and locks remain independent.
++
++The actual master sixteenth clock supplies bar boundaries independently of
++track 1's pattern length. Internal clock and configured USB/TRS realtime
++Start/Continue/Stop enter the existing sequencer. Publication is block-quantized,
++not a sample-exact output/timing promise. Sixteen rows/scenes, four banks and
++repeats 1–16 are retained. KNOB 1 browses native rows; KNOB 4 while playing queues
++the selected row for the next master bar (latest valid request wins). Native
++row names and repeats come from retained metadata. This slice exposes these
++rows read-only; editing and scene overlays are separate increments.
++
++Scenes with any apply bit refuse explicitly: MUTE=1, MIX=2, TRANSPOSE=4.
++Unsupported overlays are not silently ignored. Fill is not implemented here.
++
++Stop cancels pending requests, restores editable timing/recording and suspends
++row/phase. Continue resumes only a valid suspended preparation. Successful
++project adoption, attempted source save/rename (including uncertain commit),
++rebind, and observed physical store-epoch changes invalidate that resume.
++An invalid-resume tombstone refuses Continue; a fresh HOME/MIDI Start clears
++it and plays the current editable project from its beginning. SONG requests
++always prepare first and never silently start editable music after refusal.
++Start while valid native suspension restarts row zero. Count-in preparation,
++clock-source change, timeout and broken MIDI input are explicitly gated or
++cancelled through the existing transport. A physical epoch is 32 bits; complete
++wrap between checks is not qualified as a new authority/coherence proof.
++
++## Memory and bounded work
++
++Three immutable source snapshots and a small typed policy occupy the existing
++four-source chain extent; no full-project copy or ISR pointer remains in the
++display arena. Preparation invalidates old suspension before unlocked bulk
++copies. Start/Continue during copying abort preparation. A late failure may
++conservatively discard prior preparation; it leaves live editable music intact
++and does not publish partially usable sources. Final publication guards only
++bounded policy/flags; all source reads, CRCs and bulk copies remain IRQ enabled.
++
++A bar change includes up to 96 local note-off operations, eight P_COUNT=99
++motion restoration scans, 64 bytes of timing and eight phase resets; source
++step-zero events may then invoke up to 96 local note-ons. This is not O(1) audio
++work. Same-pitch MIDI/panel held notes are protected using actual ownership
++helpers, including sustain; final key/channel release and All Sound Off retire
++them. A 128-bit mask per track lives inside the existing unused source extent.
++Each sequence release uses one cached pitch bit. Actual MIDI/chord/panel
++ownership changes refresh only affected pitches with the original predicates;
++sustain, repeated notes and channel remaps follow those same paths. Aggregate
++panic/forget and initial stopped preparation rebuild bounded ownership data.
++These rebuilds are real work (16×128 raw ownership entries with chord-source
++checks, 24 four-note chords and 27 four-note panel chords for complete build;
++rare single-track forget checks 128 pitches). They are not hidden deadline
++qualification. An input-generation guard rejects a mixed initial cache rebuild.
++The cache is tested independently against original ownership predicates after
++actual input transitions, rather than merely against its own builder.
++It retains eight shared voices and existing stealing/release envelopes.
++The sequencer's local note path does not emit MIDI packets: this boundary does
++not itself produce a 96-packet output burst. The inherited keyboard output ring
++is 64 packets and silently declines enqueue when full; physical output remains
++unqualified. No engine or patch arrays are copied at a bar boundary.
++
++## Verification scope
++
++`tests/native_arrangement_test.c` uses the real native runtime/pool frontend,
++sequencer, master clock, USB/TRS realtime queue, motion, held ownership and
++explicit virtual NOR. It covers all bank/scene/row capacities, 16 repeats,
++track-length-independent boundaries/carry, alias motion/unlock, pending latest
++wins/invalid requests, generation wrap/cancellation, count-in, clock source/loss,
++load→Continue refusal→fresh Start, missing callback, unsupported overlays and
++fourth reference, late copy-phase activity/Start/store mutation, same-pitch
++panel/MIDI/sustain/multiple-channel holds and final release, All Sound Off,
++no output-ring publication for 96 local releases, and no NOR writes.
++
++Optimized/inherited sanitizer results, exact source head and target memory/
++static costs must be recorded in the evidence accompanying this slice.
++Inherited DSP sanitizer exclusions are not full undefined-behavior coverage.
++No audible timing, peripheral drain, hardware recovery or release qualification
++is inferred from host or virtual-NOR tests. Golden audio hashes are unchanged.
++
++The next increment implements actual mute/mix/transpose scene overlays and
++bounded fill behavior, preserving transient versus saved state and held-note
++semantics. This first slice provides real playback rather than a dormant plan.
++
++## Cold historical transition experiment
++
++This candidate separates only the eight-track historical row-advance boundary
++from the inlined audio-fragment path. The four-track source path remains
++unchanged. The hot check still computes track-zero step length, checks phase
++and decrements repeats; only an actual next-row/final-row transition calls
++`chain_advance_legacy`. Its work is not removed: final stop or row selection,
++up to 96 sequence releases, eight motion restorations and timing/phase resets
++still execute synchronously. Calls, direct helper costs/frames and the reachable
++path must be reported alongside the static IRQ metric; a lower IRQ proxy alone
++is not a device deadline or stack qualification. Actual historical boundary,
++repeat, carry, source routing and final-stop tests supplement the native tests.
++The failed dd20173 and 110c1ae target reports remain retained.
++
++## Explicit timing dispatch experiment
++
++Native-running playback now queries its master-bar period and uses the native
++clock hook; historical mode0 uses its original track-zero timing. Inactive or
++invalid-resume native modes use neither path. This removes the real eager
++period computation outside native playback, without moving an entire tick
++behind a noinline boundary. A test-only query-site counter (absent from target)
++covers editable/historical/native/suspended/tombstone states, alongside actual
++clock/carry/transport tests. Target metrics and hardware timing remain separate
++qualification gates; all earlier failed evidence is retained.
++
++## Automatic native row-boundary experiment
++
++Only the implicit next-row/final-row action uses a narrow cold helper. Native
++validity, period/phase/bar computation, explicit pending row requests and repeat
++checks remain inlined; this is not a whole tick hidden from the interrupt cost
++check. Existing all-row, master-carry, end-stop and held-ownership tests execute
++the real helper. Cleanup/restore work remains synchronous and must be included
++through its tail callees and frames, even if the IRQ proxy improves. Earlier
++failed candidate reports remain retained; device timing is still unqualified.
+diff --git a/firmware/src/d8arr_prepare.c b/firmware/src/d8arr_prepare.c
+new file mode 100644
+index 0000000..56af13f
+--- /dev/null
++++ b/firmware/src/d8arr_prepare.c
+@@ -0,0 +1,72 @@
++/* SPDX-License-Identifier: GPL-3.0-only */
++/* Actual native playback preparation. Existing trusted pool binding only;
++ * read-only, stopped main loop. No ownership receipt or production boot grant. */
++#ifndef DABBL8_ARR_PREPARE_C
++#define DABBL8_ARR_PREPARE_C
++static int d8arr_prepare_pool(const d8pool *s)
++{
++    d8pool_index index,after;d8p1_stage_workspace *stage;d8arr_state next;
++    if(cv_cpu_active||migration_owner||!d8p1_runtime_cache.valid)return D8POOL_BUSY;
++    const d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
++    if(!a->banks||a->banks>4||!a->scenes||a->scenes>16||!a->rows||a->rows>16)return D8POOL_INVALID;
++    memset(&next,0,sizeof next);next.pending=D8ARR_NONE;
++    next.banks=a->banks;next.scenes=a->scenes;next.rows=a->rows;
++    unsigned used=0;
++    for(unsigned b=0;b<a->banks;b++)for(unsigned t=0;t<8;t++){
++        if(a->bank[b].project[t]>=3||a->bank[b].track[t]>=8)return D8POOL_UNSUPPORTED;
++        next.project[b][t]=a->bank[b].project[t];next.track[b][t]=a->bank[b].track[t];used|=1u<<a->bank[b].project[t];
++    }
++    for(unsigned i=0;i<a->scenes;i++){
++        if(a->scene[i].bank>=a->banks)return D8POOL_INVALID;
++        if(a->scene[i].apply)return D8POOL_UNSUPPORTED; /* overlays implemented separately */
++        next.scene_bank[i]=a->scene[i].bank;
++    }
++    for(unsigned i=0;i<a->rows;i++){
++        if(a->row[i].scene>=a->scenes||!a->row[i].repeat||a->row[i].repeat>16)return D8POOL_INVALID;
++        next.row_scene[i]=a->row[i].scene;next.row_repeat[i]=a->row[i].repeat;
++    }
++    uint32_t metadata=d8p1_crc32(a,sizeof *a),epoch=d8_capture_change.epoch;
++    int rc=d8pr_preflight(s,&index,&stage,NULL);if(rc)return rc;
++    if(used&~index.present)return D8POOL_EMPTY;
++    uint32_t f=motion_guard();
++    if(!d8pr_stopped((void *)s)||migration_owner||cv_cpu_active){motion_unguard(f);return D8POOL_BUSY;}
++    /* Invalid before unlocked bulk copy: Start/Continue abort preparation. A
++     * late failure may discard an old suspended cache, never publish half data. */
++    chain.native_mode=1;chain.armed=0;chain.native.policy.valid=0;
++    chain.native.policy.suspended=0;chain.native.policy.preparing=1;chain.native.policy.input_generation=0;
++    motion_unguard(f);
++    for(unsigned o=0;o<3;o++)if(used&(1u<<o)){
++        size_t n=0;
++        if(!chain.native.policy.preparing||!d8pr_stopped((void *)s)){rc=D8POOL_BUSY;goto failed;}
++        rc=d8pool_load(s,o,stage->wire,sizeof stage->wire,&n,index.present&7u);if(rc)goto failed;
++        if(!d8p1_project_decode(&stage->state,stage->wire,n,index.present&7u)){rc=D8POOL_INVALID;goto failed;}
++        const project_t *p=&stage->state.project;
++        chain.source[o].motion=p->motion;
++        for(unsigned t=0;t<8;t++){
++            next.source_engine[o][t]=p->t[t].engine;
++            memcpy(chain.source[o].step[t],p->t[t].step,sizeof p->t[t].step);proj_steps(chain.source[o].step[t]);
++            for(unsigned j=0;j<4;j++)chain.source[o].timing[t][j]=(int16_t)clamp(p->t[t].p[P_SLEN+j],TP[P_SLEN+j].min,TP[P_SLEN+j].max);
++        }
++        next.sequence[o]=index.object[o].sequence;next.length[o]=index.object[o].length;next.crc[o]=index.object[o].crc;
++    }
++    rc=d8pool_inventory(s,&after);if(rc)goto failed;
++    if(index.present!=after.present){rc=D8POOL_BUSY;goto failed;}
++    for(unsigned o=0;o<4;o++)if(index.present&(1u<<o)) {
++        if(index.object[o].sequence!=after.object[o].sequence||index.object[o].length!=after.object[o].length||
++           index.object[o].crc!=after.object[o].crc||index.object[o].block!=after.object[o].block){rc=D8POOL_BUSY;goto failed;}
++    }
++    next.input_generation=chain.native.policy.input_generation;
++    d8arr_held_build(next.held);
++    int metadata_same=d8p1_runtime_cache.valid&&metadata==d8p1_crc32(a,sizeof *a);
++    f=motion_guard();
++    if(!chain.native.policy.preparing||!d8pr_stopped((void *)s)||migration_owner||cv_cpu_active||
++       !metadata_same||epoch!=d8_capture_change.epoch||next.input_generation!=chain.native.policy.input_generation){
++        motion_unguard(f);rc=D8POOL_BUSY;goto failed;
++    }
++    next.valid=1;next.store_epoch=epoch;
++    memcpy(&chain.native.policy,&next,sizeof next);RING_PUBLISH();chain.armed=1;transport_req=1;
++    motion_unguard(f);return D8POOL_OK;
++failed:
++    chain.native.policy.valid=0;chain.native.policy.preparing=0;chain.armed=0;return rc;
++}
++#endif
+diff --git a/firmware/src/d8p1_pool_runtime.c b/firmware/src/d8p1_pool_runtime.c
+index 3e5ce2f..1ef5b11 100644
+--- a/firmware/src/d8p1_pool_runtime.c
++++ b/firmware/src/d8p1_pool_runtime.c
+@@ -73,6 +73,7 @@ static int d8pr_save(const d8pool *s,unsigned object,const char *name)
+      * references still require the validated preexisting stored set. */
+     unsigned mask=(index.present&7u)|(object<3?1u<<object:0u);
+     d8pool guarded=d8pr_guard(s);
++    d8arr_invalidate(); /* even postcommit uncertainty revokes suspended playback */
+     rc=d8pool_save(&guarded,object,stage->wire,n,mask);
+     if(!rc&&object<3) {
+         proj_cur=(uint8_t)object;
+@@ -122,6 +123,7 @@ int d8p1_rename_pool(const d8pool *s,unsigned object,const char *name)
+     memcpy(stage->state.project.name,renamed,12);
+     if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&n,&stage->state))return D8POOL_INVALID;
+     d8pool guarded=d8pr_guard(s);
++    d8arr_invalidate();
+     rc=d8pool_save(&guarded,object,stage->wire,n,index.present&7u);
+     if(!rc&&proj_cur==object)memcpy(proj_name,renamed,sizeof renamed);
+     return rc;
+diff --git a/firmware/src/d8p1_runtime.c b/firmware/src/d8p1_runtime.c
+index 393229b..b7dbc24 100644
+--- a/firmware/src/d8p1_runtime.c
++++ b/firmware/src/d8p1_runtime.c
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: GPL-3.0-only
+  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
+ /* Include after project.c in an eight-track translation unit. Main-loop API;
+- * no device protocol, persistent write or arrangement playback is enabled. */
++ * no device protocol or persistent write is enabled by these adoption APIs. */
+ #include "d8p1_project.h"
+ enum { D8RT_OK=0, D8RT_BAD=1, D8RT_BUSY=2 };
+ 
+@@ -32,6 +32,7 @@ int d8p1_load_runtime(const void *raw, size_t n, unsigned available_projects)
+     if (!d8p1_project_decode(&stage->state,stage->wire,n,available_projects)) return D8RT_BAD;
+     int rc=project_restore_runtime_mode(&stage->state.project,1);
+     if (rc) return rc==2 ? D8RT_BUSY : D8RT_BAD;
++    d8arr_invalidate();
+     memcpy(&d8p1_runtime_cache.arrangement,&stage->state.arrangement,sizeof d8p1_runtime_cache.arrangement);
+     d8p1_runtime_cache.valid=1;
+     return D8RT_OK;
+diff --git a/firmware/src/felucca.c b/firmware/src/felucca.c
+index 60e2af0..b512033 100644
+--- a/firmware/src/felucca.c
++++ b/firmware/src/felucca.c
+@@ -105,6 +105,7 @@
+ #include "d8pool.c"               /* virtual explicitly migrated storage backend */
+ #include "native_migration_preflight.c" /* dormant readonly complete-plan staging */
+ #include "d8p1_pool_runtime.c"    /* native runtime persistence; no implicit migration */
++#include "d8arr_prepare.c"          /* actual stopped reference playback preparation */
+ #if FELUCCA_FLASH
+ #include "d8pool_mapped.c"          /* exact existing noncontiguous allocations */
+ #include "d8p1_flash_runtime.c"     /* explicitly authorized existing-driver adapter */
+diff --git a/firmware/src/midi_clock.c b/firmware/src/midi_clock.c
+index 5c3b4a9..a22f99a 100644
+--- a/firmware/src/midi_clock.c
++++ b/firmware/src/midi_clock.c
+@@ -22,6 +22,9 @@ static __attribute__((noinline)) void midi_clock_transport(uint32_t status, uint
+         midi_clock.have_pulse = midi_clock.tempo_valid = 0;
+         midi_clock.interval_ms = 0;
+         midi_clock.start_ms = ms;
++#if NTRK == 8
++        if (!song.playing && !d8arr_continue())return;
++#endif
+         if (!song.playing)
+             motion_begin();
+         song.playing = 1;
+diff --git a/firmware/src/midi_control.c b/firmware/src/midi_control.c
+index 09f435f..15f07bb 100644
+--- a/firmware/src/midi_control.c
++++ b/firmware/src/midi_control.c
+@@ -73,6 +73,47 @@ static int midi_local_held(const track_t *t, uint32_t note)
+     return 0;
+ }
+ 
++
++#if NTRK == 8
++/* Main-loop preparation or an actual input-ownership change only. Sequence
++ * release uses cached bits. This preserves the existing held predicates,
++ * including chord source roots that do not themselves sound. */
++static void d8arr_held_build(uint32_t out[8][4])
++{
++    memset(out,0,128);
++    for(unsigned ch=0;ch<16;ch++)for(unsigned note=0;note<128;note++){
++#ifdef D8ARR_HELD_BUILD_TEST_HOOK
++        if(ch==8&&note==0)D8ARR_HELD_BUILD_TEST_HOOK();
++#endif
++        unsigned id=midi_notes[ch][note]&127u;
++        if(id&&id<=8&&!mchord_of(ch,note,id))out[id-1][note/32u]|=1u<<(note%32u);
++    }
++    for(unsigned i=0;i<MCHORD_N;i++)if(mchord[i].id&&mchord[i].id<=8)
++        for(unsigned j=0;j<mchord[i].n;j++){unsigned note=mchord[i].note[j];out[mchord[i].id-1][note/32u]|=1u<<(note%32u);}
++    for(unsigned k=0;k<27;k++)if(kb_trk[k]<8)
++        for(unsigned j=0;j<kb_chn[k];j++){unsigned note=kb_chord[k][j];out[kb_trk[k]][note/32u]|=1u<<(note%32u);}
++}
++static void d8arr_held_refresh(track_t *t,unsigned note)
++{
++    if(chain.native_mode!=1)return;
++    d8arr_state *a=&chain.native.policy;a->input_generation++;
++    if(a->preparing)return;
++    uint32_t bit=1u<<(note%32u),*word=&a->held[trk_index(t)][note/32u];
++    if(midi_note_held(t,note)||midi_local_held(t,note))*word|=bit;else *word&=~bit;
++}
++/* Aggregate panic/forget is rare actual ownership mutation. Its bounded
++ * rebuild cost is explicit; not a fake ISR static-cost qualification. */
++static void d8arr_held_rebuild(unsigned track)
++{
++    if(chain.native_mode!=1)return;
++    d8arr_state *a=&chain.native.policy;a->input_generation++;
++    if(a->preparing)return;
++    memset(a->held[track],0,sizeof a->held[track]);
++    for(unsigned note=0;note<128;note++)
++        if(midi_note_held(&trk[track],note)||midi_local_held(&trk[track],note))a->held[track][note/32u]|=1u<<(note%32u);
++}
++#endif
++
+ static void midi_release(uint32_t ch, uint32_t note)
+ {
+     uint32_t id = midi_notes[ch][note] & 0x7Fu;
+@@ -96,6 +137,10 @@ static void midi_release(uint32_t ch, uint32_t note)
+         for (i = 0; i < n; i++)
+             if (!midi_local_held(&trk[id - 1u], nn[i]))
+                 input_off(&trk[id - 1u], nn[i]);  /* input_off also checks other MIDI owners */
++#if NTRK == 8
++        d8arr_held_refresh(&trk[id-1u],note);
++        for(i=0;i<n;i++)d8arr_held_refresh(&trk[id-1u],nn[i]);
++#endif
+     }
+ }
+ 
+@@ -143,6 +188,11 @@ static void midi_note_event(uint32_t ch, uint32_t note, uint32_t vel)
+         midi_notes[ch][note] = (uint8_t)(trk_index(t) + 1u);
+         midi_owners[trk_index(t)]++;
+         c->owned[trk_index(t)]++;
++#if NTRK == 8
++        d8arr_held_refresh(t,note);
++        mchord_t *held_chord=mchord_of(ch,note,trk_index(t)+1u);
++        if(held_chord)for(unsigned j=0;j<held_chord->n;j++)d8arr_held_refresh(t,held_chord->note[j]);
++#endif
+     } else if (id) {
+         if (c->pedal && !drum_track(&trk[id - 1u]))
+             midi_notes[ch][note] |= MIDI_PEDAL_NOTE;
+@@ -177,6 +227,9 @@ static void __attribute__((noinline)) midi_forget_track(uint32_t track)
+     midi_owners[track] = 0;
+     mchord_forget(track);
+     midi_bend_q8[track] = midi_bend_target[track] = 0;
++#if NTRK == 8
++    d8arr_held_rebuild(track);
++#endif
+ }
+ 
+ static void midi_silence_track(uint32_t track)
+diff --git a/firmware/src/motion.c b/firmware/src/motion.c
+index 56eaf2f..1157ce5 100644
+--- a/firmware/src/motion.c
++++ b/firmware/src/motion.c
+@@ -243,6 +243,9 @@ static int motion_capture(track_t *t, uint32_t id, int16_t value)
+ static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, const motion_store_t *m)
+ {
+     uint32_t k = trk_index(t), id, i;
++#if NTRK == 8
++    uint32_t owner=d8arr_source_track(t);
++#endif
+     for (id = 0; id < P_COUNT; id++) {
+         int32_t best = -1;
+         int16_t v;
+@@ -252,8 +255,15 @@ static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, c
+         for (i = 0; i < m->count; i++) {
+             const motion_event_t *e = &m->event[i];
+             int32_t s = (int32_t)(e->place & 63u);
++#if NTRK == 8
++            if ((e->place >> 6) != owner || e->param != id || s > (int32_t)step || s <= best)
++#else
+             if ((e->place >> 6) != k || e->param != id || s > (int32_t)step || s <= best)
++#endif
+                 continue;                               /* (e->param == id: automation only, no MOTION_LOCK) */
++#if NTRK == 8
++            if(!d8arr_motion_compatible(t,id))continue;
++#endif
+             best = s;
+             v = (int16_t)param_fit(param_desc_of(eng_idx(t->eng_req), id), e->value);
+         }
+@@ -265,7 +275,14 @@ static __attribute__((noinline)) void motion_unlock(track_t *t, uint32_t step, c
+ static __attribute__((noinline)) void motion_step(track_t *t, uint32_t step, const motion_store_t *m, uint32_t play)
+ {
+     uint32_t k = trk_index(t), i, w, any = 0;
++#if NTRK == 8
++    uint32_t owner=d8arr_source_track(t);
++#endif
++#if NTRK == 8
++    if (!((m->on >> owner) & 1u)) return;
++#else
+     if (!((m->on >> k) & 1u)) return;
++#endif
+     if (!((motion_base_valid >> k) & 1u)) {
+         memcpy(motion_base[k], t->p, sizeof t->p);
+         motion_base_valid |= (uint8_t)(1u << k);
+@@ -277,7 +294,14 @@ static __attribute__((noinline)) void motion_step(track_t *t, uint32_t step, con
+     for (i = 0; i < m->count; i++) {
+         const motion_event_t *e = &m->event[i];
+         uint32_t id = MOTION_ID(e);
++#if NTRK == 8
++        if (e->place != (owner << 6 | step) || ((e->param & MOTION_LOCK) && !play)) continue;
++#else
+         if (e->place != (k << 6 | step) || ((e->param & MOTION_LOCK) && !play)) continue;
++#endif
++#if NTRK == 8
++        if(!d8arr_motion_compatible(t,id))continue;
++#endif
+         const param_desc_t *d = param_desc_of(eng_idx(t->eng_req), id);
+         t->p[id] = (int16_t)param_fit(d, e->value);
+         motion_active[k][id / 32u] |= 1u << (id % 32u);
+diff --git a/firmware/src/project.c b/firmware/src/project.c
+index 5177afc..1d9b94b 100644
+--- a/firmware/src/project.c
++++ b/firmware/src/project.c
+@@ -720,6 +720,7 @@ static int project_native_bind(const project_native_ops *ops,int authorized)
+     if(!pn_quiet())return D8POOL_BUSY;
+     /* Copy before invalidating an existing binding (ops may refer to it). */
+     project_native_ops next={0};if(ops)next=*ops;
++    d8arr_invalidate();
+     project_native.mode=2;project_native.ready=0;ui.force=1;
+     if(!next.catalog||!next.save||!next.load||!next.rename)return D8POOL_INVALID;
+     project_native.ops=next;project_native.mode=1;
+@@ -958,11 +959,19 @@ static int project_rename(uint32_t slot, const char *name)
+ 
+ #if NPART >= NVOICE
+ /* Live metadata survives display/project arena reuse. Main loop only; playback
+- * does not consume these proposed banks/scenes until separately implemented. */
++ * consumes immutable prepared copies, never this main-loop cache directly. */
+ static struct {
+     d8p1_arrangement arrangement;
+     uint8_t valid;
+ } d8p1_runtime_cache __attribute__((section(".pool")));
++static unsigned d8arr_ui_rows(void)
++{ return d8p1_runtime_cache.valid?d8p1_runtime_cache.arrangement.rows:0; }
++static int d8arr_ui_row(unsigned row,char name[13],unsigned *repeat)
++{
++    const d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
++    if(!d8p1_runtime_cache.valid||row>=a->rows||a->row[row].scene>=a->scenes)return 0;
++    memcpy(name,a->scene[a->row[row].scene].name,12);name[12]=0;*repeat=a->row[row].repeat;return 1;
++}
+ static int project_restore_runtime_mode(const project_t *input, int require_stopped)
+ #else
+ static int project_restore_runtime(const project_t *input)
+@@ -995,6 +1004,7 @@ static int project_restore_runtime(const project_t *input)
+         fm1_irq_on();
+         return 2;
+     }
++    d8arr_invalidate();
+     d8p1_runtime_cache.valid = 0; /* a successful historical load replaces D8P1 metadata */
+ #endif
+     transport_req = 2;
+@@ -1191,7 +1201,12 @@ static int project_used(uint32_t slot) {
+ static uint32_t chain_prepare(void)
+ {
+ #if NPART >= NVOICE
+-    if(project_native.mode)return 1; /* native arrangement playback is issue #15 */
++    if(project_native.mode) {
++        if(project_native.mode!=1||!project_native.ready||!project_native.ops.prepare_arrangement)return 1;
++        if(!pn_quiet())return 2;
++        int rc=project_native.ops.prepare_arrangement(project_native.ops.context);
++        return !rc?0:rc==D8POOL_BUSY?2:1;
++    }
+ #endif
+     uint32_t i, k, j, used = 0;
+     if (transport_busy())
+diff --git a/firmware/src/project_native_flash.c b/firmware/src/project_native_flash.c
+index ac87162..6125b50 100644
+--- a/firmware/src/project_native_flash.c
++++ b/firmware/src/project_native_flash.c
+@@ -1,5 +1,15 @@
+ /* SPDX-License-Identifier: GPL-3.0-only */
+ /* Explicit post-migration main-loop connection; no boot caller grants it. */
++#include "d8arr_prepare.c"
++static int pnf_prepare_arrangement(void *c)
++{
++    (void)c;
++    if(!flash_ok)return D8POOL_IO;
++    d8pool_mapped mapped;d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
++    int rc=d8pool_mapped_open(&mapped,&io,1);
++    if(!rc)rc=d8arr_prepare_pool(&mapped.pool);
++    d8pool_mapped_close(&mapped);return rc;
++}
+ static int pnf_catalog(void *c,d8p1_project_catalog *out)
+ { (void)c;return d8p1_catalog_flash(out,1); }
+ static int pnf_save(void *c,unsigned slot,const char *name)
+@@ -10,6 +20,6 @@ static int pnf_rename(void *c,unsigned slot,const char *name)
+ { (void)c;return d8p1_rename_flash(slot,name,1); }
+ int project_native_bind_flash(int completed_migration_authorized)
+ {
+-    project_native_ops ops={NULL,pnf_catalog,pnf_save,pnf_load,pnf_rename};
++    project_native_ops ops={NULL,pnf_catalog,pnf_save,pnf_load,pnf_rename,pnf_prepare_arrangement};
+     return project_native_bind(&ops,completed_migration_authorized);
+ }
+diff --git a/firmware/src/project_native_frontend.h b/firmware/src/project_native_frontend.h
+index 4225324..074bc94 100644
+--- a/firmware/src/project_native_frontend.h
++++ b/firmware/src/project_native_frontend.h
+@@ -11,6 +11,7 @@ typedef struct {
+     int (*save)(void *,unsigned,const char *);
+     int (*load)(void *,unsigned);
+     int (*rename)(void *,unsigned,const char *);
++    int (*prepare_arrangement)(void *); /* optional read-only playback preparation */
+ } project_native_ops;
+ /* A failed binding that reaches preflight retains native ownership but goes
+  * offline, never falls back to stale historical RAM slots. A busy attempt
+diff --git a/firmware/src/seq.c b/firmware/src/seq.c
+index 4fae4df..f8be27e 100644
+--- a/firmware/src/seq.c
++++ b/firmware/src/seq.c
+@@ -552,6 +552,9 @@ static void key_on(uint32_t k, track_t *t)
+         midi_out_event(0x09u | (0x90u | mc) << 8 | x << 16 | 100u << 24);
+     }
+     kb_chn[k] = (uint8_t)n;
++#if NTRK == 8
++    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
++#endif
+     last_note = kb_note[k];                         /* (step entry, the SAMPLE zone: the key's note) */
+ }
+ 
+@@ -567,6 +570,9 @@ static void key_off(uint32_t k, track_t *t)
+         input_off(t, x);
+         midi_out_event(0x08u | (0x80u | mc) << 8 | x << 16);
+     }
++#if NTRK == 8
++    for(i=0;i<n;i++)d8arr_held_refresh(t,kb_chord[k][i]);
++#endif
+ }
+ 
+ #ifdef FM1_INPUT_LAT
+@@ -649,6 +655,16 @@ static void keyboard_block(void)
+ static void seq_start(void)
+ {
+     uint32_t i;
++#if NTRK == 8
++    /* A changed source invalidates Continue, but a subsequent fresh HOME/MIDI
++     * Start may play the current editable project. SONG always prepares first. */
++    if(chain.native_mode==2){chain.native_mode=0;chain.armed=0;}
++    else if(chain.native_mode&&(!chain.native.policy.valid||chain.native.policy.store_epoch!=d8_capture_change.epoch)){
++        chain.armed=0;chain.native.policy.preparing=0;
++        if(chain.native.policy.valid){chain.native_mode=2;chain.native.policy.valid=0;}
++        return;
++    }
++#endif
+     motion_begin();
+     chain_start();
+     for (i = 0; i < NTRK; i++) {                   /* every track from its step 0, together */
+@@ -671,6 +687,9 @@ static void seq_release(track_t *t)
+ {
+     uint32_t i;
+     for (i = 0; i < t->seq_n; i++)
++#if NTRK == 8
++        if (!d8arr_running() || !((chain.native.policy.held[trk_index(t)][t->seq_notes[i]/32u]>>(t->seq_notes[i]%32u))&1u))
++#endif
+         trk_note_off(t, t->seq_notes[i]);
+     t->seq_n = 0;
+     t->seq_hold = 0;
+@@ -832,7 +851,12 @@ static void seq_tick(track_t *t, uint32_t n)
+              * automation and the locks before the notes, so a note-on reads them (eng_drum's KIT, ..) */
+             if (step_chance(s) < 100u && rng() % 100u >= step_chance(s))
+                 skip = SEQ_MISS;
++#if NTRK == 8
++            const motion_store_t *ms=d8arr_running()?d8arr_motion(t):chain.running?&chain.source[chain.slot].motion:&motion;
++            motion_step(t,t->seq_idx,ms,skip==SEQ_ROLLED);
++#else
+             motion_step(t, t->seq_idx, chain.running ? &chain.source[chain.slot].motion : &motion, skip == SEQ_ROLLED);
++#endif
+             if (t->rskip_n && t->rskip_idx == t->seq_idx) {
+                 for (k = 0; k < t->rskip_n; k++) {
+                     for (i = 0; i < s->n; i++)
+@@ -972,11 +996,17 @@ static void events_block(uint32_t n)
+     pr = panic_req;
+     panic_req = 0;
+     if (midi_in_overflow) {                            /* a lost note-off must never leave a held note */
++#if NTRK == 8
++        if(chain.native_mode){chain.native.policy.pending=D8ARR_NONE;chain.native.policy.preparing=0;chain.native.policy.generation++;}
++#endif
+         mi_r = mi_w;
+         memset(midi_sel_on, 0, sizeof midi_sel_on);
+         memset(midi_ch, 0, sizeof midi_ch);
+         memset(midi_owners, 0, sizeof midi_owners);
+         memset(mchord, 0, sizeof mchord);
++#if NTRK == 8
++        if(chain.native_mode==1){chain.native.policy.input_generation++;if(!chain.native.policy.preparing)d8arr_held_build(chain.native.policy.held);}
++#endif
+         midi_hint = 0;
+         for (i = 0; i < NTRK; i++) {
+             trk[i].rh_n = trk[i].rskip_n = 0;
+@@ -1035,7 +1065,18 @@ static void events_block(uint32_t n)
+                 seq_n = midi_clock_advance(fm1_ms);
+         }
+     }
++#if NTRK == 8
++    /* Inactive native routes need neither a period query nor historical tick.
++     * Historical and native timing paths remain mutually exclusive. */
++    if(d8arr_running()) {
++#ifdef D8ARR_PERIOD_TEST_HOOK
++        D8ARR_PERIOD_TEST_HOOK();
++#endif
++        d8arr_tick(seq_n,clk_pos,clk_step,div_samples(2));
++    } else if(!chain.native_mode) chain_tick(seq_n);
++#else
+     chain_tick(seq_n);
++#endif
+     for (i = 0; i < NTRK; i++)
+         seq_tick(&trk[i], seq_n);
+     if (cin_flush)
+diff --git a/firmware/src/song_chain.c b/firmware/src/song_chain.c
+index 28147ef..82f9328 100644
+--- a/firmware/src/song_chain.c
++++ b/firmware/src/song_chain.c
+@@ -8,13 +8,46 @@ typedef struct {
+     int16_t timing[NTRK][4];
+     motion_store_t motion;
+ } chain_pattern_t;
++
++#if NTRK == 8
++/* Native references and immutable source provenance use the otherwise unused
++ * fourth legacy source extent. Never keep display/staging pointers here. */
++enum { D8ARR_APPLY_MUTE=1, D8ARR_APPLY_MIX=2, D8ARR_APPLY_TRANSPOSE=4, D8ARR_NONE=255 };
++typedef struct {
++    uint8_t project[4][8], track[4][8], scene_bank[16];
++    uint8_t row_scene[16], row_repeat[16], source_engine[3][8];
++    uint8_t banks, scenes, rows, valid, suspended, scene, bank, pending, preparing;
++    uint32_t generation, pending_generation, store_epoch;
++    uint32_t sequence[3], length[3], crc[3];
++    uint32_t held[8][4],input_generation;
++} d8arr_state;
++_Static_assert(sizeof(d8arr_state)<=sizeof(chain_pattern_t), "native policy fits unused source");
++static uint32_t motion_guard(void);
++static void motion_unguard(uint32_t);
++static unsigned d8arr_ui_rows(void);
++static void d8arr_held_build(uint32_t [8][4]);
++static void d8arr_held_refresh(track_t *,unsigned);
++static void d8arr_held_rebuild(unsigned);
++static int d8arr_ui_row(unsigned,char [13],unsigned *);
++#endif
++
+ static chain_config_t chain_config;
+ static struct {
++#if NTRK == 8
++    union {
++        chain_pattern_t source[4];
++        struct { chain_pattern_t manual[3]; d8arr_state policy; } native;
++    };
++#else
+     chain_pattern_t source[4];
++#endif
+     chain_config_t config;
+     int16_t timing[NTRK][4];
+     volatile uint8_t armed, running, row, remaining;
+     uint8_t slot, rec;
++#if NTRK == 8
++    uint8_t native_mode; /* 0 editable, 1 native, 2 invalid-resume tombstone */
++#endif
+     uint32_t carry;
+ } chain;
+ 
+@@ -40,8 +73,111 @@ static int chain_valid(const chain_config_t *c)
+             return 0;
+     return 1;
+ }
++static void motion_restore(track_t *t);
++
++#if NTRK == 8
++static int d8arr_running(void) { return chain.native_mode==1 && chain.running; }
++static unsigned d8arr_source_project(const track_t *t)
++{ return chain.native.policy.project[chain.native.policy.bank][t-trk]; }
++static unsigned d8arr_source_track(const track_t *t)
++{ return d8arr_running()?chain.native.policy.track[chain.native.policy.bank][t-trk]:(unsigned)(t-trk); }
++static const motion_store_t *d8arr_motion(const track_t *t)
++{ return &chain.source[d8arr_source_project(t)].motion; }
++static int d8arr_motion_compatible(const track_t *t,unsigned id)
++{ return !d8arr_running() || id<P_FM1_ATK || chain.native.policy.source_engine[d8arr_source_project(t)][d8arr_source_track(t)]==t->eng_req; }
++/* Stopped source-changing entry points invalidate suspension; never confer
++ * storage ownership and never tear a running source out from under the ISR. */
++static void d8arr_invalidate(void)
++{ if(chain.native_mode&&!chain.running&&!chain.armed){chain.native_mode=2;chain.native.policy.valid=0;chain.native.policy.pending=D8ARR_NONE;} }
++static int d8arr_request_row(unsigned row)
++{
++    uint32_t f=motion_guard();
++    int rc=2;
++    if(d8arr_running()&&chain.native.policy.valid&&row<chain.native.policy.rows){
++        chain.native.policy.pending=(uint8_t)row;
++        chain.native.policy.pending_generation=chain.native.policy.generation;
++        RING_PUBLISH();rc=0;
++    }
++    motion_unguard(f);return rc;
++}
++static void d8arr_timing(void)
++{
++    for(unsigned i=0;i<NTRK;i++){
++        unsigned o=d8arr_source_project(&trk[i]),k=d8arr_source_track(&trk[i]);
++        memcpy(&trk[i].p[P_SLEN],chain.source[o].timing[k],sizeof chain.timing[i]);
++    }
++}
++static void d8arr_apply(unsigned row,uint32_t carry)
++{
++    d8arr_state *a=&chain.native.policy;
++    chain.row=(uint8_t)row;chain.remaining=a->row_repeat[row];
++    a->scene=a->row_scene[row];a->bank=a->scene_bank[a->scene];chain.carry=carry;
++    /* This is bounded existing musical work, not merely O(1) publication:
++     * <=96 note-offs and 8xP_COUNT motion restoration scans. No engines/patches. */
++    for(unsigned i=0;i<NTRK;i++) {seq_release(&trk[i]);motion_restore(&trk[i]);}
++    d8arr_timing();
++    for(unsigned i=0;i<NTRK;i++){
++        track_t *t=&trk[i];t->seq_idx=(uint16_t)(t->p[P_SLEN]-1);t->seq_pos=0x7fffffffu;
++        t->rh_n=t->rskip_n=t->rat_left=0;
++    }
++}
++static void d8arr_start(void)
++{
++    d8arr_state *a=&chain.native.policy;
++    if(!chain.running&&!a->suspended){
++        chain.rec=song.rec;
++        for(unsigned i=0;i<NTRK;i++)memcpy(chain.timing[i],&trk[i].p[P_SLEN],sizeof chain.timing[i]);
++    }
++    a->generation++;a->pending=D8ARR_NONE;a->suspended=0;
++    song.rec=0;chain.running=1;chain.armed=0;d8arr_apply(0,0);
++}
++static void d8arr_stop(void)
++{
++    d8arr_state *a=&chain.native.policy;
++    chain.armed=0;a->preparing=0;a->generation++;a->pending=D8ARR_NONE;
++    if(!chain.running)return;
++    for(unsigned i=0;i<NTRK;i++)memcpy(&trk[i].p[P_SLEN],chain.timing[i],sizeof chain.timing[i]);
++    song.rec=chain.rec;chain.running=0;a->suspended=1;
++}
++static int d8arr_continue(void)
++{
++    if(!chain.native_mode)return 1;
++    if(chain.native_mode==2)return 0;
++    d8arr_state *a=&chain.native.policy;
++    if(!a->valid||!a->suspended||a->store_epoch!=d8_capture_change.epoch){
++        if(a->valid&&a->store_epoch!=d8_capture_change.epoch){chain.native_mode=2;a->valid=0;}
++        a->preparing=0;return 0;
++    }
++    a->generation++;a->pending=D8ARR_NONE;a->suspended=0;
++    chain.running=1;chain.armed=0;song.rec=0;d8arr_timing();return 1;
++}
++/* Only an automatic next/final-row boundary reaches this seam. Its synchronous
++ * cleanup/restore work and tail callees remain part of timing qualification. */
++static __attribute__((noinline)) void d8arr_advance_auto(uint32_t carry)
++{
++    if((unsigned)chain.row+1>=chain.native.policy.rows){seq_stop();return;}
++    d8arr_apply((unsigned)chain.row+1,carry);
++}
++static void d8arr_tick(uint32_t n,uint32_t pos,uint32_t step,uint32_t period)
++{
++    d8arr_state *a=&chain.native.policy;
++    if(!d8arr_running()||!a->valid||pos==0xffffffffu)return;
++    uint32_t total=step*period+pos+n,bar=16u*period;
++    if(total<bar)return;
++    if(a->pending!=D8ARR_NONE&&a->pending_generation==a->generation){
++        unsigned row=a->pending;a->pending=D8ARR_NONE;d8arr_apply(row,total-bar);return;
++    }
++    a->pending=D8ARR_NONE;
++    if(chain.remaining>1){chain.remaining--;return;}
++    d8arr_advance_auto(total-bar);
++}
++#endif
++
+ static const step_t *seq_steps(const track_t *t)
+ {
++#if NTRK == 8
++    if(d8arr_running())return chain.source[d8arr_source_project(t)].step[d8arr_source_track(t)];
++#endif
+     return chain.running ? chain.source[chain.slot].step[t - trk] : t->step;
+ }
+ static void motion_restore(track_t *t);
+@@ -62,6 +198,9 @@ static void chain_apply(void)
+ static void chain_start(void)
+ {
+     uint32_t i;
++#if NTRK == 8
++    if(chain.native_mode&&chain.native.policy.valid&&(chain.armed||chain.running||chain.native.policy.suspended)){d8arr_start();return;}
++#endif
+     if (!chain.armed)
+         return;
+     chain.rec = song.rec;
+@@ -78,6 +217,9 @@ static void chain_start(void)
+ static void chain_stop(void)
+ {
+     uint32_t i;
++#if NTRK == 8
++    if(chain.native_mode){d8arr_stop();return;}
++#endif
+     chain.armed = 0;
+     if (!chain.running)
+         return;
+@@ -86,8 +228,23 @@ static void chain_stop(void)
+     song.rec = chain.rec;
+     chain.running = 0;
+ }
++#if NTRK == 8
++/* Historical row changes are rare boundaries. Keep their actual work separate
++ * from the audio fragment loop; helper cost/stack remain part of qualification. */
++static __attribute__((noinline)) void chain_advance_legacy(uint32_t carry)
++{
++    if (chain.row + 1u >= chain.config.count) { seq_stop(); return; }
++    chain.carry = carry;
++    chain.row++;
++    chain.remaining = chain.config.row[chain.row].repeat;
++    chain_apply();
++}
++#endif
+ static void chain_tick(uint32_t n)
+ {
++#if NTRK == 8
++    if(chain.native_mode)return; /* native master-bar hook is after MIDI advancement */
++#endif
+     const track_t *t = &trk[0];
+     uint32_t length;
+     if (!chain.running || t->seq_pos >= 0x7FFFFFFFu || t->seq_idx + 1u != (uint32_t)t->p[P_SLEN])
+@@ -99,6 +256,9 @@ static void chain_tick(uint32_t n)
+         chain.remaining--;
+         return;
+     }
++#if NTRK == 8
++    chain_advance_legacy(t->seq_pos + n - length);
++#else
+     if (chain.row + 1u >= chain.config.count) {
+         seq_stop();
+         return;
+@@ -107,4 +267,5 @@ static void chain_tick(uint32_t n)
+     chain.row++;
+     chain.remaining = chain.config.row[chain.row].repeat;
+     chain_apply();
++#endif
+ }
+diff --git a/firmware/src/ui.c b/firmware/src/ui.c
+index 814a07a..ce65851 100644
+--- a/firmware/src/ui.c
++++ b/firmware/src/ui.c
+@@ -413,6 +413,10 @@ static void chain_play_ui(void)
+     uint32_t rc = chain_prepare();
+     if (!rc) {
+         ui.force = 1;
++#if NTRK == 8
++    } else if (d8arr_ui_rows()&&rc!=2u) {
++        ui_message("NATIVE SONG UNREADY");
++#endif
+     } else if (rc >= 3u) {
+         char b[8] = "A EMPTY";
+         b[0] = (char)('A' + rc - 3u);
+@@ -1411,7 +1415,11 @@ static int act_ready(void)
+         return !chain_busy() && (c == 0u ? !seq_is_empty(TSEL) || motion_count(TSEL) : c == 1u ? 1 :
+                                  c == 2u ? ui.song_row < chain_config.count : chain_config.count != 0u);
+     if (cur_page()->graph == GR_SONG)
++#if NTRK == 8
++        return song.playing || chain_busy() || d8arr_ui_rows() || chain_config.count;
++#else
+         return song.playing || chain_busy() || chain_config.count;
++#endif
+     if (cur_page()->graph == GR_PATS)
+         return pat_last[s] != pat_pick() + 1u || steps_sig(TSEL) != pat_sig[s];
+     if (cur_page()->graph == GR_USER)
+diff --git a/firmware/src/ui_draw.c b/firmware/src/ui_draw.c
+index 9663673..004e683 100644
+--- a/firmware/src/ui_draw.c
++++ b/firmware/src/ui_draw.c
+@@ -791,6 +791,20 @@ static void draw_columns(void)
+         return;
+     }
+     if (cur_page()->graph == GR_SONG) {
++#if NTRK == 8
++        unsigned rows=d8arr_ui_rows();
++        if(rows){
++            unsigned row=ui.song_row<rows?ui.song_row:rows-1,repeat=0;char name[13];
++            int used=d8arr_ui_row(row,name,&repeat);
++            fmt_int(val,(int32_t)row+1);draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
++            str_cpy(val,used?name:"--",sizeof val);draw_column(1,"SCENE",val,"",T_DIM,-1,ICON_X_PATTERN);
++            fmt_int(val,(int32_t)repeat);draw_column(2,"REPS",val,"",T_DIM,-1,ICON_AUTO);
++            if(d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE)fmt_int(val,(int32_t)chain.native.policy.pending+1);
++            else if(d8arr_running())fmt_int(val,(int32_t)chain.row+1);
++            else str_cpy(val,"--",sizeof val);
++            draw_column(3,d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE?"NEXT":"PLAYROW",val,"",d8arr_running()?VAL(3u):T_DIM,-1,ICON_X_SONG);return;
++        }
++#endif
+         uint32_t row = ui.song_row < CHAIN_ROWS ? ui.song_row : CHAIN_ROWS - 1u;
+         int used = row < chain_config.count;
+         fmt_int(val, (int32_t)row + 1);
+diff --git a/firmware/src/ui_input.c b/firmware/src/ui_input.c
+index 25a9fba..a8bf4d6 100644
+--- a/firmware/src/ui_input.c
++++ b/firmware/src/ui_input.c
+@@ -669,6 +669,16 @@ static void edit_param(uint32_t slot, int32_t steps)
+         return;
+     }
+     if (pg->graph == GR_SONG) {
++#if NTRK == 8
++        unsigned rows=d8arr_ui_rows();
++        if(rows){
++            if(slot==0u)ui.song_row=(uint8_t)clamp((int32_t)ui.song_row+steps,0,(int32_t)rows-1);
++            else if(slot==3u&&d8arr_running()) {
++                if(!d8arr_request_row(ui.song_row))ui_message("ROW QUEUED");
++            } else ui_message("NATIVE ROW READ ONLY");
++            return;
++        }
++#endif
+         if (slot == 0u) {
+             ui.song_row = (uint8_t)clamp((int32_t)ui.song_row + steps, 0,
+                 chain_config.count < CHAIN_ROWS ? chain_config.count : CHAIN_ROWS - 1u);
+@@ -766,6 +776,9 @@ static void act_do(void)
+         return;
+     }
+     if (cur_page()->graph == GR_TOOLS) {
++#if NTRK == 8
++        if(d8arr_ui_rows()&&c>=2u){ui_message("NATIVE ROW READ ONLY");return;}
++#endif
+         if (chain_busy()) { ui_message("STOP TO EDIT"); return; }
+         if (!act_ready()) {                               /* nothing there to clear or delete */
+             ui_message(c == 2u ? "NOTHING TO DELETE" : "NOTHING TO CLEAR");
+diff --git a/tests/native_arrangement_test.c b/tests/native_arrangement_test.c
+new file mode 100644
+index 0000000..c2cee0e
+--- /dev/null
++++ b/tests/native_arrangement_test.c
+@@ -0,0 +1,287 @@
++/* SPDX-License-Identifier: GPL-3.0-only */
++/* Actual sequencer, clock and motion with explicitly seeded virtual NOR. */
++#define D8POOL_RUNTIME_NO_MAIN 1
++static unsigned period_queries;
++#define D8ARR_PERIOD_TEST_HOOK() (++period_queries)
++static void held_build_hook(void);
++#define D8ARR_HELD_BUILD_TEST_HOOK() held_build_hook()
++#include "d8p1_pool_runtime_test.c"
++#include "../firmware/src/d8arr_prepare.c"
++static unsigned build_inject;
++static void held_build_hook(void)
++{
++ if(build_inject){build_inject=0;midi_note_event(0,111,100);midi_note_event(0,111,0);}
++}
++static d8p1_project_state source;
++static int32_t audio[2*CTL];
++static unsigned inject_at,inject_kind,inject_reads;
++static int arr_read(void *c,uint32_t off,void *p,uint32_t n)
++{
++ int rc=rd(c,off,p,n);
++ if(inject_at&&chain.native.policy.preparing&&++inject_reads==inject_at){
++  if(inject_kind==1)transport_req=1;
++  if(inject_kind==2)seq_start();
++  if(inject_kind==3)d8_capture_store_changed();
++ }
++ return rc;
++}
++static d8pool arr_pool={NULL,arr_read,er,pg,stop};
++static int cat(void*c,d8p1_project_catalog*out){(void)c;return d8p1_catalog_pool(&arr_pool,out);}
++static int save_cb(void*c,unsigned o,const char*n){(void)c;return d8p1_save_as_pool(&arr_pool,o,n);}
++static int load_cb(void*c,unsigned o){(void)c;return d8p1_load_pool(&arr_pool,o);}
++static int rename_cb(void*c,unsigned o,const char*n){(void)c;return d8p1_rename_pool(&arr_pool,o,n);}
++static int prep_cb(void*c){(void)c;return d8arr_prepare_pool(&arr_pool);}
++static project_native_ops ops={NULL,cat,save_cb,load_cb,rename_cb,prep_cb};
++static void arrange(void)
++{
++ d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;memset(a,0,sizeof *a);a->banks=3;a->scenes=3;a->rows=3;
++ for(unsigned b=0;b<3;b++){
++  memcpy(a->scene[b].name,"SCENE",5);a->scene[b].name[5]=(char)('1'+b);a->scene[b].bank=(uint8_t)b;
++  for(unsigned t=0;t<8;t++){a->bank[b].project[t]=(uint8_t)b;a->bank[b].track[t]=(uint8_t)(7-t);}
++  a->row[b].scene=(uint8_t)b;a->row[b].repeat=(uint8_t)(b==0?2:1);
++ }
++ /* Aliased source tracks have separate destination bases and locks. */
++ a->bank[0].track[1]=a->bank[0].track[0];d8p1_runtime_cache.valid=1;
++}
++static void seed(void)
++{
++ ui_power_on();mix_block(audio,CTL);blank();size_t n=fixture("tests/fixtures/d8p1/minimal.d8p");
++ proof(!d8p1_load_runtime(wire,n,0),"initial native live load");mix_block(audio,CTL);
++ proof(d8p1_project_decode(&source,wire,n,0),"actual native source decode");
++ for(unsigned o=0;o<3;o++){
++  source.project.motion.count=3;source.project.motion.on=128;
++  source.project.motion.event[0]=(motion_event_t){7u<<6,P_PAN,10};
++  source.project.motion.event[1]=(motion_event_t){(7u<<6)|1,P_PAN|MOTION_LOCK,30};
++  source.project.motion.event[2]=(motion_event_t){7u<<6,P_FM1_ATK,41};
++  for(unsigned t=0;t<8;t++){
++   proj_trk_t *q=&source.project.t[t];q->p[P_SLEN]=3;q->p[P_SDIV]=2;
++   for(unsigned k=0;k<NSTEP;k++){q->step[k].time=ST_NOTE;q->step[k].n=1;q->step[k].note[0]=(uint8_t)(40+o*8+t);q->step[k].vel=99;}
++  }
++  proof(d8p1_project_encode(wire,sizeof wire,&n,&source),"encode distinct eight-track source");
++  proof(!d8pool_save(&pool,o,wire,n,7),"seed actual native pool source");
++ }
++ reset();arrange();proof(!project_native_bind(&ops,1),"explicit test-only trusted native binding");
++ writes=0;inject_at=inject_reads=0;
++}
++static int live_same(void)
++{return !memcmp(before.tracks,trk,sizeof trk)&&!memcmp(&before.song_state,&song,sizeof song)&&
++ !memcmp(&before.motion_state,&motion,sizeof motion)&&!memcmp(before.patches,fm6_patch,sizeof fm6_patch)&&
++ !memcmp(&before.undo_state,&undo,sizeof undo)&&before.slot==proj_cur;}
++static void prepare_start(void);
++static void held_oracle(void)
++{
++ for(unsigned t=0;t<8;t++)for(unsigned n=0;n<128;n++){
++  unsigned bit=(chain.native.policy.held[t][n/32]>>(n%32))&1u;
++  proof(bit==(unsigned)(midi_note_held(&trk[t],n)||midi_local_held(&trk[t],n)),"held cache equals independent original ownership predicates");
++ }
++}
++static void cache_cases(void)
++{
++ arrange();reset();prepare_start();song.playing=0;usb.config=0;
++ for(unsigned t=0;t<8;t++){trk[t].p[P_MUTE]=0;trk[t].p[P_AMODE]=0;trk[t].p[P_CHRD]=CH_MAJ;}
++ for(unsigned i=0;i<200;i++){
++  unsigned ch=i%16,n=36+(i*17)%72;
++  song.g[G_ROUTE]=(int16_t)(i%2);song.sel=(uint8_t)((i*5)%8);
++  if(i%7==0)midi_control(ch,64,127);
++  midi_note_event(ch,n,100);held_oracle();
++  if(i%3==0)midi_note_event(ch,n,100); /* repeated/chord source remap */
++  midi_note_event(ch,n,0);held_oracle();
++  if(i%7==0){midi_control(ch,64,0);held_oracle();}
++  if(i%5==0){
++   unsigned k=i%27;track_t *t=&trk[(i*3)%8];
++   if(kb_chn[k])key_off(k,&trk[kb_trk[k]]);
++   kb_trk[k]=(uint8_t)trk_index(t);kb_note[k]=(uint8_t)n;key_on(k,t);held_oracle();
++   key_off(k,t);held_oracle();
++  }
++  if(i%11==0){midi_control(ch,123,0);held_oracle();}
++  if(i%13==0){midi_control(ch,120,0);held_oracle();}
++ }
++ midi_in_overflow=1;events_block(1);held_oracle();
++ for(unsigned t=0;t<8;t++){midi_forget_track(t);held_oracle();}
++ seq_stop();song.g[G_ROUTE]=0;
++}
++static void prepare_start(void)
++{proof(!chain_prepare()&&chain.armed&&chain.native.policy.valid&&!writes,"actual frontend read-only preparation arms");transport_req=0;seq_start();proof(d8arr_running()&&song.playing&&chain.row==0&&chain.remaining==d8p1_runtime_cache.arrangement.row[0].repeat,"actual sequencer starts native row zero");}
++static void boundary(uint32_t carry)
++{uint32_t p=div_samples(2);clk_step=15;clk_pos=p-4;events_block(4+carry);}
++static void legacy_boundaries(void)
++{
++ reset();memset(&chain,0,sizeof chain);song.g[G_CLOCK]=0;transport_req=0;
++ uint8_t timing[sizeof chain.timing];
++ for(unsigned t=0;t<8;t++)memcpy(chain.timing[t],&trk[t].p[P_SLEN],sizeof chain.timing[t]);
++ memcpy(timing,chain.timing,sizeof timing);
++ chain.config.count=2;chain.config.row[0].slot=0;chain.config.row[0].repeat=2;
++ chain.config.row[1].slot=1;chain.config.row[1].repeat=1;
++ for(unsigned o=0;o<2;o++)for(unsigned t=0;t<8;t++){
++  memcpy(chain.source[o].timing[t],&trk[t].p[P_SLEN],sizeof chain.source[o].timing[t]);
++  chain.source[o].timing[t][0]=(int16_t)(o?5:3);chain.source[o].timing[t][1]=2;
++  chain.source[o].step[t][0]=(step_t){.time=ST_NOTE,.n=1,.note={60+o+t},.vel=99};
++ }
++ chain.armed=1;seq_start();proof(chain.running&&!chain.native_mode&&chain.row==0&&chain.remaining==2,"actual historical Start retains first row/repeat");
++ track_t *t=&trk[0];t->seq_idx=2;
++ uint32_t len=step_samples(t,div_samples((uint32_t)t->p[P_SDIV]),t->seq_idx);
++ t->seq_pos=len-5;chain_tick(4);proof(chain.row==0&&chain.remaining==2,"historical pre-boundary fragment cannot advance");
++ chain_tick(8);proof(chain.row==0&&chain.remaining==1,"historical first repeat keeps source/row");
++ chain_tick(8);proof(chain.row==1&&chain.slot==1&&chain.carry==3&&chain.remaining==1,"actual historical row boundary preserves carry and source");
++ for(unsigned i=0;i<8;i++)proof(trk[i].p[P_SLEN]==5&&seq_steps(&trk[i])[0].note[0]==61+i,"historical row publishes all eight source tracks/timing");
++ seq_tick(t,0);proof(t->seq_idx==0&&t->seq_pos==3,"actual sequencer consumes historical transition carry");
++ t->seq_idx=4;len=step_samples(t,div_samples((uint32_t)t->p[P_SDIV]),t->seq_idx);t->seq_pos=len-1;chain_tick(4);
++ proof(!song.playing&&!chain.running&&!chain.armed,"actual historical final boundary stops");
++ for(unsigned i=0;i<8;i++)proof(!memcmp(&trk[i].p[P_SLEN],timing+i*sizeof chain.timing[i],sizeof chain.timing[i]),"historical Stop restores editable timing");
++}
++static void period_cases(void)
++{
++ unsigned n=period_queries;events_block(1);
++ proof(period_queries==n,"inactive editable playback does not request native period");
++ chain.armed=1;seq_start();events_block(1);
++ proof(chain.running&&!chain.native_mode&&period_queries==n,"actual historical playback does not request native period");seq_stop();
++ project_native.ops.prepare_arrangement=prep_cb;arrange();reset();prepare_start();n=period_queries;events_block(1);
++ proof(period_queries==n+1,"actual native playback requests one master-bar period per fragment");
++ seq_stop();n=period_queries;events_block(1);
++ proof(period_queries==n,"suspended native playback does not request period");
++ chain.native_mode=2;chain.native.policy.valid=0;events_block(1);
++ proof(period_queries==n&&!song.playing&&!chain.running,"invalid-resume native tombstone executes neither timing path");
++}
++int main(void)
++{
++ seed();snapshot();proof(!chain_prepare()&&live_same()&&!writes,"preparation preserves editable music, undo and FM6");
++ transport_req=0;seq_start();events_block(1);
++ for(unsigned t=0;t<8;t++)proof(seq_steps(&trk[t])[0].note[0]==47-(t==1?0:t),"actual eight destination reference routing");
++ proof(trk[0].p[P_PAN]==10&&trk[1].p[P_PAN]==10,"aliased source automation remaps to both destinations");
++ trk[0].p[P_PAN]=13;trk[1].p[P_PAN]=17;motion_restore(&trk[0]);motion_restore(&trk[1]);
++ motion_step(&trk[0],0,d8arr_motion(&trk[0]),1);motion_step(&trk[1],0,d8arr_motion(&trk[1]),1);
++ motion_step(&trk[0],1,d8arr_motion(&trk[0]),1);motion_step(&trk[1],1,d8arr_motion(&trk[1]),1);
++ proof(trk[0].p[P_PAN]==30&&trk[1].p[P_PAN]==30,"source parameter locks apply independently");
++ motion_step(&trk[0],2,d8arr_motion(&trk[0]),1);motion_step(&trk[1],2,d8arr_motion(&trk[1]),1);
++ proof(trk[0].p[P_PAN]==10&&trk[1].p[P_PAN]==10,"unlock resolves source automation rather than destination place");
++ /* Current engine changes dynamically filter source-specific automation. */
++ trk[0].eng_req=(uint8_t)((chain.native.policy.source_engine[0][7]+1)%14);int16_t atk=trk[0].p[P_FM1_ATK];
++ motion_step(&trk[0],0,d8arr_motion(&trk[0]),1);proof(trk[0].p[P_FM1_ATK]==atk,"mismatched current engine refuses specific automation");
++ trk[0].eng_req=chain.native.policy.source_engine[0][7];
++ uint8_t editable=trk[0].step[0].note[0];boundary(3);
++ proof(chain.row==0&&chain.remaining==1,"master bar repeat independent of three-step track0");
++ boundary(5);proof(chain.row==1&&chain.carry==5&&trk[0].seq_idx==0&&trk[0].seq_pos==5,"master bar publishes referenced next row with exact carry");
++ proof(seq_steps(&trk[0])[0].note[0]==55&&trk[0].step[0].note[0]==editable,"new sounding pattern never replaces editable steps");
++ proof(!d8arr_request_row(2)&&!d8arr_request_row(0),"pending row latest valid request wins");
++ proof(d8arr_request_row(3)==2&&chain.native.policy.pending==0,"invalid row preserves pending route");
++ events_block(1);proof(chain.row==1,"request waits for master boundary");boundary(2);
++ proof(chain.row==0&&chain.remaining==2&&chain.carry==2,"pending selection applies at bar and resets repeats");
++ proof(!d8arr_request_row(2),"queue before stop");uint16_t phase=trk[0].seq_idx;uint32_t pos=trk[0].seq_pos;
++ midi_clock_transport(0xFC,1);proof(!song.playing&&chain.native.policy.suspended&&chain.native.policy.pending==255,"Stop cancels pending and suspends");
++ midi_clock_transport(0xFB,2);proof(d8arr_running()&&trk[0].seq_idx==phase&&trk[0].seq_pos==pos,"Continue resumes row and sequence phase");
++ midi_clock_transport(0xFA,3);proof(chain.row==0&&chain.remaining==2&&clk_pos==CLK_START,"Start resets row and master phase");
++ proof(!d8arr_request_row(2),"queue before broken input");midi_in_overflow=1;events_block(1);
++ proof(chain.native.policy.pending==255,"broken MIDI stream cancels pending route");
++ seq_stop();d8_capture_store_changed();midi_clock_transport(0xFB,4);
++ proof(!song.playing&&!chain.running,"physical store epoch change refuses stale Continue");
++ proof(chain.native_mode==2,"stale Continue leaves explicit invalid-resume tombstone");
++ seq_start();proof(song.playing&&!chain.native_mode&&!chain.running&&clk_pos==CLK_START,"fresh Start after invalid resume plays editable project from top");seq_stop();
++ /* Attempted save invalidates suspended source even with postcommit uncertainty. */
++ transport_req=0;chain.native_mode=1;chain.native.policy.valid=1;cut=0;proof(d8p1_save_pool(&pool,0)==D8POOL_IO&&!chain.native.policy.valid,"uncertain attempted source writer revokes suspended preparation");reset();
++ for(unsigned bit=1;bit<=4;bit*=2){arrange();d8p1_runtime_cache.arrangement.scene[0].apply=(uint8_t)bit;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_UNSUPPORTED&&unchanged(),"unsupported overlay refuses without weakening scene semantics");}
++ arrange();d8p1_runtime_cache.arrangement.bank[0].project[0]=3;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_UNSUPPORTED&&unchanged(),"fourth reference refuses without autosave alias");arrange();
++ /* A request during copied source reads may invalidate preparation, but must
++  * leave live instruments, editable patterns, undo and saved identity intact. */
++ for(unsigned kind=1;kind<=3;kind++){
++  transport_req=0;chain.native.policy.valid=1;chain.native.policy.suspended=1;
++  inject_reads=0;inject_at=2;inject_kind=kind;snapshot();
++  int rc=d8arr_prepare_pool(&arr_pool);
++  proof(rc==D8POOL_BUSY&&live_same()&&!chain.armed&&!chain.native.policy.valid,"late activity/Start/store mutation aborts partially copied preparation");
++  inject_at=0;transport_req=0;
++ }
++ /* End-of-chain and maximum repeats through actual master-bar hook. */
++ arrange();reset();prepare_start();
++ chain.row=2;chain.remaining=1;chain.native.policy.bank=2;
++ boundary(3);proof(!song.playing&&!chain.running&&chain.native.policy.suspended,"last native row stops at master boundary");
++ arrange();d8p1_runtime_cache.arrangement.row[0].repeat=16;reset();prepare_start();
++ for(unsigned i=0;i<15;i++){boundary(1);proof(chain.row==0&&chain.remaining==15-i,"all sixteen master-bar repeats retained");}
++ boundary(7);proof(chain.row==1&&chain.carry==7,"sixteenth bar advances without truncation");
++ chain.native.policy.generation=UINT32_MAX;proof(!d8arr_request_row(2),"request near generation wrap");
++ seq_stop();proof(chain.native.policy.generation==0&&chain.native.policy.pending==255,"transport generation rollover cancels pending");
++ /* Legal worst-case 96 local releases have no MIDI-output queue publication:
++  * the inherited sequencer emits local voices, not keyboard MIDI packets. */
++ arrange();reset();prepare_start();usb.config=1;mo_w=mo_r=0;
++ for(unsigned t=0;t<8;t++){trk[t].seq_n=12;for(unsigned k=0;k<12;k++)trk[t].seq_notes[k]=(uint8_t)(30+k);}
++ d8arr_apply(1,0);proof(!mo_w&&!mo_r,"96 bounded local note-offs produce no output-ring burst");
++ for(unsigned t=0;t<8;t++)proof(!trk[t].seq_n,"each track local note list releases at boundary");
++ /* MIDI-held and panel-held collision retains its sounding gate. */
++ track_t *held=&trk[7];song.g[G_ROUTE]=0;song.playing=0;held->p[P_MUTE]=0;held->p[P_AMODE]=0;midi_note_event(7,100,100);mix_block(audio,CTL);
++ held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
++ unsigned gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
++ proof(gated&&midi_note_held(held,100),"same-pitch live MIDI hold survives native sequencer release");
++ midi_note_event(7,100,0);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
++ proof(!gated&&!midi_note_held(held,100),"final live MIDI release ends retained gate without hanging");seq_stop();usb.config=0;
++ arrange();reset();prepare_start();held->p[P_MUTE]=0;held->p[P_AMODE]=0;song.playing=0;
++ midi_note_event(7,100,100);midi_control(7,64,127);midi_note_event(7,100,0);
++ held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
++ proof(midi_note_held(held,100),"sustain-owned same pitch remains held after native release");
++ midi_control(7,64,0);proof(!midi_note_held(held,100),"pedal-up retires sustained ownership");
++ midi_note_event(7,100,100);held->seq_n=1;held->seq_notes[0]=100;seq_stop();
++ gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
++ proof(gated&&midi_note_held(held,100),"Stop releases sequencer before native-running cleanup, retaining live key");
++ midi_control(7,120,0);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate;
++ proof(!gated&&!midi_note_held(held,100),"All Sound Off ends protected native held gates");
++ arrange();reset();prepare_start();song.playing=0;held->p[P_MUTE]=0;held->p[P_AMODE]=0;
++ kb_trk[0]=7;kb_note[0]=100;held->p[P_CHRD]=CH_OFF;key_on(0,held);held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
++ gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
++ proof(gated&&midi_local_held(held,100),"same-pitch panel key retains native sounding gate");
++ key_off(0,held);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
++ proof(!gated&&!midi_local_held(held,100),"panel key-up ends protected gate without hang");seq_stop();
++ /* Existing count-in, external clock source and loss cancellation are actual
++  * events_block routes, not a separate planner model. */
++ arrange();reset();cin_left=1;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_BUSY&&unchanged(),"active count-in refuses preparation");cin_left=0;
++ prepare_start();proof(!d8arr_request_row(2),"queue before clock-source change");song.g[G_CLOCK]=1;events_block(1);
++ proof(!song.playing&&!chain.running&&chain.native.policy.pending==255,"clock-source change stops and cancels route");
++ arrange();reset();proof(!chain_prepare(),"external Start preparation");transport_req=0;midi_clock_transport(0xFA,10);
++ proof(d8arr_running()&&song.playing,"USB MIDI Start uses actual native row zero");
++ proof(!d8arr_request_row(2),"queue before external cable loss");fm1_ms=511;midi_clock.have_pulse=0;midi_clock.start_ms=10;events_block(1);
++ proof(!song.playing&&!chain.running&&chain.native.policy.pending==255,"external clock timeout cancels pending route");song.g[G_CLOCK]=0;events_block(1);
++ /* Both actual USB/TRS realtime queues select their configured source. */
++ for(unsigned clock=1;clock<=2;clock++){
++  arrange();reset();song.g[G_CLOCK]=(int16_t)clock;events_block(1);
++  proof(!chain_prepare(),"prepare for configured USB/TRS source");transport_req=0;fm1_ms+=1;
++  proof(midi_enqueue(0xFAu<<8,3-clock),"enqueue other-source Start");events_block(1);
++  proof(!song.playing&&chain.armed,"other clock source cannot activate native arrangement");
++  proof(midi_enqueue(0xFAu<<8,clock),"enqueue selected-source Start");events_block(1);
++  proof(song.playing&&d8arr_running()&&chain.row==0,"selected USB/TRS Start reaches real sequencer");
++  proof(!d8arr_request_row(2)&&midi_enqueue(0xFCu<<8,clock),"queue selected-source Stop");events_block(1);
++  proof(!song.playing&&chain.native.policy.pending==255,"selected-source Stop cancels native pending route");
++  proof(midi_enqueue(0xFBu<<8,clock),"enqueue selected-source Continue");events_block(1);
++  proof(song.playing&&d8arr_running(),"selected-source Continue resumes native arrangement");seq_stop();
++ }
++ song.g[G_CLOCK]=0;events_block(1);
++ /* Every bounded bank/scene/row slot is represented, not truncated to eight. */
++ arrange();d8p1_arrangement *all=&d8p1_runtime_cache.arrangement;
++ all->banks=4;all->scenes=16;all->rows=16;all->bank[3]=all->bank[0];
++ for(unsigned i=0;i<16;i++){all->scene[i]=all->scene[i%3];all->scene[i].bank=(uint8_t)(i%4);all->row[i].scene=(uint8_t)i;all->row[i].repeat=1;}
++ reset();prepare_start();
++ for(unsigned i=1;i<16;i++){boundary(i%7);proof(chain.row==i&&chain.native.policy.scene==i&&chain.native.policy.bank==i%4,"all sixteen scene/row references and four banks play");}
++ boundary(0);proof(!song.playing,"sixteen-row final boundary stops");
++ /* Two channels owning the same live destination pitch retain it until the
++  * final owner releases; no transposed source note is used as ownership. */
++ arrange();reset();prepare_start();song.playing=0;held->p[P_MUTE]=0;held->p[P_AMODE]=0;song.g[G_ROUTE]=1;song.sel=7;
++ midi_note_event(2,100,100);midi_note_event(3,100,100);held->seq_n=1;held->seq_notes[0]=100;seq_release(held);
++ midi_note_event(2,100,0);proof(midi_note_held(held,100),"second channel owner survives first release after native collision");
++ midi_note_event(3,100,0);proof(!midi_note_held(held,100),"last channel release clears native retained ownership");seq_stop();song.g[G_ROUTE]=0;
++ /* Successful adoption invalidates resume but permits ordinary fresh Start. */
++ arrange();reset();prepare_start();seq_stop();proof(!d8p1_load_pool(&pool,1)&&chain.native_mode==2,"successful source load invalidates suspended native route");
++ midi_clock_transport(0xFB,fm1_ms);proof(!song.playing,"load then Continue refuses invalid route");
++ seq_start();proof(song.playing&&!chain.native_mode&&!chain.running,"load then HOME fresh Start plays adopted editable project");seq_stop();
++ arrange();d8p1_runtime_cache.arrangement.scene[0].apply=D8ARR_APPLY_MIX;transport_req=0;
++ proof(chain_prepare()==1&&!transport_req&&!song.playing,"failed SONG preparation never requests editable fallback playback");events_block(1);
++ proof(!song.playing,"failed SONG request remains stopped");
++ cache_cases();
++ arrange();reset();build_inject=1;snapshot();
++ proof(d8arr_prepare_pool(&arr_pool)==D8POOL_BUSY&&!chain.armed&&!chain.native.policy.valid,"ownership mutate-and-revert during initial cache build refuses publication");
++ proof(build_inject==0,"mixed cache guard case executes actual builder midpoint hook");
++ /* Native row count/name/repeats are real loaded metadata, not stale legacy. */
++ arrange();char name[13];unsigned repeat=0;
++ proof(d8arr_ui_rows()==3&&d8arr_ui_row(2,name,&repeat)&&!strcmp(name,"SCENE3")&&repeat==1,"native UI reads actual arrangement metadata");
++ go_page(GR_SONG);ui.song_row=0;edit_param(0,2);proof(ui.song_row==2,"actual SONG knob browses native row count");
++ reset();prepare_start();ui.song_row=1;edit_param(3,1);proof(chain.native.policy.pending==1,"actual fourth SONG knob queues selected row");
++ unsigned rows_before=d8arr_ui_rows();edit_param(1,1);proof(d8arr_ui_rows()==rows_before&&msg_is("NATIVE ROW READ ONLY"),"actual native scene editor refuses unsupported mutation");seq_stop();transport_req=0;
++ project_native.ops.prepare_arrangement=NULL;proof(chain_prepare()==1,"missing optional prepare callback explicitly refuses");
++ legacy_boundaries();period_cases();
++ proof(!writes,"arrangement path never writes NOR");
++ printf("Native arrangement: %u checks, %u failures; actual runtime/sequencer/clock/motion, virtual NOR only\n",checks,failures);return !!failures;
++}
+diff --git a/tests/run_tests.sh b/tests/run_tests.sh
+index 23d0890..c574e75 100755
+--- a/tests/run_tests.sh
++++ b/tests/run_tests.sh
+@@ -231,6 +231,8 @@ if [ -f build/gen/felucca_tables.h ]; then
+     run "actual native three-slot project menu/cache/ownership" "$OUT/native_project_menu_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
++    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
++    run "actual native reference arrangement, master bars, clocks and held gates" "$OUT/native_arrangement_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
+@@ -470,6 +472,8 @@ else
+     run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"
+     $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
+     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
++    $SCC -o "$A/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
++    run "ASan/UBSan: actual native arrangement transport and source refusals" "$A/native_arrangement_test"
+     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
+     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
+     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm

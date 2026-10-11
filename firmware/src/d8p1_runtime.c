@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
 /* Include after project.c in an eight-track translation unit. Main-loop API;
- * no device protocol, persistent write or arrangement playback is enabled. */
+ * no device protocol or persistent write is enabled by these adoption APIs. */
 #include "d8p1_project.h"
 enum { D8RT_OK=0, D8RT_BAD=1, D8RT_BUSY=2 };
 
@@ -32,6 +32,7 @@ int d8p1_load_runtime(const void *raw, size_t n, unsigned available_projects)
     if (!d8p1_project_decode(&stage->state,stage->wire,n,available_projects)) return D8RT_BAD;
     int rc=project_restore_runtime_mode(&stage->state.project,1);
     if (rc) return rc==2 ? D8RT_BUSY : D8RT_BAD;
+    d8arr_invalidate();
     memcpy(&d8p1_runtime_cache.arrangement,&stage->state.arrangement,sizeof d8p1_runtime_cache.arrangement);
     d8p1_runtime_cache.valid=1;
     return D8RT_OK;

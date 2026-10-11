@@ -22,6 +22,9 @@ static __attribute__((noinline)) void midi_clock_transport(uint32_t status, uint
         midi_clock.have_pulse = midi_clock.tempo_valid = 0;
         midi_clock.interval_ms = 0;
         midi_clock.start_ms = ms;
+#if NTRK == 8
+        if (!song.playing && !d8arr_continue())return;
+#endif
         if (!song.playing)
             motion_begin();
         song.playing = 1;

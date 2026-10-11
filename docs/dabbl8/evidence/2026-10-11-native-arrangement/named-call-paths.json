@@ -1,0 +1,564 @@
+{
+  "source": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "dis_sha256": "1c545c8f28ff19329a04af25811b8829e63fbfb4ab97901ae35dd51c01d80989",
+  "scope": "named direct-call and inter-function tail-goto closure only; indirect calls/hardware/context/interrupt nesting not resolved; no cycles/whole-stack sum proof",
+  "roots": {
+    "d8arr_advance_auto": [
+      "arp_chord_off",
+      "arp_off",
+      "d8arr_advance_auto",
+      "d8arr_apply",
+      "d8arr_source_track",
+      "d8arr_timing",
+      "div_samples",
+      "glide_set",
+      "lowest_held",
+      "memcpy",
+      "mono_pick",
+      "mono_play",
+      "mono_remove",
+      "motion_restore",
+      "rec_on",
+      "rec_release",
+      "seq_release",
+      "seq_stop",
+      "trk_note_off",
+      "voice_room",
+      "voice_start",
+      "voice_victim",
+      "voices_busy"
+    ],
+    "chain_advance_legacy": [
+      "arp_chord_off",
+      "arp_off",
+      "chain_advance_legacy",
+      "chain_apply",
+      "div_samples",
+      "glide_set",
+      "lowest_held",
+      "memcpy",
+      "mono_pick",
+      "mono_play",
+      "mono_remove",
+      "motion_restore",
+      "rec_on",
+      "rec_release",
+      "seq_release",
+      "seq_stop",
+      "trk_note_off",
+      "voice_room",
+      "voice_start",
+      "voice_victim",
+      "voices_busy"
+    ],
+    "d8arr_apply": [
+      "d8arr_apply",
+      "d8arr_source_track",
+      "d8arr_timing",
+      "glide_set",
+      "lowest_held",
+      "mono_pick",
+      "mono_play",
+      "mono_remove",
+      "motion_restore",
+      "seq_release",
+      "trk_note_off",
+      "voice_room",
+      "voice_start",
+      "voice_victim",
+      "voices_busy"
+    ],
+    "seq_stop": [
+      "arp_chord_off",
+      "arp_off",
+      "div_samples",
+      "glide_set",
+      "lowest_held",
+      "memcpy",
+      "mono_pick",
+      "mono_play",
+      "mono_remove",
+      "motion_restore",
+      "rec_on",
+      "rec_release",
+      "seq_release",
+      "seq_stop",
+      "trk_note_off",
+      "voice_room",
+      "voice_start",
+      "voice_victim",
+      "voices_busy"
+    ],
+    "pnf_prepare_arrangement": [
+      "chain_busy",
+      "chain_defaults",
+      "d8arr_held_build",
+      "d8p1_crc32",
+      "d8p1_name_ok",
+      "d8p1_project_decode",
+      "d8p1_read",
+      "d8p1_refs_available",
+      "d8pool_current",
+      "d8pool_inventory",
+      "d8pool_load",
+      "d8pool_mapped_open",
+      "d8pr_preflight",
+      "d8pr_stopped",
+      "dm_stopped",
+      "dp_scan",
+      "dp_valid",
+      "fields_ok",
+      "file_crc",
+      "find",
+      "fm1_lcd_wait",
+      "lcd_sync",
+      "main_project_workspace_try",
+      "mchord_of",
+      "memcpy",
+      "memset",
+      "motion_param",
+      "motion_v1_valid",
+      "pnf_prepare_arrangement",
+      "proj_steps",
+      "seq_counting",
+      "step_set_ratchet",
+      "transport_busy"
+    ]
+  },
+  "nodes": {
+    "arp_chord_off": {
+      "calls": [
+        "rec_release",
+        "trk_note_off"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "arp_off": {
+      "calls": [
+        "arp_chord_off",
+        "rec_on",
+        "rec_release",
+        "trk_note_off"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "chain_advance_legacy": {
+      "calls": [],
+      "tails": [
+        "chain_apply",
+        "seq_stop"
+      ],
+      "indirect": []
+    },
+    "chain_apply": {
+      "calls": [
+        "motion_restore",
+        "seq_release"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "chain_busy": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "chain_defaults": {
+      "calls": [
+        "memset"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8arr_advance_auto": {
+      "calls": [],
+      "tails": [
+        "d8arr_apply",
+        "seq_stop"
+      ],
+      "indirect": []
+    },
+    "d8arr_apply": {
+      "calls": [
+        "d8arr_timing",
+        "motion_restore",
+        "seq_release"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8arr_held_build": {
+      "calls": [
+        "mchord_of"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8arr_source_track": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "d8arr_timing": {
+      "calls": [
+        "d8arr_source_track"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8p1_crc32": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "d8p1_name_ok": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "d8p1_project_decode": {
+      "calls": [
+        "chain_defaults",
+        "d8p1_read",
+        "d8p1_refs_available",
+        "memcpy",
+        "motion_v1_valid",
+        "step_set_ratchet"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8p1_read": {
+      "calls": [
+        "d8p1_crc32",
+        "fields_ok",
+        "file_crc",
+        "memcpy"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8p1_refs_available": {
+      "calls": [
+        "d8p1_read",
+        "fields_ok",
+        "find"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8pool_current": {
+      "calls": [
+        "d8pool_inventory",
+        "memcpy"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8pool_inventory": {
+      "calls": [
+        "dp_scan",
+        "dp_valid",
+        "memcpy",
+        "memset"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8pool_load": {
+      "calls": [
+        "d8p1_crc32",
+        "d8p1_read",
+        "d8p1_refs_available",
+        "d8pool_current"
+      ],
+      "tails": [],
+      "indirect": [
+        {
+          "address": "200cf3c",
+          "text": "call r6"
+        }
+      ]
+    },
+    "d8pool_mapped_open": {
+      "calls": [
+        "d8pool_inventory",
+        "dm_stopped"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8pr_preflight": {
+      "calls": [
+        "d8p1_project_decode",
+        "d8pool_inventory",
+        "d8pool_load",
+        "d8pr_stopped",
+        "main_project_workspace_try"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "d8pr_stopped": {
+      "calls": [
+        "transport_busy"
+      ],
+      "tails": [],
+      "indirect": [
+        {
+          "address": "200d26e",
+          "text": "call r1"
+        }
+      ]
+    },
+    "div_samples": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "dm_stopped": {
+      "calls": [],
+      "tails": [],
+      "indirect": [
+        {
+          "address": "200d79a",
+          "text": "call r2"
+        }
+      ]
+    },
+    "dp_scan": {
+      "calls": [
+        "d8p1_crc32"
+      ],
+      "tails": [],
+      "indirect": [
+        {
+          "address": "200cbc8",
+          "text": "call r4"
+        },
+        {
+          "address": "200cce2",
+          "text": "call r10"
+        }
+      ]
+    },
+    "dp_valid": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "fields_ok": {
+      "calls": [
+        "d8p1_name_ok",
+        "find"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "file_crc": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "find": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "fm1_lcd_wait": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "glide_set": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "lcd_sync": {
+      "calls": [
+        "fm1_lcd_wait"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "lowest_held": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "main_project_workspace_try": {
+      "calls": [
+        "lcd_sync"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "mchord_of": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "memcpy": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "memset": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "mono_pick": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "mono_play": {
+      "calls": [
+        "glide_set",
+        "voice_room",
+        "voice_start"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "mono_remove": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "motion_param": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "motion_restore": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "motion_v1_valid": {
+      "calls": [
+        "motion_param"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "pnf_prepare_arrangement": {
+      "calls": [
+        "d8arr_held_build",
+        "d8p1_crc32",
+        "d8p1_project_decode",
+        "d8pool_inventory",
+        "d8pool_load",
+        "d8pool_mapped_open",
+        "d8pr_preflight",
+        "d8pr_stopped",
+        "memcpy",
+        "proj_steps"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "proj_steps": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "rec_on": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "rec_release": {
+      "calls": [
+        "div_samples",
+        "memcpy"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "seq_counting": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "seq_release": {
+      "calls": [
+        "trk_note_off"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "seq_stop": {
+      "calls": [
+        "arp_off",
+        "motion_restore",
+        "seq_release"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "step_set_ratchet": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    },
+    "transport_busy": {
+      "calls": [
+        "chain_busy",
+        "seq_counting"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "trk_note_off": {
+      "calls": [
+        "mono_pick",
+        "mono_play",
+        "mono_remove"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "voice_room": {
+      "calls": [
+        "voice_victim",
+        "voices_busy"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "voice_start": {
+      "calls": [
+        "glide_set"
+      ],
+      "tails": [],
+      "indirect": [
+        {
+          "address": "20016d8",
+          "text": "call r2"
+        },
+        {
+          "address": "2001732",
+          "text": "call r2"
+        }
+      ]
+    },
+    "voice_victim": {
+      "calls": [
+        "lowest_held"
+      ],
+      "tails": [],
+      "indirect": []
+    },
+    "voices_busy": {
+      "calls": [],
+      "tails": [],
+      "indirect": []
+    }
+  }
+}
