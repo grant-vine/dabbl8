@@ -406,8 +406,12 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "offline legacy import preview: preserve originals, report migrations and refuse unknown data" python3 tests/offline_import_test.py "$OUT/dabbl8_import_preview"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
     run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
-    run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
+    # Keep historical fixture extents separate from the actual native eight-track lifecycle.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$OUT/motion_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$motion_bin" tests/motion_test.c -lm
+        run "motion lifecycle: tracks=$tracks FM4=$fm4 SLICE=$slice; historical inputs/native write refusal" "$motion_bin"
+    done; done; done
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
     run "RATCH: x1..x4 in a step (notes, chords, drum hits), gates, chance, swing, projects, user presets, CHANCE page" "$OUT/ratchet_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/midi_control_test" tests/midi_control_test.c -lm
@@ -579,6 +583,11 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$A/motion_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$motion_bin" tests/motion_test.c -lm
+        run "ASan/UBSan: motion lifecycle tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$motion_bin"
+    done; done; done
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
     run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
     $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
