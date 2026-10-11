@@ -1,0 +1,1 @@
+Assertion failed: (shed_count==1 && !trk[8-1].v[0].active && trk[0].v[0].active), function priorities, file native_overload_test.c, line 72.

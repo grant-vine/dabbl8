@@ -268,6 +268,7 @@ static void boot_keys(void)
           ref > 100.0 && fabs(quiet - ref) < 1e-9 && silent == 0.0);
 }
 
+#ifndef AUDIO_TEST_NO_MAIN
 int main(void)
 {
     setvbuf(stdout, NULL, _IONBF, 0);
@@ -277,3 +278,5 @@ int main(void)
     printf(bad ? "audio: %d FAILED\n" : "audio: all passed\n", bad);
     return bad != 0;
 }
+
+#endif

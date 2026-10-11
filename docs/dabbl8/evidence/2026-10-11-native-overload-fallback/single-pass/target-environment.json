@@ -1,0 +1,67 @@
+{
+  "source_commit": "1d47ebee17c72b933008524b6cabbfb138da3e72",
+  "source_archive_sha256": "6957da50c23b03a0f67debab14173b17185f6507dd86345986004dfb07ae1ba3",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "sdk_status": "",
+  "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "image": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "image_inspect": [
+    {
+      "Id": "sha256:d4c45f66efc59f89b0597d343a9bd72808493c0eacecde5285961743252cee23",
+      "RepoTags": [
+        "debian:bookworm-slim"
+      ],
+      "RepoDigests": [
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "mirror.gcr.io/library/debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+      ],
+      "Comment": "debuerreotype 0.17",
+      "Created": "2026-10-05T00:00:00Z",
+      "Config": {
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "Cmd": [
+          "bash"
+        ]
+      },
+      "Architecture": "amd64",
+      "Os": "linux",
+      "Size": 74870277,
+      "GraphDriver": {
+        "Data": {
+          "MergedDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/merged",
+          "UpperDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/diff",
+          "WorkDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/work"
+        },
+        "Name": "overlay2"
+      },
+      "RootFS": {
+        "Type": "layers",
+        "Layers": [
+          "sha256:e58989146fcec76699871403b9897b5c014af1ccd85f5a9300a215e7975525d7"
+        ]
+      },
+      "Metadata": {
+        "LastTagTime": "0001-01-01T00:00:00Z"
+      }
+    }
+  ],
+  "compiler_members": {
+    "pi32v2/bin/clang": "42b94f9e11140b0fcab8f807b2872ad245b8eeca03a2d792f8706c5a3a35d34c",
+    "pi32v2/bin/ld": "fd61aff15616bb6f6b58fd2e9ede7af741c7bf05facb3e0cb3d3c9817c268fd9",
+    "common/bin/objcopy": "a941eab0dd62d51da635be7834fc34d4765dbf421d00599f3a5081d42d416502",
+    "common/bin/objdump": "cffc304e1a9be5dac22984a6ad48e81ef82b17166fd8864c251cf635c9663b73"
+  },
+  "compiler_version": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /opt/jieli/pi32v2/bin\n",
+  "generated_inputs": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  }
+}
