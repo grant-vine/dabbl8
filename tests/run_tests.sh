@@ -243,6 +243,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native held ARP keys: scale controls, captured chords and adoption" "$OUT/native_arp_key_mapping_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
     run "actual native catalog and arrangement render matrix" "$OUT/native_state_render_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_ui_undo_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_ui_undo_test.c -lm
+    run "actual adopted-native panel sound/pattern/motion undo and running refusal" "$OUT/native_ui_undo_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
@@ -375,6 +377,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/perform_test" tests/perform_test.c -lm
     mkdir -p build/perform_demo build/fx_demo
     run "FX layer effects: on the 1/16, stereo, too-long REPEAT, SLICER, silent keys, idle bit-identical, clicks, OCT UP / DN, cost, demos" "$OUT/perform_test" build/perform_demo build/fx_demo
+    $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/native_perform_test" tests/perform_test.c -lm
+    run "eight-track original performance songs, native buffer boundaries and physical FX keys" "$OUT/native_perform_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/reverb_test" tests/reverb_test.c -lm
     run "REVERB TYPE: ROOM bit-identical, SPRING decay / chirp / stability / level, model change, cost, demos" "$OUT/reverb_test" build/fx_demo
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/regress" tests/regress.c -lm
@@ -506,6 +510,8 @@ else
     run "ASan/UBSan: native held ARP keys, chords and adoption" "$A/native_arp_key_mapping_test"
     $SCC -o "$A/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
     run "ASan/UBSan: actual native catalog and arrangement render matrix" "$A/native_state_render_test"
+    $SCC -o "$A/native_ui_undo_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_ui_undo_test.c -lm
+    run "ASan/UBSan: actual native panel undo/redo and running refusal" "$A/native_ui_undo_test"
     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm

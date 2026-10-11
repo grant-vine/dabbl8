@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "scope": "Test-only host verification of existing firmware; no device qualification or firmware change.",
+  "base_commit": "8dccebb44e75181f16fe3704e6c854643e052f58",
+  "base_archive_sha256": "d5f1d07c4b07d208d7546b885aa3a0781d78663030f881446c8a26039bd07cc0",
+  "original_tracked_files_independently_compared": 2184,
+  "only_modified_original_test_in_private_candidate": "tests/perform_test.c",
+  "candidate_test_sha256": {
+    "tests/perform_test.c": "9446473ab12663c9b9c906c223854afdf86eda2cffb2016fb8be772fe8900df3",
+    "tests/native_ui_undo_test.c": "6ff95e9395d341393691bd979b6e4d49a9ab7178378a7458372b41a019c42d32",
+    "tests/native_ui_undo_seed.inc": "d6cdf655b7583674d3156bbc303c57cb2b086d951de5b937754b4d582847e35a"
+  },
+  "runner_sha256": "1b81241b0ac7de3b4fc9e4ab5cdc61ed7b1150b971724c79f2ba2e5169b686e8",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "generated_input_sha256": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "agent_report_sha256": "b4901446d434b5ea919b3c4b9cc4af76cf7797f2559971c9043b01d970578574",
+  "agent_manifest_sha256": "34ca51947436b5207d953e9561427105be7201babd8f68dc2f2fd80eba88f5b3",
+  "agent_manifest_entries_independently_verified": 99,
+  "checks": [
+    {
+      "name": "original4",
+      "exit": 0,
+      "fail_assertions": [],
+      "sanitizer_diagnostics": [],
+      "log_sha256": "2a836d689a1dfd2ce2127d2853c1da190968f63fd14f3e981e18324c27f275b0"
+    },
+    {
+      "name": "original4-san",
+      "exit": 1,
+      "fail_assertions": [
+        "perform:   OCT UP over REPEAT 1/16 (the harmonizer itself): +217, with the shimmer +282 (device ~3.7 / 4.8 %, about 2 %) FAIL"
+      ],
+      "sanitizer_diagnostics": [],
+      "log_sha256": "c4bea4d843635c48559db89827895c2256890d9a1d70ef8c7efb729f5dc0d4f4"
+    },
+    {
+      "name": "original8-san",
+      "exit": 1,
+      "fail_assertions": [
+        "perform:   the buffer given back, nothing left running                             FAIL",
+        "perform: REPEAT 1/8 at 72 BPM (417 ms, the loop holds 371): nothing happens, bit for bit FAIL",
+        "perform:   REPEAT 1/8 and REVERSE (1/8) fit from 81 BPM, 1/16 from 41              FAIL",
+        "perform:   a REPEAT 1/8 held while the tempo drops below its fit: it ends, no click FAIL",
+        "perform: the keys without an effect (6 white from B4, 7 black from D#4): silent, nothing held FAIL",
+        "perform:   after an effect is let go and its ramp is over: skipped again           FAIL",
+        "perform:   OCT UP over REPEAT 1/16 (the harmonizer itself): +217, with the shimmer +282 (device ~3.7 / 4.8 %, about 2 %) FAIL"
+      ],
+      "sanitizer_diagnostics": [],
+      "log_sha256": "7ea5bfbfa0033b424fb7a37a01699f564e9814caebd238380d80d7e830b03c38"
+    },
+    {
+      "name": "adapted4",
+      "exit": 0,
+      "fail_assertions": [],
+      "sanitizer_diagnostics": [],
+      "last_line": "perform test passed",
+      "log_sha256": "535b5897303cba491ea16c279253bf02b76c2077ffbbec3ebe65769c182bc922"
+    },
+    {
+      "name": "adapted8",
+      "exit": 0,
+      "fail_assertions": [],
+      "sanitizer_diagnostics": [],
+      "last_line": "perform test passed",
+      "log_sha256": "eace21ee415426983b8dc6d7940e7d8d3f8bc2d0399589266869c6efbb654afd"
+    },
+    {
+      "name": "adapted8-san",
+      "exit": 1,
+      "fail_assertions": [
+        "perform:   OCT UP over REPEAT 1/16 (the harmonizer itself): +217, with the shimmer +282 (device ~3.7 / 4.8 %, about 2 %) FAIL"
+      ],
+      "sanitizer_diagnostics": [],
+      "last_line": "PERFORM TEST FAILED",
+      "log_sha256": "7b89f4fc157e586e3e8a07a580d39e91f948202ba56810e3b478b972b0637939"
+    },
+    {
+      "name": "native-undo",
+      "exit": 0,
+      "fail_assertions": [],
+      "sanitizer_diagnostics": [],
+      "last_line": "native_ui_undo: 912 checks, 0 failures;12 stopped sound/pattern/motion cases and4 actual running refusals, selected tracks1/4/5/8",
+      "log_sha256": "d0504263b63bcf9c3ad54b7a244b5f362149c6e43b9040c4178924e5febee995"
+    },
+    {
+      "name": "native-undo-san",
+      "exit": 0,
+      "fail_assertions": [],
+      "sanitizer_diagnostics": [],
+      "last_line": "native_ui_undo: 912 checks, 0 failures;12 stopped sound/pattern/motion cases and4 actual running refusals, selected tracks1/4/5/8",
+      "log_sha256": "d0504263b63bcf9c3ad54b7a244b5f362149c6e43b9040c4178924e5febee995"
+    }
+  ],
+  "log_sha256": {
+    "original4.log": "2a836d689a1dfd2ce2127d2853c1da190968f63fd14f3e981e18324c27f275b0",
+    "original4-san.log": "c4bea4d843635c48559db89827895c2256890d9a1d70ef8c7efb729f5dc0d4f4",
+    "original8-san.log": "7ea5bfbfa0033b424fb7a37a01699f564e9814caebd238380d80d7e830b03c38",
+    "adapted4.log": "535b5897303cba491ea16c279253bf02b76c2077ffbbec3ebe65769c182bc922",
+    "adapted8.log": "eace21ee415426983b8dc6d7940e7d8d3f8bc2d0399589266869c6efbb654afd",
+    "adapted8-san.log": "7b89f4fc157e586e3e8a07a580d39e91f948202ba56810e3b478b972b0637939",
+    "native-undo.log": "d0504263b63bcf9c3ad54b7a244b5f362149c6e43b9040c4178924e5febee995",
+    "native-undo-san.log": "d0504263b63bcf9c3ad54b7a244b5f362149c6e43b9040c4178924e5febee995"
+  },
+  "normal_compile_recipe": [
+    "clang",
+    "-O2",
+    "-w",
+    "-Ibuild/gen",
+    "-Ifirmware/src",
+    "tests/perform_test.c",
+    "-lm",
+    "-o",
+    "build/host/perform_test"
+  ],
+  "native_performance_define": "-DNPART=8",
+  "undo_compile_recipe": [
+    "clang",
+    "-O2",
+    "-w",
+    "-Ibuild/gen",
+    "-Ifirmware/src",
+    "tests/native_ui_undo_test.c",
+    "firmware/src/d8p1.c",
+    "firmware/src/d8pool.c",
+    "-lm",
+    "-o",
+    "build/host/native_ui_undo_test"
+  ],
+  "inherited_sanitizer_flags": [
+    "-O1",
+    "-g",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+    "-fno-sanitize-recover=undefined"
+  ],
+  "sanitizer_environment": {
+    "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  },
+  "known_failure": "The full performance suite under inherited sanitizers exits 1 on the unchanged harmonic instruction-cost assertion, both untouched original four-track and adapted eight-track. No sanitizer diagnostic; thresholds retained. This is a recorded failure, not a passing sanitizer suite.",
+  "runner_coverage": "Existing optimized four-track performance retained; add optimized native eight-track performance and actual native UI undo normal/inherited sanitizer. Full performance sanitizer is not an existing runner gate and is not introduced as a passing gate.",
+  "undo_coverage": {
+    "checks_each": 912,
+    "stopped_cases": 12,
+    "running_refusals": 4,
+    "logical_tracks": [
+      1,
+      4,
+      5,
+      8
+    ],
+    "operations": "Actual native decode/adoption/catalog/reference preparation; panel sound, pattern and held-step motion edits; SAVE hold undo/redo; running STOP TO UNDO refusal.",
+    "invariants": "Canonical musical signatures, other full runtime tracks, native cache/catalog/name/slot, virtual NOR bytes, backend read/write counts, capture epoch, and sound undo selected panic issuance/unrelated pending-bit preservation. Real event consumer clears selected bit before hold; unrelated pending bit is explicit fixture ingress."
+  },
+  "unchanged": "Firmware/build/loader/flash boundaries/goldens/CPU/target thresholds. No firmware target rebuild required for test-only source changes.",
+  "limitations": [
+    "Host stub panel/LCD and virtual NOR; not physical flash, gestures or readability.",
+    "No whole main-loop/autosave scheduler or active editor capture-token lifetime exercise.",
+    "Selected tracks/fixture engines, not every engine configuration.",
+    "Inherited DSP sanitizer exclusions retained; not strict undefined-behavior coverage.",
+    "Mac instruction counts and upstream device estimates are not measured pi32v2 timing or worst-case deadlines.",
+    "Physical timing, memory/stack high-water, recovery and release qualification remain open."
+  ]
+}
