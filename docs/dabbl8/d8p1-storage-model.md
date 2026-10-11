@@ -1,5 +1,7 @@
 # D8-005: bounded D8P1 storage model
 
+> Historical proposal: the alternatives and open map decision below describe the 2026-10-09 arithmetic study. The owner subsequently selected [three projects, one shared autosave and all three sample slots](three-project-shared-storage.md). That selected design supersedes the per-object A/B and sample-retiring alternatives for initial integration. Issue #7 is closed with that decision recorded; physical persistence and recovery qualification remain open. Keep the original calculations below as historical evidence, not instructions to remap flash.
+
 Status: arithmetic and format proposal only. No firmware storage code, sample region, loader or flash boundary is changed. The map decision remains open; #7 must not close until the selected map and its remaining gates are recorded. Reproduce the arithmetic with `python3 tools/dabbl8_storage_model.py`; [machine-readable results](evidence/2026-10-09-storage-model/model.json).
 
 ## Worst-case file

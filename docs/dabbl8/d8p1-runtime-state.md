@@ -1,5 +1,7 @@
 # Stopped native project state
 
+> Historical implementation snapshot: this page describes the initial stopped runtime API and its linked evidence. Later [arrangement playback](native-arrangement-playback.md), [migration coordination](native-migration-session.md) and [shared persistence](runtime-shared-persistence.md) have separate source-bound evidence and hardware gates. The selected storage direction is [three projects and one shared autosave](three-project-shared-storage.md), with a rotating write spare, rather than permanent per-object A/B pairs. Production native writes remain quarantined; host implementation does not qualify physical saving or recovery.
+
 The eight-track build now links an in-memory D8P1 loading/capture API and a separate 772-byte arrangement cache. This is a software implementation, not a device upload/backup feature or a hardware-qualified release. The four-track build retains its existing behavior. No editor command, format capability, flash object or loader boundary changes.
 
 ## Main-loop contract
