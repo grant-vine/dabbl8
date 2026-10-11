@@ -1,0 +1,12 @@
+--- a/src/rtmidi/RtMidi.cpp
++++ b/src/rtmidi/RtMidi.cpp
+@@ -1051,3 +1051,3 @@
+   // Save our api-specific connection information.
+-  CoreMidiData *data = (CoreMidiData *) new CoreMidiData;
++  CoreMidiData *data = (CoreMidiData *) new CoreMidiData();
+   data->client = client;
+@@ -1386,3 +1386,3 @@
+   // Save our api-specific connection information.
+-  CoreMidiData *data = (CoreMidiData *) new CoreMidiData;
++  CoreMidiData *data = (CoreMidiData *) new CoreMidiData();
+   data->client = client;

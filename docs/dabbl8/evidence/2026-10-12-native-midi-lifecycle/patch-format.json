@@ -1,0 +1,6 @@
+{
+  "old_patch_sha256": "ab326d5dbd0fbfcad5d05c8553697e55617bdd59d93452c52688833e330a7e56",
+  "final_patch_sha256": "9aca9ae910ece2263566f378eb4cf8891b2d5091ef91c477b1ffd7bf64356495",
+  "scope": "context-only patchformat correction, same exact2newCoreMidiData() edits; no changedC++fixture/helper/runtime/extension",
+  "expected_fixed_source_sha256": "73f616659483becc02ff3ccfe0e2ca5fae2ee248c1483845b6ef779783e05a37"
+}

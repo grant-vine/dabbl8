@@ -1,0 +1,17 @@
+{
+  "qualified_source_commit": "9b8c1798c40e25fab528ce2ffb431050db4972ca",
+  "qualified_source_tree": "d28501fd59ead24ed2c96ecb0ae1da60b2e87e9d",
+  "authoritative_parent": "1466d4b4f0fb4244f0491fbf3cb4103bfd3b675d",
+  "adapter_original_parent": "441fb281e69000bb432a84c7bdc8f8d944ccde04",
+  "raw_evidence_directory": ".local-baseline/readonly-midi-capture-adapter-qualification/current1466",
+  "raw_entries": 488,
+  "raw_report_sha256": "48271f6f4ac5b39ec745d8d4da64ad785ef4d0f7f09c7bec5fb3ea96b5b9f333",
+  "raw_manifest_sha256": "d52ab1fba2a121f1d3544451d93b56377741aa15910a893355e9105271ffca83",
+  "original_441_report_sha256": "756a13e6e0e77fc6654d179a33c55e1b13a9e282724cfa5c27427d7c0745cd1e",
+  "original_441_manifest_sha256": "a238e57d3e14725237100585b2780764305fd5d117db7f419b08d4dc28762fb3",
+  "command79_supplement_report_sha256": "00d8ec84aa33713ea7418838e98923cd101947ed0d1c2a15378466a6d4850ce0",
+  "command79_supplement_manifest_sha256": "8e93356d2b39620b09a4aab638938ce2443f6273751bb794240468476976cc74",
+  "capture_collector_source_unchanged": true,
+  "native_midi_contact": false,
+  "scope": "Docs delivery is a descendant of qualified merge; code/test/runner inputs must remain byte-identical. Raw transcripts/host executables/snapshot bytes remain ignored outside Git. No native or physical qualification."
+}
