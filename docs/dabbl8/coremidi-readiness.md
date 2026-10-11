@@ -18,8 +18,11 @@ source `c7c44de67f84349ba6b3d8ccb622a1f09848021a` was extracted and exercised:
 `get_output_names()` and loaded afterwards, with compiled API `MACOSX_CORE`.
 Those calls reported one input and one output named `FM-1`. The inspected native
 module links to macOS CoreAudio/CoreMIDI/CoreFoundation and system runtime libraries.
-Enumeration created and deleted temporary CoreMIDI clients; it opened no MIDI
-ports, sent no messages and did not instantiate the adapter's `ReadOnlyMidi` class.
+Enumeration constructed and deleted RtMidi C++ objects and requested no explicit
+open/connect/send operation; it did not instantiate `ReadOnlyMidi`. The objects
+may share a process-lifetime OS CoreMIDI client, which is not disposed by ordinary
+object deletion. These statements describe requested APIs, not an OS lifecycle
+trace.
 
 These are **Mido-reported name counts**. Mido1.3.3's inspected `get_devices` merges
 identical endpoint names. A coalesced list cannot prove one unique physical endpoint,
@@ -43,3 +46,18 @@ host dependencies are not embedded in the firmware or relicensed by Dabbl8.
 and [python-rtmidi API documentation](https://spotlightkid.github.io/python-rtmidi/rtmidi.html)
 describe backend API selection and enumeration; the receipt additionally binds the
 actual installed wheel/source hashes rather than relying solely on current docs.
+
+## Later native source audit correction
+
+The pinned python-rtmidi1.5.8 source and installed arm64 instructions leave a
+CoreMidiData port field uninitialised before deletion reads it. No native fault
+was reproduced, but earlier successful enumeration does not qualify safe cleanup.
+Native CLI capture remains blocked pending a reviewed dependency repair and
+source/extension qualification; see PR147's [lifecycle evidence](https://github.com/grant-vine/dabbl8/blob/ad554e76816188f25cbb9fe7f73696f899d9daf0/docs/dabbl8/native-midi-lifecycle.md).
+
+The original compact report and its raw receipt remain historical and unchanged.
+Their phrase "Ephemeral CoreMIDI clients created/deleted" is superseded by the
+object/shared-client distinction above. Its `opened_ports: 0` records absence of
+explicit open API requests, not independently traced OS behavior or absence of
+an erroneous disposal attempt. No new enumeration, port operation or physical
+capture is performed by this correction.
