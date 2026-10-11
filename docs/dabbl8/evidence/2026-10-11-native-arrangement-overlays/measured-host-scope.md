@@ -1,0 +1,13 @@
+# Parent/candidate complete host IRQ measurement
+
+Exact parentbf9ddba (functional226 unchanged) and candidate048df56, actual `fm1_alnk0_irq` through simulated DMA including active48kHz UAC, synchronous events/sequencer/engine/FX/master/click/output callees. No firmware source changes. Six alternating-order rounds × three cases × eight apply combinations × two sources =288 batches,512 measured IRQs plus16 warmups each. All batches exit0; nonzeroaudio, expected actual transitions and12 sounding sequence-note entries pertrack at boundaries asserted. Eight gated sharedvoices asserted at initialization. Worst boundary fixture has96 sequence release entries, every99parameter motion-active bit set on all8tracks, and4pitched+8drum events pertrack at stepzero. Parent cannot support scene overlays/fills; parent apply0 and equivalent explicitrow2 transition is the fill comparator. Actual fill return/transport behavior is separately covered by625904 focused tests.
+
+| Host case | Candidate/parent median wall ratios across apply0–7 | Instruction ratios | Parent IRQ time range of case medians | Candidate range |
+|---|---|---|---|---|
+| Ordinary fragment, no sequence/bar event | 0.9665–1.0444 | 0.9905–1.0467 | 16.96–17.38µs | 16.73–17.97µs |
+| Normal worst-bar transition | 0.9879–1.0372 | 0.9974–1.0269 | 31.80–32.38µs | 31.74–33.01µs |
+| Fill vs equivalent selected-row transition | 0.9719–1.0260 | 0.9974–1.0270 | 31.69–32.37µs | 31.39–33.04µs |
+
+No43% host IRQ regression observed in these fixtures. Mute combos add up to4.7% instruction count in ordinary blocks through real performance processing, about2.7% at worst boundaries. Timings overlap/noise exist; per-case ranges and raw batches are retained. This is evidence about the tested Mac build, not pi32cycle cost, device DMA/drain deadlines, peripheral IRQ nesting, maximum hardware stack or arbitrary engine combinations. Mac optimizer differs from target, and hostsim intentionally suppresses target attributes. Clock/rusage wrappers are included in instruction deltas without empty-overhead subtraction; fixture setup and simulated USB read-index draining occur outside measured windows. Hardware time/tick HAL is simulated; no physical overload/drain claim. Native static budget failure54935 remains unchanged and must be published alongside this diagnostic.
+
+The frozen candidate full regression suite90198 was concurrently active during this benchmark. Alternating paired order and instruction counters help comparison, but wall-time measurements include real host scheduling/contention; this was not an isolated machine benchmark.

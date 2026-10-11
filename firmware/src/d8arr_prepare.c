@@ -9,7 +9,7 @@ static int d8arr_prepare_pool(const d8pool *s)
     if(cv_cpu_active||migration_owner||!d8p1_runtime_cache.valid)return D8POOL_BUSY;
     const d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
     if(!a->banks||a->banks>4||!a->scenes||a->scenes>16||!a->rows||a->rows>16)return D8POOL_INVALID;
-    memset(&next,0,sizeof next);next.pending=D8ARR_NONE;
+    memset(&next,0,sizeof next);next.pending=D8ARR_NONE;next.fill_pending=D8ARR_NONE;
     next.banks=a->banks;next.scenes=a->scenes;next.rows=a->rows;
     unsigned used=0;
     for(unsigned b=0;b<a->banks;b++)for(unsigned t=0;t<8;t++){
@@ -18,8 +18,12 @@ static int d8arr_prepare_pool(const d8pool *s)
     }
     for(unsigned i=0;i<a->scenes;i++){
         if(a->scene[i].bank>=a->banks)return D8POOL_INVALID;
-        if(a->scene[i].apply)return D8POOL_UNSUPPORTED; /* overlays implemented separately */
-        next.scene_bank[i]=a->scene[i].bank;
+        const d8p1_scene_state *scene=&a->scene[i];
+        if(scene->apply&~7u)return D8POOL_UNSUPPORTED;
+        next.scene_bank[i]=scene->bank;
+        for(unsigned t=0;t<8;t++){
+            if(scene->level[t]>127||scene->pan[t]<-64||scene->pan[t]>63||scene->transpose[t]<-24||scene->transpose[t]>24)return D8POOL_INVALID;
+        }
     }
     for(unsigned i=0;i<a->rows;i++){
         if(a->row[i].scene>=a->scenes||!a->row[i].repeat||a->row[i].repeat>16)return D8POOL_INVALID;
@@ -35,6 +39,13 @@ static int d8arr_prepare_pool(const d8pool *s)
     chain.native_mode=1;chain.armed=0;chain.native.policy.valid=0;
     chain.native.policy.suspended=0;chain.native.policy.preparing=1;chain.native.policy.input_generation=0;
     motion_unguard(f);
+    /* Immutable overlay cache preloads with IRQ enabled, beside the policy;
+     * no extra 416-byte temporary or final guarded bulk copy. */
+    for(unsigned i=0;i<a->scenes;i++){
+        d8arr_scene *to=&chain.native.scene[i];const d8p1_scene_state *from=&a->scene[i];
+        to->apply=from->apply;to->mute=from->mute;
+        memcpy(to->level,from->level,8);memcpy(to->pan,from->pan,8);memcpy(to->transpose,from->transpose,8);
+    }
     for(unsigned o=0;o<3;o++)if(used&(1u<<o)){
         size_t n=0;
         if(!chain.native.policy.preparing||!d8pr_stopped((void *)s)){rc=D8POOL_BUSY;goto failed;}

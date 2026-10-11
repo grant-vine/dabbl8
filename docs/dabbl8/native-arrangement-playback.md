@@ -1,4 +1,4 @@
-# Native reference arrangement: first playback slice
+# Native reference arrangement playback, overlays and fills
 
 This software slice executes loaded D8P1 rows through the actual sequencer. It
 is not production storage activation, hardware qualification, or completion of
@@ -14,7 +14,7 @@ arrangement references, then copies patterns, four timing parameters and sparse
 motion from at most three manual sources into the existing chain cache.
 Project reference 3 refuses; it never aliases shared autosave or the historical
 fourth project. The editable project, instruments, FM6 patches, mixer and undo
-remain intact. Eight destinations may independently reference the same source
+remain intact beneath transient scene overlays. Eight destinations may independently reference the same source
 track. Automation and parameter-lock unlock use source owner/place and current
 engine compatibility; destination bases and locks remain independent.
 
@@ -25,10 +25,35 @@ not a sample-exact output/timing promise. Sixteen rows/scenes, four banks and
 repeats 1–16 are retained. KNOB 1 browses native rows; KNOB 4 while playing queues
 the selected row for the next master bar (latest valid request wins). Native
 row names and repeats come from retained metadata. This slice exposes these
-rows read-only; editing and scene overlays are separate increments.
+rows read-only; metadata editing remains a separate increment.
 
-Scenes with any apply bit refuse explicitly: MUTE=1, MIX=2, TRANSPOSE=4.
-Unsupported overlays are not silently ignored. Fill is not implemented here.
+Known apply bits are MUTE=1, MIX=2 and TRANSPOSE=4; unknown bits refuse.
+Mute is an additional performance mute using the existing gain ramp, composing
+with manual mute and solo while retaining input ownership. Mix supplies an
+absolute effective level/pan at the mixer; editable parameters and motion bases
+remain underneath. Transpose shifts only pitched sequence notes before scale
+quantization, clamps to MIDI range and deduplicates sounding pitches. Drum hits
+and engines with mapped kit/slice keys remain unchanged, as do panel/MIDI notes.
+Stop removes the effective layer; valid Continue restores the same scene.
+
+While playing, positive KNOB 3 queues the selected row as a one-master-bar fill;
+negative KNOB 3 cancels it. Pending fills show ARM, active fills RUN, and active
+cancellation RET. Calibrated encoder mapping/direction applies. Latest valid fill
+wins; KNOB 4 normal row selection cancels a fill and has priority. Cancellation
+returns to normal progression at the next bar, without cutting the active bar.
+A fill replaces, rather than inserts, the upcoming scheduled bar and consumes
+its repeat/progression. A repeat2 → fill replacing its second bar → B is one
+example; replacing one-repeat B returns directly to C. No fill is appended when
+normal progression has already ended. A fill can replace the last scheduled bar
+and Stop follows that bar. During an active fill, another fill replaces the next
+upcoming normal bar using a bounded precomputed return row/repeat context.
+
+Stop cancels pending fills, but preserves active-fill phase and return context.
+Valid Continue finishes the remaining fill once and returns to that context;
+repeated Stop/Continue does not consume extra bars. Fresh Start/reprepare resets
+fill state. Load, attempted save including uncertain commit, store epoch changes
+and existing preparation guards invalidate a suspended fill just as they do an
+ordinary suspended route. There is no fill-specific coherence exemption.
 
 Stop cancels pending requests, restores editable timing/recording and suspends
 row/phase. Continue resumes only a valid suspended preparation. Successful
@@ -45,13 +70,15 @@ wrap between checks is not qualified as a new authority/coherence proof.
 ## Memory and bounded work
 
 Three immutable source snapshots and a small typed policy occupy the existing
-four-source chain extent; no full-project copy or ISR pointer remains in the
+four-source chain extent, including a 416-byte immutable scene cache and small
+fill return context; no full-project copy or ISR pointer remains in the
 display arena. Preparation invalidates old suspension before unlocked bulk
 copies. Start/Continue during copying abort preparation. A late failure may
 conservatively discard prior preparation; it leaves live editable music intact
 and does not publish partially usable sources. Final publication guards only
 bounded policy/flags; all source reads, CRCs and bulk copies remain IRQ enabled.
 
+An overlay boundary also publishes 18 bytes of effective audio mix/mute state.
 A bar change includes up to 96 local note-off operations, eight P_COUNT=99
 motion restoration scans, 64 bytes of timing and eight phase resets; source
 step-zero events may then invoke up to 96 local note-ons. This is not O(1) audio
@@ -81,7 +108,7 @@ sequencer, master clock, USB/TRS realtime queue, motion, held ownership and
 explicit virtual NOR. It covers all bank/scene/row capacities, 16 repeats,
 track-length-independent boundaries/carry, alias motion/unlock, pending latest
 wins/invalid requests, generation wrap/cancellation, count-in, clock source/loss,
-load→Continue refusal→fresh Start, missing callback, unsupported overlays and
+load→Continue refusal→fresh Start, missing callback, unknown overlay bits and
 fourth reference, late copy-phase activity/Start/store mutation, same-pitch
 panel/MIDI/sustain/multiple-channel holds and final release, All Sound Off,
 no output-ring publication for 96 local releases, and no NOR writes.
@@ -92,9 +119,13 @@ Inherited DSP sanitizer exclusions are not full undefined-behavior coverage.
 No audible timing, peripheral drain, hardware recovery or release qualification
 is inferred from host or virtual-NOR tests. Golden audio hashes are unchanged.
 
-The next increment implements actual mute/mix/transpose scene overlays and
-bounded fill behavior, preserving transient versus saved state and held-note
-semantics. This first slice provides real playback rather than a dormant plan.
+Overlay/fill tests additionally exercise every apply combination, exact encoded
+editable-state and saved-source preservation, mixer/ramp endpoints, sequence
+transpose clamp/dedup/mapped-key exclusions, calibrated KNOB 3, replacement
+repeat/end semantics, active-fill Stop/Continue through real USB/TRS queues,
+source adoption/uncertain-save refusal and final held-input releases. Scene
+editing, microtiming depth and hardware timing qualification remain separate
+increments. A passing host test does not establish audible device behavior.
 
 ## Cold historical transition experiment
 

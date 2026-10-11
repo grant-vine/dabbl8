@@ -1,0 +1,50 @@
+[
+  {
+    "name": "native_reverb_zero_sweep_test-opt-build",
+    "exit": 0
+  },
+  {
+    "name": "native_reverb_zero_sweep_test-opt",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-opt-build",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-opt",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_counter_boundary_test-opt-build",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_counter_boundary_test-opt",
+    "exit": 0
+  },
+  {
+    "name": "native_reverb_zero_sweep_test-san-build",
+    "exit": 0
+  },
+  {
+    "name": "native_reverb_zero_sweep_test-san",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-san-build",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-san",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_counter_boundary_test-san-build",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_counter_boundary_test-san",
+    "exit": 0
+  }
+]
