@@ -10,6 +10,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+from dependency_integrity import SDK_BUILD_INPUTS, verify_archive_tree, verify_sdk
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'build/ci-evidence'
@@ -43,7 +44,20 @@ for name in ['Pillow', 'fonttools']:
 sdk = os.environ.get('AC79_SDK')
 report['sdk_commit'] = capture(['git', '-C', sdk, 'rev-parse', 'HEAD']) if sdk else {'exit_code': None, 'output': 'AC79_SDK absent'}
 tc = os.environ.get('JIELI_TOOLCHAIN')
-if tc:
+integrity_errors = []
+report['dependency_integrity'] = {}
+try:
+    if not tc or not sdk:
+        raise ValueError('Target dependency locations unavailable')
+    archive = Path(os.environ.get('JIELI_TOOLCHAIN_ARCHIVE',
+                                 str(Path(tc).parent / 'linux-toolchain.tar.xz')))
+    report['dependency_integrity']['toolchain'] = verify_archive_tree(
+        archive, tc, LOCK['toolchain_directory'], LOCK['toolchain_archive_sha256'])
+    report['dependency_integrity']['sdk'] = verify_sdk(sdk, LOCK['sdk_commit'], SDK_BUILD_INPUTS)
+except (OSError, ValueError, subprocess.CalledProcessError) as error:
+    report['dependency_integrity']['error'] = str(error)
+    integrity_errors.append('Dependency content')
+if tc and not integrity_errors:
     if os.environ.get('JIELI_DOCKER') == '1':
         report['versions']['target_compiler'] = capture(['docker', 'run', '--rm', '--platform', 'linux/amd64', '-v', f'{Path(tc).resolve()}:/opt/jieli:ro', LOCK['container'], '/opt/jieli/pi32v2/bin/clang', '--version'])
     else: report['versions']['target_compiler'] = capture([str(Path(tc) / 'pi32v2/bin/clang'), '--version'])
@@ -78,7 +92,7 @@ def run(name, args):
 
 setup_ok = os.environ.get('D8_SETUP_OK', 'true') == 'true'
 unsafe_updates = any(os.environ.get(key) not in (None, '', '0') for key in ['GOLDEN_UPDATE', 'BUDGET_UPDATE'])
-pin_errors = []
+pin_errors = list(integrity_errors)
 if os.environ.get('GITHUB_ACTIONS') == 'true':
     for name, actual, expected in [
         ('Python', platform.python_version(), LOCK['python']),
