@@ -1,0 +1,2 @@
+COMMAND ['clang', '-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow', '-fno-sanitize-recover=undefined', '-w', '-DNPART=8', '-DFELUCCA_FM4=1', '-DFELUCCA_SLICE=1', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_sound_selection_test.c', '-lm', '-o', '/private/tmp/d8-engine-ui-availability-evidence/san_8_1_1_editor']
+sound selection: 3689 proofs tracks=8 FM4=1 SLICE=1 actual editor

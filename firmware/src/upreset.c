@@ -505,6 +505,24 @@ static uint32_t up_nth(uint32_t n)             /* slot of the n-th used one (n <
     return 0;
 }
 
+/* Sound views filter by effective legacy target; structural/pattern listings stay intact. */
+static unsigned up_sound_count(unsigned mask)
+{
+    unsigned n = 0;
+    for (unsigned k = 0; k < UP_SLOTS; k++) n += !up_ready(k, mask);
+    return n;
+}
+static unsigned up_sound_nth(unsigned n, unsigned mask)
+{
+    for (unsigned k = 0; k < UP_SLOTS; k++) if (!up_ready(k, mask) && !n--) return k;
+    return UP_SLOTS;
+}
+static unsigned up_sound_rank(unsigned slot, unsigned mask)
+{
+    unsigned n = 0;
+    for (unsigned k = 0; k < slot && k < UP_SLOTS; k++) n += !up_ready(k, mask);
+    return n;
+}
 static uint32_t up_rank(uint32_t slot)         /* used slots before it */
 {
     uint32_t k, n = 0;
