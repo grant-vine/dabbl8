@@ -1,0 +1,7 @@
+{
+  "python": "Python 3.14.8",
+  "clang": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+  "node": "v26.11.0",
+  "SDK_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "toolchain_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958"
+}

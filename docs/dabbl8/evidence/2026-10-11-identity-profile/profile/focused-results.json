@@ -1,0 +1,62 @@
+[
+  {
+    "name": "identity-profile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-opt-compile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-opt",
+    "exit": 0
+  },
+  {
+    "name": "dabbl8-opt-compile",
+    "exit": 0
+  },
+  {
+    "name": "dabbl8-opt",
+    "exit": 0
+  },
+  {
+    "name": "loader-opt-compile",
+    "exit": 0
+  },
+  {
+    "name": "loader-opt",
+    "exit": 0
+  },
+  {
+    "name": "upstream-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "upstream-san",
+    "exit": 0
+  },
+  {
+    "name": "dabbl8-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "dabbl8-san",
+    "exit": 0
+  },
+  {
+    "name": "loader-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "loader-san",
+    "exit": 0
+  },
+  {
+    "name": "installer",
+    "exit": 0
+  },
+  {
+    "name": "discovery-port-names",
+    "exit": 0
+  }
+]

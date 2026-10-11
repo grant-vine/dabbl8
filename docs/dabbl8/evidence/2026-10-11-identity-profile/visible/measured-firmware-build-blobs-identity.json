@@ -1,0 +1,14 @@
+{
+  "measured_source": "d86711a1764d3228ca61a6279f4a103dfac5b12c",
+  "integration_source": "ce27b48f42c3910bb9ba7a95d35b8f083fe0798d",
+  "changed_files": [
+    "BUILDING.md",
+    "docs/dabbl8/identity-profile.md",
+    "tests/run_tests.sh",
+    "web/d8info.js",
+    "web/editor.html",
+    "web/test_d8identity.mjs"
+  ],
+  "all_firmware_build_tool_license_blobs_equal": true,
+  "hardware": "NOT_RUN"
+}
