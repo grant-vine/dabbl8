@@ -430,9 +430,16 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/editor_test" tests/editor_test.c -lm
     run "editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)" \
         env MENU_JSON="$OUT/menu.json" D8CAPS_JSON="$OUT/d8caps.json" D8INFO_JSON="$OUT/d8info.json" "$OUT/editor_test"
-    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/robust_test" tests/robust_test.c -lm
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/robust_test" firmware/src/d8p1.c tests/robust_test.c -lm
     run "robustness: crafted sample slots, engine numbers, retained old projects, preset patterns, malformed requests" \
         "$OUT/robust_test"
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            label="native_robust_fm${fm4}_slice${slice}"
+            $CC -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tests/robust_test.c -lm
+            run "native robustness: frozen historical layouts, staged defaults and refusal state; FM4=$fm4 SLICE=$slice" "$OUT/$label"
+        done
+    done
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/mod_test" tests/mod_test.c -lm
     mkdir -p build/mod_demo
     run "modulation matrix: off = bit-identical, the math, MIDI CC1 / CC11 / aftertouch, cost, demos" "$OUT/mod_test" build/mod_demo
@@ -546,9 +553,18 @@ else
     run "ASan/UBSan: update loader (other app -> this build)" "$A/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
     $SCC -DOWN_PKG=1 -o "$A/ota_test" tests/ota_test.c
     run "ASan/UBSan: M-UPGRADE entry (own loader)" "$A/ota_test" build/felucca.fwsc
-    for t in editor_test project_test backup_test robust_test; do
+    for t in editor_test project_test backup_test; do
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
+    done
+    $SCC -o "$A/robust_test" firmware/src/d8p1.c tests/robust_test.c -lm
+    run "ASan/UBSan: robust_test" "$A/robust_test"
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            label="native_robust_fm${fm4}_slice${slice}"
+            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tests/robust_test.c -lm
+            run "ASan/UBSan: native robustness and full refusal snapshots; FM4=$fm4 SLICE=$slice" "$A/$label"
+        done
     done
     for n in 4 8; do
         $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
