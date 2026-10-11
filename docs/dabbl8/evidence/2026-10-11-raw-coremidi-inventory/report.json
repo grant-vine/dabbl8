@@ -1,0 +1,170 @@
+{
+  "base": "c7c44de67f84349ba6b3d8ccb622a1f09848021a",
+  "source_freeze": {
+    "tools/dabbl8_readonly_midi.py": "8ffb62abdd015e558f9229f600b41fe15b281fa5fde07306157f7b82133b60c6",
+    "tests/raw_coremidi_inventory_test.py": "da0ee08883a68fcc39f9da4b33cf3f7f1cfcc3aa08f4d6c1f975d287269661bd",
+    "tests/run_tests.sh": "acb09b69b9a285cdd9ac1124e0a4639868c27d9049567e72239acb1e0249e065",
+    "docs/dabbl8/readonly-midi-capture.md": "9d839acfc6c7c2a71c21f8e93a6f537f3cff74ecbee335fa1bd0ed0f4d604078"
+  },
+  "status": "PASS bounded qualification; uncommitted candidate for review",
+  "host_runs": [
+    {
+      "name": "actual-4-normal-raw_coremidi_inventory_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/raw_coremidi_inventory_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-normal"
+      ],
+      "exit": 0,
+      "binary_sha256": "ea0198d17042658bf5dd987d5087d63b25b0176f83cbb8269f483a106312ff0b"
+    },
+    {
+      "name": "actual-4-normal-readonly_midi_adapter_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-normal"
+      ],
+      "exit": 0,
+      "binary_sha256": "ea0198d17042658bf5dd987d5087d63b25b0176f83cbb8269f483a106312ff0b"
+    },
+    {
+      "name": "actual-4-san-raw_coremidi_inventory_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/raw_coremidi_inventory_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-san"
+      ],
+      "exit": 0,
+      "binary_sha256": "ea0ff7b3271fef500896630630d3e6a4c530f59cb09ebc2d248019f397be50f3"
+    },
+    {
+      "name": "actual-4-san-readonly_midi_adapter_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-san"
+      ],
+      "exit": 0,
+      "binary_sha256": "ea0ff7b3271fef500896630630d3e6a4c530f59cb09ebc2d248019f397be50f3"
+    },
+    {
+      "name": "actual-8-normal-raw_coremidi_inventory_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/raw_coremidi_inventory_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-normal"
+      ],
+      "exit": 0,
+      "binary_sha256": "5a60bdc63eb214ad17c8dcb4329dd1b85420ba62995d8aa5b5d1da1eb8391415"
+    },
+    {
+      "name": "actual-8-normal-readonly_midi_adapter_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-normal"
+      ],
+      "exit": 0,
+      "binary_sha256": "5a60bdc63eb214ad17c8dcb4329dd1b85420ba62995d8aa5b5d1da1eb8391415"
+    },
+    {
+      "name": "actual-8-san-raw_coremidi_inventory_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/raw_coremidi_inventory_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-san"
+      ],
+      "exit": 0,
+      "binary_sha256": "5708b74676427e54baa2790bbfe0c79e44dca48da49b2d50e2d9e33da1c1589e"
+    },
+    {
+      "name": "actual-8-san-readonly_midi_adapter_test.py",
+      "argv": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv-readonly-midi/bin/python",
+        "/private/tmp/d8-raw-coremidi-inventory-hardening/tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-san"
+      ],
+      "exit": 0,
+      "binary_sha256": "5708b74676427e54baa2790bbfe0c79e44dca48da49b2d50e2d9e33da1c1589e"
+    }
+  ],
+  "host_scope": "Fresh Python executions using prior4/8 FM4off SLICEon normal/inheritedSAN actualC fixture binaries after all16TU dependency byte hashes verified unchanged. No whole suite, new vendor or hardware capture claim. Existing246check collector and new15363check raw wrapper cases each pass4configs.",
+  "negative_controls": [
+    {
+      "name": "coalescing-fallback",
+      "exit": 1,
+      "removed": "return list(names)  # Preserve order and duplicates, no normalisation.",
+      "replacement": "return list(dict.fromkeys(names))",
+      "assertion": "AssertionError: raw duplicate cannot be hidden"
+    },
+    {
+      "name": "cleanup-bypass",
+      "exit": 1,
+      "removed": "client.delete()",
+      "replacement": "pass",
+      "assertion": "AssertionError: duplicate inventories deleted once"
+    },
+    {
+      "name": "disappearing-preopen",
+      "exit": 1,
+      "removed": "if self.get_input_names().count(name) != 1:",
+      "replacement": "if False:",
+      "assertion": "AssertionError: API/count/name/create/scan/delete failure refuses",
+      "qualification": "Generic fullfixture bypass failure only; not isolated disappearance proof. See separate supplement."
+    }
+  ],
+  "native": {
+    "scope": "raw per-direction CoreMIDI get_ports only; temporary clients deleted; no port opens or messages",
+    "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+    "os": "macOS-26.7.1-arm64-arm-64bit",
+    "tool_sha256": "8ffb62abdd015e558f9229f600b41fe15b281fa5fde07306157f7b82133b60c6",
+    "input_names": [
+      "FM-1"
+    ],
+    "output_names": [
+      "FM-1"
+    ]
+  },
+  "native_attempts": [
+    {
+      "scope": "sandbox",
+      "exit": 134,
+      "stderr": "native-sandbox.stderr",
+      "reason": "CoreMIDI client creation -10833 abort"
+    },
+    {
+      "scope": "authorised unsandboxed exact same probe",
+      "exit": 0,
+      "stderr": "native.stderr",
+      "opens": 0,
+      "messages": 0
+    }
+  ],
+  "limits": [
+    "one raw input/output name is observation only, not physical identity",
+    "Mido actual open uses a fresh get_ports().index(name), so same-name replacement/duplicate TOCTOU remains",
+    "no ReadOnlyMidi/native port construction or capture",
+    "prior initial8run receipt remains separate; author docs/license edits while secondrun caused final source guardFAIL; final fresh frozen8run PASS",
+    "temporary API clients deleted by wrapper; no native client deletion instrumentation was injected in native run",
+    "optional dependency licensing/readiness is separate PR144; no wheels bundled"
+  ],
+  "runner_scope": "Two additive normal/inheritedSAN calls beside existing capture adapter calls, original calls unchanged. Actual wrapper executions passed, not entire runner.",
+  "api_sources": [
+    "https://mido.github.io/mido/backends/rtmidi.html",
+    "https://spotlightkid.github.io/python-rtmidi/rtmidi.html"
+  ],
+  "public_head_preserved": true,
+  "commit": null,
+  "actual_stdout": {
+    "actual-4-normal-raw_coremidi_inventory_test.py": "raw CoreMIDI inventory: 15363 checks PASS; native MIDI not imported",
+    "actual-4-normal-readonly_midi_adapter_test.py": "readonly MIDI adapter: 246 checks, PASS; native MIDI never opened",
+    "actual-4-san-raw_coremidi_inventory_test.py": "raw CoreMIDI inventory: 15363 checks PASS; native MIDI not imported",
+    "actual-4-san-readonly_midi_adapter_test.py": "readonly MIDI adapter: 246 checks, PASS; native MIDI never opened",
+    "actual-8-normal-raw_coremidi_inventory_test.py": "raw CoreMIDI inventory: 15363 checks PASS; native MIDI not imported",
+    "actual-8-normal-readonly_midi_adapter_test.py": "readonly MIDI adapter: 246 checks, PASS; native MIDI never opened",
+    "actual-8-san-raw_coremidi_inventory_test.py": "raw CoreMIDI inventory: 15363 checks PASS; native MIDI not imported",
+    "actual-8-san-readonly_midi_adapter_test.py": "readonly MIDI adapter: 246 checks, PASS; native MIDI never opened"
+  },
+  "source_delivery_note": "Qualification hashes bind measured tool/test/runner; delivery adds compact metadata and explanatory docs only."
+}

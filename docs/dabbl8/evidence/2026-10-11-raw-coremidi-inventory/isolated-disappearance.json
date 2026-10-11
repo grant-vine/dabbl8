@@ -1,0 +1,19 @@
+{
+  "scope": "isolated endpoint disappearance between accepted external inventory and exact wrapper open recheck",
+  "source_sha256": "8ffb62abdd015e558f9229f600b41fe15b281fa5fde07306157f7b82133b60c6",
+  "rows": [
+    {
+      "label": "baseline",
+      "exit": 0,
+      "stdout": "delegated opens: 0 deleted temporary clients: 2\nisolated disappearance PASS\n",
+      "stderr": ""
+    },
+    {
+      "label": "mutant",
+      "exit": 1,
+      "stdout": "delegated opens: 1 deleted temporary clients: 1\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/d8-raw-coremidi-hardening-negative-supplement/probe.py\", line 28, in <module>\n    assert not b.opened,'disappearing selected input was delegated to native open'\nAssertionError: disappearing selected input was delegated to native open\n"
+    }
+  ],
+  "correction": "Earlier84 receipt disappearing-preopen mutant failed generic fixture earlier; it was not isolated disappearance proof. This supplement replaces that attribution, original immutable."
+}

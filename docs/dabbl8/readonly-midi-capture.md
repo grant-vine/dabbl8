@@ -103,3 +103,47 @@ broad negative control: unchanged code sends nothing, while removal of the exact
 request barrier emits79 and fails its explicit no-send assertion. The original
 broad control failed earlier on an empty-request fake-reply exception and must not
 be cited as that isolated79 proof. Duplicate/token/size controls remain unchanged.
+
+## Raw CoreMIDI inventory hardening
+
+The optional CLI wraps the explicit RtMidi CoreMIDI backend with fresh,
+per-direction native inventories. It retains duplicate names rather than using
+Mido 1.3.3's coalesced name list. Inventories allow at most 256 endpoints, each
+with a nonempty name of at most 1,024 characters and no ASCII control characters.
+Malformed API bindings, import/scan failures or failed temporary-client deletion
+refuse without falling back to coalesced names. Temporary clients are deleted on
+the owning thread; enumeration does not open a MIDI port. Inventory is repeated
+before each explicit open and exchange, without caching trusted names.
+
+Mido's actual open implementation obtains another native list and uses the first
+matching name's index. These separate checks cannot prevent endpoint replacement
+or a duplicate arriving between the last inventory and open/send. A unique name
+is not physical identity, ownership or atomic pairing. A separately authorised
+physical capture must still establish provenance and exclusivity.
+
+Optional dependency versions, original notices and the earlier Mido-reported
+name observation are recorded separately in the CoreMIDI readiness documentation
+(PR144). That earlier coalesced count is not a raw endpoint count.
+
+`tests/raw_coremidi_inventory_test.py` exercises coalescing fake backends,
+API/import/cleanup failures, disappearing endpoints and actual C virtual-NOR
+full/raw collector paths. It never imports native MIDI. The existing collector
+retains role/offset/CRC/provenance validation unchanged. Native name enumeration
+is a separate readiness observation, not physical capture qualification.
+
+The [raw inventory receipt](evidence/2026-10-11-raw-coremidi-inventory/receipt.json)
+binds fresh wrapper and existing collector executions for FULL four/eight tracks,
+FM4-off/SLICE-on normal and inherited sanitizers. Actual C binaries were reused
+only after every dependency byte in the prior 16 translation-unit configurations
+matched; this is not a complete runner or reduced-profile qualification.
+Separately, pinned native read-only enumeration observed one raw `FM-1` input
+and one raw `FM-1` output, with no ports opened or messages sent. A sandbox client
+creation abort was preserved before the authorised enumeration succeeded.
+
+A generic wrapper-recheck bypass mutant failed the broader fixture before the
+disappearance case; it is not isolated disappearance evidence. The separate
+[probe](evidence/2026-10-11-raw-coremidi-inventory/isolated-disappearance.json)
+accepts an external inventory, removes the input, then checks wrapper open: the
+unchanged wrapper refuses with zero opens, while its exact recheck removal
+delegates an open and fails the explicit assertion. Coalescing and cleanup bypass
+controls independently fail their relevant assertions.

@@ -39,6 +39,74 @@ def request_operation(frame):
     return op
 
 
+class StrictCoreMidiBackend:
+    """Raw per-direction inventories retain same-name endpoints instead of merging.
+
+    Enumeration creates a temporary native client, never a port; delete happens
+    on this wrapper's owning thread. No inventory is cached or used as identity
+    attestation. Names can still change between inventory and actual port open.
+    """
+    MAX_ENDPOINTS = 256
+    MAX_NAME_LENGTH = 1024
+
+    def __init__(self, backend):
+        self.backend = backend
+        self.owner = threading.get_ident()
+        self._binding()
+
+    def _binding(self):
+        if threading.get_ident() != self.owner:
+            raise ValueError('CoreMIDI inventory must use the owning thread')
+        if self.backend.name != 'mido.backends.rtmidi' or self.backend.api != 'MACOSX_CORE':
+            raise ValueError('Explicit RtMidi CoreMIDI binding required')
+
+    def _names(self, direction):
+        self._binding()
+        # Load native code only when inventory is requested; never call the
+        # coalescing backend get_*_names/get_devices as a fallback.
+        native = self.backend.module.rtmidi
+        api = native.API_MACOSX_CORE
+        compiled = native.get_compiled_api()
+        if type(api) is not int or api <= 0 or type(compiled) is not list or len(compiled) > 32 or any(type(x) is not int for x in compiled) or api not in compiled:
+            raise ValueError('CoreMIDI API unavailable')
+        client = None
+        try:
+            factory = native.MidiIn if direction == 'input' else native.MidiOut
+            client = factory(rtapi=api)
+            actual_api = client.get_current_api()
+            if type(actual_api) is not int or actual_api != api:
+                raise ValueError('Native inventory selected another API')
+            names = client.get_ports()
+            if type(names) is not list or len(names) > self.MAX_ENDPOINTS:
+                raise ValueError('Unbounded native endpoint inventory')
+            if any(type(n) is not str or not n or len(n) > self.MAX_NAME_LENGTH or
+                   any(ord(c) < 32 or ord(c) == 127 for c in n) for n in names):
+                raise ValueError('Invalid native endpoint name')
+            return list(names)  # Preserve order and duplicates, no normalisation.
+        finally:
+            if client is not None:
+                try:
+                    client.delete()
+                except Exception as error:
+                    raise ValueError('Native inventory cleanup failed') from error
+
+    def get_input_names(self):
+        return self._names('input')
+
+    def get_output_names(self):
+        return self._names('output')
+
+    def open_input(self, name, *, callback):
+        if self.get_input_names().count(name) != 1:
+            raise ValueError('Selected raw input absent or ambiguous')
+        return self.backend.open_input(name, callback=callback)
+
+    def open_output(self, name):
+        if self.get_output_names().count(name) != 1:
+            raise ValueError('Selected raw output absent or ambiguous')
+        return self.backend.open_output(name)
+
+
 class ReadOnlyMidi:
     """One pending request and one bounded reply; any ambiguity poisons this link.
 
@@ -189,7 +257,7 @@ def main():
         import mido
     except ImportError:
         parser.error('Optional MIDI environment needs mido and python-rtmidi')
-    backend = mido.Backend('mido.backends.rtmidi/MACOSX_CORE')
+    backend = StrictCoreMidiBackend(mido.Backend('mido.backends.rtmidi/MACOSX_CORE'))
     link = None
     try:
         link = ReadOnlyMidi(backend, mido.Message, args.input_port, args.output_port, timeout=args.timeout,

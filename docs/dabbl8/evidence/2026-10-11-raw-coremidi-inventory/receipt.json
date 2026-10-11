@@ -1,0 +1,8 @@
+{
+  "raw_report_sha256": "d62c80844879915ed48082b0b6b39b3492520dad896c2577a0070f69e3221e36",
+  "raw_manifest_sha256": "258b7ab26ff1c947d0cc3f724cd7cee2281a65d171ff350a7ca24e24e2f5330d",
+  "raw_entries": 84,
+  "isolated_disappearance_report_sha256": "b1bbb4d9d18dddf0a46a1aae155b111b600d241653a84e9b3e466ce4d16ba5fa",
+  "isolated_disappearance_manifest_sha256": "a3bcbb17ada468c515037f66a440dafd672c4a0b254e55d1a753534b7780bb6f",
+  "raw_scope": "Private rawlogs, actualCfixtures and optionaldependency data outsideGit. Compact metadata contains no binaries/capturepayload."
+}
