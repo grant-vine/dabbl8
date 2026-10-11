@@ -48,6 +48,48 @@ static void fill(void)
 }
 int main(void)
 {
+    fresh(); vage = UINT32_MAX - 4u; fill();
+    trk_note_on(&trk[7], 80, 100);
+    check("rollover steals oldest protected note, preserving newer peers",
+          !held(0, 40) && held(4, 44) && held(7, 80) && active() == 8);
+    check("rollover compacts counter rather than wrapping", vage < 100 && vage > 0);
+    fresh(); trk_note_on(&trk[0], 30, 100); /* held across an arbitrary age horizon */
+    vage = UINT32_MAX - 2u;
+    trk_note_on(&trk[1], 41, 100); trk_note_on(&trk[2], 42, 100);
+    for (uint32_t p = 3; p < NPART; p++) trk_note_on(&trk[p], 40 + p, 100);
+    trk_note_on(&trk[7], 80, 100);
+    check("indefinitely held oldest note remains oldest across compaction",
+          !held(0, 30) && held(1, 41) && held(7, 80) && active() == 8);
+    fresh(); fill();
+    trk[0].v[0].age = trk[1].v[0].age = 1;
+    trk[7].v[0].active = 0; vage = UINT32_MAX;
+    trk_note_on(&trk[7], 80, 100);
+    check("compaction preserves equal-age tie and newest note",
+          trk[0].v[0].age == trk[1].v[0].age &&
+          trk[7].v[0].age > trk[6].v[0].age && active() == 8);
+    fresh(); vage = UINT32_MAX - 4u;
+    for (uint32_t i = 0; i < NVOICE; i++) trk_note_on(&trk[0], 36 + i * 4, 100);
+    voice_t *local = voice_alloc(&trk[0], 90);
+    check("local allocator preserves oldest non-bass across rollover",
+          local && local->note == 40);
+    trk_note_off(&trk[0], 44); trk_note_off(&trk[0], 60);
+    local = voice_alloc(&trk[0], 90);
+    check("local allocator preserves released priority and age order",
+          local && local->note == 44);
+
+    fresh(); vage = 100; fill();
+    static track_t before[NPART];
+    memcpy(before, trk, sizeof before); vage = UINT32_MAX;
+    uint32_t next = voice_next_age();
+    for (uint32_t p = 0; p < NPART; p++)
+        for (uint32_t i = 0; i < NVOICE; i++) before[p].v[i].age = trk[p].v[i].age;
+    check("compaction preserves all non-age track and engine state",
+          next == 9 && !memcmp(before, trk, sizeof before));
+
+    fresh(); vage = UINT32_MAX;
+    trk_note_on(&trk[0], 60, 100);
+    check("empty active set restarts at age one", vage == 1 && trk[0].v[0].age == 1);
+
     fresh(); fill();
     check("eight protected held notes use eight slots", active() == 8 && voices_busy() == 8);
     check("eight held notes render exactly eight engine voices", render() == 8);
