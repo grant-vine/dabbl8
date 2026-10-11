@@ -1,0 +1,5 @@
+{
+  "head": "c5da5988b055c9a9924a0b330f7095f3806c2eba",
+  "original_rejected": "76b3e3cd38e97deaf1d636f149074212484e0e5c",
+  "BCD_requirement": "https://developer.apple.com/documentation/usbdriverkit/iousbdevicedescriptor/bcddevice"
+}

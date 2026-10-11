@@ -2,6 +2,7 @@
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
 /* Host test of the USB descriptor layouts in src/usb.c (#67), one build per variant:
  *   -DT_CDC=0/1 (FELUCCA_CDC)  -DT_UAC=0/1 (FELUCCA_UAC)  -DT_LAYOUT=0..3 (FELUCCA_USB_LAYOUT)
+ *   -DT_AS_FIRST=0/1 (legacy/modern collection and cache identity)
  *   -DT_ON=0/1 (usb_cdc_on: the console presented or not)  -DT_48K=0/1 (FELUCCA_UAC_48K, default 1)
  * The device and configuration descriptors come from get_desc(), as GET_DESCRIPTOR sends them, and are
  * parsed as a host does: lengths and wTotalLength, bNumInterfaces, interface numbers 0..n-1 in order, the
@@ -30,9 +31,16 @@
 #define T_48K 1
 #endif
 #define FELUCCA_UAC_48K T_48K
+#ifndef T_AS_FIRST
+#define T_AS_FIRST 1
+#endif
+#define FELUCCA_UAC_AS_FIRST T_AS_FIRST
 static void fm1_delay_ms(uint32_t ms) { (void)ms; }
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"   /* SIE register macros (never touched here) */
-#include "../firmware/src/usb.c"
+#ifndef USB_DESC_SOURCE
+#define USB_DESC_SOURCE "../firmware/src/usb.c"
+#endif
+#include USB_DESC_SOURCE
 #include "usb_desc_v10.h"
 static uint32_t ota_now_ms(void) { return 0; }
 static void ota_idle(void) {}
@@ -49,8 +57,9 @@ static uint32_t le16(const uint8_t *p) { return p[0] | (uint32_t)p[1] << 8; }
 
 #define CDC_SHOWN (T_CDC && T_ON)
 #define AUDIO_48K (T_UAC && T_48K)
+#define AUDIO_FIRST (T_UAC && T_AS_FIRST)
 
-/* the 1.0 descriptors with 1.1's 48 kHz changes, nothing else: the format descriptor 11 -> 14 bytes
+/* the 1.0 descriptors with 1.1's 48 kHz changes, only selected rate/order changes: the format descriptor 11 -> 14 bytes
  * (bSamFreqType 2: 44100, 48000), EP 0x84's wMaxPacketSize 184 -> 196, wTotalLength + 3, bcdDevice x.1x -> x.2x */
 static uint8_t v11_dev[18], v11_cfg[512];
 static uint32_t v11_from_v10(const uint8_t *dev, const uint8_t *cfg, uint32_t n)
@@ -84,13 +93,22 @@ static uint32_t v11_from_v10(const uint8_t *dev, const uint8_t *cfg, uint32_t n)
 static int same_as(const uint8_t *dev, const uint8_t *c, uint32_t n, const uint8_t *rdev, const uint8_t *rcfg,
                    uint32_t rn)
 {
-    if (!AUDIO_48K)
-        return !memcmp(dev, rdev, 18) && n == rn && !memcmp(c, rcfg, n);
-    rn = v11_from_v10(rdev, rcfg, rn);
+    if (AUDIO_48K) rn = v11_from_v10(rdev, rcfg, rn);
+    else { memcpy(v11_dev,rdev,18); memcpy(v11_cfg,rcfg,rn); }
+    /* Preserve the complete released-byte oracle: modern mode changes only
+     * the cache discriminator and the two collection bytes. */
+    if (AUDIO_FIRST) {
+        unsigned minor = 10 * (v11_dev[12] >> 4) + (v11_dev[12] & 15) + 40;
+        v11_dev[12] = (uint8_t)((minor / 10) * 16 + minor % 10);
+        for (uint32_t off=0;off<rn;off+=v11_cfg[off])
+            if (v11_cfg[off]==10 && v11_cfg[off+1]==0x24 && v11_cfg[off+2]==1) {
+                uint8_t tmp=v11_cfg[off+8];v11_cfg[off+8]=v11_cfg[off+9];v11_cfg[off+9]=tmp;
+            }
+    }
     return !memcmp(dev, v11_dev, 18) && n == rn && !memcmp(c, v11_cfg, n);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     const uint8_t *dev, *c;
     uint16_t dev_len, n;
@@ -102,6 +120,13 @@ int main(void)
     int aud_if = -1, midi_if = -1, as_if = -1, comm_if = -1, data_if = -1;
     char name[128];
 
+    if (argc==2 && (!strcmp(argv[1],"--dump") || !strcmp(argv[1],"--dump-other"))) {
+#if FELUCCA_CDC
+        if (!strcmp(argv[1],"--dump-other")) usb_cdc_on = !usb_cdc_on;
+#endif
+        if (!get_desc(0x0100,&dev,&dev_len)||!get_desc(0x0200,&c,&n)) return 2;
+        return fwrite(dev,1,dev_len,stdout)!=dev_len || fwrite(c,1,n,stdout)!=n;
+    }
     memset(if_class, 0, sizeof if_class);
     memset(if_sub, 0, sizeof if_sub);
     memset(in_iad, 0, sizeof in_iad);
@@ -123,8 +148,11 @@ int main(void)
               le16(dev + 2) == 0x0200 && !dev[4] && !dev[5] && dev[6] == (T_LAYOUT == 2));
     check("VID 1209 PID 0001, strings 1 2, one configuration",
           le16(dev + 8) == 0x1209 && le16(dev + 10) == 1 && dev[14] == 1 && dev[15] == 2 && dev[17] == 1);
-    snprintf(name, sizeof name, "bcdDevice 3.%02X", 0x10 * (T_UAC + AUDIO_48K) + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0));
-    check(name, le16(dev + 12) == 0x300u + 0x10 * (T_UAC + AUDIO_48K) + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0));
+    unsigned minor = 10 * (T_UAC + AUDIO_48K) + 40 * AUDIO_FIRST + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0);
+    unsigned bcd_minor = 16 * (minor / 10) + minor % 10;
+    snprintf(name, sizeof name, "bcdDevice 3.%02X", bcd_minor);
+    check(name, le16(dev + 12) == 0x300u + bcd_minor);
+    check("device release has four valid BCD nibbles", (dev[12]&15)<=9 && (dev[12]>>4)<=9 && (dev[13]&15)<=9 && (dev[13]>>4)<=9);
 
     /* ---- the configuration, walked as a host does ---- */
     check("wTotalLength = the bytes sent", le16(c + 2) == n);
@@ -219,7 +247,12 @@ int main(void)
     }
     if (cur_if >= 0 && got != cur_neps)
         eps_ok = 0;
-    coll_ok = ncoll == 1 + T_UAC && coll[0] == midi_if && (!T_UAC || coll[1] == as_if);
+    coll_ok = ncoll == 1 + T_UAC && coll[0] == (AUDIO_FIRST ? as_if : midi_if) &&
+              (!T_UAC || coll[1] == (AUDIO_FIRST ? midi_if : as_if));
+    check("collection entries retain audio class and exact streaming roles", coll_ok &&
+          if_class[coll[0]] == 1 && if_sub[coll[0]] == (AUDIO_FIRST ? 2 : 3) &&
+          (!T_UAC || (if_class[coll[1]] == 1 && if_sub[coll[1]] == (AUDIO_FIRST ? 3 : 2))));
+    check("UAC disabled forces audio-first cache bit off", T_UAC || FELUCCA_UAC_AS_FIRST == 0);
 
     check("descriptor lengths add up to wTotalLength", lens_ok && off == n);
     snprintf(name, sizeof name, "bNumInterfaces %u = the interfaces, numbered 0..n-1 in order", (unsigned)c[4]);
@@ -240,7 +273,7 @@ int main(void)
         check("no IAD, audio from IF 0", niad == 0 && aud_if == 0);
     }
     check("audio function: AC, MIDI, AS in a row", midi_if == aud_if + 1 && (!T_UAC || as_if == aud_if + 2));
-    check("AC header 1.00, collection = the MIDI (and audio streaming) interfaces", ac_ok && coll_ok);
+    check("AC header 1.00, collection has exact selected audio/MIDI order", ac_ok && coll_ok);
     check("UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface",
           !T_UAC || (int)UAC_AS_IF == as_if);
     check("CDC union and call management name the data interface", union_ok && cm_ok &&
@@ -248,13 +281,13 @@ int main(void)
 
     /* ---- the released bytes ---- */
     if (CDC_SHOWN && T_LAYOUT == 0)
-        check(AUDIO_48K ? "layout 0 = Felucca 1.0 + the 48 kHz rate (format, EP 0x84 size, bcdDevice), nothing else"
-                        : "layout 0 = Felucca 1.0 byte for byte",
+        check(AUDIO_48K ? "layout 0 = Felucca 1.0 + the 48 kHz rate (format, EP 0x84 size, bcdDevice), only selected rate/order changes"
+                        : "layout 0 = Felucca released bytes with only explicitly selected rate/order changes",
               T_UAC ? same_as(dev, c, n, V10_CDC_DEV, V10_CDC_CFG, sizeof V10_CDC_CFG)
                     : same_as(dev, c, n, V10_CDC_NOUAC_DEV, V10_CDC_NOUAC_CFG, sizeof V10_CDC_NOUAC_CFG));
     if (!CDC_SHOWN)
-        check(AUDIO_48K ? "without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else"
-                        : "without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte",
+        check(AUDIO_48K ? "without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, only selected rate/order changes"
+                        : "without the console = a FELUCCA_CDC=0 build of released bytes with only explicitly selected rate/order changes",
               T_UAC ? same_as(dev, c, n, V10_NOCDC_DEV, V10_NOCDC_CFG, sizeof V10_NOCDC_CFG)
                     : same_as(dev, c, n, V10_MIDI_DEV, V10_MIDI_CFG, sizeof V10_MIDI_CFG));
     if (T_UAC) {                                       /* the audio streaming format, as a host lists the rates */

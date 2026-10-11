@@ -1,0 +1,550 @@
+[
+  {
+    "name": "normal-uac-cdc-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DT_CDC=1",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-uac-cdc",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-uac-cdc-compile.log"
+  },
+  {
+    "name": "normal-uac-cdc-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-uac-cdc"
+    ],
+    "exit": 0,
+    "log": "normal-uac-cdc-run.log"
+  },
+  {
+    "name": "normal-uac-plain-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DT_CDC=0",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-uac-plain",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-uac-plain-compile.log"
+  },
+  {
+    "name": "normal-uac-plain-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-uac-plain"
+    ],
+    "exit": 0,
+    "log": "normal-uac-plain-run.log"
+  },
+  {
+    "name": "normal-queue-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_output_queue_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-queue",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-queue-compile.log"
+  },
+  {
+    "name": "normal-queue-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-queue"
+    ],
+    "exit": 0,
+    "log": "normal-queue-run.log"
+  },
+  {
+    "name": "normal-queue-tone-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DFELUCCA_UAC_TONE=1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_output_queue_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-queue-tone",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-queue-tone-compile.log"
+  },
+  {
+    "name": "normal-queue-tone-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-queue-tone"
+    ],
+    "exit": 0,
+    "log": "normal-queue-tone-run.log"
+  },
+  {
+    "name": "normal-session-bridge-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_migration_session_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-session-bridge",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-session-bridge-compile.log"
+  },
+  {
+    "name": "normal-session-closed-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DD8_MC_PRODUCTION_TEST",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_migration_session_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-session-closed",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-session-closed-compile.log"
+  },
+  {
+    "name": "normal-session-closed-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-session-closed"
+    ],
+    "exit": 0,
+    "log": "normal-session-closed-run.log"
+  },
+  {
+    "name": "normal-converter-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "tools/dabbl8_project_convert.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-converter",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-converter-compile.log"
+  },
+  {
+    "name": "normal-initializer-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tools/dabbl8_pool_initialize.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-initializer",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-initializer-compile.log"
+  },
+  {
+    "name": "normal-archive-compile",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tools/dabbl8_project_archive.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-archive",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "normal-archive-compile.log"
+  },
+  {
+    "name": "normal-connected-host",
+    "cmd": [
+      "python3",
+      "tests/native_migration_session_host_test.py",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-session-bridge",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-converter",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-initializer",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-archive",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/normal-session-closed"
+    ],
+    "exit": 0,
+    "log": "normal-connected-host.log"
+  },
+  {
+    "name": "san-uac-cdc-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DT_CDC=1",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-uac-cdc",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-uac-cdc-compile.log"
+  },
+  {
+    "name": "san-uac-cdc-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-uac-cdc"
+    ],
+    "exit": 0,
+    "log": "san-uac-cdc-run.log"
+  },
+  {
+    "name": "san-uac-plain-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DT_CDC=0",
+      "-DHALF_FRAMES=128",
+      "tests/uac_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-uac-plain",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-uac-plain-compile.log"
+  },
+  {
+    "name": "san-uac-plain-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-uac-plain"
+    ],
+    "exit": 0,
+    "log": "san-uac-plain-run.log"
+  },
+  {
+    "name": "san-queue-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_output_queue_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-queue",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-queue-compile.log"
+  },
+  {
+    "name": "san-queue-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-queue"
+    ],
+    "exit": 0,
+    "log": "san-queue-run.log"
+  },
+  {
+    "name": "san-queue-tone-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DFELUCCA_UAC_TONE=1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_output_queue_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-queue-tone",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-queue-tone-compile.log"
+  },
+  {
+    "name": "san-queue-tone-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-queue-tone"
+    ],
+    "exit": 0,
+    "log": "san-queue-tone-run.log"
+  },
+  {
+    "name": "san-session-bridge-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_migration_session_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-session-bridge",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-session-bridge-compile.log"
+  },
+  {
+    "name": "san-session-closed-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DD8_MC_PRODUCTION_TEST",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_migration_session_test.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-session-closed",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-session-closed-compile.log"
+  },
+  {
+    "name": "san-session-closed-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-session-closed"
+    ],
+    "exit": 0,
+    "log": "san-session-closed-run.log"
+  },
+  {
+    "name": "san-converter-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "tools/dabbl8_project_convert.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-converter",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-converter-compile.log"
+  },
+  {
+    "name": "san-initializer-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tools/dabbl8_pool_initialize.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-initializer",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-initializer-compile.log"
+  },
+  {
+    "name": "san-archive-compile",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tools/dabbl8_project_archive.c",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-archive",
+      "-lm"
+    ],
+    "exit": 0,
+    "log": "san-archive-compile.log"
+  },
+  {
+    "name": "san-connected-host",
+    "cmd": [
+      "python3",
+      "tests/native_migration_session_host_test.py",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-session-bridge",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-converter",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-initializer",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-archive",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/san-session-closed"
+    ],
+    "exit": 0,
+    "log": "san-connected-host.log"
+  },
+  {
+    "name": "identity-upstream-compile",
+    "cmd": [
+      "clang",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-upstream",
+      "tests/d8identity_usb_test.c"
+    ],
+    "exit": 0,
+    "log": "identity-upstream-compile.log"
+  },
+  {
+    "name": "identity-upstream-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-upstream"
+    ],
+    "exit": 0,
+    "log": "identity-upstream-run.log"
+  },
+  {
+    "name": "identity-dabbl8-compile",
+    "cmd": [
+      "clang",
+      "-DDABBL8_IDENTITY=1",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-dabbl8",
+      "tests/d8identity_usb_test.c"
+    ],
+    "exit": 0,
+    "log": "identity-dabbl8-compile.log"
+  },
+  {
+    "name": "identity-dabbl8-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-dabbl8"
+    ],
+    "exit": 0,
+    "log": "identity-dabbl8-run.log"
+  },
+  {
+    "name": "identity-loader-compile",
+    "cmd": [
+      "clang",
+      "-DDABBL8_IDENTITY=1",
+      "-DFELUCCA_LOADER=1",
+      "-DFELUCCA_USB_PID=2",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-loader",
+      "tests/d8identity_usb_test.c"
+    ],
+    "exit": 0,
+    "log": "identity-loader-compile.log"
+  },
+  {
+    "name": "identity-loader-run",
+    "cmd": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/uac-collection-order-bcd-check/identity-loader"
+    ],
+    "exit": 0,
+    "log": "identity-loader-run.log"
+  },
+  {
+    "name": "identity-profile",
+    "cmd": [
+      "python3",
+      "tests/d8identity_test.py"
+    ],
+    "exit": 0,
+    "log": "identity-profile.log"
+  }
+]
