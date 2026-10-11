@@ -19,6 +19,30 @@ static union {                          /* ROOM's allpasses; SPRING's allpass ch
  * The reverb union counts current-model entries; rev_clear resets both views. */
 #if NTRK == 8
 static volatile struct { uint32_t delay, chorus, comb, ap; } fx_tail;
+/* Audio-owned conservative certificates, published only at render exit.
+ * A zero wait proves every active entry was overwritten by zero. The original
+ * comb/ap tracked-store guards remain separate, so an external tracked test
+ * write cannot be forgotten by an active-model sweep. */
+static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
+static inline void fx_sweep_model(uint8_t model)
+{
+    /* A caller that changes domains without the required rev_clear cannot
+     * prove inactive union/line entries silent. Keep that misuse quarantined. */
+    if(fx_rev_wait.model && fx_rev_wait.model!=model)fx_tail.comb=fx_tail.ap=1;
+    fx_rev_wait.model=model;
+}
+static inline uint32_t fx_zero_sweep(uint32_t wait,uint32_t dirty,uint32_t samples,uint32_t span)
+{ return dirty ? span : samples >= wait ? 0u : wait-samples; }
+#define FTR16(d,p,v) do { int16_t fv=(int16_t)(v); *(p)=fv; (d)|=(uint32_t)(int32_t)fv; \
+    FT_RENDER_STORE_HOOK(); } while(0)
+#define FTR32(d,p,v) do { int32_t fv=(v); *(p)=fv; (d)|=(uint32_t)fv; \
+    FT_RENDER_STORE_HOOK(); } while(0)
+#ifdef FT_LOCAL_STORE_HOOK
+#define FT_RENDER_STORE_HOOK() FT_LOCAL_STORE_HOOK()
+#else
+#define FT_RENDER_STORE_HOOK() do {} while(0)
+#endif
+
 static inline void ft_store16(volatile uint32_t *count,int16_t *p,int16_t value)
 { *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
 static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
@@ -49,6 +73,8 @@ static inline void ft_local32(uint32_t *count,int32_t *p,int32_t value,int32_t o
 #define FTL16(c,p,v) (*(p)=(int16_t)(v))
 #define FTLO16(c,p,v,o) (*(p)=(int16_t)(v))
 #define FTLO32(c,p,v,o) (*(p)=(v))
+#define FTR16(d,p,v) (*(p)=(int16_t)(v))
+#define FTR32(d,p,v) (*(p)=(v))
 #endif
 static struct {
     uint32_t dly_w, cho_w, cho_ph;
@@ -231,7 +257,8 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     uint32_t i, k;
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
 #if NTRK == 8
-    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
+    uint32_t comb_dirty=0,ap_dirty=0;
+    fx_sweep_model(1);
 #endif
     for (i = 0; i < n; i++) {
         int32_t a = 0;
@@ -240,7 +267,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         for (k = 0; k < 4u; k++) {
             int32_t o = c[fx.comb_i[k]];
             fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
-            FTLO16(comb_nz,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767),o);
+            FTR16(comb_dirty,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
             if (++fx.comb_i[k] >= REV_COMB[k])
                 fx.comb_i[k] = 0;
             a += o;
@@ -250,7 +277,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         for (k = 0; k < 2u; k++) {
             int32_t o = c[fx.ap_i[k]];
             int32_t v = a + (o >> 1);
-            FTLO16(ap_nz,&c[fx.ap_i[k]],clamp(v, -32768, 32767),o);
+            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
             a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
             if (++fx.ap_i[k] >= REV_AP[k])
                 fx.ap_i[k] = 0;
@@ -259,7 +286,8 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         out[i] += a;
     }
 #if NTRK == 8
-    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
+    fx_rev_wait.comb=fx_zero_sweep(fx_rev_wait.comb,comb_dirty,n,1356u);
+    fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,556u);
 #endif
 }
 
@@ -273,7 +301,8 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t 
     int16_t *ln = rev_comb;
     int32_t *ap = rev_u.sp;
 #if NTRK == 8
-    uint32_t comb_nz=fx_tail.comb,ap_nz=fx_tail.ap;
+    uint32_t comb_dirty=0,ap_dirty=0;
+    fx_sweep_model(2);
 #endif
     if (!fx.sp_size)
         fx.sp_size = len;
@@ -296,20 +325,21 @@ static __attribute__((noinline)) void rev_spring(const int32_t *rev_in, int32_t 
         fx.sp_hp += o >> 6;
         x -= fx.sp_hp;
         p = ap[j];                                      /* the chain: ap[j + k], stage k's output 4 samples ago */
-        FTLO32(ap_nz,&ap[j],x,p);
+        FTR32(ap_dirty,&ap[j],x);
         for (k = 1; k <= SP_N; k++) {                   /* (lossless: bounded by the loop's input, no clamp) */
             int32_t v = (x - ap[j + k]) * SP_A;         /* towards 0, as the loop's gain: floors would feed */
             o = ap[j + k];                              /* the loop a little offset and noise for ever */
             x = ((v + ((v >> 31) & 4095)) >> 12) + p;
             p = o;
-            FTLO32(ap_nz,&ap[j + k],x,o);
+            FTR32(ap_dirty,&ap[j + k],x);
         }
-        FTL16(comb_nz,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
+        FTR16(comb_dirty,&ln[wp & SP_MASK],clamp(x, -32768, 32767));
         fx.sp_w = (uint16_t)(wp + 1u);
         out[i] += (t0 + (((t1 - t0) * f) >> 8)) * 4 + ln[(wp - (uint32_t)L3) & SP_MASK] * 2;
     }
 #if NTRK == 8
-    fx_tail.comb=comb_nz;fx_tail.ap=ap_nz;
+    fx_rev_wait.comb=fx_zero_sweep(fx_rev_wait.comb,comb_dirty,n,SP_LEN);
+    fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,4u);
 #endif
 }
 
@@ -325,7 +355,7 @@ static void rev_clear(void)
         fx.comb_lp[i] = 0;
     fx.sp_lp = fx.sp_hp = fx.sp_he = 0;
 #if NTRK == 8
-    fx_tail.comb=fx_tail.ap=0;
+    fx_tail.comb=fx_tail.ap=0;fx_rev_wait.comb=fx_rev_wait.ap=0;fx_rev_wait.model=0;
 #endif
 }
 
@@ -397,7 +427,7 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
  * call this predicate from an interrupt nested inside audio rendering. */
 static int fx_resident_quiet(void)
 {
-    if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx.dly_lp||
+    if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx_rev_wait.comb||fx_rev_wait.ap||fx.dly_lp||
        fx.sp_lp||fx.sp_hp||(uint32_t)fx.sp_he>=64u||dc_l||dc_r||
        (uint32_t)dce_l>=4096u||(uint32_t)dce_r>=4096u||
        lc_l1||lc_l2||lc_r1||lc_r2||sb_lp1||sb_lp2||sb_lp3||sb_lp4||
