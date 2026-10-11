@@ -10,6 +10,17 @@
 static union { uint32_t align; uint8_t bytes[D8P1_LIMIT]; } input;
 static uint8_t encoded[D8P1_LIMIT];
 static d8p1_project_state state,workspace,verified;
+/* Explicit offline-only profile-v1 mode; no reduced firmware selection. */
+static unsigned profile_mode,profile_mask,profile_status;
+static const char *profile_reason(unsigned rc) {
+    static const char *names[]={"ok","bad_data","invalid_mask","unavailable_engine","unsupported_source_engine","bad_argument"};
+    return rc<sizeof names/sizeof names[0]?names[rc]:"bad_data";
+}
+static int profile_parse(const char *s,unsigned *out) {
+    unsigned value=0;if(!s||!*s)return 0;
+    for(;*s;s++){if(*s<'0'||*s>'9'||value>1638u)return 0;value=value*10u+(unsigned)(*s-'0');if(value>16383u)return 0;}
+    *out=value;return eng_mask_ok(value);
+}
 static void answer(FILE *f,int accepted,const char *reason,unsigned mask,const d8p1_legacy_report *report) {
     fprintf(f,"{\"format\":\"dabbl8-project-conversion\",\"version\":1,\"accepted\":%s,\"device_writes\":false,\"firmware_package\":false,\"available_project_mask\":%u",accepted?"true":"false",mask);
     if(reason)fprintf(f,",\"reason\":\"%s\"",reason);
@@ -23,23 +34,45 @@ static void answer(FILE *f,int accepted,const char *reason,unsigned mask,const d
                 fprintf(f,"%s{\"track\":%u,\"before\":%u,\"after\":%u}",changes++?",":"",i+1,report->engine_before[i],report->engine_after[i]);
             fputs("]",f);
         }
-    }fputs("}\n",f);
+    }
+    if(profile_mode){
+        fprintf(f,",\"profile_schema\":1,\"engine_mask\":%u,\"profile_status_code\":%u,\"profile_status\":\"%s\",\"experimental_offline_profile\":true,\"qualified_firmware\":false",profile_mask,profile_status,profile_reason(profile_status));
+        if(accepted){
+            fputs(",\"inserted_defaults\":[",f);
+            for(unsigned t=4;t<8;t++){
+                const proj_trk_t *tr=&state.project.t[t];
+                fprintf(f,"%s{\"track\":%u,\"requested_engine\":%u,\"engine\":%u,\"preset\":%u,\"fallback\":%s,\"default_kind\":\"%s\"}",t==4?"":",",t+1,(unsigned)trk_def_engine(t),tr->engine,tr->preset,tr->engine==trk_def_engine(t)?"false":"true",tr->preset==PROJ_DEF_SOUND?"historical_deferred":"factory_preset_0");
+            }fputs("]",f);
+        }
+    }
+    fputs("}\n",f);
 }
 int main(int argc,char **argv) {
-    if(argc!=4)return 2;
+    if(argc!=4&&argc!=5)return 2;
+    profile_mode=!strcmp(argv[1],"legacy-profile-v1");
+    if((profile_mode&&argc!=5)||(!profile_mode&&argc!=4))return 2;
     int legacy=!strcmp(argv[1],"legacy"),check_only=!strcmp(argv[1],"check"),canonical=!strcmp(argv[1],"canonical");
-    if(!legacy&&!check_only&&!canonical)return 2;
+    if(!legacy&&!check_only&&!canonical&&!profile_mode)return 2;
     char *end=NULL;unsigned long mask=strtoul(argv[3],&end,10);FILE *report_out=check_only?stdout:stderr;
+    if(profile_mode && !profile_parse(argv[4],&profile_mask)){
+        profile_status=D8PS_PROFILE_INVALID_MASK;answer(stderr,0,"Invalid engine availability mask",0,NULL);return 1;
+    }
+    if(profile_mode)profile_status=D8PS_PROFILE_BAD_ARGUMENT;
     if(!argv[3][0]||*end||mask>15){answer(report_out,0,"Invalid reference context",0,NULL);return 1;}
     FILE *f=fopen(argv[2],"rb");if(!f){answer(report_out,0,"Input could not be read",(unsigned)mask,NULL);return 1;}
     size_t n=fread(input.bytes,1,sizeof input.bytes,f);int extra=fgetc(f),error=ferror(f);fclose(f);
     if(error||extra!=EOF){answer(report_out,0,"Input exceeds supported bounds or read failed",(unsigned)mask,NULL);return 1;}
-    d8p1_legacy_report report;int ok=legacy?d8p1_legacy_convert(&state,&workspace,&report,input.bytes,n,(unsigned)mask):d8p1_project_decode(&state,input.bytes,n,(unsigned)mask);
+    d8p1_legacy_report report;int ok;
+    if(profile_mode){
+        profile_status=(unsigned)d8p1_legacy_convert_profile_v1(&state,&workspace,&report,input.bytes,n,(unsigned)mask,profile_mask);
+        ok=profile_status==D8PS_PROFILE_OK;
+    }else ok=legacy?d8p1_legacy_convert(&state,&workspace,&report,input.bytes,n,(unsigned)mask):d8p1_project_decode(&state,input.bytes,n,(unsigned)mask);
     if(!ok){answer(report_out,0,"Unsupported, damaged, non-standalone or unavailable-reference project",(unsigned)mask,NULL);return 1;}
     size_t written=0;
     if(!d8p1_project_encode(encoded,sizeof encoded,&written,&state)||!d8p1_project_decode(&verified,encoded,written,(unsigned)mask)){
+        if(profile_mode)profile_status=D8PS_PROFILE_BAD_DATA;
         answer(report_out,0,"Converted project failed structural verification",(unsigned)mask,NULL);return 1;
     }
     if(!check_only&&(fwrite(encoded,1,written,stdout)!=written||fflush(stdout)||ferror(stdout)))return 2;
-    answer(report_out,1,NULL,(unsigned)mask,legacy?&report:NULL);return ferror(report_out)?2:0;
+    answer(report_out,1,NULL,(unsigned)mask,(legacy||profile_mode)?&report:NULL);return ferror(report_out)?2:0;
 }

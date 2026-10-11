@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-olidivu1/tests/engine_offline_profile_workflow_test.py", line 198, in <module>
+    check(not bad_meta['accepted'] and not list(dst.glob('*.d8p')) and len(list(dst.glob('*original.bin'))) == 3, 'malformed profile metadata fails whole bundle closed')
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-olidivu1/tests/engine_offline_profile_workflow_test.py", line 36, in check
+    raise AssertionError(label)
+AssertionError: malformed profile metadata fails whole bundle closed
