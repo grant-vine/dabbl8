@@ -1,0 +1,38 @@
+[
+  {
+    "name": "effective-mask",
+    "compile": 0,
+    "run": 1,
+    "mutant_source_sha256": "0307d9b9f552e9a64be7c1b77415bf6adc02f6a7a5c073b65f83a4d34c841280",
+    "file": "firmware/src/engines.c",
+    "before": " if(!out || requested>=NENGINES",
+    "after": " mask=D8ENGINE_EFFECTIVE_MASK;\n if(!out || requested>=NENGINES"
+  },
+  {
+    "name": "editor-preflight",
+    "compile": 0,
+    "run": 1,
+    "mutant_source_sha256": "aca85bbdfad63f9cc21bfa41f9def1f55b30b8a1648a368e285fafbb346fa66c",
+    "file": "firmware/src/editor.c",
+    "before": "if (factory_ready(a[0], a[1], mask)) { ed_d8_error(cmd, 5u); return; }",
+    "after": "/* negative control: no editor preflight */"
+  },
+  {
+    "name": "user-success",
+    "compile": 0,
+    "run": 1,
+    "mutant_source_sha256": "6ab3d921842b65a5b7a68ed19c64ed9156ca0b526a973f0247244b21b4bd43d3",
+    "file": "firmware/src/upreset.c",
+    "before": "if (up_load_mask(k, mask)) return;",
+    "after": "(void)up_load_mask(k, mask);"
+  },
+  {
+    "name": "edit-undo",
+    "compile": 0,
+    "run": 1,
+    "mutant_source_sha256": "3d303a8b77bc22331f44925eda63b7641d171b88aeddc861f03d8dee4af135f5",
+    "file": "firmware/src/ui_layer.c",
+    "before": "    int rc;\n    if (e < NENGINES) {",
+    "after": "    int rc;\n    if (!lys.loaded) undo.keep = 0;\n    if (e < NENGINES) {"
+  }
+]

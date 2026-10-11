@@ -59,6 +59,11 @@ static void seed(void)
     int rc=up_store(0,"RETAINED"); REQUIRE(rc==0 || rc==3); REQUIRE(up_used(0));
     REQUIRE(favorite_set(NENGINES,0,1)); REQUIRE(favorite_set(ENGI_FM6,0,1));
     REQUIRE(!set_engine(0));
+    int32_t audio[2u*CTL];
+    mix_block(audio,CTL); /* consume engine/panic requests before seeding actual shared sounding voices */
+    for(unsigned t=0;t<NTRK;t++) { trk[t].p[P_VOICE]=V_MONO; trk_note_on(&trk[t],60u+t,100u); }
+    mix_block(audio,CTL);
+    REQUIRE(voices_busy()==NTRK);
     panic_req=0;sync_reload=0;undo.keep=1;
 #ifdef D8_SOUND_UI_TEST
     memset(&lys,0,sizeof lys);
@@ -83,8 +88,13 @@ int main(void)
         unsigned one=1u<<only; if(!(one&full)) continue;
         seed(); snapshot();
         for(unsigned e=0;e<NENGINES;e++) {
-            unsigned target; int rc=eng_runtime_target(&target,one,e,0,D8ENGINE_LEGACY_FACTORY);
-            if(rc) { REQUIRE(set_engine_of_mask(TSEL,e,one)==rc); unchanged(); }
+            /* Independent legacy identity oracle: DIGITAL alone converts when FM4 is absent. */
+            unsigned expected = e;
+#if !FELUCCA_FM4
+            if(e==ENGI_DIGITAL) expected=ENGI_FM6;
+#endif
+            if(expected!=only) { REQUIRE(set_engine_of_mask(TSEL,e,one)==D8ENGINE_UNAVAILABLE); unchanged(); }
+            else { REQUIRE(!set_engine_of_mask(TSEL,e,one)); REQUIRE(TSEL->eng_req==expected); snapshot(); }
         }
     }
     seed(); snapshot();REQUIRE(set_engine_of_mask(TSEL,NENGINES,full)==D8ENGINE_INVALID_REQUEST);unchanged();
