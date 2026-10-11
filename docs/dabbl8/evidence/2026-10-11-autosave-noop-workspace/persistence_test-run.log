@@ -1,0 +1,75 @@
+persist: editor display change while playing is applied and reports deferred saving ok
+persist: STOP commits the deferred palette setting                          ok
+persist: repeating an unchanged editor preference succeeds without erasing  ok
+persist: editor reports failed saving while preserving the previous flash setting ok
+persist: failed editor preference retries through the existing persistence path ok
+persist: the retired font weight is refused without a write                 ok
+persist: MENU_SET while playing: applied, rc 4 (queued until STOP), no erase ok
+persist: STOP commits the MENU setting (LEDS OFF in the settings record)    ok
+persist: MENU_SET stopped: rc 0, saved at once (LARGE, HOLD, SPEAKER EQ), the others kept ok
+persist: repeating an unchanged MENU_SET: rc 0, no erase                    ok
+persist: MENU_SET with a failing flash: applied, rc 3, the saved setting kept ok
+persist: ... and retried by the settings path                               ok
+persist: playing: settings queued, no erase, runtime kept                   ok
+persist: pending PLAY: settings still queued, no erase                      ok
+persist: pending SONG: settings still queued, no erase                      ok
+persist: STOP: latest settings saved and request cleared                    ok
+persist: unchanged settings do not erase                                    ok
+persist: failed settings retry waits through clock wrap                     ok
+persist: settings retry succeeds after 1000 ms                              ok
+persist: failed project save keeps RAM and old flash                        ok
+persist: successful project save publishes new RAM                          ok
+persist: pending PLAY: project save leaves slot and flash                   ok
+persist: failed first project save leaves slot empty                        ok
+persist: a project's name goes to flash and comes back                      ok
+persist: failed project rename: SAVE ERROR, the slot and flash as they were ok
+persist: pending PLAY: no rename, no erase                                  ok
+persist: project rename: flash has the new name, the music as it was        ok
+persist: damaged FUN7 slot (hash ok, n > 4) is refused                      ok
+persist: loading it says EMPTY SLOT and keeps the steps                     ok
+persist: FUN5 load bounds steps and masks lane accents                      ok
+persist: FUN5 load clamps a parameter into its range                        ok
+persist: SONG sources use the same step bounds                              ok
+persist: failed first preset save restores empty bank                       ok
+persist: preset initial save                                                ok
+persist: failed preset save rolls back bank and generation                  ok
+persist: failed preset erasure retains both the sound and its favorite      ok
+persist: failed preset save keeps old flash                                 ok
+persist: failed preset erase keeps record and loaded label                  ok
+persist: successful preset erase clears loaded label                        ok
+persist: pending PLAY: preset save blocked                                  ok
+persist: pending SONG: preset save blocked                                  ok
+persist: preset invalid slot blocked before access                          ok
+persist: PLAY consumed before the save snapshot still blocks a project write ok
+persist: PLAY consumed before the preset snapshot still blocks a bank write ok
+persist: PLAY consumed before the settings snapshot defers the write        ok
+persist: FM6 bank -> user presets: B slots get the bank's newest patches    ok
+persist:   .. written into A (the bank's older copy); the bank's newest copy (B) still whole ok
+persist:   .. UP_LOAD 1 plays the bank's B3, SLOT OWN                       ok
+persist:   .. UP_LOAD 2 (F2) plays F2, SLOT F2                              ok
+persist:   .. UP_LOAD 3 (an empty B5) plays the init voice, as before       ok
+persist:   .. the next boot: done (no write), the same patches              ok
+persist: a power cut at any step of the migration loses nothing (the next boot redoes it) ok
+persist: a cut while a preset's patch is written: the others kept, that preset without one ok
+persist: saved again: its patch, and the bank's sectors now both hold the patches object ok
+persist: no bank: nothing to move, nothing written                          ok
+persist: autosave: power-on with none: nothing restored; 2 min unchanged: no write ok
+persist: autosave: a change: no write within 10 s, one once idle 10 s (one erase) ok
+persist: autosave: 10 min unchanged after it: no more writes                ok
+persist: autosave: the selected track / PROJECT's slot pick alone: no write ok
+persist: autosave: changed while playing: no write until stopped and idle 10 s, then one ok
+persist: autosave: a key held, a voice sounding: no write (an erase stops the audio); after, idle 10 s: one ok
+persist: autosave: two writes at least 60 s apart                           ok
+persist: autosave: none during an editor transfer (autosave_hold), one after ok
+persist: autosave: power-on restores it (steps, tempo, name; RESTORED); no write after (unchanged) ok
+persist: autosave: after a crash / hang / failed boot: not restored, nothing written ok
+persist: autosave: RESTORE LAST OFF: none restored, none written            ok
+persist: autosave: the newest copy damaged: the copy before it is restored  ok
+persist: autosave: both copies damaged: ignored, power-on as new            ok
+persist: autosave: a record that is no project: ignored                     ok
+persist: autosave: a write cut short (power off): the copy before is restored ok
+persist:   a 4-hour session (3 h editing and playing, 1 h idle): 19 autosave writes
+persist: autosave wear: a session's writes stay far below one a minute      ok
+persist:   worst case, 8 h of a change every 11 s: 436 writes (218 per sector)
+persist: autosave wear, worst case: at most one write a minute (480 in 8 h) ok
+persistence test passed

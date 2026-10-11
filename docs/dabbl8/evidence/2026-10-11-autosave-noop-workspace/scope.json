@@ -1,0 +1,29 @@
+{
+  "base_commit": "3174e63e190e44f9905ceddc9911e90696b5009a",
+  "source_hashes": {
+    "firmware/src/project.c": "3fbbd64c1c10b218e05534c5e2f5d12b932e767ab02038d26429c2c48df8d948",
+    "tests/competing_workspace_callers_test.c": "5d92d8d8e6c789013ea396b1b5aee32717fb94985d4534de91c6f0aa92f9885f"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "generated_header_source": "Existing pinned generated headers from sibling voice-age-rollover/build/gen; no dependency downloads or generation performed here.",
+  "generated_headers": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "executed_checks": "Competing caller normal and inherited sanitizer: 235 checks each, zero failures. Compiled parent source negative: 11 no-op failures. Four-track persistence and native combined route checks pass. Host default-four assembly parity succeeds after removing only .file directive.",
+  "limitations": "Focused host-only tests; inherited sanitizer exclusions retained. No pinned vendor target compile, complete CI suite, physical latency, stack, audio deadline, device, package or install qualification.",
+  "write_policy": "Production native write gate and routing unchanged. The unbound native due legacy pack refuses without flash mutation.",
+  "lcd_fence_assertions": {
+    "candidate_noop_cases": 12,
+    "fences_per_noop_case": 0,
+    "candidate_due_cases": 4,
+    "fences_per_due_case": 1,
+    "parent_negative_noop_assertion_failures": 11,
+    "unchanged_parent_cpu_owned_case_already_refuses_before_fence": true
+  }
+}

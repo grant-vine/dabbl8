@@ -29,7 +29,8 @@ static void fm1_irq_off(void){}
 static void fm1_irq_on(void){}
 static void fm1_wdt_feed(void){}
 static void caller_lcd_hook(void);
-static void lcd_sync(void){caller_lcd_hook();}
+static unsigned lcd_fences;
+static void lcd_sync(void){lcd_fences++;caller_lcd_hook();}
 static void lcd_power(uint32_t s){(void)s;}
 static void lcd_fill(uint32_t x,uint32_t y,uint32_t w,uint32_t h,uint16_t c){(void)x;(void)y;(void)w;(void)h;(void)c;caller_lcd_hook();}
 static void lcd_wake_now(void){}
@@ -100,6 +101,9 @@ static project_t input,before_live,after_live;
 static __typeof__(d8p1_runtime_cache) old_cache;
 static __typeof__(project_native) old_binding;
 static void caller_lcd_hook(void){
+ if(inject==2){inject=0;fm1_in.notes=1;return;}
+ if(inject==3){inject=0;transport_req=1;return;}
+ if(inject==4){inject=0;trk[7].p[P_LEVEL]^=1;return;}
  if(!inject)return;inject=0;
  uint32_t g=0;CHECK(d8mp_begin(&g)==D8MP_OK);held=g;late_acquired++;
  memset(main_migration_workspace(g),0xa5,sizeof(d8mp_workspace));
@@ -109,6 +113,46 @@ static void hold(void){CHECK(d8mp_begin(&held)==D8MP_OK);memset(main_migration_w
 static void release(void){CHECK(held&&d8mp_end(held)==D8MP_OK);held=0;}
 static void preserve(void){CHECK(!memcmp(arena_before,&main_workspace,sizeof main_workspace));project_capture(&after_live);CHECK(!memcmp(&before_live,&after_live,sizeof before_live));CHECK(!erases&&!programs);CHECK(!memcmp(&old_cache,&d8p1_runtime_cache,sizeof old_cache)&&!memcmp(&old_binding,&project_native,sizeof old_binding));}
 static void command(unsigned cmd,unsigned op){uint8_t f[6]={0x7d,0x46,0x4c,(uint8_t)cmd,(uint8_t)op,0};ed_n=0;ed_handle(f,cmd==ED_BACKUP_LIST?4:6);CHECK(!ed_n);}
+static void autosave_workspace_cases(void){
+ /* Real unbound native path: each no-op must preserve a completed canvas. */
+ project_native_reset();transport_req=0;fm1_in.notes=fm1_in.buttons=0;
+ for(unsigned p=0;p<NTRK;p++)for(unsigned i=0;i<NVOICE;i++)trk[p].v[i].active=0;
+ for(unsigned kind=0;kind<12;kind++){
+  fm1_ms=AS_IDLE_MS+AS_GAP_MS;flash_ok=1;ui_prefs&=~PREF_RESTORE_OFF;
+  memset(&as,0,sizeof as);as.seen=autosave_sig();as.saved=as.seen^1u;
+  if(kind==0)flash_ok=0;
+  if(kind==1)as.poll=fm1_ms;
+  if(kind==2)as.saved=as.seen;
+  if(kind==3)ui_prefs|=PREF_RESTORE_OFF;
+  if(kind==4)as.t=fm1_ms;
+  if(kind==5){as.wrote=1;as.last=fm1_ms;}
+  if(kind==6)fm1_in.notes=1;
+  if(kind==7)as.seen^=1u;
+  if(kind==8)CHECK(cv_begin_try(10,10,T_BG));
+  if(kind==9)fm1_in.buttons=1;
+  if(kind==10)trk[7].v[0].active=1;
+  if(kind==11){as.wrote=1;as.err=1;as.last=fm1_ms;}
+  memset(main_workspace.pixels,0x5a,sizeof main_workspace.pixels);cv_canvas_valid=1;
+  memcpy(arena_before,&main_workspace,sizeof main_workspace);unsigned fences=lcd_fences,gen=proj_wire_gen;
+  __typeof__(as) prior=as;
+  autosave_poll();CHECK(lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace));
+  CHECK(proj_wire_gen==gen&&!erases&&!programs&&as.last==prior.last&&as.wrote==prior.wrote&&as.writes==prior.writes);
+  if(kind==0||kind==1||kind==8)CHECK(!memcmp(&prior,&as,sizeof as));
+  if(kind==8)cv_cpu_active=0;
+  fm1_in.notes=fm1_in.buttons=0;trk[7].v[0].active=0;
+ }
+ /* A due capture fences once; input or queued PLAY arriving during LCD
+  * completion restarts quiet time without publishing a write attempt. */
+ for(unsigned late=0;late<4;late++){
+  flash_ok=1;ui_prefs&=~PREF_RESTORE_OFF;transport_req=0;fm1_in.notes=0;
+  fm1_ms=AS_IDLE_MS+AS_GAP_MS;memset(&as,0,sizeof as);as.seen=autosave_sig();as.saved=as.seen^1u;
+  unsigned fences=lcd_fences,gen=proj_wire_gen;inject=late?late+1:0;
+  autosave_poll();CHECK(lcd_fences==fences+1&&!erases&&!programs);
+  if(late)CHECK(!as.wrote&&!as.last&&!as.err&&as.t==fm1_ms&&proj_wire_gen==gen);
+  else CHECK(as.wrote&&as.last==fm1_ms&&as.err&&proj_wire_gen==gen+1); /* native legacy pack refuses */
+ }
+ transport_req=0;fm1_in.notes=0;
+}
 int main(void){
  memset(nor,255,sizeof nor);flash_ok=1;panel=PANEL_DEFAULT;settings_init();host_tracks_init();native_fixture();project_native_reset();
  FILE*f=fopen("tests/fixtures/projects/fun9.bin","rb");CHECK(f!=NULL);if(!f)return 2;CHECK(fread(&proj_slot[0],1,sizeof proj_slot[0],f)==sizeof proj_slot[0]);fclose(f);
@@ -128,6 +172,7 @@ int main(void){
  ui.force=1;draw_head();draw_foot();draw_graph();draw_menu();nm_draw_field();nm_draw_panel();draw_layer();draw_confirm();ui_draw();CHECK(ui.force);preserve();release();
  /* Nested acquisition at the real LCD completion boundary, not primitive traps. */
  for(unsigned op=0;op<16;op++){
+  if(op==11){fm1_ms=AS_IDLE_MS+AS_GAP_MS;memset(&as,0,sizeof as);as.seen=autosave_sig();as.saved=as.seen^1u;}
   cv_draw_deferred=0;inject=1;late_acquired=0;memcpy(name,saved_name,sizeof name);wiregen=proj_wire_gen;old_as=as;old_native_as=native_as;old_nm=nm;
   if(op==0)CHECK(project_name(0,name)==-D8POOL_BUSY&&!memcmp(name,saved_name,sizeof name));
   if(op==1)CHECK(project_used(0)==-D8POOL_BUSY);
@@ -158,5 +203,6 @@ int main(void){
  CHECK(project_used(0)>0&&project_name(0,name)>0&&name[0]);CHECK(!chain_prepare());chain=old_chain;cv_draw_deferred=0;CHECK(cv_begin_try(10,10,T_BG));cv_blit(0,0);CHECK(!cv_cpu_active&&!migration_owner);CHECK(!erases&&!programs);
  /* Refused one-shot survives release before next clean-signature UI frame. */
  ui.force=1;ui_draw();CHECK(!ui.force);hold();unsigned prior_blits=blits;draw_text_line(0,0,50,&AF_S,"RETRY",T_TEXT,T_BG,0);CHECK(cv_draw_deferred&&!ui.force&&blits==prior_blits);release();ui_draw();CHECK(blits>prior_blits&&!cv_draw_deferred&&!ui.force);
+ autosave_workspace_cases();
  printf("Competing workspace callers: %u checks, %u failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\n",checks,failures);return failures?1:0;
 }
