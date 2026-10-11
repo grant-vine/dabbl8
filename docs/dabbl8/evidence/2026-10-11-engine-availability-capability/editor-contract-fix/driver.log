@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/private/tmp/d8-capability-editor-contract-fix/run.py", line 15, in <module>
+    rows.append({'name':name,'command':cmd,'build_exit':b.returncode,'run_exit':a.returncode if a else None});assert a and a.returncode==0,(name,b.stderr,a.stdout+a.stderr if a else '')
+                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('schema-4-0-0-normal', 'In file included from /private/tmp/d8-capability-editor-contract-fix/schema-only.c:2:\nIn file included from /Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/tests/editor_test.c:12:\n/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/tests/hostsim.c:25:10: fatal error: \'felucca_tables.h\' file not found\n   25 | #include "felucca_tables.h"\n      |          ^~~~~~~~~~~~~~~~~~\n1 error generated.\n', '')

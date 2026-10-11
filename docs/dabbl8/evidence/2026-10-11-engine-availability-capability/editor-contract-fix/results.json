@@ -1,0 +1,374 @@
+[
+  {
+    "name": "schema-4-0-0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-0-0-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-0-0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-0-0-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-0-1-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-0-1-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-0-1-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-0-1-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-1-0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-1-0-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-1-0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-1-0-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-1-1-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-1-1-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-4-1-1-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-4-1-1-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-0-0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-0-0-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-0-0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-0-0-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-0-1-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-0-1-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-0-1-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-0-1-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-1-0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-1-0-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-1-0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-1-0-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-1-1-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-1-1-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "schema-8-1-1-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/firmware/src",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-only.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/schema-8-1-1-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "full-editor-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-O2",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-Ifirmware/src",
+      "tests/editor_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/full-editor-normal"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "full-editor-san",
+    "command": [
+      "clang",
+      "-w",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-Ifirmware/src",
+      "tests/editor_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-capability-editor-contract-fix/full-editor-san"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  }
+]
