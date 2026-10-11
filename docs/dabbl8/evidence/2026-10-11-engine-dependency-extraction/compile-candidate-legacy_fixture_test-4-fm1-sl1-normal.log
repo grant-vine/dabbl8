@@ -1,0 +1,3 @@
+COMMAND ['clang', '-O2', '-w', '-DNPART=4', '-DFELUCCA_FM4=1', '-DFELUCCA_SLICE=1', '-Ibuild/gen', '-Ifirmware/src', 'tests/legacy_fixture_test.c', '-lm', '-o', '/private/tmp/d8-engine-dependency-extraction/candidate-legacy_fixture_test-4-fm1-sl1-normal']
+
+STATUS 0

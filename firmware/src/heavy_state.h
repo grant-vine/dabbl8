@@ -3,69 +3,13 @@
  * State types retain their upstream engine fields and dependency notices. */
 #ifndef DABBL8_HEAVY_STATE_H
 #define DABBL8_HEAVY_STATE_H
-/* Included by GRAIN after SAMPLE and the GR_* limits, only in expanded builds. */
+/* Expanded shared pool and bounded ownership accessors. The full build keeps
+ * its historical inclusion point; types and limits are independent headers. */
 #include "phys_dsp.c"
 #include "phys_symp.c"
 #include "drum_voice.c"
 #include "fm6_core.c"
-typedef struct {
-    const smp_zone_t *z;
-    uint32_t pos;                /* forward: the next sample to decode; reverse: the index of a */
-    int32_t frac;                /* Q16 between a and b */
-    uint32_t step;               /* Q16 source samples per output sample */
-    uint32_t wph, winc;          /* window phase: one turn = the grain */
-    uint32_t left;               /* output samples to go */
-    int32_t a, b;                /* the two source samples around the read position */
-    int32_t pred, idx;           /* ADPCM state (forward) */
-    uint32_t rlo;                /* reverse: the source index of rb[0] */
-    int32_t gain;                /* Q15 */
-    uint8_t owner;               /* voice index + 1, 0 = free */
-    uint8_t rev;
-    uint8_t zl;                  /* its zone in the set */
-} gr_grain_t;
-
-typedef struct {
-    gr_grain_t g[GR_NG];
-    int16_t rb[GR_NG][GR_RB];    /* reverse windows */
-    int16_t ipred[GR_NIDX];      /* seek index: the state before sample k * GR_SEG of a zone */
-    uint8_t iidx[GR_NIDX];
-    uint16_t zbase[GR_MAXZ], zcnt[GR_MAXZ], zdone[GR_MAXZ];   /* entries of a zone: first, all, built */
-    uint32_t stamp;              /* what the index was built for (user slots: smp_user_gen) */
-    int32_t rng;
-    uint8_t src;                 /* SRC + 1 the index holds, 0 = none */
-    uint8_t nz;
-} gr_part_t;
-typedef struct {
-    uint8_t model;               /* PM_* the state belongs to */
-    union {
-        px_modal_t m;            /* MODAL, MEMB */
-        px_string_t s;
-        px_symp_t y;
-    } u;
-} phys_slot_t;
-
-typedef struct {
-    dv_param_t key;              /* the parameters the coefficients were set up with */
-    dv_coef_t c;
-    dv_voice_t v;
-    dv_metal_t mb;
-    uint8_t owner;               /* the voice playing the lane: index + 1, 0 = none */
-    uint8_t role;                /* the drum struck (DVT_*) */
-    int8_t st;                   /* its semitones from the designed pitch (the GM map) */
-    uint8_t pad;
-} drum_lane_t;
-
-/* SLICE is included later; keep its unchanged window size checked there. */
-#define HEAVY_SLC_RB 64u
-/* A typed union preserves alignment and avoids byte-buffer aliasing. */
-typedef union {
-    drw_vc_t wheel;
-    fm6_note_t fm6;
-    int16_t slice[HEAVY_SLC_RB];
-    gr_part_t grain;
-    phys_slot_t phys;
-    drum_lane_t drum[DV_NLANE];
-} heavy_state_t;
+#include "heavy_types.h"
 static heavy_state_t heavy_pool[NVOICE] __attribute__((section(".pool")));
 static uint16_t heavy_owner[NVOICE]; /* engine/track/voice key + 1, zero = free */
 

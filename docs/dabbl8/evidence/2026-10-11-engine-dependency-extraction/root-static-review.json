@@ -1,0 +1,24 @@
+{
+  "parent": "35266b6aaa932b94c57c8cc1854c27b7d33727b9",
+  "checks": {
+    "grain_limits.h": true,
+    "wheel_limits.h": true,
+    "grain_state.h": true,
+    "wheel_state.h": true,
+    "heavy_types.h": true,
+    "phys_legacy.h": true,
+    "phys_models.h": true,
+    "pool_and_accessors_unchanged": true
+  },
+  "scope": "Independent exact-text extraction and pool/accessor comparison; no target execution or memory-saving claim",
+  "source_sha256": {
+    "grain_limits.h": "628b9eb9ba854fa9b7e195ae807608c0a51d28e213a2ec7a68a9ac571f3fcaea",
+    "grain_state.h": "fb63c8bc8459fdc686f3e29e562ec82d528acdd59f5c2128302bc47bcf72097a",
+    "wheel_limits.h": "baa29ecf366a0cb056143aeac4e68f2da770bb79c531a25649dcc2b43a8ffa34",
+    "wheel_state.h": "79b3026a2b837ab2d882ad8d6917547a7cac95403f579214be5d033b255f469b",
+    "heavy_types.h": "891e781feb0d22e91a57dc5c8a51e3b7f23df73b484ce01143d043e25b42cfcb",
+    "phys_models.h": "cb130a6a863b55f57dce10c42ab38e58433bc7b9b0c7b434a12a03d77a9f8bb4",
+    "phys_legacy.h": "1e9c0eeded8ae032ea44ace0218d23e63980ab5a137789156adc0fd873ebafce",
+    "heavy_state.h": "4233ee95a9087f631e5b08d52f076f2df9c97b7a42c4442fff8703dfb439a4f1"
+  }
+}
