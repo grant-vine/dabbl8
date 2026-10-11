@@ -46,9 +46,23 @@ static inline uint32_t fx_zero_sweep(uint32_t wait,uint32_t dirty,uint32_t sampl
 #endif
 
 static inline void ft_store16(volatile uint32_t *count,int16_t *p,int16_t value)
-{ *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
+{
+    /* Reverb rendering uses sweep certificates, not this occupancy counter.
+     * Every external tracked update latches until the existing full clear;
+     * mixed render/external stores can never underflow or wrap it to zero. */
+    if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
+    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+    *p=value;
+}
 static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
-{ *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);*p=value; }
+{
+    /* Reverb rendering uses sweep certificates, not this occupancy counter.
+     * Every external tracked update latches until the existing full clear;
+     * mixed render/external stores can never underflow or wrap it to zero. */
+    if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
+    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+    *p=value;
+}
 #define FT16(c,p,v) ft_store16(&fx_tail.c,(p),(int16_t)(v))
 #define FT32(c,p,v) ft_store32(&fx_tail.c,(p),(v))
 /* Production render owns local totals until its bounded synchronous call ends.

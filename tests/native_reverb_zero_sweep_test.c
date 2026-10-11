@@ -45,6 +45,20 @@ int main(void){
   for(unsigned i=0;i<wait;i++){render(model,input,1);if(i+1<wait)CHECK(fx_rev_wait.comb>0);}
   CHECK(!fx_rev_wait.comb&&!fx_rev_wait.ap);proof();
  }
+ /* Actual render nonzeros followed by external zero/nonzero updates once
+  * wrapped counted guards back to zero. Reverb guards now latch until clear. */
+ cold_sweep(1);int32_t pulse[1]={16384},pulse_out[1]={0};rev_spring(pulse,pulse_out,1);
+ CHECK(rev_comb[0]!=0&&rev_u.sp[0]!=0&&!fx_tail.comb&&!fx_tail.ap);
+ FT16(comb,&rev_comb[0],0);FT16(comb,&rev_comb[sizeof rev_comb/2-1],1);
+ CHECK(fx_tail.comb&&!fx_resident_quiet());
+ FT32(ap,&rev_u.sp[0],0);FT32(ap,&rev_u.sp[sizeof rev_u.sp/4-1],1);
+ CHECK(fx_tail.ap&&!fx_resident_quiet());
+ for(unsigned i=0;i<64;i++){
+  FT16(comb,&rev_comb[sizeof rev_comb/2-1],(int16_t)(i&1));
+  FT32(ap,&rev_u.sp[sizeof rev_u.sp/4-1],(int32_t)(i&1));
+  CHECK(fx_tail.comb&&fx_tail.ap&&!fx_resident_quiet());
+ }
+ rev_clear();proof();CHECK(!fx_tail.comb&&!fx_tail.ap);
  /* Every entry, including inactive union/line storage, stays refused under
   * an external tracked disturbance until its explicit clear/reset. */
  for(unsigned model=0;model<2;model++){
