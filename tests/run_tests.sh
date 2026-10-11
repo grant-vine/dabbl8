@@ -120,6 +120,7 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 run "pinned dependency integrity: corrupted cache refusal, hidden SDK edits and fresh browser extraction" python3 tests/dependency_integrity_test.py
 
 run "evidence invocation isolation: preserve historical files and refuse creation errors" python3 tests/evidence_session_test.py
+run "experimental app-only builds: isolated outputs, exact manifests and closed loader/package paths" python3 tests/build_app_only_test.py
 
 run "current tracked source notice and asset validation" python3 tools/license_inventory.py
 run "source notice validation: real Git negative controls and shallow checkout" python3 tests/license_inventory_test.py
@@ -171,7 +172,7 @@ run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" bui
 # D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
 run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
 run "Dabbl8 card configurations: all subsets and bounded CLI" python3 tests/d8card_test.py
-run "Engine availability: candidate firmware profiles remain disabled" python3 tests/d8engine_build_guard_test.py
+run "Engine availability: arbitrary card/mask overrides remain disabled" python3 tests/d8engine_build_guard_test.py
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8engine_policy_test" firmware/src/d8engine_policy.c tests/d8engine_policy_test.c
 run "Engine availability: pure policy subsets, migrations and unchanged refusal outputs" "$OUT/d8engine_policy_test"
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c
@@ -236,6 +237,27 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-track recording, playback, USB/TRS routing and bounds" "$OUT/eight_track_runtime_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/voice_budget_test" tests/voice_budget_test.c -lm
     run "eight actual parts: ninth note, held/sustain/release, stealing and render budget" "$OUT/voice_budget_test"
+    # Curated immutable profiles: full structural IDs, exact availability,
+    # actual EDIT reachability and original-preserving adoption/refusal.
+    # Each mode executes 12 distinct fixture/profile configurations.
+    for profile in 0 1 2; do
+        for fixture in engine_profile_metadata_test engine_exclusion_test; do
+            name="curated_${profile}_${fixture}"
+            $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c tests/$fixture.c -lm
+            run "curated profile=$profile actual $fixture" "$OUT/$name"
+        done
+        "$OUT/curated_${profile}_engine_exclusion_test" --metadata > "$OUT/curated_${profile}_metadata.txt"
+        if [ "$profile" != 0 ]; then
+            run "curated profile=$profile stable descriptor equivalence" cmp "$OUT/curated_0_metadata.txt" "$OUT/curated_${profile}_metadata.txt"
+            for fixture in engine_profile_browse_ui_test engine_profile_import_test engine_profile_arrangement_test; do
+                name="curated_${profile}_${fixture}"
+                pool_source=""
+                [ "$fixture" != engine_profile_arrangement_test ] || pool_source="firmware/src/d8pool.c"
+                $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c $pool_source tests/$fixture.c -lm
+                run "curated profile=$profile actual $fixture" "$OUT/$name"
+            done
+        fi
+    done
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
     run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
@@ -643,6 +665,27 @@ else
             $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$name" tests/wheel_unavailable_engine_test.c -lm
             run "ASan/UBSan: WHEEL invalid/unavailable UI requests FM4=$fm4 SLICE=$slice" "$A/$name"
         done
+    done
+    # Curated immutable profiles: full structural IDs, exact availability,
+    # actual EDIT reachability and original-preserving adoption/refusal.
+    # Each mode executes 12 distinct fixture/profile configurations.
+    for profile in 0 1 2; do
+        for fixture in engine_profile_metadata_test engine_exclusion_test; do
+            name="curated_${profile}_${fixture}"
+            $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c tests/$fixture.c -lm
+            run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
+        done
+        "$A/curated_${profile}_engine_exclusion_test" --metadata > "$A/curated_${profile}_metadata.txt"
+        if [ "$profile" != 0 ]; then
+            run "ASan/UBSan: curated profile=$profile stable descriptor equivalence" cmp "$A/curated_0_metadata.txt" "$A/curated_${profile}_metadata.txt"
+            for fixture in engine_profile_browse_ui_test engine_profile_import_test engine_profile_arrangement_test; do
+                name="curated_${profile}_${fixture}"
+                pool_source=""
+                [ "$fixture" != engine_profile_arrangement_test ] || pool_source="firmware/src/d8pool.c"
+                $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c $pool_source tests/$fixture.c -lm
+                run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
+            done
+        fi
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm

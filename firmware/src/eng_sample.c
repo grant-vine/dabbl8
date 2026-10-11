@@ -64,7 +64,7 @@ static const char *const SMP_ALL_NAMES[SMP_NALL] = {SMP_SET_NAMES_INIT, "USR1", 
 #define SMP_USER_XIP(k) fm1_xip_ptr(SMP_USER_BASE + (k) * SMP_USER_SIZE)
 #endif
 static const uint8_t *smp_user_xip(uint32_t k) { return SMP_USER_XIP(k); }
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
 static void slc_user_scan(uint32_t k, int valid);   /* eng_slice.c: SLICE's slice table of the slot */
 #else
 #define slc_user_scan(k, valid) ((void)0)
@@ -136,6 +136,7 @@ static inline const smp_zone_t *smp_zone(uint32_t zi)
 
 /* voice: ph[0] position (samples), ph[1] fraction Q16, s[0] predictor, s[1] step
  * index, s[2] previous sample, s[3] current sample, s[4] zone, s[5] step Q16 */
+#if D8BUILD_HAS(4)
 static inline int32_t sample_next(const smp_zone_t *z, voice_t *v, int loop)
 {
     uint32_t pos = v->ph[0], b = SMP_DATA[z->off + (pos >> 1)];
@@ -241,6 +242,8 @@ static void sample_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, cons
     v->ph[1] = frac;
 }
 
+#endif
+
 static const engine_t ENG_SAMPLE = {
     .name = "SAMPLE",
     .page_title = {"SET", "TONE"},
@@ -256,8 +259,13 @@ static const engine_t ENG_SAMPLE = {
     },
     .presets = SMP_PRESET_TABLE,
     .npresets = SMP_NPRESETS,
+#if D8BUILD_HAS(4)
     .note_on = sample_note_on,
     .render = sample_render,
+#else
+    .note_on = d8_unavailable_note_on,
+    .render = d8_unavailable_render,
+#endif
     .knob = {P_E0, P_E4, P_ATK, P_REL},
     .sampled = 1,
 };

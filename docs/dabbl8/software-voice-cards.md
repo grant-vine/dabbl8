@@ -4,6 +4,13 @@ Software voice cards are proposed engine profiles with a defined resource budget
 
 Tracked in [software voice card issue #53](https://github.com/grant-vine/dabbl8/issues/53), supporting memory task #12 and website task #21.
 
+The staged implementation now supports bounded Core and Breaks app-only profiles
+with actual renderer/state exclusion. See [curated engine profiles](curated-engine-profiles.md)
+for source-bound checks, measured memory savings and failed timing budgets. The
+sections below record earlier research and preparation stages; their statements
+that exclusion is disabled describe those stages. These profiles remain
+unqualified for installation or release.
+
 ## Research and resource model
 
 The JV-1080 analogy concerns sound resources: Roland's expansion boards add waveform ROM and patches within the instrument's existing polyphony. [Roland TurboStart](https://cdn.roland.com/assets/media/pdf/JV1080ts.pdf). A Dabbl8 engine profile instead selects synthesis implementations and state capacity. Sound packs and performance limits remain separate choices.
