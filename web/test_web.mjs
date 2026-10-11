@@ -17,7 +17,7 @@ import { join } from "node:path";
 import vm from "node:vm";
 import { logicalImage, productOf } from "./fm1pkg.js";
 import { Updater, pack7, unpack7 } from "./fm1ota.js";
-import { d8InfoDiscovery } from "./d8info.js";
+import { d8InfoDiscovery, d8EditorTitle } from "./d8info.js";
 
 let failed = 0;
 const ok = (cond, what) => { console.log(`${what.padEnd(64)} ${cond ? "ok" : "FAIL"}`); if (!cond) failed++; };
@@ -1251,11 +1251,12 @@ async function editorSessions() {
   const library = html.slice(html.indexOf("async function libOp(fn)"), html.indexOf("const checkRc", html.indexOf("async function libOp(fn)")));
   let shown = 0, adopted, adoptStarted;
   const nodes = new Map();
+  const document = { title: "" };
   const noop = () => {};
   const S = vm.runInNewContext(`let dev = null, lastDump = 0, libBusy = false; ${state} ${requests} ${loading} ${library}
     ;({ beginBusy, resetBusy, sessionRequest, load, libOp,
        setDevice: d => { dev = d; }, count: () => busy })`, {
-    Date, Error,
+    Date, Error, document, d8EditorTitle,
     d8Request: E.d8Request, d8Negotiate: async () => ({writable:true}), /* session tests use a supported pairing */
     $: id => { if (!nodes.has(id)) nodes.set(id, {}); return nodes.get(id); },
     CMD: { INFO: 1, PROJECT: 2, SMP_INFO: 3, DUMP: 4 },
@@ -1298,10 +1299,12 @@ async function editorSessions() {
   adopted = new Promise(r => { resolve = r; });
   const reachedAdoption = new Promise(r => { adoptStarted = r; });
   const next = { protocol: {writable:true}, pdesc: [], gdesc: [], names: [], slotUsed: [], link: { request: async kind =>
-    kind === "info" ? { pcount: 0, gcount: 0, nengines: 0 } : {} } };
+    kind === "info" ? { version: "DABBL8 v0.1.0-dev", pcount: 0, gcount: 0, nengines: 0 } : {} } };
   S.setDevice(next);
   const loadingNext = S.load(next).then(() => null, e => e);
-  await reachedAdoption;
+  await Promise.race([reachedAdoption, loadingNext.then(error => {
+    throw error || new Error("load completed before library adoption");
+  })]);
   S.resetBusy(); S.setDevice({}); resolve();
   ok((await loadingNext)?.message === "closed" && !shown && S.count() === 0,
      "editor: unplug during library adoption aborts the old load");
@@ -1309,6 +1312,8 @@ async function editorSessions() {
   S.setDevice(next);
   await S.load(next);
   ok(shown === 1 && S.count() === 0, "editor: a current connection still completes its initial load");
+  ok(document.title === "Dabbl8 Editor" && nodes.get("editorTitle").textContent === "Dabbl8 Editor",
+     "editor: actual load updates the document and visible title from branded INFO");
 
   const savedDevice = { link: { request: async () => { sent++; } } };
   sent = 0;
