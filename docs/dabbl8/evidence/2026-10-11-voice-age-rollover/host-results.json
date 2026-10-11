@@ -1,0 +1,155 @@
+[
+  {
+    "name": "voice_budget_test-8-normal",
+    "compile": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/voice_budget_test-8-normal",
+      "tests/voice_budget_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "native_overload_test-4-normal",
+    "compile": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-4-normal",
+      "tests/native_overload_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "native_overload_test-8-normal",
+    "compile": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-8-normal",
+      "tests/native_overload_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "voice_budget_test-8-inherited-san",
+    "compile": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/voice_budget_test-8-inherited-san",
+      "tests/voice_budget_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "native_overload_test-4-inherited-san",
+    "compile": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-4-inherited-san",
+      "tests/native_overload_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "native_overload_test-8-inherited-san",
+    "compile": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-8-inherited-san",
+      "tests/native_overload_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0
+  },
+  {
+    "name": "voice_budget_test-parent-negative",
+    "compile": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/tests",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/firmware/src",
+      "/private/tmp/d8-rollover-reviewed-tests/voice_budget_test-parent-negative.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/voice_budget_test-parent-negative"
+    ],
+    "build_exit": 0,
+    "run_exit": 1,
+    "expected": "failure of new rollover regression on unchanged voice.c",
+    "scope": "Parent control omits direct voice_next_age API-only state snapshot, which is absent on parent; all allocation boundary assertions retained."
+  },
+  {
+    "name": "native_overload_test-parent-negative",
+    "compile": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/tests",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/firmware/src",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-parent-negative.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-rollover-reviewed-tests/native_overload_test-parent-negative"
+    ],
+    "build_exit": 0,
+    "run_exit": -6,
+    "expected": "failure of new rollover regression on unchanged voice.c"
+  }
+]
