@@ -1,0 +1,35 @@
+from pathlib import Path
+import os,sys,subprocess,json,hashlib,shutil
+base=Path('/Users/grantv/Code/dabbl8/.local-baseline');w=base/'uac-collection-order';e=base/'uac-collection-order-bcd-check'
+head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=w,text=True).strip();assert head=='c5da5988b055c9a9924a0b330f7095f3806c2eba';assert not subprocess.check_output(['git','status','--porcelain'],cwd=w,text=True).strip()
+pins=json.loads((e/'input-pins.json').read_text());sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+assert all(sha(w/p)==h for group in pins.values() for p,h in group.items())
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(base/'deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(base/'deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(base/'venv/bin')+':'+env['PATH'])
+for k in list(env):
+ if k.startswith(('FELUCCA_','GOLDEN_','BUDGET_')):env.pop(k)
+os.chdir(w);os.environ.update(env);sys.path.insert(0,str(w/'tools'));import build as b
+(e/'target-command.py.txt').write_bytes(Path(__file__).read_bytes());(e/'target-environment.json').write_text(json.dumps({k:env[k] for k in ['JIELI_TOOLCHAIN','AC79_SDK','JIELI_DOCKER_IMAGE']},indent=2)+'\n')
+res={};flags=list(b.CFLAGS)
+for n in ['4','8','dabbl8']:
+ b.OUT=w/('build/uac-bcd-order-'+n);b.OUT.mkdir(parents=True,exist_ok=True);b.CFLAGS=flags+(['-DNPART=8'] if n=='8' else [])
+ b.PRODUCT='FM-1_900';b.VERSION=None;b.DABBL8_VERSION=None
+ if n=='dabbl8':
+  i=b.dabbl8_identity('0.1-dev');b.PRODUCT=i.product;b.VERSION=i.version;b.DABBL8_VERSION=i.version
+ with (e/('target-'+n+'.log')).open('w') as f:
+  old=sys.stdout;sys.stdout=f
+  try:
+   image,syms,dis,rt=b.build_app();errors,notes=b.check(image,syms,dis,rt);errors+=b.mmio_check()
+   (b.OUT/'linked-symbols.txt').write_text(syms);(b.OUT/'linked-disassembly.txt').write_text(dis)
+  finally:sys.stdout=old
+ rec={'source':head,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),'errors':errors,'notes':notes,'hardware':'NOT_RUN'};res[n]=rec;assert not errors,rec
+ with (e/('budget-'+n+'.log')).open('w') as f:
+  budget=subprocess.run([sys.executable,'tests/target_budget.py',str(b.OUT/'linked-disassembly.txt')],stdout=f,stderr=subprocess.STDOUT)
+ rec['static_budget_exit']=budget.returncode
+ (e/'target-results.json').write_text(json.dumps(res,indent=2)+'\n');print('Target',n,rec,flush=True)
+ if n=='dabbl8':
+  b.LDR=w/'build/uac-bcd-order-loader';ota=b.build_loader();assert hashlib.sha256(ota).hexdigest()==pins['canonical6']['build/loader/ota.bin']
+  pkg=b.fm1pkg_make.ufw(b.fm1pkg_make.flash_image(image,b.fm1pkg_make.KEY),ota,b.PRODUCT);(b.OUT/i.package).write_bytes(pkg)
+  res['private_package']={'bytes':len(pkg),'sha256':hashlib.sha256(pkg).hexdigest(),'product':i.product,'loader_sha256':hashlib.sha256(ota).hexdigest(),'release_qualified':False};(e/'target-results.json').write_text(json.dumps(res,indent=2)+'\n')
+assert all(sha(w/p)==h for group in pins.values() for p,h in group.items())
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=w,text=True).strip()==head and not subprocess.check_output(['git','status','--porcelain'],cwd=w,text=True).strip()
+print('ALL FRESH TARGET FIT CHECKS PASS; pins unchanged; static budget exits separately retained',flush=True)
