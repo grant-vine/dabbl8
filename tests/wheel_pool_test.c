@@ -72,7 +72,8 @@ int main(void)
     check("one organ track keeps its original eight-voice cap",voices_busy()==8&&ownership()&&render()==8);
     fresh();fill();uint32_t seed=23,errors=0;
     for(uint32_t i=0;i<5000;i++){
-        seed=seed*1664525u+1013904223u;uint32_t p=seed>>29,e=7+(seed>>16)%6;
+        seed=seed*1664525u+1013904223u;/* Keep the original six-engine sequence when SLICE is compiled. */
+        uint32_t p=seed>>29,e=7+(seed>>16)%(FELUCCA_SLICE?6u:5u);
         if(e>=11)e++;
         if(trk[p].engine!=e){
             trk[p].eng_req=e;for(uint32_t b=0;b<300&&trk[p].engine!=e;b++)render();
