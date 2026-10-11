@@ -971,6 +971,12 @@ static int32_t click_beat_now(void)
 /* everything that happens between two rendered blocks */
 static void events_block(uint32_t n)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8mc_blocked()){
+        if(transport_req||mi_r!=mi_w||midi_in_overflow||fm1_in.notes)d8mc_revoke();
+        return; /* Preserve queued input and all music; no unsolicited STOP. */
+    }
+#endif
     uint32_t i, pr, seq_n = n;
     uint32_t clock_mode = (uint32_t)song.g[G_CLOCK];
     if (midi_clock.mode != clock_mode) {

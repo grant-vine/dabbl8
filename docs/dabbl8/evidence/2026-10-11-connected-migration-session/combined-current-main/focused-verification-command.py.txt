@@ -1,0 +1,41 @@
+from pathlib import Path
+import subprocess,os,json,hashlib,time
+base=Path('/Users/grantv/Code/dabbl8/.local-baseline');r=base/'complete-migration-session';e=base/'complete-migration-session-combined-evidence';e.mkdir(exist_ok=True)
+head='e261b1f392033c2a6709d6c2753e9541f4d1d6e6'; h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==head
+assert not subprocess.check_output(['git','status','--porcelain'],cwd=r,text=True).strip()
+paths=['firmware/src/native_migration_session.c','tests/native_migration_session_test.c','docs/dabbl8/native-migration-session.md','tools/dabbl8_instrument_session.py','tools/dabbl8_instrument_capture.py','tests/native_migration_session_host_test.py','tests/run_tests.sh']
+pins={p:h(r/p) for p in paths};(e/'source-pins.json').write_text(json.dumps(pins,indent=2)+'\n');(e/'source-head.txt').write_text(head+'\n')
+env=os.environ.copy();env.update(PATH=str(base/'venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
+checks=[]
+def run(name,args):
+ started=time.time()
+ with (e/(name+'.log')).open('w') as f:p=subprocess.run(args,cwd=r,env=env,stdout=f,stderr=subprocess.STDOUT)
+ checks.append({'name':name,'exit':p.returncode,'seconds':time.time()-started});(e/'checks.json').write_text(json.dumps(checks,indent=2)+'\n');print(name,p.returncode,flush=True)
+ if p.returncode:raise SystemExit(p.returncode)
+common=['-w','-Ibuild/gen','-Ifirmware/src'];src=['firmware/src/d8p1.c','firmware/src/d8pool.c','firmware/src/d8pool_mapped.c','tests/native_migration_session_test.c','-lm']
+strict='/private/tmp/d8-session-combined-final-strict';closed='/private/tmp/d8-session-combined-final-closed';cs='/private/tmp/d8-session-combined-final-closed-strict'
+run('opt-compile',['clang','-O2']+common+['-o','/private/tmp/d8-session-combined-final-opt']+src)
+run('opt-connected',['/private/tmp/d8-session-combined-final-opt'])
+run('strict-compile',['clang','-O1','-g']+common+['-fsanitize=address,undefined','-fno-sanitize-recover=all','-o',strict]+src)
+run('strict-connected',[strict])
+run('shipping-opt-compile',['clang','-O2']+common+['-DD8_MC_PRODUCTION_TEST','-o',closed]+src)
+run('shipping-opt',[closed])
+run('shipping-strict-compile',['clang','-O1','-g']+common+['-DD8_MC_PRODUCTION_TEST','-fsanitize=address,undefined','-fno-sanitize-recover=all','-o',cs]+src)
+run('shipping-strict',[cs])
+helpers=['/private/tmp/d8-session-converter','/private/tmp/d8-session-initializer','/private/tmp/d8-session-archive']
+(e/'helper-sha256.json').write_text(json.dumps({p:h(Path(p)) for p in helpers},indent=2)+'\n')
+for scope,binary,shipping in [('opt','/private/tmp/d8-session-combined-final-opt',closed),('strict',strict,cs)]:
+ run('connected-host-'+scope,[str(base/'venv/bin/python'),'tests/native_migration_session_host_test.py',binary]+helpers+[shipping])
+# Discovery fixtures use their inherited DSP exclusions; connected scopes above
+# remain strict without exclusions. Both INFO suites are retained in the runner.
+for scope in ['opt','san']:
+ flags=['-O2'] if scope=='opt' else ['-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined']
+ capture='/private/tmp/d8-combined-capture-'+scope;legacy='/private/tmp/d8-combined-four-'+scope
+ run('discovery-capture-compile-'+scope,['clang']+flags+common+['-o',capture]+src[:-2]+['tests/instrument_capture_test.c','-lm'])
+ run('discovery-four-compile-'+scope,['clang']+flags+common+['-o',legacy,'tests/track_client_bridge.c','-lm'])
+ run('actual-discovery-'+scope,['node','web/test_d8info.mjs',capture,legacy,'build/felucca.fwsc'])
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==head
+assert not subprocess.check_output(['git','status','--porcelain'],cwd=r,text=True).strip()
+assert all(h(r/p)==v for p,v in pins.items())
+(e/'terminal.json').write_text(json.dumps({'source':head,'checks':'PASS','source_unchanged':True,'helper_scope':'Recorded supplied host helper binaries; fresh full suite rebuilds exact source','shipping_writes':'constant closed','hardware':'NOT RUN'},indent=2)+'\n')

@@ -1,0 +1,52 @@
+from pathlib import Path
+import re,json,hashlib
+base=Path('/Users/grantv/Code/dabbl8/.local-baseline');repo=base/'complete-migration-session';out=base/'complete-migration-session-combined-target-check'
+symbols=(repo/'build/connected-session-combined-8/linked-symbols.txt').read_text();dis=(repo/'build/connected-session-combined-8/linked-disassembly.txt').read_text()
+functions={};lines={};all_symbols={}
+for line in symbols.splitlines():
+ p=line.split()
+ if len(p)>=4:
+  try:a=int(p[0],16)
+  except ValueError:continue
+  all_symbols[p[-1]]=a
+ if len(p)==6 and p[2]=='F':
+  functions[p[5]]={'address':int(p[0],16),'size':int(p[4],16)};lines[p[5]]=[]
+ranges=sorted((v['address'],v['address']+v['size'],k) for k,v in functions.items())
+import bisect
+starts=[x[0] for x in ranges]
+for line in dis.splitlines():
+ m=re.match(r'\s*([0-9a-f]+):',line)
+ if not m:continue
+ a=int(m[1],16);i=bisect.bisect_right(starts,a)-1
+ if i>=0 and a<ranges[i][1]:lines[ranges[i][2]].append(line)
+for k,body in lines.items():
+ stack=0;pushes=[];adjusts=[];indirect=[];calls=[];dynamic=[]
+ for line in body:
+  m=re.search(r'\[--sp\] = \{([^}]+)\}',line)
+  if m:
+   count=0
+   for part in m[1].split(','):
+    part=part.strip();r=re.fullmatch(r'r(\d+)-r(\d+)',part)
+    count+=abs(int(r[1])-int(r[2]))+1 if r else 1
+   stack+=count*4;pushes.append(line.strip())
+  m=re.search(r'sp \+= (-\d+)',line)
+  if m:stack-=int(m[1]);adjusts.append(line.strip())
+  if re.search(r'\bsp\b',line) and re.search(r'sp \+= r\d+',line):dynamic.append(line.strip())
+  if '\tcall ' in line:
+   m=re.search(r'<([^ :]+) :',line)
+   if m and m[1] in functions:calls.append(m[1])
+   else:indirect.append(line.strip())
+ functions[k].update(conservative_direct_downward_bytes=stack,direct_calls=sorted(set(calls)),unresolved_call_lines=indirect,dynamic_sp_lines=dynamic,push_lines=pushes,downward_adjustments=adjusts)
+# Only named linked direct calls are summed. This is a source-specific lower
+# coverage scope, not a whole runtime/IRQ/ROM or callback stack safety proof.
+def longest(k,trail=()):
+ if k in trail:return (0,[k+' (cycle)'])
+ child=max((longest(c,trail+(k,)) for c in functions[k]['direct_calls']),default=(0,[]),key=lambda x:x[0])
+ return (functions[k]['conservative_direct_downward_bytes']+child[0],[k]+child[1])
+roots=['ed_handle','ed_service','mc_poll_core','mc_adopt_begin','mc_adoption_read','fm1_main']
+root_results={k:dict(zip(('named_direct_call_path_bytes','path'),longest(k))) for k in roots if k in functions}
+selected={k:v for k,v in functions.items() if k.startswith(('mc_','d8mc_','d8cb_','d8sv_','dpm_','dp_')) or k in ('ed_handle','ed_service','fm1_main','st_read','fl_far','d8p1_capture_runtime','d8p1_project_encode','d8p1_project_decode','d8p1_load_pool','project_native_bind_flash')}
+result={'source':'e261b1f392033c2a6709d6c2753e9541f4d1d6e6','native_disassembly_sha256':hashlib.sha256(dis.encode()).hexdigest(),'method':'Sum all fixed downward stack adjustments/register pushes per linked function conservatively; sum simple named direct-call paths only. Indirect/ROM/tail calls and interrupt nesting remain separately unresolved; no dynamic/device high-water claim.','roots':root_results,'functions':selected,'stack_regions':{k:all_symbols.get(k) for k in ('_ustack_lo','_ustack_top','_sstack_lo','_sstack_top','_pool_end')},'main_workspace_bytes':59520, 'coordinator_metadata_bytes':236, 'stack_size_bytes':{ 'user':all_symbols['_ustack_top']-all_symbols['_ustack_lo'], 'supervisor':all_symbols['_sstack_top']-all_symbols['_sstack_lo'] }, 'guards':'256 bytes below each stack as pinned linker defines; IRQ nesting and actual hardware highwater unmeasured', 'static_workspace_note':'main_workspace symbol is59520B and unchanged parent; d8mp arena view remains58432B; no second project state or40KiB plan added','shipping_private_driver_note':'Shipping mc_write_enabled returns constant0; private virtual RAM writes are host-only. This disassembly cannot qualify enabled physical driver stack/timing.'}
+(out/'direct-call-stack-scope.json').write_text(json.dumps(result,indent=2)+'\n')
+for k,v in root_results.items():print(k,v)
+print('Unresolved indirect/ROM calls and supervisor IRQ nesting are explicit; not a whole physical-stack proof.')

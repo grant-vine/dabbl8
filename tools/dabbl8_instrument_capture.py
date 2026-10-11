@@ -118,7 +118,7 @@ class Bridge:
         self.close()
 
 
-def collect(exchange, destination, mode='full', provenance='unverified supplied adapter'):
+def collect(exchange, destination, mode='full', provenance='unverified supplied adapter', *, _verified_handoff=None):
     """Retain every received frame/partial role; publish only complete verified receipt."""
     if mode not in ('full', 'raw-store') or type(provenance) is not str or len(provenance) > 200:
         raise ValueError('Unsupported completeness mode or provenance label')
@@ -134,6 +134,7 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
                   'Adapter identity and physical capture/recovery remain unqualified; completion grants no migration authority.',
                   'Raw-store mode deliberately omits unsaved current project/settings/preset state.']}
     token = None
+    handoff_consumed = False
     requests = 0
     transcript_path = destination / 'received-frames.jsonl'
     with transcript_path.open('x') as transcript:
@@ -259,10 +260,23 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
             report['current_state_complete'] = mode == 'full'
             report['token'] = token
             report['objects'] = roles
+            if _verified_handoff is not None:
+                if mode != 'full':
+                    raise ValueError('Live handoff requires the complete 17-role capture')
+                # Independent publication readback before any session command.
+                published = destination / 'verified'
+                if json.loads((published / 'manifest.json').read_text()) != manifest:
+                    raise ValueError('Published manifest readback differs')
+                for item in roles:
+                    data = (published / item['file']).read_bytes()
+                    if len(data) != item['bytes'] or hashlib.sha256(data).hexdigest() != item['sha256']:
+                        raise ValueError('Published original readback differs')
+                report['handoff'] = _verified_handoff(published, token)
+                handoff_consumed = True
         except Exception as error:
             report['reason'] = str(error)
         finally:
-            if token is not None:
+            if token is not None and not handoff_consumed:
                 try:
                     ask(6)
                 except Exception:
