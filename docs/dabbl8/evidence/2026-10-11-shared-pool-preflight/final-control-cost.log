@@ -1,0 +1,3 @@
+cost fixture=tests/fixtures/d8p1/minimal.d8p present=1 bytes=6599 catalog_calls=63 catalog_bytes=20117 snapshot_calls=0 snapshot_bytes=0
+cost fixture=tests/fixtures/d8p1/minimal.d8p present=15 bytes=6599 catalog_calls=679 catalog_bytes=192171 snapshot_calls=815 snapshot_bytes=231925
+cost fixture=tests/fixtures/d8p1/maximum.d8p present=15 bytes=7705 catalog_calls=804 catalog_bytes=224245 snapshot_calls=965 snapshot_bytes=270635

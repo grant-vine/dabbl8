@@ -1,0 +1,34 @@
+{
+  "review_scope": "Independent read-only source and stored evidence review; no builds or tests executed by reviewer. Candidate uncommitted when reviewed; receipt pins actual files below.",
+  "base": "3174e63e190e44f9905ceddc9911e90696b5009a",
+  "source_hashes": {
+    "firmware/src/d8p1_pool_runtime.c": "3df9d10a56999c451610147956820f021c70bc37b92cdd6922d325e718cee9be",
+    "tests/shared_pool_scan_test.c": "28407edfd7472f728a5efb13d0e71b5030f14d944c1a0abf8de8961f01fefee8",
+    "tests/d8p1_pool_runtime_test.c": "b3d3ee7065660e07fb7eb8164d3fb2c246d080bcede526d4f9678c5ff3a14770",
+    "tests/run_tests.sh": "8cefc7eb60760b2744dbdb831abf629b31960dbc8763de7246a067221c8c4334"
+  },
+  "verdict": "No blocking introduced defect under documented synchronous stopped backend contract, no concurrent writers or general callback reentry.",
+  "reasoning": [
+    "Initial complete inventory bounds record block and length; private copy helper only receives those records, with destination capacity D8P1_LIMIT. Copied bytes retain exact outer CRC, codec and project-reference checks, followed by full structured decode.",
+    "All current object metadata is compared after a second complete inventory: presence, block, sequence, length and CRC. A changed current identity is refused. Foreign/future and ambiguous generations still refuse in the unchanged inventory.",
+    "Obsolete spare records are scanned but not compared as current identities. Torn obsolete data remains ignored by existing recovery policy; this is not loss of a current project.",
+    "Stopped transport, workspace ownership and capture epoch are checked after acquisition, copied objects and final scan. Local catalog publication occurs only on complete success, with staged bytes allowed to change on refusal.",
+    "Private preflight flag rejects recursive entrants through the pool runtime preflight and resets on every ordinary return. It is not held across later operation-specific loads/capture/save; those remain unchanged."
+  ],
+  "caveats": [
+    "Final comparison cannot establish a transaction against arbitrary concurrent or malicious storage changes, CRC collisions, or callbacks that bypass preflight and directly borrow/draw into the arena. Existing d8pool.h explicitly excludes general callback reentry/concurrent writers; do not broaden the claim.",
+    "The new second index is 68 bytes under target unsigned/uint32 layout, plus changed spills and call structure. Total target stack high-water and physical latency remain unqualified pending vendor disassembly evidence.",
+    "Copy CRC/decode and final full scan remain deliberate costs. The optimisation removes repeated per-object complete inventories; it does not solve audio IRQ static-score failure or establish target speed-up.",
+    "The preflight comment about recursive runtime operations is broader than the actual flag; prefer wording that names recursive pool runtime preflight entrants."
+  ],
+  "test_review": [
+    "New actual C fixture injects I/O faults and transport/backend/epoch/migration/canvas refusal at every catalog backend read; preserves catalog/live music and zero writes.",
+    "Mutation controls change copied current headers/bodies, test foreign/future versus torn obsolete spare policy, and attempt recursive catalog/load/save/rename/snapshot entrants.",
+    "Stored final normal and inherited sanitizer results record success; compiled control records negative_exit 1. Recorded full four-object maximum catalog counts are 324 callbacks and 108190 bytes. No execution by reviewer.",
+    "Exact cost counts are printed and retained as evidence rather than asserted by the new C test; safety assertions are the meaningful automated acceptance checks."
+  ],
+  "manifest_review": {
+    "entries": 14,
+    "mismatches": []
+  }
+}
