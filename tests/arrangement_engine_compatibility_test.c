@@ -39,21 +39,30 @@ static void pattern_source(unsigned engine)
 }
 static void early_refusal(void)
 {
- seed();destinations();reset();chain.native_mode=1;chain.native.policy.valid=1;chain.native.policy.suspended=1;
+ for(unsigned last_only=0;last_only<2;last_only++) {
+ seed();destinations();
+ if(last_only){proof(!set_engine_of(&trk[7],12),"only eighth destination selects excluded FM6");mix_block(audio,CTL);}
+ reset();chain.native_mode=1;chain.native.policy.valid=1;chain.native.policy.suspended=1;
  cv_begin(240,124,T_BG);cv_rect(1,2,17,19,T_ACCENT);cv_blit(0,20);
  snapshot();memcpy(arena,&main_workspace,sizeof arena);memcpy(screen,host_screen,sizeof screen);
  __typeof__(dma) old_dma=dma;unsigned fences=sync_calls,wiregen=proj_wire_gen;uint32_t req=transport_req;
- proof(d8arr_prepare_pool_mask(&compatibility_pool,1u<<12)==D8POOL_UNSUPPORTED,"missing destination refuses initially");
+ proof(d8arr_prepare_pool_mask(&compatibility_pool,last_only?1u:1u<<12)==D8POOL_UNSUPPORTED,"missing destination refuses initially");
  proof(unchanged()&&!memcmp(arena,&main_workspace,sizeof arena)&&!memcmp(screen,host_screen,sizeof screen)&&
        !memcmp(&old_dma,&dma,sizeof dma)&&sync_calls==fences&&proj_wire_gen==wiregen&&transport_req==req&&!reads&&!writes,
        "initial refusal preserves all live/cache/arena/DMA state without access");
  proof(d8arr_prepare_pool_mask(&compatibility_pool,0)==D8POOL_INVALID&&unchanged(),"empty profile seam refuses");
  proof(d8arr_prepare_pool_mask(&compatibility_pool,D8ENGINE_EFFECTIVE_MASK|0x4000)==D8POOL_INVALID&&unchanged(),"foreign mask refuses");
 }
-static void pattern_only(unsigned engine)
+}
+static void pattern_only_to(unsigned engine,unsigned destination)
 {
- pattern_source(engine);snapshot();uint32_t stored=d8p1_crc32(nor,sizeof nor);
- proof(!d8arr_prepare_pool_mask(&compatibility_pool,1u)&&live_same()&&!writes,"unavailable source engine permits pattern-only preparation");
+ pattern_source(engine);
+ if(destination){
+  for(unsigned t=0;t<NTRK;t++)proof(!set_engine_of(&trk[t],destination),"supported exact destination setup");
+  mix_block(audio,CTL);transport_req=0;
+ }
+ snapshot();uint32_t stored=d8p1_crc32(nor,sizeof nor);
+ proof(!d8arr_prepare_pool_mask(&compatibility_pool,1u<<destination)&&live_same()&&!writes,"unavailable source engine permits pattern-only preparation");
  for(unsigned o=0;o<3;o++)for(unsigned t=0;t<8;t++)proof(chain.native.policy.source_engine[o][t]==engine,"exact source engine provenance retained");
  transport_req=0;seq_start();proof(d8arr_running(),"real native sequence starts");
  proof(seq_steps(&trk[0])[0].note[0]==47&&trk[0].p[P_SLEN]==3&&
@@ -65,7 +74,7 @@ static void pattern_only(unsigned engine)
   motion_step(&trk[t],step,d8arr_motion(&trk[t]),1);
   proof(trk[t].p[P_PAN]==(step==1?30:10),"common source automation/lock/unlock remaps independently");
   for(unsigned i=0;i<3;i++) {
-   int16_t value=engine?initial[t][i]:(int16_t)param_fit(param_desc_of(0,ids[i]),(step==1?42:41)+2*i);
+   int16_t value=engine!=destination?initial[t][i]:(int16_t)param_fit(param_desc_of(destination,ids[i]),(step==1?42:41)+2*i);
    proof(trk[t].p[ids[i]]==value,"specific automation/lock/unlock uses exact engine identity");
   }
  }
@@ -74,6 +83,7 @@ static void pattern_only(unsigned engine)
  proof(stored==d8p1_crc32(nor,sizeof nor)&&!writes,"exact stored sources preserved");
  seq_stop();
 }
+static void pattern_only(unsigned engine){pattern_only_to(engine,0);}
 static void late_refusal(void)
 {
  pattern_source(9);chain.native_mode=1;chain.native.policy.valid=1;chain.native.policy.suspended=1;snapshot();late_engine=12;
@@ -85,7 +95,11 @@ static void late_refusal(void)
 }
 int main(void)
 {
- early_refusal();pattern_only(9);pattern_only(1);pattern_only(4);pattern_only(0);late_refusal();
+ early_refusal();pattern_only(9);pattern_only(1);pattern_only(4);pattern_only(0);pattern_only(13);
+#if !FELUCCA_FM4
+ pattern_only_to(1,12); /* Raw DIGITAL remains ID1; FM6 must skip its specific motion. */
+#endif
+ late_refusal();
  pattern_source(9);proof(!d8arr_prepare_pool(&compatibility_pool),"immutable production wrapper still prepares");
  printf("arrangement engine compatibility: %u checks, %u failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n",checks,failures);
  return !!failures;

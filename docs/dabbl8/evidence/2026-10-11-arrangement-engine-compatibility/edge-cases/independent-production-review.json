@@ -1,0 +1,53 @@
+{
+  "commit": "0634473db765000998fe1ca170a9a7d3f984fd7a",
+  "result": "No static production blocker found.",
+  "scope": "Independent read-only source/diff/spec/receipt review. Reviewer executed only file/hash reads; no builds or tests. Retained author tests are separate host evidence, never target/device authority.",
+  "source_sha256": {
+    "firmware/src/d8arr_prepare.c": "9ac2064f1f649bc11bb5d49c0d5175fe44918364cf25e34920c5887811b78e9c",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/motion.c": "533ea04cbb9d3ae658efd24d7d35fbb685be522df28aec845b4aad442044c168",
+    "firmware/src/d8p1_project.h": "f310056786875ecd2322eff28c34b4792e649d6e471ef9451f3147870f44b623",
+    "firmware/src/d8p1_pool_runtime.c": "223ce1e54a158d5082bb46b193554c6deddbb646daf9faff6eacd4be88b3c7c1",
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "tests/arrangement_engine_compatibility_test.c": "5c331dc209d16839339ad5221c4f24fe39099514b412b109f496700a9bfdfcec",
+    "tests/native_arrangement_test.c": "c88cc9a0f368db6aedc94092511fb3c1e7cf2122722e139b4332968423f4ca43",
+    "tests/d8p1_pool_runtime_test.c": "8a9cf123b9e039d5f20d88c14d0efe310e87a208ca7259a01f95cc25c8c119dc",
+    "tests/run_tests.sh": "6f4e086bcc057aedcd8a379f3cdcb747b0151fbd33897f146cc9384c6273d0f7",
+    "docs/dabbl8/native-arrangement-playback.md": "948d23b2671b91a4ed2b55b72bdf422fe651c1df63eee741309c95e5daafb55d"
+  },
+  "receipt_manifest_validation": "All retained evidence manifest hashes and scope source hashes match current committed files.",
+  "verified_static": [
+    "Both initial and final guards use CANONICAL destination eng_req, reject empty/foreign masks, and preserve immutable full compiled production wrapper. FM4 compatibility adapter handles implemented DIGITAL; SLICE compiled absence refuses destinations.",
+    "Initial refusal occurs before cv/ownership checks, preflight inventory, arena borrow/LCD fence, source/cache invalidation or live publication. Reading destinations performs no mutation.",
+    "Source structural decode/CRC/reference checks remain independent of compiled engine count, including stable source ID13 in a SLICE-off build. Source engine parameters/presets/patches are not adopted; exact source_engine provenance retained.",
+    "Existing common motion predicate id<P_FM1_ATK and engine-specific exact provenance predicate are used in both apply and unlock resolution; aliased destinations retain separate bases/locks. No DIGITAL/PERC provenance relabel introduced.",
+    "Final guard runs inside existing motion publication guard after metadata/inventory/store/input-generation validations, before valid/armed/transport publication. Failure intentionally invalidates/disarms partly populated cache, rather than promising full rollback after bulk copy.",
+    "Existing chain_start/Continue validity paths block use of invalid native-mode1 preparation; no new tombstone or fallback grant introduced.",
+    "Author fixtures show initial full live/cache/arena/DMA preservation and late track8 engine injection rejection; restoring only the injected external eng_req before comparison is explicitly labelled. Source store hashes and common/specific apply/unlock positive controls match policy.",
+    "Evidence labels virtual NOR, existing sanitizer exclusions, exact parent+neutral-seam and overrestrict mutant controls. No true exclusion, asset authority, write grant, timing improvement, target or hardware qualification claimed."
+  ],
+  "nonblocking_test_gaps": [
+    {
+      "file": "tests/arrangement_engine_compatibility_test.c",
+      "line": 88,
+      "finding": "pattern_only cases use source IDs9,1,4,0 with ANALOG destinations. They do not exercise raw source ID13 when SLICE is compiled off, nor raw DIGITAL provenance against a destination FM6 sound.",
+      "impact": "Static decoder/predicate inspection supports those boundaries, but actual integration evidence does not directly cover compiled-out tail ID or the historical DIGITAL-to-FM6 distinction.",
+      "validation": "Add SLICE-off source13 pattern-only positive/common-motion case; add raw DIGITAL source1 with FM4-off destination12 and assert engine-specific FM records remain skipped while common records apply/unlock. Keep raw provenance unchanged.",
+      "confidence": "high"
+    },
+    {
+      "file": "tests/arrangement_engine_compatibility_test.c",
+      "line": 42,
+      "finding": "Initial missing-destination case excludes ANALOG while all destinations use ANALOG; only the late case isolates track8.",
+      "impact": "Initial coverage does not separately prove track8-only missing destination versus earlier valid destinations, though static loop visits all NTRK and late fixture covers track8.",
+      "validation": "One early case with tracks1-7 ANALOG and track8 FM6, mask ANALOG only; retain existing full arena/DMA/cache snapshot.",
+      "confidence": "high"
+    }
+  ],
+  "remaining_gates": [
+    "Full source-union CI and target app/map/stack/reserve verification owned by root.",
+    "Runtime sound/adoption enforcement and future reduced-profile activation must remain separate; this is synchronous stopped preparation availability only.",
+    "Destination-owned sample/patch availability and physical timing/recovery remain unqualified."
+  ]
+}
