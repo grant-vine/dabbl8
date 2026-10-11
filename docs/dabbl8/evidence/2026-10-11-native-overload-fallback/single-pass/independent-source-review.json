@@ -1,0 +1,27 @@
+{
+  "verdict": "No correctness defect found in independently inspected single-pass source refinement. Source preserves previous PR110 victim ordering; no adoption or target deadline qualification asserted.",
+  "scope": "Read-only comparison of source, newactualIRQ fixture and victim parity harness; no builds/tests/edits by reviewer.",
+  "pins": {
+    "candidate_audio": "2e9c17acc558fbf5045da58f14eacc2fde2b59809769af365f75b0657ea4a6b6",
+    "control_audio": "dcde98f900e3223eb628104ec887da76968472e840f4ac1304acd8e0c11ca37b",
+    "candidate_actualIRQ_test": "db15a07461abc79dabc95293db543bbb1217cb62cd9aa1c383fdbdff8c691f30",
+    "victim_parity": "1f6ad3814566a864644882d6cfc93a18b7099c113657850c358d5638c24c5d41"
+  },
+  "proof": [
+    "Released-voice pass still selects minimum envelope and returns immediately, preserving higher priority.",
+    "Second pass still selects the oldest extra held voice by global age. Its else-if caches only live, held, non-stage-4 voices that failed extra eligibility. It does not misclassify extras whose age failed the best comparison: the outer if still takes its branch.",
+    "When an extra exists, the protected cache is ignored. When none exists and sustained overload is set, the cache contains exactly the former voice_victim category-4 candidates: lowest held POLY or index-zero non-POLY. Strict less-than and identical track/slot traversal retain the first candidate on age ties.",
+    "allow_protected snapshots audio-owned shed_over. Nested TIMER5 does not write it; the main loop cannot interleave ALNK0. No ordering difference identified.",
+    "Four-track preprocessing excludes new declarations, cache branch and fallback. Native voice_kill remains immediate and only retires one voice. No extra DSP voice starts.",
+    "Empty candidate cache stays NULL; final check prevents a kill. Continued overload below eight remains eligible, allowing repeated reductions until no eligible voice remains.",
+    "New actual-IRQ fixture covers protected UNISON, lowest POLY at a nonzero index, PHYS body liveness after shedding/retrigger/note-off, and previous sustained/transient/recovery/auxiliary/priority cases.",
+    "Parity harness invokes actual old/new shed_voice functions in separately compiled identical fixtures across 65536 deterministic states seeded DABB1801. It uses at most eight active descriptors, varied modes/engines, arbitrary ages, gate/release/stage-4 state and overload history, and hashes output state. This is a differential oracle against PR110 rather than independent numerical policy expectations; source proof complements it."
+  ],
+  "limitations": [
+    "Parent target measurements reported but not independently reanalysed by this reviewer; compiled static IRQ model is not physical cycles.",
+    "Parity hash collision risk is nonzero; this is not exhaustive coverage of every engine/lifetime/state.",
+    "Actual IRQ fixture uses a simulated clock. Full IRQ nested stack/deadlines and click quality remain open.",
+    "Reverse SLICE-specific shed/reuse is not newly tested, although PHYS now covers a heavy-body lifecycle.",
+    "An explicit equal-age tie fixture would strengthen deterministic ordering coverage; strict less-than and identical traversal already support expected tie behaviour."
+  ]
+}

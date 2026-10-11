@@ -1,0 +1,158 @@
+[
+  {
+    "name": "pr110-parity-normal",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DAUDIO_SOURCE=\"/Users/grantv/Code/dabbl8/.local-baseline/native-overload-fallback/tests/audio_test.c\"",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "/private/tmp/d8-overload-scan-candidate/victim_parity.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/pr110-parity-normal"
+    ],
+    "exit": 0,
+    "stdout": "victim parity: cases=65536 tracks=8 seed=DABB1801 trace=cccef98fda6fcc91\n"
+  },
+  {
+    "name": "single-scan-parity-normal",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DAUDIO_SOURCE=\"/private/tmp/d8-overload-scan-candidate/source/tests/audio_test.c\"",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "/private/tmp/d8-overload-scan-candidate/victim_parity.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-parity-normal"
+    ],
+    "exit": 0,
+    "stdout": "victim parity: cases=65536 tracks=8 seed=DABB1801 trace=cccef98fda6fcc91\n"
+  },
+  {
+    "name": "single-scan-irq-4-normal",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-irq-4-normal"
+    ],
+    "exit": 0,
+    "stdout": "overload: tracks=4 assertions=24 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n"
+  },
+  {
+    "name": "single-scan-irq-8-normal",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-irq-8-normal"
+    ],
+    "exit": 0,
+    "stdout": "overload: tracks=8 assertions=66 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n"
+  },
+  {
+    "name": "pr110-parity-san",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-DAUDIO_SOURCE=\"/Users/grantv/Code/dabbl8/.local-baseline/native-overload-fallback/tests/audio_test.c\"",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "/private/tmp/d8-overload-scan-candidate/victim_parity.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/pr110-parity-san"
+    ],
+    "exit": 0,
+    "stdout": "victim parity: cases=65536 tracks=8 seed=DABB1801 trace=cccef98fda6fcc91\n"
+  },
+  {
+    "name": "single-scan-parity-san",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-DAUDIO_SOURCE=\"/private/tmp/d8-overload-scan-candidate/source/tests/audio_test.c\"",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "/private/tmp/d8-overload-scan-candidate/victim_parity.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-parity-san"
+    ],
+    "exit": 0,
+    "stdout": "victim parity: cases=65536 tracks=8 seed=DABB1801 trace=cccef98fda6fcc91\n"
+  },
+  {
+    "name": "single-scan-irq-4-san",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-irq-4-san"
+    ],
+    "exit": 0,
+    "stdout": "overload: tracks=4 assertions=24 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n"
+  },
+  {
+    "name": "single-scan-irq-8-san",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-scan-candidate/host-evidence-final/single-scan-irq-8-san"
+    ],
+    "exit": 0,
+    "stdout": "overload: tracks=8 assertions=66 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n"
+  }
+]

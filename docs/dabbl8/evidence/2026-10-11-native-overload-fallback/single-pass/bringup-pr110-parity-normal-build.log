@@ -1,0 +1,19 @@
+/private/tmp/d8-overload-scan-candidate/victim_parity.c:5:17: error: redefinition of 'rng' as different kind of symbol
+    5 | static uint32_t rng=0xDABB1801u;
+      |                 ^
+/Users/grantv/Code/dabbl8/.local-baseline/native-overload-fallback/tests/../firmware/src/libc.c:80:17: note: previous definition is here
+   80 | static uint32_t rng(void)
+      |                 ^
+/private/tmp/d8-overload-scan-candidate/victim_parity.c:6:45: error: invalid operands to binary expression ('uint32_t (void)' (aka 'unsigned int (void)') and 'int')
+    6 | static uint32_t random_word(void) { rng^=rng<<13;rng^=rng>>17;rng^=rng<<5;return rng; }
+      |                                          ~~~^ ~~
+/private/tmp/d8-overload-scan-candidate/victim_parity.c:6:58: error: invalid operands to binary expression ('uint32_t (void)' (aka 'unsigned int (void)') and 'int')
+    6 | static uint32_t random_word(void) { rng^=rng<<13;rng^=rng>>17;rng^=rng<<5;return rng; }
+      |                                                       ~~~^ ~~
+/private/tmp/d8-overload-scan-candidate/victim_parity.c:6:71: error: invalid operands to binary expression ('uint32_t (void)' (aka 'unsigned int (void)') and 'int')
+    6 | static uint32_t random_word(void) { rng^=rng<<13;rng^=rng>>17;rng^=rng<<5;return rng; }
+      |                                                                    ~~~^ ~
+/private/tmp/d8-overload-scan-candidate/victim_parity.c:6:82: error: incompatible pointer to integer conversion returning 'uint32_t (void)' (aka 'unsigned int (void)') from a function with result type 'uint32_t' (aka 'unsigned int') [-Wint-conversion]
+    6 | static uint32_t random_word(void) { rng^=rng<<13;rng^=rng>>17;rng^=rng<<5;return rng; }
+      |                                                                                  ^~~
+5 errors generated.

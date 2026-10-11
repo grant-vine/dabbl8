@@ -1,0 +1,10 @@
+{
+  "base_main": "1d47ebee17c72b933008524b6cabbfb138da3e72",
+  "comparison_pr110_head": "d4002ed6798a6a2026c3a653b804efc96653a48b",
+  "audio_source_sha256": "2e9c17acc558fbf5045da58f14eacc2fde2b59809769af365f75b0657ea4a6b6",
+  "victim_parity": "65536 generated cases, seedDABB1801, both original PR110 and single-pass tracecccef98fda6fcc91 in normal and inherited sanitizer builds; gate/released/extra/protected/oneshot modes varied. Source states rather than physical engine traces.",
+  "actual_isr_tests": "four-track24 and native66 assertions pass in normal/inherited sanitizers",
+  "scope": "Same protected-retirement policy; eliminate additional voice_victim search by selecting oldest protected during existing held-voice pass. No actual elapsed-time or hardware-cycle improvement asserted.",
+  "stack_caution": "Static IRQ local allocation440 bytes vs PR110444, main436; excludes wrapper/callees and dynamic nesting. No stack high-water proof.",
+  "remaining": "Native target score55767 and UAC555 still fail unchanged baseline budgets. No install/release/golden/limit/map/loader/write-gate changes."
+}

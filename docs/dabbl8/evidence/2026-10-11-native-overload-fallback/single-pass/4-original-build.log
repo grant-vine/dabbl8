@@ -1,0 +1,2 @@
+CFLAGS ['-Os', '-ffunction-sections', '-fno-builtin', '-Wall', '-Wno-unused-function'] TIMING_DIAGNOSTIC False
+CHECK [] ['.ram_text: 916 insns, no calls', 'image 447952 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064']

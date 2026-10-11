@@ -356,6 +356,10 @@ if [ -f build/gen/felucca_tables.h ]; then
         "$OUT/ui_render_fm4" build/ui_fm4 build/ui_fm4_slot
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/audio_test" tests/audio_test.c -lm
     run "audio: overload protection, bounded fades and DMA diagnostics" "$OUT/audio_test"
+    $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_overload4" tests/native_overload_test.c -lm
+    run "audio: historical protected overload policy" "$OUT/native_overload4"
+    $CC -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/native_overload8" tests/native_overload_test.c -lm
+    run "audio: native sustained-overload fallback and recovery" "$OUT/native_overload8"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/click_test" tests/click_test.c -lm
     run "metronome and count-in: beats sample for sample (internal and external clock), accent, level, MASTER, not in USB, count-in timing, notes onto step 1" "$OUT/click_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/persistence_test" tests/persistence_test.c -lm
@@ -441,8 +445,12 @@ else
     run "ASan/UBSan: strict USB AC collection-order descriptor matrix" python3 tests/uac_collection_order_test.py --sanitize
     mkdir -p "$OUT/asan"
     A="$OUT/asan"
-    SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
+    SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
+    run "ASan/UBSan: historical protected overload policy" "$A/native_overload4"
+    $SCC -DNPART=8 -o "$A/native_overload8" tests/native_overload_test.c -lm
+    run "ASan/UBSan: native sustained-overload fallback and recovery" "$A/native_overload8"
     # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
     run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p

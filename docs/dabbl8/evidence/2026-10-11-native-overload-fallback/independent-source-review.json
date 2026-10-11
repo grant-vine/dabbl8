@@ -1,0 +1,44 @@
+{
+  "base": "1d47ebee17c72b933008524b6cabbfb138da3e72",
+  "source_sha256": {
+    "firmware/src/audio.c": "dcde98f900e3223eb628104ec887da76968472e840f4ac1304acd8e0c11ca37b",
+    "firmware/src/voice.c": "b995d9de974c6f331f2d7a1fa55c6640435fc89a6086cd0b8967b87aa0413657",
+    "tests/audio_test.c": "630a72d8b15ab30b79288b7612f29835236e6293f0d2b7033d9892b0e9be1187",
+    "tests/native_overload_test.c": "bf069d6707f1038b679a915094589d6b6369597bfa26dd04706beb38373c2cfc",
+    "tests/run_tests.sh": "eee8181ad0d19779ff221fc159d982d86aba0031b66d41e595bb5635c380d1ef"
+  },
+  "scope": "Independent read-only source review; no edits, builds, tests, merge or device operations by reviewer. Parent test results not independently executed. No applicable repository AGENTS.md found.",
+  "verdict": "No blocking correctness defect found in the proposed narrow fallback. It addresses A1 source-policy failure, while target deadlines and audible declick remain open.",
+  "verified_behavior": [
+    "Existing released/quieter-tail pass returns before fallback; extra held nonbass/nonlead selection remains ahead of fallback.",
+    "Fallback compiles only for NPART>=NVOICE, which track_limits restricts to native8 in current supported configurations. Four-track production statements unchanged.",
+    "Fallback requires shed_over low two bits both set. In normal production only pending shed_req invokes shed_voice; request is cleared then measured prior-half state drives admission. Recovery can consume one already-queued request, explicitly represented in tests.",
+    "voice_victim(0,0,&owner) uses self only in soft branch, and soft=0; first accepted candidate writes owner before age tie comparison can dereference it. NVOICE result is checked before owner dereference.",
+    "No new voice starts; existing native voice_kill clears active/gate/stage/env/env_out immediately. Sounding count cannot grow and no ninth fading DSP voice is introduced.",
+    "Selection can reduce protected work below eight while continued overload remains, avoiding a one-time only remedy.",
+    "Regression uses actual audio ISR/DSP with simulated timer/DMA, asserts two-half threshold, per-track deterministic retirement, continuation tozero, no further count increase whenempty, alternating loads, auxiliary exclusion, recovery, and retained released/extra priorities. Historical4 assertsprotected voices retained.",
+    "Runner adds4/8 normal and inherited-SAN lanes. Existing DSP exclusions remain; hooks are only main suppression aroundaudio_test entry."
+  ],
+  "nonblocking_test_recommendations": [
+    {
+      "priority": "P2",
+      "description": "Add protected UNISON lead explicitly (current mixed setup is MONO/LEGATO/POLY), and POLY lowest-held voice at index>0. This tests real fallback categories rather than assuming every protected voice occupiesv[0].",
+      "why": "Existing voice_victim supports these, source reuse sound; current exactnewfixture does not exercise both categories."
+    },
+    {
+      "priority": "P2",
+      "description": "Add release/retrigger or incomingnote after shed forMONO/LEGATO/POLY, verify physicalnote-off routes, mono stacks, deterministichistory and sounding cap. Include real heavy engines and reverseSLICE ownership in a focused fixture.",
+      "why": "Current fallbacktest uses presetAnalog; numeric voice cap does not itself verifysharedstatebody reuse, nextnote behavior, or staleheld metadata."
+    },
+    {
+      "priority": "P2",
+      "description": "Preserve target compiledcost/stack evidence, compare ordinary4binary identity, and measure actualFM1 deadlines plus discontinuities onlyafterauthorisedinstall.",
+      "why": "New fallbackadds a scan only duringprotectedoverload; no claim that itmakes allenginecombinationssafe. Everyvoice can be shed ifbudget stays overloaded byfixed effects/USB evenwhenDSPvoicesreachzero."
+    }
+  ],
+  "limits": [
+    "No fresh target/hardware measurements reviewed for this new fix yet.",
+    "Test assert checks rely onstandard compilation withoutNDEBUG; configured runner shown does not setNDEBUG.",
+    "The inherited audio overload comment still describes fades; newnativeinlinecomment correctly says immediate retirement. Release claims mustretainthislimitation."
+  ]
+}
