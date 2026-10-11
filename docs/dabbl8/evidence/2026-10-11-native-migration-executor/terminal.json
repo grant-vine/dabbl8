@@ -1,0 +1,34 @@
+{
+  "source": "7c896490f61faf175d5bc294b6718768667f6106",
+  "result": "PASS",
+  "source_and_six_artifacts_unchanged": true,
+  "generated_29_inputs_unchanged": true,
+  "target_results": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "parent_quarantine_sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "parent_byte_identity": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460452,
+      "sha256": "0a48877a955a0a866a9d7a9dd19d1d6c0cddeb1bd171cd547b9c1f265d2cd41f",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460452 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ],
+      "parent_quarantine_sha256": "0a48877a955a0a866a9d7a9dd19d1d6c0cddeb1bd171cd547b9c1f265d2cd41f",
+      "parent_byte_identity": true
+    }
+  },
+  "native_budget_qualification": false,
+  "hardware": "NOT_RUN"
+}

@@ -1,0 +1,8 @@
+{
+  "source_head": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "run": "38086303575",
+  "artifact_sha256": "659a01d1914f55f47b59db635e7f2095a48fae659d225ccd94fe526b3f6b9b8c",
+  "artifact_bytes": 130171,
+  "tested_commit": "5abbbee80427412f41175ff203d326631f0f0354",
+  "tested_tree_equals_source_head": true
+}

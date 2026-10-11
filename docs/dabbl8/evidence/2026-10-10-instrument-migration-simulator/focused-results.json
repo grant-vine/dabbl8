@@ -1,0 +1,66 @@
+{
+  "head": "381537968d16da8f911f4d1ee0ae579f42ca1c3c",
+  "parent": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "optimized_checks": 6499,
+  "optimized_exit": 0,
+  "strict_sanitizer_checks": 6499,
+  "strict_sanitizer_exit": 0,
+  "strict_sanitizer_flags": "-O1 -g -fsanitize=address,undefined -fno-sanitize-recover=undefined; no exclusions",
+  "ASAN_OPTIONS": "detect_leaks=0",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "host_independent_manifest": "/Users/grantv/Code/dabbl8/.local-baseline/instrument-migration-host-check/manifest.json",
+  "full_suite_session": 78163,
+  "full_suite_state": "terminal-pass",
+  "scope": "host-only simulation, no new target build, no production activation, no current-RAM adoption, no device qualification",
+  "files": {
+    "executor_source": {
+      "path": "dabbl8_instrument_executor.c",
+      "bytes": 9701,
+      "sha256": "7e30a20dfe5e4ca9c2310c4a9f0317b5310bec7eb32c23d1ee6dbf6d040f7c27"
+    },
+    "C_test_source": {
+      "path": "instrument_migration_executor_test.c",
+      "bytes": 7591,
+      "sha256": "145e23e713c7c7679d1284e4ecdfc6f570010dc72f67ec79424b19a2c9968b66"
+    },
+    "consumer_source": {
+      "path": "dabbl8_instrument_migrate.py",
+      "bytes": 19780,
+      "sha256": "da2f07571cec705ddf1bc8964ece3ff1f6d8dac81b683f85f44553283bf224d0"
+    },
+    "host_test_source": {
+      "path": "instrument_migration_host_test.py",
+      "bytes": 15450,
+      "sha256": "9e46ba529d503eec3fbd37acc5e2b4c4a2d332172923267eadb42029d4541e04"
+    },
+    "optimized_log": {
+      "path": "optimized.log",
+      "bytes": 162,
+      "sha256": "5a83da3ffa32e79368aac7d57f218403f9c28da458d1bf3ee92d3ead3b336cb8"
+    },
+    "strict_sanitizer_log": {
+      "path": "sanitizer.log",
+      "bytes": 162,
+      "sha256": "5a83da3ffa32e79368aac7d57f218403f9c28da458d1bf3ee92d3ead3b336cb8"
+    },
+    "initial_count_failure_log": {
+      "path": "initial-count-failure.log",
+      "bytes": 189,
+      "sha256": "ccfb5ed5da5584e725beca1ff74e34097854ab37e3014f6f5a8298ffdbc6a484"
+    },
+    "optimized_binary": {
+      "path": "instrument_migration_executor",
+      "bytes": 52272,
+      "sha256": "dbed6c2ebdb9de4d76caae7b853a156f74407e7ebb047af17d75010bb98b397f"
+    },
+    "strict_sanitizer_binary": {
+      "path": "instrument_migration_executor_san",
+      "bytes": 98672,
+      "sha256": "b9dc32edfc6ad7cede4188e74f18bca1acd7ec55f1f587b0157f9dfc97004dc8"
+    }
+  },
+  "full_suite_exit": 0,
+  "full_suite_elapsed_seconds": 728.3691899776459,
+  "host_optimized_checks": 284,
+  "host_strict_sanitizer_checks": 284
+}

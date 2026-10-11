@@ -1,0 +1,79 @@
+{
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "sdk": {
+    "command": [
+      "git",
+      "-C",
+      "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit": 0,
+    "output": "d179b4484759423312073f5fbb232501aa491047"
+  },
+  "sdk_status": {
+    "command": [
+      "git",
+      "-C",
+      "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+      "status",
+      "--porcelain"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  "container": {
+    "command": [
+      "docker",
+      "image",
+      "inspect",
+      "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+      "--format",
+      "{{json .RepoDigests}}"
+    ],
+    "exit": 0,
+    "output": "[\"debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587\",\"mirror.gcr.io/library/debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587\"]"
+  },
+  "target_compiler": {
+    "command": [
+      "docker",
+      "run",
+      "--rm",
+      "--platform",
+      "linux/amd64",
+      "-v",
+      "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1:/toolchain:ro",
+      "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+      "/toolchain/pi32v2/bin/clang",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /toolchain/pi32v2/bin"
+  },
+  "python": {
+    "command": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "Python 3.14.8"
+  },
+  "dependencies": {
+    "command": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+      "-m",
+      "pip",
+      "freeze"
+    ],
+    "exit": 0,
+    "output": "fonttools==4.66.1\npillow==12.3.0"
+  },
+  "node": {
+    "command": [
+      "node",
+      "--version"
+    ],
+    "exit": 0,
+    "output": "v26.11.0"
+  }
+}

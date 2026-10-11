@@ -1,0 +1,30 @@
+{
+  "source": "a660427945c28bc8f95eb0606ad9d41602b64378",
+  "source_hashes": {
+    "firmware/src/editor_capture.c": "c7ce61d9668f15c413e8a7cbc9b847ebf832f826a4c4e88ce0200bd5aea96e82",
+    "tests/instrument_capture_test.c": "7ed3d2730ef6e620ab3fa8d9607777f53eeb062cf2df813944a5911a973edf93",
+    "tools/dabbl8_instrument_capture.py": "2923c794d34a65d3a24de71ecc5813ec6c2f17c40e610ce588bc1b45ab907560",
+    "tests/instrument_capture_collector_test.py": "44770b60614f323cd4da969811d390917e107e1d90e0df09b1a0d46e7c8ab37e",
+    "tests/run_tests.sh": "5858dc3d39b81c180d7efc4041ee6364d55772eb2ff220ba72a47738e0fecab7"
+  },
+  "results": {
+    "C_optimized": 67341,
+    "C_inherited_SAN": 67341,
+    "collector_optimized": 287,
+    "collector_inherited_SAN": 287,
+    "failures": 0
+  },
+  "logs_sha256": {
+    "focused-opt-final.log": "f7487c7241576d9aa034fb48bb1db3b8597afe213f6812ac45c0dc5f96971bbf",
+    "collector-opt-final.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49",
+    "focused-san-initial.log": "6809166362bd945caf70d64ec4a4861786a1a344133a6d106e65469b2bce042e",
+    "focused-san-final.log": "f7487c7241576d9aa034fb48bb1db3b8597afe213f6812ac45c0dc5f96971bbf",
+    "focused-opt-initial.log": "6809166362bd945caf70d64ec4a4861786a1a344133a6d106e65469b2bce042e",
+    "collector-san-final.log": "9f5c8a0c52aadd314caa43718d378f588125082b698b1270495975f577fd8b49"
+  },
+  "binaries": {
+    "/private/tmp/instrument_capture_bridge": "46d98a8698032eaf4eb54dbad213d0c6bac1931e0a291ece641b96220ee3ec95",
+    "/private/tmp/instrument_capture_san": "c8982804136b89cd6f04307b5122c7cf555855f92f6708e5f89a0f28b44824d9"
+  },
+  "qualification": "host virtual NOR and actual editor/storage/USB/native source only; inherited sanitizer exclusions; no device, restore or ownership qualification"
+}

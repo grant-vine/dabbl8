@@ -38,3 +38,11 @@ A future trusted migration coordinator must be designed and tested separately:
 6. Revoke permission on failed binding, uncertain readback, interrupted transfer/reset or lost ownership before each actual mutation boundary. Page-level interrupt/callback behavior needs an explicit atomicity contract.
 
 Only that subsequent implementation may introduce an unlock/grant API. The present change must not be presented as final persistence, completed migration, musical/device equivalence or a release-ready permanent read-only instrument.
+
+## Frozen verification
+
+Functional commit `179e41a91440469242f72af7f266d54bebbd3761` completed the full host suite with exit 0. Quarantine 220, actual capture 407,518 and collector 287 checks pass in both normal and sanitizer runs; all 92 golden renders are unchanged. Initial test-harness compile/link failures and corrections are recorded in [the evidence manifest](evidence/2026-10-11-write-quarantine/manifest.json).
+
+The fresh four-track target is byte-identical to actual integration 6f73 (`447928` bytes, SHA-256 `7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b`). The eight-track target is `460376` bytes, SHA-256 `1712c7a4a1b6d218226a2c8d376a13c6352ddd29bbe70ceea326c03b346338b8`; RAM `95780/98304`, pool `334312/344064`, RAM text `916` instructions with no calls. Structural/MMIO checks pass. Native USB48k `570/504`, ROOM `296/218` and SPRING `176/126` budgets remain failures; no threshold or golden was changed. The full suite used the fresh actual four-track disassembly, while the six historical baseline artifacts and 29 generated inputs remained unchanged.
+
+Actual omissions are the DaisySP PHYS reference, absent private vendor V15 restore fixture, MENU in the reduced sanitizer editor (normal MENU is tested), and the Emscripten emulator. Node web and backup tests pass; browser conversion parity was not separately run locally. No hardware operation or physical qualification was performed. This evidence does not grant storage ownership or complete the migration/persistence acceptance gates.
