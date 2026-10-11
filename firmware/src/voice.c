@@ -20,29 +20,33 @@ static uint32_t vage;                                   /* voice ages: one clock
  * for indefinitely held notes. No half-range modular-age assumption. Native
  * builds alone use this; historical four-part allocation remains unchanged. */
 #if NPART >= NVOICE
+/* Keep the rank table out of ordinary voice_start stack frames. */
+static __attribute__((noinline)) void voice_compact_ages(void)
+{
+    _Static_assert(NPART * NVOICE <= UINT8_MAX, "voice age rank fits");
+    uint8_t rank[NPART][NVOICE] = {{0}};
+    uint32_t highest = 0;
+    for (uint32_t p = 0; p < NPART; p++)
+        for (uint32_t i = 0; i < NVOICE; i++) {
+            const voice_t *v = &trk[p].v[i];
+            if (!v->active) continue;
+            uint32_t r = 1;
+            for (uint32_t q = 0; q < NPART; q++)
+                for (uint32_t j = 0; j < NVOICE; j++)
+                    r += trk[q].v[j].active && trk[q].v[j].age < v->age;
+            rank[p][i] = (uint8_t)r;
+            if (r > highest) highest = r;
+        }
+    /* Publish only after every rank was computed from the original ages. */
+    for (uint32_t p = 0; p < NPART; p++)
+        for (uint32_t i = 0; i < NVOICE; i++)
+            if (trk[p].v[i].active) trk[p].v[i].age = rank[p][i];
+    vage = highest;
+}
 static uint32_t voice_next_age(void)
 {
-    if (vage == UINT32_MAX) {
-        _Static_assert(NPART * NVOICE <= UINT8_MAX, "voice age rank fits");
-        uint8_t rank[NPART][NVOICE] = {{0}};
-        uint32_t highest = 0;
-        for (uint32_t p = 0; p < NPART; p++)
-            for (uint32_t i = 0; i < NVOICE; i++) {
-                const voice_t *v = &trk[p].v[i];
-                if (!v->active) continue;
-                uint32_t r = 1;
-                for (uint32_t q = 0; q < NPART; q++)
-                    for (uint32_t j = 0; j < NVOICE; j++)
-                        r += trk[q].v[j].active && trk[q].v[j].age < v->age;
-                rank[p][i] = (uint8_t)r;
-                if (r > highest) highest = r;
-            }
-        /* Publish only after every rank was computed from the original ages. */
-        for (uint32_t p = 0; p < NPART; p++)
-            for (uint32_t i = 0; i < NVOICE; i++)
-                if (trk[p].v[i].active) trk[p].v[i].age = rank[p][i];
-        vage = highest;
-    }
+    if (vage == UINT32_MAX)
+        voice_compact_ages();
     return ++vage;
 }
 #endif
