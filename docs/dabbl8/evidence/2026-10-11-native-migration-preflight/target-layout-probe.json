@@ -1,0 +1,12 @@
+{
+  "canvas": 59520,
+  "complete": 58432,
+  "stage": 17472,
+  "plan_offset": 17472,
+  "stage_offset": 0,
+  "alignment": 4,
+  "canvas_alignment": 4,
+  "result": "PASS",
+  "IR_sha256": "7c3aa5c4bb33c963e7e90a73556e3d15ab71e6cfe4a0562ec743f8d2013c7255",
+  "scope": "actual eight-track translation unit/forced APIs compiler IR only; no linking/stack/timing/physical proof"
+}

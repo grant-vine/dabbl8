@@ -76,10 +76,17 @@ static uint32_t nm_black(uint32_t k)                   /* black key k's function
 static void name_open(uint32_t kind, uint32_t slot)
 {
     char b[16];
+#if NPART >= NVOICE
+    if(kind==NK_PROJ_RENAME&&project_name(slot,b)<0){ui.force=1;return;}
+#endif
     nm.kind = (uint8_t)kind;
     nm.slot = (uint8_t)slot;
     nm.num = nm.key = nm.rep = 0;
+#if NPART >= NVOICE
+    if(kind!=NK_PROJ_RENAME)b[0]=0;
+#else
     b[0] = 0;
+#endif
     if (kind == NK_USER_SAVE || kind == NK_USER_RENAME) {
         uint32_t e = kind == NK_USER_RENAME ? up_engine(slot) : TSEL->eng_req;
         up_auto_name(nm.ph, e, slot);
@@ -93,7 +100,11 @@ static void name_open(uint32_t kind, uint32_t slot)
         str_cpy(nm.ph, "PROJECT A", sizeof nm.ph);
         nm.ph[8] = (char)('A' + (slot & 3u));
         if (kind == NK_PROJ_RENAME)
+#if NPART >= NVOICE
+            { /* b was obtained before any name-dialog mutation above */ }
+#else
             project_name(slot, b);
+#endif
         else
             project_cur_name(b);
     }
@@ -107,7 +118,13 @@ static void name_rename(void)
 {
     int user = cur_page()->graph == GR_USER;
     uint32_t k = user ? ui.uslot : (uint32_t)song.g[G_SLOT] - 1u;
+#if NPART >= NVOICE
+    int used=user?up_used(k):project_used(k);
+    if(used<0){ui.force=1;return;}
+    if(!used)
+#else
     if (!(user ? up_used(k) : project_used(k)))
+#endif
         ui_message("EMPTY SLOT");
     else if (transport_busy())
         ui_message("STOP TO SAVE");
@@ -304,7 +321,7 @@ static void nm_draw_field(void)
 {
     char b[24];
     uint32_t i, empty = nm.len == 0u;
-    cv_begin(240, CARD_H, T_BG);
+    CV_DRAW_BEGIN(240, CARD_H, T_BG);
     cv_rrect(3, 0, 234, CARD_H, 4, T_SURF, T_BG);
     nm_title(b);
     cv_text_on(9, 2, &AF_S, b, T_MID, T_SURF);
@@ -341,7 +358,7 @@ static void nm_draw_panel(void)
 {
     static const char *const FN[5] = {"F#", "G#", "A#", "C#", "D#"};
     uint32_t i;
-    cv_begin(240, H_GRAPH, T_BG);
+    CV_DRAW_BEGIN(240, H_GRAPH, T_BG);
     cv_rrect(3, 0, 234, H_GRAPH, 5, T_SURF, T_BG);
     cv_bg = T_SURF;
     if (nm.key) {                                      /* the cycling key's characters: typed THEME, next ACCENT */
@@ -397,7 +414,7 @@ static void nm_draw_foot(void)
     b[0] = (khint_t){KC_K1, "MOVE"};
     b[1] = (khint_t){KC_K2, "CHAR"};
     b[2] = (khint_t){KC_KEYS, "TYPE"};
-    cv_begin(240, H_FOOT, T_BG);
+    CV_DRAW_BEGIN(240, H_FOOT, T_BG);
     cv_key_row(8, 232, 2, a, 2, ok ? 3u : 2u, T_BG);
     cv_key_row(8, 232, 21, b, 3, 7u, T_BG);
     cv_blit(0, Y_FOOT);

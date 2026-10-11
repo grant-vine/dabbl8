@@ -1,0 +1,24 @@
+Native project-set archive: 374 checks, zero failures; all16 sparse masks, actual C exact-byte pool readback; no device or full-instrument backup claim
+held owner transitions: 64 track pairs, 192 chord/solo/FX cases; 64 drum lane cases
+banked mixer renders: 46720 frames, 0 lint findings, 0 ink errors, 0 neutral-color errors, 0 alignment failures, 0 lost declarations
+bank labels: 1280 rendered checks, 0 failures
+Native signature equivalence: 2317 checks, 0 failures; full canonical wire, pre-normalization validity, step fields and preserved refusals
+Native FX publication: 227895 checks, 0 failures; 112448 actual nested TIMER5 IRQs, 899 stale-in-flight comb observations, 80 real audio halves with complete counter oracles; main-loop-only reader contract, no device timing claim
+Native quiet autosave: 594684 checks, 0 failures; 29 IRQ-entry cuts x 20 activity kinds, 29 driver cuts, 20 postcommit disturbances; simulated hooks only
+Native autosave session: 292748 checks, 0 failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant
+Instrument capture: 67341 checks, 0 failures; actual editor/native capture, virtual NOR, no physical qualification
+Instrument capture collector: 287 checks passed; actual C dispatch/NOR and hostile responses; no physical qualification
+Native combined main-loop autosave: 210648 checks, 0 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification
+regress: 92 golden renders (0 changed, 0 gone), 0 health failures, 0 voice / routing checks failed, 0 CPU entries over budget (2 notes), 0 crashes; 0.8 s
+Native project-set archive: 374 checks, zero failures; all16 sparse masks, actual C exact-byte pool readback; no device or full-instrument backup claim
+held owner transitions: 64 track pairs, 192 chord/solo/FX cases; 64 drum lane cases
+banked mixer renders: 46720 frames, 0 lint findings, 0 ink errors, 0 neutral-color errors, 0 alignment failures, 0 lost declarations
+bank labels: 1280 rendered checks, 0 failures
+Native signature equivalence: 2317 checks, 0 failures; full canonical wire, pre-normalization validity, step fields and preserved refusals
+Native FX publication: 227895 checks, 0 failures; 112448 actual nested TIMER5 IRQs, 899 stale-in-flight comb observations, 80 real audio halves with complete counter oracles; main-loop-only reader contract, no device timing claim
+Native quiet autosave: 594684 checks, 0 failures; 29 IRQ-entry cuts x 20 activity kinds, 29 driver cuts, 20 postcommit disturbances; simulated hooks only
+Native autosave session: 292748 checks, 0 failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant
+Instrument capture: 67341 checks, 0 failures; actual editor/native capture, virtual NOR, no physical qualification
+Instrument capture collector: 287 checks passed; actual C dispatch/NOR and hostile responses; no physical qualification
+Native combined main-loop autosave: 210648 checks, 0 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification
+ALL HOST TESTS PASSED

@@ -1,0 +1,59 @@
+[
+  {
+    "name": "runner-opt-build",
+    "exit": 0,
+    "elapsed_seconds": 4.122160208,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "runner-opt",
+    "exit": 0,
+    "elapsed_seconds": 0.6715412089999999,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "runner-san-build",
+    "exit": 0,
+    "elapsed_seconds": 5.441986375000001,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "runner-san",
+    "exit": 0,
+    "elapsed_seconds": 0.8700769170000004,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-4",
+    "exit": 0,
+    "elapsed_seconds": 0.12248050000000177,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-8",
+    "exit": 1,
+    "elapsed_seconds": 0.1152769580000026,
+    "allowed_exits": [
+      0,
+      1
+    ]
+  },
+  {
+    "name": "full-suite",
+    "exit": 0,
+    "elapsed_seconds": 719.0255613749999,
+    "allowed_exits": [
+      0
+    ]
+  }
+]

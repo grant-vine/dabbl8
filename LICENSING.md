@@ -99,3 +99,10 @@ by those owners.
 ## Radio
 
 Felucca never enables the Bluetooth / Wi-Fi radio of the hardware.
+
+## Dabbl8 provenance
+
+Dabbl8 retains Felucca's GPL-3.0-only license and the component notices above.
+Its source/dependency ledger is in `docs/dabbl8/license-provenance.md`. The ledger
+records inspected source snapshots and release gates; it does not relicense
+components or authorize distribution of vendor firmware.

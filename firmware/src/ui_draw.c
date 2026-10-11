@@ -291,14 +291,14 @@ static void draw_head(void)
     head_geo(&g, b);
     if (!ui.force && sig == ui.head_sig) {
         if (ui.roll[ROLL_BPM].from[0] && centre) {     /* rolling: the BPM's strip only */
-            cv_begin((uint32_t)(g.sx1 - g.sx0), H_HEAD, T_BG);
+            CV_DRAW_BEGIN((uint32_t)(g.sx1 - g.sx0), H_HEAD, T_BG);
             roll_text(ROLL_BPM, g.bx - g.sx0, HEAD_MY, b, ui.bpm_t ? T_ACCENT : T_THEME);
             cv_blit((uint32_t)g.sx0, Y_HEAD);
         }
         if (metro_x >= 0 && beat != metro_beat) {      /* a beat: the metronome's cell only (either way round) */
             int32_t cx = g.mx0 - (g.sx0 - g.mx1);
             metro_beat = (int8_t)beat;
-            cv_begin((uint32_t)(g.sx0 - cx), H_HEAD, T_BG);
+            CV_DRAW_BEGIN((uint32_t)(g.sx0 - cx), H_HEAD, T_BG);
             head_metro(g.mx0 - cx, beat);
             cv_blit((uint32_t)cx, Y_HEAD);
         }
@@ -306,7 +306,7 @@ static void draw_head(void)
     }
     ui.head_sig = sig;
     metro_x = -1;
-    cv_begin(240, H_HEAD, T_BG);
+    CV_DRAW_BEGIN(240, H_HEAD, T_BG);
     cv_icon_mid(HEAD_TRK_X, H_HEAD / 2, 16, trk_icon(song.sel, 1), T_ACCENT, T_BG);
     draw_rec_mark(HEAD_REC_X, T_BG);
 #if NTRK == 8
@@ -412,7 +412,7 @@ static void draw_column_tall(uint32_t c, const char *label, const char *val, con
     int32_t ly = LG_LY, vy, lw = 0, mw;
     char k[3] = {'K', (char)('1' + c), 0};
     uint32_t ic = mot ? ICON_X_MOTION : icon, isz = 16u;
-    cv_begin(COL_W, LG_CARD_H, T_BG);
+    CV_DRAW_BEGIN(COL_W, LG_CARD_H, T_BG);
     cv_rrect(0, 0, COL_W, LG_CARD_H, 4, T_SURF, T_BG);
     {   /* the knob: "K1" .. "K4" on a pill */
         uint16_t fill = hot ? T_ACCENT : label[0] || val[0] ? T_KEY : T_DIM;
@@ -531,7 +531,7 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
     if (strip && !ui.roll[c].from[0])
         return;
     if (strip) {                                        /* rolling: the value strip only */
-        cv_begin(COL_W, ROLL_H, T_SURF);
+        CV_DRAW_BEGIN(COL_W, ROLL_H, T_SURF);
         cv_oy = -ROLL_Y;
     } else {
         char ov[16];                                    /* the value drawn before (in the cache key) */
@@ -552,7 +552,7 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
             draw_column_tall(c, label, val, unit, vc, ratio, icon, hot, mot, kid);
             return;
         }
-        cv_begin(COL_W, COL_H, T_BG);
+        CV_DRAW_BEGIN(COL_W, COL_H, T_BG);
         cv_rrect(0, 0, COL_W, COL_H, 4, T_SURF, T_BG);
     }
     if (label[0] || val[0]) {
@@ -685,7 +685,7 @@ static void draw_foot(void)
     if (!ui.force && sig == ui.foot_sig)
         return;
     ui.foot_sig = sig;
-    cv_begin(240, H_FOOT, T_BG);
+    CV_DRAW_BEGIN(240, H_FOOT, T_BG);
     if (act_cols()) {                                 /* row 1: the OCT+ / OCT- hint in place of the steps */
         char ha[16], hb[16];
         khint_t kh[3];
@@ -1084,7 +1084,7 @@ static const char *const SPLASH_LINES[] = {"Felucca", FELUCCA_VERSION, "H\xFCgel
 static void splash_band(uint32_t y, uint32_t h, int32_t ly, const char *const *l, uint32_t mode, int32_t al0,
                         int32_t al1, const char *tag)
 {
-    cv_begin(SPL_SQ, h, T_RAISE);
+    CV_DRAW_BEGIN(SPL_SQ, h, T_RAISE);
     GFX_HOOK_ALIGN(0, al0, 0, al1, mode | AL_N(2), tag);
     cv_text_on(SPL_PAD, ly, &AF_M, l[0], T_TEXT, T_RAISE);
     cv_text_on(SPL_PAD, ly + SPL_PITCH, &AF_M, l[1], T_TEXT, T_RAISE);
@@ -1117,7 +1117,7 @@ static void draw_uboot(void)
     draw_text_box(0, 102, 240, &AF_L, d, T_THEME, 1);
     {   /* the two keycaps held, and what letting go does */
         int32_t w = kc_w(KC_OCTDN) + 3 + kh_ink(KC_OCTUP, "LET GO TO CANCEL"), x = HALF_UP(240 - w);
-        cv_begin(240, KC_H + 2, T_BG);
+        CV_DRAW_BEGIN(240, KC_H + 2, T_BG);
         GFX_HOOK_ALIGN(0, 0, 240, 0, AL_H | AL_N(3), "update-mode keys centred");
         x = cv_keycap(x, 1, KC_OCTDN, T_KEY, T_INK, T_BG) + 3;
         cv_key_hint(x, 1, KC_OCTUP, "LET GO TO CANCEL", 1, T_BG);
@@ -1150,7 +1150,7 @@ static void draw_countin(void)
     } else
         str_cpy(sub, "1 BAR", sizeof sub);
     draw_text_box(0, 66, 240, &AF_S, sub, T_MID, 1);
-    cv_begin(216, CI_H, T_BG);
+    CV_DRAW_BEGIN(216, CI_H, T_BG);
     for (j = 0; j < 4u; j++) {
         int32_t x = (int32_t)j * 56;
         char d[2] = {(char)('4' - j), 0};
@@ -1168,7 +1168,7 @@ static void draw_countin(void)
     draw_text_box(0, CI_Y + CI_H + 14, 240, &AF_S, "RECORDING STARTS AFTER 1", T_MID, 1);
     {   /* PLAY stops it */
         int32_t x = HALF_UP(240 - kh_ink(KC_PLAY, "STOP"));
-        cv_begin(240, KC_H + 2, T_BG);
+        CV_DRAW_BEGIN(240, KC_H + 2, T_BG);
         GFX_HOOK_ALIGN(0, 0, 240, 0, AL_H | AL_N(2), "count-in key centred");
         cv_key_hint(x, 1, KC_PLAY, "STOP", 1, T_BG);
         cv_blit(0, 206);
@@ -1194,7 +1194,13 @@ static void confirm_text(char *a, char *b)
     case CF_OVR_PROJ:
         str_cpy(a, "OVERWRITE PROJECT A?", 24);
         a[18] = (char)('A' + (k & 3u));
-        if (!project_name(k & 3u, b) || !b[0])          /* the project's name, else what SONG plays from it */
+#if NPART >= NVOICE
+        int used=project_name(k&3u,b);
+        if(used<0){cv_draw_deferred=1;ui.force=1;return;}
+        if(!used||!b[0])
+#else
+        if (!project_name(k & 3u, b) || !b[0])
+#endif          /* the project's name, else what SONG plays from it */
             str_cpy(b, "SONG PATTERN CHANGES", 24);
         break;
     case CF_DEL_ROW:
@@ -1239,9 +1245,12 @@ static void draw_confirm(void)
     char a[24], b[24];
     const aafont_t *tf = &AF_M;
     confirm_text(a, b);
+#if NPART >= NVOICE
+    if(cv_draw_deferred||migration_owner||cv_cpu_active){ui.force=1;return;}
+#endif
     lcd_fill(0, H_HEAD, 240, 240 - H_HEAD, T_BG);
     ui.head_sig = ~0u;
-    cv_begin(DLG_W, DLG_H, T_BG);                     /* a SURF card: warning, the question, the detail, two buttons */
+    CV_DRAW_BEGIN(DLG_W, DLG_H, T_BG);                     /* a SURF card: warning, the question, the detail, two buttons */
     if (ux.style)                                     /* LINE: no card, a 1 px rule round it */
         cv_rrect(0, 0, DLG_W, DLG_H, 8, T_RULE, T_BG);
     cv_rrect(!!ux.style, !!ux.style, DLG_W - 2 * !!ux.style, DLG_H - 2 * !!ux.style, 8 - !!ux.style, T_SURF,
@@ -1287,7 +1296,9 @@ static void ui_draw_page(uint32_t counting);
 static void ui_draw(void)
 {
 #if NPART >= NVOICE
-    if(migration_owner){ui.force=1;return;} /* do not borrow an exclusive staged plan */
+    if(cv_draw_deferred)ui.force=1; /* carry a refused one-shot into the next safe frame */
+    cv_draw_deferred=0;
+    if(migration_owner||cv_cpu_active){ui.force=1;return;} /* defer an exclusive staged plan or canvas */
 #endif
     static uint8_t counting;
     style_apply();
@@ -1301,8 +1312,12 @@ static void ui_draw(void)
 #if NPART >= NVOICE
     if (cur_page()->graph == GR_SLOTS || cur_page()->graph == GR_SONG)
         (void)graph_project_used(0); /* decode names before the first canvas/DMA */
+    if(cv_draw_deferred||migration_owner||cv_cpu_active){ui.force=1;return;}
 #endif
     ui_draw_page(counting);
+#if NPART >= NVOICE
+    if(cv_draw_deferred){ui.force=1;return;}
+#endif
     scr_shown();
 }
 static void ui_draw_page(uint32_t counting)

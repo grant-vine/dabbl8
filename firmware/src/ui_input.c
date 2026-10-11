@@ -839,10 +839,18 @@ static void act_do(void)
 #endif
         if (transport_busy())
             ui_message("STOP TO SAVE");
+#if NPART >= NVOICE
+        else {
+            int used=project_used(k);
+            if(used<0){ui.force=1;return;}
+            if(used)confirm_open(CF_OVR_PROJ,k);else name_open(NK_PROJ_SAVE,k);
+        }
+#else
         else if (project_used(k))
             confirm_open(CF_OVR_PROJ, k);
         else
             name_open(NK_PROJ_SAVE, k);
+#endif
         break;
     case G_CLRSEQ:
         if (chain_busy()) { ui_message("STOP TO EDIT"); break; }
@@ -1380,7 +1388,7 @@ static void setup_title(void)
     {   /* the title with its icon (the menu row's), centred together; M from y 8 as before */
         const char *t = "HARDWARE CALIBRATION";
         int32_t x = (240 - (16 + 6 + text_w(&AF_M, t))) / 2;
-        cv_begin(240, 24, T_BG);
+        CV_DRAW_BEGIN(240, 24, T_BG);
         GFX_HOOK_ALIGN(0, 0, 240, 0, AL_H | AL_N(2), "calibration title centred");
         GFX_HOOK_ALIGN(0, HEAD_MY + AF_M_CAP_Y, 0, HEAD_MY + AF_M_CAP_Y + AF_M_CAP_H, AL_V | AL_PASS,
                        "header icon on its title's line");

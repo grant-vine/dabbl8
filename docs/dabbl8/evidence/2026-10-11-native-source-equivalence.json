@@ -1,0 +1,218 @@
+{
+  "format": "dabbl8-native-source-equivalence-evidence",
+  "version": 1,
+  "functional_commit": "99cde167954d3bc2b64f94201203d670cb1037b6",
+  "parent": "0787d1bb93699d510f2823e86fd83060f5169f7b",
+  "functional_source_sha256": {
+    "docs/dabbl8/native-source-equivalence.md": "6504c78fb02d0002f6c6e574290f2768218a00beb77a513a7e082f4ccfc15279",
+    "firmware/src/felucca.c": "e9b2c657733661a3ba4c666c1229063323125184143a37cddc002c01ca91bcb7",
+    "firmware/src/native_source_equivalence.c": "122fec5b3d016bac5bfcaefe698c72c3fc1c075ba810160ec209bfa148020842",
+    "firmware/src/native_source_equivalence.h": "2fa95841b9ed9d87d8299f94eb240dfbd3c19407c1c84ba1ff1b91ecbf75bdde",
+    "tests/native_source_equivalence_test.c": "dcf3b69709b5fe6757c84002c42852b5cefc828ef9248e0883e54079a42748af",
+    "tests/run_tests.sh": "97f7798af85b10e9bd665b9b6892457b375cf2eab2b19e5b9ebd825e4957cb48"
+  },
+  "focused": {
+    "source": "99cde167954d3bc2b64f94201203d670cb1037b6",
+    "normal_checks": 382171,
+    "strict_ASan_UBSan_checks": 382171,
+    "undefined_sanitizer_exclusions": [],
+    "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+    "leak_qualification": false,
+    "explicit_unobserved_late_NOR_limitation_diagnostics": 4
+  },
+  "full_suite": {
+    "head": "4ea9a7228b1f097d959e233e06261ff84826d3f0",
+    "exit": 0,
+    "elapsed_seconds": 807.7938461303711,
+    "head_and_six_baselines_unchanged": true,
+    "generated_29_inputs_unchanged": true,
+    "lines_containing_skip_not_all_skips": [
+      "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+      "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+      "ui: PRESETS KNOB 2: the engines in order, DIGITAL skipped, back to the first   ok",
+      "ui: SAMPLE: old SET 1 / preset 1 (TRANH) play PIANO; browsing and knobs skip them ok",
+      "ui: SAMPLE / GRAIN SET 4 (PERC, retired): a PIANO alias, knobs skip it, USR1..3 stay 5..7 ok",
+      "perform:   after an effect is let go and its ramp is over: skipped again           ok",
+      "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+      "drum_test: KIT 1..3 (HAND CYM H+CYM until 1.0.4) play 66 10 77 (the same samples), the knob skips them, a stored value and motion land on the kit: ok",
+      "--port picks a port the default match skips                      ok",
+      "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+      "editor: MENU settings (this editor has none)                     skip",
+      "library file: a patch for an unknown engine is skipped           ok",
+      "live: firmware before the sync tag echoes the editor's PRESET as RELOAD (the editor skips it) ok",
+      "FM6 import: supplement / performance blocks skipped, voices kept ok",
+      "backup: refusal after preflight stops, never skips object 9 or restores live music ok",
+      "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+    ]
+  },
+  "full_suite_to_final_source_delta": "Only test-only legacy buffer alignment changed; focused normal/strict suite repeated at final head. No local full-suite rerun at final head is claimed. Exact published CI must cover final test placement.",
+  "fresh_target_source": "4ea9a7228b1f097d959e233e06261ff84826d3f0",
+  "fresh_targets": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "actual_6f73_four_track_hash_matches": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460452,
+      "sha256": "0a48877a955a0a866a9d7a9dd19d1d6c0cddeb1bd171cd547b9c1f265d2cd41f",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460452 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ]
+    }
+  },
+  "target_independent_audit": {
+    "targets": {
+      "4": {
+        "actual_rehashed": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+        "byte_identical_actual0787_parent": true
+      },
+      "8": {
+        "actual_rehashed": "0a48877a955a0a866a9d7a9dd19d1d6c0cddeb1bd171cd547b9c1f265d2cd41f",
+        "byte_identical_actual0787_parent": true
+      }
+    },
+    "native_budget_failures": [
+      "target: uac_tap48         158 instructions,  126 in loops, 0 divides,  0 calls there: cost   570 (budget 504) OVER BUDGET (+13 %, limit +10 %)",
+      "target: rev_room          113 instructions,   89 in loops, 0 divides,  0 calls there: cost   296 (budget 218) OVER BUDGET (+36 %, limit +10 %)",
+      "target: rev_spring        210 instructions,  119 in loops, 0 divides,  0 calls there: cost   176 (budget 126) OVER BUDGET (+40 %, limit +10 %)"
+    ],
+    "dormant_component_note": "No production caller; unused checker functions/metadata can be eliminated. Future activation requires new linked memory/stack/timing qualification."
+  },
+  "six_canonical_baseline_sha256": {
+    "build/felucca.bin": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b",
+    "build/felucca.fwsc": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb",
+    "build/loader/ota.bin": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "generated_inputs": {
+    "build/gen/felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "build/gen/felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "build/gen/felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "build/gen/ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "build/gen/ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "build/gen/ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "build/gen/ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05",
+    "build/genwav/D CHAT.wav": "2d1d6b912d51463e2a673403e9dfdf5c26db31e8b255f0577358f84867919110",
+    "build/genwav/D CLAP.wav": "259a30e710726ee4d84bd5981662b4ab8549ef00e131fdf10117ea882826eb8f",
+    "build/genwav/D COWBELL.wav": "d00d79290209d51916aa17ef2d3da37371430468e1387a65d9d9c556a550269d",
+    "build/genwav/D CRASH.wav": "86dba714e62ae37bb5419a783f692519dd8e8ecaf940b425021968519dbce9d2",
+    "build/genwav/D KICK.wav": "279856d5818fa78c8ab5fa6999737a42f7bd6e121c826e22670bd5a9d7012fa2",
+    "build/genwav/D OHAT.wav": "d44471f44c1280058a36192a9e5574a1bc32c443dd21bebdea00c82dcd9cc00c",
+    "build/genwav/D RIDE.wav": "29cd69c70817fd74c2a40e87feb61836041920def2c9dc5d53ef92255edf9c38",
+    "build/genwav/D RIM.wav": "9c7634e1b9be5dee9a3180f3194d0b59101a93803d55a04bf2ea73e07291036f",
+    "build/genwav/D SNARE.wav": "b5ac665a957505128bcae606552eef56f021aefc572ef0ced66e1e1e226060a6",
+    "build/genwav/D TOM HI.wav": "e4b4e7d889f872fc6f38f84974bcce7d432eb45a44a22a3b560f4dcfd43a6269",
+    "build/genwav/D TOM LO.wav": "b10e3c3dad50c0788262e18c3f729cce082b7bfaa4b765fe958894ba242f6671",
+    "build/genwav/P PLUCK C2.wav": "68553dd965b5c4de5b384f7c203545a95a819b051ea32e06195f65de90b8ef9a",
+    "build/genwav/P PLUCK C3.wav": "5d9b3df3f7bfdadbbfccfca2e6c442985cf691b45215a0ad181dcc3b14bdf28f",
+    "build/genwav/P PLUCK C4.wav": "13fde0ee63b5275269f82deb673f53a2199f63d7bf9805b1441b5a559fbb7524",
+    "build/genwav/W BRASS.wav": "2fe4ae98eb100490fd145fd0e565fe8ffa22a107233ac2954ce6cbf23d50d414",
+    "build/genwav/W DIGI1.wav": "32e6332e61280831e96e3f4fcf9a988fe45c4108a4a24ab5786fbc54ca65214b",
+    "build/genwav/W DIGI2.wav": "f2cc0e9900a09c34c938af493b3f996ab885311c2e74a8f486e0bdd2cfc02f10",
+    "build/genwav/W DIGI3.wav": "4dfc631ff23653e63e888ab721cf6de1759a4fc1bc2a25cdf57f96cd7fded5d4",
+    "build/genwav/W GLASS.wav": "81140694c761d77416fff6c208f47f66fe5613c5471a4f542021e4d6b1c41a2c",
+    "build/genwav/W ORGAN.wav": "e5d63eddd93bcaa175293b330efcbe9f8b3ed04be9375d432ef415be428635e9",
+    "build/genwav/W REED.wav": "3db22bc7d73d86c7d692a25b127de02068433367a25747a802c5d1d1aa7622d6",
+    "build/genwav/W VOX.wav": "2358d0f9efcec3f1e61082439484f1dd17a99ddb4734146dcbe90351b06c7463"
+  },
+  "environment": {
+    "JIELI_TOOLCHAIN": "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1",
+    "AC79_SDK": "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+    "JIELI_DOCKER_IMAGE": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1"
+  },
+  "actual_coverage_omissions": [
+    "DaisySP PHYS reference dependency absent",
+    "Private official V15 restore fixture absent",
+    "Sanitized editor variant has no MENU settings",
+    "Browser emulator not built; Emscripten absent"
+  ],
+  "inherited_other_runtime_UBSan_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "regression": {
+    "golden_renders": 92,
+    "changed": 0,
+    "gone": 0,
+    "health_failures": 0,
+    "voice_routing_failures": 0,
+    "host_CPU_over_budget": 0
+  },
+  "preserved_initial_results": {
+    "initial_compile": "Test-only track[] identifier typo; no execution",
+    "f84_normal_and_strict_SAN": "94479 checks each, zero failures",
+    "expanded_0f92": "363996 checks, four failed expectations: unobserved mutation behind final scanned range is outside CRC consistency guarantee",
+    "ac558_guard_fixes": "382171 normal/strict each, four explicit diagnostic limitations",
+    "later_alignment": "Combined fixture exposed accidental sv_raw alignment; explicit Alignas4 now freezes input contract"
+  },
+  "limitations": [
+    "Dormant native component may be link-eliminated; no activated memory/timing qualification",
+    "No binding to earlier retained17-role capture; separate coordinator must bind private raw12/current/token/epoch/USB provenance",
+    "Phase1-only completion; subsequent metadata-only phase4 seal is separate work",
+    "CRC rescan is not atomic external NOR snapshot; observed writers and serialization plus executor originals reread required",
+    "Private callbacks must not reenter or mutate plan/source staging",
+    "No production grant, consent, external retained-original proof, adoption, musical/device equivalence, or physical qualification",
+    "Later PR84/85 host tools absent in isolated parent; actual combined-main integration required"
+  ],
+  "private_evidence_sha256": {
+    "native-source-equivalence-check/aligned-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/aligned-opt.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/aligned-strict-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/aligned-strict-san.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/compile-2.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/expanded-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/expanded-opt.log": "195bbf51b3c5a54dadabfd0c7fc8bddf41e241a2e0e53a23ae1cac596ebcd4d5",
+    "native-source-equivalence-check/frozen-focused-manifest.json": "48ea63c0a80920fb9f0eea2f96bce703f883cd1c9c202db5e51f830f48dfe09c",
+    "native-source-equivalence-check/frozen-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/frozen-opt.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/frozen-strict-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/frozen-strict-san.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/guards-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/guards-opt.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/guards-strict-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/guards-strict-san.log": "1f51c3bc1f8db3c2170f1b8f01d1814c04bcea5a33c30f0cfd9087bd31ca8ebe",
+    "native-source-equivalence-check/initial-compile.log": "8b011c67d04badfad2c7b6ee4134353baa07ad4fc5e6180cc018c540606fedbd",
+    "native-source-equivalence-check/initial-opt.log": "96ac6277f95f4278dc335b684c41fa5ad517dfab8c04da48b539074252d7f8e7",
+    "native-source-equivalence-check/strict-san-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-check/strict-san-initial.log": "96ac6277f95f4278dc335b684c41fa5ad517dfab8c04da48b539074252d7f8e7",
+    "native-source-equivalence-target-check/before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "native-source-equivalence-target-check/checks.json": "7f3f9afd8cc5b2148a6922e19b9459e3a276e9ea0ad6a5255cef2ffe6e8a9579",
+    "native-source-equivalence-target-check/environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589",
+    "native-source-equivalence-target-check/generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "native-source-equivalence-target-check/independent-audit.json": "5e98cb2190ae5f9679494d4896693ed8150e0b15ab9ab78e484a89485390a6e2",
+    "native-source-equivalence-target-check/run.py": "ad1b29f44666462555324311bde623a644a34e1faf5ace9ffacc99ad6682f42e",
+    "native-source-equivalence-target-check/session.log": "213d28e95c07deead4ed5d27cc014fe3f2ea13d0df28e2a3370c749802a27f86",
+    "native-source-equivalence-target-check/target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "native-source-equivalence-target-check/target-budget-8.log": "dbb2d47adebc6311ee20f9aefb25a0ad3278dfe4fb80c33fef13ff4931e8af43",
+    "native-source-equivalence-target-check/target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-source-equivalence-target-check/target-results.json": "1969e16f22a625eed7d245588235d83e9ceb8632da493501e2cf0304f8c9eb21",
+    "native-source-equivalence-target-check/terminal.json": "6c3fe68c42742831aac69130028185ffa201a239c97e189ee0f23246ea1de11e",
+    "native-source-equivalence-target-check/verify.py": "ad1b29f44666462555324311bde623a644a34e1faf5ace9ffacc99ad6682f42e",
+    "native-source-equivalence-full-suite/before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "native-source-equivalence-full-suite/environment.json": "a61c00f458fe489750b40e95ddebb59ecfffb5fab971715396909fa5aaeae845",
+    "native-source-equivalence-full-suite/full-suite.log": "3d426ee1a13038aec8cda5982c6901201663f8ad011245ba6a46b39170369cc3",
+    "native-source-equivalence-full-suite/generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "native-source-equivalence-full-suite/result.json": "958174b921f6dd93cb3e6d75381fbb899dfa37688c61d130c85fe39fe35b575a",
+    "native-source-equivalence-full-suite/run.py": "c2214d2aac3b5e6883346a0a2b16708d7b0785c8bda28ff151bc5a6b92fb39de",
+    "native-source-equivalence-full-suite/session.log": "465bb52bbcd51a670c94fb6192aba6317199f28baa2e2b250fd8c131b4e8c335",
+    "native-source-equivalence-full-suite/unchanged-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "native-source-equivalence-full-suite/verify.py": "c2214d2aac3b5e6883346a0a2b16708d7b0785c8bda28ff151bc5a6b92fb39de"
+  }
+}

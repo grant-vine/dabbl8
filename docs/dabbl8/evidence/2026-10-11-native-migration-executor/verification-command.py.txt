@@ -1,0 +1,58 @@
+from pathlib import Path
+import os,sys,json,hashlib,shutil,subprocess,time,importlib.util
+base=Path('/Users/grantv/Code/dabbl8/.local-baseline');r=base/'native-migration-executor';e=base/'native-migration-executor-check';expected='7c896490f61faf175d5bc294b6718768667f6106'
+h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==expected
+assert not subprocess.check_output(['git','status','--porcelain'],cwd=r,text=True).strip()
+inputs=json.loads((base/'native-autosave-combined-check/generated-inputs.json').read_text())
+for p,v in inputs.items():
+ src=base/'native-autosave-combined'/p;assert h(src)==v,p;dst=r/p;dst.parent.mkdir(parents=True,exist_ok=True)
+ if dst.exists():assert h(dst)==v,p
+ else:shutil.copyfile(src,dst)
+(e/'generated-inputs.json').write_text(json.dumps(inputs,indent=2)+'\n')
+# Existing canonical loader is read/reused only, never built or changed.
+for src,dst in [(base/'v0.1-integration/build/native-capture-4/felucca.bin',r/'build/felucca.bin'),(base/'v0.1-integration/build/native-capture-4/felucca.fwsc',r/'build/felucca.fwsc'),(base/'main-workspace/build/loader/ota.bin',r/'build/loader/ota.bin')]:dst.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(src,dst)
+refs=['build/felucca.bin','build/felucca.fwsc','build/loader/ota.bin','tests/golden.txt','tests/cpu_baseline.txt','tests/target_budget.txt'];before={p:h(r/p) for p in refs};(e/'before-artifacts.json').write_text(json.dumps(before,indent=2)+'\n')
+env=os.environ.copy();env.update(JIELI_TOOLCHAIN=str(base/'deps/jieli-linux-toolchains-20250324.1'),AC79_SDK=str(base/'deps/ac79-sdk'),JIELI_DOCKER_IMAGE='debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587',PATH=str(base/'venv/bin')+':'+env['PATH'],ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1')
+for k in list(env):
+ if k.startswith(('FELUCCA_','GOLDEN_','BUDGET_')):env.pop(k)
+(e/'environment.json').write_text(json.dumps({k:env[k] for k in ['JIELI_TOOLCHAIN','AC79_SDK','JIELI_DOCKER_IMAGE','ASAN_OPTIONS','UBSAN_OPTIONS']},indent=2)+'\n')
+checks=[]
+def run(name,args,allowed=(0,)):
+ start=time.monotonic()
+ with (e/(name+'.log')).open('w') as f:p=subprocess.run(args,cwd=r,env=env,stdout=f,stderr=subprocess.STDOUT)
+ checks.append(dict(name=name,exit=p.returncode,elapsed_seconds=time.monotonic()-start,allowed_exits=list(allowed)));(e/'checks.json').write_text(json.dumps(checks,indent=2)+'\n');print(name,p.returncode,flush=True)
+ if p.returncode not in allowed:raise SystemExit(p.returncode)
+# Arena types/layout unchanged from frozen parent; actual targets below are fresh.
+# Exact new runner compile/run commands, before full suite.
+run('runner-opt-build',['cc','-O2','-w','-Ibuild/gen','-Ifirmware/src','-o',str(e/'runner-opt'),'firmware/src/d8p1.c','firmware/src/d8pool.c','tests/native_migration_preflight_test.c','-lm'])
+run('runner-opt',[str(e/'runner-opt')])
+run('runner-san-build',['cc','-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=undefined','-w','-Ibuild/gen','-Ifirmware/src','-o',str(e/'runner-san'),'firmware/src/d8p1.c','firmware/src/d8pool.c','tests/native_migration_preflight_test.c','-lm'])
+run('runner-san',[str(e/'runner-san')])
+run('executor-opt-build',['cc','-O2','-w','-Ibuild/gen','-Ifirmware/src','-o',str(e/'executor-opt'),'firmware/src/d8p1.c','firmware/src/d8pool.c','firmware/src/d8pool_mapped.c','tests/native_migration_execute_test.c','-lm'])
+run('executor-opt',[str(e/'executor-opt')])
+run('executor-strict-san-build',['cc','-O1','-g','-fsanitize=address,undefined','-fno-sanitize-recover=undefined','-w','-Ibuild/gen','-Ifirmware/src','-o',str(e/'executor-strict-san'),'firmware/src/d8p1.c','firmware/src/d8pool.c','firmware/src/d8pool_mapped.c','tests/native_migration_execute_test.c','-lm'])
+run('executor-strict-san',[str(e/'executor-strict-san')])
+os.chdir(r);os.environ.update(env);sys.path.insert(0,str(r/'tools'))
+spec=importlib.util.spec_from_file_location('staging_builder',r/'tools/build.py');b=importlib.util.module_from_spec(spec);spec.loader.exec_module(b)
+flags=list(b.CFLAGS);targets={};parent=json.loads((base/'native-workspace-callers-check/target-results.json').read_text())
+with (e/'target-build.log').open('w') as log:
+ old=sys.stdout;sys.stdout=log
+ try:
+  for tracks in [4,8]:
+   b.OUT=r/f'build/migration-executor-{tracks}';b.OUT.mkdir(parents=True,exist_ok=True);b.CFLAGS=flags+(['-DNPART=8'] if tracks==8 else [])
+   image,symbols,dis,rt=b.build_app();errors,notes=b.check(image,symbols,dis,rt);errors+=b.mmio_check()
+   result={'tracks':tracks,'bytes':len(image),'sha256':hashlib.sha256(image).hexdigest(),'errors':errors,'notes':notes,'parent_quarantine_sha256':parent[str(tracks)]['sha256']};result['parent_byte_identity']=result['sha256']==result['parent_quarantine_sha256']
+   (b.OUT/'linked-symbols.txt').write_text(symbols);(b.OUT/'linked-disassembly.txt').write_text(dis);targets[str(tracks)]=result;(e/'target-results.json').write_text(json.dumps(targets,indent=2)+'\n');assert not errors,result
+ finally:sys.stdout=old
+print('target4/8 PASS',flush=True)
+shutil.copyfile(r/'build/migration-executor-4/linked-disassembly.txt',r/'build/felucca.dis')
+for tracks in [4,8]:run('target-budget-'+str(tracks),[str(base/'venv/bin/python'),'tests/target_budget.py',str(r/f'build/migration-executor-{tracks}/linked-disassembly.txt'),'tests/target_budget.txt'],(0,) if tracks==4 else (0,1))
+# Default package is from exact equivalent4 app if byte identity passes; no native package/flash/release.
+assert targets['4']['parent_byte_identity']
+run('full-suite',['sh','tests/run_tests.sh'])
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==expected
+assert not subprocess.check_output(['git','status','--porcelain'],cwd=r,text=True).strip()
+assert all(h(r/p)==v for p,v in before.items());assert all(h(r/p)==v for p,v in inputs.items())
+(e/'after-artifacts.json').write_text(json.dumps({p:h(r/p) for p in refs},indent=2)+'\n')
+(e/'terminal.json').write_text(json.dumps({'source':expected,'result':'PASS','source_and_six_artifacts_unchanged':True,'generated_29_inputs_unchanged':True,'target_results':targets,'native_budget_qualification':False,'hardware':'NOT_RUN'},indent=2)+'\n');print('ALL TERMINAL PASS',flush=True)

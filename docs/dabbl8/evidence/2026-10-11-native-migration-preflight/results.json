@@ -1,0 +1,72 @@
+{
+  "functional_commit": "f000b3f18f1cd3a62d8626c440e9805e4f702374",
+  "parent": "179e41a91440469242f72af7f266d54bebbd3761",
+  "source_sha256": {
+    "firmware/src/felucca.c": "49b443f9824a3b5fad00a8e1447bc94e00b4f5de0155d5b15f4347b7e6aa2b54",
+    "firmware/src/gfx.c": "72aa776b8832e7da35f0666a351e08d2d4ffd8f3f51f629828557f46050f06a4",
+    "firmware/src/ui_draw.c": "59923e00f35f27e8ee8713b2865dbd17560b350b9dc4186e614b8b53ff7dce74",
+    "firmware/src/native_migration_preflight.c": "00e0d924ae700c653d6317bcc57cc34ad6fd711d4f78b56716c045b30304c33d",
+    "firmware/src/native_migration_preflight.h": "26082f962d9bef067df3a6f77ae39676f13143f4fa2a72b03ac36edab8a6de83",
+    "tests/native_migration_preflight_test.c": "0045b4bf4881ce6c0694b00acf9295765798d2cb95bcb06841b206833df8b4d1",
+    "tests/run_tests.sh": "d93c7a6c1bcecad32983914f692efd07d60b7130eadd1dc3ca2d3dae43f2ad3e"
+  },
+  "focused_checks_per_mode": 2487,
+  "full_suite_exit": 0,
+  "full_suite_new_checks_per_mode": 2487,
+  "capturer_checks_per_mode": 407518,
+  "collector_checks_per_mode": 287,
+  "golden_renders_unchanged": 92,
+  "actual_omissions": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "inherited_sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "compiler": "Apple clang 21.0.0",
+  "python": "3.14.8",
+  "target_results": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "parent_quarantine_sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "parent_byte_identity": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460384,
+      "sha256": "5f39587e0047fd8ed4c524c7267a28ea18a29e1b60c5ef16950ff5959baf7bdf",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460384 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ],
+      "parent_quarantine_sha256": "1712c7a4a1b6d218226a2c8d376a13c6352ddd29bbe70ceea326c03b346338b8",
+      "parent_byte_identity": false
+    }
+  },
+  "target_disassembly_sha256": {
+    "4": "c5b0c4ed81fff078c156793acc041ad4bec76d638f3ae007a77d9e2c39b30733",
+    "8": "23ab3c9cb8ae710d174d7a51e3eb123dcfef8d138a60ce083d0db68083cdcd44"
+  },
+  "explicit_limits": [
+    "Dormant readonly API: no erase/program, source-conversion proof, originals durability, trusted authority, native binding, RAM adoption or scheduler activation.",
+    "Every legitimate competing arena API needs checked BUSY/defer before activation; defensive traps are invariant assertions only.",
+    "Target layout IR and application links do not prove active-coordinator stack/timing or hardware safety.",
+    "Native static UAC570/504 ROOM296/218 SPRING176/126 failures remain open.",
+    "Mac generated fonts/default4 binary identity is to exact quarantine/integration parent, not pristine Felucca276 or Linux font-generated CI image.",
+    "No browser converter rebuild in this local run; inherited emulator omission is recorded."
+  ]
+}
