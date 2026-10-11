@@ -219,7 +219,7 @@ static void midi_out_event(uint32_t pkt)            /* from the audio ISR */
 /* Two functions: audio + MIDI (0 audio control, 1 MIDI streaming, 2 audio streaming with FELUCCA_UAC)
  * and, with FELUCCA_CDC, the CDC-ACM console (communication + data). The endpoints never move:
  * EP1 MIDI, EP2 CDC notify, EP3 CDC data, EP4 audio.
- * bcdDevice: 3.00 MIDI, +0.10 the audio input (+0.20 since 1.1: 44.1 and 48 kHz, FELUCCA_UAC_48K), +0.08 audio-first
+ * bcdDevice: 3.00 MIDI, +0.10 the audio input (+0.20 since 1.1: 44.1 and 48 kHz, FELUCCA_UAC_48K), +0.40 audio-first (reserved decimal band, BCD encoded)
  * (FELUCCA_UAC_AS_FIRST: distinct descriptor cache identity), +0.01 CDC
  * (+0.02 per FELUCCA_USB_LAYOUT step, so a host never reuses what it learnt about another layout).
  * FELUCCA_USB_LAYOUT, how the CDC build presents itself (#67: macOS 13-15 attach Apple's CDC composite
@@ -307,7 +307,8 @@ static void midi_out_event(uint32_t pkt)            /* from the audio ISR */
     7, 5, 0x03, 2, 64, 0, 0,                               /* EP3 OUT bulk */                           \
     7, 5, 0x83, 2, 64, 0, 0,                               /* EP3 IN bulk */
 #define CDC_LEN 66                                         /* with its IAD */
-#define BCD_LO(cdc) (0x10 * (FELUCCA_UAC + FELUCCA_UAC_48K) + 0x08 * FELUCCA_UAC_AS_FIRST + ((cdc) ? 0x01 + 2 * FELUCCA_USB_LAYOUT : 0))
+#define BCD_MINOR(cdc) (10 * (FELUCCA_UAC + FELUCCA_UAC_48K) + 40 * FELUCCA_UAC_AS_FIRST + ((cdc) ? 1 + 2 * FELUCCA_USB_LAYOUT : 0))
+#define BCD_LO(cdc) (((BCD_MINOR(cdc) / 10) << 4) | (BCD_MINOR(cdc) % 10))
 #define D_DEV(bcdusb, cls, sub, proto, cdc)                                                          \
     18, 1, (bcdusb) & 0xFF, (bcdusb) >> 8, (cls), (sub), (proto), 64, 0x09, 0x12, FELUCCA_USB_PID & 0xFF, \
     FELUCCA_USB_PID >> 8, BCD_LO(cdc), 0x03, 1, 2, 0, 1

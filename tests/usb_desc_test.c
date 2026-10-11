@@ -98,7 +98,8 @@ static int same_as(const uint8_t *dev, const uint8_t *c, uint32_t n, const uint8
     /* Preserve the complete released-byte oracle: modern mode changes only
      * the cache discriminator and the two collection bytes. */
     if (AUDIO_FIRST) {
-        v11_dev[12] += 8;
+        unsigned minor = 10 * (v11_dev[12] >> 4) + (v11_dev[12] & 15) + 40;
+        v11_dev[12] = (uint8_t)((minor / 10) * 16 + minor % 10);
         for (uint32_t off=0;off<rn;off+=v11_cfg[off])
             if (v11_cfg[off]==10 && v11_cfg[off+1]==0x24 && v11_cfg[off+2]==1) {
                 uint8_t tmp=v11_cfg[off+8];v11_cfg[off+8]=v11_cfg[off+9];v11_cfg[off+9]=tmp;
@@ -147,8 +148,11 @@ int main(int argc, char **argv)
               le16(dev + 2) == 0x0200 && !dev[4] && !dev[5] && dev[6] == (T_LAYOUT == 2));
     check("VID 1209 PID 0001, strings 1 2, one configuration",
           le16(dev + 8) == 0x1209 && le16(dev + 10) == 1 && dev[14] == 1 && dev[15] == 2 && dev[17] == 1);
-    snprintf(name, sizeof name, "bcdDevice 3.%02X", 0x10 * (T_UAC + AUDIO_48K) + 8 * AUDIO_FIRST + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0));
-    check(name, le16(dev + 12) == 0x300u + 0x10 * (T_UAC + AUDIO_48K) + 8 * AUDIO_FIRST + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0));
+    unsigned minor = 10 * (T_UAC + AUDIO_48K) + 40 * AUDIO_FIRST + (CDC_SHOWN ? 1 + 2 * T_LAYOUT : 0);
+    unsigned bcd_minor = 16 * (minor / 10) + minor % 10;
+    snprintf(name, sizeof name, "bcdDevice 3.%02X", bcd_minor);
+    check(name, le16(dev + 12) == 0x300u + bcd_minor);
+    check("device release has four valid BCD nibbles", (dev[12]&15)<=9 && (dev[12]>>4)<=9 && (dev[13]&15)<=9 && (dev[13]>>4)<=9);
 
     /* ---- the configuration, walked as a host does ---- */
     check("wTotalLength = the bytes sent", le16(c + 2) == n);

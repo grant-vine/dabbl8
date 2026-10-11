@@ -38,7 +38,8 @@ def main():
                 toggled[key]=subprocess.run([str(target), "--dump-other"], check=True, capture_output=True).stdout
             expected = bytearray(outputs[0])
             if uac:
-                expected[12] += 8
+                minor = 10 * (expected[12] >> 4) + (expected[12] & 15) + 40
+                expected[12] = 16 * (minor // 10) + minor % 10
                 off = 18
                 while off < len(expected):
                     if expected[off:off+3] == bytes([10, 0x24, 1]):
@@ -50,6 +51,12 @@ def main():
                 subprocess.run(cmd, cwd=root, check=True, capture_output=True)
                 original = subprocess.run([str(target), '--dump'], check=True, capture_output=True).stdout
                 check(original == outputs[0], 'legacy opt-out exact parent descriptors in every variant')
+    identities = {}
+    for data in fresh.values():
+        identity = data[12:14]
+        # Collapse compile flags whose complete emitted descriptors are identical.
+        check(identity not in identities or identities[identity] == data, "different complete descriptor profiles never share a cache version")
+        identities[identity] = data
     for (cdc,layout,rate,on,order), data in toggled.items():
         check(data==fresh[(cdc,layout,rate,1-on if cdc else on,order)], "runtime console selection equals the complete separately compiled descriptor view")
     print(f'UAC collection order: {variants} variants, {checks} checks, zero failures; '+('strict ASan/UBSan' if args.sanitize else 'normal')+'; no physical enumeration proof')
