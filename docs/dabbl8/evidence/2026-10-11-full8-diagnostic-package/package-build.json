@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+    "tools/build.py",
+    "--sdk",
+    "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+    "--dabbl8",
+    "0.1.0",
+    "--timing-diagnostic",
+    "--engine-profile",
+    "full"
+  ],
+  "exit": 0
+}

@@ -1,0 +1,110 @@
+{
+  "source_commit": "53d20f03cea3959b730c0afb9ae2b0baf779301e",
+  "source_tree": "6e981b76a50818d22b3623a7b47f8b0709bd6a6b",
+  "source_unchanged": true,
+  "build_exit": 0,
+  "full_eight_tracks": true,
+  "profile": "FULL",
+  "fm4": 0,
+  "slice": 1,
+  "shared_voices": 8,
+  "diagnostic": true,
+  "identity": "FM-1_8010",
+  "version": "v0.1.0-timing",
+  "output": "output/run-_qilso66",
+  "artifacts": {
+    "felucca.bin": {
+      "bytes": 484152,
+      "sha256": "ea544b6c95dccce3ade0599c17098fa19847be2d3bf134c4a78fda96ba58b428"
+    },
+    "loader/ota.bin": {
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    },
+    "dabbl8-0.1.0-timing-diagnostic.fwsc": {
+      "bytes": 610086,
+      "sha256": "9044a5919ac5c327d8462c8998482388c6082965c1c9cb304ec4091d7429576f"
+    }
+  },
+  "loader_comparison": {
+    "loader.bin": {
+      "baseline_path": "/Users/grantv/Code/dabbl8/.local-baseline/source/build/loader/loader.bin",
+      "baseline_sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94",
+      "candidate_sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94",
+      "byte_identical": true,
+      "bytes": 8216
+    },
+    "ota.bin": {
+      "baseline_path": "/Users/grantv/Code/dabbl8/.local-baseline/source/build/loader/ota.bin",
+      "baseline_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+      "candidate_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+      "byte_identical": true,
+      "bytes": 6930
+    }
+  },
+  "package_inspection": {
+    "product": "FM-1_8010",
+    "logical_bytes": 610066,
+    "header_crc_pass": true,
+    "entry_list_crc_pass": true,
+    "members": [
+      {
+        "type": 0,
+        "index": 0,
+        "name": "flash.bin",
+        "offset": 1024,
+        "bytes": 602112,
+        "sha256": "c70f69f01f24122cc9e23abb0af194eb129c06d703770ecbd5b41030efa53b0e"
+      },
+      {
+        "type": 100,
+        "index": 1,
+        "name": "ota.bin",
+        "offset": 603136,
+        "bytes": 6930,
+        "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+      }
+    ],
+    "loader_exact_baseline": true,
+    "flash_extent": "0x93000",
+    "app_slot": "0x8dfbc"
+  },
+  "memory": {
+    "app_bytes": 484152,
+    "ram_used": 97204,
+    "ram_limit": 98304,
+    "ram_margin": 1100,
+    "pool_used": 335240,
+    "pool_limit": 344064,
+    "pool_margin": 8824,
+    "user_stack_linked_bytes": 24320,
+    "supervisor_stack_linked_bytes": 7936,
+    "not_stack_highwater": true
+  },
+  "static_budget": {
+    "exit": 1,
+    "audio_irq": {
+      "cost": 55772,
+      "budget": 37502,
+      "status": "OVER BUDGET"
+    },
+    "uac_tap48": {
+      "cost": 562,
+      "budget": 504,
+      "status": "OVER BUDGET"
+    },
+    "unchanged_budgets": true
+  },
+  "pins": "pins.json",
+  "sdk_after": "sdk-after.json",
+  "actual_recipe": "docker-commands.jsonl",
+  "baseline_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "public_loader_comparison_commit": "406de63335eb55248db21005efd17261b167b03a",
+  "loader_source_and_package_module_byte_identical_to_both": true,
+  "initial_failure": "../d8-full8-diagnostic-package-attempt1 (Docker socket sandbox denied; no compiler execution)",
+  "initial_output_retained": "output/run-yb7i4a0n configured-only failed attempt; not successful package",
+  "hardware_qualified": false,
+  "flashing_authorized": false,
+  "production_native_writes": false,
+  "scope": "Diagnostic candidate only; no device access, no install/restore/sample/patch/timing/stack qualification; sparse SDK required inputs verified, not complete SDK population"
+}

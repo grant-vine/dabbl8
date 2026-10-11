@@ -1,0 +1,16 @@
+{
+  "loader.bin": {
+    "baseline_path": "/Users/grantv/Code/dabbl8/.local-baseline/source/build/loader/loader.bin",
+    "baseline_sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94",
+    "candidate_sha256": "722a0f8a20e6c32de03da0b68728cde4cbe3441e1795d83b5d90cb41366c0a94",
+    "byte_identical": true,
+    "bytes": 8216
+  },
+  "ota.bin": {
+    "baseline_path": "/Users/grantv/Code/dabbl8/.local-baseline/source/build/loader/ota.bin",
+    "baseline_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "candidate_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "byte_identical": true,
+    "bytes": 6930
+  }
+}
