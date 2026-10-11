@@ -36,6 +36,7 @@ The header is cached (build/gen_samples.cache) under a hash of every
 input file, this script, sampleio.py and the Python version, so unchanged
 inputs skip the slow pitch detection.
 """
+import argparse
 import hashlib
 import math
 import os
@@ -417,7 +418,12 @@ def input_key(have_cc0):
     return h.hexdigest()
 
 
-def main(out):
+def main(out, workspace=None):
+    global GENDIR, CACHE
+    if workspace is not None:
+        workspace = Path(workspace).resolve()
+        workspace.relative_to(SRC.resolve())  # generated work stays in this checkout
+        GENDIR, CACHE = workspace / "genwav", workspace / "gen_samples.cache"
     subprocess.run([sys.executable, str(Path(__file__).with_name("gen_waves.py")), str(GENDIR)], check=True)
     have_cc0 = CC0.exists() and any(CC0.glob("*/*.wav"))
     if not have_cc0:
@@ -449,4 +455,8 @@ def main(out):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("out")
+    parser.add_argument("--workspace", type=Path, help="isolated generated WAV/cache directory within the checkout")
+    args = parser.parse_args()
+    main(args.out, args.workspace)

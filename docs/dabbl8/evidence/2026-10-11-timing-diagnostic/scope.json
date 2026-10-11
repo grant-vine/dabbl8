@@ -1,0 +1,9 @@
+{
+  "base_commit": "fbadbca894419c9626306eb773f38ae22baed52d",
+  "target_scope": "Actual vendor app-only compile/link; retained identical generated headers; no loader or package compiled; no device measured.",
+  "sample_generation_scope": "Earlier actual verification on identical gen_samples source: eight positive invocations across SLICE=0/1 plus two old-generator negative controls; preserves altered ordinary WAV sentinel. Durable inputs/logs outside Git.",
+  "hardware": "SKIP",
+  "memory_stack_high_water": "UNVERIFIED",
+  "static_budget": "FAIL unchanged limits",
+  "full_target_artifact_manifest": "/Users/grantv/Code/dabbl8/.local-baseline/timing-combined-target-qualification/manifest.json"
+}
