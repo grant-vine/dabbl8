@@ -1,0 +1,9 @@
+{
+  "source": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "target_verifier_session": 70540,
+  "file": "firmware/src/native_migration_capture_binding.c",
+  "line": 12,
+  "warning": "passing volatile uint32_t * to const void * discards qualifiers for &fm1_ms in d8ps_overlap",
+  "provenance": "Observed actual compiler stderr in terminal tool response; this is a structured observation, not a verbatim stderr log. target-build.log captures stdout only.",
+  "source_changed": false
+}

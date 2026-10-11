@@ -1,0 +1,23 @@
+{
+  "browser": "Chrome",
+  "url": "http://127.0.0.1:8877/webapp/editor/#sound",
+  "served_actual_make_site_output": true,
+  "readyState": "complete",
+  "title": "Felucca Editor",
+  "inline_module_imports_d8info": true,
+  "initialized_tabs": 8,
+  "settings_click_selected_tab": true,
+  "console_errors": [],
+  "console_warnings": [],
+  "source_no_inline_handlers": true,
+  "source_no_DOMContentLoaded_dependency": true,
+  "scope": "Local served editor startup and tab event handlers only. No Connect click, MIDI permission, physical device, production deployment or installation.",
+  "server_requests": {
+    "editor": 200,
+    "d8info.js": 200,
+    "fukiai.ttf": 200,
+    "favicon.ico": 404
+  },
+  "favicon_note": "Existing optional favicon missing; editor/helper/font load succeeded. Browser console warning/error query returned none.",
+  "preview_closed": true
+}
