@@ -479,6 +479,17 @@ static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: 
     uint32_t cmd = f[3], i;
     const uint8_t *a = f + 4;
     uint32_t na = n - 4u;
+    /* Additive read-only schema query. Keep schema-1/no-argument CAPS exact.
+     * Validate before capture/session revocation or any editor state mutation. */
+    if (cmd == ED_D8_CAPS && na) {
+        if (a[0] != 2u) { ed_d8_error(cmd, 2u); return; }
+        if (na != 1u) { ed_d8_error(cmd, 3u); return; }
+        ed_begin(cmd);
+        ed_b('D'); ed_b('8'); ed_b(2u); ed_b(1u); ed_b(NENGINES);
+        ed_b(D8ENGINE_EFFECTIVE_MASK); ed_b(D8ENGINE_EFFECTIVE_MASK >> 7);
+        ed_b(0u); /* observation only: no exclusion/profile/write qualification */
+        ed_send(); return;
+    }
 #if NPART >= NVOICE
     if((cmd==ED_PROJECT||(cmd>=ED_BACKUP_LIST&&cmd<=ED_BACKUP_PUT))&&!main_project_workspace_try())return;
 #endif

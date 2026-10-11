@@ -848,3 +848,12 @@ Command 74 prefixes the existing MOTION (64) explicit track/step operation paylo
 ## Dabbl8 capability negotiation (75) and errors (76)
 
 INFO appends final discovery tag `44 38 01` (D8, schema 1) without changing its original fields. Query command 75 with no arguments only after recognized discovery. The exact reply declares protocol family/schema, actual track/step/voice/motion limits, stable parameter/engine schemas, motion/save formats and feature bits. Unknown or mismatched capabilities mean a read-only identity connection; no write MIDI is sent. Command 76 returns `[1, original_command, reason]` (1 unsupported legacy write family, 2 unsupported request schema, 3 malformed request/index). Full wire format and compatibility matrix: [Dabbl8 capability specification](../docs/dabbl8/protocol-capabilities.md).
+
+## Additive engine observation (75, request schema 2)
+
+After recognized D8 discovery and validated schema-1 CAPS, an opt-in reader may
+send command 75 argument `[2]` for exact payload `[68,56,2,1,NENGINES,mask_low7,
+mask_high7,0]`. No-argument command 75 retains its original exact 15 bytes.
+Unknown request schema returns D8_ERROR `[1,75,2]`; schema 2 with trailing bytes
+returns `[1,75,3]`, before capture/session state changes. Flags 0 grant no writes
+or profile qualification. [Full engine observation contract](../docs/dabbl8/engine-availability-capability.md).

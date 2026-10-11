@@ -118,7 +118,7 @@ static int d8_capabilities(void)
         n == 21u && host_wire[5] == 'D' && host_wire[6] == '8' && host_wire[7] == 1u &&
         host_wire[8] == NTRK && host_wire[9] == NSTEP && host_wire[10] == NVOICE && host_wire[11] == MOTION_MAX &&
         host_wire[12] == P_COUNT && host_wire[13] == G_COUNT && host_wire[14] == NENGINES &&
-        host_wire[15] == 1u && host_wire[16] == 1u && host_wire[17] == 1u && host_wire[18] == 9u && host_wire[19] == 3u);
+        host_wire[15] == 1u && host_wire[16] == 1u && host_wire[17] == 1u && host_wire[18] == 9u && host_wire[19] == (NTRK <= 4u ? 3u : 5u));
     const char *path = getenv("D8CAPS_JSON");
     if (path) { FILE *f = fopen(path, "w"); if (!f) return bad + 1;
         fprintf(f, "["); for (uint32_t i = 5u; i < 20u; i++) fprintf(f, "%s%u", i == 5u ? "" : ",", host_wire[i]);
@@ -133,8 +133,21 @@ static int d8_capabilities(void)
     project_t before, after; project_capture(&before);
     n = request(ED_D8_CAPS, a, 1);
     project_capture(&after);
-    bad += check("malformed capability query has an explicit bounds error, no mutation",
-        n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[6] == ED_D8_CAPS && host_wire[7] == 3u && !memcmp(&before, &after, sizeof before));
+    bad += check("unsupported capability schema has an explicit version error, no mutation",
+        n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[5] == 1u && host_wire[6] == ED_D8_CAPS && host_wire[7] == 2u && !memcmp(&before, &after, sizeof before));
+    a[0] = 2u;
+    n = request(ED_D8_CAPS, a, 2);
+    project_capture(&after);
+    bad += check("schema-2 capability query with trailing args has a bounds error, no mutation",
+        n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[5] == 1u && host_wire[6] == ED_D8_CAPS && host_wire[7] == 3u && !memcmp(&before, &after, sizeof before));
+    n = request(ED_D8_CAPS, a, 1);
+    project_capture(&after);
+    const unsigned engine_mask = ((1u << NENGINES) - 1u) & (FELUCCA_FM4 ? ~0u : ~(1u << 1));
+    bad += check("schema-2 observation reports stable compiled IDs, no new authority or mutation",
+        n == 14u && host_wire[4] == ED_D8_CAPS && host_wire[5] == 'D' && host_wire[6] == '8' && host_wire[7] == 2u &&
+        host_wire[8] == 1u && host_wire[9] == NENGINES && host_wire[10] == (engine_mask & 127u) &&
+        host_wire[11] == (engine_mask >> 7) && host_wire[12] == 0u && !memcmp(&before, &after, sizeof before));
+    a[0] = 0u;
     /* Policy at the eight-track boundary; the production handler calls this
      * before any legacy write handler. This is not eight-track playback. */
     bad += check("eight-track protocol policy denies old editor sound/project/preset writes",

@@ -1,0 +1,21 @@
+{
+  "result": "Root static firmware review no blocker; sparse reply issue corrected and final module checks pass.",
+  "scope": "Recorded root source review plus actual host execution; no target/device qualification.",
+  "root_review": "Early schema2 dispatch uses immutable compiled mask and preserves schema1/error shape. Sparse Array.some flaw corrected with dense INFO/capability validation. Existing schema1 flags intentionally ignored for read-only helper.",
+  "source_sha256": {
+    "firmware/src/editor.c": "48653c8fe01cf650cef9319f6aa0ee984e6a00b2053757708c5c66d925d47619",
+    "tests/engine_availability_caps_test.c": "a3c3502374aec9db58b896d090954935dc63eb7662c14d88097d31356ce0b5e2",
+    "tests/engine_availability_capture_test.c": "22bdae5583dc58cc0763b0ba8334b843c662087f7c5805b6a40a78b594563083",
+    "tests/track_client_bridge.c": "68d0f0eb8461b7cee5fdbade8adbc0e4a1ab7947d1dc9e20968a1456fc2e5a19",
+    "tests/run_tests.sh": "ff1e1f756d2dc5da9f75af962260a56031c1cec1ed700718be2f06095ec8c7d0",
+    "web/d8engines.js": "fef80770df5e305c674a746a22bc2f2df42aa22a6ec8c3fc223a0df12bd265fe",
+    "web/test_d8engines.mjs": "7db2d72563d9263208aeb3f3d0cd2d6cd89b8b1ffa8710947b0d16b3f94a0de8"
+  },
+  "receipts": {
+    "/private/tmp/d8-engine-capability/run-z167pnid/receipt.json": "c49f1fc3dd2cc02ab66e8a9f21f55a28e552f2981b9771267c4fcb7fd84d1287",
+    "/private/tmp/d8-engine-capability/sparse-followup/receipt.json": "8b3fa5e3c87ce123306704eed06efd572f0f2a49ea66f774a3c64986be157f90",
+    "/private/tmp/d8-engine-capability/late-dispatch-control/receipt.json": "3093e792a4dfa5c2f53ab25bbd979642c08e5ca6089801f316432e57a6a27d56"
+  },
+  "commit": "e1850e7dddc728ea98a7b735317086bf778d9982",
+  "root_followup_verification": "Final hashes and receipts verified by root; actual parseEngineAvailability accepts valid mask and rejects all eight sparse holes in a direct module run."
+}
