@@ -803,11 +803,12 @@ static void draw_columns(void)
         if(d8arr_ui_native()){
             unsigned row=rows?(ui.song_row<rows?ui.song_row:rows-1):0,repeat=0;char name[13]={0};
             int used=d8arr_ui_row(row,name,&repeat);
-            fmt_int(val,(int32_t)row+1);draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
+            if(rows)fmt_int(val,(int32_t)row+1);else str_cpy(val,"--",sizeof val);
+            draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
             card_native_name=(uint8_t)used;
             draw_column(1,"SCENE",used?name:"--","",T_DIM,-1,ICON_X_PATTERN);card_native_name=0;
             if(d8arr_running())str_cpy(val,chain.native.policy.fill_active==2?"RET":chain.native.policy.fill_active?"RUN":chain.native.policy.fill_pending!=D8ARR_NONE?"ARM":"OFF",sizeof val);
-            else fmt_int(val,(int32_t)repeat);
+            else if(used)fmt_int(val,(int32_t)repeat);else str_cpy(val,"--",sizeof val);
             draw_column(2,d8arr_running()?"FILL +/-":"REPS",val,"",d8arr_running()?VAL(2u):T_DIM,-1,ICON_AUTO);
             if(d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE)fmt_int(val,(int32_t)chain.native.policy.pending+1);
             else if(d8arr_running())fmt_int(val,(int32_t)chain.row+1);

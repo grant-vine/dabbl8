@@ -102,6 +102,8 @@ static void edge_arrangements(const char*out){
  /* The zero-row state is actually decoded/adopted, not a synthetic cache flag. */
  memset(&native_source.arrangement,0,sizeof native_source.arrangement);size_t n=0;
  proof(d8p1_project_encode(native_wire,sizeof native_wire,&n,&native_source)&&!d8p1_load_runtime(native_wire,n,5),"actual empty native arrangement adoption");
+ go_page(GR_SONG);unsigned er=reads,ew=writes;chain_play_ui();
+ proof(!song.playing&&!transport_req&&reads==er&&writes==ew&&!strcmp(ui.msg,"ADD A SONG ROW"),"actual empty SONG play refuses transport and all backend access");ui.msg_t=0;
  for(unsigned kind=0;kind<2;kind++){
   if(kind){
    d8p1_arrangement*a=&native_source.arrangement;a->banks=2;a->scenes=a->rows=16;
@@ -117,7 +119,9 @@ static void edge_arrangements(const char*out){
    proof(nfind==nf&&al_fail==af,"edge layout has no clipping/overlap/alignment failure");proof(reads==r&&writes==w,"edge rendering has no storage access");
    proof(!word("PAT A x4 > B x1")&&!word("ADD PATTERN")&&!word("PROJECT A-D"),"adopted empty/max native graph never falls back to legacy actions");
    proof(word("ROW")&&word("SCENE")&&word("REPS")&&word("PLAY"),"native cards remain native for empty and maximum states");
-   if(!kind)proof(graph_word("NO SCENES")&&graph_word("ARRANGEMENT EMPTY"),"explicit empty native graph");
+   if(!kind){proof(graph_word("NO SCENES")&&graph_word("ARRANGEMENT EMPTY"),"explicit empty native graph");
+    unsigned values=0;for(unsigned k=0;k<nscr;k++)if(scr[k].y0<(int)graph_y()&&!strcmp(scr[k].s,"--"))values++;
+    proof(values==4,"empty native cards show no invented row or repeat number");}
    else{unsigned repeats=0;for(unsigned k=0;k<nscr;k++)if(scr[k].y0>=(int)graph_y()&&!strcmp(scr[k].s,"x16"))repeats++;
     proof(repeats==(cursor?3u:7u),"bounded maximum-row viewport shows first/last/clamped rows");proof(word(cursor?"16":"1"),"native selected row number bounded");}
    for(unsigned k=0;k<nscr;k++)if(scr[k].flags&1u)proof((scr[k].flags&8u)!=0,"widest user names alone may ellipsise");
