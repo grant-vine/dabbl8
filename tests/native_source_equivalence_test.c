@@ -4,7 +4,8 @@
 #include "instrument_capture_test.c"
 #include "../firmware/src/native_migration_preflight.c"
 #include "../firmware/src/native_source_equivalence.c"
-static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES],sv_raw[4096];
+static uint8_t sv_plan[D8POOL_BYTES],sv_before[D8POOL_BYTES];
+_Alignas(4) static uint8_t sv_raw[4096];
 static unsigned sv_reads,sv_allowed,sv_fault,sv_action,sv_at,sv_valid_action,sv_valid_nested;
 static uint32_t sv_g,sv_crc[5];
 static d8p1_project_state sv_state;
@@ -34,6 +35,8 @@ static int sv_build(const char *path,unsigned mask,unsigned choice,int erasedaut
 static int sv_run(unsigned choice)
 {d8sv_io io={NULL,sv_rd,sv_valid};int rc=d8sv_begin(sv_g,&io,sv_crc,choice);unsigned steps=0;while(rc==D8SV_MORE){unsigned reads=sv_reads;rc=d8sv_step();CHECK(sv_reads-reads<=1&&++steps<1000);}CHECK(!memcmp(main_migration_workspace(sv_g)?main_migration_workspace(sv_g)->plan:sv_plan,sv_before,sizeof sv_plan)||rc==D8SV_CHANGED||rc==D8SV_STALE);return rc;}
 static void sv_end(void){uint32_t g=migration_generation;d8sv_cancel();if(migration_owner)CHECK(!d8mp_end(g));CHECK(!writes);}
+
+#ifndef D8_SOURCE_EQ_NO_MAIN
 int main(void)
 {
  const char *base="tests/fixtures/projects/fun1.bin";
@@ -118,3 +121,5 @@ int main(void)
  printf("Unobserved late-NOR limitation: %u explicit diagnostics; not atomic snapshot or authority\n",unobserved_diagnostics);
  printf("Native source equivalence: %u checks, %u failures; fixed physical originals, explicit autosave source, canonical byte equality, no retention/consent/authority/device qualification\n",checks,failures);return failures?1:0;
 }
+
+#endif
