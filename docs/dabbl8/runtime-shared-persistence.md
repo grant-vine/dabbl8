@@ -1,6 +1,8 @@
 # Runtime shared-pool persistence
 
-`d8p1_pool_runtime.c` connects the real eight-track runtime capture/adoption API to the selected shared storage engine. It is compiled into the experimental eight-track translation unit; the default four-track app remains unchanged. The backend is still a callback interface, not a physical driver. No project menu, editor command, autosave scheduler or first-time migration calls these entry points yet. Keep issues #11/#13/#14 open.
+`d8p1_pool_runtime.c` connects the real eight-track runtime capture/adoption API to the selected shared storage engine. It is compiled into the experimental eight-track translation unit. Its original four-track preservation evidence is source-scoped below. The pool API remains a callback interface; the mapped existing-driver adapter connects it to runtime/menu/catalog and autosave policy callers. The [connected migration/session workflow](native-migration-session.md) calls these bindings after validated adoption, including explicit read-only native resume. Shipping APPLY and native save/rename/autosave writes remain quarantined; no automatic boot adoption or qualified device migration is implied. Keep issues #11/#13/#14 open.
+
+Current status above reflects firmware main `c8ee5b0f12fa04f32c93168d01839da1a98c9c74`. Source-pinned build sizes, hashes, test counts and linked evidence below describe their original implementation snapshots; they are not fresh current-main measurements.
 
 ## Entry points and preflight
 
@@ -24,7 +26,9 @@ Actual JieLi links retain the native save/load/restore and pool inventory symbol
 
 Exact source hashes, target memory/symbol/disassembly excerpts, artifact hashes, full regression logs, test commands and explicit omissions are retained in `evidence/2026-10-10-runtime-pool/`. Experimental eight-track images remain local outside Git and are not installable release offers.
 
-## Next integration steps
+## Historical integration checklist
+
+The original checklist below is retained for this source snapshot. Menu/catalog, mapped-driver, capture/session and quiet-time policy software now exist; physical qualification and production write activation remain open as described above.
 
 1. Review an explicit migration/export workflow preserving four historical projects, autosave, settings, presets and samples before any destructive operation; fourth references must be refused or separately reviewed with originals retained. Prepare a native initial record only after that workflow, never through automatic mounting/erasure of legacy bytes.
 2. Bind the existing noncontiguous approved blocks through a qualified backend. Prevent legacy writers from concurrently using the repurposed project/autosave allocations. Keep loader and boundaries unchanged.

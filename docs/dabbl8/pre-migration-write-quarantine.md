@@ -1,8 +1,10 @@
 # Pre-migration application write quarantine
 
-The eight-track build is **nonpersistent and interim** until a trusted coordinator is implemented. This is a preservation gate for the experimental eight-track build, not a completed persistence implementation or v0.1 release qualification. `NTRK > 4` application writes are refused from cold boot onward. There is no production grant, unlock setter, protocol authorization or permissive test bypass. Recognizing a native pool, binding a catalog, setting `flash_ok`, starting capture or supplying a caller's authorization boolean does not open the actual application write gate. Reads and read-only instrument capture remain available.
+The eight-track build is **nonpersistent and interim** until the connected coordinator and physical recovery/timing are qualified for production activation. This is a preservation gate for the experimental eight-track build, not a completed persistence implementation or v0.1 release qualification. `NTRK > 4` application writes are refused from cold boot onward. There is no production grant, unlock setter, protocol authorization or permissive test bypass. Recognizing a native pool, binding a catalog, setting `flash_ok`, starting capture or supplying a caller's authorization boolean does not open the actual application write gate. Reads and read-only instrument capture remain available. The [connected coordinator](native-migration-session.md) is now implemented in software; explicit read-only native resume validates capture, consent and persisted state before adoption/frontend binding, without enabling shipping writes.
 
 The four-track preprocessor path retains its existing behavior. Its target must be compared against actual frozen integration `6f73dba1576ad12bdc3fa30eac1509cd674dc0a5` (application SHA-256 `7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b`), independently of the historical audited upstream commit `276f72a4e6ea8a12499a7a6819aadf3165126755`. No loader, OTA handler, flash allocation, golden audio hash or timing threshold is changed by this slice.
+
+Current status above reflects firmware main `c8ee5b0f12fa04f32c93168d01839da1a98c9c74`. Source-pinned build sizes, hashes, test counts and linked evidence below describe their original implementation snapshots; they are not fresh current-main measurements.
 
 ## Application coverage
 
@@ -26,9 +28,9 @@ The capture tests retain PR86's cold and rotating-autosave fixtures. Former actu
 
 This constant-closed gate has no permission transition. Tests do not claim late revocation or a device/hardware safety proof. Runtime sanitizer coverage uses the runner's inherited DSP exclusions; the standalone storage gate has strict sanitizer coverage. Fresh four/eight-track target evidence and the full suite must be recorded after source freeze before considering this slice validated.
 
-## Required next coordinator
+## Historical coordinator checklist
 
-A future trusted migration coordinator must be designed and tested separately:
+This original design checklist is retained for the quarantine snapshot. The connected coordinator now implements and tests the software workflow; production write activation and physical qualification remain separate gates:
 
 1. Keep application writes quarantined while capturing all originals and current state.
 2. Validate a complete retained archive and an explicitly selected, source-derived plan; preserve the original fourth project and shared autosave evidence.
@@ -37,7 +39,7 @@ A future trusted migration coordinator must be designed and tested separately:
 5. Publish an explicit trusted completion decision with precise scope and lifetime, then initialize the intended persistence policy.
 6. Revoke permission on failed binding, uncertain readback, interrupted transfer/reset or lost ownership before each actual mutation boundary. Page-level interrupt/callback behavior needs an explicit atomicity contract.
 
-Only that subsequent implementation may introduce an unlock/grant API. The present change must not be presented as final persistence, completed migration, musical/device equivalence or a release-ready permanent read-only instrument.
+Any future production write authority still requires a separately reviewed and qualified implementation; the current coordinator introduces no shipping unlock/grant API. The present change must not be presented as final persistence, completed migration, musical/device equivalence or a release-ready permanent read-only instrument.
 
 ## Frozen verification
 
