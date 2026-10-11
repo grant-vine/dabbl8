@@ -1,0 +1,15 @@
+# Optional offline engine profile staging evidence
+
+Base `f0e8043d4e611f0c5df9dbd46888ec2e380bad43`. Only `d8p1_project.h` production helpers change. Ordinary legacy API bodies, CLI/Python bundles and browser calls remain unchanged. No profile workflow completion, reduced firmware, sample/patch/timing qualification or device operation is claimed.
+
+Eight final actual-C profile runs cover all FM4/SLICE combinations, normal and fatal ASan/UBSan with the documented DSP shift exclusion. Independent literal IDs determine singleton expectations; actual full-profile factory loads independently supply default parameter and FM6 patch expectations. Tests preserve sounding runtime state, four original canonical tracks/private patches, original bytes, arrangement and refusal outputs/reports. All 13 historical originals produce identical optional full-mask and ordinary state/report. Positive and negative late DEF_SOUND/DEF_KEEP cases are included. Five compiled mutants are detected; no thresholds or audio goldens changed.
+
+Ordinary state/legacy adapter tests: 54,761 checks normal and sanitizer. Offline no-overwrite/snapshot/context bundles: 314 normal and sanitizer. Rebuilt pinned Emscripten 4.0.17 converter: 218 actual WASM/native parity and ZIP/hash checks. Profile compile guards: 36 preprocessing checks. Fixtures remain pristine.
+
+`matrix.json` describes the earlier test hash; `matrix-final.json` describes the strengthened final test. Production header hash is identical across both. Initial recovering sounding-DSP UBSan logs contain inherited negative-shift reports and are diagnostic only. Final `*-san-clean.log` runs exclude shift and make every other sanitizer finding fatal. macOS does not support LeakSanitizer here; its refusal log is retained and final runs disable leak detection. The mistaken missing guard-script invocation is retained beside the successful correct guard run. Ordinary adapter/bundle sanitizer scopes have no DSP shift exclusion.
+
+Raw binaries stay in `/private/tmp/d8-engine-offline-staging-evidence`, with hashes recorded here. Host state size remains 9,536 bytes; it is not a target-fit measurement. FM6 fallback adds a local 156-byte unpacked patch; conversion keeps caller-owned scratch and no second project-sized stack allocation. Target stack/resource checks remain separate.
+
+The current migration report describes only historical first-four engine changes. Independent static review (SHA256 `0e34f65e75f0e3c4f6a22c98e5af88107ab50ba730f4b7011607a93f4dabd157`) matches final header/C-fixture exactly. Runner/driver added afterwards at parent request; their exact four normal and four inherited-SCC sanitizer commands were separately executed, including immutable fixture hashes. Shell syntax validated; whole unrelated CI suite not rerun.
+
+Next integration must report added defaults separately and carry a versioned engine mask through CLI, whole-bundle Python and browser paths for all referenced sources, retaining no-overwrite and all-or-none converted-file publication.

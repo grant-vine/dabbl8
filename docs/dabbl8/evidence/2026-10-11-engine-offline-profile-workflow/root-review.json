@@ -1,0 +1,18 @@
+{
+  "review": "Root static source and evidence receipt review; no independent executions in this review",
+  "manifest_sha256": "10a62749893d084a44c4160362b6105d811364f849f5e9a75e7523c1f5acc803",
+  "source_hashes_verified": {
+    "tools/dabbl8_project_convert.c": "31d13301edf9b2859719b585b8cd7e8e02f13b6a7508157320d542fec09a7d87",
+    "tools/dabbl8_project_convert.py": "f20bb733742538444cf4c93f9fd78b1fd0264b1169b1cf7f2295e657fa019dc7",
+    "tools/dabbl8_migration_bundle.py": "ea35ac65fe0ab5c2baad0a37fd04654153f7970a8f1f58293fa55c9c2fd94c2a",
+    "tests/engine_offline_profile_workflow_test.py": "af30f108292db9b998b8b57157ef7315058a4d3cd427111c79949c3af0907953",
+    "tests/fixtures/engine-profile-ordinary-cli.json": "86faf5eddfe117dd830e5f919579c1979248e5e699a7a804491d5bf33f14629e",
+    "tests/run_tests.sh": "e5e00784ddf220d474df3b522468391e53b747bca01bdc526c944d32f2ee39a7",
+    "firmware/src/d8p1_project.h": "aa54f24a37fcbcec9a2b79fab29c841c2202c6f9e6122bc4d131c6610361802f",
+    "web/d8project-conversion.js": "9f19baf3af8a2820e03e9dcecd69220b095965d933fcf548cd0dd0ec4bae924f"
+  },
+  "raw_logs_verified": 41,
+  "matrix_results_match_raw_logs": 16,
+  "findings": "No blocking defect found in C optional mode or Python mask/reply/default validation. Original slot-reference mask remains separate; optional mask is consistently propagated through primary/references/live/autosave. Production header and browser wrapper unchanged. Ordinary call seam retained.",
+  "limits": "Target allocation, hardware timing, device migration and reduced firmware profiles unqualified; full integrated CI required."
+}

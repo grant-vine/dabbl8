@@ -109,20 +109,59 @@ static int eng_runtime_target(unsigned *out,unsigned mask,unsigned requested,uns
 
 /* the engines one can pick (engine 1 only with FELUCCA_FM4), in ENGINE_ORDER: eng_ok(e), the n-th of them
  * eng_vis(n), e's place among them eng_rank(e), the next / previous one eng_step(e, dir) (wraps) */
-static int eng_ok(uint32_t e) { return e < NENGINES && (FELUCCA_FM4 || e != ENGI_DIGITAL); }
-static uint32_t eng_vis(uint32_t n) { return ENGINE_ORDER[n % NENG_SHOWN]; }
-static uint32_t eng_rank(uint32_t e)
+static int eng_mask_ok(unsigned mask) { return mask && !(mask & ~D8ENGINE_EFFECTIVE_MASK); }
+static int eng_available(unsigned e, unsigned mask) { return eng_mask_ok(mask) && e < NENGINES && (mask & (1u << e)); }
+static unsigned eng_count_mask(unsigned mask)
 {
-    uint32_t n;
-    if (!eng_ok(e))
-        e = ENGI_FM6;                            /* (DIGITAL without FELUCCA_FM4: its sounds play as FM6) */
-    for (n = 0; n < NENG_SHOWN && ENGINE_ORDER[n] != e; n++)
-        ;
-    return n < NENG_SHOWN ? n : 0u;
+    unsigned n = 0;
+    if (eng_mask_ok(mask)) for (unsigned i = 0; i < NENG_SHOWN; i++) n += !!(mask & (1u << ENGINE_ORDER[i]));
+    return n;
 }
-static uint32_t eng_step(uint32_t e, int32_t dir)
+/* Exact positions preserve stable IDs. Invalid/empty masks have no selectable entry. */
+static unsigned eng_vis_mask(unsigned n, unsigned mask)
 {
-    return eng_vis((eng_rank(e % NENGINES) + (dir > 0 ? 1u : NENG_SHOWN - 1u)) % NENG_SHOWN);
+    if (!eng_mask_ok(mask)) return NENGINES;
+    for (unsigned i = 0; i < NENG_SHOWN; i++) if (mask & (1u << ENGINE_ORDER[i])) {
+        if (!n--) return ENGINE_ORDER[i];
+    }
+    return NENGINES;
+}
+static unsigned eng_rank_mask(unsigned e, unsigned mask)
+{
+    unsigned target, n = 0;
+    if (eng_runtime_target(&target, mask, e, 0, D8ENGINE_LEGACY_SELECT)) return eng_count_mask(mask);
+    for (unsigned i = 0; i < NENG_SHOWN; i++) if (mask & (1u << ENGINE_ORDER[i])) {
+        if (ENGINE_ORDER[i] == target) return n;
+        n++;
+    }
+    return n;
+}
+static unsigned eng_step_mask(unsigned e, int32_t dir, unsigned mask)
+{
+    unsigned n = eng_count_mask(mask);
+    if (!n || e >= NENGINES || !dir) return NENGINES;
+    unsigned rank = eng_rank_mask(e, mask);
+    if (rank >= n) return eng_vis_mask(0, mask);
+    return eng_vis_mask((rank + (dir > 0 ? 1u : n - 1u)) % n, mask);
+}
+static int eng_ok(uint32_t e) { return eng_available(e, D8ENGINE_EFFECTIVE_MASK); }
+static unsigned eng_count(void) { return eng_count_mask(D8ENGINE_EFFECTIVE_MASK); }
+static uint32_t eng_vis(uint32_t n) { unsigned count = eng_count(); return count ? eng_vis_mask(n % count, D8ENGINE_EFFECTIVE_MASK) : NENGINES; }
+static uint32_t eng_rank(uint32_t e) { unsigned rank = eng_rank_mask(e, D8ENGINE_EFFECTIVE_MASK); return rank < eng_count() ? rank : 0u; }
+static uint32_t eng_step(uint32_t e, int32_t dir) { return eng_step_mask(e, dir, D8ENGINE_EFFECTIVE_MASK); }
+/* Fallback is restricted to startup/default insertion. Sound adoption never uses it.
+ * Retain the raw DIGITAL request on success so the caller performs its actual patch conversion. */
+static int eng_startup_sound(d8engine_sound *out, unsigned mask, unsigned requested, unsigned preset)
+{
+    if (!out) return D8ENGINE_INVALID_REQUEST;
+    unsigned target; int rc = eng_runtime_target(&target, mask, requested, preset, D8ENGINE_LEGACY_FACTORY);
+    d8engine_sound result = {requested, preset};
+    if (rc == D8ENGINE_UNAVAILABLE) {
+        result.engine = eng_vis_mask(0, mask); result.preset = 0;
+        if (result.engine == NENGINES) return D8ENGINE_INVALID_MASK;
+    } else if (rc) return rc;
+    else if (requested == ENGI_SAMPLE && preset == D8ENGINE_PERC_PRESET) { result.engine = target; result.preset = 0; }
+    *out = result; return D8ENGINE_OK;
 }
 
 /* factory sequence patterns: SEQ > PATTERNS loads one into the selected track (ui.c pat_load); a preset

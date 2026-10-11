@@ -1,0 +1,4 @@
+Exploratory fixture bring-up, excluded from final source-qualified test results:
+1. Initial test compile failed because defining GFX_HOOK_TEXT required explicit no-op GFX_HOOK_BEGIN/BLIT/PIXELS and page_graph was not an available helper. Corrected test-only hook definitions and used actual PAGES graph lookup.
+2. Initial eight-track drawing smoke process exited 133 (SIGTRAP) without assertion text. Fixture had not completed its canvas before engine_columns started another. Corrected fixture to end each canvas with cv_blit and begin graph_browse's canvas, matching the production drawing lifecycle. Corrected smoke passed 11217 assertions. No ownership checks weakened or production fixes made for this fixture error.
+Raw exploratory logs ui-initial.log, ui-wiring.log, editor-wiring.log and filter8-corrected.log remain in the evidence directory. They are not final matrix proof.
