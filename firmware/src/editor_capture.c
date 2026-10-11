@@ -18,7 +18,7 @@ static struct {
 } ed_capture __attribute__((section(".pool")));
 enum {EDC_OK,EDC_BAD,EDC_BUSY,EDC_STALE,EDC_CHANGED,EDC_IO};
 static int edc_stopped(void)
-{ return flash_ok&&usb.config==1&&!usb.ota_req&&!usb.uboot_req&&!cv_cpu_active&&!transport_busy()&&!transport_req&&!seq_counting(); }
+{ return flash_ok&&usb.config==1&&!usb.ota_req&&!usb.uboot_req&&!cv_cpu_active&&!migration_owner&&!transport_busy()&&!transport_req&&!seq_counting(); }
 static int edc_valid(void)
 {
  return ed_capture.active&&edc_stopped()&&ed_capture.usb==usb.resets&&

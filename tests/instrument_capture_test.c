@@ -202,6 +202,18 @@ int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return br
  fixture();begin_capture(0);scan();get(0,UINT32_MAX,1);CHECK(status()==EDC_BAD&&!ed_capture.active);
  fixture();begin_capture(0);uint8_t bad[3]={1,1,128};request(bad,3);CHECK(status()==EDC_BAD&&!ed_capture.active);
  fixture();cv_begin(8,8,T_BG);begin_capture(1);CHECK(status()==EDC_BUSY&&!ed_capture.active);cv_blit(0,0);
+ /* Both public BEGIN modes refuse a held migration lifetime before I/O or
+  * token publication, preserving every arena byte and store. */
+ for(unsigned full=0;full<2;full++) {
+  fixture();uint32_t owner=0;CHECK(main_migration_begin(&owner)==D8MP_OK);
+  memset(&main_workspace,0xa5,sizeof main_workspace);
+  uint32_t arena_crc=d8p1_crc32(&main_workspace,sizeof main_workspace);
+  unsigned reads=hw_read_calls;uint32_t epoch=d8_capture_change.epoch;
+  begin_capture(full);CHECK(status()==EDC_BUSY&&!ed_capture.active&&!ed_capture.token);
+  CHECK(hw_read_calls==reads&&!writes&&d8_capture_change.epoch==epoch&&!memcmp(nor,baseline,sizeof nor));
+  CHECK(d8p1_crc32(&main_workspace,sizeof main_workspace)==arena_crc&&migration_owner==owner);
+  CHECK(main_migration_end(owner)==D8MP_OK);
+ }
  printf("Cold capture: %u cases; rotated native autosave: %u blocks; no native binding/session or physical qualification\n",cold_cases,rotating_cases);
  printf("Instrument capture: %u checks, %u failures; actual editor/native capture, virtual NOR, no physical qualification\n",checks,failures);return failures!=0;
 }

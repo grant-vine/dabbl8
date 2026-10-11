@@ -116,14 +116,26 @@ static int main_migration_end(uint32_t generation)
     migration_owner=0;cv_canvas_valid=0;return D8MP_OK;
 }
 #define cv_px (main_workspace.pixels)
+/* Checked callers can refuse a competing lifetime without an assertion trap.
+ * The second check handles acquisition during synchronous LCD completion. */
+static project_t *main_project_workspace_try(void)
+{
+    if (cv_cpu_active || migration_owner) return NULL;
+    lcd_sync();
+    __asm__ volatile("" ::: "memory");
+    if (cv_cpu_active || migration_owner) return NULL;
+    cv_canvas_valid = 0;
+    return &main_workspace.project;
+}
 static project_t *main_project_workspace(void)
 {
-    if (cv_cpu_active || migration_owner) __builtin_trap(); /* fail before corrupting an unfinished drawing */
-    lcd_sync();
-    __asm__ volatile("" ::: "memory"); /* DMA consumption precedes switching union members */
-    if (cv_cpu_active || migration_owner) __builtin_trap(); /* recheck after synchronous completion/reentry */
-    cv_canvas_valid = 0; /* any future blit needs a fresh cv_begin */
-    return &main_workspace.project;
+    project_t *p = main_project_workspace_try();
+    if (!p) __builtin_trap(); /* unchecked internal invariant, not busy policy */
+    return p;
+}
+static d8p1_stage_workspace *main_d8p1_workspace_try(void)
+{
+    return main_project_workspace_try() ? &main_workspace.d8p1 : NULL;
 }
 static d8p1_stage_workspace *main_d8p1_workspace(void)
 {

@@ -7,7 +7,7 @@ static int d8pr_ready(const d8pool *s)
 static int d8pr_stopped(void *context)
 {
     const d8pool *s=context;
-    return !cv_cpu_active&&!transport_busy()&&!transport_req&&s->stopped(s->context);
+    return !cv_cpu_active&&!migration_owner&&!transport_busy()&&!transport_req&&s->stopped(s->context);
 }
 static int d8pr_read(void *context,uint32_t off,void *out,uint32_t n)
 { const d8pool *s=context;return s->read(s->context,off,out,n); }
@@ -27,7 +27,8 @@ static int d8pr_preflight(const d8pool *s,d8pool_index *index,d8p1_stage_workspa
     if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
     rc=d8pool_inventory(s,index);if(rc)return rc;
     if(!index->present)return D8POOL_EMPTY;
-    *stage=main_d8p1_workspace();
+    *stage=main_d8p1_workspace_try();
+    if(!*stage)return D8POOL_BUSY;
     if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
     for(unsigned o=0;o<D8POOL_OBJECTS;o++)if(index->present&(1u<<o)) {
         size_t n=0;

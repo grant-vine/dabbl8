@@ -10,6 +10,7 @@ static void acquire_hook(void);
 #define UI_LCD_SYNC_HOOK acquire_hook
 #include "ui_test.c"
 #include "../firmware/src/d8p1_runtime.c"
+#include "../firmware/src/d8p1_pool_runtime.c"
 #include "../firmware/src/native_migration_preflight.c"
 #include "../firmware/src/instrument_write_gate.h"
 static unsigned checks,failures,acquire_inject;
@@ -21,11 +22,11 @@ static uint8_t plan[D8POOL_BYTES], wire[D8P1_LIMIT], before_plan[D8POOL_BYTES];
 static d8p1_project_state source;
 static project_t live_before,live_after;
 static uint8_t tail_canary[59520-58432];
-static unsigned seed_mutations;
-static int read_seed(void *c,uint32_t off,void *p,uint32_t n){(void)c;if(off>D8POOL_BYTES||n>D8POOL_BYTES-off)return -1;memcpy(p,plan+off,n);return 0;}
+static unsigned seed_mutations,seed_reads,seed_stops;
+static int read_seed(void *c,uint32_t off,void *p,uint32_t n){(void)c;seed_reads++;if(off>D8POOL_BYTES||n>D8POOL_BYTES-off)return -1;memcpy(p,plan+off,n);return 0;}
 static int erase_seed(void *c,uint32_t off){(void)c;if(off%D8POOL_SECTOR||off>D8POOL_BYTES-D8POOL_SECTOR)return -1;seed_mutations++;memset(plan+off,255,D8POOL_SECTOR);return 0;}
 static int program_seed(void *c,uint32_t off,const void *p,uint32_t n){(void)c;if(!n||n>256||(off&255)+n>256||off>D8POOL_BYTES||n>D8POOL_BYTES-off)return -1;seed_mutations++;for(unsigned i=0;i<n;i++)plan[off+i]&=((const uint8_t*)p)[i];return 0;}
-static int stopped_seed(void *c){(void)c;return 1;}
+static int stopped_seed(void *c){(void)c;seed_stops++;return 1;}
 static d8pool seed={NULL,read_seed,erase_seed,program_seed,stopped_seed};
 static void make_plan(unsigned wanted)
 {
@@ -81,6 +82,42 @@ static void reciprocal_trap(unsigned action)
  }
  int status=0;waitpid(p,&status,0);PROOF(WIFEXITED(status)&&WEXITSTATUS(status)==77);
 }
+/* Actual API callers must refuse without callbacks, publication, or damage
+ * to the owner's complete immutable plan. */
+static void held_callers(uint32_t g)
+{
+ d8mp_workspace *w=main_migration_workspace(g);PROOF(w!=NULL);
+ uint32_t hash=d8p1_crc32(w,sizeof *w),signature=0x12345678;
+ unsigned reads=seed_reads,stops=seed_stops,mutations=seed_mutations;
+ size_t n=123;uint8_t out[32],before[32];memset(out,0xa5,sizeof out);memcpy(before,out,sizeof out);
+ d8p1_project_catalog catalog,old;memset(&catalog,0xa5,sizeof catalog);old=catalog;
+ d8pool_record record,prior;memset(&record,0xa5,sizeof record);prior=record;
+ PROOF(!main_project_workspace_try()&&!main_d8p1_workspace_try());
+ PROOF(d8p1_load_runtime(wire,0,7)==D8RT_BUSY);
+ PROOF(d8p1_capture_runtime(out,sizeof out,&n)==D8RT_BUSY&&n==123&&!memcmp(out,before,sizeof out));
+ PROOF(d8p1_signature_runtime(&signature)==D8RT_BUSY&&signature==0x12345678);
+ PROOF(d8p1_catalog_pool(&seed,&catalog)==D8POOL_BUSY&&!memcmp(&catalog,&old,sizeof old));
+ PROOF(d8p1_save_pool(&seed,0)==D8POOL_BUSY);
+ PROOF(d8p1_save_as_pool(&seed,1,"BUSY")==D8POOL_BUSY);
+ PROOF(d8p1_load_pool(&seed,0)==D8POOL_BUSY);
+ PROOF(d8p1_restore_pool_autosave(&seed,1)==D8POOL_BUSY);
+ PROOF(d8p1_rename_pool(&seed,0,"BUSY")==D8POOL_BUSY);
+ PROOF(d8p1_autosave_snapshot_pool(&seed,&signature,&record)==D8POOL_BUSY&&signature==0x12345678&&!memcmp(&record,&prior,sizeof prior));
+ PROOF(!pn_quiet());
+ PROOF(seed_reads==reads&&seed_stops==stops&&seed_mutations==mutations&&d8p1_crc32(w,sizeof *w)==hash);
+}
+static void late_callers(void)
+{
+ for(unsigned action=0;action<3;action++) {
+  size_t n=0;PROOF(d8p1_project_encode(wire,sizeof wire,&n,&source));
+  d8p1_project_catalog catalog,old;memset(&catalog,0xa5,sizeof catalog);old=catalog;
+  uint32_t signature=0x12345678;acquire_inject=1;nested_generation=0;nested_result=99;
+  int rc=action==0?d8p1_load_runtime(wire,n,7):action==1?d8p1_signature_runtime(&signature):d8p1_catalog_pool(&seed,&catalog);
+  PROOF(rc==(action==2?D8POOL_BUSY:D8RT_BUSY)&&nested_result==D8MP_OK&&nested_generation);
+  PROOF(signature==0x12345678&&!memcmp(&catalog,&old,sizeof old));
+  held_callers(nested_generation);PROOF(!d8mp_end(nested_generation));
+ }
+}
 int main(void)
 {
  ui_power_on();project_capture(&live_before);PROOF(sizeof main_workspace==59520&&sizeof(d8mp_workspace)==58432&&offsetof(d8mp_workspace,stage)==0&&offsetof(d8mp_workspace,plan)==17472);
@@ -92,6 +129,7 @@ int main(void)
   d8mp_workspace *w=main_migration_workspace(g);PROOF(w&&(uintptr_t)w%_Alignof(d8mp_workspace)==0);
   uint32_t frame=ui.frame,hash=d8p1_crc32(w->plan,sizeof w->plan);ui_draw();PROOF(ui.frame==frame&&ui.force&&d8p1_crc32(w->plan,sizeof w->plan)==hash);
   uint32_t other=0xdeadbeef;PROOF(d8mp_begin(&other)==D8MP_BUSY&&other==0xdeadbeef);PROOF(d8mp_end(g+1)==D8MP_STALE&&main_migration_workspace(g)==w);
+  held_callers(g);
   if(wanted==0){expected_trap(0);expected_trap(1);expected_trap(2);PROOF(!memcmp(w->plan,before_plan,sizeof plan));}
   d8mp_result result;memset(&result,0xa5,sizeof result);PROOF(d8mp_validate(g,&result)==D8MP_OK&&result.generation==g&&result.crc==hash&&result.index.object[3].block==wanted);for(unsigned t=0;t<8;t++)PROOF(w->stage.state.project.t[t].p[P_LEVEL]==17+(int)t);
   PROOF(d8mp_receive(g,0,plan,256)==D8MP_BUSY&&d8mp_validate(g,&result)==D8MP_BUSY);
@@ -129,7 +167,7 @@ int main(void)
  PROOF(d8mp_begin(&g)==D8MP_BUSY&&g==0xdeadbeef&&nested_result==D8MP_OK&&main_migration_workspace(nested_generation));
  PROOF(!d8mp_end(nested_generation));g=42;acquire_inject=2;
  PROOF(d8mp_begin(&g)==D8MP_BUSY&&g==42&&!migration_owner);cv_cpu_active=0;
- reciprocal_trap(0);reciprocal_trap(1);
+ reciprocal_trap(0);reciprocal_trap(1);late_callers();
  /* Generation exhaustion refuses acquisition; no wrap/stale-token reuse. */
  uint32_t saved=migration_generation;migration_generation=UINT32_MAX;g=42;PROOF(d8mp_begin(&g)==D8MP_BUSY&&g==42);migration_generation=saved;
  project_capture(&live_after);PROOF(!memcmp(&live_before,&live_after,sizeof live_before)&&!d8p1_runtime_cache.valid&&!project_native_status()&&!d8_instrument_write_allowed());
