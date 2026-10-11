@@ -65,5 +65,7 @@ jobs:
             build/host/timing-evidence/**/*.json
             build/host/timing-evidence/**/*.frame
             build/host/timing-evidence/**/*.c
+            build/host/profile-timing/**/*.json
+            build/host/profile-timing/**/*.log
           if-no-files-found: warn
           retention-days: 14
