@@ -1,0 +1,8 @@
+{
+  "scope": "Host Clang -O2 default-four persistence fixture assembly excluding only .file source filename directive; not vendor target proof.",
+  "identical": true,
+  "normalized_sha256": {
+    "candidate": "874e81fca89e4729e055ff54f064171320276c54ef22f8fd39c259029697d6a8",
+    "parent": "874e81fca89e4729e055ff54f064171320276c54ef22f8fd39c259029697d6a8"
+  }
+}

@@ -1,0 +1,250 @@
+[
+  {
+    "mode": "4-main-control",
+    "functions": {
+      "fm1_main": {
+        "present": true,
+        "entry_lines": [
+          " 2025c5a:    f0 e8 9c 1b       \tsp += -1124",
+          " 2025c5e:    60 00             \tcli",
+          " 2025c60:    c0 ff 00 00 c0 01 \tr0 = 29360128 <fl_jedec_ram : 1c00000 >",
+          " 2025c66:    bf ea 2a 22       \tcall -113580 <fl_far : 200a0be >",
+          " 2025c6a:    c0 00             \tcall r0",
+          " 2025c6c:    c2 ff 14 60 85 00 \tr2 = 8740884 <build/felucca_size.ll+0x856014 : 856014 >",
+          " 2025c72:    41 21             \tr1 = 1",
+          " 2025c74:    90 e8 00 02       \tif (r0 != r2) {"
+        ],
+        "explicit_local_reserve": 1124,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "d8pr_preflight": {
+        "present": false
+      },
+      "fm1_alnk0_irq": {
+        "present": true,
+        "entry_lines": [
+          " 20069f2:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 20069f4:    82 96             \tsp += -424",
+          " 20069f6:    c3 ff 40 c0 c7 01 \tr3 = 29868096 <felucca_dbg : 1c7c040 >",
+          " 20069fc:    44 ea 01 30       \t[r3+16] = 0x1",
+          " 2006a00:    60 e0 97 2b       \tr2 = 0x12E00",
+          " 2006a04:    28 48             \tr0 = b[r2+8] (u)",
+          " 2006a06:    c1 ff 04 08 01 00 \tr1 = 67588 <build/felucca_size.ll+0x10804 : 10804 >",
+          " 2006a0c:    11 60             \tr1 = [r1+0] "
+        ],
+        "explicit_local_reserve": 424,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "voice_start": {
+        "present": true,
+        "entry_lines": [
+          " 2001582:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 2001584:    e2 9b             \tsp += -20",
+          " 2001586:    05 16             \tr5 = r0",
+          " 2001588:    50 ee 56 0c       \tr0 = b[r5+198] (u)",
+          " 200158c:    14 16             \tr4 = r1",
+          " 200158e:    c1 ff bc 37 03 02 \tr1 = 33765308 <ENGINES : 20337bc >",
+          " 2001594:    d8 ec 1a 00       \tr0 = [r1+r0<<2]",
+          " 2001598:    49 43             \tr1 = b[r4+3] (u)"
+        ],
+        "explicit_local_reserve": 20,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "autosave_poll": {
+        "present": false
+      }
+    }
+  },
+  {
+    "mode": "4-candidate",
+    "functions": {
+      "fm1_main": {
+        "present": true,
+        "entry_lines": [
+          " 2025c5a:    f0 e8 9c 1b       \tsp += -1124",
+          " 2025c5e:    60 00             \tcli",
+          " 2025c60:    c0 ff 00 00 c0 01 \tr0 = 29360128 <fl_jedec_ram : 1c00000 >",
+          " 2025c66:    bf ea 2a 22       \tcall -113580 <fl_far : 200a0be >",
+          " 2025c6a:    c0 00             \tcall r0",
+          " 2025c6c:    c2 ff 14 60 85 00 \tr2 = 8740884 <build/felucca_size.ll+0x856014 : 856014 >",
+          " 2025c72:    41 21             \tr1 = 1",
+          " 2025c74:    90 e8 00 02       \tif (r0 != r2) {"
+        ],
+        "explicit_local_reserve": 1124,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "d8pr_preflight": {
+        "present": false
+      },
+      "fm1_alnk0_irq": {
+        "present": true,
+        "entry_lines": [
+          " 20069f2:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 20069f4:    82 96             \tsp += -424",
+          " 20069f6:    c3 ff 40 c0 c7 01 \tr3 = 29868096 <felucca_dbg : 1c7c040 >",
+          " 20069fc:    44 ea 01 30       \t[r3+16] = 0x1",
+          " 2006a00:    60 e0 97 2b       \tr2 = 0x12E00",
+          " 2006a04:    28 48             \tr0 = b[r2+8] (u)",
+          " 2006a06:    c1 ff 04 08 01 00 \tr1 = 67588 <build/felucca_size.ll+0x10804 : 10804 >",
+          " 2006a0c:    11 60             \tr1 = [r1+0] "
+        ],
+        "explicit_local_reserve": 424,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "voice_start": {
+        "present": true,
+        "entry_lines": [
+          " 2001582:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 2001584:    e2 9b             \tsp += -20",
+          " 2001586:    05 16             \tr5 = r0",
+          " 2001588:    50 ee 56 0c       \tr0 = b[r5+198] (u)",
+          " 200158c:    14 16             \tr4 = r1",
+          " 200158e:    c1 ff bc 37 03 02 \tr1 = 33765308 <ENGINES : 20337bc >",
+          " 2001594:    d8 ec 1a 00       \tr0 = [r1+r0<<2]",
+          " 2001598:    49 43             \tr1 = b[r4+3] (u)"
+        ],
+        "explicit_local_reserve": 20,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "autosave_poll": {
+        "present": false
+      }
+    }
+  },
+  {
+    "mode": "8-main-control",
+    "functions": {
+      "fm1_main": {
+        "present": true,
+        "entry_lines": [
+          " 202d4b8:    f0 e8 a8 19       \tsp += -1624",
+          " 202d4bc:    be ea 6e e5       \tcall -144676 <main_project_workspace_try : 2009f9c >",
+          " 202d4c0:    04 16             \tr4 = r0",
+          " 202d4c2:    cf ff d0 d2 c1 01 \tr15 = 29479632 <shed_req : 1c1d2d0 >",
+          " 202d4c8:    00 ff 00 40 87 03 \tif (r4 == 0) goto 1806 <fm1_main+0x724 : 202dbdc >",
+          " 202d4ce:    60 00             \tcli",
+          " 202d4d0:    c0 ff 00 00 c0 01 \tr0 = 29360128 <fl_jedec_ram : 1c00000 >",
+          " 202d4d6:    bf ea bf 05       \tcall -128130 <fl_far : 200e058 >"
+        ],
+        "explicit_local_reserve": 1624,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "d8pr_preflight": {
+        "present": true,
+        "entry_lines": [
+          " 200d73e:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 200d740:    c2 9a             \tsp += -152",
+          " 200d742:    46 e0 28 01       \tr6 = 296 <build/felucca_size.ll+0x128 : 128 >",
+          " 200d746:    cb ff d0 d2 c1 01 \tr11 = 29479632 <shed_req : 1c1d2d0 >",
+          " 200d74c:    d8 ee b0 76       \tr7 = b[r11+r6] (u)",
+          " 200d750:    3d 16             \tr13 = r3",
+          " 200d752:    2f 16             \tr15 = r2",
+          " 200d754:    18 16             \tr8 = r1"
+        ],
+        "explicit_local_reserve": 152,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "fm1_alnk0_irq": {
+        "present": true,
+        "entry_lines": [
+          " 20077fa:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 20077fc:    82 92             \tsp += -440",
+          " 20077fe:    c3 ff 40 c0 c7 01 \tr3 = 29868096 <felucca_dbg : 1c7c040 >",
+          " 2007804:    44 ea 01 30       \t[r3+16] = 0x1",
+          " 2007808:    60 e0 97 2b       \tr2 = 0x12E00",
+          " 200780c:    28 48             \tr0 = b[r2+8] (u)",
+          " 200780e:    c1 ff 04 08 01 00 \tr1 = 67588 <build/felucca_size.ll+0x10804 : 10804 >",
+          " 2007814:    11 60             \tr1 = [r1+0] "
+        ],
+        "explicit_local_reserve": 440,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "voice_start": {
+        "present": true,
+        "entry_lines": [
+          " 2001612:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 2001614:    e2 9b             \tsp += -20",
+          " 2001616:    05 16             \tr5 = r0",
+          " 2001618:    50 ee 56 0c       \tr0 = b[r5+198] (u)",
+          " 200161c:    14 16             \tr4 = r1",
+          " 200161e:    c1 ff b0 d6 03 02 \tr1 = 33806000 <ENGINES : 203d6b0 >",
+          " 2001624:    d8 ec 1a 00       \tr0 = [r1+r0<<2]",
+          " 2001628:    49 43             \tr1 = b[r4+3] (u)"
+        ],
+        "explicit_local_reserve": 20,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "autosave_poll": {
+        "present": false
+      }
+    }
+  },
+  {
+    "mode": "8-candidate",
+    "functions": {
+      "fm1_main": {
+        "present": true,
+        "entry_lines": [
+          " 202d4b8:    f0 e8 a8 19       \tsp += -1624",
+          " 202d4bc:    be ea 6e e5       \tcall -144676 <main_project_workspace_try : 2009f9c >",
+          " 202d4c0:    04 16             \tr4 = r0",
+          " 202d4c2:    cf ff d0 d2 c1 01 \tr15 = 29479632 <shed_req : 1c1d2d0 >",
+          " 202d4c8:    00 ff 00 40 87 03 \tif (r4 == 0) goto 1806 <fm1_main+0x724 : 202dbdc >",
+          " 202d4ce:    60 00             \tcli",
+          " 202d4d0:    c0 ff 00 00 c0 01 \tr0 = 29360128 <fl_jedec_ram : 1c00000 >",
+          " 202d4d6:    bf ea bf 05       \tcall -128130 <fl_far : 200e058 >"
+        ],
+        "explicit_local_reserve": 1624,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "d8pr_preflight": {
+        "present": true,
+        "entry_lines": [
+          " 200d73e:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 200d740:    c2 9a             \tsp += -152",
+          " 200d742:    46 e0 28 01       \tr6 = 296 <build/felucca_size.ll+0x128 : 128 >",
+          " 200d746:    cb ff d0 d2 c1 01 \tr11 = 29479632 <shed_req : 1c1d2d0 >",
+          " 200d74c:    d8 ee b0 76       \tr7 = b[r11+r6] (u)",
+          " 200d750:    3d 16             \tr13 = r3",
+          " 200d752:    2f 16             \tr15 = r2",
+          " 200d754:    18 16             \tr8 = r1"
+        ],
+        "explicit_local_reserve": 152,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "fm1_alnk0_irq": {
+        "present": true,
+        "entry_lines": [
+          " 20077fa:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 20077fc:    82 92             \tsp += -440",
+          " 20077fe:    c3 ff 40 c0 c7 01 \tr3 = 29868096 <felucca_dbg : 1c7c040 >",
+          " 2007804:    44 ea 01 30       \t[r3+16] = 0x1",
+          " 2007808:    60 e0 97 2b       \tr2 = 0x12E00",
+          " 200780c:    28 48             \tr0 = b[r2+8] (u)",
+          " 200780e:    c1 ff 04 08 01 00 \tr1 = 67588 <build/felucca_size.ll+0x10804 : 10804 >",
+          " 2007814:    11 60             \tr1 = [r1+0] "
+        ],
+        "explicit_local_reserve": 440,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "voice_start": {
+        "present": true,
+        "entry_lines": [
+          " 2001612:    7f 04             \t[--sp] = {rets, r15-r4}",
+          " 2001614:    e2 9b             \tsp += -20",
+          " 2001616:    05 16             \tr5 = r0",
+          " 2001618:    50 ee 56 0c       \tr0 = b[r5+198] (u)",
+          " 200161c:    14 16             \tr4 = r1",
+          " 200161e:    c1 ff 10 d7 03 02 \tr1 = 33806096 <ENGINES : 203d710 >",
+          " 2001624:    d8 ec 1a 00       \tr0 = [r1+r0<<2]",
+          " 2001628:    49 43             \tr1 = b[r4+3] (u)"
+        ],
+        "explicit_local_reserve": 20,
+        "stack_scope": "Entry explicit reservation only, excluding pushes/callees/IRQ nesting; not high-water."
+      },
+      "autosave_poll": {
+        "present": false
+      }
+    }
+  }
+]
