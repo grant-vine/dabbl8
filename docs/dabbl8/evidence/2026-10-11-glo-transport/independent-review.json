@@ -1,0 +1,166 @@
+{
+  "status": "PASS_FOCUSED_SOURCE_REVIEW_NO_FULL_TARGET_OR_HARDWARE_ACCEPTANCE",
+  "base": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "upstream_commit": "88f10300b55b35fed444525b38ad256579fbf565",
+  "production_change_exactly_one_predicate": true,
+  "upstream_condition_exact_match": true,
+  "focused_results": [
+    {
+      "tracks": 4,
+      "sanitizer": false,
+      "compiler_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/normal-4",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "summary": "GLO transport: 68 cases, 0 failures, 4 tracks; host input only"
+    },
+    {
+      "tracks": 8,
+      "sanitizer": false,
+      "compiler_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/normal-8",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "summary": "GLO transport: 136 cases, 0 failures, 8 tracks; host input only"
+    },
+    {
+      "tracks": 4,
+      "sanitizer": true,
+      "compiler_command": [
+        "clang",
+        "-O1",
+        "-w",
+        "-DNPART=4",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/san-4",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "summary": "GLO transport: 68 cases, 0 failures, 4 tracks; host input only"
+    },
+    {
+      "tracks": 8,
+      "sanitizer": true,
+      "compiler_command": [
+        "clang",
+        "-O1",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/san-8",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "summary": "GLO transport: 136 cases, 0 failures, 8 tracks; host input only"
+    }
+  ],
+  "retained_parent_failures": [
+    {
+      "source": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+      "tracks": 4,
+      "exit": 1,
+      "compiler_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/parent-4",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ]
+    },
+    {
+      "source": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+      "tracks": 8,
+      "exit": 1,
+      "compiler_command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/glo-transport-check/parent-8",
+        "tests/glo_transport_test.c",
+        "-lm"
+      ]
+    }
+  ],
+  "review_findings": [],
+  "semantics": "Locked GLO without physically held GLO returns to normal PLAY dispatch. Physical GLO retains RESTART/start and externalclock refusal; chainbusy normalSTOP unchanged. No global transport override.",
+  "fixture_scope": [
+    "Actual UI double-tap after release every4/8track; no direct manualui.lock assignment.",
+    "Actual button/frame/UIdispatch; STOP passed through actualevents_block. Otherrequests assert actualdispatchoutputs, not everyISR outcome.",
+    "Count-in, externalclock, heldbutton, runningchain and stopped states exercised.",
+    "Defaultfour and nativeeight deliberately bothreceive inheritedbugfix; parentbyteidentity mustnot beclaimed."
+  ],
+  "runner_review": "Normal4/8 entries and inheritedSAN4/8 entries additive; existing suites remain. InheritedSAN excludes signedoverflow,shift,bounds,objectsize,pointeroverflow; focusedcommand lacks runner fno-sanitize-recover flag, but rawlogs havezero sanitizer diagnostics.",
+  "limitations": [
+    "Host panel/display stubs; not physical button/panel/USB qualification.",
+    "Dedicated harness does not itself drive complete migration transaction; existingconnected regression/fullpublishedtreeCI stillneeded.",
+    "Fresh4/8target/defaultimagechange and fullsuite acceptance remainrootowned; no tests/builds rerun byreviewer."
+  ],
+  "source_hashes": {
+    "firmware/src/ui_layer.c": "e39c3efdb3150676ba80f7602dcf9772a0654b7e0f7ce0781a7da701f31831c6",
+    "tests/glo_transport_test.c": "033affd5caadb8e86bec096dea2698cb51fffe9f3013c7dcc0d489b57b83b5ff",
+    "tests/run_tests.sh": "bc1c9656d752bcab0a109315fd5e5f8b204b1b91e81bde95d2a8b0b497f282a3"
+  },
+  "evidence_hashes": {
+    "banked_mixer_test-run.log": "d8ab2e1f89a122bf0e4c5dc8884219c2b5526b4736c21586001c106930e58b6b",
+    "quick_layer_conflicts_test-run.log": "c51ae41d2dc9e57892524899913f65ba8d01e77185ce8acf2636f0297e33fa12",
+    "san-8-run.log": "67552829e392a22daece7f4018b2110f590647465a5808505fb0e3d527b37f20",
+    "normal-4-run.log": "c3e34a0d51c5553bbbf8a26c0f4ff88c3556cf232aadb0e0a45608aa6da779bd",
+    "parent-run-4.log": "84b8953860987e009def6cc3fcda0943142b08e2d224f9ce984b2d694dc35066",
+    "quick_layer_conflicts_test-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "san-8-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "parent-4-result.json": "885c368a780d2984a51575c9dc5283c5eefb0238afdd2daa8b11eb7924bf5cc1",
+    "parent-compile-8.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "banked_mixer_test-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "san-4-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "adjacent-results.json": "72aa2f6437a9f9d0eb2245d7934d2a09374fba643ff1dbbde9e557af040f02f0",
+    "parent-8-result.json": "ed3892c2bd119b29b7571b2b4d9035c9d7887dd49767c25a6ef1cf379b572ef8",
+    "parent-compile-4.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "normal-4-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "parent-run-8.log": "7ad1ecdfb23bd01336b3c29323a019603b1e96d6c84304afb5dc097ad35413ff",
+    "normal-8-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ui_test-run.log": "cb26fbe11811064f298d5dd259807e73e7fbff7ff7c647f6310a427642d34e8d",
+    "normal-8-run.log": "67552829e392a22daece7f4018b2110f590647465a5808505fb0e3d527b37f20",
+    "san-4-run.log": "c3e34a0d51c5553bbbf8a26c0f4ff88c3556cf232aadb0e0a45608aa6da779bd",
+    "focused-results.json": "43232ca6863701fce1c0b93f0700c594d993a91ddd7de2f622a4a7044040fa5f",
+    "ui_test-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

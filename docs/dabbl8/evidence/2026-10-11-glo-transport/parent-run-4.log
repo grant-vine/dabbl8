@@ -1,0 +1,69 @@
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO PLAY requests STOP                                       FAIL
+ui: actual events apply STOP                                                   FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO stopped PLAY requests START                              ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO external-clock PLAY still requests STOP                  FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO count-in PLAY requests STOP                              FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held locked GLO PLAY retains RESTART                            ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO external restart remains refused                       ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO stopped PLAY retains START                             ok
+ui: actual double tap locks GLO after button release                           ok
+ui: locked GLO running chain still routes STOP                                 ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO PLAY requests STOP                                       FAIL
+ui: actual events apply STOP                                                   FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO stopped PLAY requests START                              ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO external-clock PLAY still requests STOP                  FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO count-in PLAY requests STOP                              FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held locked GLO PLAY retains RESTART                            ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO external restart remains refused                       ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO stopped PLAY retains START                             ok
+ui: actual double tap locks GLO after button release                           ok
+ui: locked GLO running chain still routes STOP                                 ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO PLAY requests STOP                                       FAIL
+ui: actual events apply STOP                                                   FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO stopped PLAY requests START                              ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO external-clock PLAY still requests STOP                  FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO count-in PLAY requests STOP                              FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held locked GLO PLAY retains RESTART                            ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO external restart remains refused                       ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO stopped PLAY retains START                             ok
+ui: actual double tap locks GLO after button release                           ok
+ui: locked GLO running chain still routes STOP                                 ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO PLAY requests STOP                                       FAIL
+ui: actual events apply STOP                                                   FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO stopped PLAY requests START                              ok
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO external-clock PLAY still requests STOP                  FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: unheld locked GLO count-in PLAY requests STOP                              FAIL
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held locked GLO PLAY retains RESTART                            ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO external restart remains refused                       ok
+ui: actual double tap locks GLO after button release                           ok
+ui: physically held GLO stopped PLAY retains START                             ok
+ui: actual double tap locks GLO after button release                           ok
+ui: locked GLO running chain still routes STOP                                 ok
+GLO transport: 68 cases, 16 failures, 4 tracks; host input only

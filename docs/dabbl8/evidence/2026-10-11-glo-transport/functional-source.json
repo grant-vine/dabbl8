@@ -1,0 +1,16 @@
+{
+  "functional_source": "ebe1574ce1ce5cfca227cd035dd47c9729a2bb0d",
+  "parent": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "upstream_fix": "88f10300b55b35fed444525b38ad256579fbf565",
+  "changed_paths": [
+    "firmware/src/ui_layer.c",
+    "tests/glo_transport_test.c",
+    "tests/run_tests.sh"
+  ],
+  "source_pins": {
+    "firmware/src/ui_layer.c": "e39c3efdb3150676ba80f7602dcf9772a0654b7e0f7ce0781a7da701f31831c6",
+    "tests/glo_transport_test.c": "033affd5caadb8e86bec096dea2698cb51fffe9f3013c7dcc0d489b57b83b5ff",
+    "tests/run_tests.sh": "bc1c9656d752bcab0a109315fd5e5f8b204b1b91e81bde95d2a8b0b497f282a3"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n"
+}

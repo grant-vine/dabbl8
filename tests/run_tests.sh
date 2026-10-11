@@ -200,6 +200,10 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-track chord, DRUM, SCL and selected automation ownership" "$OUT/quick_layer_conflicts_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/banked_mixer_test" tests/banked_mixer_test.c -lm
     run "eight-track bank controls, quick-layer ownership and all screen layouts" "$OUT/banked_mixer_test"
+    for n in 4 8; do
+        $CC -O2 -w -DNPART=$n -Ibuild/gen -Ifirmware/src -o "$OUT/glo_transport_test$n" tests/glo_transport_test.c -lm
+        run "actual locked/held GLO transport: $n tracks" "$OUT/glo_transport_test$n"
+    done
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/versioned_track_test" tests/versioned_track_test.c -lm
     run "versioned eight-track editor: bounds, ownership, busy errors and legacy refusal" "$OUT/versioned_track_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge8" tests/track_client_bridge.c -lm
@@ -235,6 +239,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "actual native reference arrangement, master bars, clocks and held gates" "$OUT/native_arrangement_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
+    run "actual native catalog and arrangement render matrix" "$OUT/native_state_render_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
@@ -462,6 +468,10 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
+    for n in 4 8; do
+        $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
+        run "ASan/UBSan: actual locked/held GLO transport, $n tracks" "$A/glo_transport_test$n"
+    done
     for t in versioned_track_test quick_layer_conflicts_test banked_mixer_test eight_track_runtime_test voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
@@ -489,6 +499,8 @@ else
     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
     $SCC -o "$A/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "ASan/UBSan: actual native arrangement transport and source refusals" "$A/native_arrangement_test"
+    $SCC -o "$A/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
+    run "ASan/UBSan: actual native catalog and arrangement render matrix" "$A/native_state_render_test"
     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm

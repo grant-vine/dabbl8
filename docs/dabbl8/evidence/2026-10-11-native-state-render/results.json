@@ -1,0 +1,164 @@
+{
+  "source": "781ab9a857160a09f122b2e913ef151f2547ef0f",
+  "base_main": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "focused_modes": {
+    "optimized": {
+      "checks": 35427,
+      "frames": 3361,
+      "failures": 0
+    },
+    "inherited_DSP_ASan_UBSan": {
+      "checks": 35427,
+      "frames": 3361,
+      "failures": 0
+    }
+  },
+  "states": [
+    "sparse native catalog ready",
+    "failed catalog refresh hides names",
+    "unbound migration status",
+    "native stopped",
+    "running",
+    "pending fill ARM",
+    "active fill RUN/FILL",
+    "cancelled active fill RET",
+    "pending row NEXT",
+    "adopted empty",
+    "adopted maximum sixteen rows and repeats"
+  ],
+  "matrix": {
+    "regular": {
+      "states": 9,
+      "palettes": 10,
+      "styles": 2,
+      "sizes": 2,
+      "selected_tracks": 8,
+      "frames": 2880
+    },
+    "incremental": {
+      "frames": 1,
+      "actual_nonforced_queue_and_bar_transitions": true
+    },
+    "edge": {
+      "empty_or_max": 2,
+      "cursors": [
+        0,
+        15,
+        255
+      ],
+      "palettes": 10,
+      "styles": 2,
+      "sizes": 2,
+      "banks": 2,
+      "frames": 480
+    }
+  },
+  "actual_paths": [
+    "native codec decode/adopt",
+    "native C pool/catalog reads",
+    "read-only source preparation",
+    "sequencer Start/master-bar/fill/cancel/queued-row",
+    "source renderer hooks/layout lint",
+    "asynchronous LCD buffer lifetime",
+    "exclusive migration workspace acquisition/refusal"
+  ],
+  "no_storage_during_render": true,
+  "native_names_and_arrangement_unchanged": true,
+  "empty_play": "Actual chain_play_ui refuses with ADD A SONG ROW, no start/request/backend access",
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "full_host_suite": "NOT_RUN locally for this topic; additive normal/SAN runner entries included",
+  "hardware": "NOT_RUN",
+  "final_eight_target": {
+    "tracks": 8,
+    "bytes": 480012,
+    "sha256": "d3063ff2884d96d5a1db14876fdc5ccb0b8d8a63764757a96661bbe082160c74",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480012 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+    ]
+  },
+  "prior_four_target_source": "3be66755ed73dfaa92e15254cc5f942537ddecdb",
+  "prior_four_target": {
+    "tracks": 4,
+    "bytes": 447928,
+    "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "audited_v115_hash_matches": false
+  },
+  "prior_eight_target": {
+    "tracks": 8,
+    "bytes": 479964,
+    "sha256": "84b6f32c745cefbaa9d66627937d1a2067cac9faf6171c75bb37e81ab056d79e",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 479964 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+    ]
+  },
+  "native_static_cost": {
+    "IRQ": {
+      "cost": 55487,
+      "budget": 37502,
+      "status": "FAIL"
+    },
+    "USB48": {
+      "cost": 555,
+      "budget": 504,
+      "limit": 554.4,
+      "status": "FAIL"
+    },
+    "ROOM": {
+      "cost": 233,
+      "budget": 218,
+      "status": "PASS within original 10% limit"
+    },
+    "SPRING": {
+      "cost": 135,
+      "budget": 126,
+      "status": "PASS within original 10% limit"
+    }
+  },
+  "private_raw_failures": {
+    "compile-initial.log": {
+      "sha256": "441fb7a18b3db25fb6c7fdae07ec6d03c3dbf546ec727f8be1744ad518f94fdb",
+      "bytes": 957
+    },
+    "initial-run.log": {
+      "sha256": "4ff50116d937f3f995a3cd07a6dbe67aeef365336ee8a00e84217f78025c383d",
+      "bytes": 492447
+    },
+    "run-2.log": {
+      "sha256": "34cf422d1de998737812ae6d71aec699ec3532658171a56d20f1643d23fb5b48",
+      "bytes": 327936
+    },
+    "run-debug.log": {
+      "sha256": "3c030857e71a97af2b2028145891eb2ec44eafb8ddaefd06eedc26f467a2dfcb",
+      "bytes": 44632
+    },
+    "empty-values-optimized.log": {
+      "sha256": "e635341a05e91e820f25bc575c172e0b15b98b485170b8428e758e47137ac3f1",
+      "bytes": 9481
+    },
+    "empty-debug.log": {
+      "sha256": "7ab0b3b36ad2d0efe992648ae0b2624d51d8df20a2d780c12efebf3c81081367",
+      "bytes": 13681
+    },
+    "final-parent-ui.log": {
+      "sha256": "4964a482068bcd2f8d490c6c1db02df1f4c6f6731bef08fa05f4c9ea9bd83402",
+      "bytes": 1391719,
+      "lines": 16377,
+      "exit": 1
+    }
+  }
+}
