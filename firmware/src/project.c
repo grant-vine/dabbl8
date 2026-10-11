@@ -1436,23 +1436,46 @@ static void autosave_poll(void)
 #endif
         return;
     }
-    project_t *as_work=project_work_try();
-    if(!as_work)return;
 #endif
 #if FELUCCA_FLASH
     uint32_t sig;
     if (!flash_ok || fm1_ms - as.poll < AS_POLL_MS)
         return;
+#if NPART < NVOICE
     as.poll = fm1_ms;
+#endif
     sig = autosave_sig();
     if (sig != as.seen || !autosave_quiet()) {
+#if NPART >= NVOICE
+        as.poll = fm1_ms;
+#endif
         as.seen = sig;
         as.t = fm1_ms;
         return;
     }
     if (sig == as.saved || (ui_prefs & PREF_RESTORE_OFF) || fm1_ms - as.t < AS_IDLE_MS ||
-        (as.wrote && fm1_ms - as.last < (as.err ? AS_RETRY_MS : AS_GAP_MS)))
+        (as.wrote && fm1_ms - as.last < (as.err ? AS_RETRY_MS : AS_GAP_MS))) {
+#if NPART >= NVOICE
+        as.poll = fm1_ms;
+#endif
         return;
+    }
+#if NPART >= NVOICE
+    /* No-op polls retain the canvas and avoid a synchronous LCD DMA fence.
+     * Only a capture needs the arena; refuse competing ownership without
+     * publishing an attempted write. LCD completion can service new input. */
+    project_t *as_work=project_work_try();
+    if(!as_work)return;
+    as.poll = fm1_ms;
+    uint32_t late_sig = autosave_sig();
+    if(late_sig != sig || !autosave_quiet()) {
+        as.seen = late_sig;
+        as.t = fm1_ms;
+        return;
+    }
+    if(!flash_ok || project_native_owns_storage() || (ui_prefs & PREF_RESTORE_OFF))
+        return;
+#endif
     as.last = fm1_ms;
     as.wrote = 1;
 #if NPART >= NVOICE

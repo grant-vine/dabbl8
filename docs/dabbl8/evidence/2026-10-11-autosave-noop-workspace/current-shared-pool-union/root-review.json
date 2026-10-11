@@ -1,0 +1,69 @@
+{
+  "head": "8ddfefc663242554fe24af364c4421276b651c6b",
+  "scope_sha256": "e2da597ad5564f22f1efc72d7474f727ca3efbe6e4833d7aa8ccf881a6008db2",
+  "manifest_sha256": "f737b5318354a124377c329f61771aca8820c53ce516c2454efa908e273dc627",
+  "manifest_entries_verified": 29,
+  "host_source_files_verified": 363,
+  "focused_runs": 6,
+  "source_hashes_verified": {
+    "firmware/src/project.c": "3fbbd64c1c10b218e05534c5e2f5d12b932e767ab02038d26429c2c48df8d948",
+    "firmware/src/d8p1_pool_runtime.c": "1eaf0f375c7522e016319be2eca3aa7742e77cf71773cc5aa4194764ee4d58ad",
+    "firmware/src/native_autosave_session.c": "13f81960f91fa14f6b2b4048491de844b538c707f1e4a93431cdacc7c820364a",
+    "tests/competing_workspace_callers_test.c": "5d92d8d8e6c789013ea396b1b5aee32717fb94985d4534de91c6f0aa92f9885f",
+    "tests/native_autosave_combined_test.c": "02a5c7979da706c28a214fc8821f551d59f0f614d3a150bb5dffb5241726942e",
+    "tests/native_autosave_session_test.c": "306d1913f3ae57044567e06bcdd1b4b54918a4c8c9b7bff3d5e30269295cc898"
+  },
+  "target_rows_verified": [
+    {
+      "mode": "4-main-control",
+      "app_bytes": 447968,
+      "app_sha256": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+      "check_errors": [],
+      "memory_notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447968 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "target_budget_exit": 0,
+      "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof."
+    },
+    {
+      "mode": "4-candidate",
+      "app_bytes": 447968,
+      "app_sha256": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+      "check_errors": [],
+      "memory_notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447968 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "target_budget_exit": 0,
+      "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof.",
+      "main_app_identical": true
+    },
+    {
+      "mode": "8-main-control",
+      "app_bytes": 480540,
+      "app_sha256": "b70206f78fef968535e006d80c1f23e7a74b73d1ee2806c35cb750ff1dceccc1",
+      "check_errors": [],
+      "memory_notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 480540 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "target_budget_exit": 1,
+      "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof."
+    },
+    {
+      "mode": "8-candidate",
+      "app_bytes": 480636,
+      "app_sha256": "b2c473e23b0598ae375ef85c07886fbbfd36ec1c3c092f955b86bbd3e3ee34b7",
+      "check_errors": [],
+      "memory_notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 480636 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "target_budget_exit": 1,
+      "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof.",
+      "main_app_identical": false
+    }
+  ],
+  "review_scope": "Root independently verified archived committed source, raw host outputs, manifest/binary hashes and target receipts; execution by audit_audio_timing separately attributed. No independent rerun or physical timing/stack proof."
+}

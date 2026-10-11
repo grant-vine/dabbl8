@@ -1,0 +1,45 @@
+{
+  "candidate_commit": "8ddfefc663242554fe24af364c4421276b651c6b",
+  "main_control_commit": "fdd02e4969b9d9f8bc43a4ccc0a4af86f035ada9",
+  "current_worktree_head_observed_after_checks": "8ddfefc663242554fe24af364c4421276b651c6b",
+  "source_hashes": {
+    "firmware/src/project.c": "3fbbd64c1c10b218e05534c5e2f5d12b932e767ab02038d26429c2c48df8d948",
+    "firmware/src/d8p1_pool_runtime.c": "1eaf0f375c7522e016319be2eca3aa7742e77cf71773cc5aa4194764ee4d58ad",
+    "firmware/src/native_autosave_session.c": "13f81960f91fa14f6b2b4048491de844b538c707f1e4a93431cdacc7c820364a",
+    "tests/competing_workspace_callers_test.c": "5d92d8d8e6c789013ea396b1b5aee32717fb94985d4534de91c6f0aa92f9885f",
+    "tests/native_autosave_combined_test.c": "02a5c7979da706c28a214fc8821f551d59f0f614d3a150bb5dffb5241726942e",
+    "tests/native_autosave_session_test.c": "306d1913f3ae57044567e06bcdd1b4b54918a4c8c9b7bff3d5e30269295cc898"
+  },
+  "generated_header_hashes": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "artifact_sha256": {
+    "8-candidate-felucca.elf": "eab42f3b8290815716a6deaef2c277511fd23f48a0f8f69efea353d8fbe77d6b",
+    "4-candidate-felucca.dis": "ea3503cacb2cf1ad40a8d6c5f72c6a22bdb578e058f9533aa11e5843e176491d",
+    "4-main-control-felucca.elf": "7e0dff7d217f211c69ece27ff4b9379eefa7b0830b31da3bced438ec649fa96a",
+    "8-main-control-felucca.elf": "6f320a9e8498a62d683d1a3404058e060efac68c5b4cbc2e8dee54bef9bd5451",
+    "4-candidate-felucca.elf": "7e0dff7d217f211c69ece27ff4b9379eefa7b0830b31da3bced438ec649fa96a",
+    "8-candidate-felucca.dis": "2d8200610d27ed1dc9cd9fa40d59cd1d3f800d7bfb778e6d853c64f554e29cf2",
+    "4-main-control-felucca.dis": "ea3503cacb2cf1ad40a8d6c5f72c6a22bdb578e058f9533aa11e5843e176491d",
+    "8-main-control-felucca.dis": "bbd776880ca09ad0c064d51d30b9671edde8673d8e7bd1b35185b8b698873009",
+    "4-candidate-felucca.bin": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+    "8-candidate-felucca.bin": "b2c473e23b0598ae375ef85c07886fbbfd36ec1c3c092f955b86bbd3e3ee34b7",
+    "4-main-control-felucca.bin": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+    "8-main-control-felucca.bin": "b70206f78fef968535e006d80c1f23e7a74b73d1ee2806c35cb750ff1dceccc1"
+  },
+  "host_source_archive_sha256": "0a52d996093019320bea49696773d6c2d0f9af05e047852865b0e353753a716f",
+  "host_compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "python": "Python 3.14.8",
+  "host_results": "Fresh normal and inherited-sanitizer runs: competing235, native combined193089 with7 actual routes, native session172202; all zero failures. Counts are current measured assertions, not copied historical counts.",
+  "interaction_review": "autosave_poll retains early CPU canvas/migration ownership refusal and unchanged direct native session route. Unbound no-op guards now return without LCD/arena borrowing. Actual due unbound capture retains LCD-late ownership/input/transport/music checks. Native session remains separate and calls current shared-pool preflight/snapshot on its due path; direct record copies retain CRC/codec/reference/stopped/epoch/final inventory checks. The preflight-only reentry flag is not a transaction-wide mutex.",
+  "target_results": "Fresh app-only pinned vendor builds versus exact current main: four447968 and app+ELF byte-identical; native candidate480636 versus main480540 (+96). Four RAM92116/pool331332; native RAM96068/pool335240, unchanged. No check errors. Native static audio55767 and UAC562 remain over budget in both builds; unchanged thresholds.",
+  "frame_results": "Explicit local reserves only: four fm1_main1124/IRQ424/voice_start20; native fm1_main1624/preflight152/IRQ440/voice_start20, unchanged candidate versus main. autosave_poll has no separate emitted symbol. Register pushes, callees and nesting excluded; not a stack high-water proof.",
+  "limitations": "Focused host/virtual NOR and vendor static build evidence, not full final-source CI, physical timing, asset/device/recovery, package or firmware installation. Existing inherited sanitizer exclusions retained. No source edit, push, PR, merge, device or new agent.",
+  "setup_failure": "Initial archive extraction with unqualified python3 raised TypeError for extractall(filter=data). Repeated with explicit verified /opt/homebrew/bin/python3 3.14.8 succeeded; all qualification drivers use this explicit interpreter. No source change or qualification assertion was bypassed."
+}
