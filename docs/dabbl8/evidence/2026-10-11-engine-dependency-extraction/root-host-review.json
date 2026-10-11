@@ -1,0 +1,10 @@
+{
+  "fixture_pair_count": 32,
+  "passing_pairs": 20,
+  "inherited_failing_pairs": 12,
+  "raw_manifest_verified": 217,
+  "preprocessing_pairs": 8,
+  "normalization": "command header omitted; exact parent/candidate root prefixes replaced; preprocessing blank lines omitted only",
+  "initial_inspection_failure": "Raw traceback source path hashes differ; verified only root prefix differs; no tests rerun",
+  "result": "parent-candidate parity verified; inherited failures retained"
+}

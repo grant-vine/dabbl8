@@ -1,0 +1,18 @@
+Frozen35266b6 parent/candidate, identical generated files. App-only, no loader/package/device.
+['-Os', '-ffunction-sections', '-fno-builtin', '-Wall', '-Wno-unused-function', '-DNPART=8', '-DFELUCCA_FM4=1', '-DFELUCCA_SLICE=1']
+In file included from firmware/src/felucca.c:90:
+firmware/src/seq.c:421:52: warning: unused variable 'o' [-Wunused-variable]
+    uint32_t period, cnt, list[64], len = 0, i, j, o;
+                                                   ^
+firmware/src/seq.c:421:46: warning: unused variable 'i' [-Wunused-variable]
+    uint32_t period, cnt, list[64], len = 0, i, j, o;
+                                             ^
+In file included from firmware/src/felucca.c:133:
+firmware/src/native_migration_capture_binding.c:12:296: warning: passing 'volatile uint32_t *' (aka 'volatile unsigned int *') to parameter of type 'const void *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+{ return migration_alias(p,n)||d8mp_metadata_alias(p,n)||d8ps_overlap(p,n,&d8cb,sizeof d8cb)||d8ps_overlap(p,n,&ed_capture,sizeof ed_capture)||d8ps_overlap(p,n,&d8sv,sizeof d8sv)||d8ps_overlap(p,n,&d8_capture_change,sizeof d8_capture_change)||d8ps_overlap(p,n,&usb,sizeof usb)||d8ps_overlap(p,n,&fm1_ms,sizeof fm1_ms); }
+                                                                                                                                                                                                                                                                                                       ^~~~~~~
+firmware/src/d8p1_project.h:18:61: note: passing argument to parameter 'b' here
+static int d8ps_overlap(const void *a,size_t na,const void *b,size_t nb) {
+                                                            ^
+3 warnings generated.
+CHECK [] ['.ram_text: 916 insns, no calls', 'image 481860 B; RAM .data+.bss 97348 B of 98304; pool 335240 B of 344064']

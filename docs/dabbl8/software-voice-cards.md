@@ -53,6 +53,18 @@ Implemented tests exhaust 8192 masks across all eight component combinations in 
 
 Core proposes ANALOG/FM6/LOFI/DRUM; Breaks proposes ANALOG/FM6/SAMPLE/SLICE/DRUM. Dance, Chips and FM, Organic and Texture are additional research candidates. None is a known-to-work hardware combination. Keep the full-engine profile as a candidate while measuring reduced ones.
 
+## Dependency-neutral extraction before real exclusion
+
+This extraction from parent `35266b6aaa932b94c57c8cc1854c27b7d33727b9` provides separately owned GRAIN/WHEEL limit and state headers, a typed `heavy_types.h` layout, and pure `phys_models.h` / `phys_legacy.h` historical migration. Pool allocation and ownership accessors stay in `heavy_state.h`. The shipping build keeps its original inclusion points, algorithms, all engines, IDs and shared eight sounding voices. This does not consume a candidate card configuration or enable a reduced build.
+
+All eight four/eight-track FM4/SLICE configurations were built against the exact parent with the pinned target compiler: app, ELF and disassembly bytes, memory and budget outcomes are identical. Sixteen diagnostic objects confirm identical target `sizeof` and alignment. Expanded `heavy_state_t` remains 7020 bytes aligned to four, with eight slots consuming 56160 pool bytes. **This extraction saves zero bytes.** The default eight-track image is 480748 bytes; general RAM 96068/98304 and pool 335240/344064 are unchanged.
+
+Eight paired expanded heavy-pool normal/inherited-sanitizer cases pass. Existing legacy/native-project cases have 12 paired FM4-on failures against their canonical DIGITAL corpus expectations, identical to the frozen parent; they remain failures. Both ordinary audio regressions pass all 92 unchanged goldens. The standalone historical PHYS service runs 131072 model/preservation/idempotence checks normally and with strict sanitizers, without DSP exclusions; a compiled unrelated-field mutation is detected. Raw host counter/timing variation remains in evidence and establishes no target performance change.
+
+SLICE-off static budget checks fail because the inherited checker requires absent SLICE symbols; every eight-track static budget remains failed, including default IRQ 55767 against 37502 and UAC 562 against 504. No checker, golden or threshold was changed. Initial harness whitespace/path comparison failures and Docker sandbox denial are retained and explained in the [evidence manifest](evidence/2026-10-11-engine-dependency-extraction/manifest.json). App-only target work did not build a loader/package or contact a device. No physical stack, deadline, recovery or release gate is cleared.
+
+Next, a separate private proof must genuinely exclude Core/Breaks renderers and pool members while retaining required sample management, historical PHYS/DIGITAL conversion, structural record meanings and FM6 patch services. Stable descriptor slots cannot be compacted or silently redirected. The conditional DRUM-sized union's 41568-byte saving remains arithmetic until that target proof measures it. This extraction does not complete #12 or #53.
+
 ## Storage and website dependencies
 
 Engine exclusion does not shrink the current fixed D8P1 steps, parameters or eight patch records automatically. Compression and the shared-spare storage proposal remain independent work under #7/#13. Cards must not silently change flash boundaries or reuse sample space. Runtime availability depends on the native/editor capability work under #11; physical limits remain under #12 and release/recovery under #14/#20.

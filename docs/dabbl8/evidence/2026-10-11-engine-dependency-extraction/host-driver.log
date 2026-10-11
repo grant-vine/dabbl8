@@ -1,0 +1,29 @@
+preprocess-parent-4-fm0-sl0 0
+preprocess-candidate-4-fm0-sl0 0
+compile-parent-legacy_fixture_test-4-fm0-sl0-normal 0
+parent-legacy_fixture_test-4-fm0-sl0-normal 0
+compile-candidate-legacy_fixture_test-4-fm0-sl0-normal 0
+candidate-legacy_fixture_test-4-fm0-sl0-normal 0
+compile-parent-legacy_fixture_test-4-fm0-sl0-san 0
+parent-legacy_fixture_test-4-fm0-sl0-san 0
+compile-candidate-legacy_fixture_test-4-fm0-sl0-san 0
+candidate-legacy_fixture_test-4-fm0-sl0-san 0
+preprocess-parent-4-fm0-sl1 0
+preprocess-candidate-4-fm0-sl1 0
+compile-parent-legacy_fixture_test-4-fm0-sl1-normal 0
+parent-legacy_fixture_test-4-fm0-sl1-normal 0
+compile-candidate-legacy_fixture_test-4-fm0-sl1-normal 0
+candidate-legacy_fixture_test-4-fm0-sl1-normal 0
+compile-parent-legacy_fixture_test-4-fm0-sl1-san 0
+parent-legacy_fixture_test-4-fm0-sl1-san 0
+compile-candidate-legacy_fixture_test-4-fm0-sl1-san 0
+candidate-legacy_fixture_test-4-fm0-sl1-san 0
+preprocess-parent-4-fm1-sl0 0
+preprocess-candidate-4-fm1-sl0 0
+compile-parent-legacy_fixture_test-4-fm1-sl0-normal 0
+parent-legacy_fixture_test-4-fm1-sl0-normal 1
+Traceback (most recent call last):
+  File "/private/tmp/d8-engine-dependency-extraction/host_verify.py", line 30, in <module>
+    if q.returncode:raise RuntimeError('fixture failure retained')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: fixture failure retained

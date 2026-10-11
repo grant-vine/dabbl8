@@ -1,0 +1,2 @@
+Actual unchanged firmware translation unit included; diagnostic object only, no link/device.
+['-Os', '-ffunction-sections', '-fno-builtin', '-Wall', '-Wno-unused-function', '-DNPART=4', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=0', '-Ifirmware/hal', '-Ifirmware/src', '-Ibuild/gen']

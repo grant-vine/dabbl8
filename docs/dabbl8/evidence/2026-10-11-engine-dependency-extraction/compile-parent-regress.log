@@ -1,0 +1,3 @@
+COMMAND ['clang', '-O2', '-w', '-Ibuild/gen', '-Ifirmware/src', 'tests/regress.c', '-lm', '-o', '/private/tmp/d8-engine-dependency-extraction/parent-regress']
+
+STATUS 0

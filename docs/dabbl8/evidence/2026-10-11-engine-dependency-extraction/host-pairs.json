@@ -1,0 +1,202 @@
+[
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm0-sl0-normal",
+    "parent": "parent-legacy_fixture_test-4-fm0-sl0-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm0-sl0-san",
+    "parent": "parent-legacy_fixture_test-4-fm0-sl0-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm0-sl1-normal",
+    "parent": "parent-legacy_fixture_test-4-fm0-sl1-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm0-sl1-san",
+    "parent": "parent-legacy_fixture_test-4-fm0-sl1-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm1-sl0-normal",
+    "parent": "parent-legacy_fixture_test-4-fm1-sl0-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm1-sl0-san",
+    "parent": "parent-legacy_fixture_test-4-fm1-sl0-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm1-sl1-normal",
+    "parent": "parent-legacy_fixture_test-4-fm1-sl1-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-4-fm1-sl1-san",
+    "parent": "parent-legacy_fixture_test-4-fm1-sl1-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm0-sl0-normal",
+    "parent": "parent-heavy_pool_test-8-fm0-sl0-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm0-sl0-normal",
+    "parent": "parent-legacy_fixture_test-8-fm0-sl0-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm0-sl0-normal",
+    "parent": "parent-d8p1_project_test-8-fm0-sl0-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm0-sl0-san",
+    "parent": "parent-heavy_pool_test-8-fm0-sl0-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm0-sl0-san",
+    "parent": "parent-legacy_fixture_test-8-fm0-sl0-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm0-sl0-san",
+    "parent": "parent-d8p1_project_test-8-fm0-sl0-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm0-sl1-normal",
+    "parent": "parent-heavy_pool_test-8-fm0-sl1-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm0-sl1-normal",
+    "parent": "parent-legacy_fixture_test-8-fm0-sl1-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm0-sl1-normal",
+    "parent": "parent-d8p1_project_test-8-fm0-sl1-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm0-sl1-san",
+    "parent": "parent-heavy_pool_test-8-fm0-sl1-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm0-sl1-san",
+    "parent": "parent-legacy_fixture_test-8-fm0-sl1-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm0-sl1-san",
+    "parent": "parent-d8p1_project_test-8-fm0-sl1-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm1-sl0-normal",
+    "parent": "parent-heavy_pool_test-8-fm1-sl0-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm1-sl0-normal",
+    "parent": "parent-legacy_fixture_test-8-fm1-sl0-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm1-sl0-normal",
+    "parent": "parent-d8p1_project_test-8-fm1-sl0-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm1-sl0-san",
+    "parent": "parent-heavy_pool_test-8-fm1-sl0-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm1-sl0-san",
+    "parent": "parent-legacy_fixture_test-8-fm1-sl0-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm1-sl0-san",
+    "parent": "parent-d8p1_project_test-8-fm1-sl0-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm1-sl1-normal",
+    "parent": "parent-heavy_pool_test-8-fm1-sl1-normal",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm1-sl1-normal",
+    "parent": "parent-legacy_fixture_test-8-fm1-sl1-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm1-sl1-normal",
+    "parent": "parent-d8p1_project_test-8-fm1-sl1-normal",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-heavy_pool_test-8-fm1-sl1-san",
+    "parent": "parent-heavy_pool_test-8-fm1-sl1-san",
+    "status": 0,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-legacy_fixture_test-8-fm1-sl1-san",
+    "parent": "parent-legacy_fixture_test-8-fm1-sl1-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-d8p1_project_test-8-fm1-sl1-san",
+    "parent": "parent-d8p1_project_test-8-fm1-sl1-san",
+    "status": 1,
+    "normalized_diagnostic_identity": true
+  },
+  {
+    "candidate": "candidate-regress",
+    "parent": "parent-regress",
+    "status": 0,
+    "normalized_diagnostic_identity": false,
+    "accepted_summary_identity": true,
+    "scope": "Host elapsed/counter/tie differences retained; no performance parity claimed."
+  }
+]

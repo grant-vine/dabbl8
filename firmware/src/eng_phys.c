@@ -44,7 +44,7 @@
 #include "phys_symp.c"
 #endif
 
-enum { PM_MODAL, PM_STRING, PM_MEMB, PM_SYMP, PM_COUNT };
+#include "phys_models.h"
 #define PHYS_POLY 3
 /* output: model 1.0 -> this (VOICE_FS scale), then a soft knee; per model (a strike of all the modes in
  * phase peaks high but is short) */
@@ -90,14 +90,7 @@ static const int16_t PHYS_CHORDS[7][PX_NSYMP] = {
 };
 static const int8_t PHYS_DETUNE[PX_NSYMP] = {1, -1, 0};   /* 1/16 semitone (6 cents): the strings beat a little */
 
-/* a project or user preset saved before 1.0 (MODEL 2 was DUST): its E values as today's */
-static void phys_legacy(int16_t *e)
-{
-    if (e[0] == 2) {                                     /* DUST -> MODAL bowed (random hits into resonators) */
-        e[0] = PM_MODAL;
-        e[6] = 64;
-    }
-}
+#include "phys_legacy.h"
 
 static phys_slot_t *phys_slot_of(track_t *t, voice_t *v)
 {

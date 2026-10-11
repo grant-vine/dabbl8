@@ -310,6 +310,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "TRACKS: 4-track pattern, live recording (lengths, swing), voice budget, engine switch, cost" env TRACKS=build/tracks_demo "$OUT/hostsim" 0 0 1 "$OUT/tracks.wav"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/project_test" tests/project_test.c -lm
     run "project formats (FUN1..FUN5 -> FUN6, the grid and song chain; DIGITAL tracks -> FM6, SAMPLE PERC -> DRUM)" "$OUT/project_test"
+    ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/engine_legacy_service_test" tests/engine_legacy_service_test.c
+    run "standalone historical PHYS service without engine/DSP dependencies" "$OUT/engine_legacy_service_test"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test" tests/legacy_fixture_test.c -lm
     run "immutable FUN1..FUN9 imports and canonical round trips" "$OUT/legacy_fixture_test" tests/fixtures/projects
     $CC -O1 -w -DLEGACY_DEST_TRACKS=8 -Ibuild/gen -Ifirmware/src -o "$OUT/legacy_fixture_test_8" tests/legacy_fixture_test.c -lm
@@ -452,6 +454,8 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
+    run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
     $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
     run "ASan/UBSan: historical protected overload policy" "$A/native_overload4"
     $SCC -DNPART=8 -o "$A/native_overload8" tests/native_overload_test.c -lm
