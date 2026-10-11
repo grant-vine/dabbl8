@@ -1,0 +1,66 @@
+{
+  "source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "parent_main": "c5c96236ce275072adaaaca35c2046098384b2e9",
+  "parent_target_measured_source": "40a3326ccc0241f37e72f2b6ab5fd742e26a06ab",
+  "parent_target_report": "docs/dabbl8/evidence/2026-10-11-native-arrangement-overlays/integration-target-results.json",
+  "parent_target_report_sha256": "7cadb09729a5bf598c3472b144c0ca8ad1a64a956a19296a0d1b7be7e91c01ae",
+  "parent_target": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "audited_v115_hash_matches": false
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 467100,
+      "sha256": "bf2614a3b0d30f084f7c2f956c4d6861ee36d0b4bfc2951830bf5bdcc19a04c0",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 467100 B; RAM .data+.bss 95812 B of 98304; pool 334316 B of 344064"
+      ]
+    }
+  },
+  "candidate_target": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "audited_v115_hash_matches": false
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 467108,
+      "sha256": "726ad355860f305a2246a7d411e01fe632223afb176b638f7c0dbdc1c5647ebd",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 467108 B; RAM .data+.bss 95812 B of 98304; pool 334316 B of 344064"
+      ]
+    }
+  },
+  "native_image_delta_bytes": 8,
+  "native_ram_and_pool_unchanged": true,
+  "native_static_failures": [
+    "target: fm1_alnk0_irq    2318 instructions, 2193 in loops, 16 divides, 80 calls there: cost 54935 (budget 37502) OVER BUDGET (+46 %, limit +10 %)",
+    "target: uac_tap48         162 instructions,  120 in loops, 0 divides,  0 calls there: cost   555 (budget 504) OVER BUDGET (+10 %, limit +10 %)"
+  ],
+  "native_static_failure_count": 2,
+  "six_baseline_and_generated_pins": [
+    "../native-uac-occupancy-final-target-check/before-artifacts.json",
+    "../native-uac-occupancy-final-target-check/generated-inputs.json"
+  ],
+  "default4_is_post_baseline_source_not_pristine_v115": true,
+  "no_hardware_or_release_qualification": true
+}

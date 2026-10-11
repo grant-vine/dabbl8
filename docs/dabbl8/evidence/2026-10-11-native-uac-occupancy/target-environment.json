@@ -1,0 +1,7 @@
+{
+  "JIELI_TOOLCHAIN": "/Users/grantv/Code/dabbl8/.local-baseline/deps/jieli-linux-toolchains-20250324.1",
+  "AC79_SDK": "/Users/grantv/Code/dabbl8/.local-baseline/deps/ac79-sdk",
+  "JIELI_DOCKER_IMAGE": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "ASAN_OPTIONS": "detect_leaks=0:halt_on_error=1",
+  "UBSAN_OPTIONS": "halt_on_error=1"
+}

@@ -1,0 +1,1765 @@
+== flash storage (A/B, torn writes)
+empty flash loads nothing                      ok
+save A                                         ok
+load returns A                                 ok
+save B                                         ok
+load returns B (newer seq)                     ok
+torn save keeps B                              ok
+header not written keeps B                     ok
+save A again                                   ok
+load returns A                                 ok
+both copies corrupt -> nothing                 ok
+other objects untouched                        ok
+settings save/load                             ok
+CRC-32 is zlib's (check value 0xCBF43926)      ok
+newer copy rotten -> the older one loads       ok
+save over the rotten copy                      ok
+... loads the new data                         ok
+both headers broken -> nothing                 ok
+data stays in the Felucca regions              ok
+FM6 user preset patches (and the retired bank) in the sectors 0x9F000 / 0xFE000 ok
+the autosave in its own sectors 0xE5000 / 0xE6000, nothing else touched ok
+a bank copy does not read as the patches object (its type) ok
+st_save_to: the first patches write into A, the bank's older copy; the bank's B still loads ok
+the next save goes to B (over the bank), A/B as any object ok
+FM6 patches: the sector tails stay erased      ok
+every payload/header byte cut keeps old data   ok
+erase failure keeps old data                   ok
+write protection is a save error               ok
+save sequence wraps                            ok
+wrapped sequence loads new data                ok
+save after sequence wrap                       ok
+invalid object load does no flash access       ok
+invalid object save does no flash access       ok
+wrapped object rejected                        ok
+small destination rejects whole object         ok
+oversized save rejected                        ok
+storage test passed
+== eight-track refusal of all legacy application object writers
+eight-track legacy write refused before native binding ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+refusal is before reads/erase/program, all physical bytes retained ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+quarantine preserves all objects before reads/erase/program ok
+cold/unbound context cannot write the fourth legacy pair ok
+Native storage gate: 0 failures; simulated legacy driver only
+== user presets (UP_PUT parser, bank round trip, versions, PHYS DRUM and SAMPLE PERC -> DRUM, grid records, DIGITAL kept)
+UP_PUT frame < 640 bytes                       ok
+UP_PUT parses                                  ok
+UP_PUT values (negative v14 too)               ok
+pattern: rest drops flags, tie has no note     ok
+UP_PUT short frame -> args                     ok
+every short prefix rejected without record changes ok
+short optional tail rejected                   ok
+UP_PUT slot 32 -> args                         ok
+UP_PUT bad engine -> args                      ok
+UP_PUT engine 1 (DIGITAL): kept as it is       ok
+  a bank read keeps it engine 1 (its values DIGITAL's) ok
+UP_PUT empty name -> args                      ok
+UP_PUT 13-char name -> args                    ok
+UP_PUT 12-char name ok                         ok
+name shown upper case                          ok
+bank fits one object                           ok
+bank save                                      ok
+bank load: the record is back                  ok
+other slots empty                              ok
+bank 0 never written -> empty                  ok
+banks in 0xDC000..0xDFFFF                      ok
+bank with another record size -> empty         ok
+record with another version -> empty           ok
+a version 3 record (a drum grid) is used       ok
+UP_PUT kind 1: a grid record, accents only on hits ok
+UP_PUT kind 0: a note pattern (version 2)      ok
+UP_PUT short grid rejected, record unchanged   ok
+UP_PUT unknown kind rejected                   ok
+UP_PUT trailing byte rejected                  ok
+a grid record: bank round trip                 ok
+bank load: PHYS DRUM -> DRUM engine, MEMB kept ok
+UP_PUT of PHYS DRUM -> DRUM engine             ok
+bank load: SAMPLE PERC -> DRUM kit, FLUTE kept ok
+  migrated again: as it is                     ok
+UP_PUT of SAMPLE PERC -> DRUM kit              ok
+np < P_COUNT: mapped by count                  ok
+old record (np 53): SLICER and matrix defaults, E0..E7 kept ok
+old record (np 57): SLICER kept, matrix defaults, E0..E7 kept ok
+v4 / v5 records of 91, 89 and 69 parameters: E0..E7 at P_E0, lane levels and chord keys defaults ok
+np == P_COUNT: as stored                       ok
+steps -> pattern                               ok
+empty sequencer -> empty pattern               ok
+user preset test passed
+tests/input_test.c:252:9: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  252 |         FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;   /* rows open */
+      |         ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:696:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  696 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;   /* rows open */
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:774:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  774 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+tests/input_test.c:915:13: warning: multiple unsequenced modifications to 'host_now' [-Wunsequenced]
+  915 |             FM1_PR(FM1_PA, FM1_IN) = FM1_PR(FM1_PB, FM1_IN) = 0xFFFFFFFFu;
+      |             ^                        ~~~~~~~~~~~~~~~~~~~~~~
+tests/input_test.c:47:34: note: expanded from macro 'FM1_PR'
+   47 | #define FM1_PR(p, r) (*(host_now += host_bus, &host_reg[(p) & 15u][((r) / 4u) & 63u]))
+      |                                  ^
+4 warnings generated.
+== keys and buttons: fast press, long release, bouncy contacts (one note each), glitches, encoders
+debounce: press 2 frames, release 8 frames, frame 1100 us
+clean press: contact -> press avg 1746 us, max 2297 us; release -> note off max 8897 us
+clean presses: one press and one release each, every key and button      ok
+clean press: counted within 2.3 ms of the contact (2 frames)             ok
+clean release: the note ends within 10 ms                                ok
+press stat (first closed frame -> press): avg 1100 us over 1
+the press stat counts the note keys' presses (one frame after the first) ok
+bouncy press (<= 3 ms of bounce): first touch -> press avg 2511 us, max 5186 us; settled -> press max 2298 us; last bounce -> note off max 8899 us
+2000 bouncy presses: exactly one note-on / press and one release each    ok
+no note ends while its key is held                                       ok
+no hanging note 12 ms after the last bounce of a release                 ok
+bouncy press: counted within 2.3 ms of the contact settling, or sooner   ok
+bouncy release: the note ends within 10 ms of the last bounce            ok
+a 150 us glitch plays no note                                            ok
+10 notes 40 ms apart (20 ms held, bouncy): 10 note-ons, 10 releases      ok
+encoder 0: one cycle -> 1 step(s)
+an encoder detent cycle is one step                                      ok
+#63 a still knob: one contact chattering or both lost together never steps ok
+encoder at speed: 720 turns of 12 detents, 0 miscounted (worst by 0)
+#126 12-detent turns up to 300 detents/s (even) / 150/s (bunched in half a click): every detent ok
+#126 slow turns (3..40 detents/s), contacts bouncing 1.5 ms: one step a click (0 off) ok
+#126 120 detents/s, bouncing 0.2 ms: 8 right then 6 left at once -> 8, then 2 ok
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 1: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3125..3375 ns (target 3200 +-30 %) ok
+LEDs HI, bus 2: the pulse spans 11..12 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim HI: a pulse every frame on its own column, 3208..3208 ns (target 3200 +-30 %) ok
+LEDs HI, bus 4: the pulse spans 5..5 bits of the shift (no wait)
+LEDs, bus 0 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 0: the pulse spans 16..16 bits of the shift (the shift shorter than the pulse: the rest waited)
+LEDs, bus 1 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1583..1583 ns (target 1600 +-30 %) ok
+LEDs LO, bus 1: the pulse spans 11..11 bits of the shift (no wait)
+LEDs, bus 2 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1375..1625 ns (target 1600 +-30 %) ok
+LEDs LO, bus 2: the pulse spans 4..5 bits of the shift (no wait)
+LEDs, bus 4 tick(s) an access: lit every frame, own column only, dark at the latch ok
+  dim LO: a pulse every frame on its own column, 1208..1708 ns (target 1600 +-30 %) ok
+LEDs LO, bus 4: the pulse spans 1..2 bits of the shift (no wait)
+#119 breath HI, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 60.8 % of lit (50..70), from the peak (57.7 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 8 over 25 %, 28 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath HI, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 61.0 % of lit (50..70), from the peak (57.9 %), dark at half a period ok
+  smooth: 32-frame means step <= 12.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 3 fr over 50 % of the peak (<= 9: ~10 ms), 7 over 25 %, 38 at all ok
+  the glow still 3208..3208 ns (target 3208 +-30 %)                      ok
+#119 breath LO, bus 1: own column, the writes, lit / dim never breathing, in step ok
+  peak 29.2 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.2 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 22 over 25 %, 58 at all ok
+  the glow still 1500..1625 ns (target 1583 +-30 %)                      ok
+#119 breath LO, bus 2: own column, the writes, lit / dim never breathing, in step ok
+  peak 32.3 % of lit (25..35), from the peak (29.2 %), dark at half a period ok
+  smooth: 32-frame means step <= 6.3 % of lit (<= 15 % of the peak + 2 frames), monotonic ok
+  flicker: dark runs 7 fr over 50 % of the peak (<= 9: ~10 ms), 13 over 25 %, 39 at all ok
+  the glow still 1458..1708 ns (target 1583 +-30 %)                      ok
+mid level HI: lit 1 frame in 8, evenly (every 8 frames, ~113 Hz), the glow between, in step ok
+  its level 15.5 % of lit (1/8 + the glow), above the glow, below a breath's peak ok
+mid level LO: lit 1 frame in 12, evenly (every 12 frames, ~75 Hz), the glow between, in step ok
+  its level 9.8 % of lit (1/12 + the glow), above the glow, below a breath's peak ok
+power-on sweep DIM: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, the glow on every LED; nothing breathing or mid  ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep (DIM): frame  ms  keys F3..G5 (black and white by place)  buttons
+     0    0  |:                          |     0/64
+    32   35  |*@-.                       |     0/64
+    64   70  |-=+%+:                     |     0/64
+    96  105  |.:--+#%.                   |     0/64
+   128  140  |...::-=%=:                 |     0/64
+   160  176  |......:-+##:               |     0/64
+   192  211  |.......::-=*=:             |     0/64
+   224  246  |..........:-+##:.          |     0/64
+   256  281  |............:-=*%=.        |     0/64
+   288  316  |..............:--+#:       |     0/64
+   320  352  |................::-*@-.    |     0/64
+   352  387  |..................:-=+#*   |     0/64
+   384  422  |....................::-=@-.|  .  0/64
+   416  457  |......................::=+%|  .  0/64
+   448  492  |........................::-|  :  6/64
+   480  528  |..........................:|  - 11/64
+   512  563  |...........................|  - 13/64
+   544  598  |...........................|  :  8/64
+   576  633  |...........................|  :  5/64
+   608  668  |...........................|  .  0/64
+   640  704  |...........................|  .  0/64
+power-on sweep OFF: 640 frames (704 ms) and its end, then fm1_led_anim_on() 0 ok
+  every LED every frame as its level asks: lit frames (sigma-delta), the glow under / alone ok
+  32 frames: lit frames within 1 of the level; at 4 /64 and up a dark run <= 16 frames ok
+  the picture: one head, full, left to right in place order; a tail of 4..5 keys ok
+  the buttons: dark until frame 352, up to 16 /64, down to the end       ok
+  the end: nothing lit, dark (no glow); nothing breathing or mid         ok
+  then the tick as before: 33 ticks, the same line writes, no extra one  ok
+power-on sweep: a key down at frame 200: done the next frame, the glow left ok
+LEDs: refresh 909 Hz lit, 909 Hz dim
+LEDs: host 73.0 ns per tick without dim LEDs, 76.2 ns with, 76.4 ns with a breath too
+input debounce: all ok
+== TRS MIDI parser
+uart: running status, realtime, SysEx, system common ok
+clock: timestamps and USB/TRS source, no active sensing ok
+uart: channels 1, 2, 3, 10, 16 -> USB-MIDI packets   ok
+usb: ota_wire_send packets (CIN 4.. then 5/6/7)      ok
+usb: received frame == the bytes between F0 and F7   ok
+usb: a frame while one is pending is dropped         ok
+usb: a truncated frame is replaced by the next one   ok
+usb: an oversized frame (698 B) is not taken         ok
+usb: soft key -> uboot_req, not a frame              ok
+usb: upgrade key -> ota_req, not a frame             ok
+usb: bytes outside F0..F7 are ignored                ok
+usb: send with a full ring and no host fails at once ok
+usb: send with a full ring times out (200 ms)        ok
+midi parser test passed
+== USB audio input: descriptors (with CDC), ring and packets, 44.1 -> 48 kHz resampler, 48 kHz stream
+-- USB audio input, CDC on
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class misc / IAD (EF 02 01)                               ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: audio IF 0-2, CDC IF 3-4                                   ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 71..145 (band 80..128)              ok
+1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+FIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok
+1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok
+  frames out / in: 48031 / 44128 (160 / 147)                     ok
+     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok
+    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok
+   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok
+   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok
+  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok
+  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok
+  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok
+  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok
+  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok
+  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.3 ns / 44.1 kHz frame
+48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok
+  every frame = the resampled render, in order (0 off); no underrun / overrun ok
+  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok
+  1000 packets, 2.5 ms renders: no glitch                        ok
+48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok
+switch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok
+switch to 48 mid-stream: silence, primed again, every frame in order ok
+uac: all ok
+== USB audio input: descriptors (without CDC), ring and packets, resampler, 48 kHz stream
+-- USB audio input, CDC off
+device descriptor: 18 bytes, type 1, EP0 64                      ok
+bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)     ok
+device class 0 (per interface)                                   ok
+configuration: type 2, wTotalLength = the bytes sent             ok
+descriptor lengths add up to wTotalLength                        ok
+bNumInterfaces = the interfaces present                          ok
+each interface setting has bNumEndpoints endpoints               ok
+endpoint addresses unique                                        ok
+AC header: UAC 1.00, length 8 + collection                       ok
+AC header wTotalLength = the class-specific AC descriptors       ok
+AC collection: the MIDI and audio streaming interfaces           ok
+input terminal 1: 2 ch, L R, not USB streaming                   ok
+output terminal 2: USB streaming, source 1                       ok
+AS alt 0 has no endpoint                                         ok
+AS general: terminal 2, PCM                                      ok
+type I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok
+EP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok
+CS endpoint: sampling frequency control                          ok
+MIDI bulk endpoints 0x01 / 0x81 unchanged                        ok
+IADs: none                                                       ok
+not fed before the host reads (no overruns while it waits)       ok
+10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok
+  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok
+  every frame once, in order; no underrun / overrun              ok
+  fill at render start stays 71..145 (band 80..128)              ok
+1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok
+producer stopped 30 ms: underruns counted, packets keep their size ok
+  the empty ring repeats the last frame                          ok
+consumer stopped 40 ms: overruns counted, the ring never overfills ok
+alt 0: nothing fed, nothing taken                                ok
+restart: primed again, in order, no glitch                       ok
+SET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok
+FIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok
+1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok
+  frames out / in: 48031 / 44128 (160 / 147)                     ok
+     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok
+    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok
+   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok
+   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok
+  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok
+  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok
+  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok
+  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok
+  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok
+  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.2 ns / 44.1 kHz frame
+48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok
+  every frame = the resampled render, in order (0 off); no underrun / overrun ok
+  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok
+  1000 packets, 2.5 ms renders: no glitch                        ok
+48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok
+switch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok
+switch to 48 mid-stream: silence, primed again, every frame in order ok
+uac: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.21                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 + the 48 kHz rate (format, EP 0x84 size, bcdDevice), nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 1
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 1
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.23                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 2-4, CDC IF 0-1, before their first interface             ok
+CDC first: IF 0-1, audio from IF 2                                       ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 2
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 01                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.25                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+layout 2: no AppleUSBCDC device personality matches                      ok
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 1), layout 3
+-- USB descriptors: CDC 1 (presented), UAC 1 (44.1 / 48 kHz), layout 3
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 00                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.27                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 1), layout 2
+-- USB descriptors: CDC 1 (left out), UAC 1 (44.1 / 48 kHz), layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 1), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 1 (44.1 / 48 kHz), layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.20                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = 1.0's FELUCCA_CDC=0 build + the 48 kHz rate, nothing else ok
+audio input: 2 rate(s) 44100 48000, EP 0x84 196 B                        ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.11                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 byte for byte                                     ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.10                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 1 (48 kHz 0), layout 2
+-- USB descriptors: CDC 1 (presented), UAC 1, layout 2
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+bcdUSB 2.00, class 00 00 01                                              ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.15                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 5 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (6: MIDI 01 81, CDC 82 03 83, audio 84)        ok
+IADs: audio IF 0-2, CDC IF 3-4, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+layout 2: no AppleUSBCDC device personality matches                      ok
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 1 (48 kHz 0), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 1, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.10                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 3 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (3: MIDI 01 81, audio 84)                      ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+audio input: 1 rate(s) 44100, EP 0x84 184 B                              ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (presented), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.01                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 4 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (5: MIDI 01 81, CDC 82 03 83)                  ok
+IADs: audio IF 0-1, CDC IF 2-3, before their first interface             ok
+audio from IF 0, CDC last                                                ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+layout 0 = Felucca 1.0 byte for byte                                     ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 1), UAC 0 (48 kHz 1), layout 1
+-- USB descriptors: CDC 1 (presented), UAC 0, layout 1
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+misc / IAD: bcdUSB 2.00, class EF 02 01                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.03                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 4 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (5: MIDI 01 81, CDC 82 03 83)                  ok
+IADs: audio IF 2-3, CDC IF 0-1, before their first interface             ok
+CDC first: IF 0-1, audio from IF 2                                       ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Misc)
+   macOS may attach: AppleUSBAudioComposite (InterfaceAssociationClass)
+   macOS may attach: AppleUSBHostCompositeDevice (InterfaceAssociationClass)
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console presented ok
+usb_desc: all ok
+== USB descriptors: CDC 1 (presented 0), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 1 (left out), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.00                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 2 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (2: MIDI 01 81)                                ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== USB descriptors: CDC 0 (presented 1), UAC 0 (48 kHz 1), layout 0
+-- USB descriptors: CDC 0 (not built), UAC 0, layout 0
+GET_DESCRIPTOR device                                                    ok
+GET_DESCRIPTOR configuration                                             ok
+no console: bcdUSB 1.10, class 00 00 00                                  ok
+VID 1209 PID 0001, strings 1 2, one configuration                        ok
+bcdDevice 3.00                                                           ok
+wTotalLength = the bytes sent                                            ok
+descriptor lengths add up to wTotalLength                                ok
+bNumInterfaces 2 = the interfaces, numbered 0..n-1 in order              ok
+each setting has bNumEndpoints endpoints, each on its interface          ok
+endpoint addresses unique (2: MIDI 01 81)                                ok
+no IAD, audio from IF 0                                                  ok
+audio function: AC, MIDI, AS in a row                                    ok
+AC header 1.00, collection = the MIDI (and audio streaming) interfaces   ok
+UAC_AS_IF (SET_INTERFACE / GET_INTERFACE) = the audio streaming interface ok
+CDC union and call management name the data interface                    ok
+without the console = a FELUCCA_CDC=0 build of 1.0 byte for byte         ok
+   macOS may attach: AppleUSBCDCCompositeDevice (Vendor)
+   macOS may attach: AppleUSBAudioComposite
+   macOS may attach: AppleUSBHostCompositeDevice
+update path (SysEx on EP1: soft key, M-UPGRADE, frames), console not presented ok
+usb_desc: all ok
+== M-UPGRADE entry (own loader)
+handshake answered                                   ok
+identity frame is FM-1_900                           ok
+  19 requests
+session commits                                      ok
+headers + loader + confirm, no head reads            ok
+staged body == the package's loader                  ok
+LOADER.BIN head CRC                                  ok
+record at 0xE4F00 == RAM record                      ok
+record CRC / type / magic / ota_addr                 ok
+nothing written outside 0xE0000..0xE4FFF             ok
+boot cleanup erases the area                         ok
+second boot: nothing to do                           ok
+host gone -> no commit, area clean                   ok
+no 'success' -> -13, no commit, area clean           ok
+ota test passed
+== update loader: other app -> this build
+damaged package (flash.bin CRC) refused, nothing erased  ok
+  rc 0, 2332 requests, 65 sector erases
+install completes                                        ok
+a sector changed in transfer after the check is read again ok
+app area == the new package's flash.bin                  ok
+flash head [0, 0x4000) untouched                         ok
+finish asked (0xF0000000)                                ok
+update records cleared (RAM + flash 0xE4F00, the stock firmware's 0xE8F00) ok
+user data in Felucca's store that looks like a record is kept ok
+no write outside the allowed windows                     ok
+re-run with the same package erases nothing              ok
+foreign key / damaged app head refused, nothing erased   ok
+loader test passed
+== D8P1 independent synthetic reference files
+minimal.d8p 6599
+maximum.d8p 7705
+unknown-optional.d8p 6621
+D8P1: 3 independent Python reference files match committed synthetic fixtures
+== Dabbl8 card configurations: all subsets and bounded CLI
+d8card profile CLI: 16407 checks passed
+== Dabbl8 card dependencies and non-mutating project preflight
+d8card: 79881 checks passed
+== D8P1 bounded byte codec and malformed input refusal
+D8P1: 17490 checks, 0 failures; bounded buffers only, no flash/runtime adoption
+== D8P1 relative multi-sector records and every program-byte cut
+D8P1 multi-sector records: 884086 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts; relative simulator only
+== D8P1 three projects, shared autosave and interrupted pool writes
+D8P1 shared pool: 4546366 checks, 0 failures; 34 operation cuts, 7737 program-byte cuts, 8194 erase prefixes, 1000 rotating saves; virtual NOR only
+== D8P1 mapped existing allocations, session policy and physical cut guards
+D8P1 mapped pool: 93359 checks, 0 failures; 34 operation cuts, 34 late-stop cuts, 109 read cuts, 80 rotating saves; 1MiB simulated NOR only
+== offline native project-set archive: exact originals, sparse roles and whole-set readback
+Native project-set archive: 374 checks, zero failures; all16 sparse masks, actual C exact-byte pool readback; no device or full-instrument backup claim
+== offline D8P1 bundle: original snapshots, migration reports and verified references
+Offline D8P1 conversion: 314 checks passed; 13 real legacy fixtures, snapshots and verified context, no device writes
+== offline migration: complete originals, persisted autosave and real shared-pool proposal
+Migration bundle: 127 checks, 0 failures; synthetic archives, actual C conversion/pool readback; no device I/O
+== instrument migration simulator: bounded APPLY/RESTORE, cut recovery and quarantine
+Instrument migration executor: 6499 checks, 0 failures; 180 APPLY calls x2 cuts, 1401 RESTORE calls; simulator only, quarantine retained, no production ownership
+== instrument migration host: strict full archive and independent whole-NOR readback
+PASS: 284 instrument migration host checks; simulation only, no musical equivalence or hardware qualification
+== source-derived instrument plan: selected legacy conversion, exact pool and original restore
+PASS: 192 source-derived instrument plan checks; encoded provenance only, no runtime/device equivalence
+== D8P1 native state and all frozen legacy round trips
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 54761 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine
+== D8P1 motion bytes and actual upstream eligibility
+ui: D8P1 reference parsed before real motion policy comparison                 ok
+ui: D8P1 motion is byte-exact with the actual D8M1 decoder/encoder             ok
+D8P1 motion policy: 198 IDs/kinds match actual motion_param, 0 failures; no runtime adoption
+== parameter and engine tables as JSON (for the editor mock test)
+== eight-track chord, DRUM, SCL and selected automation ownership
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: held chord releases its original track after every selection transition    ok
+ui: held solo crosses banks without moving or leaving a stale solo             ok
+ui: held FX mute survives selection and releases only its original owner       ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+ui: every drum lane edits only its selected track without FX mute aliasing     ok
+held owner transitions: 64 track pairs, 192 chord/solo/FX cases; 64 drum lane cases
+ui: SCL root key owns only track eight and does not become a bank selector     ok
+ui: DRUM black key eight selects lane eight without muting any track           ok
+ui: track-eight DRUM step key edits its lane without lower-track aliasing      ok
+ui: melodic chord key plays its chord on track eight without selecting a bank  ok
+ui: track-eight chord release leaves no held notes                             ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+ui: global automation retains its selected armed upper-bank destination        ok
+quick conflicts: 0 failures; host evidence only
+== eight-track bank controls, quick-layer ownership and all screen layouts
+ui: ALGORITHM reaches track eight and selects bank 5-8                         ok
+ui: selection cannot exceed track eight                                        ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: REC arms its exact selected destination in either bank                     ok
+ui: four global knobs edit only the selected four-track bank                   ok
+ui: global undo restores all eight levels/mutes and BPM without overlap        ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: four global knobs edit only the selected four-track bank                   ok
+ui: global undo restores all eight levels/mutes and BPM without overlap        ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: global black-key mute has one exact bank destination                       ok
+ui: held global solo retains its key-down bank through selection changes       ok
+ui: C4 unmute-all keeps its role in the upper bank                             ok
+ui: F4 remains tap tempo rather than track-eight solo                          ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX black keys retain eight independent mute owners                         ok
+ui: FX white-key LPF role is unchanged on track eight                          ok
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+ui_render: the splash shows the version TEST (FELUCCA_VERSION) and its lines
+banked mixer renders: 46720 frames, 0 lint findings, 0 ink errors, 0 neutral-color errors, 0 alignment failures, 0 lost declarations
+bank labels: 1280 rendered checks, 0 failures
+banked mixer: 0 failures; prototype, shipping remains four tracks
+== versioned eight-track editor: bounds, ownership, busy errors and legacy refusal
+editor: expanded capabilities advertise track envelope, refuse legacy writes   ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: versioned selection reaches the exact track and returns all eight      ok
+editor: versioned parameter write changes only its addressed level             ok
+editor: versioned parameter read retains selection and signed framing          ok
+editor: versioned dump reports complete descriptor-sized parameter array       ok
+editor: versioned last step preserves notes, full drum bits, chance and ratchet ok
+editor: versioned mixer clamps level and mute without changing selection       ok
+editor: unknown envelope schema refuses before mutation                        ok
+editor: empty envelope refuses before mutation                                 ok
+editor: missing operation refuses before mutation                              ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: envelope cannot forward an unsupported operation or flash write        ok
+editor: track eight index is refused without aliasing track zero               ok
+editor: unknown parameter refused before mutation                              ok
+editor: step 64 index is refused without overflow                              ok
+editor: invalid step chance refused before mutation                            ok
+editor: invalid step ratchet refused before mutation                           ok
+editor: trailing step bytes refused before mutation                            ok
+editor: busy song refuses step mutation explicitly                             ok
+editor: busy song refuses timing mutation explicitly                           ok
+editor: busy song still allows live mix parameters                             ok
+editor: legacy parameter write remains denied on expanded firmware             ok
+editor: project query exposes exactly three active identities                  ok
+editor: project query exposes exactly three active identities                  ok
+editor: project query exposes exactly three active identities                  ok
+editor: historical fourth project query is refused without aliasing            ok
+editor: legacy project load/save remains denied with live music intact         ok
+editor: legacy project load/save remains denied with live music intact         ok
+editor: editor slot descriptor reports three while historical descriptor remains four ok
+editor: expanded firmware does not advertise an unimplemented native full backup ok
+editor: versioned editing made no flash erase or write                         ok
+versioned tracks: 194 assertions, 0 failures; host evidence only
+== companion track client: real C four/eight-track negotiation, edits and stale reply guards
+tracks: actual expanded capabilities grant only track editing ok
+tracks: metadata contains all eight actual tracks ok
+tracks: selection reaches track 1 ok
+tracks: parameter write/read reaches track 1 ok
+tracks: parameter write isolates track 1 ok
+tracks: complete dump reaches track 1 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 1 ok
+tracks: mix write/read reaches track 1 ok
+tracks: selection reaches track 2 ok
+tracks: parameter write/read reaches track 2 ok
+tracks: parameter write isolates track 2 ok
+tracks: complete dump reaches track 2 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 2 ok
+tracks: mix write/read reaches track 2 ok
+tracks: selection reaches track 3 ok
+tracks: parameter write/read reaches track 3 ok
+tracks: parameter write isolates track 3 ok
+tracks: complete dump reaches track 3 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 3 ok
+tracks: mix write/read reaches track 3 ok
+tracks: selection reaches track 4 ok
+tracks: parameter write/read reaches track 4 ok
+tracks: parameter write isolates track 4 ok
+tracks: complete dump reaches track 4 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 4 ok
+tracks: mix write/read reaches track 4 ok
+tracks: selection reaches track 5 ok
+tracks: parameter write/read reaches track 5 ok
+tracks: parameter write isolates track 5 ok
+tracks: complete dump reaches track 5 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 5 ok
+tracks: mix write/read reaches track 5 ok
+tracks: selection reaches track 6 ok
+tracks: parameter write/read reaches track 6 ok
+tracks: parameter write isolates track 6 ok
+tracks: complete dump reaches track 6 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 6 ok
+tracks: mix write/read reaches track 6 ok
+tracks: selection reaches track 7 ok
+tracks: parameter write/read reaches track 7 ok
+tracks: parameter write isolates track 7 ok
+tracks: complete dump reaches track 7 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 7 ok
+tracks: mix write/read reaches track 7 ok
+tracks: selection reaches track 8 ok
+tracks: parameter write/read reaches track 8 ok
+tracks: parameter write isolates track 8 ok
+tracks: complete dump reaches track 8 ok
+tracks: full step/drum/chance/ratchet round trip reaches track 8 ok
+tracks: mix write/read reaches track 8 ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: invalid local index/value refuses before transport ok
+tracks: local input refusal sends nothing and preserves the session ok
+tracks: actual busy refusal is recoverable and live mix remains available ok
+tracks: actual default four-track firmware remains read-only in companion ok
+tracks: read-only client refuses track mutation ok
+tracks: no unsupported track command sent to four-track firmware ok
+tracks: untagged firmware receives identity read only ok
+tracks: unsupported/mismatched capability 0=0 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 2=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 3=9 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 4=63 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 5=7 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 6=63 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 7=100 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 8=28 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 9=15 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 10=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 11=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 12=2 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 13=10 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 14=1 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: unsupported/mismatched capability 14=7 stays read-only ok
+tracks: mismatched capability refuses before write ok
+tracks: mismatched capability sends no edit ok
+tracks: arrays follow negotiated count 5 rather than a fixed eight ok
+tracks: arrays follow negotiated count 6 rather than a fixed eight ok
+tracks: arrays follow negotiated count 7 rather than a fixed eight ok
+tracks: malformed acknowledgment refused for operation 27 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 27 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 31 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 29 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 30 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: malformed acknowledgment refused for operation 30 ok
+tracks: malformed acknowledgment disables further editing ok
+tracks: disconnect ignores pending reply and cancels queued mutation before transport ok
+tracks: full reply validation finishes before a queued edit can transmit ok
+tracks: fresh handshake reconnects without reviving the closed client ok
+tracks: old closed client stays disabled after reconnect ok
+tracks: client exposes no legacy/project/sample/backup write family ok
+tracks: negotiated bounds cannot be mutated by callers ok
+companion tracks: 144 checks passed; actual C four/eight-track handlers, no physical device
+== companion MIDI session: framing, lifecycle and actual C handlers
+MIDI session: framed INFO/caps handshake ok
+MIDI session: only bounded handshake frames sent ok
+MIDI session: owned ports reject concurrent connection ok
+MIDI session: notes alien SysEx and WATCH push do not acknowledge request ok
+MIDI session: valid busy refusal remains recoverable ok
+MIDI session: signed parameter framing and acknowledgment ok
+MIDI session: close is idempotent ok
+MIDI session: close invalidates client and releases both ports ok
+MIDI session: closed client never sends ok
+MIDI session: late old-session frame cannot restart traffic ok
+MIDI session: fresh instance negotiates independently ok
+MIDI session: wrong command rejects ok
+MIDI session: wrong command closes session ok
+MIDI session: unknown refusal rejects ok
+MIDI session: unknown refusal closes session ok
+MIDI session: wrong refusal command rejects ok
+MIDI session: wrong refusal command closes session ok
+MIDI session: short refusal rejects ok
+MIDI session: short refusal closes session ok
+MIDI session: wrong refusal schema rejects ok
+MIDI session: wrong refusal schema closes session ok
+MIDI session: non-seven-bit payload rejects ok
+MIDI session: non-seven-bit payload closes session ok
+MIDI session: missing terminator rejects ok
+MIDI session: missing terminator closes session ok
+MIDI session: oversized reply rejects ok
+MIDI session: oversized reply closes session ok
+MIDI session: firmware refusal 1 disables editing ok
+MIDI session: firmware refusal 2 disables editing ok
+MIDI session: firmware refusal 3 disables editing ok
+MIDI session: missing reply rejects in-flight edit ok
+MIDI session: timeout blocks queued edit ok
+MIDI session: timeout never retries uncertain mutation ok
+MIDI session: input disconnect rejects pending request ok
+MIDI session: input disconnect invalidates client ok
+MIDI session: output disconnect rejects pending request ok
+MIDI session: output disconnect invalidates client ok
+MIDI session: send exception rejects ok
+MIDI session: send exception closes session ok
+MIDI session: partial open failure rejects ok
+MIDI session: partial open cleans both ports before any send ok
+MIDI session: failed open releases ownership ok
+MIDI session: abort during open rejects ok
+MIDI session: cancelled opening sends nothing and closes after open settles ok
+MIDI session: abort after connection invalidates session ok
+MIDI session: browser close failure is observable without preventing peer cleanup ok
+MIDI session: unsolicited own reply invalidates idle session ok
+MIDI session: pre-aborted connect sends nothing ok
+MIDI session: invalid signal rejected before ownership ok
+MIDI session: invalid or cancelled options never open ports ok
+MIDI session: invalid options do not retain ownership ok
+MIDI session: abort during handshake rejects and releases ports ok
+MIDI session: cancelled handshake never continues with CAPS ok
+MIDI session: cleanup preserves unrelated MIDI listeners ok
+MIDI session: externally closed port rejects pending request ok
+MIDI session: connected device with closed port requires fresh connection ok
+MIDI session: actual eight-track negotiation through framed transport ok
+MIDI session: actual selection track 1 ok
+MIDI session: actual framed mixer write track 1 ok
+MIDI session: actual mixer readback track 1 ok
+MIDI session: actual selection track 2 ok
+MIDI session: actual framed mixer write track 2 ok
+MIDI session: actual mixer readback track 2 ok
+MIDI session: actual selection track 3 ok
+MIDI session: actual framed mixer write track 3 ok
+MIDI session: actual mixer readback track 3 ok
+MIDI session: actual selection track 4 ok
+MIDI session: actual framed mixer write track 4 ok
+MIDI session: actual mixer readback track 4 ok
+MIDI session: actual selection track 5 ok
+MIDI session: actual framed mixer write track 5 ok
+MIDI session: actual mixer readback track 5 ok
+MIDI session: actual selection track 6 ok
+MIDI session: actual framed mixer write track 6 ok
+MIDI session: actual mixer readback track 6 ok
+MIDI session: actual selection track 7 ok
+MIDI session: actual framed mixer write track 7 ok
+MIDI session: actual mixer readback track 7 ok
+MIDI session: actual selection track 8 ok
+MIDI session: actual framed mixer write track 8 ok
+MIDI session: actual mixer readback track 8 ok
+MIDI session: actual signed parameter round trip ok
+MIDI session: actual four-track negotiation through framed transport ok
+MIDI session: actual four-track edit refused locally ok
+MIDI session: actual four-track handshake sends no track edits ok
+MIDI session: 85 checks passed; no real MIDI access or hardware qualification
+== companion editor model: musical schema and all-track actual C controls
+Companion model: musical schema equals actual pinned descriptor export ok
+Companion model: all 1386 engine/parameter combinations have musical labels and ranges ok
+Companion model: engine controls use correct engine-specific descriptors ok
+Companion model: musical note names span the full MIDI range ok
+Companion model: complete initial eight-track view from actual handlers ok
+Companion model: visible selection loads matching sound and step 1 ok
+Companion model: visible mixer reflects actual values 1 ok
+Companion model: visible signed pan reaches actual track 1 ok
+Companion model: visible selection loads matching sound and step 2 ok
+Companion model: visible mixer reflects actual values 2 ok
+Companion model: visible signed pan reaches actual track 2 ok
+Companion model: visible selection loads matching sound and step 3 ok
+Companion model: visible mixer reflects actual values 3 ok
+Companion model: visible signed pan reaches actual track 3 ok
+Companion model: visible selection loads matching sound and step 4 ok
+Companion model: visible mixer reflects actual values 4 ok
+Companion model: visible signed pan reaches actual track 4 ok
+Companion model: visible selection loads matching sound and step 5 ok
+Companion model: visible mixer reflects actual values 5 ok
+Companion model: visible signed pan reaches actual track 5 ok
+Companion model: visible selection loads matching sound and step 6 ok
+Companion model: visible mixer reflects actual values 6 ok
+Companion model: visible signed pan reaches actual track 6 ok
+Companion model: visible selection loads matching sound and step 7 ok
+Companion model: visible mixer reflects actual values 7 ok
+Companion model: visible signed pan reaches actual track 7 ok
+Companion model: visible selection loads matching sound and step 8 ok
+Companion model: visible mixer reflects actual values 8 ok
+Companion model: visible signed pan reaches actual track 8 ok
+Companion model: last step preserves captured notes and all drum/chance/ratchet fields ok
+Companion model: invalid musical range/value sends no requests ok
+Companion model: pan values remain isolated 1 ok
+Companion model: pan values remain isolated 2 ok
+Companion model: pan values remain isolated 3 ok
+Companion model: pan values remain isolated 4 ok
+Companion model: pan values remain isolated 5 ok
+Companion model: pan values remain isolated 6 ok
+Companion model: pan values remain isolated 7 ok
+Companion model: pan values remain isolated 8 ok
+Companion model: changed sound discards cached step and requires review ok
+Companion model: changed-sound preflight and review gate send no parameter writes ok
+Companion model: explicit refresh clears changed-sound review gate ok
+Companion model: pending operation blocks concurrent UI actions ok
+Companion model: close stops follow-up step reads after delayed dump ok
+Companion model: closed model rejects pending result without applying stale state ok
+Companion model: closed view cannot issue new traffic or callbacks ok
+Companion model: four-track firmware cannot create an editing model ok
+Companion model: view model never sends legacy globals project preset sample or backup commands ok
+Companion model: 48 checks passed; actual C host handlers, physical hardware unqualified
+== eight-track recording, playback, USB/TRS routing and bounds
+editor: USB channels 1..8 hold eight distinct tracks                           ok
+editor: other port releases the same eight channel owners                      ok
+editor: USB channels 9..16 leave notes/controllers untouched                   ok
+editor: TRS channels 1..8 hold eight distinct tracks                           ok
+editor: other port releases the same eight channel owners                      ok
+editor: TRS channels 9..16 leave notes/controllers untouched                   ok
+editor: track eight pedal ownership uses bit seven without alias               ok
+editor: SEL note-off follows track seven after selection changes               ok
+editor: return to channel mode releases high channels but retains channel eight pedal ok
+editor: channel eight pedal-up clears its final owner                          ok
+editor: all eight armed tracks record independent notes concurrently           ok
+editor: recording releases all eight destinations without stale holds          ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: an upper-bank record bit never writes another track                    ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: each playback mute suppresses only its own sequenced track             ok
+editor: selection reaches track eight                                          ok
+editor: out-of-range selection cannot alias a valid track                      ok
+editor: read-only track discovery reports eight complete records               ok
+editor: legacy editor writes remain refused on the expanded model              ok
+editor: invalid track reads leave runtime ownership unchanged                  ok
+editor: channel route label matches eight-track mode                           ok
+editor: four project slots and four note positions stay independent of track count ok
+eight-track runtime: 0 failures; host evidence only, default build remains four tracks
+== eight actual parts: ninth note, held/sustain/release, stealing and render budget
+eight voices: eight protected held notes use eight slots PASS
+eight voices: eight held notes render exactly eight engine voices PASS
+eight voices: ninth note replaces oldest protected bass with no ninth tail PASS
+eight voices: cross-track chord extra yields before another protected bass PASS
+eight voices: release tail yields before protected lead/bass PASS
+eight voices: extra unison yields before its lead PASS
+eight voices: soft unison extras cannot steal eight protected leads PASS
+eight voices: chord non-bass yields before lowest chord note PASS
+eight voices: protected drum has no unlimited premium over synth leads PASS
+eight voices: real MIDI pedal retains ownership and held allocation PASS
+eight voices: pedal-held protected note may yield to ninth event PASS
+eight voices: pedal-up of stolen note clears ownership without releasing another track PASS
+eight voices: all release tails end without hanging voices PASS
+eight voices: 10,000 burst events never exceed eight active/rendered engines PASS
+eight voices: every enabled engine and voice mode bounds eight-part bursts PASS
+result: 0 failures; target still four tracks; no deadline/click claim
+== PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal
+PHYS pool: eight independent track notes own distinct state slots PASS
+PHYS pool: eight sounding states render within the shared budget PASS
+PHYS pool: shared heavy-state bound is eight bodies across engines PASS
+PHYS pool: another track's retrigger cannot overwrite the first body PASS
+PHYS pool: same destination retrigger retains its body PASS
+PHYS pool: ninth note reclaims retired state without aliasing live bodies PASS
+PHYS pool: stale ownership on another engine is reusable PASS
+PHYS pool: returning to PHYS cannot alias the reassigned owner PASS
+PHYS pool: full state pool fails closed for an unadmitted ninth voice PASS
+PHYS pool: 5000 mixed-model steals retain unique bounded ownership PASS
+PHYS pool: release completes and all states can be reused PASS
+PHYS pool: reset after a session recreates eight independent bodies PASS
+PHYS state pool: 0 failures, 56960 shared heavy-pool host bytes
+== FM6 eight-part operator state: ownership, retriggers, release and full-pool refusal
+FM6 pool: eight tracks own distinct operator states PASS
+FM6 pool: state bound is eight bodies, independent of six-voice track cap PASS
+FM6 pool: another track's retrigger preserves the first operator body PASS
+FM6 pool: same destination retrigger retains nonzero operator phase PASS
+FM6 pool: ninth note reuses retired state without aliasing live notes PASS
+FM6 pool: changed-engine ownership is reclaimed with all operator state cleared PASS
+FM6 pool: returning to FM6 cannot alias the reassigned body PASS
+FM6 pool: unadmitted ninth state refuses instead of overwriting another track PASS
+FM6 pool: 5000 mixed-patch steals retain unique bounded state PASS
+FM6 pool: operator-envelope release ends all voices PASS
+FM6 pool: reset recreates eight independent operator bodies PASS
+FM6 pool: one track retains its original six-voice cap PASS
+FM6 state pool: 0 failures, 56960 shared heavy-pool host bytes
+== SLICE eight-part reverse windows: ownership, exact decode and render isolation
+SLICE pool: eight reverse notes own distinct windows PASS
+SLICE pool: window storage is eight bodies PASS
+SLICE pool: interleaved reverse samples equal forward decode reversed PASS
+SLICE pool: eight reverse renderers produce isolated identical BREAK loops PASS
+SLICE pool: forward BREAK render keeps its predictor and claims no reverse window PASS
+SLICE pool: forward PIANO render keeps its predictor and claims no reverse window PASS
+SLICE pool: reverse PIANO rendering has independent windows PASS
+SLICE pool: reverse-to-forward retires window ownership PASS
+SLICE pool: retired window can be reassigned without touching forward decoder PASS
+SLICE pool: forward-to-reverse reacquires an invalidated distinct window PASS
+SLICE pool: another track's retrigger cannot overwrite a cached window PASS
+SLICE pool: ninth admitted note reuses retired state without aliasing PASS
+SLICE pool: changed-engine reclamation invalidates the prior decoded window PASS
+SLICE pool: return to SLICE cannot alias a reassigned body PASS
+SLICE pool: unadmitted ninth window is refused PASS
+SLICE pool: 5000 reverse-loop steals preserve bounded unique windows PASS
+SLICE pool: all releases finish PASS
+SLICE window pool: 0 failures, 56960 shared heavy-pool host bytes
+== GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades
+heavy pool: inactive GRAIN blocks reserve no shared bodies PASS
+heavy pool: all inactive destination requests refuse allocation PASS
+heavy pool: track-wide engines reject noncanonical duplicate voice owners PASS
+heavy pool: mixed engines own eight distinct bodies PASS
+heavy pool: mixed engines render within eight sounding voices PASS
+heavy pool: a PHYS steal preserves another track's GRAIN state PASS
+heavy pool: eight GRAIN tracks retain their complete state PASS
+heavy pool: eight PHYS tracks retain distinct bodies PASS
+heavy pool: eight DRUM tracks retain complete kits PASS
+heavy pool: new engine reuses only retired state and clears its complete member PASS
+heavy pool: DRUM cannot inherit prior physical or grain body fields PASS
+heavy pool: an unadmitted ninth body fails closed PASS
+heavy pool: three GRAIN voices share one complete twelve-grain state PASS
+heavy pool: PHYS keeps its three-body per-track cap PASS
+heavy pool: eight drum lanes share one complete kit PASS
+heavy pool: 10000 mixed notes and actual engine fades preserve bounded ownership PASS
+heavy pool result: 0 failures; 56960 host bytes, 8 shared bodies
+== WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership
+WHEEL pool: eight organ tracks have unique sounding state and audible output PASS
+WHEEL pool: per-track rotor/bar caches remain independent PASS
+WHEEL pool: same-owner retrigger retains running phases and gain ramps PASS
+WHEEL pool: a ninth note preserves other live organ state and rotor PASS
+WHEEL pool: an unadmitted ninth body refuses without aliasing PASS
+WHEEL pool: new owner starts with cleared organ state PASS
+WHEEL pool: unison retains eight sounding organ bodies PASS
+WHEEL pool: single-trigger percussion stays on the first unison body PASS
+WHEEL pool: one organ track keeps its original eight-voice cap PASS
+WHEEL pool: 5000 mixed notes and engine fades preserve unique state PASS
+WHEEL pool: all organ release tails finish PASS
+WHEEL pool result: 0 failures, 56960 host bytes in existing shared pool
+== eight-part display/project workspace: asynchronous DMA and drawing ownership
+ui: typed arena retains full canvas extent                                     ok
+ui: LCD keeps canvas pointer pending after blit                                ok
+ui: project name waits for DMA before overwriting arena                        ok
+ui: consumed pixels match original canvas                                      ok
+ui: blitting a project-owned arena traps before LCD access                     ok
+ui: D8P1 borrow fences pending LCD pixels                                      ok
+ui: decoded state and bounded wire fit unchanged arena                         ok
+ui: actual maximum D8P1 decodes in display arena                               ok
+ui: arena decode retains exact source bytes                                    ok
+ui: corrupt staged wire preserves decoded state                                ok
+ui: D8P1 borrow during drawing traps before writes                             ok
+ui: expanded project captures track eight                                      ok
+ui: historical export refuses eight tracks                                     ok
+ui: historical runtime load works after display ownership                      ok
+ui: project borrow during CPU drawing traps                                    ok
+ui: parent canvas remains valid after rejected borrow                          ok
+ui: an unchanged canvas can still be blitted again                             ok
+ui: partial-row DMA also completes before project borrow                       ok
+ui: empty partial blit ends CPU canvas ownership                               ok
+ui: name-cache expiry cannot import inside a canvas                            ok
+ui: next safe cache refresh consumes pending DMA                               ok
+ui: 2400 slot/song frames preserve asynchronous pixel sources                  ok
+main workspace: 0 failures, 16806 consumed DMA sources, 0 ownership errors
+== D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal
+D8P1 runtime: 8911 checks, 0 failures; stopped in-memory adoption only, no flash/playback/physical qualification
+== native coherent canonical dirty signature: arrangement, music and UI exclusions
+Native signature: 13774 checks, 0 failures; 3579 musical mutations, coherent canonical oracle, UI exclusions and refusal output preservation; no scheduler/flash writes
+== native signature optimization: canonical wire and pre-normalization refusals
+Native signature equivalence: 2317 checks, 0 failures; full canonical wire, pre-normalization validity, step fields and preserved refusals
+== actual native three-slot project menu/cache/ownership
+Native project menu: 8221 checks, 0 failures; actual UI/runtime, virtual storage only
+== D8P1 actual runtime shared-pool save, recall and autosave policy
+D8P1 runtime pool: 525110 checks, 0 failures; 30 save cuts and 29 late-start cuts; actual eight-track runtime, virtual NOR only
+== actual native reference arrangement, master bars, clocks and held gates
+Native arrangement: 580965 checks, 0 failures; actual runtime/sequencer/clock/motion, virtual NOR only
+== actual runtime through guarded existing-driver adapter
+D8P1 flash runtime: 217341 checks, 0 failures; 29 driver cuts, 29 atomic late-start cuts; actual runtime, simulated physical hooks only
+== eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain
+Eight-track performance audio: 11328 checks, 0 failures; 2240 dry/stereo/send cases, cold first-block parity and solo release; host mixer only
+== native resident tails: real DSP silence oracles, silent echo gaps and late writes
+Native resident tails: 1257832 checks, 0 failures; 600 DSP/oracle blocks, longest-delay gap, 42 states x 29 late mutation cuts and postcommit restores; simulated hooks, no queued-audio proof
+== native FX publication: actual nested TIMER5 and complete post-block silence
+Native FX publication: 228058 checks, 0 failures; 112448 actual nested TIMER5 IRQs, 24 unpublished in-flight comb observations, 80 real audio halves with complete silence oracles; main-loop-only reader contract, no device timing claim
+== native reverb zero sweep: full resident buffers and conservative silence
+Native reverb zero sweep: 26364 checks, 0 failures; 11020 actual render blocks, entire buffer/union silence oracle; conservative latency, simulated only
+== native logical output queues: actual DMA/USB service, drain and late writes
+Native output queues: 249563 checks, 0 failures; 1444 real audio/UAC full-buffer oracles, 7 queue states x 29 late mutation cuts plus postcommit restore; simulated controller, no physical pipeline/timing claim
+== native output queues: autonomous USB benchmark refuses autosave
+Native output queues benchmark: 73 checks, 0 failures; autonomous TONE refused
+tests/native_uac_history_test.c:97:12: error: use of undeclared identifier 'FELUCCA_UAC_TONE'
+   97 |            FELUCCA_UAC_TONE ? " TONE" : "", checks, failures, cases);
+      |            ^~~~~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,10 @@
+{
+  "source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "dis_sha256": "3ca7363b2c12f49f60dbc3f026daaa62c9abbc56823238e96132ae68195c7623",
+  "uac_fragment_sha256": "c4c43835f5538cc3ce4532cb381b4403d3432d0289d8ea5582ef0ea6e7ffbe74",
+  "local_frame_bytes": 24,
+  "saved_registers": "rets and r15-r4, 13 words",
+  "local_and_saved_bytes": 76,
+  "direct_calls": 0,
+  "whole_stack_highwater_or_device_irq_timing_proof": false
+}
