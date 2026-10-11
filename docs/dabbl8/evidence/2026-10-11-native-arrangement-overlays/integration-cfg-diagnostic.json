@@ -1,0 +1,230 @@
+{
+  "source": "40a3326ccc0241f37e72f2b6ab5fd742e26a06ab",
+  "scope": "Read-only diagnostic on parsed direct intra-function branches; calls treated as returning, indirect branch targets unresolved. No check/threshold changed, no cycle/deadline/whole-stack qualification. A backward edge whose target does not dominate its source is not a natural-loop backedge in this modeled CFG; inherited target_budget still uses every backward span.",
+  "reports": {
+    "parent226": {
+      "dis_sha256": "1c545c8f28ff19329a04af25811b8829e63fbfb4ab97901ae35dd51c01d80989",
+      "unknown_indirect_branches": [],
+      "dominator_rounds": 4,
+      "largest_backward_edges": [
+        {
+          "from": "0x2009074",
+          "to": "0x200771a",
+          "head_dominates_tail": false,
+          "span_instructions": 2025,
+          "branch": "if (r3 < 128) goto -6496 <fm1_alnk0_irq+0x1D2 : 200771a >"
+        },
+        {
+          "from": "0x2008f54",
+          "to": "0x20087dc",
+          "head_dominates_tail": false,
+          "span_instructions": 635,
+          "branch": "if (r13 != 8) goto -1918 <fm1_alnk0_irq+0x1294 : 20087dc >"
+        },
+        {
+          "from": "0x2008ce2",
+          "to": "0x20087a8",
+          "head_dominates_tail": false,
+          "span_instructions": 448,
+          "branch": "if (r0 == 0) goto -1344 <fm1_alnk0_irq+0x1260 : 20087a8 >"
+        },
+        {
+          "from": "0x20083ce",
+          "to": "0x20080e2",
+          "head_dominates_tail": true,
+          "span_instructions": 236,
+          "branch": "if (r5 != 8) goto -754 <fm1_alnk0_irq+0xB9A : 20080e2 >"
+        },
+        {
+          "from": "0x2008c96",
+          "to": "0x20089fc",
+          "head_dominates_tail": false,
+          "span_instructions": 229,
+          "branch": "if (--r7 != 0) goto -670 <fm1_alnk0_irq+0x14B4 : 20089fc >"
+        },
+        {
+          "from": "0x2007e10",
+          "to": "0x2007b74",
+          "head_dominates_tail": true,
+          "span_instructions": 192,
+          "branch": "if (r11 != 27) goto -674 <fm1_alnk0_irq+0x62C : 2007b74 >"
+        },
+        {
+          "from": "0x20086e4",
+          "to": "0x20084c4",
+          "head_dominates_tail": false,
+          "span_instructions": 188,
+          "branch": "if (r13 != 8) goto -550 <fm1_alnk0_irq+0xF7C : 20084c4 >"
+        },
+        {
+          "from": "0x20083aa",
+          "to": "0x2008160",
+          "head_dominates_tail": false,
+          "span_instructions": 183,
+          "branch": "if (r0 >= r2) goto -592 <fm1_alnk0_irq+0xC18 : 2008160 >"
+        },
+        {
+          "from": "0x20083a4",
+          "to": "0x2008160",
+          "head_dominates_tail": false,
+          "span_instructions": 182,
+          "branch": "if (r0 == r3) goto -586 <fm1_alnk0_irq+0xC18 : 2008160 >"
+        },
+        {
+          "from": "0x2007acc",
+          "to": "0x2007940",
+          "head_dominates_tail": true,
+          "span_instructions": 128,
+          "branch": "if (r4 != 8) goto -400 <fm1_alnk0_irq+0x3F8 : 2007940 >"
+        },
+        {
+          "from": "0x20089b8",
+          "to": "0x2008888",
+          "head_dominates_tail": false,
+          "span_instructions": 104,
+          "branch": "goto -306 <fm1_alnk0_irq+0x1340 : 2008888 >"
+        },
+        {
+          "from": "0x2007d00",
+          "to": "0x2007ba0",
+          "head_dominates_tail": false,
+          "span_instructions": 100,
+          "branch": "if (r0 > 7) goto -356 <fm1_alnk0_irq+0x658 : 2007ba0 >"
+        },
+        {
+          "from": "0x2007cf6",
+          "to": "0x2007ba0",
+          "head_dominates_tail": false,
+          "span_instructions": 97,
+          "branch": "if ((r0 & 1) == 0) goto -346 <fm1_alnk0_irq+0x658 : 2007ba0 >"
+        },
+        {
+          "from": "0x2007cda",
+          "to": "0x2007ba0",
+          "head_dominates_tail": false,
+          "span_instructions": 89,
+          "branch": "if (r0 == 2) goto -318 <fm1_alnk0_irq+0x658 : 2007ba0 >"
+        },
+        {
+          "from": "0x2007802",
+          "to": "0x2007714",
+          "head_dominates_tail": false,
+          "span_instructions": 77,
+          "branch": "if (r0 == 0) goto -240 <fm1_alnk0_irq+0x1CC : 2007714 >"
+        }
+      ]
+    },
+    "overlay048": {
+      "dis_sha256": "f23343bffc2d60a232a0636ff0b4c08686265ac07b2580f4875b8322de5ff896",
+      "unknown_indirect_branches": [],
+      "dominator_rounds": 4,
+      "largest_backward_edges": [
+        {
+          "from": "0x2009392",
+          "to": "0x2007a12",
+          "head_dominates_tail": false,
+          "span_instructions": 2035,
+          "branch": "if (r3 < 128) goto -6534 <fm1_alnk0_irq+0x2F8 : 2007a12 >"
+        },
+        {
+          "from": "0x20082fa",
+          "to": "0x20078e6",
+          "head_dominates_tail": false,
+          "span_instructions": 767,
+          "branch": "if (r4 != r2) goto -2586 <fm1_alnk0_irq+0x1CC : 20078e6 >"
+        },
+        {
+          "from": "0x20082e4",
+          "to": "0x20078e6",
+          "head_dominates_tail": false,
+          "span_instructions": 762,
+          "branch": "if (r0 == 255) goto -2564 <fm1_alnk0_irq+0x1CC : 20078e6 >"
+        },
+        {
+          "from": "0x2009272",
+          "to": "0x2008ace",
+          "head_dominates_tail": false,
+          "span_instructions": 648,
+          "branch": "if (r13 != 8) goto -1962 <fm1_alnk0_irq+0x13B4 : 2008ace >"
+        },
+        {
+          "from": "0x2008fde",
+          "to": "0x2008a9a",
+          "head_dominates_tail": false,
+          "span_instructions": 451,
+          "branch": "if (r0 == 0) goto -1354 <fm1_alnk0_irq+0x1380 : 2008a9a >"
+        },
+        {
+          "from": "0x20086ba",
+          "to": "0x20083ce",
+          "head_dominates_tail": true,
+          "span_instructions": 236,
+          "branch": "if (r5 != 8) goto -754 <fm1_alnk0_irq+0xCB4 : 20083ce >"
+        },
+        {
+          "from": "0x2008f8a",
+          "to": "0x2008cee",
+          "head_dominates_tail": false,
+          "span_instructions": 230,
+          "branch": "if (--r7 != 0) goto -672 <fm1_alnk0_irq+0x15D4 : 2008cee >"
+        },
+        {
+          "from": "0x2008114",
+          "to": "0x2007e78",
+          "head_dominates_tail": true,
+          "span_instructions": 192,
+          "branch": "if (r11 != 27) goto -674 <fm1_alnk0_irq+0x75E : 2007e78 >"
+        },
+        {
+          "from": "0x20089d4",
+          "to": "0x20087b0",
+          "head_dominates_tail": false,
+          "span_instructions": 190,
+          "branch": "if (r13 != 8) goto -554 <fm1_alnk0_irq+0x1096 : 20087b0 >"
+        },
+        {
+          "from": "0x2008696",
+          "to": "0x200844c",
+          "head_dominates_tail": false,
+          "span_instructions": 183,
+          "branch": "if (r0 >= r2) goto -592 <fm1_alnk0_irq+0xD32 : 200844c >"
+        },
+        {
+          "from": "0x2008690",
+          "to": "0x200844c",
+          "head_dominates_tail": false,
+          "span_instructions": 182,
+          "branch": "if (r0 == r3) goto -586 <fm1_alnk0_irq+0xD32 : 200844c >"
+        },
+        {
+          "from": "0x2007afe",
+          "to": "0x2007954",
+          "head_dominates_tail": false,
+          "span_instructions": 135,
+          "branch": "if (r0 == 0) goto -430 <fm1_alnk0_irq+0x23A : 2007954 >"
+        },
+        {
+          "from": "0x2007dd0",
+          "to": "0x2007c44",
+          "head_dominates_tail": true,
+          "span_instructions": 128,
+          "branch": "if (r4 != 8) goto -400 <fm1_alnk0_irq+0x52A : 2007c44 >"
+        },
+        {
+          "from": "0x2008caa",
+          "to": "0x2008b7a",
+          "head_dominates_tail": false,
+          "span_instructions": 104,
+          "branch": "goto -306 <fm1_alnk0_irq+0x1460 : 2008b7a >"
+        },
+        {
+          "from": "0x2008004",
+          "to": "0x2007ea4",
+          "head_dominates_tail": false,
+          "span_instructions": 100,
+          "branch": "if (r0 > 7) goto -356 <fm1_alnk0_irq+0x78A : 2007ea4 >"
+        }
+      ]
+    }
+  }
+}

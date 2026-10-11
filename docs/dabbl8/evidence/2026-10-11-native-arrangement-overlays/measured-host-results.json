@@ -1,0 +1,736 @@
+{
+  "parent_source": "bf9ddbab103563fd7066618e4a51824c440e5f07",
+  "candidate_source": "048df569ca6035490cc2199fc76d3078e1e093cc",
+  "scope": "Actual fm1_alnk0_irq including synchronous event/sequencer/engines/FX/master/USB48-resampler/click/output paths; simulated DMA/registers/timers. Full host fixture uses8initial gatedsharedvoices, worst boundary96sequence-releases,99parameter motion restoration each8tracks,96localstepzero noteons. Parent fill case is equivalent explicit selectedrow transition; parent cannot implement overlays/fill. Parent apply0 throughout; candidate all8 combinations. Fixture reset and simulated USB-ring read-index draining outside measured window. CLOCK_MONOTONIC measured IRQ only; instruction delta includes clock/rusage wrapper overhead, no subtraction. 16warmups then512calls perbatch,6alternatingorder rounds. No Mac\u2192pi32/device deadline or complete hardware IRQ/context timing inference.",
+  "elapsed_seconds": 8.696670055389404,
+  "batches": 288,
+  "summary": [
+    {
+      "kind": 0,
+      "apply": 0,
+      "ns_per_irq": {
+        "parent_median": 17372.0703125,
+        "candidate_median": 16790.0390625,
+        "ratio": 0.9664961493057508,
+        "parent_range": [
+          16865.234375,
+          17402.34375
+        ],
+        "candidate_range": [
+          16482.421875,
+          16978.515625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250440.3984375,
+        "candidate_median": 248055.0751953125,
+        "ratio": 0.9904754853567174,
+        "parent_range": [
+          250398.509765625,
+          250461.3984375
+        ],
+        "candidate_range": [
+          248032.30078125,
+          248072.318359375
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 1,
+      "ns_per_irq": {
+        "parent_median": 17379.8828125,
+        "candidate_median": 17967.7734375,
+        "ratio": 1.0338259257178175,
+        "parent_range": [
+          16634.765625,
+          17464.84375
+        ],
+        "candidate_range": [
+          17250.0,
+          17978.515625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250437.458984375,
+        "candidate_median": 261820.21875,
+        "ratio": 1.045451506383217,
+        "parent_range": [
+          250415.796875,
+          250473.576171875
+        ],
+        "candidate_range": [
+          261789.40234375,
+          261842.21484375
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 2,
+      "ns_per_irq": {
+        "parent_median": 17380.859375,
+        "candidate_median": 16959.9609375,
+        "ratio": 0.9757837959321272,
+        "parent_range": [
+          16863.28125,
+          17394.53125
+        ],
+        "candidate_range": [
+          16507.8125,
+          16996.09375
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250418.7138671875,
+        "candidate_median": 248166.83203125,
+        "ratio": 0.9910075337375472,
+        "parent_range": [
+          250406.0625,
+          250455.017578125
+        ],
+        "candidate_range": [
+          248131.986328125,
+          248175.595703125
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 3,
+      "ns_per_irq": {
+        "parent_median": 17350.5859375,
+        "candidate_median": 17737.3046875,
+        "ratio": 1.0222885124106489,
+        "parent_range": [
+          16875.0,
+          17458.984375
+        ],
+        "candidate_range": [
+          17523.4375,
+          18033.203125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250424.6455078125,
+        "candidate_median": 262044.208984375,
+        "ratio": 1.0463994406501016,
+        "parent_range": [
+          250409.361328125,
+          250446.04296875
+        ],
+        "candidate_range": [
+          262019.33203125,
+          262065.083984375
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 4,
+      "ns_per_irq": {
+        "parent_median": 17188.4765625,
+        "candidate_median": 16732.421875,
+        "ratio": 0.9734674166240554,
+        "parent_range": [
+          16869.140625,
+          17507.8125
+        ],
+        "candidate_range": [
+          16423.828125,
+          17103.515625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250446.2392578125,
+        "candidate_median": 248094.8134765625,
+        "ratio": 0.9906110557370781,
+        "parent_range": [
+          250411.564453125,
+          250470.2421875
+        ],
+        "candidate_range": [
+          248089.083984375,
+          248169.3125
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 5,
+      "ns_per_irq": {
+        "parent_median": 17189.453125,
+        "candidate_median": 17953.125,
+        "ratio": 1.044426769685263,
+        "parent_range": [
+          16882.8125,
+          17371.09375
+        ],
+        "candidate_range": [
+          17453.125,
+          18078.125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250410.6640625,
+        "candidate_median": 261854.5146484375,
+        "ratio": 1.0457003324070944,
+        "parent_range": [
+          250403.6640625,
+          250457.4453125
+        ],
+        "candidate_range": [
+          261838.140625,
+          261889.26171875
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 6,
+      "ns_per_irq": {
+        "parent_median": 17098.6328125,
+        "candidate_median": 16975.5859375,
+        "ratio": 0.9928037009537952,
+        "parent_range": [
+          16769.53125,
+          17410.15625
+        ],
+        "candidate_range": [
+          16392.578125,
+          17007.8125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250418.7265625,
+        "candidate_median": 248292.5888671875,
+        "ratio": 0.9915096697259905,
+        "parent_range": [
+          250396.783203125,
+          250436.865234375
+        ],
+        "candidate_range": [
+          248289.1953125,
+          248309.302734375
+        ]
+      }
+    },
+    {
+      "kind": 0,
+      "apply": 7,
+      "ns_per_irq": {
+        "parent_median": 16959.9609375,
+        "candidate_median": 17557.6171875,
+        "ratio": 1.0352392468474694,
+        "parent_range": [
+          16828.125,
+          17447.265625
+        ],
+        "candidate_range": [
+          17376.953125,
+          18164.0625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 250428.5625,
+        "candidate_median": 262112.4384765625,
+        "ratio": 1.046655524673079,
+        "parent_range": [
+          250396.474609375,
+          250505.6640625
+        ],
+        "candidate_range": [
+          262074.462890625,
+          262165.97265625
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 0,
+      "ns_per_irq": {
+        "parent_median": 32166.9921875,
+        "candidate_median": 31779.296875,
+        "ratio": 0.9879474179544006,
+        "parent_range": [
+          31425.78125,
+          32570.3125
+        ],
+        "candidate_range": [
+          31070.3125,
+          32736.328125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410969.28515625,
+        "candidate_median": 409902.5439453125,
+        "ratio": 0.997404328621464,
+        "parent_range": [
+          410959.25,
+          411089.462890625
+        ],
+        "candidate_range": [
+          409858.013671875,
+          410542.111328125
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 1,
+      "ns_per_irq": {
+        "parent_median": 32153.3203125,
+        "candidate_median": 32732.421875,
+        "ratio": 1.0180106302201974,
+        "parent_range": [
+          31419.921875,
+          32382.8125
+        ],
+        "candidate_range": [
+          31921.875,
+          32937.5
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410971.4365234375,
+        "candidate_median": 421400.8701171875,
+        "ratio": 1.0253775145104402,
+        "parent_range": [
+          410958.728515625,
+          411026.306640625
+        ],
+        "candidate_range": [
+          421369.095703125,
+          421649.185546875
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 2,
+      "ns_per_irq": {
+        "parent_median": 32005.859375,
+        "candidate_median": 31927.734375,
+        "ratio": 0.9975590407029963,
+        "parent_range": [
+          31447.265625,
+          32449.21875
+        ],
+        "candidate_range": [
+          31244.140625,
+          32070.3125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410975.146484375,
+        "candidate_median": 409958.7490234375,
+        "ratio": 0.9975268639244195,
+        "parent_range": [
+          410959.748046875,
+          411009.373046875
+        ],
+        "candidate_range": [
+          409914.78515625,
+          410012.615234375
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 3,
+      "ns_per_irq": {
+        "parent_median": 32371.09375,
+        "candidate_median": 32771.484375,
+        "ratio": 1.0123687703632196,
+        "parent_range": [
+          32035.15625,
+          32376.953125
+        ],
+        "candidate_range": [
+          32271.484375,
+          33191.40625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410979.173828125,
+        "candidate_median": 421449.1689453125,
+        "ratio": 1.0254757315794454,
+        "parent_range": [
+          410959.43359375,
+          411044.923828125
+        ],
+        "candidate_range": [
+          421420.681640625,
+          421505.09765625
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 4,
+      "ns_per_irq": {
+        "parent_median": 31857.421875,
+        "candidate_median": 32012.6953125,
+        "ratio": 1.0048740114033474,
+        "parent_range": [
+          31705.078125,
+          32500.0
+        ],
+        "candidate_range": [
+          31320.3125,
+          32193.359375
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410987.09765625,
+        "candidate_median": 410495.9990234375,
+        "ratio": 0.9988050753037915,
+        "parent_range": [
+          410969.0703125,
+          411038.181640625
+        ],
+        "candidate_range": [
+          410465.82421875,
+          410516.009765625
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 5,
+      "ns_per_irq": {
+        "parent_median": 32384.765625,
+        "candidate_median": 33006.8359375,
+        "ratio": 1.0192087328870394,
+        "parent_range": [
+          31435.546875,
+          32441.40625
+        ],
+        "candidate_range": [
+          32064.453125,
+          33105.46875
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410964.611328125,
+        "candidate_median": 421980.2412109375,
+        "ratio": 1.0268043271346723,
+        "parent_range": [
+          410943.3203125,
+          410982.80859375
+        ],
+        "candidate_range": [
+          421948.72265625,
+          422001.013671875
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 6,
+      "ns_per_irq": {
+        "parent_median": 32048.828125,
+        "candidate_median": 31736.328125,
+        "ratio": 0.9902492534584679,
+        "parent_range": [
+          31318.359375,
+          32386.71875
+        ],
+        "candidate_range": [
+          31158.203125,
+          32087.890625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410971.654296875,
+        "candidate_median": 410522.6982421875,
+        "ratio": 0.9989075741599366,
+        "parent_range": [
+          410935.240234375,
+          410975.046875
+        ],
+        "candidate_range": [
+          410497.24609375,
+          410548.65625
+        ]
+      }
+    },
+    {
+      "kind": 1,
+      "apply": 7,
+      "ns_per_irq": {
+        "parent_median": 31801.7578125,
+        "candidate_median": 32983.3984375,
+        "ratio": 1.037156456318133,
+        "parent_range": [
+          31375.0,
+          32158.203125
+        ],
+        "candidate_range": [
+          32076.171875,
+          33037.109375
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410988.6083984375,
+        "candidate_median": 422029.921875,
+        "ratio": 1.026865254294003,
+        "parent_range": [
+          410940.169921875,
+          411024.0859375
+        ],
+        "candidate_range": [
+          422021.7890625,
+          422077.673828125
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 0,
+      "ns_per_irq": {
+        "parent_median": 31849.609375,
+        "candidate_median": 31394.53125,
+        "ratio": 0.9857116575703686,
+        "parent_range": [
+          31400.390625,
+          32519.53125
+        ],
+        "candidate_range": [
+          30966.796875,
+          31433.59375
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410959.6572265625,
+        "candidate_median": 409908.017578125,
+        "ratio": 0.9974410148783589,
+        "parent_range": [
+          410943.6640625,
+          411005.033203125
+        ],
+        "candidate_range": [
+          409865.4921875,
+          409934.697265625
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 1,
+      "ns_per_irq": {
+        "parent_median": 31693.359375,
+        "candidate_median": 32518.5546875,
+        "ratio": 1.0260368521599803,
+        "parent_range": [
+          31378.90625,
+          32359.375
+        ],
+        "candidate_range": [
+          31900.390625,
+          32953.125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410967.857421875,
+        "candidate_median": 421412.8046875,
+        "ratio": 1.0254154846346117,
+        "parent_range": [
+          410936.685546875,
+          411027.943359375
+        ],
+        "candidate_range": [
+          421370.798828125,
+          421444.041015625
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 2,
+      "ns_per_irq": {
+        "parent_median": 32373.046875,
+        "candidate_median": 31464.84375,
+        "ratio": 0.971945701357466,
+        "parent_range": [
+          31328.125,
+          32455.078125
+        ],
+        "candidate_range": [
+          31009.765625,
+          31720.703125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410964.642578125,
+        "candidate_median": 409948.59765625,
+        "ratio": 0.9975276585462414,
+        "parent_range": [
+          410922.04296875,
+          410992.07421875
+        ],
+        "candidate_range": [
+          409914.0625,
+          409994.697265625
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 3,
+      "ns_per_irq": {
+        "parent_median": 31839.84375,
+        "candidate_median": 32327.1484375,
+        "ratio": 1.0153048705680285,
+        "parent_range": [
+          31339.84375,
+          32355.46875
+        ],
+        "candidate_range": [
+          31945.3125,
+          33015.625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410959.64453125,
+        "candidate_median": 421466.21875,
+        "ratio": 1.025565951203637,
+        "parent_range": [
+          410915.3125,
+          411043.494140625
+        ],
+        "candidate_range": [
+          421428.126953125,
+          421491.630859375
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 4,
+      "ns_per_irq": {
+        "parent_median": 32312.5,
+        "candidate_median": 32078.125,
+        "ratio": 0.9927466150870407,
+        "parent_range": [
+          31414.0625,
+          32410.15625
+        ],
+        "candidate_range": [
+          31167.96875,
+          32171.875
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410955.837890625,
+        "candidate_median": 410504.125,
+        "ratio": 0.998900823765046,
+        "parent_range": [
+          410936.931640625,
+          410978.064453125
+        ],
+        "candidate_range": [
+          410465.69921875,
+          410513.140625
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 5,
+      "ns_per_irq": {
+        "parent_median": 32356.4453125,
+        "candidate_median": 33039.0625,
+        "ratio": 1.0210967917182265,
+        "parent_range": [
+          31968.75,
+          32376.953125
+        ],
+        "candidate_range": [
+          32460.9375,
+          33257.8125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410950.177734375,
+        "candidate_median": 422018.9814453125,
+        "ratio": 1.0269346609653787,
+        "parent_range": [
+          410924.9609375,
+          410972.3125
+        ],
+        "candidate_range": [
+          421974.140625,
+          422202.572265625
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 6,
+      "ns_per_irq": {
+        "parent_median": 32368.1640625,
+        "candidate_median": 32108.3984375,
+        "ratio": 0.9919746568109821,
+        "parent_range": [
+          31375.0,
+          32740.234375
+        ],
+        "candidate_range": [
+          31910.15625,
+          32228.515625
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410990.830078125,
+        "candidate_median": 410546.6318359375,
+        "ratio": 0.9989192015741494,
+        "parent_range": [
+          410947.400390625,
+          411068.37109375
+        ],
+        "candidate_range": [
+          410521.095703125,
+          410583.859375
+        ]
+      }
+    },
+    {
+      "kind": 2,
+      "apply": 7,
+      "ns_per_irq": {
+        "parent_median": 32249.0234375,
+        "candidate_median": 32707.03125,
+        "ratio": 1.0142022226932743,
+        "parent_range": [
+          31708.984375,
+          32433.59375
+        ],
+        "candidate_range": [
+          32255.859375,
+          33113.28125
+        ]
+      },
+      "instructions_per_irq": {
+        "parent_median": 410964.43359375,
+        "candidate_median": 422077.720703125,
+        "ratio": 1.027041968114352,
+        "parent_range": [
+          410928.115234375,
+          411003.07421875
+        ],
+        "candidate_range": [
+          422037.916015625,
+          422089.58984375
+        ]
+      }
+    }
+  ],
+  "pins": {
+    "probe.c": "c3d01e09446fc41fda387acc83debd80ed26acb9f2153ff10512d11640dbdd39",
+    "parent/probe": "940b7ab213d4d0c8bda22c18a3fd84238ab4ee877dda4bf7225329823245d1a3",
+    "candidate/probe": "19485eb4c07299f100ebd6420da5f145eed4e11361265dbe332484af37b19757",
+    "parent/arrangement_fixture.h": "f950c3b8e997f8c5a5d2aad0913f8b02295cd534f9dd9a3b531ae244d50f3760",
+    "candidate/arrangement_fixture.h": "e4c486fcda340bff2da8746bdf3766ec2123b9aed653cc21edb110ef3ec1fabf"
+  }
+}

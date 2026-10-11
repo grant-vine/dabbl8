@@ -1,0 +1,1217 @@
+{
+  "parent226": {
+    "file": "/Users/grantv/Code/dabbl8/.local-baseline/native-arrangement-final/build/native-arrangement-8/linked-disassembly.txt",
+    "sha256": "1c545c8f28ff19329a04af25811b8829e63fbfb4ab97901ae35dd51c01d80989",
+    "functions": {
+      "d8arr_fill_boundary": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "d8arr_scene_publish": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "d8arr_next": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "seq_step": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 266,
+          "loop": 88,
+          "div": 0,
+          "call": 3,
+          "cost": 118
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -44",
+          "r15 = r1  #",
+          "r1 = b[r1+6] (u)",
+          "r13 = r0",
+          "r4 = r0 + 52"
+        ],
+        "local_stack_adjust_bytes": 44,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 96,
+        "direct_call_targets": [
+          "scale_snap",
+          "seq_release",
+          "seq_steps",
+          "trk_note_off",
+          "trk_note_on"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "mix_part": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "perf_begin": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 192,
+          "loop": 28,
+          "div": 0,
+          "call": 0,
+          "cost": 28
+        },
+        "prologue": [
+          "[--sp] = {rets, r13-r4}",
+          "r4 = 29479632 <shed_req : 1c1d2d0 >",
+          "r0 = b[r4+18] (u)",
+          "r8 = 0",
+          "if (r0 != 0) goto 42 <perf_begin+0x3A : 2004d4a >",
+          "r0 = [r4+200]"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 44,
+        "direct_prologue_bytes": 44,
+        "direct_call_targets": [
+          "perf_avail"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_advance_auto": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 15,
+          "loop": 0,
+          "div": 0,
+          "call": 0,
+          "cost": 0
+        },
+        "prologue": [
+          "[--sp] = {rets, r5, r4}",
+          "r2 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r3 = 29422524 <chain : 1c0f3bc >",
+          "r1 = b[r3+r2] (u)",
+          "r4 = 18390 <build/native-arrangement-8/felucca_size.ll+0x47D6 : 47d6 >",
+          "r4 = b[r3+r4] (u)"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 12,
+        "direct_prologue_bytes": 12,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "chain_advance_legacy": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 21,
+          "loop": 0,
+          "div": 0,
+          "call": 0,
+          "cost": 0
+        },
+        "prologue": [
+          "r2 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r1 = 29422524 <chain : 1c0f3bc >",
+          "r2 = b[r1+r2] (u)",
+          "r3 = 24336 <build/native-arrangement-8/felucca_size.ll+0x5F10 : 5f10 >",
+          "r3 = b[r1+r3] (u)",
+          "r2 += 1"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 0,
+        "direct_prologue_bytes": 0,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "chain_apply": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 49,
+          "loop": 28,
+          "div": 0,
+          "call": 2,
+          "cost": 40
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "r0 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r0 = b[r2+r0] (u)",
+          "r0 = r0 << 1",
+          "r0 += r2"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 52,
+        "direct_call_targets": [
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "seq_stop": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 110,
+          "loop": 46,
+          "div": 0,
+          "call": 3,
+          "cost": 70
+        },
+        "prologue": [
+          "[--sp] = {rets, r11-r4}",
+          "r9 = 29481632 <con : 1c1daa0 >",
+          "r0 = 0",
+          "b[r9+126] = r0",
+          "r8 = 29479632 <shed_req : 1c1d2d0 >",
+          "b[r8+4] = r0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 36,
+        "direct_prologue_bytes": 36,
+        "direct_call_targets": [
+          "arp_off",
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "fm1_alnk0_irq": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 2218,
+          "loop": 2092,
+          "div": 16,
+          "call": 77,
+          "cost": 40575
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -432",
+          "r3 = 29868096 <felucca_dbg : 1c7c040 >",
+          "[r3+16] = 0x1",
+          "r2 = 0x12E00",
+          "r0 = b[r2+8] (u)"
+        ],
+        "local_stack_adjust_bytes": 432,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 484,
+        "direct_call_targets": [
+          "arp_chord",
+          "arp_chord_off",
+          "arp_off",
+          "arp_pick",
+          "chain_advance_legacy",
+          "chord_build",
+          "cin_begin",
+          "cin_block",
+          "cin_record",
+          "click_render",
+          "d8arr_advance_auto",
+          "d8arr_apply",
+          "d8arr_held_build",
+          "d8arr_held_refresh",
+          "div_samples",
+          "fx_buses",
+          "input_off",
+          "input_on",
+          "kb_lat",
+          "kb_map",
+          "key_place",
+          "lfo_wave",
+          "lowest_held",
+          "master_out",
+          "memcpy",
+          "midi_clock_pulse",
+          "midi_clock_transport",
+          "midi_event",
+          "midi_forget_track",
+          "midi_local_held",
+          "midi_out_event",
+          "midi_route_ch14",
+          "mod_begin",
+          "mod_end",
+          "mod_voice",
+          "motion_step",
+          "perf_begin",
+          "perf_key",
+          "perf_master",
+          "perf_mute",
+          "perf_pre",
+          "rec_note",
+          "rec_on",
+          "seq_ratchet",
+          "seq_release",
+          "seq_start",
+          "seq_step",
+          "seq_steps",
+          "seq_stop",
+          "shed_check",
+          "slicer_busy",
+          "slicer_track",
+          "trk_all_off",
+          "trk_note_off",
+          "trk_note_on",
+          "uac_render_start",
+          "uac_tap",
+          "usb_fixed_dac"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "seq_release": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 43,
+          "loop": 22,
+          "div": 0,
+          "call": 1,
+          "cost": 22
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r4 = r0",
+          "r5 = r4 + 1654",
+          "r0 = b[r5+0] (u)",
+          "if (r0 == 0) goto 110 <seq_release+0x7A : 2001ac0 >",
+          "r1 = 29395788 <trk : 1c08b4c >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "trk_note_off"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_apply": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 44,
+          "loop": 15,
+          "div": 0,
+          "call": 2,
+          "cost": 15
+        },
+        "prologue": [
+          "[--sp] = {rets, r6-r4}",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r3 = 24436 <build/native-arrangement-8/felucca_size.ll+0x5F74 : 5f74 >",
+          "r3 += r2",
+          "r0 += r2  #",
+          "b[r3+2] = r0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 16,
+        "direct_prologue_bytes": 16,
+        "direct_call_targets": [
+          "d8arr_timing",
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_timing": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 32,
+          "loop": 23,
+          "div": 0,
+          "call": 1,
+          "cost": 35
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r5 = 0",
+          "r8 = 18394 <build/native-arrangement-8/felucca_size.ll+0x47DA : 47da >",
+          "r7 = 29422524 <chain : 1c0f3bc >",
+          "r9 = 18252 <build/native-arrangement-8/felucca_size.ll+0x474C : 474c >",
+          "r10 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "d8arr_source_track"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_held_build": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 82,
+          "loop": 68,
+          "div": 0,
+          "call": 1,
+          "cost": 179
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r4 = r0",
+          "r1_r0 = 0",
+          "b[r4+r1] = r0",
+          "r1 += 1",
+          "if (r1 != 128) goto -10 <d8arr_held_build+0x6 : 200265c >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "mchord_of"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_held_refresh": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 39,
+          "loop": 5,
+          "div": 0,
+          "call": 0,
+          "cost": 5
+        },
+        "prologue": [
+          "[--sp] = {rets, r6-r4}",
+          "r3 = 24442 <build/native-arrangement-8/felucca_size.ll+0x5F7A : 5f7a >",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r3 = b[r2+r3] (u)",
+          "r4 = r0",
+          "if (r3 != 1) goto 84 <d8arr_held_refresh+0x6A : 200240a >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 16,
+        "direct_prologue_bytes": 16,
+        "direct_call_targets": [
+          "midi_local_held",
+          "midi_note_held"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_forget_track": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 84,
+          "loop": 44,
+          "div": 0,
+          "call": 2,
+          "cost": 62
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r1 = 255",
+          "r8 = r1 ^ (1 << r0)",
+          "r1 = r0 + 1",
+          "r3 = 0",
+          "r5 = 29446972 <midi_sel_on : 1c1533c >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "midi_local_held",
+          "midi_note_held"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_note_held": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 39,
+          "loop": 24,
+          "div": 0,
+          "call": 1,
+          "cost": 36
+        },
+        "prologue": [
+          "[--sp] = {rets, r8-r4}",
+          "r2 = 29395788 <trk : 1c08b4c >",
+          "r0 = r0 - r2",
+          "r2 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >",
+          "r0 = r0 / r2 (s)",
+          "r2 = r0 + 1"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 24,
+        "direct_prologue_bytes": 24,
+        "direct_call_targets": [
+          "mchord_of"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_local_held": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 28,
+          "loop": 14,
+          "div": 0,
+          "call": 0,
+          "cost": 26
+        },
+        "prologue": [
+          "[--sp] = {rets, r10-r4}",
+          "r2 = 29395788 <trk : 1c08b4c >",
+          "r0 = r0 - r2",
+          "r2 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >",
+          "r0 = r0 / r2 (s)",
+          "r2 = 0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 32,
+        "direct_prologue_bytes": 32,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "motion_step": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 106,
+          "loop": 58,
+          "div": 0,
+          "call": 2,
+          "cost": 58
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "r12 = r3",
+          "r11 = r2",
+          "r8 = r1",
+          "r13 = r0",
+          "call -10388 <d8arr_source_track : 2001ce0 >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 52,
+        "direct_call_targets": [
+          "d8arr_motion_compatible",
+          "d8arr_source_track",
+          "motion_restore",
+          "motion_unlock",
+          "param_fit"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "motion_unlock": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 86,
+          "loop": 57,
+          "div": 0,
+          "call": 2,
+          "cost": 147
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -12",
+          "r4 = r2",
+          "r8 = r1",
+          "r9 = r0",
+          "r0 = 29395788 <trk : 1c08b4c >"
+        ],
+        "local_stack_adjust_bytes": 12,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 64,
+        "direct_call_targets": [
+          "d8arr_motion_compatible",
+          "d8arr_source_track",
+          "param_fit"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "pnf_prepare_arrangement": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 378,
+          "loop": 342,
+          "div": 0,
+          "call": 12,
+          "cost": 3117
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -568",
+          "r14 = 29479632 <shed_req : 1c1d2d0 >",
+          "r0 = b[r14+2] (u)",
+          "if (r0 == 0) goto 106 <pnf_prepare_arrangement+0x7C : 200e100 >",
+          "r4 = sp + 32"
+        ],
+        "local_stack_adjust_bytes": 568,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 620,
+        "direct_call_targets": [
+          "d8arr_held_build",
+          "d8p1_crc32",
+          "d8p1_project_decode",
+          "d8pool_inventory",
+          "d8pool_load",
+          "d8pool_mapped_open",
+          "d8pr_preflight",
+          "d8pr_stopped",
+          "memcpy",
+          "proj_steps"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      }
+    },
+    "irq_capped_depth_histogram": {
+      "0": 126,
+      "1": 443,
+      "2": 743,
+      "3": 497,
+      "4": 409
+    },
+    "largest_backward_spans": [
+      {
+        "head": "0x200771a",
+        "end": "0x2009074",
+        "covered_instructions": 2025
+      },
+      {
+        "head": "0x20087dc",
+        "end": "0x2008f54",
+        "covered_instructions": 635
+      },
+      {
+        "head": "0x20087a8",
+        "end": "0x2008ce2",
+        "covered_instructions": 448
+      },
+      {
+        "head": "0x20080e2",
+        "end": "0x20083ce",
+        "covered_instructions": 236
+      },
+      {
+        "head": "0x20089fc",
+        "end": "0x2008c96",
+        "covered_instructions": 229
+      },
+      {
+        "head": "0x2007b74",
+        "end": "0x2007e10",
+        "covered_instructions": 192
+      },
+      {
+        "head": "0x20084c4",
+        "end": "0x20086e4",
+        "covered_instructions": 188
+      },
+      {
+        "head": "0x2008160",
+        "end": "0x20083aa",
+        "covered_instructions": 183
+      }
+    ]
+  },
+  "integration40a": {
+    "file": "/Users/grantv/Code/dabbl8/.local-baseline/native-arrangement-overlay-final/build/native-arrangement-8/linked-disassembly.txt",
+    "sha256": "f23343bffc2d60a232a0636ff0b4c08686265ac07b2580f4875b8322de5ff896",
+    "functions": {
+      "d8arr_fill_boundary": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "d8arr_scene_publish": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 33,
+          "loop": 10,
+          "div": 0,
+          "call": 0,
+          "cost": 10
+        },
+        "prologue": [
+          "[--sp] = {rets, r6-r4}",
+          "r0 = 18401 <build/native-arrangement-8/felucca_size.ll+0x47E0 : 47e0 >",
+          "r1 = 29422524 <chain : 1c0f3bc >",
+          "r0 = b[r1+r0] (u)",
+          "r0 = r0 * 0x1A",
+          "r1 += r0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 16,
+        "direct_prologue_bytes": 16,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_next": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "seq_step": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 345,
+          "loop": 116,
+          "div": 0,
+          "call": 3,
+          "cost": 146
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -48",
+          "r15_r14 = r1_r0  #",
+          "r1 = b[r1+6] (u)",
+          "r4 = r0 + 52",
+          "r0 = h[r4+12] (s)"
+        ],
+        "local_stack_adjust_bytes": 48,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 100,
+        "direct_call_targets": [
+          "scale_snap",
+          "seq_release",
+          "seq_steps",
+          "trk_note_off",
+          "trk_note_on"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "mix_part": {
+        "linked_separate": false,
+        "scope": "may be inlined/absent; no zero-cost claim"
+      },
+      "perf_begin": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 200,
+          "loop": 28,
+          "div": 0,
+          "call": 0,
+          "cost": 28
+        },
+        "prologue": [
+          "[--sp] = {rets, r13-r4}",
+          "r4 = 29479632 <shed_req : 1c1d2d0 >",
+          "r0 = b[r4+18] (u)",
+          "r8 = 0",
+          "if (r0 != 0) goto 42 <perf_begin+0x3A : 2004ee6 >",
+          "r0 = [r4+200]"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 44,
+        "direct_prologue_bytes": 44,
+        "direct_call_targets": [
+          "perf_avail"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_advance_auto": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 15,
+          "loop": 0,
+          "div": 0,
+          "call": 0,
+          "cost": 0
+        },
+        "prologue": [
+          "[--sp] = {rets, r5, r4}",
+          "r2 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r3 = 29422524 <chain : 1c0f3bc >",
+          "r1 = b[r3+r2] (u)",
+          "r4 = 18398 <build/native-arrangement-8/felucca_size.ll+0x47DE : 47de >",
+          "r4 = b[r3+r4] (u)"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 12,
+        "direct_prologue_bytes": 12,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "chain_advance_legacy": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 21,
+          "loop": 0,
+          "div": 0,
+          "call": 0,
+          "cost": 0
+        },
+        "prologue": [
+          "r2 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r1 = 29422524 <chain : 1c0f3bc >",
+          "r2 = b[r1+r2] (u)",
+          "r3 = 24336 <build/native-arrangement-8/felucca_size.ll+0x5F10 : 5f10 >",
+          "r3 = b[r1+r3] (u)",
+          "r2 += 1"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 0,
+        "direct_prologue_bytes": 0,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "chain_apply": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 49,
+          "loop": 28,
+          "div": 0,
+          "call": 2,
+          "cost": 40
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "r0 = 24438 <build/native-arrangement-8/felucca_size.ll+0x5F76 : 5f76 >",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r0 = b[r2+r0] (u)",
+          "r0 = r0 << 1",
+          "r0 += r2"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 52,
+        "direct_call_targets": [
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "seq_stop": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 114,
+          "loop": 46,
+          "div": 0,
+          "call": 3,
+          "cost": 70
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r9 = 29481664 <con : 1c1dac0 >",
+          "r0 = 0",
+          "b[r9+126] = r0",
+          "r8 = 29479632 <shed_req : 1c1d2d0 >",
+          "b[r8+4] = r0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "arp_off",
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "fm1_alnk0_irq": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 2318,
+          "loop": 2193,
+          "div": 16,
+          "call": 80,
+          "cost": 54935
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -432",
+          "r3 = 29868096 <felucca_dbg : 1c7c040 >",
+          "[r3+16] = 0x1",
+          "r2 = 0x12E00",
+          "r0 = b[r2+8] (u)"
+        ],
+        "local_stack_adjust_bytes": 432,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 484,
+        "direct_call_targets": [
+          "arp_chord",
+          "arp_chord_off",
+          "arp_off",
+          "arp_pick",
+          "chord_build",
+          "cin_begin",
+          "cin_block",
+          "cin_record",
+          "click_render",
+          "d8arr_advance_auto",
+          "d8arr_apply",
+          "d8arr_held_build",
+          "d8arr_held_refresh",
+          "div_samples",
+          "fx_buses",
+          "input_off",
+          "input_on",
+          "kb_lat",
+          "kb_map",
+          "key_place",
+          "lfo_wave",
+          "lowest_held",
+          "master_out",
+          "memcpy",
+          "midi_clock_pulse",
+          "midi_clock_transport",
+          "midi_event",
+          "midi_forget_track",
+          "midi_local_held",
+          "midi_out_event",
+          "midi_route_ch14",
+          "mod_begin",
+          "mod_end",
+          "mod_voice",
+          "motion_step",
+          "perf_begin",
+          "perf_key",
+          "perf_master",
+          "perf_mute",
+          "perf_pre",
+          "rec_note",
+          "rec_on",
+          "seq_ratchet",
+          "seq_release",
+          "seq_start",
+          "seq_step",
+          "seq_steps",
+          "seq_stop",
+          "shed_check",
+          "slicer_busy",
+          "slicer_track",
+          "trk_all_off",
+          "trk_note_off",
+          "trk_note_on",
+          "uac_render_start",
+          "uac_tap",
+          "usb_fixed_dac"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "seq_release": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 43,
+          "loop": 22,
+          "div": 0,
+          "call": 1,
+          "cost": 22
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r4 = r0",
+          "r5 = r4 + 1654",
+          "r0 = b[r5+0] (u)",
+          "if (r0 == 0) goto 110 <seq_release+0x7A : 2001ac0 >",
+          "r1 = 29395788 <trk : 1c08b4c >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "trk_note_off"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_apply": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 45,
+          "loop": 15,
+          "div": 0,
+          "call": 2,
+          "cost": 15
+        },
+        "prologue": [
+          "[--sp] = {rets, r6-r4}",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r3 = 24436 <build/native-arrangement-8/felucca_size.ll+0x5F74 : 5f74 >",
+          "r3 += r2",
+          "r0 += r2  #",
+          "b[r3+2] = r0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 16,
+        "direct_prologue_bytes": 16,
+        "direct_call_targets": [
+          "d8arr_scene_publish",
+          "d8arr_timing",
+          "motion_restore",
+          "seq_release"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_timing": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 32,
+          "loop": 23,
+          "div": 0,
+          "call": 1,
+          "cost": 35
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r5 = 0",
+          "r8 = 18402 <build/native-arrangement-8/felucca_size.ll+0x47E2 : 47e2 >",
+          "r7 = 29422524 <chain : 1c0f3bc >",
+          "r9 = 18252 <build/native-arrangement-8/felucca_size.ll+0x474C : 474c >",
+          "r10 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "d8arr_source_track"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_held_build": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 82,
+          "loop": 68,
+          "div": 0,
+          "call": 1,
+          "cost": 179
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r4 = r0",
+          "r1_r0 = 0",
+          "b[r4+r1] = r0",
+          "r1 += 1",
+          "if (r1 != 128) goto -10 <d8arr_held_build+0x6 : 20026e4 >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "mchord_of"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "d8arr_held_refresh": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 39,
+          "loop": 5,
+          "div": 0,
+          "call": 0,
+          "cost": 5
+        },
+        "prologue": [
+          "[--sp] = {rets, r6-r4}",
+          "r3 = 24442 <build/native-arrangement-8/felucca_size.ll+0x5F7A : 5f7a >",
+          "r2 = 29422524 <chain : 1c0f3bc >",
+          "r3 = b[r2+r3] (u)",
+          "r4 = r0",
+          "if (r3 != 1) goto 84 <d8arr_held_refresh+0x6A : 2002490 >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 16,
+        "direct_prologue_bytes": 16,
+        "direct_call_targets": [
+          "midi_local_held",
+          "midi_note_held"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_forget_track": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 84,
+          "loop": 44,
+          "div": 0,
+          "call": 2,
+          "cost": 62
+        },
+        "prologue": [
+          "[--sp] = {rets, r12-r4}",
+          "r1 = 255",
+          "r8 = r1 ^ (1 << r0)",
+          "r1 = r0 + 1",
+          "r3 = 0",
+          "r5 = 29446972 <midi_sel_on : 1c1533c >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 40,
+        "direct_prologue_bytes": 40,
+        "direct_call_targets": [
+          "midi_local_held",
+          "midi_note_held"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_note_held": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 39,
+          "loop": 24,
+          "div": 0,
+          "call": 1,
+          "cost": 36
+        },
+        "prologue": [
+          "[--sp] = {rets, r8-r4}",
+          "r2 = 29395788 <trk : 1c08b4c >",
+          "r0 = r0 - r2",
+          "r2 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >",
+          "r0 = r0 / r2 (s)",
+          "r2 = r0 + 1"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 24,
+        "direct_prologue_bytes": 24,
+        "direct_call_targets": [
+          "mchord_of"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "midi_local_held": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 28,
+          "loop": 14,
+          "div": 0,
+          "call": 0,
+          "cost": 26
+        },
+        "prologue": [
+          "[--sp] = {rets, r10-r4}",
+          "r2 = 29395788 <trk : 1c08b4c >",
+          "r0 = r0 - r2",
+          "r2 = 1772 <build/native-arrangement-8/felucca_size.ll+0x6EC : 6ec >",
+          "r0 = r0 / r2 (s)",
+          "r2 = 0"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 32,
+        "direct_prologue_bytes": 32,
+        "direct_call_targets": [],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "motion_step": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 106,
+          "loop": 58,
+          "div": 0,
+          "call": 2,
+          "cost": 58
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "r12 = r3",
+          "r11 = r2",
+          "r8 = r1",
+          "r13 = r0",
+          "call -10510 <d8arr_source_track : 2001cf2 >"
+        ],
+        "local_stack_adjust_bytes": 0,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 52,
+        "direct_call_targets": [
+          "d8arr_motion_compatible",
+          "d8arr_source_track",
+          "motion_restore",
+          "motion_unlock",
+          "param_fit"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "motion_unlock": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 86,
+          "loop": 57,
+          "div": 0,
+          "call": 2,
+          "cost": 147
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -12",
+          "r4 = r2",
+          "r8 = r1",
+          "r9 = r0",
+          "r0 = 29395788 <trk : 1c08b4c >"
+        ],
+        "local_stack_adjust_bytes": 12,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 64,
+        "direct_call_targets": [
+          "d8arr_motion_compatible",
+          "d8arr_source_track",
+          "param_fit"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      },
+      "pnf_prepare_arrangement": {
+        "linked_separate": true,
+        "static_direct_metric": {
+          "insns": 436,
+          "loop": 400,
+          "div": 0,
+          "call": 12,
+          "cost": 4339
+        },
+        "prologue": [
+          "[--sp] = {rets, r15-r4}",
+          "sp += -576",
+          "r14 = 29479632 <shed_req : 1c1d2d0 >",
+          "r0 = b[r14+2] (u)",
+          "if (r0 == 0) goto 106 <pnf_prepare_arrangement+0x7C : 200e424 >",
+          "r4 = sp + 32"
+        ],
+        "local_stack_adjust_bytes": 576,
+        "prologue_saved_bytes": 52,
+        "direct_prologue_bytes": 628,
+        "direct_call_targets": [
+          "d8arr_held_build",
+          "d8p1_crc32",
+          "d8p1_project_decode",
+          "d8pool_inventory",
+          "d8pool_load",
+          "d8pool_mapped_open",
+          "d8pr_preflight",
+          "d8pr_stopped",
+          "memcpy",
+          "proj_steps"
+        ],
+        "scope": "direct function only, not recursive cost or whole stack"
+      }
+    },
+    "irq_capped_depth_histogram": {
+      "0": 125,
+      "1": 239,
+      "2": 656,
+      "3": 717,
+      "4": 581
+    },
+    "largest_backward_spans": [
+      {
+        "head": "0x2007a12",
+        "end": "0x2009392",
+        "covered_instructions": 2035
+      },
+      {
+        "head": "0x20078e6",
+        "end": "0x20082fa",
+        "covered_instructions": 767
+      },
+      {
+        "head": "0x2008ace",
+        "end": "0x2009272",
+        "covered_instructions": 648
+      },
+      {
+        "head": "0x2008a9a",
+        "end": "0x2008fde",
+        "covered_instructions": 451
+      },
+      {
+        "head": "0x20083ce",
+        "end": "0x20086ba",
+        "covered_instructions": 236
+      },
+      {
+        "head": "0x2008cee",
+        "end": "0x2008f8a",
+        "covered_instructions": 230
+      },
+      {
+        "head": "0x2007e78",
+        "end": "0x2008114",
+        "covered_instructions": 192
+      },
+      {
+        "head": "0x20087b0",
+        "end": "0x20089d4",
+        "covered_instructions": 190
+      }
+    ]
+  }
+}
