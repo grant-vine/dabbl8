@@ -1,0 +1,7 @@
+{
+  "raw_entries": 44,
+  "report_sha256": "82ac328f05e540aefbdfa85fe4ad942802ff48426c4d5bd474c583fafa8bf7c9",
+  "manifest_sha256": "871e5d422e1353236ebfb10f95c22764d6df284bc443f64552bb4af42fe29246",
+  "raw_ignored_directory": ".local-baseline/coremidi-readiness-qualification/current143-c7",
+  "scope": "Compact metadata only; no wheel/native library/module payload, private backups, capture data or firmware binaries in Git. Read-only endpoint-name enumeration only, using Mido-reported coalesced names."
+}
