@@ -34,6 +34,7 @@
 #ifndef FELUCCA_VERSION
 #define FELUCCA_VERSION "v1.1.5.1" /* shown in the menu, the console and the editor; build.py --release X.Y */
 #endif
+#include "identity.h"
 #if FELUCCA_OTA && !FELUCCA_FLASH
 #error "FELUCCA_OTA needs FELUCCA_FLASH"
 #endif
