@@ -27,7 +27,7 @@
     "tools/dabbl8_instrument_session.py": "749d04f301ccee50f68c5900110e46c85be1230584bfc0a5012f959ad0c419bd"
   },
   "evidence_sha256": {
-    "README.md": "fd214f76bfa985e462b4d2a4cbfa8d43e9466c332fd4583bd1623fa6de78cd66",
+    "README.md": "44618228f9dd51c0d96681f1a5d6bc532195da04980cb85b89fe516c52a48cf3",
     "before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
     "direct-call-stack-scope.json": "b7c805108881793c8d0b7caf7d8fd9d06bf77ccabdcc4fd7eb97d564cae9ab46",
     "focused-actual-discovery-opt.log": "7bcdbed360c47ea9660aa8b45c1466f8e0e48b1a631e5ec8ff11ddf05110a23a",
@@ -71,17 +71,36 @@
   "physical": "NOT RUN",
   "shipping_permission": "constant0",
   "known_native_budget_failures": {
-    "USB": [
+    "fm1_alnk0_irq": [
+      55487,
+      37502
+    ],
+    "uac_tap48": [
       570,
       504
-    ],
-    "ROOM": [
-      296,
+    ]
+  },
+  "native_effect_entries_within_tolerance": {
+    "rev_room": [
+      233,
       218
     ],
-    "SPRING": [
-      176,
+    "rev_spring": [
+      135,
       126
     ]
+  },
+  "parent_static_proxy_comparison": {
+    "parent": "c5c96236ce275072adaaaca35c2046098384b2e9",
+    "fm1_alnk0_irq": 54935,
+    "candidate": 55487,
+    "delta": 552,
+    "scope": "Originalbudget37502 retained; historical verified current-main report plus root byte-identity check; no physical deadline inference"
+  },
+  "preceding_summary_correction": {
+    "cause": "Assumed prior three failure names before fully inspecting actual combined raw log; corrected before publication",
+    "initial_commit": "02c51cb725845a1cfb786a3c3dacea57a08b1738",
+    "private_initial_readme_sha256": "fd214f76bfa985e462b4d2a4cbfa8d43e9466c332fd4583bd1623fa6de78cd66",
+    "private_initial_manifest_sha256": "45ef473c6705e0bdd9f2199e65276651d2f9a79b34032d221511a2d6ba175108"
   }
 }
