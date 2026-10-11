@@ -1,0 +1,17 @@
+{
+  "source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "exit": 0,
+  "elapsed_seconds": 912.946986913681,
+  "six_baseline_unchanged": true,
+  "generated29_unchanged": true,
+  "golden_cost_refs_unchanged": true,
+  "actual_default4_dis_sha256": "2a853c0003e337ac8f603315b101c0ec885256bdeba1d30d10c2556a30033aa3",
+  "native8_static_failures": 2,
+  "hardware": "NOT_RUN",
+  "release_qualified": false,
+  "native8_static_failure_lines": [
+    "target: fm1_alnk0_irq    2318 instructions, 2193 in loops, 16 divides, 80 calls there: cost 54935 (budget 37502) OVER BUDGET (+46 %, limit +10 %)",
+    "target: uac_tap48         162 instructions,  120 in loops, 0 divides,  0 calls there: cost   555 (budget 504) OVER BUDGET (+10 %, limit +10 %)"
+  ],
+  "metadata_correction": "Original copied terminal constant was 1; derive 2 from raw composed-source target report. Original terminal preserved."
+}

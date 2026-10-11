@@ -1,0 +1,42 @@
+[
+  {
+    "name": "tone-opt-build",
+    "exit": 0
+  },
+  {
+    "name": "tone-opt",
+    "exit": 0
+  },
+  {
+    "name": "tone-san-build",
+    "exit": 0
+  },
+  {
+    "name": "tone-san",
+    "exit": 0
+  },
+  {
+    "name": "parent-timing-build",
+    "exit": 0
+  },
+  {
+    "name": "candidate-timing-build",
+    "exit": 0
+  },
+  {
+    "name": "parent-actual-DAC-USB-state",
+    "exit": 0
+  },
+  {
+    "name": "candidate-actual-DAC-USB-state",
+    "exit": 0
+  },
+  {
+    "name": "parent-tone-probe-build",
+    "exit": 0
+  },
+  {
+    "name": "candidate-tone-probe-build",
+    "exit": 0
+  }
+]

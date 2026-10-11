@@ -1091,12 +1091,12 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
         uac.overruns++;
         return;
     }
+#if NTRK == 8
+    uint32_t ring = uq.ring;
+#endif
     for (i = 0; i < n; i++) {
         uint32_t s = h & (RS_H - 1u);
         int16_t l = (int16_t)uac_s16(out[2u * i]), r = (int16_t)uac_s16(out[2u * i + 1u]);
-#if NTRK == 8
-        uq.history += (uint32_t)(l!=0||r!=0)-(uint32_t)(rs.l[s]!=0||rs.r[s]!=0);
-#endif
         rs.l[s] = rs.l[s + RS_H] = l;
         rs.r[s] = rs.r[s + RS_H] = r;
         h++;
@@ -1130,11 +1130,27 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
                 yr = (int32_t)q2 * 1000 - 25000;
             }
 #endif
+#if NTRK == 8
+            uint32_t *slot = &ua_ring[(w + k++) & (UA_N - 1u)];
+            uint32_t value = (uint32_t)(uint16_t)yl | (uint32_t)(uint16_t)yr << 16;
+            ring += (uint32_t)(value != 0) - (uint32_t)(*slot != 0);
+            *slot = value;
+#else
             UA_STORE(&ua_ring[(w + k++) & (UA_N - 1u)],(uint32_t)(uint16_t)yl | (uint32_t)(uint16_t)yr << 16);
+#endif
             ph += UAC_FIR_M;
         } while (ph < UAC_FIR_L);
         ph -= UAC_FIR_L;
     }
+#if NTRK == 8
+    /* Producer-only fixed 32-frame recount: exact after any block length.
+     * Nested TIMER5 never owns these totals or invokes quiet authority. */
+    uint32_t history = 0;
+    for (i = 0; i < RS_H; i++)
+        history += (rs.l[i] | rs.r[i]) != 0;
+    uq.history = history;
+    uq.ring = ring;
+#endif
     rs.w = h;
     rs.ph = ph;
     RING_PUBLISH();

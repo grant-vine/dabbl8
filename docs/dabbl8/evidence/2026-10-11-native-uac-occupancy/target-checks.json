@@ -1,0 +1,45 @@
+[
+  {
+    "name": "queue-opt-build",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "queue-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "queue-san-build",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "queue-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-4",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-8",
+    "exit": 1,
+    "allowed_exits": [
+      0,
+      1
+    ]
+  }
+]

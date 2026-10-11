@@ -1,0 +1,8 @@
+{
+  "source": "d450d49e42dda5f8cc345c5be9d212c2dbb4eef6",
+  "checks": "PASS",
+  "source_unchanged": true,
+  "helper_scope": "All converter/initializer/archive helpers freshly built from this source in normal and strict modes",
+  "shipping_writes": "constant closed",
+  "hardware": "NOT RUN"
+}

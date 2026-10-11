@@ -1,0 +1,52 @@
+{
+  "functional_source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "parent_main": "c5c96236ce275072adaaaca35c2046098384b2e9",
+  "original_functional_source": "0978023e794409e89994cec7009b832f63b6d2bb",
+  "original_full_exit": 1,
+  "original_failure": "Test-only unset TONE macro at printf; corrected explicit test default; raw failure retained",
+  "final_full_exit": 0,
+  "exact_cases_per_mode": 31200,
+  "normal_checks_per_optimized_and_SAN": 2246436,
+  "tone_checks_per_optimized_and_SAN": 2277636,
+  "reference_function_source": "e63164bc41c563fa02fe6d5bb4affecaca05adbd",
+  "reference_function_sha256": "91ed5076e4e1e4d9f2dace26100a6cd27c64dda01638776c6070e36bfaca83a2",
+  "native_static_failure_count": 2,
+  "native_static_failure_lines": [
+    "target: fm1_alnk0_irq    2318 instructions, 2193 in loops, 16 divides, 80 calls there: cost 54935 (budget 37502) OVER BUDGET (+46 %, limit +10 %)",
+    "target: uac_tap48         162 instructions,  120 in loops, 0 divides,  0 calls there: cost   555 (budget 504) OVER BUDGET (+10 %, limit +10 %)"
+  ],
+  "native_UAC_limit_exact": 554.4,
+  "native_UAC_actual": 555,
+  "native_parent_target_source": "40a3326ccc0241f37e72f2b6ab5fd742e26a06ab",
+  "native_parent_bytes": 467100,
+  "native_candidate_bytes": 467108,
+  "native_image_delta_bytes": 8,
+  "native_ram": 95812,
+  "native_pool": 334316,
+  "default4_sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+  "default4_postbaseline_not_pristine_v115": true,
+  "full_suite_package_tests_use_preserved_baseline_artifacts": true,
+  "omissions_raw": [
+    "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)",
+    "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)",
+    "editor: MENU settings (this editor has none)                     skip",
+    "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+  ],
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "ASAN_detect_leaks": false,
+  "hardware": "NOT_RUN",
+  "release_qualified": false,
+  "golden_or_budget_changes": false,
+  "no_ownership_or_scheduler_activation": true,
+  "CI": "NOT_YET_RUN_FOR_PUBLISHED_HEAD",
+  "golden_renders": 92,
+  "golden_renders_changed": 0,
+  "golden_renders_gone": 0,
+  "host_CPU_entries_over_budget": 0
+}

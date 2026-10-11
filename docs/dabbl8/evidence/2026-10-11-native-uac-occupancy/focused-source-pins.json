@@ -1,0 +1,9 @@
+{
+  "source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "files_sha256": {
+    "firmware/src/usb.c": "a83f5d4ed6f7f0681e9d4b074ec1f59da2bd52ebd2b6890884f6b1d2b9bb0d19",
+    "tests/native_uac_history_test.c": "6a45ebabd8eb1c99d86bc38888c8c31dc7f4c677a6cbfd1ec1dc1ad0b899e284",
+    "tests/fixtures/uac/e631-uac-tap48.inc": "105d0508b25d9474d029cf8fa0de10df8889a69ef034e999692be5ea47ed3ed9",
+    "tests/run_tests.sh": "4ec3211ebc3c05d3d4389134dd64e30ca7169b63661ff83808f7a0de20273535"
+  }
+}
