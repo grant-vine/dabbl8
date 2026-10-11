@@ -1,0 +1,1 @@
+actual console slice: exact word parsing, argument refusal, dispatch, CDC framing, paused state, read-only status and DTR truncation PASS; simulated only

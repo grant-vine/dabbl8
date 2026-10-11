@@ -61,5 +61,9 @@ jobs:
             build/browser-conversion-evidence/
             build/ui_new/report.txt
             build/ui_new/align.txt
+            build/host/timing-evidence/**/*.log
+            build/host/timing-evidence/**/*.json
+            build/host/timing-evidence/**/*.frame
+            build/host/timing-evidence/**/*.c
           if-no-files-found: warn
           retention-days: 14

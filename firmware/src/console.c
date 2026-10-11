@@ -2,8 +2,9 @@
  * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments */
 /* Serial console on the CDC-ACM function (FELUCCA_CDC=1): read-only
  * diagnostics. Runs in the main loop (cdc_task); usb_poll moves the bytes.
- * The baud rate is ignored. Nothing here writes memory or flash; `uboot`
- * does what the SysEx soft key does. */
+ * The baud rate is ignored. Optional timing controls reset diagnostic RAM only;
+ * no command writes application memory or flash. `uboot` does what the SysEx
+ * soft key does. */
 #define CON_LINE 64u
 
 static struct {
@@ -105,6 +106,10 @@ static int con_word(const char **p, const char *w)       /* match a whole word *
     *p = s;
     return 1;
 }
+
+#if DABBL8_TIMING_DIAGNOSTIC
+#include "audio_timing_console.h"
+#endif
 
 static void con_memr(const char *p)
 {
@@ -343,8 +348,16 @@ static void con_params(void)
 
 static void con_exec(const char *p)
 {
-    if (con_word(&p, "help") || con_word(&p, "?"))
+    if (con_word(&p, "help") || con_word(&p, "?")) {
         con_puts("status  dbg  inp  crash  params  memr ADDR [LEN]  flr OFF [LEN]  uboot yes\r\n");
+#if DABBL8_TIMING_DIAGNOSTIC
+        con_puts("timing start|stop|report (diagnostic, no storage writes)\r\n");
+#endif
+    }
+#if DABBL8_TIMING_DIAGNOSTIC
+    else if (con_word(&p, "timing"))
+        con_timing(p);
+#endif
     else if (con_word(&p, "status"))
         con_status();
     else if (con_word(&p, "dbg"))
