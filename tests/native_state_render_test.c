@@ -97,8 +97,37 @@ static void cached_transitions(void){
  seq_stop();transport_req=0;ui.song_row=15;nscr=npend=nrules=0;ui.force=1;ui_draw();lcd_sync();lint();
  proof(graph_word("REPLACE FILL")&&word("3"),"native graph clamps a historical row cursor to its adopted final row");
 }
+static void edge_arrangements(const char*out){
+ seq_stop();transport_req=0;cur_name="EDGE_ADOPTION";
+ /* The zero-row state is actually decoded/adopted, not a synthetic cache flag. */
+ memset(&native_source.arrangement,0,sizeof native_source.arrangement);size_t n=0;
+ proof(d8p1_project_encode(native_wire,sizeof native_wire,&n,&native_source)&&!d8p1_load_runtime(native_wire,n,5),"actual empty native arrangement adoption");
+ for(unsigned kind=0;kind<2;kind++){
+  if(kind){
+   d8p1_arrangement*a=&native_source.arrangement;a->banks=2;a->scenes=a->rows=16;
+   for(unsigned b=0;b<2;b++)for(unsigned t=0;t<8;t++){a->bank[b].project[t]=(uint8_t)(b*2);a->bank[b].track[t]=(uint8_t)t;}
+   for(unsigned r=0;r<16;r++){memcpy(a->scene[r].name,"WWWWWWWWWWWW",12);a->scene[r].bank=(uint8_t)(r%2);a->row[r].scene=(uint8_t)r;a->row[r].repeat=16;}
+   proof(d8p1_project_encode(native_wire,sizeof native_wire,&n,&native_source)&&!d8p1_load_runtime(native_wire,n,5),"actual maximum native arrangement adoption");
+  }
+  go_page(GR_SONG);ui.msg_t=0;
+  for(unsigned cursor=0;cursor<3;cursor++)for(unsigned p=0;p<NPALETTES;p++)for(unsigned st=ST_FLAT;st<=ST_LINE;st++)for(unsigned big=0;big<2;big++)for(unsigned bank=0;bank<2;bank++){
+   cur_name=kind?"MAXIMUM_NATIVE":"EMPTY_NATIVE";ui.song_row=(uint8_t)(cursor==0?0:cursor==1?15:255);song.sel=(uint8_t)(bank?7:0);
+   ui_style=(uint8_t)st;style_apply();pal(p);ui_prefs=big?ui_prefs|PREF_LARGE:ui_prefs&~PREF_LARGE;
+   nscr=npend=nrules=0;unsigned r=reads,w=writes,nf=nfind,af=al_fail;ui.force=1;ui_draw();lcd_sync();lint();mono_check();render_frames++;
+   proof(nfind==nf&&al_fail==af,"edge layout has no clipping/overlap/alignment failure");proof(reads==r&&writes==w,"edge rendering has no storage access");
+   proof(!word("PAT A x4 > B x1")&&!word("ADD PATTERN")&&!word("PROJECT A-D"),"adopted empty/max native graph never falls back to legacy actions");
+   proof(word("ROW")&&word("SCENE")&&word("REPS")&&word("PLAY"),"native cards remain native for empty and maximum states");
+   if(!kind)proof(graph_word("NO SCENES")&&graph_word("ARRANGEMENT EMPTY"),"explicit empty native graph");
+   else{unsigned repeats=0;for(unsigned k=0;k<nscr;k++)if(scr[k].y0>=(int)graph_y()&&!strcmp(scr[k].s,"x16"))repeats++;
+    proof(repeats==(cursor?3u:7u),"bounded maximum-row viewport shows first/last/clamped rows");proof(word(cursor?"16":"1"),"native selected row number bounded");}
+   for(unsigned k=0;k<nscr;k++)if(scr[k].flags&1u)proof((scr[k].flags&8u)!=0,"widest user names alone may ellipsise");
+   proof(!memcmp(&d8p1_runtime_cache.arrangement,&native_source.arrangement,sizeof native_source.arrangement),"edge render preserves maximum/empty native state");
+   if(out&&p==UI_GREY_INDEX&&st==ST_FLAT&&!big&&bank==1&&cursor<2)write_ppm(out,"GREY",kind?(cursor?"MAXIMUM_LAST":"MAXIMUM_FIRST"):"EMPTY_NATIVE");
+  }
+ }
+}
 int main(int argc,char**argv){const char*out=argc>1?argv[1]:NULL;rep=tmpfile();if(!rep)return 2;seed();
  for(unsigned s=0;s<9;s++){scene(s);for(unsigned p=0;p<NPALETTES;p++)for(unsigned st=ST_FLAT;st<=ST_LINE;st++)for(unsigned b=0;b<2;b++)for(unsigned t=0;t<8;t++)render(s,p,st,b,t,out);}
- cached_transitions();canvas_refusal();seq_stop();lcd_sync();proof(!nfind&&!nink&&!mono_bad&&!al_fail&&!dma_errors,"all rendering and async ownership checks clean");
+ cached_transitions();edge_arrangements(out);canvas_refusal();seq_stop();lcd_sync();proof(!nfind&&!nink&&!mono_bad&&!al_fail&&!dma_errors,"all rendering and async ownership checks clean");
  rewind(rep);char buf[1024];while(fgets(buf,sizeof buf,rep))fputs(buf,stdout);fclose(rep);
  printf("native_state_render: %u checks, %u frames, %u failures; actual adopted native catalog/arrangement, no device qualification\n",checks,render_frames,failures);return failures?1:0;}

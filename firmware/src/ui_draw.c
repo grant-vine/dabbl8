@@ -800,8 +800,8 @@ static void draw_columns(void)
     if (cur_page()->graph == GR_SONG) {
 #if NTRK == 8
         unsigned rows=d8arr_ui_rows();
-        if(rows){
-            unsigned row=ui.song_row<rows?ui.song_row:rows-1,repeat=0;char name[13];
+        if(d8arr_ui_native()){
+            unsigned row=rows?(ui.song_row<rows?ui.song_row:rows-1):0,repeat=0;char name[13]={0};
             int used=d8arr_ui_row(row,name,&repeat);
             fmt_int(val,(int32_t)row+1);draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
             card_native_name=(uint8_t)used;

@@ -940,11 +940,11 @@ static uint32_t graph_signature(void)
     if (pg->graph == GR_SONG) {
 #if NTRK == 8
         unsigned rows=d8arr_ui_rows();
-        if(rows){
+        if(d8arr_ui_native()){
             h^=ui.song_row*40503u+rows*7919u;
             for(unsigned r=0;r<rows;r++){
-                char name[13];unsigned repeat=0;
-                (void)d8arr_ui_row(r,name,&repeat);
+                char name[13]={0};unsigned repeat=0;
+                if(!d8arr_ui_row(r,name,&repeat)){name[0]=0;repeat=0;}
                 h=str_hash(h,name)^repeat*104729u;
             }
             if(d8arr_running()){
@@ -1524,7 +1524,8 @@ static void graph_song(void)
 {
 #if NTRK == 8
     unsigned rows=d8arr_ui_rows();
-    if(rows){
+    if(d8arr_ui_native()){
+        if(!rows){panel_note("NO SCENES","ARRANGEMENT EMPTY",0);return;}
         unsigned selected=ui.song_row<rows?ui.song_row:rows-1u;
         unsigned first=selected>2u?selected-2u:0u;
         for(unsigned r=first;r<rows&&r<first+7u;r++){
