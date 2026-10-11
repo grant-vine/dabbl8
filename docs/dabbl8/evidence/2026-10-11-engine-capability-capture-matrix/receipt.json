@@ -1,0 +1,612 @@
+{
+  "dependency_head": "cc49923aa029210337dbe8475ea8e566114d0c81",
+  "source_hashes": {
+    "tests/engine_availability_capture_test.c": "c2a76d9c1bfed08ffad51cc39fff2f72c4f2e2817daea1301d301d9598cc18b5",
+    "tests/engine_availability_caps_test.c": "a3c3502374aec9db58b896d090954935dc63eb7662c14d88097d31356ce0b5e2",
+    "tests/run_tests.sh": "8a2ec06f8e46db9a5e5cca3bd8a37c15383336e4d433f5d90b0a985b88abc2c2",
+    "firmware/src/editor.c": "48653c8fe01cf650cef9319f6aa0ee984e6a00b2053757708c5c66d925d47619"
+  },
+  "generated_header_hashes": {
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "generated_header_source": "../uac-array-bounds/build/gen",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "python": "Python 3.9.6",
+  "positive": [
+    {
+      "name": "normal-4-fm0-slice0-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice0",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-4-fm0-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "d63647ddfd9bcf955d39993fe1796beef1bee3ae36bf1d5658af40f898bad066"
+    },
+    {
+      "name": "normal-4-fm0-slice1-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice1",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-4-fm0-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "f389c87dfc1d04a94750b892b22161ec2dfbc4283d0adf1d54ac6ff15ba64c3d"
+    },
+    {
+      "name": "normal-4-fm1-slice0-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice0",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-4-fm1-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "0c5f23968953179e2af1e4ca0f5792bdec642a9a5667412b311a29163807867b"
+    },
+    {
+      "name": "normal-4-fm1-slice1-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice1",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-4-fm1-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "035c72335765f350b5c20fdeb5dd259077da02c34a7ae8e8373f939367afeed1"
+    },
+    {
+      "name": "normal-8-fm0-slice0-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice0",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-8-fm0-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "da3663f128ccf48615fbe205b628a73ac3394af6abf92540054b16b40e0499fb"
+    },
+    {
+      "name": "normal-8-fm0-slice1-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice1",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-8-fm0-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "499fb8cf4c714fa31a87c22e52e8b83d77da15cb299e2f6352835a8e6194d721"
+    },
+    {
+      "name": "normal-8-fm1-slice0-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice0",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-8-fm1-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "9b83d48d5953c085de7450a68724eaaa152919de285504bf28c1fda4d6c6c28b"
+    },
+    {
+      "name": "normal-8-fm1-slice1-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice1",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-8-fm1-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "06400e54669480715b29fff94ae70cda2bce20bb71135bacaa4bdf1dd9b59153"
+    },
+    {
+      "name": "inherited-san-4-fm0-slice0-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice0",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-4-fm0-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "d63647ddfd9bcf955d39993fe1796beef1bee3ae36bf1d5658af40f898bad066"
+    },
+    {
+      "name": "inherited-san-4-fm0-slice1-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice1",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-4-fm0-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "f389c87dfc1d04a94750b892b22161ec2dfbc4283d0adf1d54ac6ff15ba64c3d"
+    },
+    {
+      "name": "inherited-san-4-fm1-slice0-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice0",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-4-fm1-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "0c5f23968953179e2af1e4ca0f5792bdec642a9a5667412b311a29163807867b"
+    },
+    {
+      "name": "inherited-san-4-fm1-slice1-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice1",
+        "tests/engine_availability_caps_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-4-fm1-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "035c72335765f350b5c20fdeb5dd259077da02c34a7ae8e8373f939367afeed1"
+    },
+    {
+      "name": "inherited-san-8-fm0-slice0-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice0",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-8-fm0-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "da3663f128ccf48615fbe205b628a73ac3394af6abf92540054b16b40e0499fb"
+    },
+    {
+      "name": "inherited-san-8-fm0-slice1-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice1",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-8-fm0-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "499fb8cf4c714fa31a87c22e52e8b83d77da15cb299e2f6352835a8e6194d721"
+    },
+    {
+      "name": "inherited-san-8-fm1-slice0-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice0",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-8-fm1-slice0-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice0"
+      ],
+      "exit": 0,
+      "log_sha256": "9b83d48d5953c085de7450a68724eaaa152919de285504bf28c1fda4d6c6c28b"
+    },
+    {
+      "name": "inherited-san-8-fm1-slice1-build",
+      "command": [
+        "clang",
+        "-O1",
+        "-g",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice1",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "inherited-san-8-fm1-slice1-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice1"
+      ],
+      "exit": 0,
+      "log_sha256": "06400e54669480715b29fff94ae70cda2bce20bb71135bacaa4bdf1dd9b59153"
+    }
+  ],
+  "negative_controls": {
+    "rows": [
+      {
+        "name": "late-dispatch-build",
+        "command": [
+          "clang",
+          "-O2",
+          "-w",
+          "-DNPART=8",
+          "-DFELUCCA_FM4=1",
+          "-DFELUCCA_SLICE=1",
+          "-Ibuild/gen",
+          "-Ifirmware/src",
+          "-o",
+          "/private/tmp/d8-engine-capture-matrix/late-dispatch-control-binary",
+          "firmware/src/d8p1.c",
+          "firmware/src/d8pool.c",
+          "firmware/src/d8pool_mapped.c",
+          "tests/engine_availability_capture_test.c",
+          "-lm"
+        ],
+        "exit": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "late-dispatch-run",
+        "command": [
+          "/private/tmp/d8-engine-capture-matrix/late-dispatch-control-binary"
+        ],
+        "exit": 1,
+        "log_sha256": "689807bc1dc26682d330aa962952d983368d8a21127d28a48718299d18a53537"
+      },
+      {
+        "name": "wrong-four-track-capture-build",
+        "command": [
+          "clang",
+          "-O2",
+          "-w",
+          "-DNPART=4",
+          "-Ibuild/gen",
+          "-Ifirmware/src",
+          "-o",
+          "/private/tmp/d8-engine-capture-matrix/wrong-four-track-capture",
+          "firmware/src/d8p1.c",
+          "firmware/src/d8pool.c",
+          "firmware/src/d8pool_mapped.c",
+          "tests/engine_availability_capture_test.c",
+          "-lm"
+        ],
+        "exit": 1,
+        "log_sha256": "eadff4756af16919b4ec2f1303cef834e807a9caed7bb7d777a2d3be22518180"
+      }
+    ],
+    "control_source_sha256": "3100baacc34522f8cf81c8f16a8917865cb78673baf7ec93ac1cf12ea6b03a44",
+    "scope": "Mutated private candidate late-dispatch control, not pristine parent; proves actual capture retention assertions fail. Wrong4 build refuses rather than silently native8."
+  },
+  "result": "16 host executions PASS; expected late-dispatch runtime and incorrect-four-track compile refusals observed",
+  "coverage": {
+    "native8_capture_and_owned_arena": {
+      "executions": 8,
+      "checks_each": 8775,
+      "FM4": [
+        0,
+        1
+      ],
+      "SLICE": [
+        0,
+        1
+      ],
+      "contexts": [
+        "active full capture initial phase",
+        "active full capture after one status/poll",
+        "exclusive main migration workspace owner"
+      ],
+      "queries_per_execution": 1152,
+      "snapshots": [
+        "caller input bytes",
+        "entire capture object",
+        "entire capture-change state",
+        "entire workspace bytes",
+        "migration owner and generation",
+        "hardware read counter",
+        "NOR bytes and write counter"
+      ],
+      "responses": "Exact schema2 mask/flags0/frame or version2/bounds3 error; all128schemas with lengths1,2,3 in each context"
+    },
+    "legacy4": {
+      "executions": 8,
+      "checks_each": 1943,
+      "scope": "Existing actual C capability/schema1/refusal runtime-state fixture. Native capture/owned-arena protocol does not exist at four tracks; NOT APPLICABLE, never overridden to8."
+    }
+  },
+  "runner_syntax_exit": 0,
+  "production_delta": "",
+  "limitations": [
+    "Apple clang21 host, not hosted clang18 or targetcompiler qualification.",
+    "Inherited sanitizer exclusions signed-integer-overflow,shift,bounds,object-size,pointer-overflow unchanged.",
+    "Focused tests only, no full-suite rerun, targetbuild, package, physical MIDI/capture/recovery/device.",
+    "No reduced selectable profiles, writes, authority flags, budgets or golden changes.",
+    "Prior CI123 had fixture source but no invocation; PR127 source already restored paired default-native8 invocation. This strengthens that existing fixture/matrix, not a duplicate new protocol."
+  ]
+}

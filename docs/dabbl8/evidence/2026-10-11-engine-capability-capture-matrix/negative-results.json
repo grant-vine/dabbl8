@@ -1,0 +1,56 @@
+{
+  "rows": [
+    {
+      "name": "late-dispatch-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/late-dispatch-control-binary",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "late-dispatch-run",
+      "command": [
+        "/private/tmp/d8-engine-capture-matrix/late-dispatch-control-binary"
+      ],
+      "exit": 1,
+      "log_sha256": "689807bc1dc26682d330aa962952d983368d8a21127d28a48718299d18a53537"
+    },
+    {
+      "name": "wrong-four-track-capture-build",
+      "command": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-engine-capture-matrix/wrong-four-track-capture",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/engine_availability_capture_test.c",
+        "-lm"
+      ],
+      "exit": 1,
+      "log_sha256": "eadff4756af16919b4ec2f1303cef834e807a9caed7bb7d777a2d3be22518180"
+    }
+  ],
+  "control_source_sha256": "3100baacc34522f8cf81c8f16a8917865cb78673baf7ec93ac1cf12ea6b03a44",
+  "scope": "Mutated private candidate late-dispatch control, not pristine parent; proves actual capture retention assertions fail. Wrong4 build refuses rather than silently native8."
+}
