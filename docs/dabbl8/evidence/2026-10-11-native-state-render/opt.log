@@ -1,0 +1,5 @@
+free   SONG_STOPPED/GREY/style0/large0/track1 ellipsised 'LONG…'
+free   SONG_RUNNING/GREY/style0/large0/track8 ellipsised 'REPLA…'
+free   MAXIMUM_NATIVE         ellipsised 'WWW…'
+free   MAXIMUM_NATIVE         ellipsised 'WWWWWWWW…'
+native_state_render: 35427 checks, 3361 frames, 0 failures; actual adopted native catalog/arrangement, no device qualification

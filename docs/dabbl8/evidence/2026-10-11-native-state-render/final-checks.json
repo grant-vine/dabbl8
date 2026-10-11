@@ -1,0 +1,10 @@
+[
+  {
+    "name": "target-budget-8",
+    "exit": 1,
+    "allowed_exits": [
+      0,
+      1
+    ]
+  }
+]
