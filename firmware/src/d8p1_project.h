@@ -168,11 +168,14 @@ static uint8_t d8ps_source_engine(const uint8_t *b,unsigned version,unsigned t) 
  * Exact standalone records only. No retained-slot tails or old magic upgrade.
  * out/report are published only after conversion and structural validation.
  * workspace may change on refusal; never use it as active state. */
-static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *workspace,
+/* Owned scratch-only conversion. A refusal may change workspace; the caller
+ * must discard it. It is never an active/live state publication. This avoids a
+ * second project-sized buffer while verifying original sources beside a sealed
+ * migration plan. Input and report remain disjoint and immutable on refusal. */
+static int d8p1_legacy_stage(d8p1_project_state *workspace,
         d8p1_legacy_report *report,const void *data,size_t n,unsigned available_projects) {
-    if(!out||!workspace||!report||!data||n<8||n>PROJ_STORE_SIZE||available_projects>15||((uintptr_t)data&3u)||
-       d8ps_overlap(out,sizeof *out,workspace,sizeof *workspace)||d8ps_overlap(out,sizeof *out,data,n)||
-       d8ps_overlap(workspace,sizeof *workspace,data,n)||d8ps_overlap(report,sizeof *report,out,sizeof *out)||
+    if(!workspace||!report||!data||n<8||n>PROJ_STORE_SIZE||available_projects>15||((uintptr_t)data&3u)||
+       d8ps_overlap(workspace,sizeof *workspace,data,n)||
        d8ps_overlap(report,sizeof *report,workspace,sizeof *workspace)||d8ps_overlap(report,sizeof *report,data,n))return 0;
     const uint8_t *b=data;uint32_t magic=(uint32_t)d8ps_u16(b)|((uint32_t)d8ps_u16(b+2)<<16);
     uint32_t length=(uint32_t)d8ps_u16(b+4)|((uint32_t)d8ps_u16(b+6)<<16);
@@ -207,7 +210,18 @@ static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *works
     for(unsigned i=0;i<a->rows;i++){a->row[i].scene=result.scene_for_project[q->chain.row[i].slot];a->row[i].repeat=q->chain.row[i].repeat;}
     chain_defaults(&q->chain);q->parts=8;q->phys=2;q->rsv=0;q->magic=PROJ_MAGIC;q->size=sizeof *q;q->sum=proj_sum(q);
     if(!d8ps_valid(workspace))return 0;
-    memcpy(out,workspace,sizeof *out);*report=result;return 1;
+    *report=result;return 1;
+}
+
+/* Transactional public adapter: preserve the historical two-buffer contract. */
+static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *workspace,
+        d8p1_legacy_report *report,const void *data,size_t n,unsigned available_projects) {
+    if(!out||!workspace||!report||!data||n<8||n>PROJ_STORE_SIZE||available_projects>15||((uintptr_t)data&3u)||
+       d8ps_overlap(out,sizeof *out,workspace,sizeof *workspace)||d8ps_overlap(out,sizeof *out,data,n)||
+       d8ps_overlap(workspace,sizeof *workspace,data,n)||d8ps_overlap(report,sizeof *report,out,sizeof *out)||
+       d8ps_overlap(report,sizeof *report,workspace,sizeof *workspace)||d8ps_overlap(report,sizeof *report,data,n))return 0;
+    if(!d8p1_legacy_stage(workspace,report,data,n,available_projects))return 0;
+    memcpy(out,workspace,sizeof *out);return 1;
 }
 
 #endif
