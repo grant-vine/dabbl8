@@ -1,5 +1,11 @@
 # Project migration and recovery
 
+This numbered document retains the original research snapshot. For the current
+owner-selected three-project/shared-autosave direction and uncompleted physical
+acceptance gates, use [selected storage](three-project-shared-storage.md) and
+[first-device evidence plan](target-evidence-plan.md). The A/B discussion below
+describes historical preparation, not the selected initial pool.
+
 Proposed new format D8P1 has explicit version, track count, bounded lengths, stable engine and parameter IDs, sequence chunks, per-track patch data and checksums. Use a documented wire encoding, not raw C structs. Unknown optional chunks may be skipped only with validated lengths; unsupported required capabilities must fail safely. Keep limits available in the editor’s capability handshake.
 
 Legacy import maps tracks 1–4 to the same identities and creates empty tracks 5–8. Preserve older engine conversion rules. Conversion should produce a new save rather than overwrite the only original. Backward export is a separate optional feature: an eight-track project cannot generally be represented by old firmware. Provide a desktop backup/conversion tool and a readable migration report for unsupported settings.
