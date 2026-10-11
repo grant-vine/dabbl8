@@ -1,0 +1,7 @@
+tests/../firmware/src/eng_analog.c:70:19: runtime error: left shift of negative value -302
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior tests/../firmware/src/eng_analog.c:70:19 
+tests/../firmware/src/eng_analog.c:72:38: runtime error: left shift of negative value -33
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior tests/../firmware/src/eng_analog.c:72:38 
+tests/../firmware/src/fm6_core.c:267:63: runtime error: left shift of negative value -743
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior tests/../firmware/src/fm6_core.c:267:63 
+Offline profile v1: 80782 checks PASS; FM4=0 SLICE=1; original/sounding runtime preserved, no device proof
