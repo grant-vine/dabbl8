@@ -10,13 +10,14 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+from evidence_session import create_evidence_directory
 from dependency_integrity import SDK_BUILD_INPUTS, verify_archive_tree, verify_sdk
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'build/ci-evidence'
-OUT.mkdir(parents=True, exist_ok=True)
+OUT = create_evidence_directory(ROOT / 'build/ci-evidence')
 LOCK = json.loads((ROOT / 'ci/dependencies.json').read_text())
 report = {'schema': 1, 'time_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+          'evidence_directory': OUT.relative_to(ROOT).as_posix(),
           'host': platform.platform(), 'checks': [], 'skips': [], 'artifacts': {},
           'dependency_lock': LOCK, 'hardware': {'status': 'SKIP', 'reason': 'No physical device qualification or flashing authorized'}}
 
@@ -128,6 +129,7 @@ for name, before in references_before.items():
     if digest(ROOT / name) != before:
         failed = True
         report['checks'].append({'name': 'unchanged-reference', 'status': 'FAIL', 'path': name})
+report['log_hashes'] = {p.name: digest(p) for p in OUT.glob('*.log')}
 report['result'] = 'FAIL' if failed else 'PASS'
 (OUT / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
 summary = f'Host/package result: {report["result"]}\n\nHardware qualification: SKIP (not performed).\n\nExplicit optional/environment skips: {len(report["skips"])}. Details and dependency versions are in results.json; raw failures remain in the logs.\n'
@@ -135,4 +137,5 @@ summary = f'Host/package result: {report["result"]}\n\nHardware qualification: S
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as output: output.write(summary)
 print(summary, flush=True)
+print('Evidence:', OUT.relative_to(ROOT).as_posix(), flush=True)
 sys.exit(1 if failed else 0)

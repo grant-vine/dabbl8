@@ -37,7 +37,9 @@ jobs:
           echo "$PWD/.local-baseline/ci/venv/bin" >> "$GITHUB_PATH"
       - name: Verify dependency integrity refusal regressions
         id: integrity
-        run: python tests/dependency_integrity_test.py
+        run: |
+          python tests/dependency_integrity_test.py
+          python tests/evidence_session_test.py
       - name: Acquire hash-verified target dependencies
         id: acquire
         run: python ci/bootstrap.py

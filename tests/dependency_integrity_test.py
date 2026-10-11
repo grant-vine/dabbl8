@@ -19,6 +19,9 @@ from unittest import mock
 spec = importlib.util.spec_from_file_location('integrity', Path(__file__).resolve().parents[1] / 'ci/dependency_integrity.py')
 integrity = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(integrity)
+session_spec = importlib.util.spec_from_file_location('evidence_session', Path(__file__).resolve().parents[1] / 'ci/evidence_session.py')
+evidence_session = importlib.util.module_from_spec(session_spec)
+session_spec.loader.exec_module(evidence_session)
 
 class IntegrityTests(unittest.TestCase):
     def setUp(self):
@@ -105,6 +108,10 @@ class IntegrityTests(unittest.TestCase):
 
     def test_evidence_refusal_never_executes_target_compiler_or_build(self):
         repo = self.driver('run_evidence.py')
+        previous = repo / 'build/ci-evidence'
+        previous.mkdir(parents=True)
+        stale = previous / 'host-tests.log'
+        stale.write_text('== skip stale sanitizer runs\n')
         calls = []
         def capture(args, **kwargs):
             calls.append(args)
@@ -112,7 +119,7 @@ class IntegrityTests(unittest.TestCase):
         env = {'JIELI_TOOLCHAIN': str(self.root / 'target'),
                'AC79_SDK': str(self.root / 'sdk'), 'GITHUB_ACTIONS': 'false',
                'GITHUB_STEP_SUMMARY': '', 'GOLDEN_UPDATE': '0', 'BUDGET_UPDATE': '0', 'CC': 'clang-18'}
-        with mock.patch.dict(sys.modules, dependency_integrity=integrity), \
+        with mock.patch.dict(sys.modules, dependency_integrity=integrity, evidence_session=evidence_session), \
              mock.patch.dict(os.environ, env), \
              mock.patch('platform.platform', return_value='fixture host'), \
              mock.patch.object(integrity, 'verify_archive_tree', side_effect=ValueError('altered compiler fixture')), \
@@ -124,7 +131,12 @@ class IntegrityTests(unittest.TestCase):
         self.assertEqual(exit_status.exception.code, 1)
         sdk_check.assert_not_called()
         self.assertFalse(any(str(self.root / 'target') in str(arg) or arg == 'build.sh' for args in calls for arg in args))
-        report = json.loads((repo / 'build/ci-evidence/results.json').read_text())
+        reports = list((repo / 'build/ci-evidence').glob('run-*/results.json'))
+        self.assertEqual(len(reports), 1)
+        report = json.loads(reports[0].read_text())
+        self.assertEqual(stale.read_text(), '== skip stale sanitizer runs\n')
+        self.assertEqual(report['log_hashes'], {})
+        self.assertFalse(any('stale' in item.get('reason', '') for item in report['skips']))
         self.assertIn(['clang-18', '--version'], calls)
         self.assertEqual(report['result'], 'FAIL')
         self.assertEqual(report['pin_errors'], ['Dependency content'])
@@ -151,18 +163,41 @@ class IntegrityTests(unittest.TestCase):
         lock = {'linux_archive_sha256': integrity.file_digest(archive),
                 'linux_archive_bytes': archive.stat().st_size, 'emscripten_version': '4.0.17'}
         (repo / 'ci/browser-conversion.json').write_text(json.dumps(lock))
+        previous = repo / 'build/browser-conversion-evidence'
+        previous.mkdir(parents=True)
+        stale = previous / 'browser-parity.log'
+        stale.write_text('previous successful parity must remain historical\n')
+        first_evidence = None
+        first_bytes = None
         for invocation in range(2):
+            def failed_build(args, **kwargs):
+                kwargs['stdout'].write('fixture invocation ' + str(invocation) + '\n')
+                return subprocess.CompletedProcess(args, 7)
+            before = set(previous.glob('run-*/results.json'))
             # Stop after extraction/version reporting, before actual compilation.
-            with mock.patch('platform.system', return_value='Linux'), \
+            with mock.patch.dict(sys.modules, evidence_session=evidence_session), \
+                 mock.patch('platform.system', return_value='Linux'), \
                  mock.patch('platform.machine', return_value='x86_64'), \
                  mock.patch('shutil.which', return_value='/fixture/node'), \
                  mock.patch.object(subprocess, 'check_output', return_value='fixture version'), \
-                 mock.patch.object(subprocess, 'run', return_value=subprocess.CompletedProcess([], 7)), \
+                 mock.patch.object(subprocess, 'run', side_effect=failed_build), \
                  contextlib.redirect_stdout(io.StringIO()):
                 with self.assertRaises(SystemExit) as exit_status:
                     runpy.run_path(str(repo / 'ci/run_browser_conversion.py'), run_name='__main__')
             self.assertEqual(exit_status.exception.code, 1)
-            report = json.loads((repo / 'build/browser-conversion-evidence/results.json').read_text())
+            current = set(previous.glob('run-*/results.json')) - before
+            self.assertEqual(len(current), 1)
+            self.assertEqual(len(list(previous.glob('run-*/results.json'))), invocation + 1)
+            current_report = current.pop()
+            report = json.loads(current_report.read_text())
+            if first_evidence is None:
+                first_evidence = current_report.parent
+                first_bytes = {p.name: p.read_bytes() for p in first_evidence.iterdir()}
+            else:
+                self.assertEqual({p.name: p.read_bytes() for p in first_evidence.iterdir()}, first_bytes)
+            self.assertEqual((current_report.parent / 'wasm-build.log').read_text(), 'fixture invocation ' + str(invocation) + '\n')
+            self.assertEqual(stale.read_text(), 'previous successful parity must remain historical\n')
+            self.assertEqual(set(report['log_hashes']), {'wasm-build.log'})
             self.assertFalse(report['sdk_extraction']['reused_tree'])
             self.assertIn('wasm-build failed', report['reason'])
             trees = list(deps.glob('sdk-verified-*'))
