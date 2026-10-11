@@ -224,4 +224,84 @@ static int d8p1_legacy_convert(d8p1_project_state *out,d8p1_project_state *works
     memcpy(out,workspace,sizeof *out);return 1;
 }
 
+/* Optional offline profile contract v1. Production conversion/browser callers
+ * retain the historical APIs above. Masks describe availability only: no
+ * sample, patch, memory, timing, card or reduced-build qualification follows.
+ * Refusal preserves source/report/output; scratch may change and is discarded. */
+enum { D8PS_PROFILE_OK=0, D8PS_PROFILE_BAD_DATA=1,
+       D8PS_PROFILE_INVALID_MASK=2, D8PS_PROFILE_UNAVAILABLE=3,
+       D8PS_PROFILE_UNSUPPORTED_SOURCE=4, D8PS_PROFILE_BAD_ARGUMENT=5 };
+
+/* Diagnose unsupported IDs only inside an exact, checksum-valid historical
+ * envelope. This reason identifies the unsupported field, not a certificate
+ * that every other field is valid. Corrupt/truncated envelopes remain BAD_DATA. */
+static int d8ps_profile_source_v1(const void *data,size_t n) {
+    const uint8_t *b=data;uint32_t magic,length,sum;
+    if(n<8||n>PROJ_STORE_SIZE)return D8PS_PROFILE_BAD_DATA;
+    memcpy(&magic,b,4);memcpy(&length,b+4,4);
+    if(magic<PROJ_MAGIC_V1||magic>PROJ_MAGIC||length!=n)return D8PS_PROFILE_BAD_DATA;
+    unsigned v=magic-PROJ_MAGIC_V1+1;
+    static const size_t sizes[]={0,sizeof(project_v1_t),sizeof(project_v2_t),sizeof(project_v3_t),
+        sizeof(project_v4_t),sizeof(project_v5_t),sizeof(project_v6_t),PROJ_STORE_V7,PROJ_STORE_V8,PROJ_STORE_SIZE};
+    if(n!=sizes[v])return D8PS_PROFILE_BAD_DATA;
+    memcpy(&sum,b+n-4,4);if(sum!=proj_hash(b,(uint32_t)n-4))return D8PS_PROFILE_BAD_DATA;
+    if(v>=7 && (b[66]<8||b[66]>P_COUNT||68u+4u*(b[66]+2u+NSTEP*9u)+sizeof(chain_config_t)+sizeof(motion_legacy_store_t)>
+        n-4u-PROJ_NAME_LEN-(v==7?0u:4u*FM6_PACKED)))return D8PS_PROFILE_BAD_DATA;
+    for(unsigned t=0;t<(v==1?1u:4u);t++)if(d8ps_source_engine(b,v,t)>=NENGINES)return D8PS_PROFILE_UNSUPPORTED_SOURCE;
+    return D8PS_PROFILE_OK;
+}
+
+/* Factory preset zero into a fresh, silent added track. Uses actual tables and
+ * a local FM6 patch; never calls runtime load/patch/undo/cache functions. */
+static int d8ps_profile_default_v1(project_t *q,unsigned t,unsigned e) {
+    if(e>=NENGINES||!ENGINES[e]->npresets)return 0;
+    const preset_t *pr=&ENGINES[e]->presets[0];proj_trk_t *tr=&q->t[t];
+    memset(tr,0,sizeof *tr);tr->engine=(uint8_t)e;tr->preset=0;
+    for(unsigned i=0;i<P_E0;i++)tr->p[i]=TP[i].def;
+    for(unsigned i=0;i<8;i++)tr->p[P_E0+i]=pr->e[i];
+    tr->p[P_ATK]=pr->env[0];tr->p[P_DEC]=pr->env[1];tr->p[P_SUS]=pr->env[2];tr->p[P_REL]=pr->env[3];
+    tr->p[P_ED_FLT]=pr->fenv;tr->p[P_VOICE]=pr->mono?V_LEGATO:V_POLY;
+    static const uint8_t sends[]={0,24,28,36};
+    for(unsigned i=0;i<4;i++)tr->p[P_DIST+i]=pr->fx[i]?pr->fx[i]-1:sends[i];
+    for(unsigned i=0;i<NSTEP;i++)tr->step[i].time=ST_REST;
+    memcpy(q->fm6[t],FM6_INIT,FM6_PACKED);
+    if(e==ENGI_FM6){
+        int slot=tr->p[P_E7];if(slot<0||slot>=FM6_NFACTORY)return 0;
+        uint8_t patch[FP_SIZE+1u];fm6_unpack(FM6_FACTORY[slot],patch);fm6_pack(patch,q->fm6[t]);
+    }
+    return 1;
+}
+static int d8p1_legacy_stage_profile_v1(d8p1_project_state *workspace,
+        d8p1_legacy_report *report,const void *data,size_t n,unsigned available_projects,unsigned engine_mask) {
+    if(!eng_mask_ok(engine_mask))return D8PS_PROFILE_INVALID_MASK;
+    if(!workspace||!report||!data||available_projects>15||((uintptr_t)data&3u)||
+       d8ps_overlap(workspace,sizeof *workspace,data,n)||d8ps_overlap(report,sizeof *report,workspace,sizeof *workspace)||
+       d8ps_overlap(report,sizeof *report,data,n))return D8PS_PROFILE_BAD_ARGUMENT;
+    int rc=d8ps_profile_source_v1(data,n);if(rc)return rc;
+    d8p1_legacy_report result;
+    if(!d8p1_legacy_stage(workspace,&result,data,n,available_projects))return D8PS_PROFILE_BAD_DATA;
+    project_t *q=&workspace->project;unsigned target;
+    /* Historical canonicalization has already run. Check both publication
+     * and late sentinel aliases, but never substitute any of the first four. */
+    for(unsigned t=0;t<4;t++){
+        const proj_trk_t *tr=&q->t[t];
+        if(eng_runtime_target(&target,engine_mask,tr->engine,0,D8ENGINE_CANONICAL))return D8PS_PROFILE_UNAVAILABLE;
+        if(tr->preset==PROJ_DEF_KEEP && eng_runtime_target(&target,engine_mask,ENGI_DRUM,0,D8ENGINE_CANONICAL))return D8PS_PROFILE_UNAVAILABLE;
+        if(tr->preset==PROJ_DEF_SOUND && eng_runtime_target(&target,engine_mask,tr->engine,TRK_DEF[t][1],D8ENGINE_LEGACY_FACTORY))return D8PS_PROFILE_UNAVAILABLE;
+    }
+    for(unsigned t=4;t<8;t++)if(!(engine_mask&(1u<<q->t[t].engine))){
+        unsigned e=eng_vis_mask(0,engine_mask);
+        if(!d8ps_profile_default_v1(q,t,e))return D8PS_PROFILE_UNAVAILABLE;
+    }
+    q->sum=proj_sum(q);if(!d8ps_valid(workspace))return D8PS_PROFILE_BAD_DATA;
+    *report=result;return D8PS_PROFILE_OK;
+}
+static int d8p1_legacy_convert_profile_v1(d8p1_project_state *out,d8p1_project_state *workspace,
+        d8p1_legacy_report *report,const void *data,size_t n,unsigned available_projects,unsigned engine_mask) {
+    if(!out||!workspace||!report||!data||d8ps_overlap(out,sizeof *out,workspace,sizeof *workspace)||
+       d8ps_overlap(out,sizeof *out,data,n)||d8ps_overlap(report,sizeof *report,out,sizeof *out))return D8PS_PROFILE_BAD_ARGUMENT;
+    int rc=d8p1_legacy_stage_profile_v1(workspace,report,data,n,available_projects,engine_mask);
+    if(rc)return rc;memcpy(out,workspace,sizeof *out);return D8PS_PROFILE_OK;
+}
+
 #endif

@@ -137,9 +137,9 @@ effective engine is unavailable, it selects the first available display engine's
 preset 0. Tracks 5–8 retain their inherited ANALOG preset 0 under the full mask.
 Fallback is exclusive to startup/default construction. Existing project/native,
 user/factory/editor adoption continues to refuse unsupported sounds instead of
-substituting them. Offline legacy staging and its added-track insertion remain
-profile-independent and need a separately named profile-aware integration gate;
-this does not complete every default-insertion path.
+substituting them. Ordinary offline legacy staging remains profile-independent;
+the optional profile-aware staging API below is a separate integration boundary.
+This does not complete every default-insertion path.
 
 Two internal list-index spaces intentionally remain distinct: `preset_go_mask`
 addresses the full immutable-production stored-list view and checks its selected
@@ -157,14 +157,62 @@ No reduced capability list, engine exclusion, resource savings or physical timin
 claim follows from this implementation. Host evidence is in
 `evidence/2026-10-11-engine-ui-availability/`.
 
+### Optional offline legacy staging API v1
+
+`d8p1_legacy_stage_profile_v1` and `d8p1_legacy_convert_profile_v1` accept a separate
+engine availability mask. Existing ordinary APIs, converter CLI/Python bundles
+and browser flows continue using their historical path. This is an opt-in C
+foundation, not a user-selectable profile workflow or qualified reduced firmware.
+
+The actual FUN1–FUN9 importers and compiled PHYS/PERC/DIGITAL migrations run first.
+All four resulting historical tracks, parameters, patterns and private patches
+remain byte-exact; FUN1's historically synthesized tracks 2–4 also remain original
+conversion output. Unavailable original canonical engines or late DEF_SOUND /
+DEF_KEEP targets refuse rather than substitute. The source bytes and published
+output/report remain unchanged on refusal. Scratch is disposable and may change.
+
+Only added tracks 5–8 can receive a fallback. If inherited ANALOG is available,
+the existing descriptor-default parameters and deferred PROJ_DEF_SOUND output
+remain unchanged. Otherwise the first available compiled display identity gets
+concrete factory preset 0, including actual engine/edit, envelope, sends and voice
+parameters. FM6 receives its factory SLOT's sanitized packed patch; other engines
+retain the inactive initialization patch. This construction reads actual preset
+and patch tables without live engine, voice, cache, undo or transport changes.
+Full-mask optional output equals ordinary output, including padding and checksum.
+The report remains first-four historical migration metadata: it does not describe
+added-track fallback identities. A future wrapper must record those separately.
+
+Result codes distinguish invalid masks, malformed data, unavailable canonical or
+late engines, unsupported source IDs and invalid/overlapping arguments. An
+unsupported-source diagnostic requires an exact checksum-valid historical
+envelope and identifies an unsupported engine field; it does not certify all
+other fields. Damaged or truncated envelopes remain malformed data. Known SLICE
+ID 13 is unsupported when that existing build flag omits it. DIGITAL retains the
+actual FM4 compatibility meaning, or the actual historical FM6 conversion.
+
+Next wiring must carry a versioned optional mask independently of the saved-slot
+mask through `tools/dabbl8_project_convert.c`, its Python bundle wrapper and
+`web/d8project-conversion.js`. One mask must apply to primary and all referenced
+projects; any refusal must retain originals and prevent every proposed converted
+file from publication. Add fallback metadata, reason-code reporting and actual
+WASM/native parity tests while preserving ordinary outputs and no-overwrite
+policy. Browser selection, capability negotiation and immutable profile builds
+remain separate closed gates. Engine availability alone proves neither sample
+assets/patch compatibility nor memory fit/timing.
+
+Host evidence is in `evidence/2026-10-11-engine-offline-staging/`. The helper adds
+one small migration report and, when constructing FM6 fallback, a 156-byte local
+unpacked patch; no second project-sized stack object or retained profile cache.
+Target compiler stack/resource checks remain an integration obligation.
+
 Runtime stage completion still requires all of the following:
 
 - Complete any remaining publication paths and retain exact/effective refusal
   checks before undo/panic/patch mutation; historical UI/editor selection and
   project/native adoption already have these guards.
-- Integrate profile-aware defaults into separately named offline/default-insertion
-  paths without silently substituting original imported sounds; runtime browsing
-  and startup filtering do not authorize a reduced profile.
+- Wire the optional profile-v1 offline staging API through actual converter and
+  whole-bundle/browser paths without substituting original imported sounds;
+  header-only staging and runtime filtering do not authorize a reduced profile.
 - Complete all remaining publication paths beyond the project/native adoption
   slice; retain transactional refusal tests and target regression evidence.
 - Define referenced-project compatibility precisely, including the existing late
