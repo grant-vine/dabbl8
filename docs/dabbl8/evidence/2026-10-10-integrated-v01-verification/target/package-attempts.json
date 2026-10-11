@@ -1,0 +1,10 @@
+[
+  {
+    "exit": 1,
+    "failure": "Missing AC79_SDK environment in initial fm1pkg_make invocation; no package generated"
+  },
+  {
+    "exit": 0,
+    "resolution": "Explicit existing pinned AC79_SDK path; original loader reused"
+  }
+]

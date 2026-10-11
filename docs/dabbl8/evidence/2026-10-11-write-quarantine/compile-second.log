@@ -1,0 +1,8 @@
+In file included from tests/instrument_write_quarantine_test.c:47:
+tests/../firmware/src/editor.c:552:27: error: expected ')'
+  552 |         ed_str("FELUCCA " FELUCCA_VERSION, 24);
+      |                           ^
+tests/../firmware/src/editor.c:552:15: note: to match this '('
+  552 |         ed_str("FELUCCA " FELUCCA_VERSION, 24);
+      |               ^
+1 error generated.

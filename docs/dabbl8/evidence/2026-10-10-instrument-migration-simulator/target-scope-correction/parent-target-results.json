@@ -1,0 +1,23 @@
+{
+  "4": {
+    "tracks": 4,
+    "bytes": 447928,
+    "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "audited_v115_hash_matches": false
+  },
+  "8": {
+    "tracks": 8,
+    "bytes": 461312,
+    "sha256": "34091caeec7d9b2bdd06d65844e313fa4b23a6e8a7a78a8e6121de61e7ab11db",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 461312 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+    ]
+  }
+}

@@ -830,8 +830,19 @@ static int graph_project_used(uint32_t slot)
 #else
     if (!ready || fm1_ms - ms >= 500u || (ui.force && frame != ui.frame)) {
 #endif
+#if NPART >= NVOICE
+        char names[4][13];uint8_t next_mask=0;
+        memcpy(names,graph_pname,sizeof names);
+        for(uint32_t i=0;i<PROJECT_UI_SLOTS;i++) {
+            int rc=project_name(i,names[i]);
+            if(rc<0){cv_draw_deferred=1;ui.force=1;return slot<PROJECT_UI_SLOTS?((mask>>slot)&1u):0;}
+            next_mask|=(uint8_t)((rc!=0)<<i);
+        }
+        memcpy(graph_pname,names,sizeof names);mask=next_mask;
+#else
         uint32_t i; mask = 0;
         for (i = 0; i < PROJECT_UI_SLOTS; i++) mask |= (uint8_t)((project_name(i, graph_pname[i]) != 0) << i);
+#endif
         graph_pname_sig = fnv(2166136261u, graph_pname, sizeof graph_pname);
         ready = 1; ms = fm1_ms; frame = ui.frame;
     }
@@ -1299,7 +1310,7 @@ static void track_strip(uint32_t c, uint32_t sel, uint32_t st, uint32_t mute, ui
 {
     int32_t gw = CARD_W - 10, m = ts.meter[c] * gw / (TS_MH - 2), fx = (int32_t)lvl * gw / 127;
     uint16_t vc = mute ? T_DIM : T_THEME;
-    cv_begin(CARD_W, LG_H_GRAPH, T_BG);
+    CV_DRAW_BEGIN(CARD_W, LG_H_GRAPH, T_BG);
     cv_rrect(0, 0, CARD_W, LG_H_GRAPH, 5, T_SURF, T_BG);
     cv_icon_on(4, 4, 16, trk_icon(c, sel), sel ? T_ACCENT : T_MID, T_SURF);
     if (st)
@@ -1345,7 +1356,7 @@ static void draw_tracks(void)
         ts.col[c] = sig;
     }
     if (!changed) return;
-    cv_begin(240, gh, T_BG);
+    CV_DRAW_BEGIN(240, gh, T_BG);
     for (uint32_t c = 0; c < NTRK; c++) {
         const track_t *t = &trk[c];
         const engine_t *e = ENGINES[t->eng_req % NENGINES];
@@ -1407,7 +1418,7 @@ static void draw_tracks(void)
             track_strip(c, sel, st, mute, arm, hot, lvl, b);
             continue;
         }
-        cv_begin(CARD_W, H_GRAPH, T_BG);
+        CV_DRAW_BEGIN(CARD_W, H_GRAPH, T_BG);
         cv_rrect(0, 0, CARD_W, H_GRAPH, 5, T_SURF, T_BG);
         cv_icon_on(4, 5, 16, trk_icon(c, sel), sel ? T_ACCENT : T_MID, T_SURF);
         if (st)
@@ -1538,7 +1549,7 @@ static void draw_graph(void)
     if (!ui.force && sig == ui.graph_sig)
         return;
     ui.graph_sig = sig;
-    cv_begin(240, graph_h(), T_BG);
+    CV_DRAW_BEGIN(240, graph_h(), T_BG);
     cv_rrect(3, 0, 234, graph_h(), 5, T_SURF, T_BG);   /* the panel (MENU > LARGE: the strip) */
     cv_bg = T_SURF;                                  /* (text drawn with cv_text lands on it) */
     cv_oy = GOY;                                     /* graphs on a 100 px scale */

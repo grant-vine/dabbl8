@@ -1,0 +1,8 @@
+{
+  "firmware/src/native_migration_execute.h": "d65efee79c799fa92072694ae33974978d859e67765b33d57ffa60000a530483",
+  "firmware/src/native_migration_execute.c": "0c6815b7df7b0bc4ec81ae827e58c1d4a932ad1f02d7179e294a2b8d4ccd5c13",
+  "firmware/src/felucca.c": "46d5483f0ef3c5ed9d9872d80bf03fa668110da5f91f3d127e75e5d88e0d9f18",
+  "tests/native_migration_execute_test.c": "40b445cb4ca9cbedffa8cd50c6a8b86b5667c9fc719ce745187f956c7696ca23",
+  "tests/instrument_capture_test.c": "00d3f37e7fd37dddd6ed60bb5601e3e3b489e95daf402fc7c9dca25aa6bebb4d",
+  "tests/run_tests.sh": "d31b5d96856d71d25767a36d175b6d57282e1692e87e07d88bd64a0dfc8d588c"
+}
