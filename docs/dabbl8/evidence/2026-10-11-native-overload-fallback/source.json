@@ -1,0 +1,15 @@
+{
+  "base": "1d47ebee17c72b933008524b6cabbfb138da3e72",
+  "candidate_files": {
+    "firmware/src/audio.c": "dcde98f900e3223eb628104ec887da76968472e840f4ac1304acd8e0c11ca37b",
+    "tests/audio_test.c": "630a72d8b15ab30b79288b7612f29835236e6293f0d2b7033d9892b0e9be1187",
+    "tests/native_overload_test.c": "db15a07461abc79dabc95293db543bbb1217cb62cd9aa1c383fdbdff8c691f30",
+    "tests/run_tests.sh": "eee8181ad0d19779ff221fc159d982d86aba0031b66d41e595bb5635c380d1ef",
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  },
+  "private_diagnostic_included": false,
+  "checks": "Four/eight normal and inherited-sanitizer focused tests; unchanged4 audio; original-main8 negative regression fails expected sustained fallback assertion; four fresh target apps. Full hosted suite pending.",
+  "remaining": "Native IRQ/UAC static budget failures unchanged thresholds, hardware deadlines/click quality/stack high-water and recovery unqualified. Immediate retirement reuses current native policy. No package, install, loader/map/write-gate modification."
+}

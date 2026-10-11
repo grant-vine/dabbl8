@@ -1,0 +1,82 @@
+[
+  {
+    "name": "overload-4-normal",
+    "exit": 0,
+    "log": "overload: tracks=4 assertions=24 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-review-expanded/overload-4-normal"
+    ]
+  },
+  {
+    "name": "overload-4-san",
+    "exit": 0,
+    "log": "overload: tracks=4 assertions=24 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=4",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-review-expanded/overload-4-san"
+    ]
+  },
+  {
+    "name": "overload-8-normal",
+    "exit": 0,
+    "log": "overload: tracks=8 assertions=66 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n",
+    "cmd": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-review-expanded/overload-8-normal"
+    ]
+  },
+  {
+    "name": "overload-8-san",
+    "exit": 0,
+    "log": "overload: tracks=8 assertions=66 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n",
+    "cmd": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-DNPART=8",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "tests/native_overload_test.c",
+      "-lm",
+      "-o",
+      "/private/tmp/d8-overload-review-expanded/overload-8-san"
+    ]
+  },
+  {
+    "name": "original4-audio",
+    "exit": 0
+  }
+]

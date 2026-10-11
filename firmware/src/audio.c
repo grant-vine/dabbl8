@@ -110,6 +110,18 @@ static void shed_voice(void)
             }
         }
     }
+#if NPART >= NVOICE
+    /* Eight protected leads/basses can occupy the entire shared budget. Only
+     * sustained measured overload may use admission's oldest-protected fallback;
+     * released tails and extra held notes above retain their existing priority.
+     * Native voice_kill retires immediately: no ninth overlapping fade voice. */
+    if (!best && (shed_over & 3u) == 3u) {
+        track_t *owner = 0;
+        uint32_t victim = voice_victim(0, 0, &owner);
+        if (victim < NVOICE)
+            best = &owner->v[victim];
+    }
+#endif
     if (best) {
         voice_kill(best);
         shed_count++;

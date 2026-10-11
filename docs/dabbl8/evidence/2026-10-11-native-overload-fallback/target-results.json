@@ -1,0 +1,156 @@
+[
+  {
+    "name": "4-original",
+    "tracks": 4,
+    "mode": "original",
+    "wall_seconds": 8.007734416984022,
+    "app_bytes": 447952,
+    "app_sha256": "a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096",
+    "memory_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447952 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "budget_exit": 0,
+    "cost": {
+      "fm1_alnk0_irq": {
+        "insns": 2114,
+        "loop": 2000,
+        "div": 16,
+        "call": 70,
+        "cost": 40609
+      },
+      "uac_tap48": {
+        "insns": 134,
+        "loop": 99,
+        "div": 0,
+        "call": 0,
+        "cost": 504
+      }
+    },
+    "flags": [
+      "-Os",
+      "-ffunction-sections",
+      "-fno-builtin",
+      "-Wall",
+      "-Wno-unused-function"
+    ],
+    "scope": "Fresh app-only target compile/link. No package, loader build, install, timing cycles or hardware claim."
+  },
+  {
+    "name": "4-candidate-off",
+    "tracks": 4,
+    "mode": "candidate-off",
+    "wall_seconds": 8.249448832997587,
+    "app_bytes": 447952,
+    "app_sha256": "a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096",
+    "memory_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447952 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "budget_exit": 0,
+    "cost": {
+      "fm1_alnk0_irq": {
+        "insns": 2114,
+        "loop": 2000,
+        "div": 16,
+        "call": 70,
+        "cost": 40609
+      },
+      "uac_tap48": {
+        "insns": 134,
+        "loop": 99,
+        "div": 0,
+        "call": 0,
+        "cost": 504
+      }
+    },
+    "flags": [
+      "-Os",
+      "-ffunction-sections",
+      "-fno-builtin",
+      "-Wall",
+      "-Wno-unused-function"
+    ],
+    "scope": "Fresh app-only target compile/link. No package, loader build, install, timing cycles or hardware claim."
+  },
+  {
+    "name": "8-original",
+    "tracks": 8,
+    "mode": "original",
+    "wall_seconds": 9.093402250029612,
+    "app_bytes": 480220,
+    "app_sha256": "0726552f3a3272a8a85a3aa3eb468946f3748cb1d541a4a82ad6523da09d7c60",
+    "memory_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480220 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+    ],
+    "budget_exit": 1,
+    "cost": {
+      "fm1_alnk0_irq": {
+        "insns": 2359,
+        "loop": 2239,
+        "div": 16,
+        "call": 81,
+        "cost": 55722
+      },
+      "uac_tap48": {
+        "insns": 162,
+        "loop": 120,
+        "div": 0,
+        "call": 0,
+        "cost": 555
+      }
+    },
+    "flags": [
+      "-Os",
+      "-ffunction-sections",
+      "-fno-builtin",
+      "-Wall",
+      "-Wno-unused-function",
+      "-DNPART=8"
+    ],
+    "scope": "Fresh app-only target compile/link. No package, loader build, install, timing cycles or hardware claim."
+  },
+  {
+    "name": "8-candidate-off",
+    "tracks": 8,
+    "mode": "candidate-off",
+    "wall_seconds": 9.018653666018508,
+    "app_bytes": 480300,
+    "app_sha256": "b0302738494d7fa5d62e44ce540216df51054a189db9b1e48e522d70c97a4246",
+    "memory_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480300 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+    ],
+    "budget_exit": 1,
+    "cost": {
+      "fm1_alnk0_irq": {
+        "insns": 2379,
+        "loop": 2330,
+        "div": 17,
+        "call": 84,
+        "cost": 133953
+      },
+      "uac_tap48": {
+        "insns": 162,
+        "loop": 120,
+        "div": 0,
+        "call": 0,
+        "cost": 555
+      }
+    },
+    "flags": [
+      "-Os",
+      "-ffunction-sections",
+      "-fno-builtin",
+      "-Wall",
+      "-Wno-unused-function",
+      "-DNPART=8"
+    ],
+    "scope": "Fresh app-only target compile/link. No package, loader build, install, timing cycles or hardware claim."
+  }
+]
