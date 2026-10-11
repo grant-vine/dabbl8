@@ -1,0 +1,355 @@
+{
+  "source_hashes": {
+    "firmware/src/audio.c": "8ee712b32cdbf0e8863220213749a582c940de42b513e1c580af3a7db4f6db0d",
+    "firmware/src/audio_timing.h": "4de7e6df4c942e8a71abeb28275492dcb6724d1fb305303c8d7f97f338b026a6",
+    "firmware/src/console.c": "958b8a00ab51bb4e4c297965ce3000e31e0b5320f0a977d11c76b2c42e259e9c",
+    "firmware/src/audio_timing_console.h": "d708a1f9527297feeb1f1e328d1a4ccb6358190538972261aa9aa03fc4b4c2f1",
+    "tools/build.py": "e7062a31058adebf37eebe24070b436c5d8bbaa053be95b1d0218a8dc074ce45",
+    "tools/gen_samples.py": "3f72590d383f7833b9c97c3dfe9b67582155bc77d2b13a2b505aa9618c27a06b",
+    "tools/dabbl8_timing_report.py": "66128423daf70b9e3bc2f5b324fb69ae3a7180f0591c297232f06dd08f5d6332",
+    "tests/audio_test.c": "e920abd719ea6e48e4a7fbd931ecdddb151ad1a800f82afdcd3300c32ea78024",
+    "tests/audio_timing_isr_test.c": "c868320891afcb8e696eb56b9f714604ffab53f833d456efebfb240c0088d0e6",
+    "tests/audio_timing_session_test.c": "f27f2cea8f423c18bbaa03e5636e89c119f3a80e968b5e019091f5eff4d38f5c",
+    "tests/audio_timing_console_test.py": "0e11a36b492b940aa7f6dda9d616eca294b3ef57ee6e0def4f27f25e95358f1e",
+    "tests/dabbl8_timing_report_test.py": "19d32147c6840313708afed439c002688323b1a0850a5a23acf0864f35644e27",
+    "tests/timing_build_isolation_test.py": "51038bad7dc03f1e6ffbc04bfddf06d433e64f1672e165e9d11262b7a193a5ec",
+    "tests/audio_timing_test.py": "45965cb30603bfd711784f2c52b09ce3a4a0a980de10357a7637fe6c620ba3b9"
+  },
+  "scope": "Simulated clocks/DMA/CDC only; no device or target timing proof.",
+  "result": "PASS",
+  "checks": [
+    {
+      "name": "session-normal-build",
+      "command": [
+        "cc",
+        "-O2",
+        "-Wall",
+        "tests/audio_timing_session_test.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/session-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "session-normal",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/session-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "ce14dad76d9509010aa02c01828c929d96105c0e93ea1521b90ee14ebdde5554"
+    },
+    {
+      "name": "session-san-build",
+      "command": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-Wall",
+        "tests/audio_timing_session_test.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/session-san"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "session-san",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/session-san"
+      ],
+      "exit": 0,
+      "log_sha256": "ce14dad76d9509010aa02c01828c929d96105c0e93ea1521b90ee14ebdde5554"
+    },
+    {
+      "name": "irq-4-normal-flag0-build",
+      "command": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-normal-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-4-normal-flag0-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-normal-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "a592a7a299a1cebf62efc4a686578011f87729d010fb628dbf5776dbf601eb94"
+    },
+    {
+      "name": "irq-4-normal-flag1-build",
+      "command": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-normal-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-4-normal-flag1-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-normal-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "a592a7a299a1cebf62efc4a686578011f87729d010fb628dbf5776dbf601eb94"
+    },
+    {
+      "name": "irq-4-normal-flag1-collect",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-normal-flag1",
+        "collect"
+      ],
+      "exit": 0,
+      "log_sha256": "7319dda19d3b318adbddd2864e652d0815085b9dbb27f8b19275159721662d00"
+    },
+    {
+      "name": "irq-4-san-flag0-build",
+      "command": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-w",
+        "-DNPART=4",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-san-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-4-san-flag0-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-san-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "a592a7a299a1cebf62efc4a686578011f87729d010fb628dbf5776dbf601eb94"
+    },
+    {
+      "name": "irq-4-san-flag1-build",
+      "command": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-w",
+        "-DNPART=4",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-san-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-4-san-flag1-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-san-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "a592a7a299a1cebf62efc4a686578011f87729d010fb628dbf5776dbf601eb94"
+    },
+    {
+      "name": "irq-4-san-flag1-collect",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-4-san-flag1",
+        "collect"
+      ],
+      "exit": 0,
+      "log_sha256": "7319dda19d3b318adbddd2864e652d0815085b9dbb27f8b19275159721662d00"
+    },
+    {
+      "name": "irq-8-normal-flag0-build",
+      "command": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-normal-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-8-normal-flag0-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-normal-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "5e62d5e27d7022a7073ac245e00aab0b028cec4bbf258a0262e9717137df187e"
+    },
+    {
+      "name": "irq-8-normal-flag1-build",
+      "command": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-normal-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-8-normal-flag1-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-normal-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "5e62d5e27d7022a7073ac245e00aab0b028cec4bbf258a0262e9717137df187e"
+    },
+    {
+      "name": "irq-8-normal-flag1-collect",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-normal-flag1",
+        "collect"
+      ],
+      "exit": 0,
+      "log_sha256": "b31524534dffabd4284d03d113f6f22ddbe91734daeb30a3fc7607cd9f588725"
+    },
+    {
+      "name": "irq-8-san-flag0-build",
+      "command": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-w",
+        "-DNPART=8",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-san-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-8-san-flag0-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-san-flag0"
+      ],
+      "exit": 0,
+      "log_sha256": "5e62d5e27d7022a7073ac245e00aab0b028cec4bbf258a0262e9717137df187e"
+    },
+    {
+      "name": "irq-8-san-flag1-build",
+      "command": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-w",
+        "-DNPART=8",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "tests/audio_timing_isr_test.c",
+        "-lm",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-san-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "irq-8-san-flag1-paused",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-san-flag1"
+      ],
+      "exit": 0,
+      "log_sha256": "5e62d5e27d7022a7073ac245e00aab0b028cec4bbf258a0262e9717137df187e"
+    },
+    {
+      "name": "irq-8-san-flag1-collect",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/irq-8-san-flag1",
+        "collect"
+      ],
+      "exit": 0,
+      "log_sha256": "b31524534dffabd4284d03d113f6f22ddbe91734daeb30a3fc7607cd9f588725"
+    },
+    {
+      "name": "console",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+        "tests/audio_timing_console_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "3280f1a9e4888e6f49f83a3e5b3bb0b04c363ccb4fdfc6b4717e848115d20993"
+    },
+    {
+      "name": "parser",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+        "tests/dabbl8_timing_report_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "057ffd85f13a936d1b8758be0c65e011c4351babe8d4a754ef08867cf4958687"
+    },
+    {
+      "name": "output-isolation",
+      "command": [
+        "/Users/grantv/Code/dabbl8/.local-baseline/venv/bin/python",
+        "tests/timing_build_isolation_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "ba8dd02bb7437942124041e01665b154f224dfbcb0a07cdebc0a6802f7ac9c74"
+    }
+  ],
+  "skips": []
+}

@@ -1,0 +1,2 @@
+# Preserve exact CDC wire captures, including CRLF framing, for CRC/parser evidence.
+docs/dabbl8/evidence/2026-10-11-timing-diagnostic/host/console/*.frame -text -diff

@@ -11,7 +11,12 @@
 static uint32_t host_clock, host_us, host_half_reads, host_dma_advanced, host_acks, host_nest;
 static uint8_t host_pending;
 static volatile uint32_t t5_nested_ticks;              /* audio.c's: TIMER5 nested in the render (main.c) */
-static uint32_t fm1_ticks(void) { t5_nested_ticks = host_nest; host_clock += host_us; return host_clock; }
+static uint32_t fm1_ticks(void) {
+#ifdef AUDIO_CLOCK_TEST_HOOK
+    AUDIO_CLOCK_TEST_HOOK();
+#endif
+    t5_nested_ticks = host_nest; host_clock += host_us; return host_clock;
+}
 static uint8_t fm1_audio_pending(void) { return host_pending; }
 static void fm1_audio_ack_aux(uint8_t p) { (void)p; }
 static uint32_t fm1_audio_free_half(void) { return host_dma_advanced && host_half_reads++ > 0u; }
@@ -268,6 +273,7 @@ static void boot_keys(void)
           ref > 100.0 && fabs(quiet - ref) < 1e-9 && silent == 0.0);
 }
 
+/* Reuse the actual ISR fixture without its standalone entry point. */
 #ifndef AUDIO_TEST_NO_MAIN
 int main(void)
 {

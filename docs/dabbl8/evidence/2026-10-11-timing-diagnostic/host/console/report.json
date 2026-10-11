@@ -1,0 +1,73 @@
+{
+  "scope": "Actual candidate console prefix parser/hex/print and con_exec/cdc_task, new timing formatter; unrelated diagnostic bodies stubbed. Simulated ring and watchdog/host drain, no physical transport or target cost proof.",
+  "console_source_sha256": "958b8a00ab51bb4e4c297965ce3000e31e0b5320f0a977d11c76b2c42e259e9c",
+  "fixture_sha256": "a076a341348fc4332c46a955405e334c0fad69ade54c86a1761b6838534ba9aa",
+  "checks": [
+    {
+      "name": "normal-flag0",
+      "build": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ifirmware/src",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/console-fixture.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/normal-flag0"
+      ],
+      "exit": 0,
+      "frame_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "normal-flag1",
+      "build": [
+        "cc",
+        "-O2",
+        "-w",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ifirmware/src",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/console-fixture.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/normal-flag1"
+      ],
+      "exit": 0,
+      "frame_sha256": "c44a80feafa320bb0b42cfc914ff85e52bb3f4f3caf7c73ceaf63edf2d8d1437"
+    },
+    {
+      "name": "strict-san-flag0",
+      "build": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DDABBL8_TIMING_DIAGNOSTIC=0",
+        "-Ifirmware/src",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/console-fixture.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/strict-san-flag0"
+      ],
+      "exit": 0,
+      "frame_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "strict-san-flag1",
+      "build": [
+        "cc",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DDABBL8_TIMING_DIAGNOSTIC=1",
+        "-Ifirmware/src",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/console-fixture.c",
+        "-o",
+        "/Users/grantv/Code/dabbl8/.local-baseline/timing-diagnostic/build/host/timing-evidence/run-mvtz0rag/console/strict-san-flag1"
+      ],
+      "exit": 0,
+      "frame_sha256": "c44a80feafa320bb0b42cfc914ff85e52bb3f4f3caf7c73ceaf63edf2d8d1437"
+    }
+  ]
+}

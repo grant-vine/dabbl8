@@ -19,6 +19,12 @@
 #ifndef FELUCCA_CDC
 #define FELUCCA_CDC 1            /* USB CDC-ACM serial console */
 #endif
+#ifndef DABBL8_TIMING_DIAGNOSTIC
+#define DABBL8_TIMING_DIAGNOSTIC 0
+#endif
+#if DABBL8_TIMING_DIAGNOSTIC && !FELUCCA_CDC
+#error "Timing diagnostic needs the CDC console"
+#endif
 #ifndef FELUCCA_UAC
 #define FELUCCA_UAC 1            /* USB audio input: the master output, 16-bit stereo 44.1 kHz (usb.c) */
 #endif

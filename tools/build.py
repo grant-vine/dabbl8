@@ -15,6 +15,7 @@ macOS (or with JIELI_DOCKER=1) each tool runs in a linux/amd64 container.
 """
 import argparse
 import hashlib
+import json
 import os
 import platform
 import re
@@ -22,6 +23,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -52,6 +54,7 @@ SDK_SHA256 = {
 
 PRODUCT = "FM-1_900"                # package identity; release builds are FM-1_9XY
 DABBL8_VERSION = None
+TIMING_DIAGNOSTIC = False
 VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/felucca.c)
 
 
@@ -105,6 +108,8 @@ def generate():
             [tools / "gen_tables.py", GEN / "felucca_tables.h"],
             [tools / "gen_fm6_patches.py", GEN / "felucca_fm6.h"],
             [tools / "gen_samples.py", GEN / "felucca_samples.h"]]
+    if TIMING_DIAGNOSTIC:
+        cmds[-1].extend(["--workspace", OUT])
     procs = [subprocess.Popen([sys.executable, *map(str, c)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               text=True) for c in cmds]
     failed = []
@@ -179,7 +184,11 @@ def build_loader():
 # ---- app
 
 def build_app():
-    flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src", "-Ibuild/gen"]
+    flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src", "-I" + GEN.relative_to(SRC).as_posix()]
+    if TIMING_DIAGNOSTIC:
+        if os.environ.get("FELUCCA_CDC") == "0":
+            raise SystemExit("--timing-diagnostic needs FELUCCA_CDC=1")
+        flags.append("-DDABBL8_TIMING_DIAGNOSTIC=1")
     for flag in ("FELUCCA_FLASH", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY", "FELUCCA_CDC",
                  "FELUCCA_UART", "FELUCCA_UAC", "FELUCCA_UAC_TONE", "FELUCCA_UAC_48K", "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_FM4",
                  "FELUCCA_CDC_DEFAULT"):
@@ -322,12 +331,19 @@ def mmio_check():
 
 
 def main():
-    global PRODUCT, VERSION, DABBL8_VERSION
+    global PRODUCT, VERSION, DABBL8_VERSION, TIMING_DIAGNOSTIC, OUT, GEN, LDR
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_9XY, version string vX.Y")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     ap.add_argument("--dabbl8", metavar="X.Y[.Z][-suffix]", help="experimental eight-track Dabbl8 package; no publication or hardware qualification")
+    ap.add_argument("--timing-diagnostic", action="store_true",
+                    help="optional paused timing histograms; no hardware qualification")
     a = ap.parse_args()
+    if a.timing_diagnostic and a.release:
+        ap.error("timing diagnostics are not release builds")
+    if a.timing_diagnostic and os.environ.get("FELUCCA_CDC") == "0":
+        ap.error("--timing-diagnostic needs FELUCCA_CDC=1")
+    TIMING_DIAGNOSTIC = a.timing_diagnostic
     if a.release and a.dabbl8:
         ap.error("--release (upstream identity) and --dabbl8 are mutually exclusive")
     name = "felucca.fwsc"
@@ -345,6 +361,31 @@ def main():
             ap.error(str(exc))
         PRODUCT, VERSION, name = ident.product, ident.version, ident.package
         DABBL8_VERSION = VERSION
+    diagnostic_manifest = None
+    if TIMING_DIAGNOSTIC:
+        normal_name = name
+        if DABBL8_VERSION:
+            VERSION = DABBL8_VERSION.split("-", 1)[0] + "-timing"
+            DABBL8_VERSION = VERSION
+            name = "dabbl8-" + VERSION[1:] + "-diagnostic.fwsc"
+        else:
+            VERSION = "vTIMING"
+            name = "felucca-timing-diagnostic.fwsc"
+        parent = SRC / "build/timing-diagnostics"
+        parent.mkdir(parents=True, exist_ok=True)
+        OUT = Path(tempfile.mkdtemp(prefix="run-", dir=parent))
+        GEN, LDR = OUT / "gen", OUT / "loader"
+        diagnostic_manifest = {
+            "schema": 1, "diagnostic": True, "phase": "configured",
+            "hardware_qualified": False, "flashing_authorized": False,
+            "ordinary_package_name": normal_name, "package_name": name,
+            "product": PRODUCT, "version": VERSION,
+            "requested_dabbl8_version": a.dabbl8,
+            "output_directory": OUT.relative_to(SRC).as_posix(),
+            "scope": "Timing instrumentation changes load; no physical timing, stack or recovery qualification",
+        }
+        (OUT / "diagnostic-manifest.json").write_text(json.dumps(diagnostic_manifest, indent=2) + "\n")
+        print("DIAGNOSTIC ONLY: isolated output", OUT.relative_to(SRC).as_posix())
     fm1pkg_make.SDK = a.sdk
     for rel, sha in SDK_SHA256.items():          # fail early without the SDK
         if hashlib.sha256(fm1pkg_make.sdk_file(rel)).hexdigest() != sha:
@@ -368,6 +409,14 @@ def main():
         raise SystemExit("build: checks failed")
     pkg = fm1pkg_make.ufw(fm1pkg_make.flash_image(img, fm1pkg_make.KEY), ota, PRODUCT)
     (OUT / name).write_bytes(pkg)
+    if diagnostic_manifest is not None:
+        diagnostic_manifest["phase"] = "build_checks_passed_not_hardware_qualified"
+        diagnostic_manifest["artifacts"] = {
+            path.relative_to(OUT).as_posix(): {"bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+            for path in (OUT / "felucca.bin", LDR / "ota.bin", OUT / name)
+        }
+        (OUT / "diagnostic-manifest.json").write_text(json.dumps(diagnostic_manifest, indent=2) + "\n")
     att = SRC / "assets" / "samples-cc0" / "ATTRIBUTION.txt"
     if att.exists():
         shutil.copy(att, OUT / "ATTRIBUTION.txt")

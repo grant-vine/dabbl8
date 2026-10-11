@@ -5,6 +5,15 @@
  * each synth part -> dist -> level / pan -> sends -> buses -> master) -> USB audio (uac_tap) -> the metronome's
  * click (click.c, the DAC only) -> 24-bit stereo. */
 /* registers: hal/fm1_audio.h */
+#ifndef DABBL8_TIMING_DIAGNOSTIC
+#define DABBL8_TIMING_DIAGNOSTIC 0
+#endif
+#if DABBL8_TIMING_DIAGNOSTIC != 0 && DABBL8_TIMING_DIAGNOSTIC != 1
+#error "DABBL8_TIMING_DIAGNOSTIC must be 0 or 1"
+#endif
+#if DABBL8_TIMING_DIAGNOSTIC
+#include "audio_timing.h"
+#endif
 #define HALF_WORDS (HALF_FRAMES * 2u)
 #define DAC_TICKS 544u            /* TIMER4 ticks per I2S frame (24 MHz / 44,117.6 Hz) */
 #define CPU_AVG (4096u / HALF_FRAMES)   /* halves the load meter averages: ~93 ms whatever the half */
@@ -137,7 +146,13 @@ void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) 
 {
     uint8_t p;
     uint32_t t0;
-    felucca_dbg.in_audio = 1;                   /* first: TIMER5 nests from here on (main.c) */
+    felucca_dbg.in_audio = 1;                   /* keep TIMER5 on its bounded nested path through collection */
+#if DABBL8_TIMING_DIAGNOSTIC
+    uint32_t diagnostic_start = 0, diagnostic_render = 0;
+    uint32_t diagnostic_enabled = audio_timing.enabled, diagnostic_half = 0;
+    if (diagnostic_enabled)
+        diagnostic_start = fm1_ticks();
+#endif
     p = fm1_audio_pending();
     t0 = fm1_ticks();
     t5_nested_ticks = 0;
@@ -171,6 +186,10 @@ void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) 
         fm1_audio_ack_half();
         audio_halves++;
         us = shed_check(fm1_ticks() - t0);
+#if DABBL8_TIMING_DIAGNOSTIC
+        diagnostic_render = us * FM1_TICKS_PER_US;
+        diagnostic_half = 1;
+#endif
         if (us > audio_max_us)
             audio_max_us = us;
         {
@@ -186,6 +205,10 @@ void fm1_alnk0_irq(void)                       /* via isr_alnk0 (hal/fm1_isr.S) 
             felucca_dbg.max_us = us;
         felucca_dbg.cpu_q8 = song.cpu_q8;
     }
+#if DABBL8_TIMING_DIAGNOSTIC
+    if (diagnostic_enabled && diagnostic_half)
+        audio_timing_record(diagnostic_render, fm1_ticks() - diagnostic_start, audio_halves);
+#endif
     felucca_dbg.in_audio = 0;
 }
 extern void isr_alnk0(void);

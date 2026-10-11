@@ -1,0 +1,26 @@
+[
+  {
+    "old_generator_workspace_negative_control": "Ordinary altered WAV overwritten as expected",
+    "slice": "1",
+    "header_sha256": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "header_bytes": 460065,
+    "generated_wav_count": 22,
+    "original_default_candidate_default_isolated_headers": "byte-identical",
+    "generated_wavs": "byte-identical",
+    "ordinary_files_preserved": 24,
+    "isolated_cache_hit": "PASS byte-identical outputs",
+    "scope": "Actual sample generation with identical retained CC0 inputs and Python version; no compiler/loader/package/device"
+  },
+  {
+    "old_generator_workspace_negative_control": "Ordinary altered WAV overwritten as expected",
+    "slice": "0",
+    "header_sha256": "cfff041d32f43d7269e6b142b05a3564f01b4545b60ba3474223d4b29112c639",
+    "header_bytes": 377527,
+    "generated_wav_count": 22,
+    "original_default_candidate_default_isolated_headers": "byte-identical",
+    "generated_wavs": "byte-identical",
+    "ordinary_files_preserved": 24,
+    "isolated_cache_hit": "PASS byte-identical outputs",
+    "scope": "Actual sample generation with identical retained CC0 inputs and Python version; no compiler/loader/package/device"
+  }
+]
