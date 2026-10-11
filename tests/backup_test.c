@@ -25,10 +25,10 @@ static void panel_setup(void) {}
 
 static uint8_t nor[0x100000], flash_ok = 1;
 static int erase_error;
-static uint32_t erases;
+static uint32_t erases, programs;
 static int st_read(uint32_t off, void *dst, uint32_t n) { memcpy(dst, nor + off, n); return 0; }
 static int st_erase(uint32_t off) { if (erase_error) return -8; memset(nor + off, 0xFF, 4096); erases++; return 0; }
-static int st_prog(uint32_t off, const void *src, uint32_t n) { memcpy(nor + off, src, n); return 0; }
+static int st_prog(uint32_t off, const void *src, uint32_t n) { programs++; memcpy(nor + off, src, n); return 0; }
 static uint32_t irq_save(void) { return 0; }
 static void irq_restore(uint32_t f) { (void)f; }
 static uint32_t fl_jedec_ram(void) { return 0; }
@@ -37,6 +37,7 @@ static void fl_plain_window_init(void) {}
 #include "../firmware/src/storage.c"
 #include "../firmware/src/upreset.c"
 #include "../firmware/src/project.c"
+#include "legacy_wire_fixture.h"
 
 enum { ED_BACKUP_LIST = 65, ED_BACKUP_GET, ED_BACKUP_PUT };
 static uint8_t rep[4096];
@@ -86,7 +87,7 @@ static void reset(void)
     transport_req = 0;
     usb.resets = 0;
     erase_error = 0;
-    erases = 0;
+    erases = programs = 0;
     ed_bk_valid = ed_bk_put = 0;
 }
 
@@ -167,7 +168,7 @@ static uint32_t get(uint32_t id, uint32_t off, uint32_t count)
     return rep[1];
 }
 
-int main(void)
+static int legacy_backup_four(void)
 {
     int bad = 0;
     uint32_t len = 0, crc = 0, before;
@@ -275,7 +276,8 @@ int main(void)
     reset();
     trk[1].step[3] = (step_t){{64}, 1, ST_NOTE, 0, 96, 0, 0};
     project_capture(&proj_scratch);
-    proj_pack(&st, &proj_scratch);
+    proj_scratch.parts=PROJ_LEGACY_NTRK;
+    fixture_pack(&st, &proj_scratch);
     bad += check("a FUN9 project restores into slot 3 (flash and RAM)",
                  put_all(4, &st, sizeof st, st_crc32(&st, sizeof st)) == 0 && project_used(2) &&
                  !memcmp(&proj_slot[2], &st, sizeof st) && st_load(OBJ_PROJECT0 + 2, &proj_wire, sizeof proj_wire) == (int)sizeof st);
@@ -284,17 +286,18 @@ int main(void)
         uint32_t pos = 68u, pos9 = 68u, k, j, sum;
         trk[2].p[P_E0] = 2;
         project_capture(&proj_scratch);
-        proj_pack(&st, &proj_scratch);
+        proj_scratch.parts=PROJ_LEGACY_NTRK;
+    fixture_pack(&st, &proj_scratch);
         memcpy(v8, st.raw, 68);
         v8[66] = 91;
-        for (k = 0; k < NTRK; k++) {
+        for (k = 0; k < PROJ_LEGACY_NTRK; k++) {
             for (j = 0; j < 91u; j++) v8[pos++] = st.raw[pos9 + (j < 83u ? j : j + 8u)];
             pos9 += P_COUNT;
             memcpy(v8 + pos, st.raw + pos9, 2u + NSTEP * 9u);
             pos += 2u + NSTEP * 9u; pos9 += 2u + NSTEP * 9u;
         }
         memcpy(v8 + pos, st.raw + pos9, sizeof(chain_config_t) + sizeof(motion_legacy_store_t));
-        memcpy(v8 + 3056u, st.raw + PROJ_FM6_OFF, NTRK * FM6_PACKED);
+        memcpy(v8 + 3056u, st.raw + PROJ_FM6_OFF, PROJ_LEGACY_NTRK * FM6_PACKED);
         ((uint32_t *)v8)[0] = 0x46554E38u;
         ((uint32_t *)v8)[1] = 3584u;
         sum = proj_hash(v8, 3580u);
@@ -309,7 +312,7 @@ int main(void)
     v6.size = sizeof v6;
     for (uint32_t i = 0; i < G_COUNT; i++)
         v6.g[i] = GP[i].def;
-    for (uint32_t i = 0; i < NTRK; i++)
+    for (uint32_t i = 0; i < PROJ_LEGACY_NTRK; i++)
         v6.t[i].engine = trk[i].engine;
     v6.t[0].step[0] = (step10_t){{255, 72}, 9, 7, 0, 96, 0, 0};
     v6.t[0].p[61] = 3;                                   /* old E0 */
@@ -393,7 +396,8 @@ int main(void)
     trk[2].step[5] = (step_t){{67}, 1, ST_NOTE, 0, 96, 0, 0};
     trk[2].p[P_LEVEL] = 77;
     project_capture(&proj_scratch);
-    proj_pack(&st, &proj_scratch);
+    proj_scratch.parts=PROJ_LEGACY_NTRK;
+    fixture_pack(&st, &proj_scratch);
     host_tracks_init();
     bad += check("the runtime object restores the tracks",
                  put_all(0, &st, sizeof st, st_crc32(&st, sizeof st)) == 0 && trk[2].step[5].note[0] == 67u &&
@@ -420,4 +424,178 @@ int main(void)
     }
     printf("backup test %s\n", bad ? "FAILED" : "passed");
     return bad != 0;
+}
+
+#if NPART == 8
+/* This fixture calls the internal transfer handler below ed_dispatch. Begin,
+ * chunks and abort intentionally operate on staging/session state. Production
+ * storage quarantine still refuses commits; public all-state refusal belongs
+ * to the actual editor/robust dispatcher fixtures, not this helper boundary. */
+static uint8_t native_nor_before[sizeof nor];
+static struct {
+    __typeof__(trk) tracks;__typeof__(song) song_state;__typeof__(fm6_patch) patches;
+    __typeof__(motion) motion_state;__typeof__(chain_config) chain_state;
+    __typeof__(proj_slot) slots;__typeof__(settings) settings_state;
+} native_music_before;
+static int native_put_check(const char *label,unsigned id,const void *p,unsigned n,unsigned crc,unsigned expected) {
+    memcpy(native_nor_before,nor,sizeof nor);unsigned old_erases=erases, old_programs=programs;
+    memcpy(native_music_before.tracks,trk,sizeof trk);native_music_before.song_state=song;
+    memcpy(native_music_before.patches,fm6_patch,sizeof fm6_patch);native_music_before.motion_state=motion;
+    native_music_before.chain_state=chain_config;memcpy(native_music_before.slots,proj_slot,sizeof proj_slot);
+    native_music_before.settings_state=settings;
+    int ok=put_all(id,p,n,crc)==expected && erases==old_erases && programs==old_programs && !memcmp(nor,native_nor_before,sizeof nor) &&
+        !memcmp(native_music_before.tracks,trk,sizeof trk) && !memcmp(&native_music_before.song_state,&song,sizeof song) &&
+        !memcmp(native_music_before.patches,fm6_patch,sizeof fm6_patch) && !memcmp(&native_music_before.motion_state,&motion,sizeof motion) &&
+        !memcmp(&native_music_before.chain_state,&chain_config,sizeof chain_config) && !memcmp(native_music_before.slots,proj_slot,sizeof proj_slot) &&
+        !memcmp(&native_music_before.settings_state,&settings,sizeof settings);
+    return check(label,ok);
+}
+static int native_backup_eight(void) {
+    int bad=0;unsigned len=0,crc=0;static project_store_t st;static project_v6_t v6;
+    persist_t ps;reset();
+    memset(&st,0xA5,sizeof st);project_store_t sentinel=st;
+    project_capture(&proj_scratch);
+    bad+=check("native packing refuses without altering historical output",!proj_pack(&st,&proj_scratch)&&!memcmp(&st,&sentinel,sizeof st));
+    bad+=check("internal LIST cannot capture native runtime as FUN9 (2, zero objects)",list(0,&len,&crc)==2&&rep[2]==0&&!ed_bk_valid);
+    bad+=check("internal GET after failed capture is stale (5)",get(0,0,64)==5);
+    project_save(0);
+    bad+=check("refused native save cannot make old runtime GET readable",get(0,0,64)==5);
+    bad+=check("a repeated internal LIST still refuses historical capture",list(0,&len,&crc)==2&&!ed_bk_valid);
+    usb.resets++;
+    bad+=check("USB reset cannot authorize old GET",get(2,0,16)==5);
+    reset();memset(&ps,0,sizeof ps);settings_export(&ps);
+    /* Every historical valid settings encoding still reaches the lower
+     * storage quarantine; invalid encodings fail validation before that gate. */
+    __typeof__(settings) saved_settings=settings;
+    ps.lowcut=2;ps.palette=palette_to_stored(6);
+    bad+=native_put_check("SPEAKER BASS+ / palette validated, storage refused (4)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),4);
+    ps.palette=13;
+    bad+=native_put_check("legacy PAPER palette validated, storage refused (4)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),4);
+    ps.palette=palette_to_stored(6);ps.lowcut=3;
+    bad+=native_put_check("unknown SPEAKER refused before storage (2)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),2);
+    ps.lowcut=0;
+    ps.bold=hold_to_stored(0,3);
+    bad+=native_put_check("HOLD 0.6 seconds validated, storage refused (4)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),4);
+    ps.bold=1;
+    bad+=native_put_check("legacy HOLD validated, storage refused (4)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),4);
+    ps.bold=HOLD_TAG+7;
+    bad+=native_put_check("unknown HOLD refused before storage (2)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),2);
+    ps.bold=0;
+    static const unsigned leds[]={LEDS_TAG|LEDS_INV,1,LEDS_TAG|LEDS_DIM_LO,LEDS_TAG|LEDS_OFF};
+    for(unsigned i=0;i<4;i++){ps.zoom=leds[i];bad+=native_put_check("current/legacy LEDS encoding validated, storage refused (4)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),4);}
+    ps.zoom=LEDS_TAG+4;
+    bad+=native_put_check("unknown LEDS refused before storage (2)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps),2);
+    ps.zoom=0;
+    bad+=native_put_check("incorrect transfer CRC refused before storage (2)",1,&ps,sizeof ps,st_crc32(&ps,sizeof ps)^1,2);
+    bad+=check("all refused settings commits preserve live settings",!memcmp(&settings,&saved_settings,sizeof settings));
+    bad+=check("unknown object layout refused at begin",put_begin(8,sizeof ps,0)==1);
+    bad+=check("wrong project length refused at begin",put_begin(2,sizeof st-4,0)==1);
+    bad+=check("wrong settings length refused at begin",put_begin(1,sizeof ps+4,0)==1);
+    ed_bk_put=0;
+    bad+=check("chunk without begin remains stale (5)",put_chunk(1,0,(uint8_t*)&ps,16)==5);
+    bad+=check("valid settings begin is internal staging only",put_begin(1,sizeof ps,st_crc32(&ps,sizeof ps))==0&&ed_bk_put);
+    bad+=check("wrong offset refused",put_chunk(1,16,(uint8_t*)&ps,16)==1);
+    bad+=check("another object's chunk remains stale (5)",put_chunk(2,0,(uint8_t*)&ps,16)==5);
+    put_begin(1,sizeof ps,st_crc32(&ps,sizeof ps));unsigned step=sizeof ps-8,off=0;
+    for(;off+256<=step;off+=256)put_chunk(1,off,(uint8_t*)&ps+off,256);
+    if(off<step)put_chunk(1,off,(uint8_t*)&ps+off,step-off);
+    bad+=check("chunk beyond declared length refused",put_chunk(1,step,(uint8_t*)&ps,16)==1);
+    bad+=check("incomplete commit refused before any erase",put_end(1,2)==2&&erases==0);
+    put_begin(1,sizeof ps,st_crc32(&ps,sizeof ps));put_chunk(1,0,(uint8_t*)&ps,64);usb.resets++;
+    bad+=check("USB reset ends internal transfer (5)",put_chunk(1,64,(uint8_t*)&ps+64,64)==5);
+    put_begin(1,sizeof ps,st_crc32(&ps,sizeof ps));fm1_ms+=16000;
+    bad+=check("sixteen-second timeout ends internal transfer (5)",put_chunk(1,0,(uint8_t*)&ps,64)==5);
+    put_begin(2,sizeof st,0);put_chunk(2,0,(uint8_t*)&ps,64);unsigned gen=proj_wire_gen;
+    project_save(1);
+    bad+=check("refused native save does not reuse transfer scratch or bump generation",proj_wire_gen==gen&&put_chunk(2,64,(uint8_t*)&ps,64)==0);
+    put_end(2,3);
+    bad+=check("internal abort ends staging without writes",!ed_bk_put&&erases==0);
+    transport_req=1;bad+=check("starting PLAY refuses begin (3)",put_begin(1,sizeof ps,0)==3);transport_req=0;
+    /* Original valid historical project input is constructed independently;
+     * accepting its parser does not authorize repacking or flash publication. */
+    reset();project_capture(&proj_scratch);proj_scratch.parts=4;
+    bad+=check("independent valid FUN9 input constructed",fixture_fun9(&st,&proj_scratch));
+    project_t imported;
+    bad+=check("valid FUN9 parser accepts before isolated corruption",proj_import(&imported,&st,sizeof st));
+    bad+=native_put_check("valid historical FUN9 commit refuses native repacking (2)",4,&st,sizeof st,st_crc32(&st,sizeof st),2);
+    { uint8_t v8[3584]={0};unsigned pos=68,pos9=68;
+      memcpy(v8,st.raw,68);v8[66]=91;
+      for(unsigned t=0;t<4;t++) {
+        for(unsigned j=0;j<91;j++)v8[pos++]=st.raw[pos9+(j<83?j:j+8)];pos9+=99;
+        memcpy(v8+pos,st.raw+pos9,2+64*9);pos+=2+64*9;pos9+=2+64*9;
+      }
+      memcpy(v8+pos,st.raw+pos9,36+260);memcpy(v8+3056,st.raw+3120,4*128);
+      fixture_le32(v8,0x46554e38);fixture_le32(v8+4,3584);fixture_le32(v8+3580,fixture_hash(v8,3580));
+      bad+=check("valid FUN8 parser accepts historical lane/default mapping",proj_import(&imported,v8,sizeof v8)&&imported.t[2].p[P_LN3]==127);
+      bad+=native_put_check("valid historical FUN8 commit refuses native repacking (2)",3,v8,sizeof v8,st_crc32(v8,sizeof v8),2);
+    }
+    st.raw[200]^=1;
+    bad+=native_put_check("isolated bad FUN9 checksum refuses publication (2)",4,&st,sizeof st,st_crc32(&st,sizeof st),2);
+    bad+=native_put_check("empty historical project cannot clear native slot (4)",4,0,0,st_crc32(0,0),4);
+    memset(&v6,0,sizeof v6);v6.magic=PROJ_MAGIC_V6;v6.size=sizeof v6;
+    for(unsigned i=0;i<G_COUNT;i++)v6.g[i]=GP[i].def;
+    for(unsigned i=0;i<4;i++)v6.t[i].engine=trk[i].engine;
+    v6.t[0].step[0]=(step10_t){{255,72},9,7,0,96,0,0};v6.t[0].p[61]=3;
+    chain_defaults(&v6.chain);v6.sum=proj_hash(&v6,sizeof v6-4);
+    bad+=check("legacy FUN6 parser still bounds original malformed step",proj_import(&imported,&v6,sizeof v6)&&(proj_bound(&imported),imported.t[0].step[0].n==4)&&imported.t[0].step[0].note[0]==127);
+    bad+=native_put_check("bounded legacy FUN6 commit refuses native repacking (2)",5,&v6,sizeof v6,st_crc32(&v6,sizeof v6),2);
+    erase_error=1;
+    st.raw[200]^=1;
+    bad+=native_put_check("project commit refuses packing before unreachable flash fault",4,&st,sizeof st,st_crc32(&st,sizeof st),2);
+    erase_error=0;
+    bad+=native_put_check("runtime restore refuses native repacking without adopting tracks",0,&st,sizeof st,st_crc32(&st,sizeof st),2);
+    { static up_bank_t bank;static fm6_bank_t old_bank;static upf_t patches;
+      reset();memset(&bank,0,sizeof bank);bank.magic=UP_BANK_MAGIC;bank.rsize=sizeof(up_rec_t);bank.nslot=UP_PER_BANK;
+      bank.r[4].used=UP_USED;bank.r[4].ver=99;memcpy(bank.r[4].name,"Future",7);bank.r[4].p[0]=55;
+      up_bank_t bank_before=up_bank[0];
+      bad+=native_put_check("future preset record validated but storage quarantine refuses bank",6,&bank,sizeof bank,st_crc32(&bank,sizeof bank),4);
+      bad+=check("refused bank leaves live user records unchanged",!memcmp(&up_bank[0],&bank_before,sizeof bank_before));
+      bank.nslot=3;
+      bad+=native_put_check("incorrect preset slot count refused before storage (2)",7,&bank,sizeof bank,st_crc32(&bank,sizeof bank),2);
+      bank.nslot=UP_PER_BANK;
+      /* Seed a pre-existing historical user bank to test the internal migration
+       * path. These bytes are not described as a successful native restore. */
+      static const int16_t slots[5]={FM6_NFACTORY+2,1,FM6_NFACTORY+4,FM6_NFACTORY+2,FM6_NFACTORY+2};
+      for(unsigned k=0;k<5;k++) {
+        memset(&bank.r[k],0,sizeof bank.r[k]);bank.r[k].used=UP_USED;bank.r[k].ver=UP_VER;bank.r[k].np=P_COUNT;bank.r[k].engine=k==3?ENGI_DRUM:ENGI_FM6;
+        for(unsigned i=0;i<P_COUNT;i++)up_set_value(&bank.r[k],i,param_desc_of(bank.r[k].engine,i)->def);
+        up_set_value(&bank.r[k],P_E7,slots[k]);bank.r[k].name[0]='A'+k;
+      }
+      bank.r[4].name[1]='X';up_set_value(&bank.r[4],P_E0,3);up_bank[0]=bank;
+      memset(&old_bank,0,sizeof old_bank);old_bank.magic=FM6_BANK_MAGIC;old_bank.ver=1;old_bank.nslot=FM6_BANK_N;old_bank.used=1u<<2;
+      memcpy(old_bank.v[2],FM6_FACTORY[5],128);memcpy(old_bank.v[2]+118,"BANK B3   ",10);upf_empty();
+      bad+=native_put_check("internal old FM6 bank migration is RAM-only on failed storage (4)",8,&old_bank,sizeof old_bank,st_crc32(&old_bank,sizeof old_bank),4);
+      uint8_t pk[128];
+      bad+=check("RAM migration binds old B3 patch to seeded preset despite write refusal",!upf_get(0,pk)&&!memcmp(pk+118,"BANK B3",7));
+      bad+=check("shared old B3 patch becomes each seeded preset's own",!upf_get(4,pk)&&!memcmp(pk+118,"BANK B3",7));
+      bad+=check("factory F2, empty B5 and DRUM do not acquire owned patches",upf_get(1,pk)&&upf_get(2,pk)&&upf_get(3,pk));
+      up_load(0);
+      bad+=check("explicit seeded B3 user load uses owned RAM patch",TSEL->eng_req==ENGI_FM6&&!memcmp(fm6_patch[song.sel]+FP_NAME,"BANK B3",7)&&TSEL->p[P_E7]==FM6_OWN);
+      up_load(1);
+      bad+=check("explicit seeded F2 user load retains factory patch",TSEL->p[P_E7]==1&&!memcmp(fm6_patch[song.sel]+FP_NAME,FM6_FACTORY[1]+118,10));
+      patches=upf;
+      bad+=native_put_check("repeated internal old FM6 migration cannot write (4)",8,&old_bank,sizeof old_bank,st_crc32(&old_bank,sizeof old_bank),4);
+      bad+=check("repeated RAM migration is idempotent",!memcmp(&patches,&upf,sizeof patches));
+      bad+=native_put_check("empty retired FM6 bank is taken without writing (0)",8,0,0,st_crc32(0,0),0);
+      old_bank.v[3][0]=200;
+      bad+=native_put_check("bad FM6 patch byte refused before migration (2)",8,&old_bank,sizeof old_bank,st_crc32(&old_bank,sizeof old_bank),2);
+      upf_empty();
+      bad+=native_put_check("internal owned FM6 patches copy to RAM but storage refuses (4)",9,&patches,sizeof patches,st_crc32(&patches,sizeof patches),4);
+      bad+=check("failed owned-patch write preserves documented restored RAM copy",!memcmp(&patches,&upf,sizeof patches)&&!upf_get(0,pk));
+      patches.magic^=1;
+      bad+=native_put_check("invalid owned-patch layout refused before RAM copy (2)",9,&patches,sizeof patches,st_crc32(&patches,sizeof patches),2);
+      bad+=check("invalid patch copy keeps existing B3 RAM patch",!upf_get(0,pk)&&!memcmp(pk+118,"BANK B3",7));
+      bad+=check("wrong owned-patch size refused at begin",put_begin(9,sizeof patches-4,0)==1);
+      bad+=check("unknown object ten refused at begin",put_begin(10,0,0)==1);
+      bad+=check("LIST cannot advertise old id8/id9 after native capture failure",list(8,&len,&crc)==2&&rep[2]==0);
+    }
+    printf("backup internal native test %s\n",bad?"FAILED":"passed");return bad!=0;
+}
+#endif
+int main(void) {
+#if NPART == 8
+    return native_backup_eight();
+#else
+    return legacy_backup_four();
+#endif
 }
