@@ -1,0 +1,134 @@
+[
+  {
+    "name": "competing_workspace_callers_test-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/competing_workspace_callers_test-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/competing_workspace_callers_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Competing workspace callers: 235 checks, 0 failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\n"
+  },
+  {
+    "name": "competing_workspace_callers_test-inherited-san",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/competing_workspace_callers_test-inherited-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/competing_workspace_callers_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Competing workspace callers: 235 checks, 0 failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\n"
+  },
+  {
+    "name": "native_autosave_combined_test-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/native_autosave_combined_test-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_autosave_combined_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native combined main-loop autosave: 193089 checks, 0 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification\n"
+  },
+  {
+    "name": "native_autosave_combined_test-inherited-san",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/native_autosave_combined_test-inherited-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_autosave_combined_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native combined main-loop autosave: 193089 checks, 0 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification\n"
+  },
+  {
+    "name": "native_autosave_session_test-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/native_autosave_session_test-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_autosave_session_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native autosave session: 172202 checks, 0 failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant\n"
+  },
+  {
+    "name": "native_autosave_session_test-inherited-san",
+    "command": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-autosave-union-qualification/native_autosave_session_test-inherited-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_autosave_session_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native autosave session: 172202 checks, 0 failures; virtual NOR, canonical committed reconciliation, policy/wrap/boot/late-state/actual queue guards; no production ownership grant\n"
+  }
+]

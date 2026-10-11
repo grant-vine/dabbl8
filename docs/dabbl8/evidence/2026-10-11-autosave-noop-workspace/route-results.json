@@ -1,0 +1,39 @@
+[
+  {
+    "test": "persistence_test",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/voice-age-rollover/build/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-autosave-workspace-qualification/persistence_test",
+      "tests/persistence_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "persist: editor display change while playing is applied and reports deferred saving ok\npersist: STOP commits the deferred palette setting                          ok\npersist: repeating an unchanged editor preference succeeds without erasing  ok\npersist: editor reports failed saving while preserving the previous flash setting ok\npersist: failed editor preference retries through the existing persistence path ok\npersist: the retired font weight is refused without a write                 ok\npersist: MENU_SET while playing: applied, rc 4 (queued until STOP), no erase ok\npersist: STOP commits the MENU setting (LEDS OFF in the settings record)    ok\npersist: MENU_SET stopped: rc 0, saved at once (LARGE, HOLD, SPEAKER EQ), the others kept ok\npersist: repeating an unchanged MENU_SET: rc 0, no erase                    ok\npersist: MENU_SET with a failing flash: applied, rc 3, the saved setting kept ok\npersist: ... and retried by the settings path                               ok\npersist: playing: settings queued, no erase, runtime kept                   ok\npersist: pending PLAY: settings still queued, no erase                      ok\npersist: pending SONG: settings still queued, no erase                      ok\npersist: STOP: latest settings saved and request cleared                    ok\npersist: unchanged settings do not erase                                    ok\npersist: failed settings retry waits through clock wrap                     ok\npersist: settings retry succeeds after 1000 ms                              ok\npersist: failed project save keeps RAM and old flash                        ok\npersist: successful project save publishes new RAM                          ok\npersist: pending PLAY: project save leaves slot and flash                   ok\npersist: failed first project save leaves slot empty                        ok\npersist: a project's name goes to flash and comes back                      ok\npersist: failed project rename: SAVE ERROR, the slot and flash as they were ok\npersist: pending PLAY: no rename, no erase                                  ok\npersist: project rename: flash has the new name, the music as it was        ok\npersist: damaged FUN7 slot (hash ok, n > 4) is refused                      ok\npersist: loading it says EMPTY SLOT and keeps the steps                     ok\npersist: FUN5 load bounds steps and masks lane accents                      ok\npersist: FUN5 load clamps a parameter into its range                        ok\npersist: SONG sources use the same step bounds                              ok\npersist: failed first preset save restores empty bank                       ok\npersist: preset initial save                                                ok\npersist: failed preset save rolls back bank and generation                  ok\npersist: failed preset erasure retains both the sound and its favorite      ok\npersist: failed preset save keeps old flash                                 ok\npersist: failed preset erase keeps record and loaded label                  ok\npersist: successful preset erase clears loaded label                        ok\npersist: pending PLAY: preset save blocked                                  ok\npersist: pending SONG: preset save blocked                                  ok\npersist: preset invalid slot blocked before access                          ok\npersist: PLAY consumed before the save snapshot still blocks a project write ok\npersist: PLAY consumed before the preset snapshot still blocks a bank write ok\npersist: PLAY consumed before the settings snapshot defers the write        ok\npersist: FM6 bank -> user presets: B slots get the bank's newest patches    ok\npersist:   .. written into A (the bank's older copy); the bank's newest copy (B) still whole ok\npersist:   .. UP_LOAD 1 plays the bank's B3, SLOT OWN                       ok\npersist:   .. UP_LOAD 2 (F2) plays F2, SLOT F2                              ok\npersist:   .. UP_LOAD 3 (an empty B5) plays the init voice, as before       ok\npersist:   .. the next boot: done (no write), the same patches              ok\npersist: a power cut at any step of the migration loses nothing (the next boot redoes it) ok\npersist: a cut while a preset's patch is written: the others kept, that preset without one ok\npersist: saved again: its patch, and the bank's sectors now both hold the patches object ok\npersist: no bank: nothing to move, nothing written                          ok\npersist: autosave: power-on with none: nothing restored; 2 min unchanged: no write ok\npersist: autosave: a change: no write within 10 s, one once idle 10 s (one erase) ok\npersist: autosave: 10 min unchanged after it: no more writes                ok\npersist: autosave: the selected track / PROJECT's slot pick alone: no write ok\npersist: autosave: changed while playing: no write until stopped and idle 10 s, then one ok\npersist: autosave: a key held, a voice sounding: no write (an erase stops the audio); after, idle 10 s: one ok\npersist: autosave: two writes at least 60 s apart                           ok\npersist: autosave: none during an editor transfer (autosave_hold), one after ok\npersist: autosave: power-on restores it (steps, tempo, name; RESTORED); no write after (unchanged) ok\npersist: autosave: after a crash / hang / failed boot: not restored, nothing written ok\npersist: autosave: RESTORE LAST OFF: none restored, none written            ok\npersist: autosave: the newest copy damaged: the copy before it is restored  ok\npersist: autosave: both copies damaged: ignored, power-on as new            ok\npersist: autosave: a record that is no project: ignored                     ok\npersist: autosave: a write cut short (power off): the copy before is restored ok\npersist:   a 4-hour session (3 h editing and playing, 1 h idle): 19 autosave writes\npersist: autosave wear: a session's writes stay far below one a minute      ok\npersist:   worst case, 8 h of a change every 11 s: 436 writes (218 per sector)\npersist: autosave wear, worst case: at most one write a minute (480 in 8 h) ok\npersistence test passed\n"
+  },
+  {
+    "test": "native_autosave_combined_test",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/voice-age-rollover/build/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-autosave-workspace-qualification/native_autosave_combined_test",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/native_autosave_combined_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native combined main-loop autosave: 210648 checks, 0 failures; 7 actual queue/drain/save/restore routes; binding alone inactive, hold/end and track8/scene persistence; simulated NOR/DMA, no device qualification\n"
+  }
+]

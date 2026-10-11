@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "4-main-control",
+    "app_bytes": 447968,
+    "app_sha256": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+    "check_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447968 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "target_budget_exit": 0,
+    "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof."
+  },
+  {
+    "mode": "4-candidate",
+    "app_bytes": 447968,
+    "app_sha256": "f8bf55d66f73284f82bb5268fa0072c3d41243f0f648220da7a6f84eaf3fe0e4",
+    "check_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447968 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "target_budget_exit": 0,
+    "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof.",
+    "main_app_identical": true
+  },
+  {
+    "mode": "8-main-control",
+    "app_bytes": 480540,
+    "app_sha256": "b70206f78fef968535e006d80c1f23e7a74b73d1ee2806c35cb750ff1dceccc1",
+    "check_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480540 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+    ],
+    "target_budget_exit": 1,
+    "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof."
+  },
+  {
+    "mode": "8-candidate",
+    "app_bytes": 480636,
+    "app_sha256": "b2c473e23b0598ae375ef85c07886fbbfd36ec1c3c092f955b86bbd3e3ee34b7",
+    "check_errors": [],
+    "memory_notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480636 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+    ],
+    "target_budget_exit": 1,
+    "scope": "App-only pinned vendor compile/link; retained generated headers, no loader/package/device. No calibrated timing or stack proof.",
+    "main_app_identical": false
+  }
+]
