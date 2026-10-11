@@ -465,6 +465,13 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/editor_test" tests/editor_test.c -lm
     run "editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)" \
         env MENU_JSON="$OUT/menu.json" D8CAPS_JSON="$OUT/d8caps.json" D8INFO_JSON="$OUT/d8info.json" "$OUT/editor_test"
+    # Complete native editor suite: same families, explicit quarantine and valid independent read fixtures.
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            $CC -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/editor_native_${fm4}_${slice}" tests/editor_test.c -lm
+            run "complete native editor: FM4=$fm4 SLICE=$slice" "$OUT/editor_native_${fm4}_${slice}"
+        done
+    done
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/robust_test" firmware/src/d8p1.c tests/robust_test.c -lm
     run "robustness: crafted sample slots, engine numbers, retained old projects, preset patterns, malformed requests" \
         "$OUT/robust_test"
@@ -591,6 +598,12 @@ else
     for t in editor_test project_test backup_test; do
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
+    done
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/editor_native_${fm4}_${slice}" tests/editor_test.c -lm
+            run "ASan/UBSan: complete native editor FM4=$fm4 SLICE=$slice" "$A/editor_native_${fm4}_${slice}"
+        done
     done
     $SCC -o "$A/robust_test" firmware/src/d8p1.c tests/robust_test.c -lm
     run "ASan/UBSan: robust_test" "$A/robust_test"

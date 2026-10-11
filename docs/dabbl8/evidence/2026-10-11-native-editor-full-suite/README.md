@@ -1,0 +1,13 @@
+# Complete native editor harness qualification
+
+The inherited complete `editor_test.c` assumed accepted legacy writes. With eight tracks those writes are quarantined; its subsequent preset reads used invalid records and crashed. The original normal and sanitizer failures, including earlier policy assertions, remain preserved in the local qualification receipts. This change ports the complete harness to the documented native policy rather than weakening production guards.
+
+Every existing family still runs. Four-track assertion bodies remain in their original branches, with eight independently executed parent controls producing identical output (127 checks each). Eight-track tests assert exact error frames and unchanged music, mirrors and simulated flash; later read tests use independently parsed and validated fixtures. Shared framing, UART recovery and MENU descriptor cases remain shared. Native versioned step writes exercise all admitted lengths and bounds. A matched service-only control accounts for actual preexisting WATCH output and reload consumption; unexpected communication shadow changes fail. The historical drum-kit fixture covers all eight tracks without the inherited four-element test array overrun.
+
+Fresh direct host executions cover four/eight tracks × FM4 off/on × SLICE off/on × normal/inherited sanitizer modes: 16 passes, with 380 checks in each native run. An independent reviewer repeated all 16 configurations successfully. Compiled private negative controls injected an unexpected reload during refusal (12 failed checks) and bypassed UI admission (5 failed checks); each failed in both modes without a sanitizer diagnostic or crash.
+
+The runner retains its original four-track editor invocation and adds all four native FM4/SLICE combinations to normal and inherited sanitizer sections. The full repository runner was not executed for this focused qualification. Existing sanitizer exclusions remain signed integer overflow, shift, bounds, object size and pointer overflow; this is not an all-undefined-behavior proof. The separate robust-fixture change and its combined source are not qualified by this receipt.
+
+No firmware production file, golden hash, budget, loader or flash boundary changed. There are no target timing, device, hardware USB or release-readiness claims. The existing native static IRQ/UAC failures remain unresolved.
+
+`qualification.json` binds the exact three reviewed test-source hashes to the local raw evidence manifest. Raw logs, binaries and original failure receipts are retained under ignored `.local-baseline` evidence, not committed as firmware or downloads.

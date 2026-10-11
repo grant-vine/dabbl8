@@ -110,6 +110,21 @@ static uint32_t pack7(const uint8_t *p, uint32_t n, uint8_t *a)
 
 /* 1.1 parameter locks over MOTION (64): ops 5 (set a lock), 6 (clear a step's locks, 127 every step's), 7 (the query
  * with the kinds); the query and ops 1..4 reply as before (a lock's id without bit 7) */
+#if NTRK > 4
+static int native_motion_locks(void);
+static int native_preferences(void);
+static int native_steps(void);
+static int native_samples(void);
+static int native_song_protocol(void);
+static int native_malformed_saves(void);
+static int native_fm6_patches(void);
+static int native_user_preset_roundtrip(void);
+static int native_live_sync(void);
+static int native_usb_burst(void);
+static int native_drum_kit_retired(void);
+static int native_menu_writes(void);
+#endif
+
 static int d8_capabilities(void)
 {
     int bad = 0; uint8_t a[6] = {0}; reset();
@@ -164,6 +179,9 @@ static int d8_capabilities(void)
 
 static int motion_locks(void)
 {
+#if NTRK > 4
+    return native_motion_locks();
+#else
     int bad = 0;
     uint32_t n;
     uint8_t a[8];
@@ -201,10 +219,15 @@ static int motion_locks(void)
     bad += check("D8 MOTION unavailable track error refuses without aliasing", n == 9u && host_wire[4] == ED_D8_ERROR && host_wire[7] == 3u && !memcmp(&saved, &motion, sizeof saved));
     motion_clear(&trk[1]);
     return bad;
+
+#endif
 }
 
 static int preferences(void)
 {
+#if NTRK > 4
+    return native_preferences();
+#else
     int bad = 0;
     uint8_t a[4] = {0, 7, 0, 0};
     reset();
@@ -251,6 +274,8 @@ static int preferences(void)
     a[0] = 0; request(ED_SONG, a, 1);
     bad += check("SONG still responds through its original command", host_wire_n > 6 && host_wire[4] == 33 && host_wire[5] == 0);
     return bad;
+
+#endif
 }
 
 static int framing(void)
@@ -330,6 +355,9 @@ static int uart_recovery(void)
 
 static int steps(void)
 {
+#if NTRK > 4
+    return native_steps();
+#else
     uint8_t a[80] = {0, 1, 60, 0, 0, 0, ST_NOTE, SF_ACCENT, 100, 0x12, 0x02, 1};
     step_t before;
     uint32_t n, ok = 1;
@@ -377,10 +405,15 @@ static int steps(void)
     bad += check("TRACK_STEP sets the ratchet of any track (x4, then back to x1)",
                  ok && n == 21u && step_ratchet(&trk[1].step[2]) == 1u && !(trk[1].step[2].flags & SF_RATCH));
     return bad;
+
+#endif
 }
 
 static int samples(void)
 {
+#if NTRK > 4
+    return native_samples();
+#else
     uint8_t a[640] = {0}, data[257], short_group[] = {0, 0, 4, 0, 1};
     uint32_t n, i;
     int bad = 0;
@@ -425,10 +458,15 @@ static int samples(void)
     bad += check("user-preset ERASE reports failure when audio cannot stop",
                  request(ED_UP_ERASE, a, 1) == 8u && host_wire[6] == 2);
     return bad;
+
+#endif
 }
 
 static int song_protocol(void)
 {
+#if NTRK > 4
+    return native_song_protocol();
+#else
     uint8_t a[] = {1, 1, 0, 2};
     chain_config_t before;
     int bad = 0;
@@ -444,10 +482,15 @@ static int song_protocol(void)
     chain.armed = 0; a[0] = 2;
     bad += check("SONG PLAY refuses extra argument bytes", !request(ED_SONG, a, 2) && !transport_req);
     return bad;
+
+#endif
 }
 
 static int malformed_saves(void)
 {
+#if NTRK > 4
+    return native_malformed_saves();
+#else
     static const uint8_t slot[] = {1, 4}, name[] = {0, 'X', 0, 'Y'};
     const uint8_t save[] = {1, 0};
     project_store_t old;
@@ -463,12 +506,17 @@ static int malformed_saves(void)
     bad += check("PROJECT never confirms an old used slot when STOP timed out",
                  !request(ED_PROJECT, save, sizeof save) && !memcmp(&old, &proj_slot[0], sizeof old));
     return bad;
+
+#endif
 }
 
 /* FM6 patches (cmds 68..71): a track's own patch, the retired bank ("no bank"), the factory patches, the user presets'
  * patches (target 3), malformed frames */
 static int fm6_patches(void)
 {
+#if NTRK > 4
+    return native_fm6_patches();
+#else
     int bad = 0;
     uint8_t a[2 + FM6_PACKED], pk[FM6_PACKED];
     uint32_t n, i;
@@ -582,11 +630,16 @@ static int fm6_patches(void)
     request(ED_FM6_GET, a, 2);
     bad += check("FM6_GET of an unknown target: rc 1", host_wire[7] == 1u);
     return bad;
+
+#endif
 }
 
 /* UP_PUT -> UP_GET: every value round-trips through the v4 record (a byte each), negative ones too */
 static int user_preset_roundtrip(void)
 {
+#if NTRK > 4
+    return native_user_preset_roundtrip();
+#else
     static uint8_t a[16 + 2u * P_COUNT + 32u];
     int16_t want[P_COUNT], got[P_COUNT];
     uint32_t k = 0, i, p, ok;
@@ -622,6 +675,8 @@ static int user_preset_roundtrip(void)
         ok &= host_wire[p] == (i & 1u ? 0u : 48u + i);
     bad += check("UP_GET returns the values and the pattern UP_PUT sent", ok);
     return bad;
+
+#endif
 }
 
 /* the frames of cmd in host_wire: how many, and the args of the last (into *args) */
@@ -647,6 +702,9 @@ static uint32_t sync_pass(void)                          /* one main-loop pass o
 /* #65: WATCH while watching keeps what is not pushed yet; the editor's own sound load is not echoed as RELOAD */
 static int live_sync(void)
 {
+#if NTRK > 4
+    return native_live_sync();
+#else
     int bad = 0;
     uint8_t a[4] = {1, 0, 0, 0};
     uint32_t i, other = 0;
@@ -702,6 +760,8 @@ static int live_sync(void)
     a[0] = 1; request(ED_WATCH, a, 1);
     bad += check("not watching: PRESET as before, WATCH then starts from it", !sync_pass() && TSEL->preset == 3);
     return bad;
+
+#endif
 }
 
 /* #64: SysEx through the USB packet path (ep1_take) at full speed: a 256-byte BACKUP_PUT piece (293 pack7 bytes, 101
@@ -746,6 +806,9 @@ static uint32_t put_frame(uint8_t *f, uint32_t op, uint32_t off, uint32_t count)
 }
 static int usb_burst(void)
 {
+#if NTRK > 4
+    return native_usb_burst();
+#else
     static uint8_t f[700], u[1000], u2[2000];
     uint32_t off, n, k, ok = 1, max = 0;
     const uint8_t *x = 0;
@@ -785,6 +848,8 @@ static int usb_burst(void)
                  wire_frames(ED_BACKUP_PUT, &x) == 1u && x[2] == 1u && ed_bk_pos == 256u);
     request(ED_BACKUP_PUT, (const uint8_t[]){3, 2}, 2);
     return bad;
+
+#endif
 }
 
 /* ---- MENU_DESC / MENU_SET (72, 73): the menu's settings over the editor ---- */
@@ -881,11 +946,17 @@ static int menu_protocol(void)
                  ok && n == 2u && it.index == 127 && it.id == 127);
     {
         uint8_t a[3] = {0, 0, 0};
-        ok = request(ED_MENU_DESC, a, 0) == 0 && request(ED_MENU_DESC, a, 2) == 0 && request(ED_MENU_SET, a, 2) == 0 &&
-             request(ED_MENU_SET, a, 1) == 0;
-        bad += check("MENU_DESC / MENU_SET with the wrong length: no reply", ok);
+        ok = request(ED_MENU_DESC, a, 0) == 0 && request(ED_MENU_DESC, a, 2) == 0;
+#if NTRK <= 4
+        ok &= request(ED_MENU_SET, a, 2) == 0 && request(ED_MENU_SET, a, 1) == 0;
+#endif
+
+        bad += check(NTRK>4 ? "MENU_DESC with wrong length: no reply (native MENU_SET refusal tested separately)" : "MENU_DESC / MENU_SET with the wrong length: no reply", ok);
     }
 
+#if NTRK > 4
+    return bad + native_menu_writes();
+#else
     /* MENU_SET: each setting, applied as the menu applies it; RAM only here (no flash: rc 3) */
     reset();
     ui.force = 0;
@@ -979,6 +1050,7 @@ static int menu_protocol(void)
         bad += check("MENU_SET USB SERIAL ON: applied later (with the MENU open: when it closes); unchanged: no drop", ok);
     }
     reset();
+#endif
     return bad;
 }
 
@@ -986,6 +1058,9 @@ static int menu_protocol(void)
  * one lands on that kit (the reply says so), a user preset sent with one loads as that kit */
 static int drum_kit_retired(void)
 {
+#if NTRK > 4
+    return native_drum_kit_retired();
+#else
     static const uint8_t MAP[4] = {0, 6, 5, 8};
     static uint8_t a[16 + 2u * P_COUNT + 32u];
     int16_t got[P_COUNT];
@@ -1038,7 +1113,13 @@ static int drum_kit_retired(void)
         bad += check("a project of DRUM KIT 1..3 loads as 66 10 77 (STD stays)", ok);
     }
     return bad;
+
+#endif
 }
+
+#if NTRK > 4
+#include "editor_native_cases.h"
+#endif
 
 #ifndef EDITOR_TEST_NO_MAIN                              /* (robust_test.c, fuzz_*.c: this file is their base) */
 int main(void)
