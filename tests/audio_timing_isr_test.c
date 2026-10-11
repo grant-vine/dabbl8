@@ -2,6 +2,9 @@
 /* Actual ALNK0 ISR and DSP, simulated clock/DMA; fresh processes compare build
  * flag 0 with flag 1 paused and collecting. No target timing claim. */
 static void nested_policy_probe(void);
+static void snapshot_preempt(void);
+static unsigned snapshot_inject;
+#define D8_TIMING_SNAPSHOT_TEST_HOOK() snapshot_preempt()
 static unsigned clock_probes, record_probes;
 #define AUDIO_CLOCK_TEST_HOOK() do { nested_policy_probe(); clock_probes++; } while(0)
 #define D8_TIMING_RECORD_TEST_HOOK() do { nested_policy_probe(); record_probes++; } while(0)
@@ -10,6 +13,7 @@ static unsigned clock_probes, record_probes;
 #undef AUDIO_TEST_NO_MAIN
 #include <assert.h>
 static void nested_policy_probe(void) { assert(felucca_dbg.in_audio == 1u); }
+static void snapshot_preempt(void) { if(snapshot_inject && !--snapshot_inject){uac.underruns++;} }
 static uint64_t digest=UINT64_C(14695981039346656037);
 static void hash_word(uint32_t value)
 {
@@ -71,6 +75,10 @@ int main(int argc,char **argv)
         assert(audio_timing.render.max_ticks==470 && audio_timing.inclusive.max_ticks==1500);
         assert(audio_timing.render.count==1 && !audio_timing.invalid && !audio_timing.saturated);
         assert(audio_timing_stop());
+        assert(audio_timing_start());snapshot_inject=1;fm1_alnk0_irq();
+        assert(audio_timing.taint&D8_TIMING_SNAPSHOT);assert(audio_timing_stop());
+        assert(audio_timing_start());snapshot_inject=2;fm1_alnk0_irq();
+        assert(audio_timing.taint&D8_TIMING_SNAPSHOT);assert(audio_timing_stop());
         puts("actual timing ISR: paired accounting, auxiliary exclusion, pause/reset and timer wrap PASS; simulated clock only");
     } else assert(!audio_timing.render.count);
 #endif

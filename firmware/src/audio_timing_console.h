@@ -37,28 +37,43 @@ static void con_timing_report(void)
     }
     generation = audio_timing.generation;
     boots = felucca_dbg.boots;
-    con_timing_crc_word(&crc, 0x44385431u); /* D8T1 */
-    con_puts("d8t1 begin");
+    con_timing_crc_word(&crc, 0x44385432u); /* D8T2 */
+    con_puts("d8t2 begin");
     con_timing_word(&crc, generation);
     con_timing_word(&crc, boots);
-    con_puts("\r\nd8t1 config");
+    con_puts("\r\nd8t2 config");
     con_timing_word(&crc, NTRK);
     con_timing_word(&crc, HALF_FRAMES);
     con_timing_word(&crc, FS);
     con_timing_word(&crc, FM1_TICKS_PER_US); /* nominal, not measured calibration */
     con_timing_word(&crc, D8_TIMING_SHIFT);
     con_timing_word(&crc, D8_TIMING_BINS);
-    con_puts("\r\nd8t1 state");
+    con_puts("\r\nd8t2 state");
     con_timing_word(&crc, audio_timing.first_half);
     con_timing_word(&crc, audio_timing.last_half);
     con_timing_word(&crc, audio_timing.saturated);
     con_timing_word(&crc, audio_timing.invalid);
     con_puts("\r\n");
-    con_timing_hist(&crc, "d8t1 render", 0x52u, &audio_timing.render);
-    con_timing_hist(&crc, "d8t1 inclusive", 0x49u, &audio_timing.inclusive);
+    con_puts("d8t2 window");
+    con_timing_word(&crc, audio_timing.first_ticks);
+    con_timing_word(&crc, audio_timing.last_ticks);
+    con_timing_word(&crc, audio_timing.elapsed_lo);
+    con_timing_word(&crc, audio_timing.elapsed_hi);
+    con_timing_word(&crc, audio_timing.window_boots);
+    con_timing_word(&crc, audio_timing.run_late);
+    con_timing_word(&crc, audio_timing.run_under);
+    con_timing_word(&crc, audio_timing.run_over);
+    con_timing_word(&crc, audio_timing.run_aux[0]);
+    con_timing_word(&crc, audio_timing.run_aux[1]);
+    con_timing_word(&crc, audio_timing.run_aux[2]);
+    con_timing_word(&crc, audio_timing.taint);
+    con_timing_word(&crc, FELUCCA_UAC);
+    con_puts("\r\n");
+    con_timing_hist(&crc, "d8t2 render", 0x52u, &audio_timing.render);
+    con_timing_hist(&crc, "d8t2 inclusive", 0x49u, &audio_timing.inclusive);
     if (con.stalled)
         return; /* do not close a reply after a recorded transport drop */
-    con_puts("d8t1 end ");
+    con_puts("d8t2 end ");
     con_hex(generation, 8);
     con_putc(' ');
     con_hex(boots, 8);
