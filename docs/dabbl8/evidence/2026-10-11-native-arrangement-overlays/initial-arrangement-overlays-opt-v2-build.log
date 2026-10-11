@@ -1,0 +1,4 @@
+tests/native_arrangement_test.c:209:10: error: use of undeclared identifier 'GR_MIXER'
+  209 |  go_page(GR_MIXER);song.sel=0;edit_param(0,1);int16_t edited=t->p[P_LEVEL];seq_stop();proof(t->p[P_LEVEL]==edited,"actual mixer edit under overlay survives Stop");
+      |          ^~~~~~~~
+1 error generated.

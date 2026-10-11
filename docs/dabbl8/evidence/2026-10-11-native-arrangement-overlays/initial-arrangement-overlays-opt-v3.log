@@ -1,0 +1,3 @@
+FAIL: physical calibrated reverse K3 arms selected row fill
+FAIL: physical calibrated reverse K3 cancels fill
+Native arrangement: 615395 checks, 2 failures; actual runtime/sequencer/clock/motion, virtual NOR only

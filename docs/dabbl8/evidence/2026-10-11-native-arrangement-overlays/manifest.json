@@ -1,0 +1,154 @@
+{
+  "initial-integration-head-pin-refusal.log": {
+    "bytes": 237,
+    "sha256": "2be3b95fcaecab90d0ed7be25a4c717b6571a859377ceeab302e1baa1d05fddd"
+  },
+  "integration-fx-checks.json": {
+    "bytes": 871,
+    "sha256": "aadfee3aa61765c3712110907f7f0abb65f3d8b47411e6fd1ac2d4fda5b07952"
+  },
+  "integration-reference-artifacts.json": {
+    "bytes": 563,
+    "sha256": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc"
+  },
+  "initial-arrangement-overlays-opt-v3.log": {
+    "bytes": 213,
+    "sha256": "0822fa6cf92b3bc37ac9e1e6dac9774a53d9d2f84847544b7d76b197d12c4df8"
+  },
+  "measured-full-suite.log": {
+    "bytes": 508449,
+    "sha256": "dec6783424a49b78b6c237ac18f1a1648c6f1be5c61804f1d4f0cafe57799b22"
+  },
+  "initial-arrangement-overlays-opt-v6.log": {
+    "bytes": 155,
+    "sha256": "ef7fa760883aa378c69aa9bea23c898bb24d85260b4ce7a42fd1d678f0c3be9c"
+  },
+  "measured-host-probe.c": {
+    "bytes": 3360,
+    "sha256": "c3d01e09446fc41fda387acc83debd80ed26acb9f2153ff10512d11640dbdd39"
+  },
+  "measured-host-run.py": {
+    "bytes": 3228,
+    "sha256": "87914c50f948f336cafaace75b17c3edbe003a17e3c19f394851b2b29c01b2de"
+  },
+  "integration-target-budget-8.log": {
+    "bytes": 5847,
+    "sha256": "0067808472b94c4ce3b689dd23f2c59a4c878bb56198e29e1836870bfaf7df24"
+  },
+  "measured-host-scope.md": {
+    "bytes": 2638,
+    "sha256": "132a3ab45329ee666aa30dbc30c80958fc5b1a60e045f1b3266f938f218383ca"
+  },
+  "initial-failures.md": {
+    "bytes": 1032,
+    "sha256": "a178a93acb1c22cc2e7243aaec03e5b755ecfcd582c8188a8c7869c63e9d8798"
+  },
+  "measured-host-platform.txt": {
+    "bytes": 371,
+    "sha256": "e8b318c982379307517ddabf7518305d47ed4e272babf9092bdd364c31988934"
+  },
+  "integration-arrangement-san.log": {
+    "bytes": 103,
+    "sha256": "385f3113c975e6ec390d2b430bd1eeab86b1c36c47f99c31d05797bf255ba98d"
+  },
+  "integration-direct-frames.json": {
+    "bytes": 35072,
+    "sha256": "1c4f42554a9141fdaced168eee8f9d7a1539aa0fa0eb3cee23cbe03cb7793bad"
+  },
+  "measured-host-results.json": {
+    "bytes": 18520,
+    "sha256": "ad7f048a969bfb9ebb510df3bac3ffee84cd773c3918900fc5849813dbbd32c0"
+  },
+  "scope.json": {
+    "bytes": 1488,
+    "sha256": "5b54ceb854050159fd6e24571d878f03e8f1a024f8ec0bf08d92cc642a97ce5c"
+  },
+  "measured-reference-pins.json": {
+    "bytes": 4019,
+    "sha256": "6e256e9932d7110e76e3c1b7208c50395c4e2a4914737165a373b4865f2cc69f"
+  },
+  "integration-checks.json": {
+    "bytes": 576,
+    "sha256": "a10a2df28989c3e879716cc1d64cec92d77abdc4b413c705315188ae6deb1944"
+  },
+  "integration-arrangement-opt.log": {
+    "bytes": 103,
+    "sha256": "385f3113c975e6ec390d2b430bd1eeab86b1c36c47f99c31d05797bf255ba98d"
+  },
+  "integration-target-results.json": {
+    "bytes": 631,
+    "sha256": "7cadb09729a5bf598c3472b144c0ca8ad1a64a956a19296a0d1b7be7e91c01ae"
+  },
+  "initial-arrangement-overlays-opt-v2-build.log": {
+    "bytes": 304,
+    "sha256": "6f1cdd6617d034802495a585c41735f01a840705fc98bdbc26448340ecf3b661"
+  },
+  "integration-call-paths.json": {
+    "bytes": 13054,
+    "sha256": "71178796bc4a1520d55608c21fbe201147b4ee0febb67567f519655c59f364e4"
+  },
+  "README.md": {
+    "bytes": 7639,
+    "sha256": "83606d888f0bc6bac5c7d7228108a837dddbfce6d9ff5c4ed885099f78165561"
+  },
+  "integration-environment.json": {
+    "bytes": 377,
+    "sha256": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589"
+  },
+  "measured-host-batches.json": {
+    "bytes": 51915,
+    "sha256": "150ebc387400373fa1f3ccf8d3abb1aa339f19e67278b11603b1eba59f31d7a2"
+  },
+  "integration-cfg-diagnostic.json": {
+    "bytes": 7964,
+    "sha256": "95c42cd91731c08df713c8b3d49f205e60ca16f006e2cb150daec4d5e2cd893c"
+  },
+  "integration-native_fx_counter_boundary_test-san.log": {
+    "bytes": 235,
+    "sha256": "12d0d0fec98ad8a97ffd01d7f62ad649245e7a31e042dc956eb148b4534deefa"
+  },
+  "integration-native_reverb_zero_sweep_test-opt.log": {
+    "bytes": 153,
+    "sha256": "d80e25668875dd0ab6b2328a805c57724405b852301486454edb08f0bc39838a"
+  },
+  "integration-native_reverb_zero_sweep_test-san.log": {
+    "bytes": 153,
+    "sha256": "d80e25668875dd0ab6b2328a805c57724405b852301486454edb08f0bc39838a"
+  },
+  "integration-native_fx_counter_boundary_test-opt.log": {
+    "bytes": 235,
+    "sha256": "12d0d0fec98ad8a97ffd01d7f62ad649245e7a31e042dc956eb148b4534deefa"
+  },
+  "integration-native_fx_tail_test-san.log": {
+    "bytes": 191,
+    "sha256": "19dc487458fe22eb37f0ea3e447addeba0d37f3c6b78df89a475173bdb9c75fa"
+  },
+  "initial-arrangement-overlays-opt.log": {
+    "bytes": 103,
+    "sha256": "5337ebcfd4099609617e2a0840c736d6af8c1ec40ca6b17b21786a5a5623d6a5"
+  },
+  "integration-target-budget-4.log": {
+    "bytes": 5787,
+    "sha256": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4"
+  },
+  "integration-generated-inputs.json": {
+    "bytes": 2841,
+    "sha256": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b"
+  },
+  "integration-native_fx_tail_test-opt.log": {
+    "bytes": 191,
+    "sha256": "19dc487458fe22eb37f0ea3e447addeba0d37f3c6b78df89a475173bdb9c75fa"
+  },
+  "measured-full-terminal.json": {
+    "bytes": 407,
+    "sha256": "099a117f42c20fdc9dccf3f5fb6afdc121312ef2260b14437ab9e39481198a93"
+  },
+  "integration-target-driver.log": {
+    "bytes": 1653,
+    "sha256": "bb2d0fb1e23baba5c3dc468554b582f3ffb628cd2b24ee0e1b86a2514a6e8bd1"
+  },
+  "integration-verify.py": {
+    "bytes": 5661,
+    "sha256": "a813903b662b9e099b254c1d8743477e51a6c6acfca9c5346c376483d20ef006"
+  }
+}

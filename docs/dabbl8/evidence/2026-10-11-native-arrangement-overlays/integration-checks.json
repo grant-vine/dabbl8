@@ -1,0 +1,45 @@
+[
+  {
+    "name": "arrangement-opt-build",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "arrangement-opt",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "arrangement-san-build",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "arrangement-san",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-4",
+    "exit": 0,
+    "allowed_exits": [
+      0
+    ]
+  },
+  {
+    "name": "target-budget-8",
+    "exit": 1,
+    "allowed_exits": [
+      0,
+      1
+    ]
+  }
+]

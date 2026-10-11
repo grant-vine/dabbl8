@@ -142,6 +142,165 @@ static void period_cases(void)
  chain.native_mode=2;chain.native.policy.valid=0;events_block(1);
  proof(period_queries==n&&!song.playing&&!chain.running,"invalid-resume native tombstone executes neither timing path");
 }
+static uint8_t overlay_wire[D8P1_LIMIT],overlay_after[D8P1_LIMIT];
+static int nonzero(const int32_t *v,unsigned n){for(unsigned i=0;i<n;i++)if(v[i])return 1;return 0;}
+static void overlay_setup(unsigned apply)
+{
+ seed();d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
+ for(unsigned s=0;s<a->scenes;s++){
+  a->scene[s].apply=(uint8_t)apply;a->scene[s].mute=(uint8_t)(s?0x80:1);
+  for(unsigned t=0;t<8;t++){a->scene[s].level[t]=(uint8_t)(20+s*20+t);a->scene[s].pan[t]=(int8_t)(-64+s*32+t);a->scene[s].transpose[t]=(int8_t)(s? -12:12);}
+ }
+}
+static void overlay_cases(void)
+{
+ /* Exact codec/live capture, every apply combination, source alias and return. */
+ for(unsigned apply=0;apply<8;apply++){
+  overlay_setup(apply);size_t n=0,m=0;
+  proof(!d8p1_capture_runtime(overlay_wire,sizeof overlay_wire,&n),"encode live scene overlays through actual native capture");
+  proof(!d8p1_load_runtime(overlay_wire,n,7),"scene overlay wire adopts through actual checked runtime");
+  uint32_t original=d8p1_crc32(nor,sizeof nor);prepare_start();
+  uint32_t cached=d8p1_crc32(chain.native.manual,sizeof chain.native.manual);
+  proof(d8arr_mix.apply==apply&&d8arr_mix.mute==1,"selected scene publishes actual effective audio layer");
+  for(unsigned t=0;t<8;t++)proof(d8arr_mix.level[t]==20+t&&d8arr_mix.pan[t]==-64+(int)t,"all eight scene mix destinations cached independently");
+  boundary(1);boundary(2);proof(chain.row==1&&d8arr_mix.mute==0x80&&d8arr_mix.level[7]==47,"row transition selects next effective overlay");
+  proof(d8p1_crc32(chain.native.manual,sizeof chain.native.manual)==cached,"overlay/automation never alters immutable source cache");
+  seq_stop();transport_req=0;
+  proof(!d8arr_mix.apply,"Stop disables transient audio overlay");
+  proof(!d8p1_capture_runtime(overlay_after,sizeof overlay_after,&m)&&m==n&&!memcmp(overlay_after,overlay_wire,n),"Stop preserves exact encoded editable project and scene state");
+  proof(d8p1_crc32(nor,sizeof nor)==original&&!writes,"overlay playback preserves exact all saved source bytes");
+ }
+ /* Unsupported bits and all signed/unsigned bounds refuse before publication. */
+ for(unsigned kind=0;kind<6;kind++){
+  overlay_setup(7);d8p1_scene_state *s=&d8p1_runtime_cache.arrangement.scene[1];
+  if(kind==0)s->apply=8;if(kind==1)s->level[7]=128;if(kind==2)s->pan[7]=-65;
+  if(kind==3)s->pan[7]=64;if(kind==4)s->transpose[7]=-25;if(kind==5)s->transpose[7]=25;
+  snapshot();int rc=d8arr_prepare_pool(&arr_pool);
+  proof(rc==(kind?D8POOL_INVALID:D8POOL_UNSUPPORTED)&&unchanged(),"invalid overlay bit/range refuses without state publication");
+ }
+ /* Pitched sequence-only transpose, clamping, dedup and exact released pitch. */
+ overlay_setup(7);prepare_start();track_t *t=&trk[0];t->eng_req=t->engine=0;t->p[P_MUTE]=0;t->p[P_QUANT]=0;
+ step_t s={.time=ST_NOTE,.n=2,.note={120,126},.vel=99};seq_step(t,&s,1000,0);
+ proof(t->seq_n==1&&t->seq_notes[0]==127,"scene transpose clamps and deduplicates sounding pitches");
+ s.n=1;s.note[0]=48;s.hit=1;seq_step(t,&s,1000,0);
+ proof(t->seq_n==2&&t->seq_notes[0]==60&&t->seq_notes[1]==DRUM_LANE_NOTE[0],"pitched transpose leaves drum lane hits unchanged");
+ t->eng_req=ENGI_DRUM;seq_step(t,&s,1000,0);proof(t->seq_notes[0]==48,"mapped drum kit keys are not transposed");
+#if FELUCCA_SLICE
+ t->eng_req=13;seq_step(t,&s,1000,0);proof(t->seq_notes[0]==48,"mapped slice keys are not transposed");
+#endif
+ t->eng_req=t->engine=0;t->p[P_AMODE]=0;t->p[P_CHRD]=CH_OFF;song.g[G_ROUTE]=1;song.sel=0;
+ midi_note_event(0,60,100);midi_control(0,64,127);midi_note_event(0,60,0);
+ s.hit=0;s.note[0]=48;seq_step(t,&s,1000,0);proof(t->seq_notes[0]==60&&midi_note_held(t,60),"transposed sequence collides with actual sustained input pitch");
+ seq_release(t);proof(midi_note_held(t,60),"sequence release retains sustained exact sounding pitch");
+ /* The SLIDE removal path must use the same ownership cache. */
+ s.flags=SF_SLIDE;seq_step(t,&s,1000,0);s.note[0]=50;seq_step(t,&s,1000,0);
+ proof(midi_note_held(t,60),"transposed slide removal retains actual input ownership");
+ midi_control(0,64,0);proof(!midi_note_held(t,60),"final pedal release retires retained transposed collision");
+ seq_stop();song.g[G_ROUTE]=0;
+ /* Actual mixer endpoints and performance ramp: no p/motion-base replacement. */
+ overlay_setup(D8ARR_APPLY_MIX);prepare_start();t=&trk[0];t->p[P_MUTE]=0;t->p[P_DIST]=t->p[P_CHOR]=t->p[P_DLY]=t->p[P_REV]=0;
+ t->eng_req=0;mix_block(audio,CTL);trk_all_off(t);trk_note_on(t,60,100);
+ int16_t level=t->p[P_LEVEL],pan=t->p[P_PAN];
+ chain.native.scene[0].level[0]=0;d8arr_scene_publish();memset(mix_l,0,sizeof mix_l);memset(mix_r,0,sizeof mix_r);mix_part(t,CTL);
+ proof(!nonzero(mix_l,CTL)&&!nonzero(mix_r,CTL),"effective zero scene level silences actual dry mixer");
+ chain.native.scene[0].level[0]=127;chain.native.scene[0].pan[0]=-64;d8arr_scene_publish();memset(mix_l,0,sizeof mix_l);memset(mix_r,0,sizeof mix_r);mix_part(t,CTL);
+ proof(nonzero(mix_l,CTL)&&!nonzero(mix_r,CTL),"scene hard-left pan affects actual dry mixer");
+ proof(t->p[P_LEVEL]==level&&t->p[P_PAN]==pan,"effective mix never overwrites underlying automation parameters");
+ go_page(GR_TRK);song.sel=0;edit_param(0,1);int16_t edited=t->p[P_LEVEL];seq_stop();proof(t->p[P_LEVEL]==edited,"actual mixer edit under overlay survives Stop");
+ overlay_setup(D8ARR_APPLY_MUTE);prepare_start();t=&trk[0];t->p[P_MUTE]=0;t->p[P_AMODE]=0;song.g[G_ROUTE]=1;song.sel=0;
+ midi_note_event(0,60,100);memset(&pf,0,sizeof pf);for(unsigned k=0;k<8;k++)pf.mg[k]=32768;
+ for(unsigned b=0;b<64;b++){perf_begin(CTL);memset(mix_l,0,sizeof mix_l);memset(mix_r,0,sizeof mix_r);mix_part(t,CTL);}
+ proof(pf.mg[0]==0&&!nonzero(mix_l,CTL)&&!nonzero(mix_r,CTL)&&midi_note_held(t,60),"scene mute uses actual ramp while held input ownership survives");
+ perf_solo=2;perf_begin(CTL);proof((pf.act&PF_MUTE)&(1u<<(PF_M1+0)),"scene mute composes with actual solo performance layer");perf_solo=0;
+ seq_stop();midi_note_event(0,60,0);proof(!midi_note_held(t,60)&&!d8arr_mix.apply,"Stop and final input release clear overlay without hung ownership");song.g[G_ROUTE]=0;
+}
+static void fill_cases(void)
+{
+ overlay_setup(7);prepare_start();unsigned original=chain.row;
+ proof(!d8arr_request_fill(2)&&!d8arr_request_fill(1)&&chain.native.policy.fill_pending==1,"latest valid pending fill wins");
+ proof(d8arr_request_fill(16)==2&&chain.native.policy.fill_pending==1,"invalid fill preserves prior pending request");
+ events_block(1);proof(chain.row==original&&!chain.native.policy.fill_active,"fill waits for actual master bar");boundary(3);
+ proof(chain.row==1&&chain.native.policy.fill_active&&chain.native.policy.fill_return==1&&chain.native.policy.fill_remaining==1,"fill replaces A second bar and computes next B context");
+ boundary(2);proof(chain.row==1&&!chain.native.policy.fill_active&&chain.remaining==1,"single fill completes exactly once then returns B");
+ seq_stop();overlay_setup(7);prepare_start();boundary(0);proof(chain.row==0&&chain.remaining==1,"first A repeat completed before next-bar replacement");
+ proof(!d8arr_request_fill(2),"queue fill replacing one-repeat B");boundary(1);
+ proof(chain.native.policy.fill_active&&chain.native.policy.fill_return==2,"one-repeat B can be wholly replaced");boundary(1);proof(chain.row==2&&!chain.native.policy.fill_active,"replacement consumes B and returns C");seq_stop();
+ /* Mid-fill repeated USB transport Stop/Continue retains exact phase/context. */
+ overlay_setup(7);prepare_start();proof(!d8arr_request_fill(2),"arm active-fill transport case");boundary(0);events_block(17);
+ for(unsigned i=0;i<3;i++){
+  unsigned phase=trk[0].seq_idx,masterstep=clk_step;uint32_t pos=trk[0].seq_pos,masterpos=clk_pos;unsigned ret=chain.native.policy.fill_return,remaining=chain.native.policy.fill_remaining;
+  proof(!d8arr_request_fill(0),"queue pending fill before Stop");midi_clock_transport(0xFC,fm1_ms);
+  proof(!song.playing&&chain.native.policy.fill_active&&chain.native.policy.fill_pending==D8ARR_NONE&&!d8arr_mix.apply,"Stop cancels pending but preserves active fill context");
+  midi_clock_transport(0xFB,fm1_ms+1);
+  proof(d8arr_running()&&chain.native.policy.fill_active&&trk[0].seq_idx==phase&&trk[0].seq_pos==pos&&clk_step==masterstep&&clk_pos==masterpos&&chain.native.policy.fill_return==ret&&chain.native.policy.fill_remaining==remaining&&d8arr_mix.apply==7,"Continue resumes exact active-fill phase and return route");events_block(5);
+ }
+ boundary(1);proof(!chain.native.policy.fill_active&&chain.row==1&&chain.remaining==1,"resumed fill returns once to unchanged precomputed progression");seq_stop();
+ /* Chained fills replace successive normal bars, never append after end. */
+ overlay_setup(0);prepare_start();d8arr_request_fill(2);boundary(0);d8arr_request_fill(0);boundary(0);
+ proof(chain.native.policy.fill_active&&chain.row==0&&chain.native.policy.fill_return==2,"fill requested during fill replaces next upcoming normal bar");boundary(0);proof(chain.row==2&&!chain.native.policy.fill_active,"chained fills retain bounded normal progression");
+ d8arr_request_fill(0);boundary(0);proof(!song.playing&&!chain.native.policy.fill_active,"already-end progression stops rather than append unscheduled fill");
+ overlay_setup(0);prepare_start();boundary(0);d8arr_request_fill(1);boundary(0);boundary(0); /* C now current */
+ d8arr_request_fill(1);boundary(0);proof(!song.playing,"final row cannot append a fill");
+ /* Fill occupying last scheduled bar completes before end-stop cleanup. */
+ overlay_setup(0);prepare_start();boundary(0);boundary(0); /* B current */
+ d8arr_request_fill(0);boundary(0);proof(chain.native.policy.fill_active&&chain.native.policy.fill_return==D8ARR_NONE,"fill may replace final scheduled C bar");boundary(0);proof(!song.playing&&!chain.running&&!chain.native.policy.fill_active,"last replacement ends with real sequencer Stop");
+ /* Manual route priority and active cancellation are quantized. */
+ overlay_setup(0);prepare_start();d8arr_request_fill(2);d8arr_request_row(1);proof(chain.native.policy.fill_pending==D8ARR_NONE&&d8arr_request_fill(0)==2,"normal row queue cancels and dominates pending fill");boundary(0);proof(chain.row==1&&!chain.native.policy.fill_active,"manual row wins at actual bar");seq_stop();
+ overlay_setup(0);prepare_start();d8arr_request_fill(2);boundary(0);d8arr_cancel_fill();proof(chain.native.policy.fill_active,"active cancel retains phase until boundary");boundary(0);proof(chain.row==1&&!chain.native.policy.fill_active,"cancel returns bounded normal route at boundary");seq_stop();
+ /* Observed source change while suspended invalidates the entire return route. */
+ overlay_setup(0);prepare_start();d8arr_request_fill(2);boundary(0);seq_stop();d8_capture_store_changed();midi_clock_transport(0xFB,fm1_ms);
+ proof(!song.playing&&chain.native_mode==2,"source mutation refuses stale active-fill Continue");seq_start();proof(!chain.native_mode&&!chain.running&&song.playing,"fresh Start after stale fill uses editable project");seq_stop();
+ /* Successful load and uncertain save revoke a suspended fill, not its originals. */
+ overlay_setup(7);prepare_start();d8arr_request_fill(2);boundary(0);seq_stop();
+ proof(!d8p1_load_pool(&pool,1)&&chain.native_mode==2,"actual source adoption invalidates suspended active-fill route");
+ midi_clock_transport(0xFB,fm1_ms);proof(!song.playing&&!d8arr_mix.apply,"loaded source cannot Continue a stale effective fill");
+ overlay_setup(7);prepare_start();d8arr_request_fill(2);boundary(0);seq_stop();cut=0;
+ proof(d8p1_save_pool(&pool,0)==D8POOL_IO&&!chain.native.policy.valid,"uncertain source save invalidates suspended active-fill route");cut=-1;
+ midi_clock_transport(0xFB,fm1_ms);proof(!song.playing,"uncertain source write never resumes old fill");
+ /* Fresh Start resets fill; count-in cannot publish a partially prepared overlay. */
+ overlay_setup(7);prepare_start();d8arr_request_fill(2);boundary(0);seq_stop();seq_start();
+ proof(song.playing&&!chain.native.policy.fill_active&&chain.native.policy.fill_pending==D8ARR_NONE&&chain.row==0,"fresh Start restarts normal row zero without retained fill");seq_stop();transport_req=0;
+ cin_left=1;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_BUSY&&unchanged(),"count-in refuses overlay preparation without publication");cin_left=0;
+ /* Active fill boundary and final Stop preserve a panel hold until actual key-up. */
+ overlay_setup(7);prepare_start();d8arr_request_fill(2);boundary(0);track_t *held=&trk[7];held->p[P_MUTE]=0;held->p[P_AMODE]=0;held->p[P_CHRD]=CH_OFF;
+ held->eng_req=0;mix_block(audio,CTL);kb_trk[0]=7;kb_note[0]=100;key_on(0,held);held->seq_n=1;held->seq_notes[0]=100;
+ boundary(0);proof(midi_local_held(held,100),"fill return keeps actual same-pitch panel ownership");
+ /* Other sequence voices may steal a voice from the eight shared pool. Renew
+  * actual input after the boundary to test Stop gate retention independently. */
+ key_off(0,held);key_on(0,held);
+ held->seq_n=1;held->seq_notes[0]=100;seq_stop();unsigned gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
+ proof(gated&&midi_local_held(held,100),"Stop after fill preserves panel sounding gate");key_off(0,held);gated=0;for(unsigned v=0;v<NVOICE;v++)gated|=held->v[v].gate&&held->v[v].note==100;
+ proof(!gated&&!midi_local_held(held,100),"final physical panel release after fill retires sounding gate");
+ /* Actual calibrated encoder routing/direction, not just direct callback tests. */
+ overlay_setup(0);prepare_start();go_page(GR_SONG);ui.song_row=2;
+ unsigned oldenc=panel.enc[EN_K3],otherenc=panel.enc[EN_K2];int olddir=panel.dir[EN_K3];panel.enc[EN_K2]=(uint8_t)oldenc;panel.enc[EN_K3]=(uint8_t)otherenc;panel.dir[EN_K3]=-1;
+ host_enc[panel.enc[EN_K3]]=-1;frame();proof(chain.native.policy.fill_pending==2&&msg_is("FILL QUEUED"),"physical calibrated reverse K3 arms selected row fill");
+ host_enc[panel.enc[EN_K3]]=1;frame();proof(chain.native.policy.fill_pending==D8ARR_NONE&&msg_is("FILL CANCELLED"),"physical calibrated reverse K3 cancels fill");panel.enc[EN_K3]=(uint8_t)oldenc;panel.enc[EN_K2]=(uint8_t)otherenc;panel.dir[EN_K3]=(int8_t)olddir;seq_stop();
+ /* Real selected USB/TRS pulse and transport queues, not direct clock state. */
+ for(unsigned clock=1;clock<=2;clock++){
+  overlay_setup(7);song.g[G_CLOCK]=(int16_t)clock;events_block(1);proof(!chain_prepare(),"prepare active fill for actual selected realtime source");transport_req=0;
+  proof(midi_enqueue(0xFAu<<8,clock),"selected-source Start enqueues for fill");events_block(1);d8arr_request_fill(2);
+  unsigned pulses=0;
+  while(!chain.native.policy.fill_active&&song.playing&&pulses++<130){fm1_ms+=20;midi_enqueue(0xF8u<<8,clock);events_block(1);}
+  proof(chain.native.policy.fill_active&&pulses<=130,"actual selected clock pulses reach replacement fill boundary");
+  for(unsigned j=0;j<10;j++){fm1_ms+=20;midi_enqueue(0xF8u<<8,clock);events_block(1);}
+  unsigned idx=trk[0].seq_idx,masterstep=clk_step;uint32_t pos=trk[0].seq_pos,masterpos=clk_pos;
+  midi_enqueue(0xFCu<<8,clock);events_block(1);proof(!song.playing&&chain.native.policy.fill_active,"actual selected realtime Stop preserves partial fill");
+  midi_enqueue(0xFBu<<8,clock);events_block(1);proof(song.playing&&trk[0].seq_idx==idx&&trk[0].seq_pos==pos&&clk_step==masterstep&&clk_pos==masterpos,"actual selected realtime Continue preserves track/master phase");
+  pulses=0;while(chain.native.policy.fill_active&&song.playing&&pulses++<130){fm1_ms+=20;midi_enqueue(0xF8u<<8,clock);events_block(1);}
+  proof(song.playing&&!chain.native.policy.fill_active&&chain.row==1&&pulses<100,"remaining external fill pulses return exactly once to normal route");
+  d8arr_request_fill(2);fm1_ms+=501;events_block(1);proof(!song.playing&&chain.native.policy.fill_pending==D8ARR_NONE,"clock timeout cancels pending fill and stops real sequence");song.g[G_CLOCK]=0;events_block(1);
+ }
+ /* Broken input cancels a pending fill immediately. */
+ overlay_setup(0);prepare_start();d8arr_request_fill(2);midi_in_overflow=1;events_block(1);proof(chain.native.policy.fill_pending==D8ARR_NONE,"broken input invalidates pending fill generation");seq_stop();
+ /* Maximum repeats/rows/scenes/banks use the same bounded route context. */
+ overlay_setup(7);d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;a->banks=4;a->scenes=a->rows=16;a->bank[3]=a->bank[0];
+ for(unsigned i=0;i<16;i++){a->scene[i]=a->scene[i%3];a->scene[i].bank=(uint8_t)(i%4);a->row[i].scene=(uint8_t)i;a->row[i].repeat=16;}
+ prepare_start();d8arr_request_fill(15);boundary(0);proof(chain.native.policy.fill_return==0&&chain.native.policy.fill_remaining==14,"replacement consumes one of sixteen repeats");boundary(0);proof(chain.row==0&&chain.remaining==14&&!chain.native.policy.fill_active,"maximum-capacity fill returns exact repeat count");
+ d8arr_request_row(15);boundary(0);proof(chain.row==15&&chain.native.policy.scene==15&&chain.native.policy.bank==3,"last bounded row/scene/bank remains playable with overlays");
+ seq_stop();transport_req=0;
+}
+
 int main(void)
 {
  seed();snapshot();proof(!chain_prepare()&&live_same()&&!writes,"preparation preserves editable music, undo and FM6");
@@ -178,7 +337,7 @@ int main(void)
  seq_start();proof(song.playing&&!chain.native_mode&&!chain.running&&clk_pos==CLK_START,"fresh Start after invalid resume plays editable project from top");seq_stop();
  /* Attempted save invalidates suspended source even with postcommit uncertainty. */
  transport_req=0;chain.native_mode=1;chain.native.policy.valid=1;cut=0;proof(d8p1_save_pool(&pool,0)==D8POOL_IO&&!chain.native.policy.valid,"uncertain attempted source writer revokes suspended preparation");reset();
- for(unsigned bit=1;bit<=4;bit*=2){arrange();d8p1_runtime_cache.arrangement.scene[0].apply=(uint8_t)bit;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_UNSUPPORTED&&unchanged(),"unsupported overlay refuses without weakening scene semantics");}
+ for(unsigned bit=8;bit<=32;bit*=2){arrange();d8p1_runtime_cache.arrangement.scene[0].apply=(uint8_t)bit;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_UNSUPPORTED&&unchanged(),"unsupported overlay refuses without weakening scene semantics");}
  arrange();d8p1_runtime_cache.arrangement.bank[0].project[0]=3;snapshot();proof(d8arr_prepare_pool(&arr_pool)==D8POOL_UNSUPPORTED&&unchanged(),"fourth reference refuses without autosave alias");arrange();
  /* A request during copied source reads may invalidate preparation, but must
   * leave live instruments, editable patterns, undo and saved identity intact. */
@@ -267,7 +426,7 @@ int main(void)
  arrange();reset();prepare_start();seq_stop();proof(!d8p1_load_pool(&pool,1)&&chain.native_mode==2,"successful source load invalidates suspended native route");
  midi_clock_transport(0xFB,fm1_ms);proof(!song.playing,"load then Continue refuses invalid route");
  seq_start();proof(song.playing&&!chain.native_mode&&!chain.running,"load then HOME fresh Start plays adopted editable project");seq_stop();
- arrange();d8p1_runtime_cache.arrangement.scene[0].apply=D8ARR_APPLY_MIX;transport_req=0;
+ arrange();d8p1_runtime_cache.arrangement.scene[0].apply=128;transport_req=0;
  proof(chain_prepare()==1&&!transport_req&&!song.playing,"failed SONG preparation never requests editable fallback playback");events_block(1);
  proof(!song.playing,"failed SONG request remains stopped");
  cache_cases();
@@ -281,7 +440,7 @@ int main(void)
  reset();prepare_start();ui.song_row=1;edit_param(3,1);proof(chain.native.policy.pending==1,"actual fourth SONG knob queues selected row");
  unsigned rows_before=d8arr_ui_rows();edit_param(1,1);proof(d8arr_ui_rows()==rows_before&&msg_is("NATIVE ROW READ ONLY"),"actual native scene editor refuses unsupported mutation");seq_stop();transport_req=0;
  project_native.ops.prepare_arrangement=NULL;proof(chain_prepare()==1,"missing optional prepare callback explicitly refuses");
- legacy_boundaries();period_cases();
+ legacy_boundaries();period_cases();overlay_cases();fill_cases();
  proof(!writes,"arrangement path never writes NOR");
  printf("Native arrangement: %u checks, %u failures; actual runtime/sequencer/clock/motion, virtual NOR only\n",checks,failures);return !!failures;
 }
