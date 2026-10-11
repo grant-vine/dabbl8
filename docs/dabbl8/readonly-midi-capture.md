@@ -80,3 +80,26 @@ cases. The normal and inherited-sanitizer CI capture blocks call it with the act
 fixture. Separate local four/eight-track runs retain their exact source/generation
 receipts. Guard-removal negative controls must fail; neither this test nor the C
 fixture opens MIDI ports or proves native USB/CoreMIDI behaviour.
+
+## Current-main qualification receipt
+
+The exact integration source `9b8c1798c40e25fab528ce2ffb431050db4972ca`
+(tree `d28501fd59ead24ed2c96ecb0ae1da60b2e87e9d`) has parents current main
+`1466d4b4f0fb4244f0491fbf3cb4103bfd3b675d` and original adapter
+`441fb281e69000bb432a84c7bdc8f8d944ccde04`. Adapter/tool test bytes match the
+original; the actual capture translation unit changed with profile/UI/voice/project
+hooks, so earlier capture execution was not reused. Fresh FULL four/eight-track,
+FM4-off/SLICE-on normal and inherited-sanitizer runs passed 246 checks each.
+This does not qualify reduced-profile capture or the complete test suite.
+
+Each run retained complete 17-role/raw12 captures and three hostile READ cases:
+correct operation/token with wrong role, offset or payload CRC. All hostile cases
+refused without verified publication and retained exact private transcripts; all
+virtual NOR bytes remained unchanged with zero write callbacks. Original and new
+raw receipts remain separate. The compact [receipt](evidence/2026-10-11-readonly-midi-adapter/receipt.json)
+binds source, logs and scope; actual data/transcripts and host executables stay
+outside Git. A targeted command79 guard-removal probe supplements the original
+broad negative control: unchanged code sends nothing, while removal of the exact
+request barrier emits79 and fails its explicit no-send assertion. The original
+broad control failed earlier on an empty-request fake-reply exception and must not
+be cited as that isolated79 proof. Duplicate/token/size controls remain unchanged.
