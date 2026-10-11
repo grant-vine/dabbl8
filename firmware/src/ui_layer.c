@@ -1063,7 +1063,7 @@ static void draw_layer(void)
         sig += snd_id() * 31u + (uint32_t)preset_favorite() * 5u + (uint32_t)chain_busy() * 3u + up_gen * 101u;
     if (ui.force || sig != ui.layer_sig) {
         ui.layer_sig = sig;
-        cv_begin(240, H_GRAPH, T_BG);
+        CV_DRAW_BEGIN(240, H_GRAPH, T_BG);
         cv_rrect(3, 0, 234, H_GRAPH, 5, T_SURF, T_BG);
         cv_bg = T_SURF;
         if (l == LAYER_FX)
@@ -1081,7 +1081,7 @@ static void draw_layer(void)
         cv_blit(0, Y_GRAPH);
     }
     if (ui.force) {                                     /* the footer: what the keys, knobs and buttons do */
-        cv_begin(240, H_FOOT, T_BG);
+        CV_DRAW_BEGIN(240, H_FOOT, T_BG);
         const khint_t *ft = l == LAYER_FX && perf_latch_on ? FX_LATCH_FOOT : LAYERS[l].foot;
         cv_key_row(8, 232, 9, ft, ft[2].act ? 3u : 2u, 7u, T_BG);
         cv_blit(0, Y_FOOT);

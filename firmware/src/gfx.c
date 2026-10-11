@@ -86,6 +86,7 @@ _Static_assert(sizeof(project_t) <= sizeof main_workspace.pixels, "project works
 _Static_assert(sizeof(d8p1_stage_workspace) <= sizeof main_workspace.pixels, "D8P1 staging fits canvas arena");
 _Static_assert(sizeof(d8mp_workspace) <= sizeof main_workspace.pixels, "complete migration plan fits canvas arena");
 _Static_assert(offsetof(d8mp_workspace,stage)==0, "native staging retains arena offset");
+_Static_assert(offsetof(d8p1_stage_workspace,state)+offsetof(d8p1_project_state,project)==0,"decoded project shares arena origin after LCD fence");
 _Static_assert(offsetof(d8mp_workspace,plan)==sizeof(d8p1_stage_workspace), "plan disjoint from native staging");
 _Static_assert(_Alignof(d8mp_workspace)<=_Alignof(__typeof__(main_workspace)), "migration alignment");
 static uint8_t cv_cpu_active, cv_canvas_valid;
@@ -247,6 +248,38 @@ static int palette_stored_ok(uint32_t v) { return v < 20u || (v >= UI_PAL_TAG &&
 static inline uint16_t swap16(uint32_t c) { return (uint16_t)(((c >> 8) & 0xFFu) | ((c & 0xFFu) << 8)); }
 
 /* ------------------------------------------------------------ canvas --- */
+#if NPART >= NVOICE
+static uint8_t cv_draw_deferred;
+static int cv_begin_try(uint32_t w, uint32_t h, uint16_t bg)
+{
+    uint32_t i, n;
+#if NPART >= NVOICE
+    if(cv_cpu_active||migration_owner){cv_draw_deferred=1;return 0;}
+#endif
+    uint16_t s = swap16(bg);
+    if (w * h > CV_MAX)
+        h = CV_MAX / w;
+    lcd_sync();                     /* the last blit may still read cv_px */
+#if NPART >= NVOICE
+    __asm__ volatile("" ::: "memory");
+    if(cv_cpu_active||migration_owner){cv_draw_deferred=1;return 0;}
+    cv_cpu_active = cv_canvas_valid = 1;
+#endif
+    GFX_HOOK_BEGIN();
+    cv_w = w;
+    cv_h = h;
+    cv_cy0 = 0;
+    cv_cy1 = (int16_t)h;
+    cv_bg = bg;
+    n = w * h;
+    for (i = 0; i < n; i++)
+        cv_px[i] = s;
+    return 1;
+}
+
+static void cv_begin(uint32_t w,uint32_t h,uint16_t bg)
+{ if(!cv_begin_try(w,h,bg))__builtin_trap(); } /* invariant-only; operational callers use try */
+#else
 static void cv_begin(uint32_t w, uint32_t h, uint16_t bg)
 {
     uint32_t i, n;
@@ -272,6 +305,8 @@ static void cv_begin(uint32_t w, uint32_t h, uint16_t bg)
     for (i = 0; i < n; i++)
         cv_px[i] = s;
 }
+
+#endif
 
 static void cv_blit(uint32_t x, uint32_t y)
 {
@@ -926,7 +961,11 @@ static void draw_text_line(uint32_t x, uint32_t y, uint32_t w, const aafont_t *f
                            uint16_t c, uint16_t bg, int align)
 {
     int32_t tw = text_w(f, s), tx = 0;
+#if NPART >= NVOICE
+    if(!cv_begin_try(w,f->h,bg))return;
+#else
     cv_begin(w, f->h, bg);
+#endif
     if (align == 1) {
         tx = ink_in(f, s, (int32_t)w);
         GFX_HOOK_ALIGN(0, 0, (int32_t)w, 0, AL_H, "one-shot line centred");

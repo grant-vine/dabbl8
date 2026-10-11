@@ -9,7 +9,13 @@ static int project_save(uint32_t slot);
 static int project_native_status(void);
 #endif
 static void panel_setup(void);
+#if NPART >= NVOICE
+static int project_load(uint32_t slot);
+#define CV_DRAW_BEGIN(w,h,bg) do { if(!cv_begin_try(w,h,bg)){ui.force=1;return;} } while(0)
+#else
 static void project_load(uint32_t slot);
+#define CV_DRAW_BEGIN(w,h,bg) cv_begin(w,h,bg)
+#endif
 static int project_used(uint32_t slot);
 static uint32_t chain_prepare(void);
 static int up_used(uint32_t k);              /* user presets: upreset.c */
@@ -1416,7 +1422,11 @@ static int act_ready(void)
 #endif
     id = cur_page()->id[c & 3u];
     if (id == G_LOAD)
+#if NPART >= NVOICE
+        return project_used((uint32_t)song.g[G_SLOT] - 1u)>0;
+#else
         return project_used((uint32_t)song.g[G_SLOT] - 1u);
+#endif
     if (id == G_SAVE)
         return !song.playing;
     if (id == G_CLRSEQ)
