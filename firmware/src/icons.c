@@ -200,7 +200,7 @@ static uint32_t param_icon(const param_desc_t *d, int32_t v)
         return ICON_NOISE;                    /* NOISE's MODE is the source; its CLK the register clock */
     if (d == &NOISE_CLK)
         return ICON_RATE;
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     if (d->names == N_SLC_DIV)
         return ICON_SLICE;                    /* SLICE: DIV is the slicing, MODE the gate, REV the direction */
     if (d->names == N_SLC_MODE)

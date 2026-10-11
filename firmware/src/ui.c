@@ -364,7 +364,7 @@ static int page_visible(uint32_t i)
 {
     if (PAGES[i].scope == SC_TRACK && PAGES[i].id[0] >= P_LN0 && PAGES[i].id[0] <= P_LN7)
         return TSEL->eng_req % NENGINES == ENGI_DRUM;
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     if (PAGES[i].graph == GR_SLICES)
         return ENGINES[TSEL->eng_req % NENGINES] == &ENG_SLICE;
 #else
@@ -1335,7 +1335,11 @@ static uint32_t eng_list_pos_mask(uint32_t *total, unsigned mask)
     uint32_t cur = np ? preset_rank(en, preset_orig(en, TSEL->preset % en->npresets)) : 0u;   /* (#124: the aliases
                                         * skipped, as on PRESETS: SAMPLE 1 loads as 0, so counting it stuck KNOB 2) */
     for (k = 0; k < UP_SLOTS; k++)
-        if (up_used(k) && up_engine(k) == e) {
+        if (up_used(k)
+#if D8BUILD_PROFILE != 0
+            && !up_ready(k, mask)
+#endif
+            && up_engine(k) == e) {
             if (k == u)
                 cur = np + n;
             n++;
@@ -1357,7 +1361,11 @@ static int eng_list_pick_mask(int32_t direction, uint32_t *engine, uint32_t *slo
     }
     n -= np;
     for (k = 0; k < UP_SLOTS; k++)
-        if (up_used(k) && up_engine(k) == e && !n--) {
+        if (up_used(k)
+#if D8BUILD_PROFILE != 0
+            && !up_ready(k, mask)
+#endif
+            && up_engine(k) == e && !n--) {
             *engine = NENGINES; *slot = k; return D8ENGINE_OK;
         }
     return D8ENGINE_INVALID_REQUEST;
@@ -1511,7 +1519,7 @@ static int act_ready(void)
         return pat_last[s] != pat_pick() + 1u || steps_sig(TSEL) != pat_sig[s];
     if (cur_page()->graph == GR_USER)
         return c == 3u ? !song.playing : up_used(ui.uslot) && (c == 1u || !song.playing);
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     if (cur_page()->graph == GR_SLICES)
         return slice_act_ready(c);
 #endif
