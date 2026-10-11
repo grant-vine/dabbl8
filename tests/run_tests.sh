@@ -246,6 +246,16 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "GRAIN/PHYS/DRUM eight-part shared state: mixed lifetimes and engine fades" "$OUT/heavy_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/wheel_pool_test" tests/wheel_pool_test.c -lm
     run "WHEEL eight-part shared voice state: phase, percussion, retrigger and ownership" "$OUT/wheel_pool_test"
+    for fm4 in 0 1; do
+        name="wheel_pool_sliceoff_fm${fm4}"
+        $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=0 -Ibuild/gen -Ifirmware/src -o "$OUT/$name" tests/wheel_pool_test.c -lm
+        run "WHEEL valid mixed-engine stress with SLICE disabled: FM4=$fm4" "$OUT/$name"
+        for slice in 0 1; do
+            name="wheel_refusal_fm${fm4}_slice${slice}"
+            $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" tests/wheel_unavailable_engine_test.c -lm
+            run "WHEEL unavailable/invalid requests: FM4=$fm4 SLICE=$slice, preserve actual UI and ownership" "$OUT/$name"
+        done
+    done
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/main_workspace_test" firmware/src/d8p1.c tests/main_workspace_test.c -lm
     run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
@@ -573,6 +583,16 @@ else
     for t in versioned_track_test quick_layer_conflicts_test banked_mixer_test eight_track_runtime_test voice_budget_test phys_pool_test fm6_pool_test slice_pool_test heavy_pool_test wheel_pool_test; do
         $SCC -DNPART=8 -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: actual eight parts $t" "$A/$t"
+    done
+    for fm4 in 0 1; do
+        name="wheel_pool_sliceoff_fm${fm4}"
+        $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=0 -o "$A/$name" tests/wheel_pool_test.c -lm
+        run "ASan/UBSan: WHEEL SLICE-disabled valid mixed-engine stress FM4=$fm4" "$A/$name"
+        for slice in 0 1; do
+            name="wheel_refusal_fm${fm4}_slice${slice}"
+            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$name" tests/wheel_unavailable_engine_test.c -lm
+            run "ASan/UBSan: WHEEL invalid/unavailable UI requests FM4=$fm4 SLICE=$slice" "$A/$name"
+        done
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
