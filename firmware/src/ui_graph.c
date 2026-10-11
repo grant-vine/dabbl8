@@ -1081,9 +1081,9 @@ static void panel_alert(uint32_t id, const char *a)
 
 /* preset browser: the global list (every engine), the current one selected; tag DIM, name TEXT,
  * favourites starred (the accent), the selected row's suggested pattern at its right */
-static void graph_browse(void)
+static void graph_browse_mask(unsigned mask)
 {
-    uint32_t total, cur = preset_pos(&total), e, k;
+    uint32_t total, cur = preset_pos_mask(&total, mask), e, k;
     int32_t row;
     if (!total) {
         panel_note("NO FAVORITES", "LIST ALL TO ADD SOUNDS", 0);
@@ -1096,7 +1096,7 @@ static void graph_browse(void)
         int sel = index == cur;
         int32_t hint = sel ? preset_pat_hint() : -1;    /* the suggested pattern */
         if (index >= total) continue;
-        e = preset_at(index, &k);
+        e = preset_at_mask(index, &k, mask);
         if (e == NENGINES) {                             /* user preset: "U07" and its name */
             up_slot_label(tag, k);
             up_name(k, nm);
@@ -1119,6 +1119,7 @@ static void graph_browse(void)
         }
     }
 }
+static void graph_browse(void) { graph_browse_mask(D8ENGINE_EFFECTIVE_MASK); }
 /* the EDIT layer (ui_layer.c): the sound loaded, as the browser's selected row: "03" (its place in KNOB 2's list,
  * the engine's sounds) or "U07", the name, the star of a favourite */
 static void engine_sound_row(int32_t y)

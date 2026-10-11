@@ -1,0 +1,5 @@
+Mutation firmware/src/ui_layer.c
+            unsigned count = eng_count_mask(engine_mask);
+ ->             unsigned count = NENG_SHOWN;
+source SHA256 720cfee90ec3f22f23ddfc74028cba0ad9cf5bac3322efa109f95fb6fc4cf91e
+FAIL line 105: ((lit|br)>>key&1u)==(p<=expected_count)

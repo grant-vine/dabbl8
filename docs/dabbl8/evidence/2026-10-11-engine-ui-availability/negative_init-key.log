@@ -1,0 +1,5 @@
+Mutation firmware/src/ui_layer.c
+unsigned count = eng_count_mask(engine_mask);
+ -> unsigned count = NENG_SHOWN;
+source SHA256 750b0c1deafb4e4c3175f854a086f2015581a67969e080077de63031d1c6963e
+FAIL line 109: ui.confirm==CF_INIT_SOUND
