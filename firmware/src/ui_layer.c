@@ -67,8 +67,8 @@ static const page_t *ly_page(uint32_t l) { return l == LAYER_SCL ? &LY_SCL : l =
 #define LY_OPEN 2u                     /* ui.ly_t0: the map opened (no tap any more) */
 #define LY_COMBO 4u                    /* .. by a combo */
 #define LY_DEAD 8u                     /* .. pressed where there is no layer: does nothing */
-#define LY_INIT ((uint32_t)NENG_SHOWN) /* EDIT: the white key of INIT, the one after the engines (13: E5), its map cell */
-typedef char ly_init_fits[LY_INIT < 16u ? 1 : -1];   /* (a white key: F3 .. G5) */
+#define LY_INIT ((uint32_t)eng_count()) /* EDIT: the white key of INIT, the one after the engines (13: E5), its map cell */
+typedef char ly_init_fits[NENG_SHOWN < 16u ? 1 : -1];   /* (a white key: F3 .. G5) */
 #define layer_seen (favorites.factory[15][31])   /* bit l: layer l opened once (a byte no engine uses) */
 static const khint_t FX_LATCH_FOOT[3] = {{KC_KEYS, "ON / OFF"}, {KC_K14, "MACROS"}, {KC_OCTDN, "ALL OFF"}};
 
@@ -344,21 +344,26 @@ static void layer_tap(uint32_t l)
 /* EDIT: a sound load in the layer. The first one takes the undo copy as the track is now (when the layer
  * opened, unless KNOB 2 / 3 had loaded already), so OCT- and SAVE held go back to it */
 static uint32_t snd_id(void) { return TSEL->eng_req | (uint32_t)TSEL->preset << 8 | (uint32_t)TSEL->user << 16; }
-static void edit_load(uint32_t e, int32_t step)
+static int edit_load_mask(uint32_t e, int32_t step, unsigned mask)
 {
     uint32_t id = snd_id();
-    if (!lys.loaded)
-        undo.keep = 0;
+    int rc;
     if (e < NENGINES) {
-        if (e == TSEL->eng_req % NENGINES)
-            return;                                     /* its engine already: the sound stays */
-        select_engine(e);
+        rc = factory_ready(e, 0, mask);
+        if (rc) return rc;
+        if (e == TSEL->eng_req) return D8ENGINE_OK;
+        if (!lys.loaded) undo.keep = 0;
+        rc = select_engine_mask(e, mask);
+        if (rc) return rc;
         preset_hinted();
-    } else {
-        eng_list_step(step);
-    }
+    } else if (e == NENGINES) {
+        rc = eng_list_step_mask(step, mask, !lys.loaded);
+        if (rc) return rc;
+    } else return D8ENGINE_INVALID_REQUEST;
     lys.loaded |= snd_id() != id;
+    return D8ENGINE_OK;
 }
+static int edit_load(uint32_t e, int32_t step) { return edit_load_mask(e, step, D8ENGINE_EFFECTIVE_MASK); }
 
 /* GLO TAP: from the third tap the tempo of the taps (the last 4); 2 s without one starts over. INT clock only */
 static void glo_tap(void)
@@ -463,7 +468,7 @@ static void rec_key(uint32_t p)
 }
 
 /* a key pressed in layer l (k: 0 = F3 .. 26 = G5) */
-static void layer_key(uint32_t l, uint32_t k)
+static void layer_key_mask(uint32_t l, uint32_t k, unsigned engine_mask)
 {
     uint32_t p = key_place(k), i;
     if (l == LAYER_GLO) {
@@ -493,11 +498,13 @@ static void layer_key(uint32_t l, uint32_t k)
     } else if (l == LAYER_SCL) {
         TSEL->p[P_ROOT] = (int16_t)((k + 5u) % 12u);    /* the key's note name (F3 = F) */
     } else if (l == LAYER_EDIT && !key_black(k)) {
-        if (p < NENG_SHOWN && p < LY_INIT)
-            edit_load(eng_vis(p), 0);
-        else if (p == LY_INIT && chain_busy())
+        unsigned count = eng_count_mask(engine_mask);
+        if (!count) return;
+        if (p < count)
+            (void)edit_load_mask(eng_vis_mask(p, engine_mask), 0, engine_mask);
+        else if (p == count && chain_busy())
             ui_message("STOP TO EDIT");
-        else if (p == LY_INIT)
+        else if (p == count)
             confirm_open(CF_INIT_SOUND, song.sel);      /* (the dialog closes the layer) */
     } else if (l == LAYER_REC) {
         if (!key_black(k) && p < 4u)
@@ -509,6 +516,7 @@ static void layer_key(uint32_t l, uint32_t k)
             ui.lane = (uint8_t)p;                       /* (black keys 1..8: the lane, as on the grid) */
     }
 }
+static void layer_key(uint32_t l, uint32_t k) { layer_key_mask(l, k, D8ENGINE_EFFECTIVE_MASK); }
 /* each pass: the keys the layer got now; then GLO's solo: the tracks of its keys still held (perform.c) */
 static void layer_keys(uint32_t keys)
 {
@@ -528,7 +536,7 @@ static void layer_keys(uint32_t keys)
 }
 
 /* KNOB 1..4 in the open layer: its own (FX macros, GLO levels, EDIT's sound), else the four of its page */
-static void layer_knob(uint32_t k, int32_t s)
+static void layer_knob_mask(uint32_t k, int32_t s, unsigned mask)
 {
     uint32_t l = layer_open();
     if (l == LAYER_FX) {                                /* perform.c perf_k, not recorded */
@@ -550,9 +558,9 @@ static void layer_knob(uint32_t k, int32_t s)
 #endif
     } else if (l == LAYER_EDIT) {                       /* ENG, No., FAV */
         if (k == 0u)
-            edit_load(eng_step(TSEL->eng_req, s), 0);
+            (void)edit_load_mask(eng_step_mask(TSEL->eng_req, s, mask), 0, mask);
         else if (k == 1u)
-            edit_load(NENGINES, s);
+            (void)edit_load_mask(NENGINES, s, mask);
         else if (k == 2u)
             preset_mark(s > 0);
     } else if (l == LAYER_REC) {                        /* CLICK, COUNT-IN, LEVEL (KNOB 4: none) */
@@ -563,12 +571,13 @@ static void layer_knob(uint32_t k, int32_t s)
         ui.home = 0;
         ui.page = (uint8_t)page_first(LAYERS[l].fam);
         page_over = ly_page(l);
-        edit_param(k, s);
+        edit_param_mask(k, s, mask);
         page_over = 0;
         ui.home = h;
         ui.page = pg;
     }
 }
+static void layer_knob(uint32_t k, int32_t s) { layer_knob_mask(k, s, D8ENGINE_EFFECTIVE_MASK); }
 
 /* PLAY with GLO held open: RESTART (from the top, playing on); stopped: PLAY. 1 = done here */
 static int layer_play(void)
@@ -666,7 +675,7 @@ static uint32_t layer_oct(uint32_t pressed, uint32_t oct)
  * back, ~1.1 s, hal/fm1_input.h fm1_led_breath; was a hard 250 ms blink, #119), dark = nothing there */
 static int glo_sounding(uint32_t t) { return !trk[t].p[P_MUTE] && (!perf_solo || ((perf_solo >> t) & 1u)); }
 static int rec_clearable(void) { return !seq_is_empty(TSEL) || motion_count(TSEL) != 0u; }
-static uint32_t layer_leds(uint32_t *br)
+static uint32_t layer_leds_mask(uint32_t *br, unsigned engine_mask)
 {
     uint32_t k, m = 0, n = 0, l = ui.layer, held = perf_held | perf_latched, ok = perf_avail();
     uint32_t mask = scale_mask(TSEL), root = (uint32_t)TSEL->p[P_ROOT] % 12u;
@@ -689,8 +698,9 @@ static uint32_t layer_leds(uint32_t *br)
             on = e == 0u;
             can = (mask >> e) & 1u;
         } else if (l == LAYER_EDIT && !b) {             /* the engine lit, the others and INIT breathe */
-            on = p < NENG_SHOWN && p < LY_INIT && eng_vis(p) == TSEL->eng_req % NENGINES;
-            can = p < NENG_SHOWN && p < LY_INIT ? 1u : p == LY_INIT && !chain_busy();
+            unsigned count = eng_count_mask(engine_mask);
+            on = p < count && eng_vis_mask(p, engine_mask) == TSEL->eng_req;
+            can = p < count ? 1u : count && p == count && !chain_busy();
         } else if (l == LAYER_SEQ) {                    /* the tools breathe (not while a song plays); DRUM: the lane */
             on = b && p < NLANE && drum_track(TSEL) && p == ui.lane;   /* lit, the other lanes breathe */
             can = b ? p < NLANE && drum_track(TSEL) : tl_cell(TSEL, p) && !chain_busy();
@@ -706,6 +716,7 @@ static uint32_t layer_leds(uint32_t *br)
         *br = n;
     return m;
 }
+static uint32_t layer_leds(uint32_t *br) { return layer_leds_mask(br, D8ENGINE_EFFECTIVE_MASK); }
 
 /* ------------------------------------------------------ the overlay --- */
 /* One template: the header names the button and the kind ("[GLO] SET"); the cards are KNOB 1..4; the panel the
@@ -892,20 +903,22 @@ static void layer_scl(void)                             /* KNOB 2's scales, 4 x 
         cv_text_in(x, y + CAP_IN(S, 25), LC_W, &AF_S, TP[P_SCALE].names[i], ink, fill);
     }
 }
-static void layer_edit(void)                            /* the engines from F3, INIT next (LY_INIT), the sound under them */
+static void layer_edit_mask(unsigned mask)                            /* the engines from F3, INIT next (LY_INIT), the sound under them */
 {                                                        /* (cells show the engine's icon, not the key's note) */
-    uint32_t n = NENG_SHOWN < LY_INIT ? NENG_SHOWN : LY_INIT, cells = n + 1u, i, h = cells > 12u ? 20u : 28u;   /* 4 rows of 20: 8 px clear above the sound row */
+    uint32_t n = eng_count_mask(mask), cells = n ? n + 1u : 0, i, h = cells > 12u ? 20u : 28u;   /* 4 rows of 20: 8 px clear above the sound row */
     for (i = 0; i < cells; i++) {
         int32_t x = LC_X(i % 4u), y = 4 + (int32_t)(h + 4u) * (int32_t)(i / 4u);
-        const engine_t *en = ENGINES[eng_vis(i) % NENGINES];
-        if (i < n)
+        if (i < n) {
+            unsigned e = eng_vis_mask(i, mask);
+            const engine_t *en = ENGINES[e];
             lcell(x, y, (int32_t)h, 0, engine_icon(en->name), 0, h > 24u ? en->name : eng_abbr(en->name),
-                  eng_vis(i) == TSEL->eng_req % NENGINES ? LS_SEL : LS_OFF, 0);
-        else
+                  e == TSEL->eng_req ? LS_SEL : LS_OFF, 0);
+        } else
             lcell(x, y, (int32_t)h, 0, ICON_X_WARN, 0, "INIT", chain_busy() ? LS_DIM : LS_OFF, 0);
     }
     engine_sound_row(104);
 }
+static void layer_edit(void) { layer_edit_mask(D8ENGINE_EFFECTIVE_MASK); }
 
 /* SEQ TOOLS: the white keys' tools, 4 a row from F3 (the whole sequence; RANDOM COOK BEAT; the lane's), on a DRUM
  * track the lanes of black keys 1..8 under them (the selected one: the selection's fill). A melodic track: the two

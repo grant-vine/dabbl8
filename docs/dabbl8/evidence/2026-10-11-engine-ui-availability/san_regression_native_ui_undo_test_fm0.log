@@ -1,0 +1,2 @@
+['clang', '-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow', '-fno-sanitize-recover=undefined', '-w', '-DFELUCCA_FM4=0', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'tests/native_ui_undo_test.c', '-lm', '-o', '/private/tmp/d8-engine-ui-availability-evidence/san_regression_native_ui_undo_test_fm0']
+native_ui_undo: 912 checks, 0 failures;12 stopped sound/pattern/motion cases and4 actual running refusals, selected tracks1/4/5/8

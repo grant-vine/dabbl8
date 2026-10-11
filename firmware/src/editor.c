@@ -413,6 +413,7 @@ static int ed_family_allowed(uint32_t tracks, uint32_t cmd, const uint8_t *a, ui
 {
     return tracks <= 4u || cmd == ED_D8_MOTION || cmd == ED_D8_TRACK || ed_read_request(cmd, a, n);
 }
+/* Reason 5: exact/effective sound target refused; no successful sound write reply. */
 static void ed_d8_error(uint32_t cmd, uint32_t rc)
 {
     ed_begin(ED_D8_ERROR); ed_b(1u); ed_b(cmd); ed_b(rc); ed_send();
@@ -471,7 +472,7 @@ static int ed_args_ok(uint32_t cmd, const uint8_t *a, uint32_t n)
     }
 }
 
-static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0 and F7 */
+static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: the bytes between F0 and F7 */
 {
     if (n < 4u)
         return;
@@ -589,8 +590,10 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
             if (a[0] == 1 && a[1] == G_ENGSEL) {          /* engine change: the safe path (1 without FELUCCA_FM4:
                                                            * DIGITAL's first preset, as FM6) */
                 ed_load_t b;
+                uint32_t engine = (uint32_t)ed_rv(a + 2);
+                if (factory_ready(engine, 0, mask)) { ed_d8_error(cmd, 5u); return; }
                 ed_load_before(&b);
-                set_engine((uint32_t)clamp(ed_rv(a + 2), 0, NENGINES - 1));
+                (void)set_engine_of_mask(TSEL, engine, mask);
                 ed_load_after(&b);
             } else if (d->max > d->min) {
                 *vp = (int16_t)enum_orig(d, clamp(ed_rv(a + 2), d->min, d->max));
@@ -647,19 +650,10 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     }
     case ED_PRESET: {                                      /* engine, preset */
         ed_load_t b;
-        if (na < 2u || a[0] >= NENGINES)
-            return;
+        if (na < 2u) return;
+        if (factory_ready(a[0], a[1], mask)) { ed_d8_error(cmd, 5u); return; }
         ed_load_before(&b);
-#if !FELUCCA_FM4
-        if (a[0] == ENGI_DIGITAL)                          /* a DIGITAL preset (retired): its sound, as FM6 */
-            fm4_load_preset(TSEL, a[1]);
-        else
-#endif
-        {
-            if (a[0] != TSEL->eng_req)
-                set_engine(a[0]);
-            apply_preset(a[1]);
-        }
+        (void)factory_load_mask(a[0], a[1], mask);
         ed_load_after(&b);
         ui.force = 1;
         ed_b(ed_eng(TSEL));
@@ -868,7 +862,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         if (na < 1u)
             return;
         ed_b(a[0]);
-        ed_b(a[0] < UP_SLOTS && !up_load(a[0]) ? 0u : 1u);
+        ed_b(a[0] < UP_SLOTS && !up_load_mask(a[0], mask) ? 0u : 1u);
         break;
     case ED_UP_ERASE:
         if (na < 1u)
@@ -1003,6 +997,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     }
     ed_send();
 }
+static void ed_handle(const uint8_t *f, uint32_t n) { ed_handle_mask(f, n, D8ENGINE_EFFECTIVE_MASK); }
 
 /* main loop: editor frames first; anything else stays for ota_service() */
 static void ed_service(void)

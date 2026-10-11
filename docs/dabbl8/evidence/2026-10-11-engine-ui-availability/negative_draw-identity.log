@@ -1,0 +1,5 @@
+Mutation firmware/src/ui_layer.c
+unsigned e = eng_vis_mask(i, mask);
+ -> unsigned e = ENGINE_ORDER[i];
+source SHA256 2e1733859a2cf5a0723b41e640a2e777c61f6ab6bbf34b6768eedca686cbf07b
+FAIL line 116: strstr(seen,ENGINES[expected_order[0]]->name)

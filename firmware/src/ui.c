@@ -20,6 +20,11 @@ static int project_used(uint32_t slot);
 static uint32_t chain_prepare(void);
 static int up_used(uint32_t k);              /* user presets: upreset.c */
 static int up_load(uint32_t k);
+static int up_load_mask(uint32_t k, unsigned mask);
+static int up_ready(uint32_t k, unsigned mask);
+static unsigned up_sound_count(unsigned mask);
+static unsigned up_sound_nth(unsigned n, unsigned mask);
+static unsigned up_sound_rank(unsigned k, unsigned mask);
 static uint32_t up_count(void);
 static uint32_t up_nth(uint32_t n);
 static uint32_t up_rank(uint32_t slot);
@@ -797,7 +802,7 @@ static int param_kept(uint32_t i);
 /* SAVE held: what the loads changed (undo.what) and the copy change places, so held again = the loads
  * again. The sound: engine, preset and its parameters (not param_kept); the pattern: the steps and LEN
  * DIV SWING GATE. The mix (LEVEL PAN MUTE) stays: no load changes it */
-static void undo_swap(void)
+static void undo_swap_mask(unsigned mask)
 {
     track_t *t;
     uint32_t i;
@@ -807,6 +812,9 @@ static void undo_swap(void)
         return;
     }
     t = &trk[(undo.trk - 1u) % NTRK];
+    unsigned target;
+    if ((undo.what & UNDO_SOUND) && eng_runtime_target(&target, mask, undo.eng, undo.preset, D8ENGINE_CANONICAL))
+        return;
     motion_restore(t);
     motion_store_t current_motion;
     motion_snapshot_track(t, &current_motion);
@@ -869,6 +877,7 @@ static void undo_swap(void)
     ui_say("UNDO/REDO ", b);
     ui.force = 1;
 }
+static void undo_swap(void) { undo_swap_mask(D8ENGINE_EFFECTIVE_MASK); }
 
 /* a 16-step pattern (PATTERNS[] format, user presets too) into steps 1..16, the rest empty, LEN 16 */
 static void load_pat16(track_t *t, const uint8_t *note, const uint8_t *flags)
@@ -1027,8 +1036,11 @@ static void fm4_track(track_t *t)                     /* t holds a DIGITAL sound
 }
 /* DIGITAL preset k (a stored preset number of engine 1: the editor's PRESET, SET G_ENGSEL, an old project's
  * power-on sound): its sound as a preset load sets it, converted. The sound only (not the steps, not param_kept) */
-static void fm4_load_preset(track_t *t, uint32_t k)
+static int fm4_load_preset_mask(track_t *t, uint32_t k, unsigned mask)
 {
+    unsigned target;
+    int rc = eng_runtime_target(&target, mask, ENGI_DIGITAL, k, D8ENGINE_LEGACY_FACTORY);
+    if (rc) return rc;
     int16_t p[P_COUNT];
     uint32_t i;
     load_begin(t, UNDO_SOUND);
@@ -1043,24 +1055,27 @@ static void fm4_load_preset(track_t *t, uint32_t k)
     fm4_preset_values(p, k);
     fm4_apply(t, p);
     load_end(t);
+    return D8ENGINE_OK;
 }
+static int fm4_load_preset(track_t *t, uint32_t k) { return fm4_load_preset_mask(t, k, D8ENGINE_EFFECTIVE_MASK); }
 #endif
 
-static void set_engine_of(track_t *t, uint32_t ei);
+static int set_engine_of_mask(track_t *t, uint32_t ei, unsigned mask);
 /* preset pi of the engine the track asked for: the sound only (not the steps, not param_kept) */
-static void apply_preset_to(track_t *t, uint32_t pi)
+static int apply_preset_to_mask(track_t *t, uint32_t pi, unsigned mask)
 {
-    const engine_t *e = ENGINES[t->eng_req % NENGINES];
+    unsigned target;
+    int rc = eng_runtime_target(&target, mask, t->eng_req, pi, D8ENGINE_LEGACY_FACTORY);
+    if (rc) return rc;
+    const engine_t *e = ENGINES[t->eng_req];
     uint32_t i;
 #if !FELUCCA_FM4
-    if (t->eng_req % NENGINES == ENGI_DIGITAL) {
-        fm4_load_preset(t, pi);
-        return;
+    if (t->eng_req == ENGI_DIGITAL) {
+        return fm4_load_preset_mask(t, pi, mask);
     }
 #endif
-    if (t->eng_req % NENGINES == ENGI_SAMPLE && pi == SMP_SET_PERC) {   /* SAMPLE preset 4 was PERC (retired, a stored */
-        set_engine_of(t, ENGI_DRUM);                  /* number: the editor's PRESET, a favourite): DRUM's kit */
-        return;                                       /* (core.h drum_from_perc) */
+    if (t->eng_req == ENGI_SAMPLE && pi == SMP_SET_PERC) {   /* SAMPLE preset 4 was PERC (retired, a stored */
+        return set_engine_of_mask(t, ENGI_DRUM, mask); /* stored PERC number: DRUM kit (core.h drum_from_perc) */
     }
     load_begin(t, UNDO_SOUND);
     panic_req |= (uint8_t)(1u << trk_index(t));       /* MONO/POLY may change: release what sounds */
@@ -1069,7 +1084,7 @@ static void apply_preset_to(track_t *t, uint32_t pi)
         sync_reload = 1;
     if (!e->npresets) {
         load_end(t);
-        return;
+        return D8ENGINE_OK;
     }
     pi = preset_orig(e, pi % e->npresets);
     t->preset = (uint8_t)pi;
@@ -1092,18 +1107,21 @@ static void apply_preset_to(track_t *t, uint32_t pi)
     }
     fm6_track_loaded(t);                              /* FM6: the preset's patch (its SLOT) */
     load_end(t);
+    return D8ENGINE_OK;
 }
 
 /* the engine's defaults and its first preset. With the audio IRQ off: the ISR sees the old engine with
  * its values or the new one with its own (voice.c engine_block), never one with the other's */
-static void set_engine_of(track_t *t, uint32_t ei)
+static int set_engine_of_mask(track_t *t, uint32_t ei, unsigned mask)
 {
-    const engine_t *e = ENGINES[ei % NENGINES];
+    unsigned target;
+    int rc = eng_runtime_target(&target, mask, ei, 0, D8ENGINE_LEGACY_FACTORY);
+    if (rc) return rc;
+    const engine_t *e = ENGINES[ei];
     uint32_t i;
 #if !FELUCCA_FM4
-    if (ei % NENGINES == ENGI_DIGITAL) {             /* DIGITAL (retired): its first preset, as FM6 */
-        fm4_load_preset(t, 0);
-        return;
+    if (ei == ENGI_DIGITAL) {             /* DIGITAL (retired): its first preset, as FM6 */
+        return fm4_load_preset_mask(t, 0, mask);
     }
 #endif
     load_begin(t, UNDO_SOUND);
@@ -1112,20 +1130,41 @@ static void set_engine_of(track_t *t, uint32_t ei)
 #else
     fm1_irq_off();
 #endif
-    t->eng_req = (uint8_t)(ei % NENGINES);
+    t->eng_req = (uint8_t)ei;
     for (i = 0; i < 8u; i++)
         t->p[P_E0 + i] = e->edit[i].def;
-    apply_preset_to(t, 0);
+    (void)apply_preset_to_mask(t, 0, mask);
 #if NPART >= NVOICE
     motion_unguard(guard);
 #else
     fm1_irq_on();
 #endif
     load_end(t);
+    return D8ENGINE_OK;
 }
 
-static void apply_preset(uint32_t pi) { apply_preset_to(TSEL, pi); }
-static void set_engine(uint32_t ei) { set_engine_of(TSEL, ei); }
+/* Masks are synchronous internal seams; production always uses the immutable compiled mask.
+ * No trust or selected profile is retained between operations. */
+static int apply_preset_to(track_t *t, uint32_t pi) { return apply_preset_to_mask(t, pi, D8ENGINE_EFFECTIVE_MASK); }
+static int set_engine_of(track_t *t, uint32_t ei) { return set_engine_of_mask(t, ei, D8ENGINE_EFFECTIVE_MASK); }
+static int apply_preset(uint32_t pi) { return apply_preset_to(TSEL, pi); }
+static int set_engine(uint32_t ei) { return set_engine_of(TSEL, ei); }
+static int factory_ready(unsigned e, unsigned k, unsigned mask)
+{
+    unsigned target;
+    return eng_runtime_target(&target, mask, e, k, D8ENGINE_LEGACY_FACTORY);
+}
+static int factory_load_mask(unsigned e, unsigned k, unsigned mask)
+{
+    int rc = factory_ready(e, k, mask);
+    if (rc) return rc; /* Includes the late SAMPLE/PERC target, before changing the intermediate engine. */
+#if !FELUCCA_FM4
+    if (e == ENGI_DIGITAL) return fm4_load_preset_mask(TSEL, k, mask);
+#endif
+    if (e == ENGI_SAMPLE && k == SMP_SET_PERC) return set_engine_of_mask(TSEL, ENGI_DRUM, mask);
+    if (e != TSEL->eng_req && (rc = set_engine_of_mask(TSEL, e, mask))) return rc;
+    return apply_preset_to_mask(TSEL, k, mask);
+}
 
 static void track_defaults(track_t *t)
 {
@@ -1135,73 +1174,97 @@ static void track_defaults(track_t *t)
     track_defaults_steps(t);
 }
 
-/* switch engine (its defaults + first preset) and say so */
-static void select_engine(uint32_t e)
+/* One startup track, including the added tracks: resolve the whole default before mutation. */
+static int track_startup_mask(track_t *t, unsigned i, unsigned mask)
 {
-    set_engine(e);
+    if (i >= NTRK || t != &trk[i]) return D8ENGINE_INVALID_REQUEST;
+    d8engine_sound sound;
+    int rc = eng_startup_sound(&sound, mask, TRK_DEF[i][0], TRK_DEF[i][1]);
+    if (rc) return rc;
+    track_defaults(t);
+#if !FELUCCA_FM4
+    if (sound.engine == ENGI_DIGITAL) rc = fm4_load_preset_mask(t, sound.preset, mask);
+    else
+#endif
+    {
+        rc = set_engine_of_mask(t, sound.engine, mask);
+        if (!rc) rc = apply_preset_to_mask(t, sound.preset, mask);
+    }
+    if (rc) return rc;
+    t->engine = t->eng_req;
+    track_defaults_steps(t);
+    if (TRK_DEF[i][2]) load_pat16(t, PATTERNS[TRK_DEF[i][2] - 1u].note, PATTERNS[TRK_DEF[i][2] - 1u].flags);
+    pat_sig[i] = steps_sig(t); pat_last[i] = TRK_DEF[i][2];
+    return D8ENGINE_OK;
+}
+static int track_startup(track_t *t, unsigned i) { return track_startup_mask(t, i, D8ENGINE_EFFECTIVE_MASK); }
+
+/* switch engine (its defaults + first preset) and say so */
+static int select_engine_mask(uint32_t e, unsigned mask)
+{
+    int rc = set_engine_of_mask(TSEL, e, mask);
+    if (rc) return rc;
     ui_say("ENGINE ", ENGINES[TSEL->eng_req]->name);
     ui.force = 1;
+    return D8ENGINE_OK;
 }
+static int select_engine(uint32_t e) { return select_engine_mask(e, D8ENGINE_EFFECTIVE_MASK); }
 
 /* the presets of every engine (in ENGINE_ORDER), then the used user presets, as one list (the PRESETS knob and the
  * PRESETS page browse it) */
-static uint32_t preset_all_pos(uint32_t *total)          /* list index of the selected track's preset */
+static uint32_t preset_all_pos_mask(uint32_t *total, unsigned mask)
 {
-    uint32_t n = 0, cur = 0, e, r;
-    for (r = 0; r < NENG_SHOWN; r++) {                  /* (engines.c ENGINE_ORDER) */
-        const engine_t *en = ENGINES[e = eng_vis(r)];
+    uint32_t n = 0, cur = UINT32_MAX, e, r, count = eng_count_mask(mask);
+    for (r = 0; r < count; r++) {
+        const engine_t *en = ENGINES[e = eng_vis_mask(r, mask)];
         if (e == TSEL->eng_req)
             cur = n + preset_rank(en, preset_orig(en, TSEL->preset % (en->npresets ? en->npresets : 1u)));
         n += preset_shown(e);
     }
-    if (user_of(TSEL) < UP_SLOTS)
-        cur = n + up_rank(user_of(TSEL));
-    *total = n + up_count();
-    return cur;
+    unsigned u = user_of(TSEL);
+    if (u < UP_SLOTS && !up_ready(u, mask)) cur = n + up_sound_rank(u, mask);
+    *total = n + up_sound_count(mask);
+    return cur == UINT32_MAX ? *total : cur;
 }
-
-/* list index n (< total) -> engine, *k its preset; NENGINES = user preset, *k its slot */
-static uint32_t preset_all_at(uint32_t n, uint32_t *k)
+static uint32_t preset_all_pos(uint32_t *total) { return preset_all_pos_mask(total, D8ENGINE_EFFECTIVE_MASK); }
+static uint32_t preset_all_at_mask(uint32_t n, uint32_t *k, unsigned mask)
 {
-    uint32_t e = 0, i, r;
-    for (r = 0; r < NENG_SHOWN && n >= preset_shown(eng_vis(r)); r++)
-        n -= preset_shown(eng_vis(r));
-    if (r == NENG_SHOWN) {
-        *k = up_nth(n);
-        return NENGINES;
+    unsigned count = eng_count_mask(mask), e = NENGINES, i, r;
+    for (r = 0; r < count; r++) {
+        e = eng_vis_mask(r, mask);
+        if (n < preset_shown(e)) break;
+        n -= preset_shown(e);
     }
-    e = eng_vis(r);
-    for (i = 0; preset_orig(ENGINES[e], i) != i || n--; i++)    /* the n-th shown preset */
-        ;
-    *k = i;
-    return e;
+    if (r == count) { *k = up_sound_nth(n, mask); return NENGINES; }
+    for (i = 0; preset_orig(ENGINES[e], i) != i || n--; i++) ;
+    *k = i; return e;
 }
-
-static uint32_t preset_pos(uint32_t *total)
+static uint32_t preset_all_at(uint32_t n, uint32_t *k) { return preset_all_at_mask(n, k, D8ENGINE_EFFECTIVE_MASK); }
+static uint32_t preset_pos_mask(uint32_t *total, unsigned mask)
 {
-    uint32_t all, current = preset_all_pos(&all), n = 0, pos = 0xFFFFFFFFu;
+    uint32_t all, current = preset_all_pos_mask(&all, mask), n = 0, pos = UINT32_MAX;
     if (!favorites.filter) { *total = all; return current; }
     for (uint32_t i = 0; i < all; i++) {
-        uint32_t k, e = preset_all_at(i, &k);
+        uint32_t k, e = preset_all_at_mask(i, &k, mask);
         if (!favorite_has(e, k)) continue;
         if (i == current) pos = n;
         n++;
     }
-    *total = n;
-    return pos == 0xFFFFFFFFu ? n : pos; /* current sound need not be a favorite */
+    *total = n; return pos == UINT32_MAX ? n : pos;
 }
-static uint32_t preset_at(uint32_t n, uint32_t *k)
+static uint32_t preset_pos(uint32_t *total) { return preset_pos_mask(total, D8ENGINE_EFFECTIVE_MASK); }
+static uint32_t preset_at_mask(uint32_t n, uint32_t *k, unsigned mask)
 {
     uint32_t all;
-    if (!favorites.filter) return preset_all_at(n, k);
-    preset_all_pos(&all);
+    if (!favorites.filter) return preset_all_at_mask(n, k, mask);
+    preset_all_pos_mask(&all, mask);
     for (uint32_t i = 0; i < all; i++) {
-        uint32_t e = preset_all_at(i, k);
+        uint32_t e = preset_all_at_mask(i, k, mask);
         if (favorite_has(e, *k) && !n--) return e;
     }
-    *k = UP_SLOTS;
-    return NENGINES;
+    *k = UP_SLOTS; return NENGINES;
 }
+static uint32_t preset_at(uint32_t n, uint32_t *k) { return preset_at_mask(n, k, D8ENGINE_EFFECTIVE_MASK); }
 static int preset_favorite(void)
 {
     uint32_t k = user_of(TSEL);
@@ -1239,25 +1302,36 @@ static void preset_hinted(void)                     /* after a sound load: SEQ >
     ui.force = 1;
 }
 
-static void preset_go(uint32_t n)                    /* load list index n into the selected track (the sound only) */
+static int preset_go_mask(uint32_t n, unsigned mask)
 {
     uint32_t k, e = preset_at(n, &k);
-    if (e == NENGINES) {
-        up_load(k);
-    } else {
-        if (e != TSEL->eng_req)
-            select_engine(e);
-        apply_preset(k);
-    }
+    int changed = e != TSEL->eng_req;
+    int rc = e == NENGINES ? up_load_mask(k, mask) : factory_load_mask(e, k, mask);
+    if (rc) return rc;
+    if (e != NENGINES && changed) ui_say("ENGINE ", ENGINES[TSEL->eng_req]->name);
     preset_hinted();
+    return D8ENGINE_OK;
+}
+static int preset_go(uint32_t n) { return preset_go_mask(n, D8ENGINE_EFFECTIVE_MASK); }
+
+static int preset_browse_go_mask(unsigned n, unsigned mask)
+{
+    unsigned k, e = preset_at_mask(n, &k, mask);
+    int changed = e != TSEL->eng_req;
+    int rc = e == NENGINES ? up_load_mask(k, mask) : factory_load_mask(e, k, mask);
+    if (rc) return rc;
+    if (e != NENGINES && changed) ui_say("ENGINE ", ENGINES[TSEL->eng_req]->name);
+    preset_hinted(); return D8ENGINE_OK;
 }
 
 /* the EDIT layer's KNOB 2 (ui_layer.c): the selected track's engine only: its factory presets, then the used user presets
  * made with it (slot order). List index of the current sound; *total the length */
-static uint32_t eng_list_pos(uint32_t *total)
+static uint32_t eng_list_pos_mask(uint32_t *total, unsigned mask)
 {
-    const engine_t *en = ENGINES[TSEL->eng_req % NENGINES];
-    uint32_t e = TSEL->eng_req % NENGINES, np = preset_shown(e), u = user_of(TSEL), k, n = 0;
+    uint32_t e = TSEL->eng_req;
+    if (!eng_available(e, mask)) { *total = 0; return 0; }
+    const engine_t *en = ENGINES[e];
+    uint32_t np = preset_shown(e), u = user_of(TSEL), k, n = 0;
     uint32_t cur = np ? preset_rank(en, preset_orig(en, TSEL->preset % en->npresets)) : 0u;   /* (#124: the aliases
                                         * skipped, as on PRESETS: SAMPLE 1 loads as 0, so counting it stuck KNOB 2) */
     for (k = 0; k < UP_SLOTS; k++)
@@ -1269,35 +1343,48 @@ static uint32_t eng_list_pos(uint32_t *total)
     *total = np + n;
     return cur;
 }
+static uint32_t eng_list_pos(uint32_t *total) { return eng_list_pos_mask(total, D8ENGINE_EFFECTIVE_MASK); }
 
-static void eng_list_step(int32_t direction)         /* the next / previous sound of the engine (wraps) */
+static int eng_list_pick_mask(int32_t direction, uint32_t *engine, uint32_t *slot, unsigned mask)
 {
-    uint32_t total, cur = eng_list_pos(&total), e = TSEL->eng_req % NENGINES, np = preset_shown(e), k, n;
-    if (total < 2u)
-        return;
+    if (TSEL->eng_req >= NENGINES) return D8ENGINE_INVALID_REQUEST;
+    uint32_t total, cur = eng_list_pos_mask(&total, mask), e = TSEL->eng_req, np = preset_shown(e), k, n;
+    if (total < 2u) return D8ENGINE_INVALID_REQUEST;
     n = (cur + (direction > 0 ? 1u : total - 1u)) % total;
     if (n < np) {
-        for (k = 0; preset_orig(ENGINES[e], k) != k || n--; k++)   /* the n-th shown preset */
-            ;
-        apply_preset(k);
-    } else {
-        n -= np;
-        for (k = 0; k < UP_SLOTS; k++)
-            if (up_used(k) && up_engine(k) == e && !n--) {
-                up_load(k);
-                break;
-            }
+        for (k = 0; preset_orig(ENGINES[e], k) != k || n--; k++) ;
+        *engine = e; *slot = k; return D8ENGINE_OK;
     }
+    n -= np;
+    for (k = 0; k < UP_SLOTS; k++)
+        if (up_used(k) && up_engine(k) == e && !n--) {
+            *engine = NENGINES; *slot = k; return D8ENGINE_OK;
+        }
+    return D8ENGINE_INVALID_REQUEST;
+}
+static int eng_list_step_mask(int32_t direction, unsigned mask, int fresh_undo)
+{
+    uint32_t e, k;
+    int rc = factory_ready(TSEL->eng_req, 0, mask);
+    if (rc) return rc;
+    rc = eng_list_pick_mask(direction, &e, &k, mask);
+    if (!rc) rc = e == NENGINES ? up_ready(k, mask) : factory_ready(e, k, mask);
+    if (rc) return rc;
+    if (fresh_undo) undo.keep = 0;
+    rc = e == NENGINES ? up_load_mask(k, mask) : apply_preset_to_mask(TSEL, k, mask);
+    if (rc) return rc;
     preset_hinted();
+    return D8ENGINE_OK;
 }
 
-static void preset_step(int32_t direction)
+static void preset_step_mask(int32_t direction, unsigned mask)
 {
-    uint32_t total, cur = preset_pos(&total);
+    uint32_t total, cur = preset_pos_mask(&total, mask);
     if (!total) { ui_message("NO FAVORITES"); return; }
-    preset_go(cur >= total ? (direction > 0 ? 0 : total - 1) :
-              (cur + (direction > 0 ? 1u : total - 1u)) % total);
+    preset_browse_go_mask(cur >= total ? (direction > 0 ? 0 : total - 1) :
+              (cur + (direction > 0 ? 1u : total - 1u)) % total, mask);
 }
+static void preset_step(int32_t direction) { preset_step_mask(direction, D8ENGINE_EFFECTIVE_MASK); }
 
 /* Seven display rows. Favorites use a bounded window, not a repeating carousel.
  * Return total for an empty row; a non-favorite current sound shows the start. */

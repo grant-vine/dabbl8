@@ -1,0 +1,2 @@
+COMMAND ['clang', '-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow', '-fno-sanitize-recover=undefined', '-w', '-DNPART=4', '-DFELUCCA_FM4=1', '-DFELUCCA_SLICE=0', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_ui_availability_test.c', '-lm', '-o', '/private/tmp/d8-engine-ui-availability-evidence/san_4_1_0_availability']
+engine UI availability: 10562 proofs tracks=4 FM4=1 SLICE=0; actual lists/knobs/keys/LEDs/drawing/startup, immutable records

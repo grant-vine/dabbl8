@@ -53,12 +53,14 @@ run; it does not examine PHYS model parameters or migrate native projects. These
 helpers do not adopt patches or preset parameters. Factory preset range/modulo
 policy and the actual DIGITAL patch conversion remain the adoption caller's job.
 All refusal results preserve the helper's output. Project/native adoption now
-consumes these helpers through the compatibility adapter described below; other
-UI/editor sound-publication paths remain outstanding.
+consumes these helpers through the compatibility adapter described below; historical UI/editor sound-publication paths also use transactional guards.
+Available browsing/runtime startup defaults are described below; negotiated
+profiles and other remaining integration gates are still closed.
 
 `core.h` exposes an immutable `D8ENGINE_EFFECTIVE_MASK` observation of the existing
-Felucca SLICE/FM4 build switches. It does not change NENGINES, NENG_SHOWN, sentinel
-values or runtime behaviour. Attempting to override that macro or to inject the
+Felucca SLICE/FM4 build switches. It does not change NENGINES, NENG_SHOWN or sentinel
+values. Full-profile valid browsing/default behavior remains compatible;
+malformed exact sound IDs refuse rather than wrapping/clamping. Attempting to override that macro or to inject the
 generator's `D8CARD_REQUESTED_ENGINE_MASK` now refuses compilation, including an
 attempted full mask. Candidate outputs remain research material. The helpers are now included through `engines.c` for project-adoption checks;
 no selectable reduced-profile firmware is enabled,
@@ -118,13 +120,99 @@ adoption sanitizer runs retain the existing upstream DSP exclusions, while the
 standalone policy checks remain strict. No hardware timing or memory saving
 claim follows from this host evidence.
 
+### Available browsing and runtime startup defaults
+
+The actual factory/user/favourite preset views, PRESETS engine and sound knobs,
+EDIT-layer engine/preset knobs, EDIT keys, LEDs and drawing now consume filtered
+available counts and stable IDs. The full compiled production mask preserves
+historical ordering, including implemented DIGITAL when FM4 is enabled and
+SLICE when compiled. Retired DIGITAL user sounds resolve to FM6 when FM4 is off.
+Factory SAMPLE/PERC aliases retain their explicit DRUM adoption rule and inherited
+browse exclusions. No engine IDs, records or favourite bits are compacted or
+removed. Structural user-bank/pattern APIs remain independent of sound availability.
+
+`track_startup` is called by actual `main.c` initialization for all four/eight
+tracks. It resolves each historical default before changing track state; if its
+effective engine is unavailable, it selects the first available display engine's
+preset 0. Tracks 5–8 retain their inherited ANALOG preset 0 under the full mask.
+Fallback is exclusive to startup/default construction. Existing project/native,
+user/factory/editor adoption continues to refuse unsupported sounds instead of
+substituting them. Ordinary offline legacy staging remains profile-independent;
+the optional profile-aware staging API below is a separate integration boundary.
+This does not complete every default-insertion path.
+
+Two internal list-index spaces intentionally remain distinct: `preset_go_mask`
+addresses the full immutable-production stored-list view and checks its selected
+sound against the supplied mask; `preset_browse_go_mask` addresses the filtered
+view produced by `preset_pos_mask`/`preset_at_mask`. Never interchange their
+indices. Both preserve stored records; the filtered view hides unavailable sounds.
+
+Subset masks are synchronous host/integration arguments, not retained runtime
+configuration. A confirmation opened with a test subset still dispatches its later
+confirmed action through the full immutable production wrapper. Tests prove
+filtered key/INIT placement, not persistence of a selected card across callbacks.
+The build profile guard remains closed until negotiation, all publication and
+insertion paths, and a consistently configured immutable profile are qualified.
+No reduced capability list, engine exclusion, resource savings or physical timing
+claim follows from this implementation. Host evidence is in
+`evidence/2026-10-11-engine-ui-availability/`.
+
+### Optional offline legacy staging API v1
+
+`d8p1_legacy_stage_profile_v1` and `d8p1_legacy_convert_profile_v1` accept a separate
+engine availability mask. Existing ordinary APIs, converter CLI/Python bundles
+and browser flows continue using their historical path. This is an opt-in C
+foundation, not a user-selectable profile workflow or qualified reduced firmware.
+
+The actual FUN1–FUN9 importers and compiled PHYS/PERC/DIGITAL migrations run first.
+All four resulting historical tracks, parameters, patterns and private patches
+remain byte-exact; FUN1's historically synthesized tracks 2–4 also remain original
+conversion output. Unavailable original canonical engines or late DEF_SOUND /
+DEF_KEEP targets refuse rather than substitute. The source bytes and published
+output/report remain unchanged on refusal. Scratch is disposable and may change.
+
+Only added tracks 5–8 can receive a fallback. If inherited ANALOG is available,
+the existing descriptor-default parameters and deferred PROJ_DEF_SOUND output
+remain unchanged. Otherwise the first available compiled display identity gets
+concrete factory preset 0, including actual engine/edit, envelope, sends and voice
+parameters. FM6 receives its factory SLOT's sanitized packed patch; other engines
+retain the inactive initialization patch. This construction reads actual preset
+and patch tables without live engine, voice, cache, undo or transport changes.
+Full-mask optional output equals ordinary output, including padding and checksum.
+The report remains first-four historical migration metadata: it does not describe
+added-track fallback identities. A future wrapper must record those separately.
+
+Result codes distinguish invalid masks, malformed data, unavailable canonical or
+late engines, unsupported source IDs and invalid/overlapping arguments. An
+unsupported-source diagnostic requires an exact checksum-valid historical
+envelope and identifies an unsupported engine field; it does not certify all
+other fields. Damaged or truncated envelopes remain malformed data. Known SLICE
+ID 13 is unsupported when that existing build flag omits it. DIGITAL retains the
+actual FM4 compatibility meaning, or the actual historical FM6 conversion.
+
+Next wiring must carry a versioned optional mask independently of the saved-slot
+mask through `tools/dabbl8_project_convert.c`, its Python bundle wrapper and
+`web/d8project-conversion.js`. One mask must apply to primary and all referenced
+projects; any refusal must retain originals and prevent every proposed converted
+file from publication. Add fallback metadata, reason-code reporting and actual
+WASM/native parity tests while preserving ordinary outputs and no-overwrite
+policy. Browser selection, capability negotiation and immutable profile builds
+remain separate closed gates. Engine availability alone proves neither sample
+assets/patch compatibility nor memory fit/timing.
+
+Host evidence is in `evidence/2026-10-11-engine-offline-staging/`. The helper adds
+one small migration report and, when constructing FM6 fallback, a 156-byte local
+unpacked patch; no second project-sized stack object or retained profile cache.
+Target compiler stack/resource checks remain an integration obligation.
+
 Runtime stage completion still requires all of the following:
 
-- Integrate exact/effective checks before undo/panic/patch mutation in engine and
-  factory preset selection, user preset adoption and editor requests; propagate
-  refusal rather than announcing or acknowledging success.
-- Use filtered available counts throughout preset/favourite browsing, editor-layer
-  keys/LEDs/drawing, startup and added-track defaults; preserve unavailable records.
+- Complete any remaining publication paths and retain exact/effective refusal
+  checks before undo/panic/patch mutation; historical UI/editor selection and
+  project/native adoption already have these guards.
+- Wire the optional profile-v1 offline staging API through actual converter and
+  whole-bundle/browser paths without substituting original imported sounds;
+  header-only staging and runtime filtering do not authorize a reduced profile.
 - Complete all remaining publication paths beyond the project/native adoption
   slice; retain transactional refusal tests and target regression evidence.
 - Define referenced-project compatibility precisely, including the existing late

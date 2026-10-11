@@ -1,0 +1,6 @@
+Mutation firmware/src/engines.c
+ if(!out || requested>=NENGINES
+ ->  mask=D8ENGINE_EFFECTIVE_MASK;
+ if(!out || requested>=NENGINES
+source SHA256 0307d9b9f552e9a64be7c1b77415bf6adc02f6a7a5c073b65f83a4d34c841280
+FAIL line 96: set_engine_of_mask(TSEL,e,one)==D8ENGINE_UNAVAILABLE

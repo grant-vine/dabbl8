@@ -1,0 +1,51 @@
+{
+  "result": "No static production blocker found; execution results owned by root.",
+  "scope": "Independent read-only source/diff review only. No builds, tests, target, device, edits or downloads executed. Candidate changed during review; hashes pin final read snapshot.",
+  "base": "6cfef34a7b1960caa8adf8f3394bcb3c16b2ac48",
+  "source_sha256": {
+    "firmware/src/ui.c": "0023c079b4385e856668e22172755e469a0f66aa386abe17f4c825c1abf4bd04",
+    "firmware/src/ui_input.c": "96113f2a54d5ef5b1bb4b32a444e69cf317c675ab50512ef5a8862f6ec4e2cab",
+    "firmware/src/ui_layer.c": "d2c31c0320ddd902a07414fbd90d76eaaf923f209679561ed5155ae2fd6ca94a",
+    "firmware/src/upreset.c": "4d32e8c7064a2ed965222bf0fe1f43fbd97cf6f81a6602a511ef1e975d593801",
+    "firmware/src/editor.c": "58986fbc86d84495dc13935e25cedcea6253d6e94210f49eb8baff9759996fa9",
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/d8engine_policy.c": "faea936acbe145a0f75dc1acaf3c8809b7de57ef87df3eb9e78d11a596a68160",
+    "firmware/src/d8engine_policy.h": "d79f0161fbdff29404e0e67e29bc4536831a5eff5a7549af63dbc21e076971e5",
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "firmware/src/favorites.c": "7506c3454bdfd5982e747cf0c671bc410a27d2baf0fc8b7032fc4788408220e3",
+    "tests/engine_sound_selection_test.c": "40608f0d186710293f7178d780ea0fa1020b7d029d3aca05704531fc162a1c2e",
+    "tests/run_tests.sh": "407fe11c41226b3b154b90e15a582ff909241064febe0ad132e4a1eca3f81054"
+  },
+  "checked": [
+    "Factory/UI engine and preset preflight precedes load_begin, panic, undo.keep, labels/preset hints. SAMPLE/PERC factory request bypasses intermediate SAMPLE publication and validates DRUM directly.",
+    "Legacy user records use LEGACY_SELECT and preserve record/favourite validity independent of test mask; records are migrated on existing ingestion paths. Stored SAMPLE values are not factory PERC numbers.",
+    "FM4 implemented DIGITAL uses compatibility adapter; retired DIGITAL converts to FM6 only in explicit historical paths. Optional SLICE rejects compiled-absent IDs.",
+    "Undo uses CANONICAL because loaded sound snapshot is already normalized, before motion restoration; no conversion introduced.",
+    "Legacy editor SET and PRESET retain historical DIGITAL semantics and validate before ed_load_before; refusal sends error5 and returns before regular ack. ED_UP_LOAD uses existing failure status instead of success. Native-eight legacy family gate still rejects before reaching historical sound handlers.",
+    "Production mask override/profile guards remain closed; schema1 capability response untouched."
+  ],
+  "nonblocking_fixture_improvements": [
+    {
+      "file": "tests/engine_sound_selection_test.c",
+      "line": 54,
+      "trigger": "seed() initializes sounds but does not explicitly start sounding voices.",
+      "impact": "Track/patch snapshots prove idle-state preservation, not live sounding-state refusal.",
+      "validation": "Seed mono notes on all tracks and assert voices_busy before negative cases, retaining existing snapshot checks.",
+      "confidence": "high"
+    },
+    {
+      "file": "tests/engine_sound_selection_test.c",
+      "line": 86,
+      "trigger": "Singleton-mask expected status is obtained from eng_runtime_target, the same helper used by production.",
+      "impact": "Shared conversion mistake could pass this integration loop; separate exhaustive policy evidence partially mitigates.",
+      "validation": "Derive expected effective ID independently: DIGITAL to FM6 iff FM4 off; all other engine default requests retain IDs. Compute mask membership directly and add successful singleton positive checks.",
+      "confidence": "high"
+    }
+  ],
+  "remaining_gates": [
+    "Filtered browsing and safe startup defaults are not implemented by this selection slice.",
+    "Separate engine-availability negotiation, reference arrangement preparation, runtime native adoption union validation and reduced-profile proof remain required.",
+    "Explicit historical editor families must remain distinct from any future canonical exact-ID request.",
+    "Host fixtures cannot qualify physical audio/MIDI timing, RAM/stack or recovery."
+  ]
+}

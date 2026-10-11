@@ -1,0 +1,5 @@
+Mutation firmware/src/engines.c
+ if(!out || requested>=NENGINES
+ ->  mask=D8ENGINE_EFFECTIVE_MASK;
+ if(!out || requested>=NENGINES
+FAIL line 92: select_engine_mask(ENGI_FM6,nofm)==D8ENGINE_UNAVAILABLE
