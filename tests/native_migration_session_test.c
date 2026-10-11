@@ -52,6 +52,61 @@ static void mc_begin(unsigned resume,unsigned choice){uint8_t a[10]={1,1};mc_put
 static void mc_transfer(void){for(unsigned off=0;off<D8POOL_BYTES;off+=256){uint8_t a[312]={1,2};mc_put32(a+2,d8mc.generation);mc_put32(a+7,d8mc.request+1);mc_put32(a+12,off);a[17]=0;a[18]=2;unsigned pos=19;for(unsigned j=0;j<256;j+=7){unsigned k=256-j;if(k>7)k=7;unsigned mask=0;for(unsigned i=0;i<k;i++)mask|=(sv_plan[off+j+i]>>7)<<i;a[pos++]=mask;for(unsigned i=0;i<k;i++)a[pos++]=sv_plan[off+j+i]&127;}CHECK(mc_request(a,pos)==MC_OK);}}
 static void mc_consent(void){fm1_in.buttons=1u<<panel.btn[B_SAVE];host_pressed=1u<<panel.btn[B_SAVE];ui_input();CHECK(d8mc.phase==MC_RELEASE_BUTTON);fm1_in.buttons=0;ui_input();}
 static void mc_finish(void){unsigned steps=0;while(d8mc.phase!=MC_READY&&d8mc.phase!=MC_FAILED&&steps++<5000)d8mc_poll();CHECK(d8mc.phase==MC_READY&&!migration_owner&&!d8mc_edit.locked&&project_native_status()==1&&native_as.ready);}
+#ifdef D8_MC_PRODUCTION_TEST
+/* Fixture input is a real canonical rotating native pool prepared with the
+ * actual relative writer before boot/capture. It is not a shipping permission. */
+static void mc_ship_tap(unsigned button)
+{
+ uint32_t bit=1u<<panel.btn[button];host_pressed=bit;fm1_in.buttons=bit;fm1_ms++;
+ ui_input();host_pressed=0;fm1_in.buttons=0;fm1_ms++;ui_input();
+}
+static void mc_shipping_resume(void)
+{
+ mc_setup(D8SV_PERSISTED);
+ d8pool source={NULL,sv_pr,sv_pe,sv_pp,stop};d8pool_index prior,rotating;
+ CHECK(!d8pool_inventory(&source,&prior));size_t n=0;
+ CHECK(!d8pool_load(&source,0,out,sizeof out,&n,7));
+ CHECK(!d8pool_save(&source,0,out,n,7)&&!d8pool_inventory(&source,&rotating));
+ CHECK(rotating.object[0].sequence==2&&rotating.object[0].block!=prior.object[0].block);
+ op(6);CHECK(!status());
+ for(unsigned b=0;b<5;b++)memcpy(nor+d8pool_mapped_address(b),sv_plan+b*8192,8192);
+ memcpy(baseline,nor,sizeof nor);reset();physical_calls=0;
+ begin_capture(1);CHECK(!status());scan();uint8_t bytes[256];
+ for(unsigned role=0;role<17;role++)for(unsigned off=0;off<edc_length(role);off+=256){unsigned k=edc_length(role)-off;if(k>256)k=256;CHECK(reply_bytes(bytes,role,off,k));}
+ op(5);CHECK(!status());scan();CHECK(ed_capture.phase==4);
+ mc_begin(1,D8SV_PERSISTED);unsigned progress=0;
+ while(d8mc.phase==MC_RESUME_READ){d8mc_poll();CHECK(++progress<=160);}
+ CHECK(d8mc.phase==MC_CONSENT&&!physical_calls&&!writes);mc_consent();mc_finish();
+ CHECK(!mc_write_enabled()&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+ CHECK(!d8pool_inventory(&seed,&prior)&&prior.object[0].block==rotating.object[0].block&&prior.object[0].sequence==2);
+ uint32_t music=st_crc32(trk,sizeof trk),epoch=d8_capture_change.epoch;
+ uint32_t generation=d8mc.generation,token=d8mc.token;char saved_name[13];str_cpy(saved_name,proj_name,sizeof saved_name);
+ CHECK(d8p1_save_flash(0,1)==D8POOL_UNSUPPORTED&&d8p1_rename_flash(0,"DENIED",1)==D8POOL_UNSUPPORTED&&d8p1_autosave_flash(1)==D8POOL_UNSUPPORTED);
+ CHECK(!physical_calls&&!writes&&d8mc_session_valid()&&!memcmp(nor,baseline,sizeof nor)&&music==st_crc32(trk,sizeof trk));
+ /* Actual calibrated action/confirm/name release dispatch, never name_ok or a
+  * backend shortcut. A shipping refusal must not report SAVED or change identity. */
+ go_page(GR_SLOTS);song.g[G_SLOT]=1;ui.act=4;mc_ship_tap(B_OCTUP);
+ CHECK(ui.confirm==CF_OVR_PROJ&&!name_on());mc_ship_tap(B_OCTUP);
+ CHECK(name_on()&&nm.kind==NK_PROJ_SAVE);mc_ship_tap(B_OCTUP);
+ CHECK(!name_on()&&msg_is("MIGRATION REQUIRED")&&!strcmp(saved_name,proj_name));
+ go_page(GR_SLOTS);song.g[G_SLOT]=1;mc_ship_tap(B_EDIT);
+ CHECK(name_on()&&nm.kind==NK_PROJ_RENAME);mc_ship_tap(B_OCTUP);
+ CHECK(!name_on()&&msg_is("MIGRATION REQUIRED")&&!strcmp(saved_name,proj_name));
+ CHECK(!physical_calls&&!writes&&music==st_crc32(trk,sizeof trk)&&!memcmp(nor,baseline,sizeof nor));
+ /* Dirty only the explicit test edit; the real automatic policy may report
+  * refusal/reconcile the old record, never claim the changed music committed. */
+ trk[7].p[P_LEVEL]^=1;music=st_crc32(trk,sizeof trk);uint32_t stored=0,current=0;d8pool_record committed;
+ CHECK(!d8p1_autosave_snapshot_flash(&stored,&committed,1)&&!d8p1_signature_runtime(&current)&&stored!=current);
+ fm1_ms+=AS_POLL_MS;CHECK(!d8p1_autosave_session_poll());
+ fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(d8p1_autosave_session_poll()==D8POOL_UNSUPPORTED);
+ CHECK(native_as.saved==stored&&native_as.saved!=current&&!native_as.writes&&!native_as.pending&&native_as.err&&native_as.ready&&native_as.sequence==committed.sequence);
+ CHECK(d8mc_session_valid()&&d8mc.generation==generation&&d8mc.token==token&&d8_capture_change.epoch==epoch);
+ CHECK(!physical_calls&&!writes&&music==st_crc32(trk,sizeof trk)&&!memcmp(nor,baseline,sizeof nor));
+ CHECK(mc_op(4)==MC_OK&&d8mc.phase==MC_FAILED&&project_native_status()==2&&!native_as.ready&&!migration_owner);
+ CHECK(!physical_calls&&!writes&&music==st_crc32(trk,sizeof trk)&&!memcmp(nor,baseline,sizeof nor));
+}
+#endif
+
 static unsigned mc_preflight_note,mc_readback_note;
 static uint32_t mc_preflight_delay;
 static void mc_preflight_read_hook(void)
@@ -196,6 +251,7 @@ printf("Prewrite session identity: %u checks, %u failures\n",checks,failures);re
  mc_setup(D8SV_CURRENT);mc_begin(0,D8SV_CURRENT);mc_transfer();CHECK(!mc_op(3));
  while(d8mc.phase==MC_PROOF)d8mc_poll();CHECK(d8mc.phase==MC_CONSENT);mc_consent();d8mc_poll();
  CHECK(d8mc.phase==MC_FAILED&&d8mc.status==MC_QUARANTINED&&!physical_calls&&!writes&&!migration_owner&&!memcmp(nor,baseline,sizeof nor));
+ mc_shipping_resume();
  printf("Connected shipping quarantine: %u checks, %u failures; zero RAM mutation callbacks\n",checks,failures);return failures!=0;
 #endif
  for(unsigned choice=0;choice<2;choice++){mc_setup(choice);mc_begin(0,choice);mc_transfer();CHECK(!mc_op(3));unsigned n=0;while(d8mc.phase==MC_PROOF){CHECK(!mc_op(3));CHECK(++n<1000);}CHECK(d8mc.phase==MC_CONSENT&&!physical_calls);mc_consent();mc_finish();CHECK(physical_calls==180&&d8mc.own==180);for(unsigned b=0;b<5;b++)CHECK(!memcmp(nor+d8pool_mapped_address(b),sv_plan+b*8192,8192));
