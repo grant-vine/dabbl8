@@ -1,0 +1,113 @@
+{
+  "result": "PASS",
+  "scope": "Complete policy foundation only; shipping profiles blocked, no runtime adoption/capability integration or hardware qualification.",
+  "checks": [
+    {
+      "name": "final-policy-normal-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/final-policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-policy-normal",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/final-policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "462cdf04b56ba6a10cfdd9a3cf2e2c7c74c9ebf30ef49f605d35ad0e39f7f893"
+    },
+    {
+      "name": "final-policy-san-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/final-policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "final-policy-san",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/final-policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "462cdf04b56ba6a10cfdd9a3cf2e2c7c74c9ebf30ef49f605d35ad0e39f7f893"
+    },
+    {
+      "name": "final-build-guard",
+      "command": [
+        "/opt/homebrew/bin/python3.14",
+        "tests/d8engine_build_guard_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "5333fcab52426887cc85ad99e1b1f8d298406cb85f07e9c7fdc9ad74f63e7f2a"
+    },
+    {
+      "name": "shell-syntax",
+      "command": [
+        "bash",
+        "-n",
+        "tests/run_tests.sh"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "Python AST syntax",
+      "exit": 0
+    }
+  ],
+  "source_sha256": {
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "firmware/src/d8engine_policy.h": "e689fc90ffca41e7db7c82366c62994af7e73ca4e214b4bd55bbcaf99d193f85",
+    "firmware/src/d8engine_policy.c": "7266ac2d4af4bdffacaf617c233d7b6161838e5bd05b97cbd0d9839ddcb6d66a",
+    "tests/d8engine_policy_test.c": "e9f65908f9a3dc50d77568b0974bc71648de56a4e1c30c5fd6f432100310381d",
+    "tests/d8engine_build_guard_test.py": "03aca9d0df4b20dd06f4742dac4d523d67cdacc6e7890eba9d0fe36c0ece69c8",
+    "tests/run_tests.sh": "8617a789550d56fb4a7b83cfb7eac40ab69754ab6b453c28f6be2b378d04a0d3",
+    "docs/dabbl8/software-voice-cards.md": "e5c3d0ef7ab1fdd9009624395a814acb844138ebc59dda8770f24aa638fc02af"
+  },
+  "preserved_earlier_evidence": [
+    "receipt.json (initial extra audio8 attempt FAIL)",
+    "regression-receipt-missing-hal.json (incomplete frozen extraction FAIL)",
+    "regression-receipt.json (control comparison and intended fixtures PASS)",
+    "final-receipt-collector-failed.json: every final check passed; metadata collection attempted to hash macOS dSYM directory. Corrected file-only collection after verifying unchanged sources/logs; no test rerun claimed."
+  ],
+  "binary_sha256": {
+    "final-policy-normal": "22a0302e84a5efcc98b4f48d3064955cf323f3eb283f6e653afbd9b3d5df01df",
+    "final-policy-san": "804cd4c45aa43b6af24b4ca3bfe8d75651cd89ee21e1c9f80078e1cd4092696b"
+  }
+}
