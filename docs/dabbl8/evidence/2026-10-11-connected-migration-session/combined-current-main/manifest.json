@@ -1,0 +1,87 @@
+{
+  "source": "e261b1f392033c2a6709d6c2753e9541f4d1d6e6",
+  "tree": "f7ab63cce9aa2b77070e7927d15850899cc550e7",
+  "parents": [
+    "fcb1aa6e2f0f2e27bdb1185afd554e638247c0f3",
+    "c5c96236ce275072adaaaca35c2046098384b2e9"
+  ],
+  "current_main": "c5c96236ce275072adaaaca35c2046098384b2e9",
+  "source_sha256": {
+    "firmware/src/core.h": "7dbb81998d8c2047eb75397ec8693238d346ebad88738c93b6dc77c407d9a812",
+    "firmware/src/d8p1_flash_runtime.c": "0d96dcf15d5230c6302acbe2a4d83842f4e0e616d9977cfa6860c72cb8403dfa",
+    "firmware/src/editor.c": "711efcd225d72de1bd2c951040af980f20b239696203ceaf646cdad552f4ab9c",
+    "firmware/src/felucca.c": "b0145a9f37e382eeb61560f1774a837d0034af68796c7e5ceb4a5c8c6e501152",
+    "firmware/src/main.c": "f16b5e949d1a6ccf51649d07f8b698f7a440e87cca069b1a4dba6ba5cf919b25",
+    "firmware/src/master.c": "f5249eb1545f742d066eef8320b9f5615507f48ac218cfdb711136629e187f38",
+    "firmware/src/native_migration_session.c": "14e949f64ce6e91e7f61de1e79f132e5ecee3098f474771a888c9be3d3090843",
+    "firmware/src/native_migration_session.h": "2d9a0f19b8729e485d8b154064c28f64c3fefdf9523bac85cc62bbef68a72a36",
+    "firmware/src/project.c": "20a9db9e771e694be58ceace9ce57b5f9e5137562191a6c22bb5cc5d042f2f80",
+    "firmware/src/project_native_flash.c": "6e0733f46d4850bfd70ee488dd4568d5d8befeaf88d72c2abc6e60843e7fe9af",
+    "firmware/src/seq.c": "aeabe2d633fc58e557482f58043278dc123171b4e09be8eb76568592a2096eda",
+    "firmware/src/ui_input.c": "8f296a19c2247b4d54c96af45ee564971f13221eaa335d8238954b5f5947a349",
+    "tests/native_autosave_session_test.c": "306d1913f3ae57044567e06bcdd1b4b54918a4c8c9b7bff3d5e30269295cc898",
+    "tests/native_migration_session_host_test.py": "0cde883dbbbba037a2338974417d7c59e50974d762f8328184668152052bb100",
+    "tests/native_migration_session_test.c": "444ef41bd2ad15423893e282070f8486c50e0e779b956519ef348dab5257f194",
+    "tests/run_tests.sh": "fc97674e1a7660f91d1c11f34e667b5233048fe13be5e504c075d97306ce4468",
+    "tools/dabbl8_instrument_capture.py": "9c4985d968974ad6d2528869bdb82323ddae0593d7a5104744b46d8fc02d4cfa",
+    "tools/dabbl8_instrument_session.py": "749d04f301ccee50f68c5900110e46c85be1230584bfc0a5012f959ad0c419bd"
+  },
+  "evidence_sha256": {
+    "README.md": "fd214f76bfa985e462b4d2a4cbfa8d43e9466c332fd4583bd1623fa6de78cd66",
+    "before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "direct-call-stack-scope.json": "b7c805108881793c8d0b7caf7d8fd9d06bf77ccabdcc4fd7eb97d564cae9ab46",
+    "focused-actual-discovery-opt.log": "7bcdbed360c47ea9660aa8b45c1466f8e0e48b1a631e5ec8ff11ddf05110a23a",
+    "focused-actual-discovery-san.log": "e26254aeb9bf923a7eeaabedbb4baeca9de9b03b6c3411b17c971bbfa59fc150",
+    "focused-checks.json": "e14fd8c6df311204958667cd57ca4d0b34a03cce0f95d65e517faae0c7ca4d77",
+    "focused-connected-host-opt.log": "1bb8c55b7139deb7b2d5e0b0546fccaa4e9bb2431a73788edf5ffc53e5f0a8e8",
+    "focused-connected-host-strict.log": "1bb8c55b7139deb7b2d5e0b0546fccaa4e9bb2431a73788edf5ffc53e5f0a8e8",
+    "focused-discovery-capture-compile-opt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-discovery-capture-compile-san.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-discovery-four-compile-opt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-discovery-four-compile-san.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-helper-sha256.json": "feebe2fffb416db8c60f1ea4f3b5e27bdbed4f986e2e39bb412e6f1a44c1441c",
+    "focused-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-opt-connected.log": "2f39fb1e84be3761b875b3ed74913adbd361c3396aed11113a81feac85345f85",
+    "focused-shipping-opt-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-shipping-opt.log": "d95f5085c39072c4301b58284c46db673e8b0cfa1e1f07d8d49791e02e83091b",
+    "focused-shipping-strict-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-shipping-strict.log": "d95f5085c39072c4301b58284c46db673e8b0cfa1e1f07d8d49791e02e83091b",
+    "focused-source-head.txt": "a18abbad91decc7bad805806ffd2ced42a950b14189639016f53a6030c20be57",
+    "focused-source-pins.json": "298a1642efeb696c2c107d3e04f960036dc678585d3db64aa50f36d4d2febd83",
+    "focused-strict-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "focused-strict-connected.log": "2f39fb1e84be3761b875b3ed74913adbd361c3396aed11113a81feac85345f85",
+    "focused-terminal.json": "0e01a656868b54d03686834c53f71202e4e0ccb266918313f650a809d141239b",
+    "focused-verification-command.py.txt": "9ec3a37f2c5b3c15f69c086bf0b7a5796271dd33775b7077eaeb0f361623125b",
+    "generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "stack-audit-command.py.txt": "aef8bb91933657911f953f0c2118653e8a3b629617fb95fb2ac81d958f7f96af",
+    "target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "target-budget-8.log": "f026d188f235738917653431ef753e78ea8024e2a23c48590124487dd7cc0af6",
+    "target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target-results.json": "dc0a4ada4c7a53369b8d9db4e46882eff4aacb55420ca91d3aafebf01d72de93",
+    "target-verification-command.py.txt": "85e025e2b9f16fbff4837486b5cc6b3676dd462d639d81f5d296907ed4e83e1c",
+    "terminal.json": "0c1f2859c43bc4e1c95292ceb89e5e212a512e730375c8ce003061a7b60c614d"
+  },
+  "paired_scopes": {
+    "connected": 103371616,
+    "shipping": 1214600,
+    "host": 781,
+    "INFO": 95
+  },
+  "full_published_tree_CI": "REQUIRED",
+  "physical": "NOT RUN",
+  "shipping_permission": "constant0",
+  "known_native_budget_failures": {
+    "USB": [
+      570,
+      504
+    ],
+    "ROOM": [
+      296,
+      218
+    ],
+    "SPRING": [
+      176,
+      126
+    ]
+  }
+}

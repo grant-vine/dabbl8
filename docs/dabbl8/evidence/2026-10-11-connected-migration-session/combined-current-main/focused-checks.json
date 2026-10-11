@@ -1,0 +1,82 @@
+[
+  {
+    "name": "opt-compile",
+    "exit": 0,
+    "seconds": 4.8965630531311035
+  },
+  {
+    "name": "opt-connected",
+    "exit": 0,
+    "seconds": 9.277118921279907
+  },
+  {
+    "name": "strict-compile",
+    "exit": 0,
+    "seconds": 8.56552505493164
+  },
+  {
+    "name": "strict-connected",
+    "exit": 0,
+    "seconds": 12.55059003829956
+  },
+  {
+    "name": "shipping-opt-compile",
+    "exit": 0,
+    "seconds": 4.990571022033691
+  },
+  {
+    "name": "shipping-opt",
+    "exit": 0,
+    "seconds": 1.2846779823303223
+  },
+  {
+    "name": "shipping-strict-compile",
+    "exit": 0,
+    "seconds": 8.51737093925476
+  },
+  {
+    "name": "shipping-strict",
+    "exit": 0,
+    "seconds": 0.6640710830688477
+  },
+  {
+    "name": "connected-host-opt",
+    "exit": 0,
+    "seconds": 7.262017011642456
+  },
+  {
+    "name": "connected-host-strict",
+    "exit": 0,
+    "seconds": 9.14461374282837
+  },
+  {
+    "name": "discovery-capture-compile-opt",
+    "exit": 0,
+    "seconds": 3.196937084197998
+  },
+  {
+    "name": "discovery-four-compile-opt",
+    "exit": 0,
+    "seconds": 2.4760189056396484
+  },
+  {
+    "name": "actual-discovery-opt",
+    "exit": 0,
+    "seconds": 1.0593762397766113
+  },
+  {
+    "name": "discovery-capture-compile-san",
+    "exit": 0,
+    "seconds": 4.4494030475616455
+  },
+  {
+    "name": "discovery-four-compile-san",
+    "exit": 0,
+    "seconds": 3.667065143585205
+  },
+  {
+    "name": "actual-discovery-san",
+    "exit": 0,
+    "seconds": 1.0801589488983154
+  }
+]

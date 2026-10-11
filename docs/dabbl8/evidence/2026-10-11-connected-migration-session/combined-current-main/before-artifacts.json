@@ -1,0 +1,8 @@
+{
+  "build/felucca.bin": "b69e74e98721ca1f1124edec114c824e315102c65e1f89bf437619d8f048387b",
+  "build/felucca.fwsc": "2b2484e03880030e9be1f47988dce88f6b875aa4ed2ddcdf7e5d4e78f437d1cb",
+  "build/loader/ota.bin": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+  "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+  "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+  "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+}
