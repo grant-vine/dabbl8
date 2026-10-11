@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-xc4kuq2j/tests/engine_offline_profile_workflow_test.py", line 218, in <module>
+    check(ordinary['accepted'] and optional['accepted'], 'actual migration full profile accepted')
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-xc4kuq2j/tests/engine_offline_profile_workflow_test.py", line 36, in check
+    raise AssertionError(label)
+AssertionError: actual migration full profile accepted

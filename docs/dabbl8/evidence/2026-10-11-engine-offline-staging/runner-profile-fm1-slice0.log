@@ -1,0 +1,3 @@
+Exact added tests/run_tests.sh CC/SCC command flags, clang on Mac; ASAN_OPTIONS=detect_leaks=0
+Offline profile v1: 80855 checks PASS; FM4=1 SLICE=0; original/sounding runtime preserved, no device proof
+Offline profile staging: all 13 historical originals and canonical references remain pristine

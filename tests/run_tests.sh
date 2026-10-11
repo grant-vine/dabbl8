@@ -253,6 +253,17 @@ if [ -f build/gen/felucca_tables.h ]; then
                 label="engine_adoption${n}_fm${fm4}_slice${slice}"
                 $CC -O2 -w -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tests/engine_adoption_test.c -lm
                 run "project/native availability refusal: $n tracks FM4=$fm4 SLICE=$slice, full state and LCD preservation" "$OUT/$label"
+                label="engine_ui${n}_fm${fm4}_slice${slice}"
+                $CC -O2 -w -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tests/engine_ui_availability_test.c -lm
+                run "available engine UI/defaults: $n tracks FM4=$fm4 SLICE=$slice actual lists/knobs/keys/LEDs/drawing/startup" "$OUT/$label"
+                if [ "$n" = 8 ]; then
+                    label="engine_offline_profile_fm${fm4}_slice${slice}"
+                    $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tests/engine_offline_staging_test.c -lm
+                    run "offline profile-v1 staging: FM4=$fm4 SLICE=$slice original preservation and factory defaults" python3 tests/engine_offline_staging_test.py "$OUT/$label"
+                    label="engine_offline_workflow_fm${fm4}_slice${slice}"
+                    $CC -O2 -w -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
+                    run "offline profile-v1 CLI/bundles: FM4=$fm4 SLICE=$slice frozen parent receipts and whole-set refusal" python3 tests/engine_offline_profile_workflow_test.py "$OUT/$label" - "$OUT/dabbl8_pool_initialize" "$fm4" "$slice"
+                fi
                 for pathway in editor ui; do
                     seam=""; test "$pathway" != ui || seam="-DD8_SOUND_UI_TEST"
                     label="engine_sound${n}_fm${fm4}_slice${slice}_$pathway"
@@ -566,6 +577,17 @@ else
                 label="engine_adoption${n}_fm${fm4}_slice${slice}"
                 $SCC -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tests/engine_adoption_test.c -lm
                 run "ASan/UBSan: project/native availability refusal: $n tracks FM4=$fm4 SLICE=$slice" "$A/$label"
+                label="engine_ui${n}_fm${fm4}_slice${slice}"
+                $SCC -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tests/engine_ui_availability_test.c -lm
+                run "ASan/UBSan: available engine UI/defaults: $n tracks FM4=$fm4 SLICE=$slice" "$A/$label"
+                if [ "$n" = 8 ]; then
+                    label="engine_offline_profile_fm${fm4}_slice${slice}"
+                    $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tests/engine_offline_staging_test.c -lm
+                    run "ASan/UBSan: offline profile-v1 staging: FM4=$fm4 SLICE=$slice" python3 tests/engine_offline_staging_test.py "$A/$label"
+                    label="engine_offline_workflow_fm${fm4}_slice${slice}"
+                    $SCC -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
+                    run "ASan/UBSan: offline profile-v1 CLI/bundles: FM4=$fm4 SLICE=$slice" python3 tests/engine_offline_profile_workflow_test.py "$A/$label" - "$A/dabbl8_pool_initialize" "$fm4" "$slice"
+                fi
                 for pathway in editor ui; do
                     seam=""; test "$pathway" != ui || seam="-DD8_SOUND_UI_TEST"
                     label="engine_sound${n}_fm${fm4}_slice${slice}_$pathway"

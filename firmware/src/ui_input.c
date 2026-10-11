@@ -640,7 +640,7 @@ static void step_edit(uint32_t slot, int32_t steps)
     }
 }
 
-static void edit_param(uint32_t slot, int32_t steps)
+static void edit_param_mask(uint32_t slot, int32_t steps, unsigned mask)
 {
     int16_t *vp;
     const page_t *pg = cur_page();
@@ -716,9 +716,9 @@ static void edit_param(uint32_t slot, int32_t steps)
     }
     if (pg->graph == GR_BROWSE) {                         /* KNOB 1: one preset, KNOB 2: the next / previous engine */
         if (slot == 0u) {
-            preset_step(steps);
+            preset_step_mask(steps, mask);
         } else if (slot == 1u) {
-            select_engine(eng_step(TSEL->eng_req, steps));
+            (void)select_engine_mask(eng_step_mask(TSEL->eng_req, steps, mask), mask);
         } else if (slot == 2u) {
             preset_mark(steps > 0);
         } else if (slot == 3u && favorites.filter != (uint32_t)(steps > 0)) {
@@ -761,6 +761,7 @@ static void edit_param(uint32_t slot, int32_t steps)
     *vp = (int16_t)v;
     if (pg->scope != SC_GLOBAL) motion_capture(TSEL, (uint32_t)(vp - TSEL->p), *vp);
 }
+static void edit_param(uint32_t slot, int32_t steps) { edit_param_mask(slot, steps, D8ENGINE_EFFECTIVE_MASK); }
 
 /* OCT+ on an action page: the picked action. A load stays picked (browse and load again); the others
  * are dropped once done. Flash writes only while stopped; over the user's data: the dialog */

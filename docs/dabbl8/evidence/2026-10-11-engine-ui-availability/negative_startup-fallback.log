@@ -1,0 +1,5 @@
+Mutation firmware/src/engines.c
+if (rc == D8ENGINE_UNAVAILABLE) {
+ -> if (rc == D8ENGINE_UNAVAILABLE) { return rc;
+source SHA256 1c6caaf1d3af0bdf0bd729426078402f60aa912cc26a374153d3fcbe55de314d
+FAIL line 88: !track_startup_mask(&trk[t],t,mask)

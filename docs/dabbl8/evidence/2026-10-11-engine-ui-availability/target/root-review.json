@@ -1,0 +1,13 @@
+{
+  "source_commit": "75dee150640500024b16979d84d7b43e20434b70",
+  "control_commit": "e1bd9eea8ab1bc131ca6f0b5092c74d01e1dceae",
+  "committed_source_files_verified": 369,
+  "app_hashes_verified": true,
+  "app_deltas_bytes": {
+    "four": 148,
+    "eight": -32
+  },
+  "RAM_pool_unchanged": true,
+  "eight_static_budget": "FAIL",
+  "scope": "Pinned app-only comparison at these exact commits; no loader/package/device, calibrated timing or physical stack qualification. Later source unions require their own qualification."
+}

@@ -1,0 +1,2 @@
+COMMAND ['clang', '-O2', '-w', '-DNPART=4', '-DFELUCCA_FM4=1', '-DFELUCCA_SLICE=1', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_adoption_test.c', '-lm', '-o', '/private/tmp/d8-engine-ui-availability-evidence/normal_4_1_1_adoption']
+engine adoption: tracks=4 FM4=1 SLICE=1 proofs=237 PASS; live-state refusal and legacy target checks, host only
