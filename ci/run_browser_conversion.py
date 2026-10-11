@@ -3,10 +3,11 @@
 """Pinned actual C/WASM browser-converter parity; no device or release writes."""
 from pathlib import Path
 import hashlib,json,os,platform,shutil,subprocess,sys,tarfile,tempfile
+from evidence_session import create_evidence_directory
 ROOT=Path(__file__).resolve().parents[1]
-OUT=ROOT/'build/browser-conversion-evidence';OUT.mkdir(parents=True,exist_ok=True)
+OUT=create_evidence_directory(ROOT/'build/browser-conversion-evidence')
 LOCK=json.loads((ROOT/'ci/browser-conversion.json').read_text())
-report={'result':'FAIL','lock':LOCK,'checks':[],'hardware':'SKIP','device_writes':False,'firmware_package':False}
+report={'evidence_directory':OUT.relative_to(ROOT).as_posix(),'result':'FAIL','lock':LOCK,'checks':[],'hardware':'SKIP','device_writes':False,'firmware_package':False}
 def command(name,args,env=None):
     with (OUT/(name+'.log')).open('w') as log:
         p=subprocess.run(args,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
@@ -53,4 +54,5 @@ finally:
     report['log_hashes']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in OUT.glob('*.log')}
     (OUT/'results.json').write_text(json.dumps(report,indent=2)+'\n')
 print('Browser converter:',report['result'],report.get('reason','actual C/WASM parity and independent ZIP checks'))
+print('Evidence:',OUT.relative_to(ROOT).as_posix())
 sys.exit(0 if report['result']=='PASS' else 1)
