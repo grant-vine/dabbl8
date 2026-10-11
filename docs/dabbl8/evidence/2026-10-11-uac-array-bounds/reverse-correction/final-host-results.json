@@ -1,0 +1,171 @@
+{
+  "usb_sha256": "dc47dba4aa1b90787be82685028cc7600fa78a9e58644313311d7f17e9e4b09e",
+  "runs": [
+    {
+      "name": "normal-tone0",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_UAC_TONE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/normal-tone0"
+      ],
+      "exit": 0,
+      "output": "Native SRC history: 2246436 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n",
+      "stderr": ""
+    },
+    {
+      "name": "normal-tone1",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_UAC_TONE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/normal-tone1"
+      ],
+      "exit": 0,
+      "output": "Native SRC history TONE: 2277636 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n",
+      "stderr": ""
+    },
+    {
+      "name": "inherited-san-tone0",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DFELUCCA_UAC_TONE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/inherited-san-tone0"
+      ],
+      "exit": 0,
+      "output": "Native SRC history: 2246436 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n",
+      "stderr": ""
+    },
+    {
+      "name": "inherited-san-tone1",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DFELUCCA_UAC_TONE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/inherited-san-tone1"
+      ],
+      "exit": 0,
+      "output": "Native SRC history TONE: 2277636 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n",
+      "stderr": ""
+    },
+    {
+      "name": "uac-normal-cdc0",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DT_CDC=0",
+        "-DHALF_FRAMES=128",
+        "tests/uac_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/uac-normal-cdc0"
+      ],
+      "exit": 0,
+      "output": "-- USB audio input, CDC off\ndevice descriptor: 18 bytes, type 1, EP0 64                      ok\nbcdDevice preserves rate identity and valid audio-order cache band ok\ndevice class 0 (per interface)                                   ok\nconfiguration: type 2, wTotalLength = the bytes sent             ok\ndescriptor lengths add up to wTotalLength                        ok\nbNumInterfaces = the interfaces present                          ok\neach interface setting has bNumEndpoints endpoints               ok\nendpoint addresses unique                                        ok\nAC header: UAC 1.00, length 8 + collection                       ok\nAC header wTotalLength = the class-specific AC descriptors       ok\nAC collection: the MIDI and audio streaming interfaces           ok\ninput terminal 1: 2 ch, L R, not USB streaming                   ok\noutput terminal 2: USB streaming, source 1                       ok\nAS alt 0 has no endpoint                                         ok\nAS general: terminal 2, PCM                                      ok\ntype I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok\nEP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok\nCS endpoint: sampling frequency control                          ok\nMIDI bulk endpoints 0x01 / 0x81 unchanged                        ok\nIADs: none                                                       ok\nnot fed before the host reads (no overruns while it waits)       ok\n10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok\n  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok\n  every frame once, in order; no underrun / overrun              ok\n  fill at render start stays 71..145 (band 80..128)              ok\n1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok\nproducer stopped 30 ms: underruns counted, packets keep their size ok\n  the empty ring repeats the last frame                          ok\nconsumer stopped 40 ms: overruns counted, the ring never overfills ok\nalt 0: nothing fed, nothing taken                                ok\nrestart: primed again, in order, no glitch                       ok\nSET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok\nFIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok\n1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok\n  frames out / in: 48031 / 44128 (160 / 147)                     ok\n     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok\n    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok\n   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok\n   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok\n  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok\n  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok\n  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok\n  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok\n  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok\n  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 20.1 ns / 44.1 kHz frame\n48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok\n  every frame = the resampled render, in order (0 off); no underrun / overrun ok\n  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok\n  1000 packets, 2.5 ms renders: no glitch                        ok\n48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok\nswitch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok\nswitch to 48 mid-stream: silence, primed again, every frame in order ok\nuac: all ok\n",
+      "stderr": ""
+    },
+    {
+      "name": "uac-normal-cdc1",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DT_CDC=1",
+        "-DHALF_FRAMES=128",
+        "tests/uac_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/uac-normal-cdc1"
+      ],
+      "exit": 0,
+      "output": "-- USB audio input, CDC on\ndevice descriptor: 18 bytes, type 1, EP0 64                      ok\nbcdDevice preserves rate identity and valid audio-order cache band ok\ndevice class misc / IAD (EF 02 01)                               ok\nconfiguration: type 2, wTotalLength = the bytes sent             ok\ndescriptor lengths add up to wTotalLength                        ok\nbNumInterfaces = the interfaces present                          ok\neach interface setting has bNumEndpoints endpoints               ok\nendpoint addresses unique                                        ok\nAC header: UAC 1.00, length 8 + collection                       ok\nAC header wTotalLength = the class-specific AC descriptors       ok\nAC collection: the MIDI and audio streaming interfaces           ok\ninput terminal 1: 2 ch, L R, not USB streaming                   ok\noutput terminal 2: USB streaming, source 1                       ok\nAS alt 0 has no endpoint                                         ok\nAS general: terminal 2, PCM                                      ok\ntype I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok\nEP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok\nCS endpoint: sampling frequency control                          ok\nMIDI bulk endpoints 0x01 / 0x81 unchanged                        ok\nIADs: audio IF 0-2, CDC IF 3-4                                   ok\nnot fed before the host reads (no overruns while it waits)       ok\n10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok\n  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok\n  every frame once, in order; no underrun / overrun              ok\n  fill at render start stays 71..145 (band 80..128)              ok\n1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok\nproducer stopped 30 ms: underruns counted, packets keep their size ok\n  the empty ring repeats the last frame                          ok\nconsumer stopped 40 ms: overruns counted, the ring never overfills ok\nalt 0: nothing fed, nothing taken                                ok\nrestart: primed again, in order, no glitch                       ok\nSET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok\nFIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok\n1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok\n  frames out / in: 48031 / 44128 (160 / 147)                     ok\n     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok\n    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok\n   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok\n   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok\n  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok\n  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok\n  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok\n  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok\n  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok\n  cost (host): 242 instructions / 44.1 kHz frame (222 / 48 kHz frame), 19.5 ns / 44.1 kHz frame\n48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok\n  every frame = the resampled render, in order (0 off); no underrun / overrun ok\n  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok\n  1000 packets, 2.5 ms renders: no glitch                        ok\n48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok\nswitch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok\nswitch to 48 mid-stream: silence, primed again, every frame in order ok\nuac: all ok\n",
+      "stderr": ""
+    },
+    {
+      "name": "uac-strict-san-cdc0",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DT_CDC=0",
+        "-DHALF_FRAMES=128",
+        "tests/uac_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/uac-strict-san-cdc0"
+      ],
+      "exit": 0,
+      "output": "-- USB audio input, CDC off\ndevice descriptor: 18 bytes, type 1, EP0 64                      ok\nbcdDevice preserves rate identity and valid audio-order cache band ok\ndevice class 0 (per interface)                                   ok\nconfiguration: type 2, wTotalLength = the bytes sent             ok\ndescriptor lengths add up to wTotalLength                        ok\nbNumInterfaces = the interfaces present                          ok\neach interface setting has bNumEndpoints endpoints               ok\nendpoint addresses unique                                        ok\nAC header: UAC 1.00, length 8 + collection                       ok\nAC header wTotalLength = the class-specific AC descriptors       ok\nAC collection: the MIDI and audio streaming interfaces           ok\ninput terminal 1: 2 ch, L R, not USB streaming                   ok\noutput terminal 2: USB streaming, source 1                       ok\nAS alt 0 has no endpoint                                         ok\nAS general: terminal 2, PCM                                      ok\ntype I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok\nEP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok\nCS endpoint: sampling frequency control                          ok\nMIDI bulk endpoints 0x01 / 0x81 unchanged                        ok\nIADs: none                                                       ok\nnot fed before the host reads (no overruns while it waits)       ok\n10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok\n  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok\n  every frame once, in order; no underrun / overrun              ok\n  fill at render start stays 71..145 (band 80..128)              ok\n1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok\nproducer stopped 30 ms: underruns counted, packets keep their size ok\n  the empty ring repeats the last frame                          ok\nconsumer stopped 40 ms: overruns counted, the ring never overfills ok\nalt 0: nothing fed, nothing taken                                ok\nrestart: primed again, in order, no glitch                       ok\nSET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok\nFIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok\n1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok\n  frames out / in: 48031 / 44128 (160 / 147)                     ok\n     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok\n    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok\n   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok\n   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok\n  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok\n  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok\n  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok\n  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok\n  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok\n  cost (host): 1058 instructions / 44.1 kHz frame (972 / 48 kHz frame), 46.5 ns / 44.1 kHz frame\n48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok\n  every frame = the resampled render, in order (0 off); no underrun / overrun ok\n  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok\n  1000 packets, 2.5 ms renders: no glitch                        ok\n48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok\nswitch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok\nswitch to 48 mid-stream: silence, primed again, every frame in order ok\nuac: all ok\n",
+      "stderr": ""
+    },
+    {
+      "name": "uac-strict-san-cdc1",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DT_CDC=1",
+        "-DHALF_FRAMES=128",
+        "tests/uac_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds-predecrement/uac-strict-san-cdc1"
+      ],
+      "exit": 0,
+      "output": "-- USB audio input, CDC on\ndevice descriptor: 18 bytes, type 1, EP0 64                      ok\nbcdDevice preserves rate identity and valid audio-order cache band ok\ndevice class misc / IAD (EF 02 01)                               ok\nconfiguration: type 2, wTotalLength = the bytes sent             ok\ndescriptor lengths add up to wTotalLength                        ok\nbNumInterfaces = the interfaces present                          ok\neach interface setting has bNumEndpoints endpoints               ok\nendpoint addresses unique                                        ok\nAC header: UAC 1.00, length 8 + collection                       ok\nAC header wTotalLength = the class-specific AC descriptors       ok\nAC collection: the MIDI and audio streaming interfaces           ok\ninput terminal 1: 2 ch, L R, not USB streaming                   ok\noutput terminal 2: USB streaming, source 1                       ok\nAS alt 0 has no endpoint                                         ok\nAS general: terminal 2, PCM                                      ok\ntype I format: 2 ch, 2-byte subframe, 16 bit, 44100 and 48000 Hz ok\nEP 0x84: isochronous async, 196 B (49 frames), every frame, alt 1 ok\nCS endpoint: sampling frequency control                          ok\nMIDI bulk endpoints 0x01 / 0x81 unchanged                        ok\nIADs: audio IF 0-2, CDC IF 3-4                                   ok\nnot fed before the host reads (no overruns while it waits)       ok\n10 s, random render times: sizes 43..46 (44:8243 45:1381 46:56 43:320) ok\n  mean packet 44.1173 frames (I2S 44117.6 Hz)                    ok\n  every frame once, in order; no underrun / overrun              ok\n  fill at render start stays 71..145 (band 80..128)              ok\n1000 packets, 2.5 ms renders: mean 44.115, no glitch             ok\nproducer stopped 30 ms: underruns counted, packets keep their size ok\n  the empty ring repeats the last frame                          ok\nconsumer stopped 40 ms: overruns counted, the ring never overfills ok\nalt 0: nothing fed, nothing taken                                ok\nrestart: primed again, in order, no glitch                       ok\nSET_CUR: 44100 / 48000, the nearer of the two; a change re-primes ok\nFIR table = sinc x Kaiser (24 x 160 taps, beta 9, 22 kHz); phases sum to 1.0 ok\n1 s of noise: every frame = the double-precision resampler +-1 LSB (0 off) ok\n  frames out / in: 48031 / 44128 (160 / 147)                     ok\n     20 Hz -1 dBFS: gain -0.000 dB, SNR 94.7 dB in band, 94.2 full (exact taps 94.6) ok\n    100 Hz -1 dBFS: gain +0.000 dB, SNR 94.4 dB in band, 94.0 full (exact taps 94.5) ok\n   1000 Hz -1 dBFS: gain +0.000 dB, SNR 94.6 dB in band, 94.0 full (exact taps 95.0) ok\n   5000 Hz -1 dBFS: gain +0.000 dB, SNR 93.9 dB in band, 93.4 full (exact taps 94.0) ok\n  10000 Hz -1 dBFS: gain -0.000 dB, SNR 93.0 dB in band, 92.7 full (exact taps 92.9) ok\n  15000 Hz -1 dBFS: gain +0.000 dB, SNR 93.3 dB in band, 92.8 full (exact taps 93.4) ok\n  18000 Hz -1 dBFS: gain -0.059 dB, SNR 94.6 dB in band, 45.3 full (exact taps 94.3) ok\n  20000 Hz -1 dBFS: gain -1.173 dB, SNR 93.0 dB in band, 17.7 full (exact taps 93.0) ok\n  flat 20 Hz .. 18 kHz within -0.059 .. +0.000 dB; SNR 100 Hz .. 15 kHz >= 93.0 dB ok\n  cost (host): 1058 instructions / 44.1 kHz frame (972 / 48 kHz frame), 47.1 ns / 44.1 kHz frame\n48 kHz, 10 s, random render times: sizes 47..49 (48:9134 49:530 47:336), mean 48.0194 ok\n  every frame = the resampled render, in order (0 off); no underrun / overrun ok\n  fill at render start 73..157 (band 87..139), adj up 648 down 395 (I2S 44117.6 Hz: fast) ok\n  1000 packets, 2.5 ms renders: no glitch                        ok\n48 kHz, I2S 44085 Hz (slow): mean 47.9836, adj up 308 down 472, no glitch ok\nswitch to 44.1 mid-stream: silence, primed again, every frame in order, bit for bit ok\nswitch to 48 mid-stream: silence, primed again, every frame in order ok\nuac: all ok\n",
+      "stderr": ""
+    }
+  ]
+}
