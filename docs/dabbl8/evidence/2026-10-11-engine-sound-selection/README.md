@@ -34,3 +34,11 @@ Target logs, environment, hashes and review are in `target/`. These measurements
 predate the current-main USB correction and do not qualify a later combined
 image, package, stack high-water, physical timing or recovery. Full final-source
 CI remains a separate gate.
+
+## Current prerequisite integration
+
+Exact source `9f8755921c901986e6961a303ef72d9de4a1f697` integrates native
+adoption PR #120 and current-main USB correction. All 48 local normal/sanitized
+UI/editor/native-adoption configurations passed again; raw logs and hashes are
+in `current-union/`. The earlier target measurements do not represent this
+combined source. Final CI and target/device qualification remain separate.
