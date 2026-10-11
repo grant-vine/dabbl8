@@ -160,9 +160,9 @@ claim follows from this implementation. Host evidence is in
 ### Optional offline legacy staging API v1
 
 `d8p1_legacy_stage_profile_v1` and `d8p1_legacy_convert_profile_v1` accept a separate
-engine availability mask. Existing ordinary APIs, converter CLI/Python bundles
-and browser flows continue using their historical path. This is an opt-in C
-foundation, not a user-selectable profile workflow or qualified reduced firmware.
+engine availability mask. Existing ordinary APIs and default CLI/Python/browser flows retain their
+historical path. This C API underpins the explicit optional offline CLI/Python
+workflow below; it is not a firmware profile selector or qualified reduced build.
 
 The actual FUN1–FUN9 importers and compiled PHYS/PERC/DIGITAL migrations run first.
 All four resulting historical tracks, parameters, patterns and private patches
@@ -179,8 +179,8 @@ parameters. FM6 receives its factory SLOT's sanitized packed patch; other engine
 retain the inactive initialization patch. This construction reads actual preset
 and patch tables without live engine, voice, cache, undo or transport changes.
 Full-mask optional output equals ordinary output, including padding and checksum.
-The report remains first-four historical migration metadata: it does not describe
-added-track fallback identities. A future wrapper must record those separately.
+The C API migration report remains first-four metadata: it does not describe
+added-track fallbacks. The optional CLI now records those identities separately.
 
 Result codes distinguish invalid masks, malformed data, unavailable canonical or
 late engines, unsupported source IDs and invalid/overlapping arguments. An
@@ -190,14 +190,14 @@ other fields. Damaged or truncated envelopes remain malformed data. Known SLICE
 ID 13 is unsupported when that existing build flag omits it. DIGITAL retains the
 actual FM4 compatibility meaning, or the actual historical FM6 conversion.
 
-Next wiring must carry a versioned optional mask independently of the saved-slot
-mask through `tools/dabbl8_project_convert.c`, its Python bundle wrapper and
-`web/d8project-conversion.js`. One mask must apply to primary and all referenced
-projects; any refusal must retain originals and prevent every proposed converted
-file from publication. Add fallback metadata, reason-code reporting and actual
-WASM/native parity tests while preserving ordinary outputs and no-overwrite
-policy. Browser selection, capability negotiation and immutable profile builds
-remain separate closed gates. Engine availability alone proves neither sample
+The optional `legacy-profile-v1` C CLI and Python project/migration bundle
+wrappers now carry the engine mask separately from saved-slot context, report
+actual added defaults and structured reasons, and refuse the complete proposed
+set if any emitted source lacks its original engines. Ordinary mode bytes remain
+unchanged. See `offline-project-conversion.md` for the exact experimental contract.
+`web/d8project-conversion.js` continues using ordinary conversions; browser profile
+selection, capability negotiation and immutable profile builds remain separate
+closed gates. Engine availability alone proves neither sample
 assets/patch compatibility nor memory fit/timing.
 
 Host evidence is in `evidence/2026-10-11-engine-offline-staging/`. The helper adds
@@ -210,9 +210,9 @@ Runtime stage completion still requires all of the following:
 - Complete any remaining publication paths and retain exact/effective refusal
   checks before undo/panic/patch mutation; historical UI/editor selection and
   project/native adoption already have these guards.
-- Wire the optional profile-v1 offline staging API through actual converter and
-  whole-bundle/browser paths without substituting original imported sounds;
-  header-only staging and runtime filtering do not authorize a reduced profile.
+- Wire the optional CLI/Python profile-v1 workflow through browser paths without
+  substituting original imported sounds; offline profile conversion and runtime
+  filtering do not authorize a reduced firmware profile.
 - Complete all remaining publication paths beyond the project/native adoption
   slice; retain transactional refusal tests and target regression evidence.
 - Define referenced-project compatibility precisely, including the existing late

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/grantv/Code/dabbl8/.local-baseline/engine-offline-profile-workflow/tests/project_conversion_test.py", line 120, in <module>
+    report = module.prepare(fixtures / 'fun9.bin', dst, exe, refs)
+  File "/Users/grantv/Code/dabbl8/.local-baseline/engine-offline-profile-workflow/tools/dabbl8_project_convert.py", line 101, in prepare
+    data, meta = run_converter(converter, mode, original_ref, mask, engine_mask)
+TypeError: failed_canonical() takes 4 positional arguments but 5 were given
