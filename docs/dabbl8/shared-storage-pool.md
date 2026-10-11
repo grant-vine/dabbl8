@@ -2,7 +2,7 @@
 
 This callback-driven C engine implements the owner's three-project/shared-autosave decision for [issue #13](https://github.com/grant-vine/dabbl8/issues/13). Native runtime, mapped existing-driver, menu/catalog and autosave policy bindings now exist. The [connected migration/session workflow](native-migration-session.md) also provides explicit read-only native resume after a new capture and consent; shipping APPLY and native writes remain quarantined. There is no automatic boot adoption or qualified physical migration/recovery. No device has been migrated or flashed.
 
-`firmware/src/d8pool.c` manages five virtual 8192-byte blocks. Objects 0–2 are saved projects; object 3 is the one logical autosave. Four current objects share one replacement block. Read the [selected physical geometry](three-project-shared-storage.md) before implementing a backend: block 4 is noncontiguous, and treating this as contiguous physical storage would overwrite unrelated data.
+`firmware/src/d8pool.c` manages five virtual 8192-byte blocks. Objects 0–2 are saved projects; object 3 is the one logical autosave. Four current objects share one replacement block. Read the [selected physical geometry](three-project-shared-storage.md) when using or extending a backend: block 4 is noncontiguous, and treating this as contiguous physical storage would overwrite unrelated data.
 
 Current status above reflects firmware main `c8ee5b0f12fa04f32c93168d01839da1a98c9c74`. Source-pinned build sizes, hashes, test counts and linked evidence below describe their original implementation snapshots; they are not fresh current-main measurements.
 
