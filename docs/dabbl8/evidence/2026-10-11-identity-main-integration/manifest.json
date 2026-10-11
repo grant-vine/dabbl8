@@ -1,0 +1,188 @@
+{
+  "files": {
+    "target/before-pins.json": {
+      "bytes": 3574,
+      "sha256": "a2e943d3838388adcbfac01b12c9781610836750a1e9f5971aaa1edf48015e12"
+    },
+    "target/branded-discovery.log": {
+      "bytes": 244,
+      "sha256": "303dcc95ecd2fa548aa90cf24bb8e3e4f680c3fbff02b1a7c5ebc38ca4f9a880"
+    },
+    "target/bridge4-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target/budget-results.json": {
+      "bytes": 1029,
+      "sha256": "c65218f42d821c97db3fe1af46e1d8e644c57c449ed10e5c5cabeea984fbde77"
+    },
+    "target/capture-branded-compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target/environment.json": {
+      "bytes": 287,
+      "sha256": "8f3698d242522e608b17ebc0f2a333a585a258f44679afe70be56710f0824fbe"
+    },
+    "target/target-4.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target/target-8.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target/target-budget-4.log": {
+      "bytes": 5787,
+      "sha256": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4"
+    },
+    "target/target-budget-8.log": {
+      "bytes": 5847,
+      "sha256": "0067808472b94c4ce3b689dd23f2c59a4c878bb56198e29e1836870bfaf7df24"
+    },
+    "target/target-budget-dabbl8.log": {
+      "bytes": 5847,
+      "sha256": "0067808472b94c4ce3b689dd23f2c59a4c878bb56198e29e1836870bfaf7df24"
+    },
+    "target/target-dabbl8.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "target/target-results.json": {
+      "bytes": 1465,
+      "sha256": "4c3f1d3b0b78a2270f8e1827055c73426669d0ba311ea49ac40bb37d492705c6"
+    },
+    "target/verify.py": {
+      "bytes": 5183,
+      "sha256": "4d195359aa9173959549b1b611921136d474303a3927205293327cf548f3b6ff"
+    },
+    "focused/branded-discovery.log": {
+      "bytes": 244,
+      "sha256": "2e3c92aee313fc0bafcd08839e4bb9532ebb26576a429a5a8179441b3364ae27"
+    },
+    "focused/capture-branded-opt-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/capture-branded-opt-identity.log": {
+      "bytes": 97,
+      "sha256": "931810ea0797ec438e4e08bf093c07e94aa1a4215246fd3da57f295ce36e47c6"
+    },
+    "focused/capture-branded-san-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/capture-branded-san-identity.log": {
+      "bytes": 97,
+      "sha256": "931810ea0797ec438e4e08bf093c07e94aa1a4215246fd3da57f295ce36e47c6"
+    },
+    "focused/capture-legacy-opt-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/capture-legacy-opt-identity.log": {
+      "bytes": 97,
+      "sha256": "931810ea0797ec438e4e08bf093c07e94aa1a4215246fd3da57f295ce36e47c6"
+    },
+    "focused/capture-legacy-san-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/capture-legacy-san-identity.log": {
+      "bytes": 97,
+      "sha256": "931810ea0797ec438e4e08bf093c07e94aa1a4215246fd3da57f295ce36e47c6"
+    },
+    "focused/dabbl8-opt-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/dabbl8-opt.log": {
+      "bytes": 380,
+      "sha256": "0f5a2d4db78b1380b30e2bf572467218745cad588973a724549f928a6ae95523"
+    },
+    "focused/dabbl8-san-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/dabbl8-san.log": {
+      "bytes": 380,
+      "sha256": "0f5a2d4db78b1380b30e2bf572467218745cad588973a724549f928a6ae95523"
+    },
+    "focused/experimental-site-refusal.log": {
+      "bytes": 168,
+      "sha256": "83b26923502da966cd45bd05864d7bded1423e58b2e1b3b05ef774009d0992d7"
+    },
+    "focused/four-bridge-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/installer.log": {
+      "bytes": 2369,
+      "sha256": "0dbc1d6eb6d71f7749cb3dcf262cfe901f65423517014a57a541f7dc01afc534"
+    },
+    "focused/integration-source.json": {
+      "bytes": 354,
+      "sha256": "ece20657800236fc1c69370dc7abc09ee380ca2eb3c7ce32611a62dccc9f808b"
+    },
+    "focused/loader-opt-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/loader-opt.log": {
+      "bytes": 304,
+      "sha256": "a78b590ccdc1675621d43e29c6ebde9370f0a95a81b0026e244dcd334eaeb09a"
+    },
+    "focused/loader-san-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/loader-san.log": {
+      "bytes": 304,
+      "sha256": "a78b590ccdc1675621d43e29c6ebde9370f0a95a81b0026e244dcd334eaeb09a"
+    },
+    "focused/local-editor-site.log": {
+      "bytes": 197,
+      "sha256": "3269368aee2cc6d47fd388027b765f4c541d48da02db22d12efb22a6f51b26ce"
+    },
+    "focused/profile.log": {
+      "bytes": 85,
+      "sha256": "2a907419ae5d5bf90c551f2b80dc20726303d062136c67745a4bac483b652cf9"
+    },
+    "focused/results.json": {
+      "bytes": 2105,
+      "sha256": "8ae0e22d626aabf02b45b0b9d49a8aed544b15e192e38256a095f77b97603c7e"
+    },
+    "focused/source-head.txt": {
+      "bytes": 41,
+      "sha256": "f73c46ff74bdb548850ea5b03e3f09edeb0076d134bae93345ec4e6f6f4e88ef"
+    },
+    "focused/upstream-opt-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/upstream-opt.log": {
+      "bytes": 380,
+      "sha256": "7ab27d491a61961df3c428f8eab86936475d66732f78b38f520f3633c845dbb4"
+    },
+    "focused/upstream-san-build.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "focused/upstream-san.log": {
+      "bytes": 380,
+      "sha256": "7ab27d491a61961df3c428f8eab86936475d66732f78b38f520f3633c845dbb4"
+    },
+    "focused/verify.py": {
+      "bytes": 3854,
+      "sha256": "4c17ae778b2cd5077070181d7d9584fe3693a70a0e36c3f54d1f579e453b4f97"
+    },
+    "scope.json": {
+      "bytes": 3472,
+      "sha256": "b854db2b2bb904a8817e01ad00d274f98ed089b911ed2b09513642462ea48f37"
+    },
+    "README.md": {
+      "bytes": 2073,
+      "sha256": "8a75674956b69da9cd77df8512e5edfff45d0a5fb77182880306b8105b1fc2be"
+    }
+  }
+}
