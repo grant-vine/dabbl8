@@ -1,0 +1,98 @@
+[
+  {
+    "name": "opt-capture-build",
+    "args": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/capture",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/instrument_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-four-build",
+    "args": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/four",
+      "tests/track_client_bridge.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-discovery",
+    "args": [
+      "node",
+      "web/test_d8info.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/capture",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/four",
+      "build/felucca.fwsc"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-capture-build",
+    "args": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/capture",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/instrument_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-four-build",
+    "args": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/four",
+      "tests/track_client_bridge.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-discovery",
+    "args": [
+      "node",
+      "web/test_d8info.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/capture",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/four",
+      "build/felucca.fwsc"
+    ],
+    "exit": 0
+  }
+]

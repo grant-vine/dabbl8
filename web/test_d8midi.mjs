@@ -7,7 +7,10 @@ import { TrackProtocolError } from './d8tracks.js';
 let checks = 0;
 function ok(value, label) { assert.ok(value, label); checks++; console.log('MIDI session: ' + label + ' ok'); }
 const frame = (cmd, args = []) => [240, 125, 70, 76, cmd, ...args, 247];
-const info = [...Buffer.from('test'), 0, 14, 99, 27, 64, 91, ...Array(14).fill(0), 8, 68, 56, 1];
+// Known modern INFO prefix before D8, as emitted by the actual C handler below.
+const info = [...Buffer.from('test'), 0, 14, 99, 27, 64, 91, ...Array(14).fill(0), 8,
+  16, 0x55, 1, 15, 0x4d, 1, 64, 1, 0x42, 1, 0, 0x46, 1, 8, 0,
+  0x53, 1, 3, 0x50, 1, 3, 0x4e, 1, 0, 0x52, 1, 4, 0x4c, 1, 1, 68, 56, 1];
 const caps = [68, 56, 1, 8, 64, 8, 64, 99, 27, 14, 1, 1, 1, 9, 5];
 class Port extends EventTarget {
   constructor(type) { super(); this.type = type; this.state = 'connected'; this.connection = 'closed'; this.opens = 0; this.closes = 0; this.sent = []; }

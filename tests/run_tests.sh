@@ -266,6 +266,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "native migration capture binding: earlier full capture, exact proposal and readback isolation" "$OUT/native_migration_capture_binding_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
+    run "INFO discovery: actual capture suffix, legacy negotiation and built editor import" node web/test_d8info.mjs "$OUT/instrument_capture_test" "$OUT/track_client_bridge4" build/felucca.fwsc
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/scale_test" tests/scale_test.c -lm
@@ -507,6 +508,7 @@ else
     ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "strict ASan/UBSan: private earlier-capture binding and metadata-only scratch guards" "$A/native_migration_capture_binding_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
+    run "ASan/UBSan: actual capture INFO and bounded discovery negotiation" node web/test_d8info.mjs "$A/instrument_capture_test" "$A/track_client_bridge4" build/felucca.fwsc
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"
     $SCC -o "$A/fuzz_ed" tests/fuzz_ed.c -lm
