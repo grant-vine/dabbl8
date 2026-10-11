@@ -20,14 +20,11 @@ try:
     if not archive.exists():command('download',['curl','-fL','--retry','3',LOCK['linux_archive_url'],'-o',str(archive)])
     digest=hashlib.sha256(archive.read_bytes()).hexdigest();report['archive']={'bytes':archive.stat().st_size,'sha256':digest}
     if digest!=LOCK['linux_archive_sha256'] or archive.stat().st_size!=LOCK['linux_archive_bytes']:raise RuntimeError('Pinned browser compiler archive mismatch; refusing upgrade.')
-    sdk=deps/'sdk'
-    if not sdk.exists():
-        staging=Path(tempfile.mkdtemp(prefix='sdk-extract-',dir=deps))
-        try:
-            with tarfile.open(archive) as source:source.extractall(staging,filter='data')
-            staging.rename(sdk)
-        except Exception:
-            shutil.rmtree(staging);raise
+    # Fresh extraction for every invocation: preserve previous SDK work and never
+    # trust compiler files or generated caches left by an earlier run.
+    sdk=Path(tempfile.mkdtemp(prefix='sdk-verified-',dir=deps))
+    with tarfile.open(archive) as source:source.extractall(sdk,filter='data')
+    report['sdk_extraction']={'policy':'fresh pinned archive extraction', 'reused_tree':False}
     install=sdk/'install'
     # Match the reviewed official emsdk release installer: the immutable
     # build archive contains a -git label; the SDK writes its release label.
