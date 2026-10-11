@@ -1,0 +1,19 @@
+# Companion engine availability evidence
+
+Base: `3371d9124d25bbbaac56db52270665860a1be56b` (additive schema-2 capability foundation). This slice changes browser modules, regression orchestration and documentation only. No firmware, engine exclusion, profile authorization, loader, flash boundary, budgets or audio goldens change.
+
+## Executed host checks
+
+- New `web/test_d8companion_engines.mjs`: 149 checks per normal and sanitized pass. Production `D8MidiSession`, shared exact capability parser and actual `mountCompanion` execute against simulated owned ports and an explicitly minimal DOM; each pass also queries eight actual host C bridges (4/8 tracks × FM4 off/on × SLICE off/on). No second session/listener, read-only three-frame handshake, historical stable ID behavior, malformed/version/slot/mask/flag payloads, explicit firmware refusals, optional timeout, late replies during edits, abort, legacy discovery, visible known/unknown states, disconnect and teardown are covered.
+- All sixteen host C bridge compilations pass. Generated tables are reused unchanged from `uac-array-bounds/build/gen` and hashed. These are host builds, not target artifacts. Established sanitized flags use AddressSanitizer/UndefinedBehaviorSanitizer with inherited exclusions for signed integer overflow, shift, bounds, object size and pointer overflow, and fatal enabled undefined behavior. This does not prove excluded checks or physical memory/timing safety.
+- Unchanged existing MIDI 85, track 144, companion model 48 and standalone engine capability 394 checks pass in both normal and sanitized host passes using freshly compiled eight/four-track bridges. Model descriptor equality uses the hashed existing `native-uac-occupancy-delivery/build/host/desc.json` export.
+- Existing browser project conversion: 218 checks pass using pinned, hashed reused native and WebAssembly converter artifacts. Ordinary converter modules are unchanged; this is regression evidence, not a fresh converter build.
+- A private candidate with only the companion's explicit availability opt-in removed fails the visible availability assertion. This negative control is a deliberately changed browser candidate, not a pristine-parent comparison.
+
+Final receipts and selected raw logs are committed in [the evidence directory](evidence/2026-10-11-companion-engine-availability/README.md). The full private working evidence, exact commands, source/generated/artifact SHA-256 hashes and historical receipts remain in `/private/tmp/d8-companion-engine-integration`. Early narrower fixture logs remain historical. The first fixture failure was an incorrect expected engine label (VA versus the actual ANALOG descriptor); a labeled observation note is retained because that initial process output was returned by the tool rather than redirected to a raw file. No failing firmware evidence or thresholds were rewritten.
+
+## Limits and remaining gates
+
+The minimal DOM fixture checks actual production rendering logic and lifecycle, not visual layout or browser Web MIDI behavior. No physical ports/device, browser rendering preview, target build, loader/package, install/flash or target timing/memory qualification was executed for this slice. The reused schema foundation's older editor-test `[0]` assertion CI failure is being corrected separately by the owner; the actual C bridge intentionally compiles `EDITOR_TEST_NO_MAIN`, so these results do not claim the full editor regression executable or full CI passes.
+
+Reduced profiles remain blocked. This observation grants no new engine changes, project writes, profile flags, asset authority or installation claims. Existing track editing relies on its unchanged independent schema-1 negotiation. Firmware UI/startup integration and any future profile publication/adoption qualification remain separately required.

@@ -226,6 +226,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     done
     run "read-only engine capability client: actual C and malformed/legacy replies" node web/test_d8engines.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion track client: real C four/eight-track negotiation, edits and stale reply guards" node web/test_d8tracks.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
+    run "companion engine display: owned transport, hostile replies and mounted UI" node web/test_d8companion_engines.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion MIDI session: framing, lifecycle and actual C handlers" node web/test_d8midi.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion editor model: musical schema and all-track actual C controls" node web/test_d8companion.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_runtime_test" tests/eight_track_runtime_test.c -lm
@@ -541,6 +542,7 @@ else
     done
     run "ASan/UBSan: read-only engine capability actual C browser module" node web/test_d8engines.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion client through actual C four/eight-track handlers" node web/test_d8tracks.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
+    run "ASan/UBSan: companion engine display through owned transport" node web/test_d8companion_engines.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion MIDI session through actual C handlers" node web/test_d8midi.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion editor model through actual C handlers" node web/test_d8companion.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     $SCC -o "$A/dabbl8_import_preview" tools/dabbl8_import_preview.c -lm
