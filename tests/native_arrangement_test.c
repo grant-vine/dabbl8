@@ -46,8 +46,17 @@ static void arrange(void)
 static void seed(void)
 {
  ui_power_on();mix_block(audio,CTL);blank();size_t n=fixture("tests/fixtures/d8p1/minimal.d8p");
+#ifdef D8_ENGINE_PROFILE_HOST_SETUP
+ /* Retain original referenced instruments. Seed live destinations independently
+  * from supported startup sounds; never load an unsupported source as music. */
+ proof(d8p1_project_decode(&source,wire,n,0),"actual original native reference decode");
+ d8p1_runtime_cache.valid=0; /* Seed a new live project, without prior test references. */
+ proof(!d8p1_capture_runtime(wire,sizeof wire,&n),"independent current-profile live fixture capture");
+ proof(!d8p1_load_runtime(wire,n,0),"independent current-profile live load");mix_block(audio,CTL);
+#else
  proof(!d8p1_load_runtime(wire,n,0),"initial native live load");mix_block(audio,CTL);
  proof(d8p1_project_decode(&source,wire,n,0),"actual native source decode");
+#endif
  for(unsigned o=0;o<3;o++){
   source.project.motion.count=3;source.project.motion.on=128;
   source.project.motion.event[0]=(motion_event_t){7u<<6,P_PAN,10};

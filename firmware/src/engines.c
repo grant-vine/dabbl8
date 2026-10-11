@@ -3,24 +3,67 @@
 /* Engine table (order = PRESETS browsing order and the engine numbers of the editor protocol), the
  * factory patterns (SEQ > PATTERNS) and the parts' sounds at power-on. */
 #include "dsp.c"
+#if D8BUILD_PROFILE != 0
+#include "engine_unavailable.h"
+#endif
 #include "eng_analog.c"
+#if D8BUILD_HAS(2)
 #include "eng_phase.c"
+#else
+#include "engine_metadata_phase.h"
+#endif
+#if D8BUILD_HAS(3)
 #include "eng_lofi.c"
+#else
+#include "engine_metadata_lofi.h"
+#endif
 #include "eng_sample.c"
+#if D8BUILD_HAS(5)
 #include "eng_formant.c"
+#else
+#include "engine_metadata_formant.h"
+#endif
+#if D8BUILD_HAS(6)
 #include "eng_trio.c"
+#else
+#include "engine_metadata_trio.h"
+#endif
+#if D8BUILD_HAS(7)
 #include "eng_wheel.c"
+#else
+#include "engine_metadata_wheel.h"
+#endif
+#if D8BUILD_HAS(8)
 #include "eng_grain.c"
-#include "eng_phys.c"           /* PHYS: DaisySP physical models (phys_dsp.c, MIT) */
+#else
+#if NPART >= NVOICE
+#include "heavy_state.h"
+#endif
+#include "engine_metadata_grain.h"
+#endif
+#if D8BUILD_HAS(9)
+#include "eng_phys.c"
+#else
+#include "phys_legacy.h"
+#include "engine_metadata_phys.h"
+#endif           /* PHYS: DaisySP physical models (phys_dsp.c, MIT) */
 #include "eng_drum.c"           /* DRUM: the 8-lane kit (drum_voice.c) */
+#if D8BUILD_HAS(11)
 #include "eng_noise.c"
+#else
+#include "engine_metadata_noise.h"
+#endif
 #include "eng_fm6.c"            /* FM6: 6-operator FM, msfa ported (fm6_core.c, Apache-2.0) */
 #include "fm4_convert.c"        /* DIGITAL's tables, and its sounds -> FM6 */
 #if FELUCCA_FM4
 #include "eng_digital.c"        /* DIGITAL: four-operator FM (retired; FELUCCA_FM4=1 builds it) */
 #endif
 #if FELUCCA_SLICE
+#if D8BUILD_HAS(13)
 #include "eng_slice.c"
+#else
+#include "engine_metadata_slice.h"
+#endif
 #endif
 
 /* the editor protocol, user presets and projects store these indices: append, never reorder */
@@ -58,7 +101,7 @@ static const char *snd_missing(const track_t *t, uint32_t *code)
 {
     const engine_t *e = ENGINES[eng_idx(t->eng_req)];
     uint32_t si = (uint32_t)t->p[P_E0] % SMP_NALL;
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     if (e == &ENG_SLICE) {
         si = slc_src_of(t->p);
         *code = 64u + si;

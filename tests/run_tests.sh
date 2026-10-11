@@ -120,6 +120,7 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 run "pinned dependency integrity: corrupted cache refusal, hidden SDK edits and fresh browser extraction" python3 tests/dependency_integrity_test.py
 
 run "evidence invocation isolation: preserve historical files and refuse creation errors" python3 tests/evidence_session_test.py
+run "experimental app-only builds: isolated outputs, exact manifests and closed loader/package paths" python3 tests/build_app_only_test.py
 run "actual bend arithmetic: four/eight tracks, full MIDI domain and defined signed edges" python3 tests/bend_fine_table_test.py --cc "$CC"
 
 run "current tracked source notice and asset validation" python3 tools/license_inventory.py
@@ -172,7 +173,7 @@ run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" bui
 # D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
 run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
 run "Dabbl8 card configurations: all subsets and bounded CLI" python3 tests/d8card_test.py
-run "Engine availability: candidate firmware profiles remain disabled" python3 tests/d8engine_build_guard_test.py
+run "Engine availability: arbitrary card/mask overrides remain disabled" python3 tests/d8engine_build_guard_test.py
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8engine_policy_test" firmware/src/d8engine_policy.c tests/d8engine_policy_test.c
 run "Engine availability: pure policy subsets, migrations and unchanged refusal outputs" "$OUT/d8engine_policy_test"
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c
@@ -237,6 +238,29 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-track recording, playback, USB/TRS routing and bounds" "$OUT/eight_track_runtime_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/voice_budget_test" tests/voice_budget_test.c -lm
     run "eight actual parts: ninth note, held/sustain/release, stealing and render budget" "$OUT/voice_budget_test"
+    # Curated immutable profiles: full structural IDs, exact availability,
+    # actual EDIT reachability and original-preserving adoption/refusal.
+    # Each mode executes 12 distinct fixture/profile configurations.
+    for profile in 0 1 2; do
+        for fixture in engine_profile_metadata_test engine_exclusion_test; do
+            name="curated_${profile}_${fixture}"
+            $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c tests/$fixture.c -lm
+            run "curated profile=$profile actual $fixture" "$OUT/$name"
+        done
+        "$OUT/curated_${profile}_engine_exclusion_test" --metadata > "$OUT/curated_${profile}_metadata.txt"
+        if [ "$profile" != 0 ]; then
+            run "curated profile=$profile stable descriptor equivalence" cmp "$OUT/curated_0_metadata.txt" "$OUT/curated_${profile}_metadata.txt"
+            for fixture in engine_profile_browse_ui_test engine_profile_import_test engine_profile_arrangement_test; do
+                name="curated_${profile}_${fixture}"
+                pool_source=""
+                [ "$fixture" != engine_profile_arrangement_test ] || pool_source="firmware/src/d8pool.c"
+                $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c $pool_source tests/$fixture.c -lm
+                run "curated profile=$profile actual $fixture" "$OUT/$name"
+            done
+        fi
+    done
+    # One invocation contains normal and inherited sanitizer profile matrices.
+    run "curated diagnostic apps: actual eight-track ISR off/paused/collect parity" env CC="$CC" SANITIZE="${SANITIZE:-1}" python3 tests/engine_profile_timing_test.py
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
     run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
@@ -385,12 +409,20 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "offline legacy import preview: preserve originals, report migrations and refuse unknown data" python3 tests/offline_import_test.py "$OUT/dabbl8_import_preview"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
     run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
-    run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
+    # Keep historical fixture extents separate from the actual native eight-track lifecycle.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$OUT/motion_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$motion_bin" tests/motion_test.c -lm
+        run "motion lifecycle: tracks=$tracks FM4=$fm4 SLICE=$slice; historical inputs/native write refusal" "$motion_bin"
+    done; done; done
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
     run "RATCH: x1..x4 in a step (notes, chords, drum hits), gates, chance, swing, projects, user presets, CHANCE page" "$OUT/ratchet_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/midi_control_test" tests/midi_control_test.c -lm
-    run "USB/TRS clock, bend, sustain, ownership and panic recovery" "$OUT/midi_control_test"
+    # Full historical/native MIDI harness; protocol constants stay independent of track count.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$OUT/midi_control_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$midi_bin" tests/midi_control_test.c -lm
+        run "complete MIDI controls/clock: tracks=$tracks FM4=$fm4 SLICE=$slice" "$midi_bin"
+    done; done; done
     $CC -O1 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/digital_test" tests/digital_test.c -lm
     run "DIGITAL (retired, built here with FELUCCA_FM4=1): operator envelopes/levels" "$OUT/digital_test"
     $CC -O2 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/fm4_test" tests/fm4_test.c -lm
@@ -558,6 +590,11 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$A/motion_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$motion_bin" tests/motion_test.c -lm
+        run "ASan/UBSan: motion lifecycle tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$motion_bin"
+    done; done; done
     run "strict ASan/UBSan: actual bend arithmetic (no DSP exclusions)" python3 tests/bend_fine_table_test.py --cc "${CC%% *}" --sanitize
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
     run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
@@ -641,6 +678,11 @@ else
         done
     done
     # END complete project/backup historical/native matrix (san)
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$A/midi_control_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$midi_bin" tests/midi_control_test.c -lm
+        run "ASan/UBSan: complete MIDI controls/clock tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$midi_bin"
+    done; done; done
     for n in 4 8; do
         $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
         run "ASan/UBSan: actual locked/held GLO transport, $n tracks" "$A/glo_transport_test$n"
@@ -658,6 +700,27 @@ else
             $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$name" tests/wheel_unavailable_engine_test.c -lm
             run "ASan/UBSan: WHEEL invalid/unavailable UI requests FM4=$fm4 SLICE=$slice" "$A/$name"
         done
+    done
+    # Curated immutable profiles: full structural IDs, exact availability,
+    # actual EDIT reachability and original-preserving adoption/refusal.
+    # Each mode executes 12 distinct fixture/profile configurations.
+    for profile in 0 1 2; do
+        for fixture in engine_profile_metadata_test engine_exclusion_test; do
+            name="curated_${profile}_${fixture}"
+            $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c tests/$fixture.c -lm
+            run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
+        done
+        "$A/curated_${profile}_engine_exclusion_test" --metadata > "$A/curated_${profile}_metadata.txt"
+        if [ "$profile" != 0 ]; then
+            run "ASan/UBSan: curated profile=$profile stable descriptor equivalence" cmp "$A/curated_0_metadata.txt" "$A/curated_${profile}_metadata.txt"
+            for fixture in engine_profile_browse_ui_test engine_profile_import_test engine_profile_arrangement_test; do
+                name="curated_${profile}_${fixture}"
+                pool_source=""
+                [ "$fixture" != engine_profile_arrangement_test ] || pool_source="firmware/src/d8pool.c"
+                $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c $pool_source tests/$fixture.c -lm
+                run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
+            done
+        fi
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm

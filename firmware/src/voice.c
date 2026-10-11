@@ -339,6 +339,11 @@ static void voice_start(track_t *t, voice_t *v, uint32_t note, uint32_t vel, int
  * engine's voice cap, spread by DETUNE over the same width) */
 static void mono_play(track_t *t, uint32_t note, uint32_t vel, int retrig, int glide)
 {
+#if D8BUILD_PROFILE != 0
+    if (t->eng_req >= NENGINES || t->engine >= NENGINES ||
+        !D8BUILD_HAS(t->eng_req) || !D8BUILD_HAS(t->engine)) return;
+#endif
+
     uint32_t mode = (uint32_t)t->p[P_VOICE], nv = mode == V_UNISON ? trk_nvoice(t) : 1u, i;
     for (i = 0; i < nv; i++) {
         voice_t *v = &t->v[i];
@@ -396,6 +401,11 @@ static void mono_remove(track_t *t, uint32_t note)
 
 static void trk_note_on(track_t *t, uint32_t note, uint32_t vel)
 {
+#if D8BUILD_PROFILE != 0
+    if (t->eng_req >= NENGINES || t->engine >= NENGINES ||
+        !D8BUILD_HAS(t->eng_req) || !D8BUILD_HAS(t->engine)) return;
+#endif
+
     uint32_t any = 0, i, mode = trk_vmode(t);
     if (t->p[P_MUTE])
         return;
@@ -444,7 +454,11 @@ static void trk_note_on(track_t *t, uint32_t note, uint32_t vel)
 
 static void trk_note_off(track_t *t, uint32_t note)
 {
+#if D8BUILD_PROFILE != 0
+    uint32_t i, k = 0, mode = t->engine < NENGINES ? trk_vmode(t) : V_POLY;
+#else
     uint32_t i, k = 0, mode = trk_vmode(t);
+#endif
     for (i = 0; i < t->xp_n; i++)                       /* not sounding yet (engine switch): forget it */
         if (t->xp_note[i] != note) {
             t->xp_note[k] = t->xp_note[i];
@@ -496,6 +510,11 @@ static void trk_all_off(track_t *t)
 #define XF_BLOCKS 4u                                    /* 4 x 32 samples: 2.9 ms */
 static void engine_block(track_t *t)
 {
+#if D8BUILD_PROFILE != 0
+    if (t->eng_req >= NENGINES || t->engine >= NENGINES ||
+        !D8BUILD_HAS(t->eng_req) || !D8BUILD_HAS(t->engine)) return;
+#endif
+
     uint32_t i, any = 0;
     if (t->xf_on || t->eng_req != t->engine) {
         if (!t->xf_on) {
@@ -586,6 +605,18 @@ static uint32_t track_render_tuned(track_t *t, int32_t *out, uint32_t n, global_
 static uint32_t track_render(track_t *t, int32_t *out, uint32_t n)
 #endif
 {
+#if D8BUILD_PROFILE != 0
+    if (t->engine >= NENGINES || !D8BUILD_HAS(t->engine)) {
+        uint32_t i;
+        for (i=0;i<NVOICE;i++) {
+            t->v[i].active=t->v[i].gate=t->v[i].stage=0;
+            t->v[i].env=t->v[i].env_out=0;
+        }
+        memset(out,0,n*sizeof *out);
+        return 0;
+    }
+#endif
+
     const engine_t *e = ENGINES[t->engine];
     const int16_t *p = t->p;
     uint32_t i;
