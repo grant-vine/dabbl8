@@ -27,6 +27,15 @@ static void d8_capture_store_changed(void)
 #define FELUCCA_FM4 0            /* the DIGITAL engine (eng_digital.c, four-operator FM): kept in the tree, not built
                                   * by default; replaced by FM6, its sounds convert (fm4_convert.c) */
 #endif
+/* No reduced card may enter firmware before every adoption/publication path
+ * and capability handshake has availability enforcement. Generated candidate
+ * headers are research outputs, not active runtime configuration. */
+#if defined(D8CARD_REQUESTED_ENGINE_MASK) || defined(D8ENGINE_EFFECTIVE_MASK)
+#error "Dabbl8 engine-card runtime enforcement is incomplete; reduced profiles are disabled"
+#endif
+/* Immutable observation of existing build switches; never changes stable IDs,
+ * protocol counts, sentinels, compiled implementations or allocated state. */
+#define D8ENGINE_EFFECTIVE_MASK ((0x1ffdu | (FELUCCA_SLICE ? 0x2000u : 0u)) | (FELUCCA_FM4 ? 2u : 0u))
 #define NENGINES (13 + FELUCCA_SLICE)   /* SLICE (13) comes last: the other engines keep their numbers */
 #define ENGI_DIGITAL 1u          /* reserved without FELUCCA_FM4: never selectable (eng_ok), its sounds load as FM6 */
 #define NENG_SHOWN (NENGINES - !FELUCCA_FM4)   /* the engines one can pick: PRESETS, the EDIT layer, the editor,

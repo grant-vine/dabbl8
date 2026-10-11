@@ -168,6 +168,9 @@ run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" bui
 # D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
 run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
 run "Dabbl8 card configurations: all subsets and bounded CLI" python3 tests/d8card_test.py
+run "Engine availability: candidate firmware profiles remain disabled" python3 tests/d8engine_build_guard_test.py
+${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8engine_policy_test" firmware/src/d8engine_policy.c tests/d8engine_policy_test.c
+run "Engine availability: pure policy subsets, migrations and unchanged refusal outputs" "$OUT/d8engine_policy_test"
 ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c
 run "Dabbl8 card dependencies and non-mutating project preflight" "$OUT/d8card_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
 ${CC%% *} -std=c11 -O1 -Wall -Wextra -Werror -o "$OUT/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
@@ -457,6 +460,8 @@ else
     $SCC -DNPART=8 -o "$A/native_overload8" tests/native_overload_test.c -lm
     run "ASan/UBSan: native sustained-overload fallback and recovery" "$A/native_overload8"
     # Standalone codec uses full ASan/UBSan, without the upstream DSP exclusions.
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8engine_policy_test" firmware/src/d8engine_policy.c tests/d8engine_policy_test.c
+    run "ASan/UBSan: strict availability policy and unchanged refusal outputs" "$A/d8engine_policy_test"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8p1_test" firmware/src/d8p1.c tests/d8p1_test.c
     run "ASan/UBSan: D8P1 strict bounded byte codec" "$A/d8p1_test" tests/fixtures/d8p1/minimal.d8p tests/fixtures/d8p1/maximum.d8p tests/fixtures/d8p1/unknown-optional.d8p
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/d8card_test" firmware/src/d8p1.c firmware/src/d8card.c tests/d8card_test.c

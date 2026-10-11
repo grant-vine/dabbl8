@@ -1,0 +1,7 @@
+In file included from tests/audio_test.c:6:
+In file included from tests/hostsim.c:32:
+In file included from tests/../firmware/src/engines.c:9:
+tests/../firmware/src/eng_sample.c:44:10: fatal error: '../hal/fm1_xip.h' file not found
+   44 | #include "../hal/fm1_xip.h"   /* relative: hostsim includes this file too */
+      |          ^~~~~~~~~~~~~~~~~~
+1 error generated.

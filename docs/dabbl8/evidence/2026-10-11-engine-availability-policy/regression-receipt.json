@@ -1,0 +1,148 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "name": "base-core-preprocessed",
+      "command": [
+        "/usr/bin/clang",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-Ifirmware/src",
+        "firmware/src/core.h"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+    },
+    {
+      "name": "current-core-preprocessed",
+      "command": [
+        "/usr/bin/clang",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-Ifirmware/src",
+        "firmware/src/core.h"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+    },
+    {
+      "name": "base-audio-8-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=8",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/audio_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/base-audio-8"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "base-audio-8",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/base-audio-8"
+      ],
+      "exit": 1,
+      "expected_exit": 1,
+      "log_sha256": "fd967879cfb0afe5ab593bd50a9d0029ddc98e20fda01f3905192a88b3d6686a"
+    },
+    {
+      "name": "native-overload-4-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=4",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/native_overload_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/native-overload-4"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "native-overload-4",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/native-overload-4"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "dc6cc683c5f23ced2dabd932ca60717ab72233037cb837beca16fafba0884434"
+    },
+    {
+      "name": "native-overload-8-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=8",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/native_overload_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/native-overload-8"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "native-overload-8",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/native-overload-8"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "219ff25305a56c2d28850064c690c3604cd3d4e13e7a3384dd1c022063d4003a"
+    },
+    {
+      "name": "eight-track-runtime-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/eight_track_runtime_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/eight-track-runtime"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "eight-track-runtime",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/eight-track-runtime"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "34698d806eee66d167ec78ffb3829ad3698d12348618a251f16596457d624123"
+    }
+  ],
+  "expected_legacy_fixture_failures": [
+    "audio_test NPART8 has the same two four-track overload assertions failing on frozen base3174e63 and this branch; use intended native_overload8. No test/golden change."
+  ],
+  "scope": "Host base-comparison and intended native regression fixtures; no target firmware or device qualification.",
+  "default_core_preprocessed_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+}

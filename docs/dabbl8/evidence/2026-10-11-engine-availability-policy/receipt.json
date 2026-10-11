@@ -1,0 +1,172 @@
+{
+  "scope": "Host policy/preprocessor and existing simulated audio regression only. No runtime-card integration, target firmware build, memory or device qualification.",
+  "source": "/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-runtime",
+  "result": "FAIL",
+  "checks": [
+    {
+      "name": "compiler-version",
+      "command": [
+        "/usr/bin/clang",
+        "--version"
+      ],
+      "exit": 0,
+      "log_sha256": "55f7662ee66d47566d9f08f35a12158ac9588e4852f788eed57fa3bf625c9a5d"
+    },
+    {
+      "name": "python-version",
+      "command": [
+        "/opt/homebrew/bin/python3.14",
+        "--version"
+      ],
+      "exit": 0,
+      "log_sha256": "f615dc9512de8b165e2b595e5cdc608a3ba7927ae92f959c5b42ec3d58e2ffa8"
+    },
+    {
+      "name": "policy-normal-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "policy-normal",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "ffa6ad78512aeb46b47dc8baa3297ff500e482d9bad542299e502c1978d485b0"
+    },
+    {
+      "name": "policy-san-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "policy-san",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "ffa6ad78512aeb46b47dc8baa3297ff500e482d9bad542299e502c1978d485b0"
+    },
+    {
+      "name": "build-guard",
+      "command": [
+        "/opt/homebrew/bin/python3.14",
+        "tests/d8engine_build_guard_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "5333fcab52426887cc85ad99e1b1f8d298406cb85f07e9c7fdc9ad74f63e7f2a"
+    },
+    {
+      "name": "card-cli-regression",
+      "command": [
+        "/opt/homebrew/bin/python3.14",
+        "tests/d8card_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "da15e5d8d1b4a9155b258d059bcc0a46a495ee61e76681cb63cb0ce9bf9cc246"
+    },
+    {
+      "name": "audio-4-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=4",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/audio_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/audio-4"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "audio-4",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/audio-4"
+      ],
+      "exit": 0,
+      "log_sha256": "87c692aaab2a7acd3aea45f1f6ab37c96cedbc196c9663fff15a92a41a8849fb"
+    },
+    {
+      "name": "audio-8-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=8",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/audio_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/audio-8"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "audio-8",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/audio-8"
+      ],
+      "exit": 1,
+      "log_sha256": "fd967879cfb0afe5ab593bd50a9d0029ddc98e20fda01f3905192a88b3d6686a"
+    }
+  ],
+  "source_sha256": {
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "firmware/src/d8engine_policy.h": "fd5e4feef54bbc72ee84dfba580e50a3e516414b828d03441cd849ea12e4c713",
+    "firmware/src/d8engine_policy.c": "7266ac2d4af4bdffacaf617c233d7b6161838e5bd05b97cbd0d9839ddcb6d66a",
+    "tests/d8engine_policy_test.c": "18eb94b8d20ee797c6d9f0a2fa1494a63ce01edd60293ea8be72848f538287d1",
+    "tests/d8engine_build_guard_test.py": "03aca9d0df4b20dd06f4742dac4d523d67cdacc6e7890eba9d0fe36c0ece69c8",
+    "tests/run_tests.sh": "8617a789550d56fb4a7b83cfb7eac40ab69754ab6b453c28f6be2b378d04a0d3",
+    "docs/dabbl8/software-voice-cards.md": "d2dbe81ccde65386729d8d31d0c7828e9b82f1f203c82f029cca0461b140caa5"
+  },
+  "borrowed_gen_sha256": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "binary_sha256": {
+    "policy-san": "882716b35f19161cfb59d3f3d42a9e796a6d096aa2173f5be19bf931cd77173e",
+    "audio-8": "9615312b7764ba2ebfb6fc9bb06d5883cc68508693c1b189cd60610e50c91c89",
+    "policy-normal": "02fc2a0ab7a62025759ca802957bb69d6050509889c605edcfbdcd4cad650d2c",
+    "audio-4": "93d960dcbcbee5da5cf3de36257abc3d38dc3d735536d6436ae9dd3501658d30"
+  }
+}

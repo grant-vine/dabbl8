@@ -1,0 +1,96 @@
+{
+  "result": "PASS",
+  "scope": "Policy foundation only, no live runtime/card or target qualification. Explicit legacy conversion modes; canonical DIGITAL refuses.",
+  "checks": [
+    {
+      "name": "named-policy-normal-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/named-policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "named-policy-normal",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/named-policy-normal"
+      ],
+      "exit": 0,
+      "log_sha256": "462cdf04b56ba6a10cfdd9a3cf2e2c7c74c9ebf30ef49f605d35ad0e39f7f893"
+    },
+    {
+      "name": "named-policy-san-build",
+      "command": [
+        "/usr/bin/clang",
+        "-std=c11",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=undefined",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Ifirmware/src",
+        "firmware/src/d8engine_policy.c",
+        "tests/d8engine_policy_test.c",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/named-policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "named-policy-san",
+      "command": [
+        "/private/tmp/d8-engine-availability-runtime/named-policy-san"
+      ],
+      "exit": 0,
+      "log_sha256": "462cdf04b56ba6a10cfdd9a3cf2e2c7c74c9ebf30ef49f605d35ad0e39f7f893"
+    },
+    {
+      "name": "named-build-guard",
+      "command": [
+        "/opt/homebrew/bin/python3.14",
+        "tests/d8engine_build_guard_test.py"
+      ],
+      "exit": 0,
+      "log_sha256": "5333fcab52426887cc85ad99e1b1f8d298406cb85f07e9c7fdc9ad74f63e7f2a"
+    },
+    {
+      "name": "named-diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "source_sha256": {
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "firmware/src/d8engine_policy.h": "d79f0161fbdff29404e0e67e29bc4536831a5eff5a7549af63dbc21e076971e5",
+    "firmware/src/d8engine_policy.c": "faea936acbe145a0f75dc1acaf3c8809b7de57ef87df3eb9e78d11a596a68160",
+    "tests/d8engine_policy_test.c": "b39295786188088af575c0dc01f70ba02296136d2de3e062facc10f055ef2b0b",
+    "tests/d8engine_build_guard_test.py": "03aca9d0df4b20dd06f4742dac4d523d67cdacc6e7890eba9d0fe36c0ece69c8",
+    "tests/run_tests.sh": "8617a789550d56fb4a7b83cfb7eac40ab69754ab6b453c28f6be2b378d04a0d3",
+    "docs/dabbl8/software-voice-cards.md": "511a908d0285798b886005f3a69f1113b14653fb0822b9e1073b6b83c301be62"
+  },
+  "earlier_evidence": "Prior receipts/logs preserved. Production core/run_tests unchanged since passing frozen-base and native regression checks; helper mode renaming retested here.",
+  "binary_sha256": {
+    "named-policy-san": "73f3a1d7fedbd9073431af89afaeec47fbd26a1de715aa87a6dbfba2b7bf226f",
+    "named-policy-normal": "0e9f9da4ce4a9d786e8804aada2598f68873fc06f5b7fa8932007473a5ab38b7"
+  },
+  "commit": "4b4f32c1ebbc0c099cc505128be056c49bae0f31",
+  "branch": "dabbl8/engine-availability-runtime"
+}

@@ -1,0 +1,56 @@
+{
+  "result": "FAIL",
+  "checks": [
+    {
+      "name": "base-core-preprocessed",
+      "command": [
+        "/usr/bin/clang",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-Ifirmware/src",
+        "firmware/src/core.h"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+    },
+    {
+      "name": "current-core-preprocessed",
+      "command": [
+        "/usr/bin/clang",
+        "-E",
+        "-P",
+        "-x",
+        "c",
+        "-Ifirmware/src",
+        "firmware/src/core.h"
+      ],
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+    },
+    {
+      "name": "base-audio-8-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-w",
+        "-DNPART=8",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "tests/audio_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-runtime/base-audio-8"
+      ],
+      "exit": 1,
+      "expected_exit": 0,
+      "log_sha256": "a7fdc3cfb2f2d3f91e518658a67ab274d018669ba5478884deb9c4ccbd481378"
+    }
+  ],
+  "expected_legacy_fixture_failures": [],
+  "scope": "Host base-comparison and intended native regression fixtures; no target firmware or device qualification.",
+  "default_core_preprocessed_sha256": "417ed170da18b2c876ced4ecb4e6cf602baf8c5f2eda342f3a8a4d54f940c34f"
+}

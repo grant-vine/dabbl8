@@ -37,6 +37,66 @@ python3 tools/dabbl8_card.py docs/dabbl8/cards/core.json /tmp/dabbl8-core-candid
 
 The outputs explicitly say candidate, no firmware generated, no runtime enforcement and no hardware qualification. The header macros are not consumed by the shipping build. Neither the registry nor preflight is included in `felucca.c`; they are freestanding preparation, not a selectable firmware card or a device capability advertisement. No engine is compiled out or remapped by this PR.
 
+## Runtime policy preparation: firmware profiles remain disabled
+
+`d8engine_policy.h` / `.c` add pure host-testable helpers for the next runtime
+stage. They retain the 14-position stable ID space, filter the inherited display
+order by a nonempty engine mask, resolve exact requested IDs and choose available
+fallback defaults for startup/default insertion only. Adoption must refuse an
+unavailable sound rather than silently calling the fallback helper. Future new
+exact-ID UI/editor callers must use CANONICAL, so DIGITAL refuses.
+LEGACY_SELECT resolves retired DIGITAL to FM6 only for explicit historical
+sound requests; LEGACY_FACTORY additionally resolves SAMPLE/PERC preset 4 to
+DRUM. Availability is checked against the effective
+target. CANONICAL rejects DIGITAL and assumes historical normalization has already
+run; it does not examine PHYS model parameters or migrate native projects. These
+helpers do not adopt patches or preset parameters. Factory preset range/modulo
+policy and the actual DIGITAL patch conversion remain the adoption caller's job.
+All refusal results preserve the helper's output. This is not a guarantee that
+live firmware state is preserved: publication paths do not consume the helpers yet.
+
+`core.h` exposes an immutable `D8ENGINE_EFFECTIVE_MASK` observation of the existing
+Felucca SLICE/FM4 build switches. It does not change NENGINES, NENG_SHOWN, sentinel
+values or runtime behaviour. Attempting to override that macro or to inject the
+generator's `D8CARD_REQUESTED_ENGINE_MASK` now refuses compilation, including an
+attempted full mask. Candidate outputs remain research material. The helpers are
+not included in `felucca.c`; no selectable reduced-profile firmware is enabled,
+no engine or state is excluded, no availability capability is advertised, and no
+profile memory or physical timing qualification follows from this preparation.
+The policy registry covers the current 13 selectable engines with DIGITAL retired;
+optional historical `FELUCCA_FM4=1` behaviour remains untouched in shipping firmware
+and must be explicitly reconciled before runtime helper integration.
+In particular, the observational mask includes DIGITAL when FM4 is enabled,
+whereas the current-card policy deliberately excludes that retired ID and
+converts LEGACY_SELECT requests to FM6. The observation is not a policy-ready mask for
+that compatibility build: integration must preserve its existing FM4 browsing
+and defaults or explicitly handle the configuration before enabling profiles.
+
+Host fixtures exhaust every nonempty current-engine subset, display order and
+wraparound, exact IDs, effective migration targets, safe fallback defaults and
+unchanged refusal outputs. Actual `core.h` preprocessing checks the four existing
+SLICE/FM4 combinations and refusal of command-line/header profile overrides.
+The pure policy also runs strict ASan/UBSan without DSP exclusions. These are helper
+and preprocessing checks, not native-adoption transactions or target/device tests.
+
+Runtime stage completion still requires all of the following:
+
+- Integrate exact/effective checks before undo/panic/patch mutation in engine and
+  factory preset selection, user preset adoption and editor requests; propagate
+  refusal rather than announcing or acknowledging success.
+- Use filtered available counts throughout preset/favourite browsing, editor-layer
+  keys/LEDs/drawing, startup and added-track defaults; preserve unavailable records.
+- Normalize historical native projects, then validate their final sound targets
+  before cache invalidation or publication, including legacy default-sound/drum
+  aliases; snapshot complete runtime/cache/patch/undo/transport state on refusal.
+- Define referenced-project compatibility precisely, including the existing late
+  failure semantics during arrangement preparation.
+- Negotiate an explicit availability mask separately from the unchanged 15-byte
+  schema-1 capability response; preserve stable ID meanings and fail closed for
+  sound editing when a client cannot understand a reduced profile.
+- Resolve optional FM4/SLICE build interactions and demonstrate unchanged default
+  behaviour/audio hashes before removing the compile-time profile guard.
+
 ## Test case and implementation sequence
 
 | Stage | Test case and acceptance | Implementation |

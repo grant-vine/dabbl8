@@ -1,0 +1,23 @@
+{
+  "source_commit": "4b4f32c1ebbc0c099cc505128be056c49bae0f31",
+  "source_sha256": "faea936acbe145a0f75dc1acaf3c8809b7de57ef87df3eb9e78d11a596a68160",
+  "result": "PASS",
+  "compiler": "JieLi clang4.0.1, pinned linux toolchain20250324.1",
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "container_digest": "sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "flags": [
+    "-target",
+    "pi32v2",
+    "-std=c11",
+    "-Os",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-builtin",
+    "-Ifirmware/src",
+    "-c"
+  ],
+  "object_bytes": 1040,
+  "object_sha256": "6e1916de1ae11aeb81884e1fa9dd6f23ff10a48089d2f28e559ed05a69b8275e",
+  "scope": "Compile-only freestanding object. No firmware link/package, runtime integration, target resource savings, timing or hardware qualification."
+}
