@@ -1,0 +1,164 @@
+{
+  "base": "370ac2d108be3de6cd258ded66cda179218198d8",
+  "runs": [
+    {
+      "label": "workflow-fm0-slice0",
+      "compiler": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm0-slice0"
+      ]
+    },
+    {
+      "label": "workflow-fm0-slice1",
+      "compiler": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm0-slice1"
+      ]
+    },
+    {
+      "label": "workflow-fm1-slice0",
+      "compiler": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm1-slice0"
+      ]
+    },
+    {
+      "label": "workflow-fm1-slice1",
+      "compiler": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm1-slice1"
+      ]
+    },
+    {
+      "label": "workflow-fm0-slice0-san",
+      "compiler": [
+        "clang",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm0-slice0-san"
+      ]
+    },
+    {
+      "label": "workflow-fm0-slice1-san",
+      "compiler": [
+        "clang",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm0-slice1-san"
+      ]
+    },
+    {
+      "label": "workflow-fm1-slice0-san",
+      "compiler": [
+        "clang",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm1-slice0-san"
+      ]
+    },
+    {
+      "label": "workflow-fm1-slice1-san",
+      "compiler": [
+        "clang",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize-recover=all",
+        "-fno-omit-frame-pointer",
+        "-O2",
+        "-w",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tools/dabbl8_project_convert.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-offline-profile-workflow-evidence/workflow-fm1-slice1-san"
+      ]
+    }
+  ],
+  "source_hashes": {
+    "tools/dabbl8_project_convert.c": "31d13301edf9b2859719b585b8cd7e8e02f13b6a7508157320d542fec09a7d87",
+    "tools/dabbl8_project_convert.py": "f20bb733742538444cf4c93f9fd78b1fd0264b1169b1cf7f2295e657fa019dc7",
+    "tools/dabbl8_migration_bundle.py": "ea35ac65fe0ab5c2baad0a37fd04654153f7970a8f1f58293fa55c9c2fd94c2a",
+    "tests/engine_offline_profile_workflow_test.py": "af30f108292db9b998b8b57157ef7315058a4d3cd427111c79949c3af0907953",
+    "tests/fixtures/engine-profile-ordinary-cli.json": "86faf5eddfe117dd830e5f919579c1979248e5e699a7a804491d5bf33f14629e"
+  }
+}

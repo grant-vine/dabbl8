@@ -1,0 +1,2 @@
+COMMAND ['clang', '-DD8_SOUND_UI_TEST', '-O2', '-w', '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=0', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_sound_selection_test.c', '-lm', '-o', '/private/tmp/d8-engine-ui-availability-evidence/normal_8_0_0_ui']
+sound selection: 3043 proofs tracks=8 FM4=0 SLICE=0 actual UI
