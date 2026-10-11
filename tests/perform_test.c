@@ -55,7 +55,11 @@ static void perf_reset(void)
     memset(&pf, 0, sizeof pf);
     pf.src = pf.next = PF_N;
     pf.lc = PF_TOP;
+#if NTRK == 8
+    for (uint32_t k = 0; k < NTRK; k++) pf.mg[k] = 32768;
+#else
     pf.mg[0] = pf.mg[1] = pf.mg[2] = pf.mg[3] = 32768;
+#endif
     perf_held = perf_act = 0;
     perf_kill = 0;
     memset((void *)perf_k, 0, sizeof perf_k);
@@ -226,6 +230,44 @@ static int test_stereo(void)
 }
 
 /* -------------------------------------------------------- 3. too long --- */
+#if NTRK == 8
+/* Native capacity is larger because the existing eight slicer recordings are
+ * borrowed intact. Independent sample arithmetic, not the four-track constants. */
+static int test_too_long(void)
+{
+    int bad = 0;
+    uint32_t capacity = sizeof sl_buf / sizeof(int16_t); /* stereo half-rate -> full-rate samples */
+    static const uint8_t den[] = {2, 4, 8, 2};
+    bad += check("native capacity matches unchanged full slicer storage", capacity == 32768u && PB_MAX == capacity);
+    host_tracks_init(); perf_reset();song.g[G_CLOCK] = 1;
+    for (uint32_t e = 0; e < 4; e++) {
+        midi_beat_samples = capacity * den[e];
+        bad += check("native REPEAT/REVERSE exact last-fitting sample accepted", (perf_avail() & PF_BIT(e)) != 0 && perf_len(e) == capacity);
+        midi_beat_samples++;
+        bad += check("native REPEAT/REVERSE one beat-sample too long refused", !(perf_avail() & PF_BIT(e)));
+    }
+    midi_beat_samples = 0;song.g[G_CLOCK] = 0;
+    uint32_t fitting = 1;
+    while ((uint64_t)FS * 60u / fitting > (uint64_t)capacity * 2u) fitting++;
+    bad += check("native independent integer-BPM REPEAT1/8 threshold", fitting == 41u);
+    ev_t ev[] = {{992, PF_R8 + 1}, {80000, -(PF_R8 + 1)}};
+    test_signal(440,12000,277,9000);run(fitting - 1,1,ev,2,110000);
+    bad += check("native just-too-slow REPEAT is live bit-identical and never borrows", same(0,110000)&&!busy_seen&&!sl_lent&&!(perf_avail()&PF_BIT(PF_R8)));
+    run(fitting,1,ev,2,110000);
+    bad += check("native just-fitting REPEAT actually records/loops then cleanly releases", !same(0,80000)&&same(80160,110000)&&!sl_lent&&pf.mode==BM_NONE&&!pf.busy);
+    host_tracks_init();perf_reset();song.playing=1;song.g[G_BPM]=(int16_t)fitting;perf_start();perf_press(PF_R8,1);
+    int32_t mx=0;
+    for(uint32_t t=0;t<130000;t+=CTL){
+        if(t==80000)song.g[G_BPM]=(int16_t)(fitting-1);
+        memcpy(out_l+t%NT,in_l+t%NT,CTL*4);memcpy(out_r+t%NT,in_r+t%NT,CTL*4);
+        if(perf_begin(CTL))perf_block(out_l+t%NT,out_r+t%NT,CTL);
+        for(uint32_t i=1;i<CTL&&t>81000;i++){int32_t d=abs(out_l[t%NT+i]-out_l[t%NT+i-1]);if(d>mx)mx=d;}
+    }
+    perf_press(PF_R8,0);
+    bad += check("native tempo crosses true capacity: effect releases without click", pf.mode==BM_NONE&&!sl_lent&&mx<4*190);
+    return bad;
+}
+#else
 static int test_too_long(void)
 {
     int bad = 0;
@@ -271,6 +313,8 @@ static int test_too_long(void)
     }
     return bad;
 }
+
+#endif
 
 /* ------------------------------------------------------------ the song --- */
 static void song_setup(void)
@@ -408,8 +452,20 @@ static int test_keys(void)
             ok &= !kb_layer && !perf_held && mo_w == mo0;
         }
         fm1_in.buttons = 0;
-        bad += check("the keys without an effect (6 white from B4, 7 black from D#4): silent, nothing held",
+        bad += check(NTRK == 8 ? "native unassigned keys: six white and three black stay silent, nothing held" : "the keys without an effect (6 white from B4, 7 black from D#4): silent, nothing held",
+#if NTRK == 8
+                     ok && assigned == 0x3FFFFu); /* ten white FX plus eight black track-mute keys */
+        static const uint8_t native_black[] = {1,3,5,8,10,13,15,17};
+        for(uint32_t t=0;t<8;t++){
+            uint32_t bit=1u<<native_black[t];
+            fm1_in.buttons=fx;fm1_in.notes=bit;keyboard_block();
+            bad += check("native independent physical black-key owner", perf_held==PF_BIT(PF_M1+t)&&(kb_layer&bit)&&kb_note[native_black[t]]==KB_SILENT&&mo_w==mo0);
+            fm1_in.notes=0;keyboard_block();bad += check("native black-key release has no MIDI/note owner",!perf_held&&!kb_layer&&mo_w==mo0);
+        }
+        fm1_in.buttons=0;
+#else
                      ok && assigned == 0x15BFFu);   /* F3 .. A4 but D#4 F#4 G#4 */
+#endif
         kb_mask = perf_mask = 0;
     }
     usb.config = 0;
