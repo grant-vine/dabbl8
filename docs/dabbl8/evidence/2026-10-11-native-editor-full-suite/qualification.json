@@ -1,0 +1,38 @@
+{
+  "base": "4f115916fc957c9e6fdd6ac2ff1d788ce5f5ae4e",
+  "tested_source_sha256": {
+    "tests/editor_test.c": "521645ff6ddf2f82b561f78940e2c6b141a791fa4a6554f6d703a7202ae55d7f",
+    "tests/editor_native_cases.h": "81e541126ba5b9caaf445aa4936242156e14d86379593de5675b628db5a613ca",
+    "tests/run_tests.sh": "ee40f4e9b152ca2d4699e266d41881e3ff523f1c2c3bba68eab859115a754763"
+  },
+  "report_sha256": "ffe09c23c429e6d58914e30b70f56604a67a64bc9adbf842b0b9baf773e336f6",
+  "evidence_manifest_sha256": "e93d84bceb4e63626828bb03812d732a93ca7a75c086d4d8b48d5820f0f92761",
+  "manifest_entries": 89,
+  "fresh_candidate_runs": 16,
+  "fresh_parent_four_track_controls": 8,
+  "checks_per_four_track_run": 127,
+  "checks_per_eight_track_run": 380,
+  "parent_stdout_identity": true,
+  "independent_review_sha256": "5364adc360a39ff362a738996e7202962244205116c17933a2f7db9de46fd533",
+  "independent_editor_reruns": 16,
+  "negative_controls": [
+    {
+      "name": "unexpected sync_reload during refusal",
+      "runs": 2,
+      "failed_checks_per_run": 12
+    },
+    {
+      "name": "UI admission guard bypass",
+      "runs": 2,
+      "failed_checks_per_run": 5
+    }
+  ],
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "scope": "Actual complete host C editor harness; full repository runner and target/device checks not executed by this focused qualification. Robust fixture union not qualified."
+}
