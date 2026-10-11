@@ -56,8 +56,11 @@ native save. A new note or PLAY request before the first mutation cancels that
 operation, returns BUSY, and retains music, NOR, pending input and completed
 identity. A subsequent save must independently pass a fresh quiet preflight and
 obtain a new ordered ticket; cancellation observed during preflight cannot be
-cleared at its end. USB, observer, source and hardware changes revoke the whole
-session. After any mutation attempt, cancellation or uncertain readback latches
+cleared at its end. The completed identity is independent of the obsolete
+proposal-transfer deadline. READY accepts STATUS and explicit CANCEL only; old
+STEP, RECEIVE or unknown operations refuse without modifying it. Explicit CANCEL
+and whole-session failures also clear frontend/catalog/autosave readiness. USB,
+observer, source and hardware changes revoke the whole session. After any mutation attempt, cancellation or uncertain readback latches
 the frontend offline. No old operation ticket is restored.
 
 A failed destructive transaction latches the native frontend offline; no legacy

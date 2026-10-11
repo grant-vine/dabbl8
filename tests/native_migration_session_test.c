@@ -219,6 +219,28 @@ printf("Prewrite session identity: %u checks, %u failures\n",checks,failures);re
  mc_begin(1,D8SV_PERSISTED);unsigned progress=0;while(d8mc.phase==MC_RESUME_READ){d8mc_poll();CHECK(++progress<=160);}CHECK(d8mc.phase==MC_CONSENT);
  mc_consent();mc_finish();CHECK(physical_calls==old&&!memcmp(nor,baseline,sizeof nor));
  CHECK(!d8pool_inventory(&seed,&rotating)&&rotating.object[0].sequence==sequence);
+ /* Completed readonly resume retains identity beyond the obsolete transfer
+  * deadline. Unsupported old operations cannot revoke or refresh it. */
+ uint32_t completed_generation=d8mc.generation,completed_token=d8mc.token;
+ uint32_t completed_epoch=d8_capture_change.epoch,completed_music=st_crc32(trk,sizeof trk);
+ unsigned completed_calls=physical_calls;fm1_ms=d8mc.started+MC_HARD_MS+1u;
+ uint32_t completed_last=d8mc.last;CHECK(mc_op(5)==MC_OK&&d8mc.last==completed_last);
+ const unsigned old_ops[]={0,2,3,6,127};
+ for(unsigned i=0;i<sizeof old_ops/sizeof old_ops[0];i++){
+  uint32_t request=d8mc.request;CHECK(mc_op(old_ops[i])==MC_BAD);
+  CHECK(d8mc.phase==MC_READY&&d8mc_session_valid()&&project_native_status()==1&&native_as.ready);
+  CHECK(d8mc.generation==completed_generation&&d8mc.token==completed_token&&d8mc.request==request&&d8mc.last==completed_last);
+  CHECK(physical_calls==completed_calls&&d8_capture_change.epoch==completed_epoch&&!memcmp(nor,baseline,sizeof nor));
+ }
+ uint8_t stale_receive[21]={1,2};mc_put32(stale_receive+2,d8mc.generation);mc_put32(stale_receive+7,d8mc.request+1);stale_receive[17]=1;stale_receive[20]=7;
+ uint32_t ready_request=d8mc.request,scratch_crc=st_crc32(ed_smp_buf,sizeof ed_smp_buf);
+ CHECK(mc_request(stale_receive,sizeof stale_receive)==MC_BAD&&d8mc.request==ready_request&&d8mc.last==completed_last);
+ CHECK(d8mc.phase==MC_READY&&d8mc_session_valid()&&project_native_status()==1&&native_as.ready&&scratch_crc==st_crc32(ed_smp_buf,sizeof ed_smp_buf));
+ CHECK(physical_calls==completed_calls&&d8_capture_change.epoch==completed_epoch&&!memcmp(nor,baseline,sizeof nor));
+ CHECK(mc_op(4)==MC_OK&&d8mc.phase==MC_FAILED&&!d8mc_session_valid());
+ CHECK(project_native_status()==2&&!native_as.ready&&!migration_owner);
+ CHECK(physical_calls==completed_calls&&d8_capture_change.epoch==completed_epoch&&!memcmp(nor,baseline,sizeof nor)&&completed_music==st_crc32(trk,sizeof trk));
+ CHECK(d8p1_save_flash(0,1)==D8POOL_UNSUPPORTED&&d8p1_load_flash(3,1)==D8POOL_UNSUPPORTED&&physical_calls==completed_calls);
  mc_prewrite_cases();mc_writer_attempt_cases();mc_preflight_case();mc_preflight_deadlines();mc_header_refusals();
  /* Replayed/empty/noncanonical input never refreshes an idle lease. */
  for(unsigned kind=0;kind<5;kind++){

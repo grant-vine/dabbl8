@@ -43,7 +43,7 @@ static void mc_offline(void)
 { project_native.mode=2;project_native.ready=0;d8p1_autosave_session_end(); }
 static void mc_fail(unsigned status)
 {
- if(d8mc.attempted||d8mc.phase==MC_ADOPT)mc_offline();
+ if(d8mc.attempted||d8mc.phase==MC_ADOPT||d8mc.phase==MC_READY)mc_offline();
  d8mc.status=(uint8_t)status;d8mc.phase=MC_FAILED;
  d8cb_cancel();d8mx_cancel();d8mc_edit.locked=0;
 }
@@ -361,6 +361,9 @@ static void mc_handle_core(const uint8_t*a,uint32_t n)
  if(!g||g!=d8mc.generation||!request||d8mc.request==UINT32_MAX||request!=d8mc.request+1){mc_reply(MC_STALE);return;}
  if(op==4&&n==12){d8mc.request=request;mc_fail(MC_CHANGED);mc_reply(MC_OK);return;}
  if(op==5&&n==12){d8mc.request=request;mc_reply(d8mc.status);return;} /* No lease refresh. */
+ /* A completed session has no old transfer/proof lease. Only STATUS and
+  * explicit CANCEL are valid here; fresh writers have separate preflights. */
+ if(d8mc.phase==MC_READY){mc_reply(status);return;}
  if(!mc_lifetime()){mc_fail(MC_CHANGED);mc_reply(MC_CHANGED);return;}
  if(op==2&&d8mc.phase==MC_RECEIVE&&n>=19){
   uint32_t off=0;unsigned count=a[17]|(unsigned)a[18]<<7;
