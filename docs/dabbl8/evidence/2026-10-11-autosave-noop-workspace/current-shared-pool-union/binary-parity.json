@@ -1,0 +1,10 @@
+{
+  "4": {
+    "felucca.bin": true,
+    "felucca.elf": true
+  },
+  "8": {
+    "felucca.bin": false,
+    "felucca.elf": false
+  }
+}
