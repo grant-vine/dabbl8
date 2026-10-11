@@ -400,6 +400,31 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "persistence: deferred settings, retry and failed-save rollback" "$OUT/persistence_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/backup_test" tests/backup_test.c -lm
     run "full backup: CRC before writes, stale runtime, USB reset / timeout, malformed objects, older projects" "$OUT/backup_test"
+    # BEGIN complete project/backup historical/native matrix (normal)
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            # Fresh controls prevent an old or partial four-track result from
+            # authorizing an eight-track comparison. Keep the failed gate visible.
+            controls=$(mktemp -d "$OUT/project_control_fm${fm4}_slice${slice}.XXXXXX")
+            project4="project4_fm${fm4}_slice${slice}"
+            project8="project8_fm${fm4}_slice${slice}"
+            $CC -w -Ibuild/gen -Ifirmware/src -DNPART=4 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$OUT/$project4" tests/project_test.c -lm
+            $CC -w -Ibuild/gen -Ifirmware/src -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$OUT/$project8" tests/project_test.c firmware/src/d8p1.c -lm
+            echo "== complete historical project controls: 4 tracks FM4=$fm4 SLICE=$slice"
+            if env D8_TEST_FUN9_CONTROL_DIR="$controls" "$OUT/$project4"; then
+                run "complete native project import/staging: 8 tracks FM4=$fm4 SLICE=$slice" env D8_TEST_FUN9_CONTROL_DIR="$controls" "$OUT/$project8"
+            else
+                echo "== failed four-track project control; native project comparison not executed"
+                fail=1
+            fi
+            for n in 4 8; do
+                label="backup${n}_fm${fm4}_slice${slice}"
+                $CC -w -Ibuild/gen -Ifirmware/src -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$OUT/$label" tests/backup_test.c -lm
+                run "complete backup internal handler: $n tracks FM4=$fm4 SLICE=$slice" "$OUT/$label"
+            done
+        done
+    done
+    # END complete project/backup historical/native matrix (normal)
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/editor_test" tests/editor_test.c -lm
     run "editor: real C protocol, malformed transfers, queue recovery, MENU settings (writes build/host/menu.json)" \
         env MENU_JSON="$OUT/menu.json" D8CAPS_JSON="$OUT/d8caps.json" D8INFO_JSON="$OUT/d8info.json" "$OUT/editor_test"
@@ -521,6 +546,31 @@ else
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
     done
+    # BEGIN complete project/backup historical/native matrix (san)
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            # Fresh controls prevent an old or partial four-track result from
+            # authorizing an eight-track comparison. Keep the failed gate visible.
+            controls=$(mktemp -d "$A/project_control_fm${fm4}_slice${slice}.XXXXXX")
+            project4="project4_fm${fm4}_slice${slice}"
+            project8="project8_fm${fm4}_slice${slice}"
+            $SCC -DNPART=4 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$project4" tests/project_test.c -lm
+            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$project8" tests/project_test.c firmware/src/d8p1.c -lm
+            echo "== ASan/UBSan: complete historical project controls: 4 tracks FM4=$fm4 SLICE=$slice"
+            if env D8_TEST_FUN9_CONTROL_DIR="$controls" "$A/$project4"; then
+                run "ASan/UBSan: complete native project import/staging: 8 tracks FM4=$fm4 SLICE=$slice" env D8_TEST_FUN9_CONTROL_DIR="$controls" "$A/$project8"
+            else
+                echo "== failed four-track project control; native project comparison not executed"
+                fail=1
+            fi
+            for n in 4 8; do
+                label="backup${n}_fm${fm4}_slice${slice}"
+                $SCC -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" tests/backup_test.c -lm
+                run "ASan/UBSan: complete backup internal handler: $n tracks FM4=$fm4 SLICE=$slice" "$A/$label"
+            done
+        done
+    done
+    # END complete project/backup historical/native matrix (san)
     for n in 4 8; do
         $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
         run "ASan/UBSan: actual locked/held GLO transport, $n tracks" "$A/glo_transport_test$n"
