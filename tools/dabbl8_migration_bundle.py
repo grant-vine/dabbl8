@@ -9,7 +9,7 @@ from pathlib import Path
 import struct
 import subprocess
 import zlib
-from dabbl8_project_convert import run_converter
+from dabbl8_project_convert import run_converter, profile_mask_value, ProfileConversionError
 from dabbl8_storage_plan import plan
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,7 +56,9 @@ def preserve(path, output, maximum):
     return data, {'file': output.name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
 
 
-def prepare(backup, autosave, destination, converter, initializer, node='node'):
+def prepare(backup, autosave, destination, converter, initializer, node='node', *, engine_mask=None):
+    if engine_mask is not None:
+        profile_mask_value(engine_mask)
     destination = Path(destination)
     destination.mkdir(parents=True, exist_ok=False)
     report = {'format': 'dabbl8-migration-proposal', 'version': 1, 'accepted': False,
@@ -66,6 +68,11 @@ def prepare(backup, autosave, destination, converter, initializer, node='node'):
                            'Original slot 4 is archived only, never aliased into the three native slots.',
                            'The virtual image is a migration proposal, not an installer, firmware package or qualified restore path.',
                            'Capture and provenance of device snapshots, physical backend, interruption-safe migration and hardware recovery remain unqualified.']}
+    if engine_mask is not None:
+        report.update({'profile_schema': 1, 'engine_mask': engine_mask,
+                       'experimental_offline_profile': True, 'qualified_firmware': False})
+    mode = 'legacy-profile-v1' if engine_mask is not None else 'legacy'
+    profile_args = () if engine_mask is None else (engine_mask,)
     try:
         _, report['originals']['backup'] = preserve(backup, destination / 'original.fm1bak', 2 * 1024 * 1024)
         if autosave is None:
@@ -108,7 +115,7 @@ def prepare(backup, autosave, destination, converter, initializer, node='node'):
         converted = []
         report['conversions'] = {}
         for name, source in pending:
-            data, meta = run_converter(converter, 'legacy', source, mask)
+            data, meta = run_converter(converter, mode, source, mask, *profile_args)
             if not data.startswith(b'D8P1') or not 32 <= len(data) <= 7936:
                 raise ValueError('Converter emitted an invalid bounded project')
             converted.append((name, data))
@@ -138,6 +145,8 @@ def prepare(backup, autosave, destination, converter, initializer, node='node'):
         report['accepted'] = True
     except (OSError, ValueError, KeyError, UnicodeError, struct.error) as error:
         report['reason'] = str(error)
+        if isinstance(error, ProfileConversionError):
+            report['profile_refusal'] = error.metadata
         for path in [*destination.glob('*.d8p'), destination / 'proposed-virtual-pool.bin']:
             path.unlink(missing_ok=True)
         report.pop('pool', None)
@@ -155,9 +164,15 @@ def main():
     parser.add_argument('--autosave', type=Path, help='Raw two-sector legacy autosave snapshot; required for acceptance')
     parser.add_argument('--converter', type=Path, default=Path('build/host/dabbl8_project_convert'))
     parser.add_argument('--initializer', type=Path, default=Path('build/host/dabbl8_pool_initialize'))
+    parser.add_argument('--experimental-engine-mask-v1', type=int, help='Optional offline engine mask; not qualified reduced firmware')
     parser.add_argument('--node', default='node')
     args = parser.parse_args()
-    report = prepare(args.backup, args.autosave, args.destination, args.converter, args.initializer, args.node)
+    if args.experimental_engine_mask_v1 is not None:
+        try:
+            profile_mask_value(args.experimental_engine_mask_v1)
+        except ValueError as error:
+            parser.error(str(error))
+    report = prepare(args.backup, args.autosave, args.destination, args.converter, args.initializer, args.node, engine_mask=args.experimental_engine_mask_v1)
     print(json.dumps(report, indent=2))
     return 0 if report['accepted'] else 1
 
