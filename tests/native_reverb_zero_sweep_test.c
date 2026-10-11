@@ -47,7 +47,7 @@ int main(void){
  }
  /* Actual render nonzeros followed by external zero/nonzero updates once
   * wrapped counted guards back to zero. Reverb guards now latch until clear. */
- cold_sweep(1);int32_t pulse[1]={16384},pulse_out[1]={0};rev_spring(pulse,pulse_out,1);
+ cold_sweep(1);fx.sp_w=0;int32_t pulse[1]={16384},pulse_out[1]={0};rev_spring(pulse,pulse_out,1);
  CHECK(rev_comb[0]!=0&&rev_u.sp[0]!=0&&!fx_tail.comb&&!fx_tail.ap);
  FT16(comb,&rev_comb[0],0);FT16(comb,&rev_comb[sizeof rev_comb/2-1],1);
  CHECK(fx_tail.comb&&!fx_resident_quiet());
