@@ -1,0 +1,61 @@
+{
+  "source": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "hardware": "SKIP",
+  "device_writes": false,
+  "checks": [
+    {
+      "name": "preview-kit",
+      "exit": 0,
+      "elapsed_seconds": 8.792573928833008,
+      "log_sha256": "2d6ee397d8ae62d514fb993cbadd684026f8e9cca0a7a2aa17fcca513b6fb838"
+    },
+    {
+      "name": "browser-wasm-build",
+      "exit": 0,
+      "elapsed_seconds": 3.175402879714966,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "browser-native-build",
+      "exit": 0,
+      "elapsed_seconds": 1.4521381855010986,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "browser-parity",
+      "exit": 0,
+      "elapsed_seconds": 1.2943706512451172,
+      "log_sha256": "3238482e324176201a5bff7a1e988ca221080e5c9c6cf2f88f807dabc5231268"
+    }
+  ],
+  "compiler_version": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.17 (bb11bae9af3a6551132655a0908f86889d2d423b)\nCopyright (C) 2025 the Emscripten authors (see AUTHORS.txt)\nThis is free and open source software under the MIT license.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "node_version": "v26.11.0",
+  "source_hashes": {
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/d8p1_project.h": "bc8ba87e3754c765701b9830a982ff06e9abb1c4378abb383ecc61efa43e4a24",
+    "firmware/src/d8p1_project_types.h": "dd2f9fa799a2eb6ff78f0bd977695bb30cf03676c2ab1f2c3c4e8290f49624b2",
+    "tools/dabbl8_project_convert.c": "bc799c191d248c07c08d69ea62b79fc0b48046b22c8b342e0ec284b688705241",
+    "web/build-d8converter.sh": "7bf5a28048b0004e71c21b310a751ef10e9537000302fc68d0689205a0dfa8b1",
+    "web/d8project-conversion.js": "9f19baf3af8a2820e03e9dcecd69220b095965d933fcf548cd0dd0ec4bae924f",
+    "web/d8project-conversion-page.js": "392ff155a6855d403daebc6d87bf244da5868336fc8570a217edd3a48a3ccba4",
+    "tests/browser_project_conversion_test.mjs": "4e9d5a756fc9e9120db47db3e9bc29aa4d729f699937da534757326873ad6e0e"
+  },
+  "generated_artifacts": {
+    "dabbl8_project_convert.wasm": {
+      "bytes": 271137,
+      "sha256": "8919ed4e36cb6e5b338df4c135a11491f4c446294b7e59ee9213b937670540e2"
+    },
+    "compiler-version.txt": {
+      "bytes": 330,
+      "sha256": "a15564b7d1ba91e7773478e36124bd4b2cf5e0bffbcb1a82c4d61991887c00d9"
+    },
+    "dabbl8_project_convert.mjs": {
+      "bytes": 60278,
+      "sha256": "3c517bd31420101747c3946857b065c98ddac5f156cb3177d1d7c1f70611b297"
+    }
+  },
+  "source_unchanged": true,
+  "generated_29_unchanged": true,
+  "six_artifacts_unchanged": true,
+  "result": "PASS"
+}

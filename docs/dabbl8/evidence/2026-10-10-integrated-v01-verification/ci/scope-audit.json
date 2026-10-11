@@ -1,0 +1,108 @@
+{
+  "head": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "tested_merge": "5abbbee80427412f41175ff203d326631f0f0354",
+  "normal_and_sanitizer_counts": {
+    "PR62 frames": 2,
+    "PR62 bank labels": 2,
+    "PR62 ownership": 2,
+    "signature": 2,
+    "canonical equivalence": 2,
+    "resident tails": 2,
+    "FX publication": 2,
+    "output queue": 2,
+    "TONE refusal": 2,
+    "combined integration": 2,
+    "quiet activity": 2,
+    "session": 2,
+    "capture": 2,
+    "collector": 2,
+    "actual mainloop routes": 2,
+    "strict archive": 2
+  },
+  "scopes": {
+    "PR62 frames": "banked mixer renders: 46720 frames, 0 lint findings",
+    "PR62 bank labels": "bank labels: 1280 rendered checks, 0 failures",
+    "PR62 ownership": "held owner transitions: 64 track pairs, 192 chord/solo/FX cases; 64 drum lane cases",
+    "signature": "Native signature: 13774 checks, 0 failures",
+    "canonical equivalence": "Native signature equivalence: 2317 checks, 0 failures",
+    "resident tails": "Native resident tails: 1256615 checks, 0 failures",
+    "FX publication": "Native FX publication: 227895 checks, 0 failures",
+    "output queue": "Native output queues: 249563 checks, 0 failures",
+    "TONE refusal": "Native output queues benchmark: 73 checks, 0 failures",
+    "combined integration": "Native autosave integration: 130295 checks, 0 failures",
+    "quiet activity": "Native quiet autosave: 594684 checks, 0 failures",
+    "session": "Native autosave session: 292748 checks, 0 failures",
+    "capture": "Instrument capture: 67341 checks, 0 failures",
+    "collector": "Instrument capture collector: 287 checks passed",
+    "actual mainloop routes": "Native combined main-loop autosave: 210648 checks, 0 failures",
+    "strict archive": "Native project-set archive: 374 checks, zero failures"
+  },
+  "goldens_unchanged": 92,
+  "browser_parity_checks": 218,
+  "browser_log_hashes_verified": true,
+  "strict_archive_has_no_DSP_exclusions": true,
+  "whole_engine_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "explicit_skips": [
+    {
+      "name": "host-tests.log",
+      "reason": "mod: cost: no instruction counter on this host (proc_pid_rusage), skipped"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "slicer: cost: no instruction counter on this host"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "perform: cost: no instruction counter on this host"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "reverb: cost: no instruction counter on this host"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "regress: CPU: no instruction counter on this host (proc_pid_rusage); the budget is not checked"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "phys_test: cost: no instruction counter on this host (proc_pid_rusage); not checked"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "== skip PHYS reference test (no DaisySP: set DAISYSP to a checkout)"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "drum_test: cost: no instruction counter on this host (proc_pid_rusage); not measured"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "noise: cost: no instruction counter on this host (proc_pid_rusage); not measured"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "fm6: cost: no instruction counter on this host (proc_pid_rusage); not measured"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "official V15 restore: skipped (needs FM-1_v15.fwsc in the repo root)"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "editor: MENU settings (this editor has none)                     skip"
+    },
+    {
+      "name": "host-tests.log",
+      "reason": "== skip the browser emulator (no emcc: Emscripten builds web/emu)"
+    }
+  ],
+  "hardware": "SKIP",
+  "host_log_sha256": "1ef4fad0d8d9c706f871c9f1dbfeee2990e97cd3e34a495ed42d4f8a038bce65",
+  "result": "PASS"
+}

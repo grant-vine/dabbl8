@@ -1,0 +1,87 @@
+In file included from tests/instrument_write_quarantine_test.c:43:
+tests/../firmware/src/d8p1_flash_runtime.c:12:50: error: call to undeclared function 'audio_output_quiet'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   12 |     if(!autosave_quiet()||!fx_resident_quiet()||!audio_output_quiet()||
+      |                                                  ^
+tests/instrument_write_quarantine_test.c:45:13: error: conflicting types for 'ota_wire_send'
+   45 | static void ota_wire_send(const uint8_t*p,uint32_t n){(void)p;(void)n;}
+      |             ^
+tests/../firmware/src/usb.c:902:12: note: previous definition is here
+  902 | static int ota_wire_send(const uint8_t *p, uint32_t n)   /* F0..F7 -> USB-MIDI SysEx packets */
+      |            ^
+tests/instrument_write_quarantine_test.c:46:12: error: redefinition of 'ota_frame_get'
+   46 | static int ota_frame_get(const uint8_t**p,uint32_t*n){(void)p;(void)n;return 0;}
+      |            ^
+tests/../firmware/src/usb.c:926:12: note: previous definition is here
+  926 | static int ota_frame_get(const uint8_t **p, uint32_t *n)
+      |            ^
+tests/instrument_write_quarantine_test.c:47:13: error: redefinition of 'ota_frame_done'
+   47 | static void ota_frame_done(void){}
+      |             ^
+tests/../firmware/src/usb.c:935:13: note: previous definition is here
+  935 | static void ota_frame_done(void)
+      |             ^
+In file included from tests/instrument_write_quarantine_test.c:48:
+In file included from tests/../firmware/src/editor.c:365:
+tests/../firmware/src/editor_menu.c:15:6: error: use of undeclared identifier 'MI_COLOR'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |      ^~~~~~~~
+tests/../firmware/src/editor_menu.c:15:21: error: use of undeclared identifier 'MI_STYLE'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                     ^~~~~~~~
+tests/../firmware/src/editor_menu.c:15:36: error: use of undeclared identifier 'MI_LARGE'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                                    ^~~~~~~~
+tests/../firmware/src/editor_menu.c:15:51: error: use of undeclared identifier 'MI_ANIM'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                                                   ^~~~~~~
+tests/../firmware/src/editor_menu.c:15:65: error: use of undeclared identifier 'MI_LEDS'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                                                                 ^~~~~~~
+tests/../firmware/src/editor_menu.c:15:79: error: use of undeclared identifier 'MI_HOLD'; did you mean 'KC_HOLD'?
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                                                                               ^~~~~~~
+      |                                                                               KC_HOLD
+/Users/grantv/Code/dabbl8/.local-baseline/v0.1-integration/build/gen/ui_keycaps.h:28:5: note: 'KC_HOLD' declared here
+   28 |     KC_HOLD,   /* HOLD */
+      |     ^
+In file included from tests/instrument_write_quarantine_test.c:48:
+In file included from tests/../firmware/src/editor.c:365:
+tests/../firmware/src/editor_menu.c:15:93: error: use of undeclared identifier 'MI_ACCEL'
+   15 |     {MI_COLOR, 0}, {MI_STYLE, 1}, {MI_LARGE, 2}, {MI_ANIM, 3}, {MI_LEDS, 4}, {MI_HOLD, 5}, {MI_ACCEL, 6},
+      |                                                                                             ^~~~~~~~
+tests/../firmware/src/editor_menu.c:16:6: error: use of undeclared identifier 'MI_LATCH'
+   16 |     {MI_LATCH, 7}, {MI_BPMLOCK, 8}, {MI_LOWCUT, 9}, {MI_USB, 10}, {MI_SERIAL, 11},
+      |      ^~~~~~~~
+tests/../firmware/src/editor_menu.c:16:21: error: use of undeclared identifier 'MI_BPMLOCK'
+   16 |     {MI_LATCH, 7}, {MI_BPMLOCK, 8}, {MI_LOWCUT, 9}, {MI_USB, 10}, {MI_SERIAL, 11},
+      |                     ^~~~~~~~~~
+tests/../firmware/src/editor_menu.c:16:38: error: use of undeclared identifier 'MI_LOWCUT'
+   16 |     {MI_LATCH, 7}, {MI_BPMLOCK, 8}, {MI_LOWCUT, 9}, {MI_USB, 10}, {MI_SERIAL, 11},
+      |                                      ^~~~~~~~~
+tests/../firmware/src/editor_menu.c:16:54: error: use of undeclared identifier 'MI_USB'
+   16 |     {MI_LATCH, 7}, {MI_BPMLOCK, 8}, {MI_LOWCUT, 9}, {MI_USB, 10}, {MI_SERIAL, 11},
+      |                                                      ^~~~~~
+tests/../firmware/src/editor_menu.c:16:68: error: use of undeclared identifier 'MI_SERIAL'
+   16 |     {MI_LATCH, 7}, {MI_BPMLOCK, 8}, {MI_LOWCUT, 9}, {MI_USB, 10}, {MI_SERIAL, 11},
+      |                                                                    ^~~~~~~~~
+tests/../firmware/src/editor_menu.c:17:6: error: use of undeclared identifier 'MI_CLICK'; did you mean 'RP_CLICK'?
+   17 |     {MI_CLICK, 12}, {MI_CLKLVL, 13}, {MI_COUNTIN, 14},
+      |      ^~~~~~~~
+      |      RP_CLICK
+tests/../firmware/src/ui.c:65:8: note: 'RP_CLICK' declared here
+   65 | enum { RP_CLICK, RP_LEVEL, RP_COUNTIN };
+      |        ^
+In file included from tests/instrument_write_quarantine_test.c:48:
+In file included from tests/../firmware/src/editor.c:365:
+tests/../firmware/src/editor_menu.c:17:22: error: use of undeclared identifier 'MI_CLKLVL'
+   17 |     {MI_CLICK, 12}, {MI_CLKLVL, 13}, {MI_COUNTIN, 14},
+      |                      ^~~~~~~~~
+tests/../firmware/src/editor_menu.c:17:39: error: use of undeclared identifier 'MI_COUNTIN'; did you mean 'RP_COUNTIN'?
+   17 |     {MI_CLICK, 12}, {MI_CLKLVL, 13}, {MI_COUNTIN, 14},
+      |                                       ^~~~~~~~~~
+      |                                       RP_COUNTIN
+tests/../firmware/src/ui.c:65:28: note: 'RP_COUNTIN' declared here
+   65 | enum { RP_CLICK, RP_LEVEL, RP_COUNTIN };
+      |                            ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.

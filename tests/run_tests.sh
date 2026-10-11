@@ -181,6 +181,11 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
     ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
     run "offline migration: complete originals, persisted autosave and real shared-pool proposal" python3 tests/migration_bundle_test.py "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize"
+    ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/instrument_migration_executor" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tools/dabbl8_instrument_executor.c
+    ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/instrument_migration_executor_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_migration_executor_test.c
+    run "instrument migration simulator: bounded APPLY/RESTORE, cut recovery and quarantine" "$OUT/instrument_migration_executor_test"
+    run "instrument migration host: strict full archive and independent whole-NOR readback" python3 tests/instrument_migration_host_test.py "$OUT/instrument_migration_executor" "$OUT/dabbl8_pool_initialize"
+    run "source-derived instrument plan: selected legacy conversion, exact pool and original restore" python3 tests/instrument_plan_test.py "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize" "$OUT/dabbl8_project_archive" "$OUT/instrument_migration_executor"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
     run "D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$OUT/d8p1_project_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
@@ -252,6 +257,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "readonly migration staging: complete native set and exclusive LCD arena" "$OUT/native_migration_preflight_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/competing_workspace_callers_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/competing_workspace_callers_test.c -lm
     run "checked historical/editor/drawing callers preserve competing arena ownership" "$OUT/competing_workspace_callers_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_execute_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_execute_test.c -lm
+    run "bounded native migration: complete canonical plan, partial cuts and physical scope" "$OUT/native_migration_execute_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
@@ -415,8 +422,13 @@ else
     run "ASan/UBSan: offline D8P1 bundle and original/reference preservation" python3 tests/project_conversion_test.py "$A/dabbl8_project_convert"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
     run "ASan/UBSan: original-preserving migration and real shared-pool proposal" python3 tests/migration_bundle_test.py "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize"
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/instrument_migration_executor" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tools/dabbl8_instrument_executor.c
+    ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/instrument_migration_executor_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_migration_executor_test.c
+    run "ASan/UBSan: strict instrument executor and cut/recovery readback" "$A/instrument_migration_executor_test"
+    run "ASan/UBSan: strict full-instrument host archive and whole-NOR simulation" python3 tests/instrument_migration_host_test.py "$A/instrument_migration_executor" "$A/dabbl8_pool_initialize"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/dabbl8_project_archive" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_project_archive.c
     run "ASan/UBSan: strict native project-set archive and whole-set readback" python3 tests/native_project_archive_test.py "$A/dabbl8_project_archive"
+    run "ASan/UBSan: source-derived instrument plan, exact conversion/pool/restore" python3 tests/instrument_plan_test.py "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize" "$A/dabbl8_project_archive" "$A/instrument_migration_executor"
     $SCC -o "$A/d8p1_project_test" firmware/src/d8p1.c tests/d8p1_project_test.c -lm
     run "ASan/UBSan: D8P1 native state and all frozen legacy round trips" python3 tests/d8p1_project_test.py "$A/d8p1_project_test"
     $SCC -o "$A/d8p1_motion_policy_test" firmware/src/d8p1.c tests/d8p1_motion_policy_test.c -lm
@@ -480,6 +492,8 @@ else
     run "ASan/UBSan: complete migration preflight and exclusive LCD arena" "$A/native_migration_preflight_test"
     $SCC -o "$A/competing_workspace_callers_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/competing_workspace_callers_test.c -lm
     run "ASan/UBSan: checked actual historical/editor/boot/drawing caller refusals" "$A/competing_workspace_callers_test"
+    $SCC -o "$A/native_migration_execute_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_execute_test.c -lm
+    run "ASan/UBSan: bounded migration partial cuts and complete readback" "$A/native_migration_execute_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"

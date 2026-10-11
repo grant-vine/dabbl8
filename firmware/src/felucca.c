@@ -116,6 +116,9 @@
 #include "ota.c"
 #include "ota_hw.c"
 #include "editor.c"              /* web editor SysEx (needs the OTA SysEx plumbing) */
+#if NTRK == 8 && FELUCCA_FLASH
+#include "native_migration_execute.c" /* bounded internal component; no protocol grant/caller */
+#endif
 #endif
 #if FELUCCA_CDC
 #include "console.c"

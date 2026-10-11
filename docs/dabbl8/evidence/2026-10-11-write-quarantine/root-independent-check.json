@@ -1,0 +1,29 @@
+{
+  "source": "179e41a91440469242f72af7f266d54bebbd3761",
+  "actual_binaries_rehashed": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "actual_6f73_four_track_hash_matches": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460376,
+      "sha256": "1712c7a4a1b6d218226a2c8d376a13c6352ddd29bbe70ceea326c03b346338b8",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460376 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ]
+    }
+  },
+  "baseline_and_generated_pins": "PASS",
+  "native_timing": "FAIL: 570/504, 296/218, 176/126",
+  "hardware": "NOT_RUN"
+}

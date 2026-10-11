@@ -1,0 +1,7 @@
+# Correction of target-disassembly evidence scope
+
+The initial evidence descendant `3ddb05439c0245eb20754f7dff83dc79d7255e20` used reference baseline disassembly in the full-suite target-cost check. It did not use actual parent `6f73dba1576ad12bdc3fa30eac1509cd674dc0a5` disassembly. Original README/manifest are copied here unchanged, and original full-suite result/log/verifier remain unchanged in the parent folder. They describe the initial run and cannot establish current-target costs or current-target binary identity.
+
+The sole disassembly consumer was identified from actual source and rerun against an immutable private copy of the already built/verified parent default-four-track linked disassembly. This focused check passed. Result JSON binds both disassembly hashes, parent target source/image and all retained-reference checks. The copied parent results include the actual current four/eight-track sizes and memory reports, but are reused parent evidence, not a fresh simulator build or native/device qualification. Hardware was not run, native budget remains unqualified, and loader/boundaries are unchanged.
+
+The simulator's frozen functional source remains `381537968d16da8f911f4d1ee0ae579f42ca1c3c`; only documentation/evidence is corrected. No current source, golden hashes, native activation or original archives changed. Full linked disassembly copies remain private and are bound by SHA-256; no binary/private original archives are included here.
