@@ -80,4 +80,30 @@ static void compatibility_cases(void)
   t->p[P_AORDER]=1;t->arp_idx=0xffffffffu;next(t);proof(t->arp_note==72,"AORDER retains actual insertion ordering for ORD");midi_silence_track(ti);
  }
 }
-int main(void){mapping_cases();native_cases();compatibility_cases();printf("native_arp_key_mapping: %u checks %u failures; host only\n",checks,failures);return failures?1:0;}
+
+static void captured_chord_cases(void)
+{
+ for(unsigned ti=0;ti<8;ti++)for(unsigned hold=0;hold<2;hold++)for(unsigned mode=0;mode<2;mode++)for(unsigned change=0;change<4;change++){
+  ui_power_on();panel_arp(ti,hold,0);track_t*t=&trk[ti];t->p[P_VOICE]=V_POLY;t->p[P_CHRD]=(int16_t)(mode?CH_DIA3:CH_MAJ);t->p[P_VOIC]=0;
+  unsigned k=change==1?12:change==2?8:9;t->p[P_QUANT]=(int16_t)(change==2?QN_OFF:QN_WHITE);
+  fm1_in.notes=1u<<k;keyboard_block();next(t);
+  unsigned captured[CHORD_MAX],count=kb_chn[k],base=kb_note[k];
+  proof(count==3&&t->nheld==3,"actual CHRD panel key captures a polyphonic triad");
+  for(unsigned j=0;j<count;j++){
+   captured[j]=kb_chord[k][j];
+   proof(t->held[j]==captured[j]&&held_dt[ti][j]==(int)captured[j]-(int)base,"actual chord interval stored with physical key provenance");
+  }
+  if(change==0)proof(captured[1]-base==(mode?3u:4u),"DIA3 minor versus fixed MAJ interval is genuinely exercised");
+  if(hold){fm1_in.notes=0;keyboard_block();proof(t->nheld==3&&!t->arp_phys,"actual chord HOLD release retains all captured intervals");}
+  go_page(GR_SCALE);if(change==0)edit_param(0,2);if(change==1)edit_param(1,4);if(change==2)edit_param(2,2);if(change==3)edit_param(3,12);
+  unsigned mapped=kb_map(t,k),list[64],cnt=0,len=arp_key_list(t,list,&cnt);
+  if(mapped==KB_SILENT){proof(!cnt&&!len,"QNT silence excludes whole captured chord");next(t);proof(!t->arp_note&&!t->arp_ch[0]&&!t->arp_ch[1],"QNT silence releases previously sounding chord input");}
+  else{
+   proof(cnt==count&&len==count,"remapped chord retains triad rhythm slots");
+   for(unsigned j=0;j<count;j++)proof(list[j]==mapped+captured[j]-base,"ROOT SCALE TRN remap key while preserving captured chord intervals");
+   t->arp_idx=0xffffffffu;next(t);proof(t->arp_note==list[0],"actual ARP voice emits first remapped captured chord pitch");
+  }
+  fm1_in.notes=0;keyboard_block();t->p[P_AHOLD]=0;events_block(1);proof(!t->nheld&&!t->arp_note,"actual chord release leaves no stale sounding/provenance slots");
+ }
+}
+int main(void){mapping_cases();native_cases();compatibility_cases();captured_chord_cases();printf("native_arp_key_mapping: %u checks %u failures; host only\n",checks,failures);return failures?1:0;}
