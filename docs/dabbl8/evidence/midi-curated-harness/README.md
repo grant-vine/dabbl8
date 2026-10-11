@@ -1,0 +1,13 @@
+# Curated MIDI harness portability
+
+This test-only change is based on merged main `9ec215e3` (tree `4e2a20c7`), including the existing profile, diagnostic and motion work. The correction adds none of those firmware features. Production firmware, build tools, generated headers, loader boundaries, golden hashes and timing budgets remain unchanged.
+
+Core could not compile the complete MIDI harness because included historical UI helpers referenced removed SLICE and SAMPLE rendering functions. Breaks compiled, but its startup assertion assumed unavailable LOFI. Reduced test initialization now calls production `track_startup` and checks success. An independent Breaks oracle requires ANALOG/FM6/ANALOG/DRUM and literal ANALOG preset 0 (SAW LEAD) parameters. FULL initialization and expectations remain intact. Three SLICE helper guards and the SAMPLE-only waveform guard fix compilation of UI helpers included by MIDI; this does not establish that the complete curated UI suite passes.
+
+Fresh October 12 qualification consists of 16 FULL configurations on the exact pre-correction main tree (four/eight tracks, FM4/SLICE combinations, normal/inherited sanitizers), plus four Core/Breaks configurations on the correction (eight tracks, FM4 off, SLICE IDs retained, normal/inherited sanitizers). All pass: 95 assertions per four-track configuration and 171 per eight-track configuration. Actual whole preprocessed code and project/system dependency comparisons bind those FULL runs to this correction and bind all 20 configurations to the previously qualified source.
+
+The earlier October 11 source qualification executed all 20 configurations and six compiled negative controls: a wrong fallback preset and removal of either renderer guard, in normal/sanitizer modes. Those original outcomes remain preserved; the six controls were not rerun on October 12. Original and intermediate compilation/assertion failures also remain sealed. The date rollover changed only the compiled About-screen date literal from October 11 to October 12. No date was normalized: the applicable 16 FULL and four reduced runs were repeated with the actual October 12 inputs.
+
+Inherited DSP sanitizer exclusions remain signed-integer-overflow, shift, bounds, object-size and pointer-overflow. No new vendor or renderer runs occurred for this correction. Previous prospective build artifacts are not promoted as current-main target evidence. Static audio IRQ/UAC timing failures, hardware deadlines, stack, recovery and release qualification remain open; no device, loader or package operations occurred.
+
+See `qualification.json` for source hashes and the separate historical/current evidence seals.
