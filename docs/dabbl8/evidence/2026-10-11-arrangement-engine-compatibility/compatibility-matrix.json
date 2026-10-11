@@ -1,0 +1,140 @@
+[
+  {
+    "name": "compat-fm0-slice0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm0-slice0-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "name": "compat-fm0-slice0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm0-slice0-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "name": "compat-fm1-slice0-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm1-slice0-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "name": "compat-fm1-slice0-san",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm1-slice0-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "name": "compat-fm1-slice1-normal",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm1-slice1-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "name": "compat-fm1-slice1-san",
+    "command": [
+      "clang",
+      "-w",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/compat-fm1-slice1-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  }
+]

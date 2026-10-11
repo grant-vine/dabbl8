@@ -1,0 +1,32 @@
+{
+  "production_commit": "0634473db765000998fe1ca170a9a7d3f984fd7a",
+  "production_source_hashes": {
+    "firmware/src/d8arr_prepare.c": "9ac2064f1f649bc11bb5d49c0d5175fe44918364cf25e34920c5887811b78e9c",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/motion.c": "533ea04cbb9d3ae658efd24d7d35fbb685be522df28aec845b4aad442044c168",
+    "firmware/src/d8p1_project.h": "f310056786875ecd2322eff28c34b4792e649d6e471ef9451f3147870f44b623",
+    "firmware/src/d8p1_pool_runtime.c": "223ce1e54a158d5082bb46b193554c6deddbb646daf9faff6eacd4be88b3c7c1",
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a"
+  },
+  "production_matches_independent_review": {
+    "firmware/src/d8arr_prepare.c": true,
+    "firmware/src/song_chain.c": true,
+    "firmware/src/motion.c": true,
+    "firmware/src/d8p1_project.h": true,
+    "firmware/src/d8p1_pool_runtime.c": true,
+    "firmware/src/engines.c": true,
+    "firmware/src/core.h": true
+  },
+  "test_sha256": "3adedf15a5ef8c93199fdc9881c06c26ec87a774e044ae028e622e7c7af4df7e",
+  "original_evidence_manifest_unchanged": true,
+  "new_cases": [
+    "Stable source ID13 remains valid as a pattern source under SLICE-off; exact provenance and existing motion policy preserved.",
+    "Raw DIGITAL1 source with actual FM6 destination under FM4-off retains provenance1, applies common pan automation/lock/unlock and skips FM envelope, lane and E automation/locks in both apply and unlock. No source patch adopted.",
+    "Only destination track8 uses excluded FM6; tracks1..7 use available ANALOG. Initial refusal preserves complete prior runtime/cache/arena/DMA state without reads/fences/writes."
+  ],
+  "executed": "All eight explicit FM4/SLICE configurations normal/inherited sanitizer pass. FM4-off22641 checks each, FM4-on19968 each.",
+  "historical_controls": "Original0634473 parent and overrestrict negative evidence retained verbatim; not rerun against revised test fixture.",
+  "independent_source_review_sha256": "2323411a5782ea6fcf4c51c0cb34bb7c081aa54fd6c7e39fa3940cd3885554ec",
+  "limits": "Test-only followup; production source unchanged. No vendor build, complete CI, device, hardware timing or release qualification by this agent. Frozen root target comparison concerns identical production source."
+}

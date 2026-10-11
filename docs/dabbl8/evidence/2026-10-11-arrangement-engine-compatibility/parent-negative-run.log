@@ -1,0 +1,7 @@
+arrangement engine compatibility: 17265 checks, 6 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only
+FAIL: missing destination refuses initially
+FAIL: initial refusal preserves all live/cache/arena/DMA state without access
+FAIL: empty profile seam refuses
+FAIL: foreign mask refuses
+FAIL: late unavailable destination refuses publication
+FAIL: late refusal discards preparation but adds no live mutation or start

@@ -1,0 +1,3 @@
+Parent negative: exact base9fcf06d firmware/src/d8arr_prepare.c, with only a neutral new-call seam appended: static int d8arr_prepare_pool_mask(const d8pool *s,unsigned mask){(void)mask;return d8arr_prepare_pool(s);}. This permits the new actual fixture to compile without adding any guard or changing parent preparation behavior. Runtime fails six new initial/late destination and invalid-mask assertions.
+
+Overrestrict negative: candidate source with one intentional restriction after actual project decode: for(unsigned t=0;t<8;t++)if(!(engine_mask&(1u<<p->t[t].engine))){rc=D8POOL_UNSUPPORTED;goto failed;}. This compiles and fails 99 positive pattern/provenance/playback assertions. It does not represent adopted production source.

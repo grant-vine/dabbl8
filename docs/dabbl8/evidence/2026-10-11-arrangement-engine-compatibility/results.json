@@ -1,0 +1,101 @@
+[
+  {
+    "mode": "normal",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "mode": "inherited-san",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/inherited-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/arrangement_engine_compatibility_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "arrangement engine compatibility: 16595 checks, 0 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n"
+  },
+  {
+    "mode": "existing-arrangement",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/existing-arrangement",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/native_arrangement_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Native arrangement: 625904 checks, 0 failures; actual runtime/sequencer/clock/motion, virtual NOR only\n"
+  },
+  {
+    "mode": "parent-negative",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/parent-negative",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "/private/tmp/d8-arrangement-compatibility-qualification/parent-negative-test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 1,
+    "output": "arrangement engine compatibility: 17265 checks, 6 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\nFAIL: missing destination refuses initially\nFAIL: initial refusal preserves all live/cache/arena/DMA state without access\nFAIL: empty profile seam refuses\nFAIL: foreign mask refuses\nFAIL: late unavailable destination refuses publication\nFAIL: late refusal discards preparation but adds no live mutation or start\n"
+  },
+  {
+    "mode": "overrestrict-negative",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/engine-sound-selection/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-arrangement-compatibility-qualification/overrestrict-negative",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "/private/tmp/d8-arrangement-compatibility-qualification/overrestrict-negative-test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 1,
+    "output": "arrangement engine compatibility: 15279 checks, 99 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\nFAIL: unavailable source engine permits pattern-only preparation\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: real native sequence starts\nFAIL: referenced notes/timing play without replacing editable steps\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: unavailable source engine permits pattern-only preparation\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: real native sequence starts\nFAIL: referenced notes/timing play without replacing editable steps\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: unavailable source engine permits pattern-only preparation\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: exact source engine provenance retained\nFAIL: real native sequence starts\nFAIL: referenced notes/timing play without replacing editable steps\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\nFAIL: common source automation/lock/unlock remaps independently\n"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "target_source": "0634473db765000998fe1ca170a9a7d3f984fd7a",
+  "test_followup": "4f162e0747bdf24f20b17cba1b26e05be258ad8f",
+  "control": "9fcf06dce71624ae7339b0ef458307b0613ba56b",
+  "production_hashes_same_after_test_followup": true,
+  "four_app_elf_identical": true,
+  "eight_app_delta_bytes": 64,
+  "RAM_pool_unchanged": true,
+  "eight_static_budget": "FAIL",
+  "scope": "Pinned app-only comparison; no final-source full CI, loader/package/device, calibrated timing or physical stack high-water qualification."
+}

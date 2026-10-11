@@ -1,0 +1,100 @@
+arrangement engine compatibility: 15279 checks, 99 failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only
+FAIL: unavailable source engine permits pattern-only preparation
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: real native sequence starts
+FAIL: referenced notes/timing play without replacing editable steps
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: unavailable source engine permits pattern-only preparation
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: real native sequence starts
+FAIL: referenced notes/timing play without replacing editable steps
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: unavailable source engine permits pattern-only preparation
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: exact source engine provenance retained
+FAIL: real native sequence starts
+FAIL: referenced notes/timing play without replacing editable steps
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
+FAIL: common source automation/lock/unlock remaps independently
