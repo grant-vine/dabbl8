@@ -1,0 +1,4 @@
+tests/engine_availability_capture_test.c:6:2: error: "native capture fixture requires NPART=8; four-track capture is not applicable"
+    6 | #error "native capture fixture requires NPART=8; four-track capture is not applicable"
+      |  ^
+1 error generated.

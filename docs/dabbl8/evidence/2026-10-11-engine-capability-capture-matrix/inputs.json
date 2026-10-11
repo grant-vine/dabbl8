@@ -1,0 +1,19 @@
+{
+  "head": "cc49923aa029210337dbe8475ea8e566114d0c81",
+  "source_hashes": {
+    "tests/engine_availability_capture_test.c": "c2a76d9c1bfed08ffad51cc39fff2f72c4f2e2817daea1301d301d9598cc18b5",
+    "tests/engine_availability_caps_test.c": "a3c3502374aec9db58b896d090954935dc63eb7662c14d88097d31356ce0b5e2",
+    "tests/run_tests.sh": "8a2ec06f8e46db9a5e5cca3bd8a37c15383336e4d433f5d90b0a985b88abc2c2",
+    "firmware/src/editor.c": "48653c8fe01cf650cef9319f6aa0ee984e6a00b2053757708c5c66d925d47619"
+  },
+  "gen_hashes": {
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n"
+}

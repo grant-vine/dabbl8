@@ -1,0 +1,13 @@
+# Supplemental engine capability capture evidence
+
+Based exactly on `cc49923aa029210337dbe8475ea8e566114d0c81` (the companion integration topic), this change strengthens the existing `engine_availability_capture_test.c` and replaces its default-only runner calls with the native eight-track FM4/SLICE matrix. Firmware, browser production and dependency code are unchanged.
+
+The focused [receipt](evidence/2026-10-11-engine-capability-capture-matrix/receipt.json) preserves source/generated-header hashes, compiler version, all commands and raw logs. Sixteen executions pass: eight native capture/owned-arena cases at 8,775 checks each, and eight existing four-track capability/refusal cases at 1,943 assertions each. Each set covers FM4/SLICE enabled/disabled in normal and inherited ASan/UBSan modes. The runner passes its shell syntax check. This is Apple clang 21 host evidence; hosted CI and the full suite were not rerun here.
+
+Native capture queries run in three contexts: active full capture, after one capture poll, and with an exclusively held migration workspace. Every context exercises all 128 schema bytes at argument lengths one through three. Exact response bytes and unchanged caller input, capture state, workspace bytes, owner/generation, NOR and read/write counters are checked. Four-track capture is not applicable; the fixture explicitly rejects compiling it as four tracks instead of allowing its inherited fixture to silently override `NPART` to eight.
+
+A private candidate with capability dispatch moved after capture revocation compiles, then fails the actual capture-retention assertions. A deliberately incorrect four-track capture build fails the explicit compile guard. Both expected negative outcomes and raw logs are retained. The mutated control is not a pristine historical parent.
+
+The earlier corrected PR123 CI had this fixture source but no invocation. PR127 already restored paired default-native8 execution; this expands that reusable coverage. Historical receipts remain unchanged.
+
+Inherited sanitizer exclusions (`signed-integer-overflow`, `shift`, `bounds`, `object-size`, `pointer-overflow`) remain. No target build, package, loader, physical MIDI, hardware capture/recovery or release qualification is claimed. No selectable reduced profile, write authority, firmware download, budget or golden change is introduced.

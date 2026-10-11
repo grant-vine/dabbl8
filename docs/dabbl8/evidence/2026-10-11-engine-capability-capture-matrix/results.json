@@ -1,0 +1,490 @@
+[
+  {
+    "name": "normal-4-fm0-slice0-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice0",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-4-fm0-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "d63647ddfd9bcf955d39993fe1796beef1bee3ae36bf1d5658af40f898bad066"
+  },
+  {
+    "name": "normal-4-fm0-slice1-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice1",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-4-fm0-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm0-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "f389c87dfc1d04a94750b892b22161ec2dfbc4283d0adf1d54ac6ff15ba64c3d"
+  },
+  {
+    "name": "normal-4-fm1-slice0-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice0",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-4-fm1-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "0c5f23968953179e2af1e4ca0f5792bdec642a9a5667412b311a29163807867b"
+  },
+  {
+    "name": "normal-4-fm1-slice1-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice1",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-4-fm1-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-4-fm1-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "035c72335765f350b5c20fdeb5dd259077da02c34a7ae8e8373f939367afeed1"
+  },
+  {
+    "name": "normal-8-fm0-slice0-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice0",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-8-fm0-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "da3663f128ccf48615fbe205b628a73ac3394af6abf92540054b16b40e0499fb"
+  },
+  {
+    "name": "normal-8-fm0-slice1-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-8-fm0-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm0-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "499fb8cf4c714fa31a87c22e52e8b83d77da15cb299e2f6352835a8e6194d721"
+  },
+  {
+    "name": "normal-8-fm1-slice0-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice0",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-8-fm1-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "9b83d48d5953c085de7450a68724eaaa152919de285504bf28c1fda4d6c6c28b"
+  },
+  {
+    "name": "normal-8-fm1-slice1-build",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "normal-8-fm1-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/normal-8-fm1-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "06400e54669480715b29fff94ae70cda2bce20bb71135bacaa4bdf1dd9b59153"
+  },
+  {
+    "name": "inherited-san-4-fm0-slice0-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice0",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-4-fm0-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "d63647ddfd9bcf955d39993fe1796beef1bee3ae36bf1d5658af40f898bad066"
+  },
+  {
+    "name": "inherited-san-4-fm0-slice1-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice1",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-4-fm0-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm0-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "f389c87dfc1d04a94750b892b22161ec2dfbc4283d0adf1d54ac6ff15ba64c3d"
+  },
+  {
+    "name": "inherited-san-4-fm1-slice0-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice0",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-4-fm1-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "0c5f23968953179e2af1e4ca0f5792bdec642a9a5667412b311a29163807867b"
+  },
+  {
+    "name": "inherited-san-4-fm1-slice1-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=4",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice1",
+      "tests/engine_availability_caps_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-4-fm1-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-4-fm1-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "035c72335765f350b5c20fdeb5dd259077da02c34a7ae8e8373f939367afeed1"
+  },
+  {
+    "name": "inherited-san-8-fm0-slice0-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice0",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-8-fm0-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "da3663f128ccf48615fbe205b628a73ac3394af6abf92540054b16b40e0499fb"
+  },
+  {
+    "name": "inherited-san-8-fm0-slice1-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=0",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-8-fm0-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm0-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "499fb8cf4c714fa31a87c22e52e8b83d77da15cb299e2f6352835a8e6194d721"
+  },
+  {
+    "name": "inherited-san-8-fm1-slice0-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=0",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice0",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-8-fm1-slice0-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice0"
+    ],
+    "exit": 0,
+    "log_sha256": "9b83d48d5953c085de7450a68724eaaa152919de285504bf28c1fda4d6c6c28b"
+  },
+  {
+    "name": "inherited-san-8-fm1-slice1-build",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-DFELUCCA_FM4=1",
+      "-DFELUCCA_SLICE=1",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice1",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/engine_availability_capture_test.c",
+      "-lm"
+    ],
+    "exit": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "inherited-san-8-fm1-slice1-run",
+    "command": [
+      "/private/tmp/d8-engine-capture-matrix/inherited-san-8-fm1-slice1"
+    ],
+    "exit": 0,
+    "log_sha256": "06400e54669480715b29fff94ae70cda2bce20bb71135bacaa4bdf1dd9b59153"
+  }
+]

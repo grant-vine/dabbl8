@@ -1,0 +1,121 @@
+diff --git a/tests/engine_availability_capture_test.c b/tests/engine_availability_capture_test.c
+index 26d1309..4e2ac5a 100644
+--- a/tests/engine_availability_capture_test.c
++++ b/tests/engine_availability_capture_test.c
+@@ -1,29 +1,53 @@
+ /* SPDX-License-Identifier: GPL-3.0-only */
+-/* Schema-2 observation during actual simulated capture/arena ownership. */
++/* Actual native schema-2 capture/arena retention; virtual NOR only.
++ * Four-track firmware has no native capture/arena protocol. Its separate
++ * engine_availability_caps_test covers schema/refusal state preservation. */
++#if defined(NPART) && NPART != 8
++#error "native capture fixture requires NPART=8; four-track capture is not applicable"
++#endif
+ #define D8_INSTRUMENT_CAPTURE_NO_MAIN 1
+ #include "instrument_capture_test.c"
+-int main(void) {
+-    fixture();begin_capture(1);CHECK(!status() && ed_capture.active);
+-    __typeof__(ed_capture) retained=ed_capture;
+-    uint32_t arena=d8p1_crc32(&main_workspace,sizeof main_workspace), epoch=d8_capture_change.epoch;
+-    for(unsigned version=0;version<128;version++) {
+-        uint8_t frame[]={0x7d,0x46,0x4c,75,(uint8_t)version};
+-        ed_handle(frame,sizeof frame);so_r=so_w;
+-        CHECK(!memcmp(&retained,&ed_capture,sizeof retained));
+-        CHECK(arena==d8p1_crc32(&main_workspace,sizeof main_workspace));
+-        CHECK(epoch==d8_capture_change.epoch && !writes && !memcmp(nor,baseline,sizeof nor));
+-        CHECK(version==2?(ed_n==14&&ed_out[4]==75):(ed_n==9&&ed_out[4]==76&&ed_out[7]==2));
++_Static_assert(NTRK == 8, "actual native capture configuration");
++static __typeof__(ed_capture) retained_capture;
++static __typeof__(d8_capture_change) retained_change;
++static uint8_t retained_arena[sizeof main_workspace];
++static void query_matrix(void)
++{
++    memcpy(&retained_capture,&ed_capture,sizeof ed_capture);
++    memcpy(&retained_change,&d8_capture_change,sizeof d8_capture_change);
++    memcpy(retained_arena,&main_workspace,sizeof main_workspace);
++    const uint32_t owner=migration_owner,generation=migration_generation;
++    const unsigned before_reads=hw_read_calls,before_writes=writes;
++    const unsigned expected_mask=0x1ffdu|(FELUCCA_FM4?2u:0u)|(FELUCCA_SLICE?0x2000u:0u);
++    for(unsigned version=0;version<128;version++)for(unsigned len=1;len<=3;len++) {
++        uint8_t frame[]={0x7d,0x46,0x4c,75,(uint8_t)version,0,0,0xa5};
++        uint8_t input[sizeof frame];memcpy(input,frame,sizeof input);
++        ed_handle(frame,4+len);so_r=so_w;
++        CHECK(!memcmp(input,frame,sizeof input));
++        CHECK(!memcmp(&retained_capture,&ed_capture,sizeof ed_capture));
++        CHECK(!memcmp(&retained_change,&d8_capture_change,sizeof d8_capture_change));
++        CHECK(!memcmp(retained_arena,&main_workspace,sizeof main_workspace));
++        CHECK(migration_owner==owner&&migration_generation==generation);
++        CHECK(hw_read_calls==before_reads&&writes==before_writes&&!memcmp(nor,baseline,sizeof nor));
++        if(version==2&&len==1) {
++            const uint8_t expected[]={0xf0,0x7d,0x46,0x4c,75,'D','8',2,1,NENGINES,
++                expected_mask&127,(expected_mask>>7)&127,0,0xf7};
++            CHECK(ed_n==sizeof expected&&!memcmp(ed_out,expected,sizeof expected));
++        } else {
++            const uint8_t expected[]={0xf0,0x7d,0x46,0x4c,76,1,75,version==2?3:2,0xf7};
++            CHECK(ed_n==sizeof expected&&!memcmp(ed_out,expected,sizeof expected));
++        }
+     }
+-    uint8_t malformed[]={0x7d,0x46,0x4c,75,2,0};ed_handle(malformed,sizeof malformed);so_r=so_w;
+-    CHECK(ed_n==9&&ed_out[7]==3&&!memcmp(&retained,&ed_capture,sizeof retained));
+-    op(6);uint32_t owner=0;CHECK(main_migration_begin(&owner)==D8MP_OK);memset(&main_workspace,0xa5,sizeof main_workspace);
+-    arena=d8p1_crc32(&main_workspace,sizeof main_workspace);
+-    for(unsigned version=0;version<128;version++) {
+-        uint8_t frame[]={0x7d,0x46,0x4c,75,(uint8_t)version};ed_handle(frame,sizeof frame);so_r=so_w;
+-        CHECK(migration_owner==owner&&arena==d8p1_crc32(&main_workspace,sizeof main_workspace));
+-        CHECK(!writes&&!memcmp(nor,baseline,sizeof nor));
+-    }
+-    CHECK(main_migration_end(owner)==D8MP_OK);
+-    printf("engine availability during capture/owned arena: %u checks %u failures; virtual NOR only\n",checks,failures);
++}
++int main(void)
++{
++    fixture();begin_capture(1);CHECK(!status()&&ed_capture.active);
++    query_matrix();
++    op(2);CHECK(!status()&&ed_capture.active);query_matrix();
++    op(6);CHECK(!ed_capture.active);
++    uint32_t owner=0;CHECK(main_migration_begin(&owner)==D8MP_OK);
++    memset(&main_workspace,0xa5,sizeof main_workspace);query_matrix();
++    CHECK(migration_owner==owner&&main_migration_end(owner)==D8MP_OK);
++    printf("engine availability during capture/owned arena: %u checks %u failures tracks=%u FM4=%u SLICE=%u; virtual NOR only; four-track capture not applicable\n",checks,failures,NTRK,FELUCCA_FM4,FELUCCA_SLICE);
+     return failures!=0;
+ }
+diff --git a/tests/run_tests.sh b/tests/run_tests.sh
+index d5097bf..e37ecc9 100755
+--- a/tests/run_tests.sh
++++ b/tests/run_tests.sh
+@@ -304,8 +304,15 @@ if [ -f build/gen/felucca_tables.h ]; then
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
+     run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+-    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+-    run "read-only engine availability during capture and owned arena" "$OUT/engine_availability_capture_test"
++    # Native capture exists only at eight tracks; four-track schema/refusal
++    # preservation is covered by engine_caps_4_* above, never mislabeled capture.
++    for fm4 in 0 1; do
++        for slice in 0 1; do
++            name="engine_capture_8_${fm4}_${slice}"
++            $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
++            run "read-only engine availability during actual native capture and owned arena FM4=$fm4 SLICE=$slice" "$OUT/$name"
++        done
++    done
+     run "read-only instrument capture: actual handler, fixed stores, current state and interruption" "$OUT/instrument_capture_test"
+     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
+     run "pre-migration quarantine: actual boot, application writers, binding and read-only capture" "$OUT/instrument_write_quarantine_test"
+@@ -610,8 +617,15 @@ else
+     $SCC -o "$A/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
+     run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
+     $SCC -o "$A/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+-    $SCC -o "$A/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+-    run "ASan/UBSan: engine availability during capture and owned arena" "$A/engine_availability_capture_test"
++    # Native capture exists only at eight tracks; four-track schema/refusal
++    # preservation is covered by engine_caps_4_* above, never mislabeled capture.
++    for fm4 in 0 1; do
++        for slice in 0 1; do
++            name="engine_capture_8_${fm4}_${slice}"
++            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
++            run "ASan/UBSan: engine availability during actual native capture and owned arena FM4=$fm4 SLICE=$slice" "$A/$name"
++        done
++    done
+     run "ASan/UBSan: read-only instrument capture and actual USB/storage interruption" "$A/instrument_capture_test"
+     $SCC -o "$A/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
+     run "ASan/UBSan: actual pre-migration application write quarantine" "$A/instrument_write_quarantine_test"
