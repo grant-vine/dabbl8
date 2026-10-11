@@ -265,22 +265,43 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         int16_t *c = rev_comb;
         int32_t in = mulq15(rev_in[i], 2580);           /* 1/8 at -4 dB: level as before the allpass fix */
         for (k = 0; k < 4u; k++) {
+#if NTRK == 8
+            uint32_t position=fx.comb_i[k];
+            int32_t o = c[position];
+#else
             int32_t o = c[fx.comb_i[k]];
+#endif
             fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
+#if NTRK == 8
+            FTR16(comb_dirty,&c[position],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
+            fx.comb_i[k]=(uint16_t)(position+1u>=REV_COMB[k]?0u:position+1u);
+#else
             FTR16(comb_dirty,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
             if (++fx.comb_i[k] >= REV_COMB[k])
                 fx.comb_i[k] = 0;
+#endif
             a += o;
             c += REV_COMB[k];
         }
         c = rev_ap;
         for (k = 0; k < 2u; k++) {
+#if NTRK == 8
+            uint32_t position=fx.ap_i[k];
+            int32_t o = c[position];
+#else
             int32_t o = c[fx.ap_i[k]];
+#endif
             int32_t v = a + (o >> 1);
+#if NTRK == 8
+            FTR16(ap_dirty,&c[position],clamp(v, -32768, 32767));
+            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
+            fx.ap_i[k]=(uint16_t)(position+1u>=REV_AP[k]?0u:position+1u);
+#else
             FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
             a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
             if (++fx.ap_i[k] >= REV_AP[k])
                 fx.ap_i[k] = 0;
+#endif
             c += REV_AP[k];
         }
         out[i] += a;
