@@ -1,0 +1,16 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: actual companion visible stable engine state
+    at ok (file:///private/tmp/d8-companion-engine-integration/ui-optin-negative-control-final/test_d8companion_engines.mjs:8:42)
+    at file:///private/tmp/d8-companion-engine-integration/ui-optin-negative-control-final/test_d8companion_engines.mjs:87:7 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.11.0

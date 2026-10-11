@@ -17,10 +17,20 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   const identity=el('p',{class:'identity small'}),inputSelect=el('select',{'aria-label':'MIDI input'}),outputSelect=el('select',{'aria-label':'MIDI output'});
   const find=button('Find MIDI ports',findPorts),join=button('Connect',connectPorts,{class:'primary'}),leave=button('Disconnect',disconnect),refresh=button('Refresh from device',()=>act((m)=>m.refresh()));
   const connection=el('section',{class:'connection','aria-label':'Connection'},el('h2',{},'Connection'),el('div',{class:'row'},field('Receive from',inputSelect),field('Send to',outputSelect),find,join,leave),identity,status);
+  const engines=el('section',{'aria-label':'Engine availability'});
   const controls=el('div',{}),foot=el('footer',{},el('p',{class:'small'},'Built on Felucca by Hügelton Instruments and its contributors. Dabbl8 is GPL-3.0-only.'),el('p',{class:'small'},el('a',{href:'https://github.com/grant-vine/dabbl8'},'Source and development status'),' · ',el('a',{href:'editor.html'},'Legacy four-track editor'),' · ',el('a',{href:'https://github.com/grant-vine/dabbl8/blob/dabbl8/develop/LICENSING.md'},'Licensing')));
   const conversionRoot=el('section',{});
-  root.replaceChildren(heading,notice,connection,controls,conversionRoot,foot);
+  root.replaceChildren(heading,notice,connection,engines,controls,conversionRoot,foot);
   const conversion=mountProjectConversion(conversionRoot);
+  function renderEngines(){
+    const observation=session?.engineAvailability,caps=observation?.caps;
+    engines.replaceChildren(el('h2',{},'Engine availability'),el('p',{class:'small'},'Read-only observation of this compiled firmware. Stable IDs include historical engines; this grants no engine changes or profile selection and makes no performance claim.'));
+    if(!caps){engines.append(el('p',{},'Unknown — '+(observation?.reason||'connect to discover available engines.')));return;}
+    const list=el('ul',{});
+    for(let id=0;id<descriptors.engine.length;id++)list.append(el('li',{},`ID ${id} · ${id===1?'DIGITAL (historical)':descriptors.engine[id].name} · ${id<caps.slots?(caps.mask&(1<<id)?'Available':'Unavailable'):'Unavailable (outside compiled slots)'}`));
+    engines.append(list);
+  }
+  renderEngines();
   function setStatus(message,bad=false){status.textContent=message;status.className='status'+(bad?' bad':'');}
   function availability(){const busy=working||Boolean(model?.state.busy);find.disabled=busy||Boolean(session);join.disabled=busy||Boolean(session)||!inputSelect.value||!outputSelect.value;inputSelect.disabled=busy||Boolean(session);outputSelect.disabled=inputSelect.disabled;leave.disabled=!working&&!session;refresh.disabled=busy||!model?.editable;}
   function render(){
@@ -65,14 +75,14 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   }catch(e){if(g===generation)setStatus(e.message,true);}finally{if(g===generation){working=false;availability();}}}
   async function connectPorts(){if(working||session)return;const input=access?.inputs.get(inputSelect.value),output=access?.outputs.get(outputSelect.value);if(!input||!output){setStatus('Choose connected MIDI input and output ports.',true);return;}
     working=true;abort=new AbortController();const g=++generation;availability();setStatus('Opening ports and checking firmware…');let opened;
-    try{opened=await connect(input,output,{signal:abort.signal,onClose:(reason)=>{if(g!==generation)return;model?.close();model=null;session=null;working=false;generation++;identity.textContent='';controls.replaceChildren();setStatus(reason,true);availability();}});
-      if(g!==generation){await opened.close();return;}session=opened;working=false;const client=opened.tracks;
+    try{opened=await connect(input,output,{signal:abort.signal,engineAvailability:true,onClose:(reason)=>{if(g!==generation)return;model?.close();model=null;session=null;working=false;generation++;identity.textContent='';controls.replaceChildren();renderEngines();setStatus(reason,true);availability();}});
+      if(g!==generation){await opened.close();return;}session=opened;working=false;renderEngines();const client=opened.tracks;
       if(!client.editable){identity.textContent=client.info.version;setStatus(client.reason+' Use the legacy editor for supported four-track firmware.',true);availability();return;}
       model=new CompanionModel(opened,()=>{if(g===generation)render();});await act((m)=>m.refresh());
     }catch(e){if(g===generation)setStatus(e.message,true);if(opened&&g===generation)await opened.close();}
     finally{if(g===generation){working=false;availability();}}
   }
-  async function disconnect(){const old=model,oldSession=session;generation++;abort?.abort();model=null;session=null;working=false;identity.textContent='';controls.replaceChildren();setStatus('Disconnected.');availability();await (old?old.close():oldSession?.close());}
+  async function disconnect(){const old=model,oldSession=session;generation++;abort?.abort();model=null;session=null;working=false;identity.textContent='';controls.replaceChildren();renderEngines();setStatus('Disconnected.');availability();await (old?old.close():oldSession?.close());}
   inputSelect.addEventListener('change',availability);outputSelect.addEventListener('change',availability);availability();
   const pagehide=()=>{void disconnect();};doc.defaultView?.addEventListener('pagehide',pagehide);
   return {disconnect,destroy:()=>{conversion.destroy();doc.defaultView?.removeEventListener('pagehide',pagehide);return disconnect();}};

@@ -81,3 +81,15 @@ was used. See [preserved evidence](evidence/2026-10-10-companion-page/README.md)
 The full repository suite passed locally. Required new-format project/backup round
 trips, #7/#9 and physical acceptance gates remain; keep issue #11 open. No firmware,
 loader, flash map, fixture or golden changes are part of this page stage.
+
+## Read-only compiled engine availability
+
+The companion explicitly opts into `D8MidiSession.connect(..., { engineAvailability: true })`. The default transport still sends only INFO and the exact schema-1 capability request. The companion reuses those replies to validate discovery, then sends one command-75 `[2]` request through its existing serialized port owner and listener, before exposing the track client. It does not create a `D8Engines` connection or another MIDI session.
+
+A separate Engine availability panel shows stable IDs as Available or Unavailable only after exact schema-2 validation and matching INFO/schema-1 slot counts. Slot 13 is unavailable when outside a verified 13-slot build. Historical ID 1 is labeled DIGITAL; its advertised bit can be available on an FM4-enabled compatibility build. These observational IDs are not a canonical engine selection policy. The current firmware still compiles the full permitted configuration; this display offers no profiles, engine writes, exclusions, performance qualification or hardware claim.
+
+Unsupported discovery, refusal, invalid capability payload or a missing optional reply shows Unknown, never an assumed full mask. Unknown availability does not authorize writes and does not replace the existing track client's independently negotiated editing contract. Four-track/unsupported track clients retain their identity-only connection. Disconnect, port loss, cancellation and page teardown clear the observation.
+
+The optional read has a bounded, non-retried timeout that leaves the independently negotiated connection usable. Command 75 is never requested again by this session after the optional exchange completes. Late or duplicate well-framed command-75 replies and exact refusals for that completed query are discarded, including during a later command-77 transaction; they cannot acknowledge an edit. Invalid framing, alien command replies, malformed refusals, send failures and normal track transaction timeouts retain the original session-closing policy. Any future reuse of command 75 needs a new correlation design rather than reusing this handshake-only exception.
+
+Evidence: [companion-engine-availability-evidence.md](companion-engine-availability-evidence.md). Physical MIDI and browser rendering qualification remain pending for this addition.

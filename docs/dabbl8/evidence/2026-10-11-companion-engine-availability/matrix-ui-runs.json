@@ -1,0 +1,36 @@
+[
+  {
+    "mode": "normal",
+    "command": [
+      "node",
+      "web/test_d8companion_engines.mjs",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-4-fm0-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-4-fm0-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-4-fm1-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-4-fm1-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-8-fm0-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-8-fm0-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-8-fm1-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-normal-8-fm1-sl1"
+    ],
+    "exit": 0,
+    "output": "companion engine integration: 149 checks PASS; simulated ports/DOM and supplied host C only"
+  },
+  {
+    "mode": "san",
+    "command": [
+      "node",
+      "web/test_d8companion_engines.mjs",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-4-fm0-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-4-fm0-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-4-fm1-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-4-fm1-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-8-fm0-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-8-fm0-sl1",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-8-fm1-sl0",
+      "/private/tmp/d8-companion-engine-integration/bridge-san-8-fm1-sl1"
+    ],
+    "exit": 0,
+    "output": "companion engine integration: 149 checks PASS; simulated ports/DOM and supplied host C only"
+  }
+]
