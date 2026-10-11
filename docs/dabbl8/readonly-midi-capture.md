@@ -110,9 +110,11 @@ The optional CLI wraps the explicit RtMidi CoreMIDI backend with fresh,
 per-direction native inventories. It retains duplicate names rather than using
 Mido 1.3.3's coalesced name list. Inventories allow at most 256 endpoints, each
 with a nonempty name of at most 1,024 characters and no ASCII control characters.
-Malformed API bindings, import/scan failures or failed temporary-client deletion
-refuse without falling back to coalesced names. Temporary clients are deleted on
-the owning thread; enumeration does not open a MIDI port. Inventory is repeated
+Malformed API bindings, import/scan failures or failed temporary-object deletion
+refuse without falling back to coalesced names. Temporary RtMidi C++ objects are deleted on
+the owning thread; their shared OS client can outlive those objects. No explicit
+open/connect/send API is requested by inventory. The pinned native cleanup defect
+blocks native CLI qualification; see [lifecycle evidence](native-midi-lifecycle.md). Inventory is repeated
 before each explicit open and exchange, without caching trusted names.
 
 Mido's actual open implementation obtains another native list and uses the first
@@ -147,3 +149,8 @@ accepts an external inventory, removes the input, then checks wrapper open: the
 unchanged wrapper refuses with zero opens, while its exact recheck removal
 delegates an open and fails the explicit assertion. Coalescing and cleanup bypass
 controls independently fail their relevant assertions.
+
+The native CLI is now blocked before imports until a source/extension pair is
+qualified. Historical endpoint observations and offline collector receipts remain
+unchanged; the new [lifecycle audit](native-midi-lifecycle.md) supersedes claims
+that object deletion guarantees disposal of an ephemeral OS MIDI client.

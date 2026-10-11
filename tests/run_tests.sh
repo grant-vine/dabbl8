@@ -378,6 +378,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native migration capture binding: earlier full capture, exact proposal and readback isolation" "$OUT/native_migration_capture_binding_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
     run "read-only MIDI capture adapter: injected ports and actual C full capture" python3 tests/readonly_midi_adapter_test.py "$OUT/instrument_capture_test"
+    run "RtMidi extracted lifecycle: poison allocator and two-site repair" python3 tests/rtmidi_native_lifecycle_test.py
+    run "native MIDI CLI remains unqualified before imports" python3 tests/native_midi_qualification_guard_test.py
     run "raw CoreMIDI inventory: duplicate-preserving fake ports and actual capture" python3 tests/raw_coremidi_inventory_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
     run "connected native migration/session: exact source, consent, own tickets, cuts, adoption and explicit reboot resume" "$OUT/native_migration_session_test"

@@ -1,0 +1,20 @@
+--- a/src/rtmidi/RtMidi.cpp
++++ b/src/rtmidi/RtMidi.cpp
+@@ -1049,7 +1049,7 @@
+   MIDIClientRef client = getCoreMidiClientSingleton(clientName);
+ 
+   // Save our api-specific connection information.
+-  CoreMidiData *data = (CoreMidiData *) new CoreMidiData;
++  CoreMidiData *data = (CoreMidiData *) new CoreMidiData();
+   data->client = client;
+   data->endpoint = 0;
+   apiData_ = (void *) data;
+@@ -1384,7 +1384,7 @@
+   MIDIClientRef client = getCoreMidiClientSingleton(clientName);
+ 
+   // Save our api-specific connection information.
+-  CoreMidiData *data = (CoreMidiData *) new CoreMidiData;
++  CoreMidiData *data = (CoreMidiData *) new CoreMidiData();
+   data->client = client;
+   data->endpoint = 0;
+   apiData_ = (void *) data;

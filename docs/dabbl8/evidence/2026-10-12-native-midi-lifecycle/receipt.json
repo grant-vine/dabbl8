@@ -1,0 +1,10 @@
+{
+  "native_source_audit_report_sha256": "5b56610b2ff9e1222ea052f2e1249ed16280c01b08c2259717d66ac6963885f9",
+  "initial377_report_sha256": "f7c194829b3b0dabce4bccc99f9e13327996874a1dc779d9881ec0d4319ab7ce",
+  "initial377_manifest_sha256": "f124c0d618a10e12f3633c4689f39467f55f851c8f95df350dfde6929dc0d4c5",
+  "final_correction_report_sha256": "bcab14780d8d29f4ef2140fbbfe7a732a1f7f967435c49d636a095b1c9d7dded",
+  "final_correction_manifest_sha256": "b2e06fad9edc5b605089fda8937d42022f4a8be0ad73b88dcf8df3f1e8a4469a",
+  "payload_scope": "Compactmetadata only; no wheels/extensions/SDK/toolchain/firmware/captures bundled",
+  "native_capture_qualified": false,
+  "dependency_patch_installed": false
+}

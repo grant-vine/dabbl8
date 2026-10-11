@@ -42,8 +42,9 @@ def request_operation(frame):
 class StrictCoreMidiBackend:
     """Raw per-direction inventories retain same-name endpoints instead of merging.
 
-    Enumeration creates a temporary native client, never a port; delete happens
-    on this wrapper's owning thread. No inventory is cached or used as identity
+    Enumeration constructs temporary RtMidi C++ objects and may create a shared
+    OS MIDI client. delete releases the object on the owning thread; shared OS
+    client lifetime is not attested by this wrapper. No inventory is cached or used as identity
     attestation. Names can still change between inventory and actual port open.
     """
     MAX_ENDPOINTS = 256
@@ -243,6 +244,9 @@ def bridge(link, incoming=sys.stdin, outgoing=sys.stdout):
         outgoing.write(reply.hex(' ') + '\n'); outgoing.flush()
 
 
+QUALIFIED_NATIVE_BACKENDS = ()  # No native source/extension pair is qualified.
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bridge', action='store_true', required=True)
@@ -252,6 +256,11 @@ def main():
     args = parser.parse_args()
     if platform.system() != 'Darwin':
         parser.error('This adapter selects the macOS CoreMIDI backend only')
+    # No native dependency is currently qualified. The pinned 1.5.8 CoreMIDI
+    # cleanup reads an uninitialised port field; do not import/construct native
+    # objects until a reviewed source+extension qualification is committed.
+    if not QUALIFIED_NATIVE_BACKENDS:
+        parser.error('Native CoreMIDI capture is unqualified and disabled; see docs/dabbl8/native-midi-lifecycle.md')
     # Lazy optional dependency; --help and all offline tests need no MIDI backend.
     try:
         import mido
