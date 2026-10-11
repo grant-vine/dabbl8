@@ -268,6 +268,11 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "native migration capture binding: earlier full capture, exact proposal and readback isolation" "$OUT/native_migration_capture_binding_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
+    run "connected native migration/session: exact source, consent, own tickets, cuts, adoption and explicit reboot resume" "$OUT/native_migration_session_test"
+    $CC -O2 -w -DD8_MC_PRODUCTION_TEST -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_session_closed" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
+    run "connected shipping quarantine: no private NOR mutation callbacks" "$OUT/native_migration_session_closed"
+    run "connected collector/session: actual C bridge, independent originals, malformed replies and explicit native resume" python3 tests/native_migration_session_host_test.py "$OUT/native_migration_session_test" "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize" "$OUT/dabbl8_project_archive" "$OUT/native_migration_session_closed"
     run "INFO discovery: actual capture suffix, legacy negotiation and built editor import" node web/test_d8info.mjs "$OUT/instrument_capture_test" "$OUT/track_client_bridge4" build/felucca.fwsc
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "native combined autosave: actual main-loop hold/queue/drain/save/restore" "$OUT/native_autosave_combined_test"
@@ -512,6 +517,11 @@ else
     ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "strict ASan/UBSan: private earlier-capture binding and metadata-only scratch guards" "$A/native_migration_capture_binding_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
+    ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
+    run "strict ASan/UBSan: connected native migration, exact own tickets, all cuts and readonly reboot resume" "$A/native_migration_session_test"
+    ${CC%% *} -O1 -g -w -DD8_MC_PRODUCTION_TEST -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_session_closed" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
+    run "strict ASan/UBSan: shipping connected quarantine zero mutation callbacks" "$A/native_migration_session_closed"
+    run "ASan/UBSan: actual connected collector/session, independent originals and hostile replies" python3 tests/native_migration_session_host_test.py "$A/native_migration_session_test" "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize" "$A/dabbl8_project_archive" "$A/native_migration_session_closed"
     run "ASan/UBSan: actual capture INFO and bounded discovery negotiation" node web/test_d8info.mjs "$A/instrument_capture_test" "$A/track_client_bridge4" build/felucca.fwsc
     $SCC -o "$A/native_autosave_combined_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_combined_test.c -lm
     run "ASan/UBSan: combined actual main-loop autosave routes" "$A/native_autosave_combined_test"

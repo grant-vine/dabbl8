@@ -1,0 +1,1084 @@
+{
+  "source": "eed49037a6dc22e144063a41b6ea9a923e6c0e3d",
+  "native_disassembly_sha256": "6a1029c67218474dd29fdb3a0c1fee0f7bedde354424877f3e0cae0354d3cd8d",
+  "method": "Sum all fixed downward stack adjustments/register pushes per linked function conservatively; sum simple named direct-call paths only. Indirect/ROM/tail calls and interrupt nesting remain separately unresolved; no dynamic/device high-water claim.",
+  "roots": {
+    "ed_handle": {
+      "named_direct_call_path_bytes": 3976,
+      "path": [
+        "ed_handle",
+        "mc_poll_core",
+        "d8p1_autosave_session_begin",
+        "d8p1_load_flash",
+        "d8p1_load_pool",
+        "d8p1_load_runtime",
+        "d8p1_project_decode",
+        "d8p1_refs_available",
+        "d8p1_read",
+        "fields_ok",
+        "d8p1_name_ok"
+      ]
+    },
+    "ed_service": {
+      "named_direct_call_path_bytes": 4036,
+      "path": [
+        "ed_service",
+        "ed_handle",
+        "mc_poll_core",
+        "d8p1_autosave_session_begin",
+        "d8p1_load_flash",
+        "d8p1_load_pool",
+        "d8p1_load_runtime",
+        "d8p1_project_decode",
+        "d8p1_refs_available",
+        "d8p1_read",
+        "fields_ok",
+        "d8p1_name_ok"
+      ]
+    },
+    "mc_poll_core": {
+      "named_direct_call_path_bytes": 1900,
+      "path": [
+        "mc_poll_core",
+        "d8p1_autosave_session_begin",
+        "d8p1_load_flash",
+        "d8p1_load_pool",
+        "d8p1_load_runtime",
+        "d8p1_project_decode",
+        "d8p1_refs_available",
+        "d8p1_read",
+        "fields_ok",
+        "d8p1_name_ok"
+      ]
+    },
+    "mc_adopt_begin": {
+      "named_direct_call_path_bytes": 604,
+      "path": [
+        "mc_adopt_begin",
+        "d8pool_inventory",
+        "dp_scan",
+        "d8p1_crc32"
+      ]
+    },
+    "mc_adoption_read": {
+      "named_direct_call_path_bytes": 76,
+      "path": [
+        "mc_adoption_read",
+        "mc_quiet",
+        "df_automatic_quiet",
+        "autosave_quiet",
+        "transport_busy",
+        "chain_busy"
+      ]
+    },
+    "fm1_main": {
+      "named_direct_call_path_bytes": 5660,
+      "path": [
+        "fm1_main",
+        "ed_service",
+        "ed_handle",
+        "mc_poll_core",
+        "d8p1_autosave_session_begin",
+        "d8p1_load_flash",
+        "d8p1_load_pool",
+        "d8p1_load_runtime",
+        "d8p1_project_decode",
+        "d8p1_refs_available",
+        "d8p1_read",
+        "fields_ok",
+        "d8p1_name_ok"
+      ]
+    }
+  },
+  "functions": {
+    "d8cb_alias": {
+      "address": 33633272,
+      "size": 196,
+      "conservative_direct_downward_bytes": 12,
+      "direct_calls": [
+        "d8mp_metadata_alias"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "20133f8:    75 04             \t[--sp] = {rets, r5, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_cancel": {
+      "address": 33634242,
+      "size": 100,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "20137c2:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_capture_matches": {
+      "address": 33633950,
+      "size": 98,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "201369e:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_guard": {
+      "address": 33634184,
+      "size": 58,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [
+        "d8cb_quiet"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "d8cb_quiet": {
+      "address": 33634048,
+      "size": 136,
+      "conservative_direct_downward_bytes": 16,
+      "direct_calls": [
+        "transport_busy"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013700:    76 04             \t[--sp] = {rets, r6-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_receive": {
+      "address": 33634644,
+      "size": 230,
+      "conservative_direct_downward_bytes": 36,
+      "direct_calls": [
+        "d8cb_guard",
+        "d8mp_metadata_alias"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013954:    7b 04             \t[--sp] = {rets, r11-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_source_read": {
+      "address": 33794010,
+      "size": 16,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [],
+      "unresolved_call_lines": [
+        "203a7e6:    c4 00             \tcall r4"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a7da:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8cb_source_valid": {
+      "address": 33794026,
+      "size": 64,
+      "conservative_direct_downward_bytes": 16,
+      "direct_calls": [
+        "d8cb_guard"
+      ],
+      "unresolved_call_lines": [
+        "203a810:    c2 00             \tcall r2"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a7ea:    76 04             \t[--sp] = {rets, r6-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8mc_blocked": {
+      "address": 33630832,
+      "size": 12,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "d8mc_revoke": {
+      "address": 33641394,
+      "size": 32,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "d8mc_session_valid": {
+      "address": 33610112,
+      "size": 152,
+      "conservative_direct_downward_bytes": 24,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200d980:    78 04             \t[--sp] = {rets, r8-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8p1_project_decode": {
+      "address": 33594270,
+      "size": 1112,
+      "conservative_direct_downward_bytes": 944,
+      "direct_calls": [
+        "chain_defaults",
+        "d8p1_read",
+        "d8p1_refs_available",
+        "memcpy",
+        "motion_v1_valid",
+        "step_set_ratchet"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2009b9e:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "2009ba0:    f0 e8 84 1c       \tsp += -892"
+      ]
+    },
+    "d8p1_project_encode": {
+      "address": 33604806,
+      "size": 1456,
+      "conservative_direct_downward_bytes": 120,
+      "direct_calls": [
+        "d8p1_crc32",
+        "d8ps_finish_chunk",
+        "d8ps_valid",
+        "motion_v1_valid"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200c4c6:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "200c4c8:    e2 8f             \tsp += -68"
+      ]
+    },
+    "d8sv_alias": {
+      "address": 33634874,
+      "size": 84,
+      "conservative_direct_downward_bytes": 12,
+      "direct_calls": [
+        "d8mp_metadata_alias"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013a3a:    75 04             \t[--sp] = {rets, r5, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8sv_canonical_plan": {
+      "address": 33635292,
+      "size": 318,
+      "conservative_direct_downward_bytes": 80,
+      "direct_calls": [
+        "d8p1_project_decode",
+        "d8p1_project_encode",
+        "d8pool_inventory",
+        "d8pool_load",
+        "memcpy"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013bdc:    7d 04             \t[--sp] = {rets, r13-r4}"
+      ],
+      "downward_adjustments": [
+        "2013bde:    e2 97             \tsp += -36"
+      ]
+    },
+    "d8sv_completed": {
+      "address": 33636120,
+      "size": 176,
+      "conservative_direct_downward_bytes": 20,
+      "direct_calls": [
+        "d8p1_crc32",
+        "d8sv_current",
+        "d8sv_guard"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013f18:    77 04             \t[--sp] = {rets, r7-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8sv_convert": {
+      "address": 33636486,
+      "size": 1184,
+      "conservative_direct_downward_bytes": 156,
+      "direct_calls": [
+        "chain_defaults",
+        "d8p1_project_encode",
+        "d8ps_valid",
+        "d8sv_sector",
+        "memcpy",
+        "proj_fm4",
+        "proj_import_any",
+        "proj_perc"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2014086:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "2014088:    e2 86             \tsp += -104"
+      ]
+    },
+    "d8sv_current": {
+      "address": 33635752,
+      "size": 368,
+      "conservative_direct_downward_bytes": 108,
+      "direct_calls": [
+        "d8p1_crc32",
+        "d8p1_project_encode",
+        "d8p1_read",
+        "d8p1_refs_available",
+        "d8sv_guard",
+        "project_capture"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013da8:    79 04             \t[--sp] = {rets, r9-r4}"
+      ],
+      "downward_adjustments": [
+        "2013daa:    e2 8c             \tsp += -80"
+      ]
+    },
+    "d8sv_guard": {
+      "address": 33634958,
+      "size": 334,
+      "conservative_direct_downward_bytes": 32,
+      "direct_calls": [
+        "transport_busy"
+      ],
+      "unresolved_call_lines": [
+        "2013b46:    c2 00             \tcall r2"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013a8e:    7a 04             \t[--sp] = {rets, r10-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8sv_plan_read": {
+      "address": 33794090,
+      "size": 82,
+      "conservative_direct_downward_bytes": 20,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a82a:    77 04             \t[--sp] = {rets, r7-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8sv_plan_stopped": {
+      "address": 33794180,
+      "size": 16,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [
+        "d8sv_guard"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "d8sv_sector": {
+      "address": 33636296,
+      "size": 190,
+      "conservative_direct_downward_bytes": 24,
+      "direct_calls": [
+        "st_crc32"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013fc8:    78 04             \t[--sp] = {rets, r8-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "dp_scan": {
+      "address": 33606524,
+      "size": 546,
+      "conservative_direct_downward_bytes": 344,
+      "direct_calls": [
+        "d8p1_crc32"
+      ],
+      "unresolved_call_lines": [
+        "200cb96:    c4 00             \tcall r4",
+        "200ccb0:    ca 00             \tcall r10"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200cb7c:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "200cb7e:    a2 97             \tsp += -292"
+      ]
+    },
+    "dp_valid": {
+      "address": 33606496,
+      "size": 28,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "ed_handle": {
+      "address": 33647510,
+      "size": 12022,
+      "conservative_direct_downward_bytes": 2076,
+      "direct_calls": [
+        "apply_preset",
+        "autosave_hold",
+        "chain_busy",
+        "chain_defaults",
+        "chain_prepare",
+        "chain_valid",
+        "d8cb_alias",
+        "d8cb_cancel",
+        "d8cb_capture_matches",
+        "d8cb_guard",
+        "d8cb_quiet",
+        "d8cb_receive",
+        "d8mc_blocked",
+        "d8mc_revoke",
+        "d8mp_metadata_alias",
+        "d8p1_crc32",
+        "d8p1_project_encode",
+        "d8sv_alias",
+        "d8sv_canonical_plan",
+        "d8sv_guard",
+        "ed_args_ok",
+        "ed_b",
+        "ed_begin",
+        "ed_bk_r32",
+        "ed_bk_u32",
+        "ed_d8_error",
+        "ed_desc",
+        "ed_eng",
+        "ed_flash_stop",
+        "ed_known",
+        "ed_load_after",
+        "ed_load_before",
+        "ed_rv",
+        "ed_send",
+        "ed_shadow",
+        "ed_step_put",
+        "ed_step_reply",
+        "ed_step_sig",
+        "ed_str",
+        "ed_tdesc",
+        "ed_ui_save",
+        "ed_ui_state",
+        "ed_unpack7",
+        "ed_v",
+        "ed_val",
+        "edc_crc_step",
+        "edc_current",
+        "edc_length",
+        "edc_ram",
+        "edc_read",
+        "edc_reply",
+        "edc_stopped",
+        "edc_valid",
+        "enum_orig",
+        "favorite_has",
+        "favorite_set",
+        "fm4_load_preset",
+        "fm6_adopt",
+        "fm6_bank_valid",
+        "fm6_pack",
+        "fm6_set_patch",
+        "fm6_unpack",
+        "lcd_sync",
+        "load_begin",
+        "load_end",
+        "main_project_workspace_try",
+        "mc_fail",
+        "mc_lifetime",
+        "mc_poll_core",
+        "mc_quiet",
+        "mc_reply",
+        "mc_wire_u32",
+        "memcmp",
+        "memcpy",
+        "memset",
+        "menu_get",
+        "menu_n",
+        "menu_put",
+        "menu_vname",
+        "motion_base_value",
+        "motion_capture",
+        "motion_clear",
+        "motion_clear_locks",
+        "motion_count",
+        "motion_delete_event",
+        "motion_enabled",
+        "motion_param",
+        "motion_put",
+        "motion_set_enabled",
+        "motion_set_lock",
+        "palette_set",
+        "panel_init",
+        "proj_bound",
+        "proj_import",
+        "proj_store_len",
+        "project_capture",
+        "project_load",
+        "project_save_as",
+        "project_used",
+        "seq_steps",
+        "set_engine",
+        "settings_export",
+        "settings_import",
+        "settings_init",
+        "settings_save",
+        "st_crc32",
+        "st_save",
+        "track_select",
+        "track_sig",
+        "up_bank_check",
+        "up_grid",
+        "up_load",
+        "up_migrate",
+        "up_name_ok",
+        "up_pat_norm",
+        "up_put",
+        "up_rec",
+        "up_set_value",
+        "up_store",
+        "up_used",
+        "up_values",
+        "upf_empty",
+        "upf_fm6",
+        "upf_get",
+        "upf_migrate",
+        "upf_save",
+        "upf_set",
+        "upf_valid"
+      ],
+      "unresolved_call_lines": [
+        "2018df8:    bf ea e3 e8       \t\tcall -11834"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2016b96:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "2016b98:    f0 e8 18 18       \tsp += -2024"
+      ]
+    },
+    "ed_service": {
+      "address": 33659546,
+      "size": 822,
+      "conservative_direct_downward_bytes": 60,
+      "direct_calls": [
+        "ed_b",
+        "ed_begin",
+        "ed_eng",
+        "ed_handle",
+        "ed_room",
+        "ed_send",
+        "ed_shadow",
+        "ed_step_sig",
+        "ed_v",
+        "ed_val",
+        "ota_frame_done",
+        "ota_frame_get",
+        "seq_steps"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2019a9a:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "2019a9c:    e2 9e             \tsp += -8"
+      ]
+    },
+    "fl_far": {
+      "address": 33610304,
+      "size": 10,
+      "conservative_direct_downward_bytes": 4,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": [
+        "200da40:    e2 9f             \tsp += -4"
+      ]
+    },
+    "fm1_main": {
+      "address": 33736666,
+      "size": 13050,
+      "conservative_direct_downward_bytes": 1624,
+      "direct_calls": [
+        "act_cols",
+        "act_ready",
+        "apply_preset_to",
+        "autosave_quiet",
+        "autosave_sig",
+        "black_held",
+        "chain_busy",
+        "chain_defaults",
+        "con_dec",
+        "con_hex",
+        "con_kv",
+        "con_kx",
+        "con_num",
+        "con_putc",
+        "con_puts",
+        "con_uac",
+        "con_word",
+        "cur_page",
+        "d8p1_autosave_session_poll",
+        "div_samples",
+        "draw_text_box",
+        "ed_service",
+        "eng_vis",
+        "favorite_set",
+        "fl_far",
+        "fm1__sr_bits",
+        "fm1_adc_read",
+        "fm1_delay_ms",
+        "fm1_enter_uboot",
+        "fm1_led_dim_level",
+        "fm1_wdt_feed",
+        "fm6_bank_valid",
+        "fm6_set_patch",
+        "fm6_unpack",
+        "glo_sounding",
+        "graph_project_used",
+        "grid_on",
+        "kb_map",
+        "key_black",
+        "key_place",
+        "layer_btn",
+        "layer_set_open",
+        "lcd_cmd",
+        "lcd_data",
+        "lcd_fill",
+        "lcd_power",
+        "lcd_spin",
+        "lcd_sync",
+        "led_put",
+        "main_project_workspace_try",
+        "master_poll",
+        "mc_poll_core",
+        "memcpy",
+        "memset",
+        "menu_get",
+        "menu_step",
+        "midi_note_held",
+        "mixer_bank",
+        "name_on",
+        "nm_black",
+        "ota_crc16",
+        "ota_erase",
+        "ota_fread",
+        "ota_jl_enc",
+        "ota_memeq",
+        "ota_prog",
+        "ota_rd16",
+        "ota_rd32",
+        "ota_read",
+        "ota_show",
+        "ota_take",
+        "ota_unstage",
+        "ota_wr16",
+        "ota_wr32",
+        "palette_set",
+        "panel_init",
+        "panel_setup",
+        "perf_avail",
+        "perf_key",
+        "proj_bound",
+        "proj_fetch_work",
+        "proj_import",
+        "project_capture",
+        "project_native_owns_storage",
+        "project_restore_runtime",
+        "rec_clearable",
+        "rp_get",
+        "scale_mask",
+        "scr_get",
+        "scr_wake",
+        "scr_wake_now",
+        "seq_counting",
+        "seq_steps",
+        "set_engine_of",
+        "settings_import",
+        "settings_init",
+        "settings_poll",
+        "settings_save",
+        "slc_note_slice",
+        "slc_store_load",
+        "slice_count",
+        "slice_page_on",
+        "slice_sel",
+        "splash_band",
+        "st_current",
+        "st_load",
+        "st_read",
+        "step_accents",
+        "step_lanes",
+        "steps_sig",
+        "tl_cell",
+        "track_defaults_steps",
+        "ui_draw_page",
+        "ui_input",
+        "ui_message",
+        "up_bank_check",
+        "up_used",
+        "upf_empty",
+        "upf_migrate",
+        "upf_valid",
+        "usb_detach",
+        "usb_serial_apply",
+        "usb_start"
+      ],
+      "unresolved_call_lines": [
+        "202c7fc:    c0 00             \tcall r0",
+        "202eaba:    c2 00             \tcall r2",
+        "202f50a:    bf ea 80 16       \t\tcall -119552",
+        "202f606:    bf ea 93 54       \t\tcall -87770"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": [
+        "202c7da:    f0 e8 a8 19       \tsp += -1624"
+      ]
+    },
+    "mc_adopt_begin": {
+      "address": 33637670,
+      "size": 168,
+      "conservative_direct_downward_bytes": 36,
+      "direct_calls": [
+        "d8p1_crc32",
+        "d8pool_inventory",
+        "mc_fail",
+        "mc_lifetime",
+        "mc_quiet",
+        "memcpy"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2014526:    76 04             \t[--sp] = {rets, r6-r4}"
+      ],
+      "downward_adjustments": [
+        "2014528:    e2 9b             \tsp += -20"
+      ]
+    },
+    "mc_adoption_read": {
+      "address": 33794372,
+      "size": 130,
+      "conservative_direct_downward_bytes": 24,
+      "direct_calls": [
+        "d8mc_session_valid",
+        "mc_quiet",
+        "st_read"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a944:    78 04             \t[--sp] = {rets, r8-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_adoption_stopped": {
+      "address": 33794502,
+      "size": 26,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [
+        "d8mc_session_valid",
+        "mc_quiet"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "mc_fail": {
+      "address": 33634342,
+      "size": 100,
+      "conservative_direct_downward_bytes": 0,
+      "direct_calls": [
+        "d8cb_cancel"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [],
+      "downward_adjustments": []
+    },
+    "mc_lifetime": {
+      "address": 33634442,
+      "size": 202,
+      "conservative_direct_downward_bytes": 24,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "201388a:    78 04             \t[--sp] = {rets, r8-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_poll_core": {
+      "address": 33637926,
+      "size": 3468,
+      "conservative_direct_downward_bytes": 328,
+      "direct_calls": [
+        "d8cb_cancel",
+        "d8cb_guard",
+        "d8cb_receive",
+        "d8mc_session_valid",
+        "d8mx_guard",
+        "d8p1_autosave_session_begin",
+        "d8p1_crc32",
+        "d8p1_load_pool",
+        "d8p1_project_decode",
+        "d8p1_project_encode",
+        "d8pool_inventory",
+        "d8pool_load",
+        "d8pool_mapped_open",
+        "d8sv_canonical_plan",
+        "d8sv_completed",
+        "d8sv_convert",
+        "d8sv_current",
+        "d8sv_guard",
+        "d8sv_sector",
+        "edc_crc_step",
+        "mc_adopt_begin",
+        "mc_fail",
+        "mc_lifetime",
+        "mc_quiet",
+        "mc_read",
+        "memcpy",
+        "project_native_bind_flash"
+      ],
+      "unresolved_call_lines": [
+        "2014a86:    c4 00             \tcall r4",
+        "2014c22:    c4 00             \tcall r4",
+        "2014d08:    c2 00             \tcall r2",
+        "2014d6a:    c5 00             \tcall r5",
+        "2014db0:    c6 00             \tcall r6",
+        "2014dda:    c8 00             \tcall r8"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2014626:    7f 04             \t[--sp] = {rets, r15-r4}"
+      ],
+      "downward_adjustments": [
+        "2014628:    a2 9b             \tsp += -276"
+      ]
+    },
+    "mc_quiet": {
+      "address": 33633068,
+      "size": 86,
+      "conservative_direct_downward_bytes": 12,
+      "direct_calls": [
+        "df_automatic_quiet",
+        "transport_busy"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "201332c:    75 04             \t[--sp] = {rets, r5, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_read": {
+      "address": 33635610,
+      "size": 102,
+      "conservative_direct_downward_bytes": 20,
+      "direct_calls": [
+        "mc_lifetime",
+        "st_read"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013d1a:    77 04             \t[--sp] = {rets, r7-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_reply": {
+      "address": 33632750,
+      "size": 104,
+      "conservative_direct_downward_bytes": 16,
+      "direct_calls": [
+        "ed_bk_u32"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "20131ee:    76 04             \t[--sp] = {rets, r6-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_resume_read": {
+      "address": 33794196,
+      "size": 114,
+      "conservative_direct_downward_bytes": 20,
+      "direct_calls": [
+        "mc_lifetime"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a894:    77 04             \t[--sp] = {rets, r7-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_resume_stopped": {
+      "address": 33794310,
+      "size": 62,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [
+        "mc_lifetime",
+        "mc_quiet"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a906:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_valid": {
+      "address": 33793974,
+      "size": 36,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [
+        "mc_lifetime",
+        "mc_quiet"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "203a7b6:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "mc_wire_u32": {
+      "address": 33632854,
+      "size": 34,
+      "conservative_direct_downward_bytes": 8,
+      "direct_calls": [],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "2013256:    74 04             \t[--sp] = {rets, r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "st_read": {
+      "address": 33610314,
+      "size": 68,
+      "conservative_direct_downward_bytes": 28,
+      "direct_calls": [
+        "fl_far"
+      ],
+      "unresolved_call_lines": [
+        "200da76:    c3 00             \tcall r3"
+      ],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200da4a:    79 04             \t[--sp] = {rets, r9-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8p1_capture_runtime": {
+      "address": 33606262,
+      "size": 98,
+      "conservative_direct_downward_bytes": 20,
+      "direct_calls": [
+        "d8p1_capture_state_runtime",
+        "d8p1_project_encode"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200ca76:    77 04             \t[--sp] = {rets, r7-r4}"
+      ],
+      "downward_adjustments": []
+    },
+    "d8p1_load_pool": {
+      "address": 33608794,
+      "size": 124,
+      "conservative_direct_downward_bytes": 100,
+      "direct_calls": [
+        "d8p1_load_runtime",
+        "d8pool_load",
+        "d8pr_preflight"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200d45a:    76 04             \t[--sp] = {rets, r6-r4}"
+      ],
+      "downward_adjustments": [
+        "200d45c:    e2 8b             \tsp += -84"
+      ]
+    },
+    "project_native_bind_flash": {
+      "address": 33611618,
+      "size": 116,
+      "conservative_direct_downward_bytes": 12,
+      "direct_calls": [
+        "d8arr_invalidate",
+        "d8mc_session_valid",
+        "pn_quiet",
+        "project_native_refresh"
+      ],
+      "unresolved_call_lines": [],
+      "dynamic_sp_lines": [],
+      "push_lines": [
+        "200df62:    75 04             \t[--sp] = {rets, r5, r4}"
+      ],
+      "downward_adjustments": []
+    }
+  },
+  "stack_regions": {
+    "_ustack_lo": 29835520,
+    "_ustack_top": 29859840,
+    "_sstack_lo": 29860096,
+    "_sstack_top": 29868032,
+    "_pool_end": 29826440
+  },
+  "main_workspace_bytes": 59520,
+  "coordinator_metadata_bytes": 236,
+  "stack_size_bytes": {
+    "user": 24320,
+    "supervisor": 7936
+  },
+  "guards": "256 bytes below each stack as pinned linker defines; IRQ nesting and actual hardware highwater unmeasured",
+  "static_workspace_note": "main_workspace symbol is59520B and unchanged parent; d8mp arena view remains58432B; no second project state or40KiB plan added",
+  "shipping_private_driver_note": "Shipping mc_write_enabled returns constant0; private virtual RAM writes are host-only. This disassembly cannot qualify enabled physical driver stack/timing."
+}

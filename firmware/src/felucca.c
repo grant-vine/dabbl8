@@ -61,6 +61,9 @@
 #endif
 
 /* ----------------------------------------------------------- sound --- */
+#if NTRK == 8 && FELUCCA_FLASH && FELUCCA_OTA
+#define D8_MIGRATION_SESSION 1
+#endif
 #include "core.h"
 #include "engines.c"             /* dsp.c, the eng_*.c files, the factory patterns */
 #if NPART >= NVOICE
@@ -121,7 +124,8 @@
 #if NTRK == 8 && FELUCCA_FLASH
 #include "native_migration_execute.c" /* bounded internal component; no protocol grant/caller */
 #include "native_source_equivalence.c" /* readonly source/plan equality; no authority/caller */
-#include "native_migration_capture_binding.c" /* private earlier-capture binding; no authority/caller */
+#include "native_migration_capture_binding.c" /* private earlier-capture binding */
+#include "native_migration_session.c" /* connected workflow; shipping writes quarantined */
 #endif
 #endif
 #if FELUCCA_CDC

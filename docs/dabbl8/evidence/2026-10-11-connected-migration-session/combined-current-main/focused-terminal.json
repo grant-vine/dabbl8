@@ -1,0 +1,8 @@
+{
+  "source": "e261b1f392033c2a6709d6c2753e9541f4d1d6e6",
+  "checks": "PASS",
+  "source_unchanged": true,
+  "helper_scope": "Recorded supplied host helper binaries; fresh full suite rebuilds exact source",
+  "shipping_writes": "constant closed",
+  "hardware": "NOT RUN"
+}

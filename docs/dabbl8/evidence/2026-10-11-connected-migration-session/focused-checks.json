@@ -1,0 +1,52 @@
+[
+  {
+    "name": "opt-compile",
+    "exit": 0,
+    "seconds": 4.5992677211761475
+  },
+  {
+    "name": "opt-connected",
+    "exit": 0,
+    "seconds": 8.986320972442627
+  },
+  {
+    "name": "strict-compile",
+    "exit": 0,
+    "seconds": 7.601923942565918
+  },
+  {
+    "name": "strict-connected",
+    "exit": 0,
+    "seconds": 12.212631940841675
+  },
+  {
+    "name": "shipping-opt-compile",
+    "exit": 0,
+    "seconds": 4.89362907409668
+  },
+  {
+    "name": "shipping-opt",
+    "exit": 0,
+    "seconds": 0.5805718898773193
+  },
+  {
+    "name": "shipping-strict-compile",
+    "exit": 0,
+    "seconds": 7.692744970321655
+  },
+  {
+    "name": "shipping-strict",
+    "exit": 0,
+    "seconds": 0.6957299709320068
+  },
+  {
+    "name": "connected-host-opt",
+    "exit": 0,
+    "seconds": 6.523873805999756
+  },
+  {
+    "name": "connected-host-strict",
+    "exit": 0,
+    "seconds": 8.503504276275635
+  }
+]

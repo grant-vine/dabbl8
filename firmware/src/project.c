@@ -1264,6 +1264,9 @@ static uint32_t chain_prepare(void)
 
 static void settings_poll(void)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8mc_blocked())return; /* Before settings_export changes zoom or slice state. */
+#endif
 #if FELUCCA_FLASH
     persist_t p;
 #if FELUCCA_SLICE

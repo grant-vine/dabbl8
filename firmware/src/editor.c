@@ -482,6 +482,10 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     if((cmd==ED_PROJECT||(cmd>=ED_BACKUP_LIST&&cmd<=ED_BACKUP_PUT))&&!main_project_workspace_try())return;
 #endif
 #if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
+#if D8_MIGRATION_SESSION
+    if(cmd==79u){ed_begin(cmd);d8mc_handle(a,na);ed_send();return;}
+    if(d8mc_blocked()){d8mc_revoke();ed_d8_error(cmd,4u);return;}
+#endif
     if(cmd==ED_D8_CAPTURE){ed_begin(cmd);ed_capture_handle(a,na);ed_send();return;}
     /* Any other editor transaction conservatively ends this private session. */
     ed_capture.active=0;
