@@ -55,3 +55,12 @@ A fallback connection displays identity and its reported track count, hides the 
 - Expanded-runtime command policy: legacy writes denied, reads and versioned schema path allowed. This policy check does not establish eight-track sequencing or target performance.
 
 Chrome preview tests exercise the actual browser script against mock devices only. A test-only hook exposes the closure to the verifier; no test hook is added to production files and no real MIDI permission is requested.
+
+## Additive engine observation query
+
+The separate [schema-2 engine availability query](engine-availability-capability.md)
+uses command 75 with exact argument `[2]`. The original no-argument schema-1
+15-byte response and INFO discovery remain unchanged. The new eight-byte reply
+contains stable-ID slot count and immutable compiled-engine mask with flags 0;
+it grants no write/profile authorization. Explicitly opted-in clients must treat
+unsupported/malformed replies or timeout as unavailable, never assume a full mask.

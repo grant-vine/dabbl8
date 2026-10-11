@@ -215,6 +215,16 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "versioned eight-track editor: bounds, ownership, busy errors and legacy refusal" "$OUT/versioned_track_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge8" tests/track_client_bridge.c -lm
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/track_client_bridge4" tests/track_client_bridge.c -lm
+    for tracks in 4 8; do
+        for fm4 in 0 1; do
+            for slice in 0 1; do
+                name="engine_caps_${tracks}_${fm4}_${slice}"
+                $CC -O2 -w -DNPART=$tracks -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" tests/engine_availability_caps_test.c -lm
+                run "engine availability: schema-1 exact, version/malformed refusal and immutable mask $name" "$OUT/$name"
+            done
+        done
+    done
+    run "read-only engine capability client: actual C and malformed/legacy replies" node web/test_d8engines.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion track client: real C four/eight-track negotiation, edits and stale reply guards" node web/test_d8tracks.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion MIDI session: framing, lifecycle and actual C handlers" node web/test_d8midi.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
     run "companion editor model: musical schema and all-track actual C controls" node web/test_d8companion.mjs "$OUT/track_client_bridge8" "$OUT/track_client_bridge4"
@@ -293,6 +303,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+    run "read-only engine availability during capture and owned arena" "$OUT/engine_availability_capture_test"
     run "read-only instrument capture: actual handler, fixed stores, current state and interruption" "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
     run "pre-migration quarantine: actual boot, application writers, binding and read-only capture" "$OUT/instrument_write_quarantine_test"
@@ -518,6 +530,16 @@ else
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
+    for tracks in 4 8; do
+        for fm4 in 0 1; do
+            for slice in 0 1; do
+                name="engine_caps_${tracks}_${fm4}_${slice}"
+                $SCC -DNPART=$tracks -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$name" tests/engine_availability_caps_test.c -lm
+                run "ASan/UBSan: engine capability $name" "$A/$name"
+            done
+        done
+    done
+    run "ASan/UBSan: read-only engine capability actual C browser module" node web/test_d8engines.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion client through actual C four/eight-track handlers" node web/test_d8tracks.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion MIDI session through actual C handlers" node web/test_d8midi.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
     run "ASan/UBSan: companion editor model through actual C handlers" node web/test_d8companion.mjs "$A/track_client_bridge8" "$A/track_client_bridge4"
@@ -586,6 +608,8 @@ else
     $SCC -o "$A/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
     $SCC -o "$A/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+    $SCC -o "$A/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+    run "ASan/UBSan: engine availability during capture and owned arena" "$A/engine_availability_capture_test"
     run "ASan/UBSan: read-only instrument capture and actual USB/storage interruption" "$A/instrument_capture_test"
     $SCC -o "$A/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
     run "ASan/UBSan: actual pre-migration application write quarantine" "$A/instrument_write_quarantine_test"
