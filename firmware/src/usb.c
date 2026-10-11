@@ -140,7 +140,7 @@ static struct {
 #define RS_H 32u
 _Static_assert(RS_H >= UAC_FIR_N && (RS_H & (RS_H - 1u)) == 0, "the history holds a window");
 static struct {
-    int16_t l[2u * RS_H], r[2u * RS_H];   /* r right after l (the FIR loop reads both from one pointer) */
+    int16_t l[2u * RS_H], r[2u * RS_H];   /* separate channel histories, each doubled for contiguous FIR windows */
     uint32_t w;                  /* input frames written */
     uint32_t ph;                 /* the next output's phase, 0..159 (its newest input frame: the next written) */
 #if FELUCCA_UAC_TONE
@@ -1124,22 +1124,22 @@ static __attribute__((noinline)) void uac_tap48(const int32_t *out, uint32_t n)
         h++;
         s = (h - UAC_FIR_N) & (RS_H - 1u);              /* the window: oldest .. this frame */
         do {
-            const int16_t *x = &rs.l[s];                /* R: x[2 * RS_H] */
+            const int16_t *x = &rs.l[s], *y = &rs.r[s]; /* keep each pointer within its own array */
             int64_t al = 0, ar = 0;
             int32_t yl, yr;
             if (ph < UAC_FIR_L / 2u) {
                 const int32_t *c = UAC_FIR[ph];
-                for (j = UAC_FIR_N; j; j--, x++) {
+                for (j = UAC_FIR_N; j; j--, x++, y++) {
                     int32_t t = *c++;
                     al += (int64_t)t * x[0];
-                    ar += (int64_t)t * x[2u * RS_H];
+                    ar += (int64_t)t * y[0];
                 }
             } else {
-                const int32_t *c = &UAC_FIR[UAC_FIR_L - 1u - ph][UAC_FIR_N - 1u];
-                for (j = UAC_FIR_N; j; j--, x++) {
-                    int32_t t = *c--;
+                const int32_t *c = UAC_FIR[UAC_FIR_L - 1u - ph] + UAC_FIR_N;
+                for (j = UAC_FIR_N; j; j--, x++, y++) {
+                    int32_t t = *--c;
                     al += (int64_t)t * x[0];
-                    ar += (int64_t)t * x[2u * RS_H];
+                    ar += (int64_t)t * y[0];
                 }
             }
             yl = uac_s16((int32_t)((al + (1 << (UAC_FIR_Q - 1))) >> UAC_FIR_Q));
