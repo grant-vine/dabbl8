@@ -11,6 +11,7 @@ strict whole-engine UBSan qualification or a hardware timing test.
 import argparse
 import json
 import os
+import shlex
 from pathlib import Path
 import subprocess
 import tempfile
@@ -24,6 +25,7 @@ SAN = ["-O1", "-g", "-fsanitize=address,undefined",
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sanitize", action="store_true", help="Run inherited ASan/UBSan only; default is normal only")
     parser.add_argument("--control", type=Path, help="Unchanged checkout at frozen BASE")
     parser.add_argument("--evidence-dir", type=Path, help="Retain executables and verbatim logs")
     args = parser.parse_args()
@@ -41,10 +43,11 @@ def main():
     with tempfile.TemporaryDirectory(prefix="dabbl8-tuning-") as temporary:
         evidence = args.evidence_dir.resolve() if args.evidence_dir else Path(temporary)
         evidence.mkdir(parents=True, exist_ok=True)
-        for mode, flags in [("normal", ["-O2", "-w"]), ("inherited-san", SAN)]:
+        modes = [("inherited-san", SAN)] if args.sanitize else [("normal", ["-O2", "-w"])]
+        for mode, flags in modes:
             for label, source in sources:
                 binary = evidence / (mode + "-" + label)
-                cmd = [os.environ.get("CC", "clang"), *flags, "-I" + str(source / "build/gen"),
+                cmd = [*shlex.split(os.environ.get("CC", "clang")), *flags, "-I" + str(source / "build/gen"),
                        "-I" + str(source / "firmware/src"),
                        "-DD8_TUNING_HOSTSIM=" + json.dumps(str(source / "tests/hostsim.c"))]
                 if label == "candidate":
@@ -56,7 +59,7 @@ def main():
                 if compiled.returncode:
                     raise SystemExit(compiled.stderr)
                 tested = subprocess.run([str(binary)], cwd=source, text=True, capture_output=True,
-                                        env={**os.environ, "ASAN_OPTIONS": "detect_leaks=0"})
+                                        env={**os.environ, "ASAN_OPTIONS": os.environ.get("ASAN_OPTIONS", "detect_leaks=0")})
                 (evidence / (mode + "-" + label + ".log")).write_text(
                     tested.stdout + tested.stderr + "\nexit=" + str(tested.returncode) + "\n")
                 print(mode, label, tested.stdout.strip(), flush=True)

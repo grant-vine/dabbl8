@@ -237,6 +237,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
     run "eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain" "$OUT/eight_track_performance_test"
+    run "eight-track block tuning: frozen trace, admission, mixed audio and release" python3 tests/block_global_tuning.py
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
     run "native resident tails: real DSP silence oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
@@ -490,6 +491,7 @@ else
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm
     run "ASan/UBSan: eight-track solo dry/send isolation and cold first activation" "$A/eight_track_performance_test"
+    run "ASan/UBSan: eight-track tuning frozen trace and simultaneous mix" python3 tests/block_global_tuning.py --sanitize
     $SCC -o "$A/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
     run "ASan/UBSan: resident DSP tails and every late mutation refusal" "$A/native_fx_tail_test"
     $SCC -o "$A/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
