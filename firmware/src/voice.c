@@ -16,6 +16,36 @@
  * Steals retire immediately there, so fading engine work cannot exceed eight.
  * The default four-track build retains upstream crossfades and golden audio. */
 static uint32_t vage;                                   /* voice ages: one clock for every part */
+/* Compact active ages before overflow, preserving strict order and ties even
+ * for indefinitely held notes. No half-range modular-age assumption. Native
+ * builds alone use this; historical four-part allocation remains unchanged. */
+#if NPART >= NVOICE
+static uint32_t voice_next_age(void)
+{
+    if (vage == UINT32_MAX) {
+        _Static_assert(NPART * NVOICE <= UINT8_MAX, "voice age rank fits");
+        uint8_t rank[NPART][NVOICE] = {{0}};
+        uint32_t highest = 0;
+        for (uint32_t p = 0; p < NPART; p++)
+            for (uint32_t i = 0; i < NVOICE; i++) {
+                const voice_t *v = &trk[p].v[i];
+                if (!v->active) continue;
+                uint32_t r = 1;
+                for (uint32_t q = 0; q < NPART; q++)
+                    for (uint32_t j = 0; j < NVOICE; j++)
+                        r += trk[q].v[j].active && trk[q].v[j].age < v->age;
+                rank[p][i] = (uint8_t)r;
+                if (r > highest) highest = r;
+            }
+        /* Publish only after every rank was computed from the original ages. */
+        for (uint32_t p = 0; p < NPART; p++)
+            for (uint32_t i = 0; i < NVOICE; i++)
+                if (trk[p].v[i].active) trk[p].v[i].age = rank[p][i];
+        vage = highest;
+    }
+    return ++vage;
+}
+#endif
 static int32_t lfo_wave(track_t *t, uint32_t ph)
 {
     switch (t->p[P_LWAVE]) {
@@ -254,6 +284,9 @@ static void glide_set(track_t *t, voice_t *v, int glide)
 
 static void voice_start(track_t *t, voice_t *v, uint32_t note, uint32_t vel, int glide)
 {
+#if NPART >= NVOICE
+    uint32_t age = voice_next_age();
+#endif
     const engine_t *e = ENGINES[t->engine];
     int sounding = v->active && v->stage != 0;
     uint32_t ph0 = v->ph[0], ph1 = v->ph[1], ph2 = v->ph[2];
@@ -264,7 +297,11 @@ static void voice_start(track_t *t, voice_t *v, uint32_t note, uint32_t vel, int
     v->gate = 1;
     v->active = 1;
     v->stage = 1;
+#if NPART >= NVOICE
+    v->age = age;
+#else
     v->age = ++vage;
+#endif
     v->pitch16 = (int32_t)note * 16;
     v->mvel = t->m_vel;                                 /* mod.c: the note's VEL and RAND */
     v->mrnd = t->m_rnd;

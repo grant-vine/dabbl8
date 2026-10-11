@@ -1,0 +1,17 @@
+{
+  "base_commit": "3174e63e190e44f9905ceddc9911e90696b5009a",
+  "parent_negative_control_commit": "52d58d810882b25ade8475f956705d2a63593ef0",
+  "candidate_source_hashes": {
+    "firmware/src/voice.c": "b2a87dbc5825debd22ee81c7b46913b48eb320ea396eec5020e7cdfe1740a3b8",
+    "tests/voice_budget_test.c": "95426f3b54e16f6fbbc8f17f5b13dd1b03a5b0929b879bbd450eeb29a02f002c",
+    "tests/native_overload_test.c": "c6a8fdc139de0d89562b21e24817cfeff0b1a53cf3df878eb893a24793d3338d"
+  },
+  "four_track_app_identical": true,
+  "four_track_elf_identical": true,
+  "host": "six final candidate runs PASS; two unchanged allocator controls fail the new boundary tests as expected",
+  "sanitizer": "Inherited DSP exclusions: signed-integer-overflow, shift, bounds, object-size, pointer-overflow. Not a strict whole-DSP sanitizer claim.",
+  "target": "Pinned app-only four/eight controls; unchanged generated headers. Eight-track static budget failure remains. No package, loader changes, device, elapsed-life or calibrated timing/stack claim.",
+  "full_ci": "Pending; no full-suite golden claim from these focused tests.",
+  "parent_negative_control_scope": "Direct new-helper state snapshot omitted on old source because that API does not exist there; all allocation boundary regressions retained and compiled controls fail at runtime.",
+  "vendor_stack_observation": "Vendor compiler inlines rank compaction into voice_start: explicit local reservation 20 -> 88 bytes, plus unchanged register push. This applies to normal admissions too; not a full IRQ stack bound or physical high-water result."
+}
