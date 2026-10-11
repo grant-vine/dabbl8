@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/private/tmp/d8-capability-editor-contract-fix/run.py", line 15, in <module>
+    rows.append({'name':name,'command':cmd,'build_exit':b.returncode,'run_exit':a.returncode if a else None});assert a and a.returncode==0,(name,b.stderr,a.stdout+a.stderr if a else '')
+                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('schema-4-0-0-normal', "/private/tmp/d8-capability-editor-contract-fix/schema-only.c:4:5: error: redefinition of 'main'\n    4 | int main(void) { return d8_capabilities(); }\n      |     ^\n/Users/grantv/Code/dabbl8/.local-baseline/engine-availability-capability/tests/editor_test.c:1044:5: note: previous definition is here\n 1044 | int main(void)\n      |     ^\n1 error generated.\n", '')

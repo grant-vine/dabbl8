@@ -1,0 +1,8 @@
+editor: D8 capabilities: family/schema and actual track/step/voice/event limits ok
+editor: INFO appends D8 discovery without replacing the legacy reply           ok
+editor: unsupported capability schema has an explicit version error, no mutation ok
+editor: schema-2 capability query with trailing args has a bounds error, no mutation ok
+editor: schema-2 observation reports stable compiled IDs, no new authority or mutation ok
+editor: eight-track protocol policy denies old editor sound/project/preset writes ok
+editor: eight-track policy permits identity and bounded reads; schema command remains distinct ok
+editor: four-track new firmware keeps old editor commands compatible           ok
