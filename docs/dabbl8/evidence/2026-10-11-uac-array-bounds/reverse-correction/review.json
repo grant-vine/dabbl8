@@ -1,0 +1,14 @@
+{
+  "result": "FOCUSED_PASS_TARGET8_BUDGET_FAIL",
+  "base": "fbadbca894419c9626306eb773f38ae22baed52d",
+  "usb_sha256": "dc47dba4aa1b90787be82685028cc7600fa78a9e58644313311d7f17e9e4b09e",
+  "historical_channel_only_head": "a46324aaeceba9aa515e489573badbb359d87a17",
+  "host_runs": 8,
+  "memory_change": 0,
+  "application_change_bytes": 16,
+  "eight_track_static_uac_cost": 562,
+  "previous_cost": 555,
+  "whole_irq_cost": 55767,
+  "physical_hardware": "SKIP",
+  "scope": "Exact frozen-reference/independent-oracle parity and target app-only builds. No complete hosted check of this revision yet; no calibrated timing, stack or recovery proof. Indexed and predecrement candidates produced identical target hashes; both retained privately."
+}
