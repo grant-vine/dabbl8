@@ -1,0 +1,29 @@
+{
+  "source": {
+    "candidate": "362385768a4173f4133c592a1849622cc798971d",
+    "control": "89a489da5581f0442cd587024c8ba65070434094"
+  },
+  "only_changed_compiled_path": [
+    "firmware/src/seq.c"
+  ],
+  "generated29_identical": true,
+  "flags_both": [
+    "-Os",
+    "-ffunction-sections",
+    "-fno-builtin",
+    "-Wall",
+    "-Wno-unused-function",
+    "-DNPART=8"
+  ],
+  "size_partition": "Both invoke same tools/build.py build_app and default minsize ISR reachability partition, no noinline change; actual root and candidate commands retained.",
+  "parent_disassembly_sha256": "eba556d5cf705b21cb8c03220ed2c0cfc45cb7696eb5ad89cf836140191037bb",
+  "candidate_disassembly_sha256": "5eb4bd622126e15956e59518ab14650dc8ca4ac8c445daf0f36d377c76079e3b",
+  "paired_reanalysis": {
+    "control": 54302,
+    "candidate": 55722
+  },
+  "delta": 1420,
+  "percent": 2.615004972192553,
+  "error": "Original proposal used stale984f-era IRQ55487 instead of actual same-source89a489 IRQ54302. Its image/RAM comparison and stack analysis already used correct89a489 source/disassembly. Preserved original proposal and appended correction; no build/source rerun or alteration.",
+  "stack_scope": "936 versus924 is named linked direct-call coverage only, NOT a bound covering indirect/ROM/tail calls, engine callbacks or nested TIMER5/supervisor contexts. Fixed IRQ frame492 unchanged. Do not compare936 to physical stack capacity as qualification."
+}

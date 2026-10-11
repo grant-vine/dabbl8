@@ -1,0 +1,33 @@
+Undefined symbols for architecture arm64:
+  "_d8p1_crc32", referenced from:
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_encode in native_arp_key_mapping_test-096a46.o
+      ...
+  "_d8p1_read", referenced from:
+      _d8p1_load_runtime in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_decode in native_arp_key_mapping_test-096a46.o
+  "_d8p1_refs_available", referenced from:
+      _d8p1_load_runtime in native_arp_key_mapping_test-096a46.o
+      _d8p1_project_decode in native_arp_key_mapping_test-096a46.o
+  "_d8pool_inventory", referenced from:
+      _d8pr_preflight in native_arp_key_mapping_test-096a46.o
+      _prep_cb in native_arp_key_mapping_test-096a46.o
+  "_d8pool_load", referenced from:
+      _d8p1_load_pool in native_arp_key_mapping_test-096a46.o
+      _d8pr_preflight in native_arp_key_mapping_test-096a46.o
+      _d8p1_rename_pool in native_arp_key_mapping_test-096a46.o
+      _d8p1_autosave_snapshot_pool in native_arp_key_mapping_test-096a46.o
+      _prep_cb in native_arp_key_mapping_test-096a46.o
+  "_d8pool_save", referenced from:
+      _d8pr_save in native_arp_key_mapping_test-096a46.o
+      _d8p1_rename_pool in native_arp_key_mapping_test-096a46.o
+      _main in native_arp_key_mapping_test-096a46.o
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)

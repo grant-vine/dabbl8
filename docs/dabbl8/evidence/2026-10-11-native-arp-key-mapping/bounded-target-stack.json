@@ -1,0 +1,348 @@
+{
+  "control": {
+    "disassembly_sha256": "eba556d5cf705b21cb8c03220ed2c0cfc45cb7696eb5ad89cf836140191037bb",
+    "roots": {
+      "fm1_alnk0_irq": {
+        "direct_path_bytes": 924,
+        "path": [
+          "fm1_alnk0_irq",
+          "seq_ratchet",
+          "seq_step",
+          "seq_release",
+          "trk_note_off",
+          "mono_play",
+          "voice_room",
+          "voice_victim",
+          "lowest_held"
+        ]
+      },
+      "kb_map": {
+        "direct_path_bytes": 36,
+        "path": [
+          "kb_map",
+          "scale_snap"
+        ]
+      },
+      "input_on": {
+        "direct_path_bytes": 324,
+        "path": [
+          "input_on",
+          "trk_note_on",
+          "mono_play",
+          "voice_room",
+          "voice_victim",
+          "lowest_held"
+        ]
+      }
+    },
+    "functions": {
+      "fm1_alnk0_irq": {
+        "address": 33584946,
+        "size": 7552,
+        "fixed_frame_bytes": 492,
+        "direct_calls": [
+          "arp_chord",
+          "arp_chord_off",
+          "arp_off",
+          "arp_pick",
+          "chord_build",
+          "cin_begin",
+          "cin_block",
+          "cin_record",
+          "click_render",
+          "d8arr_advance_auto",
+          "d8arr_apply",
+          "d8arr_held_build",
+          "d8arr_held_refresh",
+          "div_samples",
+          "fx_buses",
+          "input_off",
+          "input_on",
+          "kb_lat",
+          "kb_map",
+          "key_place",
+          "lfo_wave",
+          "lowest_held",
+          "master_out",
+          "memcpy",
+          "midi_clock_pulse",
+          "midi_clock_transport",
+          "midi_event",
+          "midi_forget_track",
+          "midi_local_held",
+          "midi_out_event",
+          "midi_route_ch14",
+          "mod_begin",
+          "mod_end",
+          "mod_voice",
+          "motion_step",
+          "perf_begin",
+          "perf_key",
+          "perf_master",
+          "perf_mute",
+          "perf_pre",
+          "rec_note",
+          "rec_on",
+          "seq_ratchet",
+          "seq_release",
+          "seq_start",
+          "seq_step",
+          "seq_steps",
+          "seq_stop",
+          "shed_check",
+          "slicer_busy",
+          "slicer_track",
+          "trk_all_off",
+          "trk_note_off",
+          "trk_note_on",
+          "uac_render_start",
+          "uac_tap",
+          "usb_fixed_dac"
+        ],
+        "unresolved_calls": [
+          "2008422:    bf ea ca df       \t\tcall -16492",
+          "2008d56:    c1 00             \tcall r1",
+          "2008e3e:    c2 00             \tcall r2",
+          "2008e68:    c3 00             \tcall r3",
+          "2009016:    c5 00             \tcall r5"
+        ],
+        "dynamic_sp_lines": [],
+        "instructions": 2346,
+        "divides": 17
+      },
+      "kb_map": {
+        "address": 33566820,
+        "size": 268,
+        "fixed_frame_bytes": 20,
+        "direct_calls": [
+          "scale_snap"
+        ],
+        "unresolved_calls": [
+          "2003084:    c2 00             \tcall r2"
+        ],
+        "dynamic_sp_lines": [],
+        "instructions": 86,
+        "divides": 2
+      },
+      "input_on": {
+        "address": 33568720,
+        "size": 174,
+        "fixed_frame_bytes": 24,
+        "direct_calls": [
+          "cin_keep",
+          "rec_note",
+          "rec_on",
+          "trk_note_on"
+        ],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 64,
+        "divides": 0
+      },
+      "scale_snap": {
+        "address": 33566746,
+        "size": 74,
+        "fixed_frame_bytes": 16,
+        "direct_calls": [],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 25,
+        "divides": 1
+      },
+      "arp_pick": {
+        "address": 33574040,
+        "size": 334,
+        "fixed_frame_bytes": 24,
+        "direct_calls": [],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 131,
+        "divides": 5
+      }
+    }
+  },
+  "candidate": {
+    "disassembly_sha256": "5eb4bd622126e15956e59518ab14650dc8ca4ac8c445daf0f36d377c76079e3b",
+    "roots": {
+      "fm1_alnk0_irq": {
+        "direct_path_bytes": 936,
+        "path": [
+          "fm1_alnk0_irq",
+          "midi_event",
+          "midi_note_event",
+          "input_on",
+          "trk_note_on",
+          "mono_play",
+          "voice_room",
+          "voice_victim",
+          "lowest_held"
+        ]
+      },
+      "kb_pitch": {
+        "direct_path_bytes": 36,
+        "path": [
+          "kb_pitch",
+          "scale_snap"
+        ]
+      },
+      "kb_map": {
+        "direct_path_bytes": 48,
+        "path": [
+          "kb_map",
+          "kb_pitch",
+          "scale_snap"
+        ]
+      },
+      "input_on": {
+        "direct_path_bytes": 340,
+        "path": [
+          "input_on",
+          "trk_note_on",
+          "mono_play",
+          "voice_room",
+          "voice_victim",
+          "lowest_held"
+        ]
+      }
+    },
+    "functions": {
+      "fm1_alnk0_irq": {
+        "address": 33585142,
+        "size": 7536,
+        "fixed_frame_bytes": 492,
+        "direct_calls": [
+          "arp_chord",
+          "arp_chord_off",
+          "arp_off",
+          "arp_pick",
+          "chord_build",
+          "cin_begin",
+          "cin_block",
+          "cin_record",
+          "click_render",
+          "d8arr_advance_auto",
+          "d8arr_apply",
+          "d8arr_held_build",
+          "d8arr_held_refresh",
+          "div_samples",
+          "fx_buses",
+          "input_off",
+          "input_on",
+          "kb_lat",
+          "kb_map",
+          "kb_pitch",
+          "key_place",
+          "lfo_wave",
+          "lowest_held",
+          "master_out",
+          "memcpy",
+          "midi_clock_pulse",
+          "midi_clock_transport",
+          "midi_event",
+          "midi_forget_track",
+          "midi_local_held",
+          "midi_out_event",
+          "midi_route_ch14",
+          "mod_begin",
+          "mod_end",
+          "mod_voice",
+          "motion_step",
+          "perf_begin",
+          "perf_key",
+          "perf_master",
+          "perf_mute",
+          "perf_pre",
+          "rec_note",
+          "rec_on",
+          "seq_ratchet",
+          "seq_release",
+          "seq_start",
+          "seq_step",
+          "seq_steps",
+          "seq_stop",
+          "shed_check",
+          "slicer_busy",
+          "slicer_track",
+          "trk_all_off",
+          "trk_note_off",
+          "trk_note_on",
+          "uac_render_start",
+          "uac_tap",
+          "usb_fixed_dac"
+        ],
+        "unresolved_calls": [
+          "200848a:    bf ea f4 df       \t\tcall -16408",
+          "2008e0e:    c1 00             \tcall r1",
+          "2008efc:    c2 00             \tcall r2",
+          "2008f24:    c3 00             \tcall r3",
+          "20090d0:    c4 00             \tcall r4"
+        ],
+        "dynamic_sp_lines": [],
+        "instructions": 2363,
+        "divides": 17
+      },
+      "kb_pitch": {
+        "address": 33566884,
+        "size": 214,
+        "fixed_frame_bytes": 20,
+        "direct_calls": [
+          "scale_snap"
+        ],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 71,
+        "divides": 2
+      },
+      "kb_map": {
+        "address": 33567098,
+        "size": 34,
+        "fixed_frame_bytes": 12,
+        "direct_calls": [
+          "kb_engine",
+          "kb_pitch"
+        ],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 11,
+        "divides": 0
+      },
+      "input_on": {
+        "address": 33568764,
+        "size": 314,
+        "fixed_frame_bytes": 40,
+        "direct_calls": [
+          "cin_keep",
+          "kb_engine",
+          "rec_note",
+          "rec_on",
+          "trk_note_on"
+        ],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 105,
+        "divides": 1
+      },
+      "scale_snap": {
+        "address": 33566810,
+        "size": 74,
+        "fixed_frame_bytes": 16,
+        "direct_calls": [],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 25,
+        "divides": 1
+      },
+      "arp_pick": {
+        "address": 33574228,
+        "size": 334,
+        "fixed_frame_bytes": 24,
+        "direct_calls": [],
+        "unresolved_calls": [],
+        "dynamic_sp_lines": [],
+        "instructions": 131,
+        "divides": 5
+      }
+    }
+  },
+  "method": "Conservative fixed register pushes and downward SP adjustments per linked function; longest named direct-call path only. ROM, indirect/tail calls and nested IRQs unresolved; no hardware high-water or cycle claim."
+}

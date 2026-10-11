@@ -1,0 +1,8 @@
+{
+  "source": "a403f2a308487170445c115f9c7c845dedeeb92f",
+  "checks": "PASS",
+  "source_generated_goldens_unchanged": true,
+  "fullsuite": "NOT_RUN",
+  "new_target_build": "NOT_RUN test-only descendant; production source byte-identical362 with pinned prior target evidence",
+  "hardware": "NOT_RUN"
+}
