@@ -1,0 +1,137 @@
+{
+  "scope": "App-only compile evidence and host differential tests; no release or hardware qualification",
+  "baseline_commit": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "production_commit": "0a6ca3018f7a358747f698b7f464dc0594f52d24",
+  "source_sha256": {
+    "firmware/src/voice.c": "b995d9de974c6f331f2d7a1fa55c6640435fc89a6086cd0b8967b87aa0413657",
+    "firmware/src/fx.c": "cee06f65ba826ce6066d0a3123f8529d783e04b09bd874bffc90981699185f6a",
+    "tests/block_global_tuning.c": "3f3880ef7911b9c05c42c8bcfe16a1d90a3ae4a971dda1a9a910eecabbd892e1",
+    "tests/block_global_tuning.py": "8d91585dff60a70aa5436215e031e024961ffe66244ee7ad1e53d98b13fa4691",
+    "tests/run_tests.sh": "d27c684307820a9a1390a8ec0112cc82910bc0470cef2a9c95fa2e2d7ce43adc",
+    "docs/dabbl8/block-global-tuning-evidence.md": "1c7323235a6773ce1aeff09e1960db198162a4d102340e085e42d23661a1f201"
+  },
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "sdk_commit": "d179b4484759423312073f5fbb232501aa491047",
+  "container": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "targets": [
+    {
+      "name": "frozen4",
+      "image_bytes": 447928,
+      "image_sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "cost": {
+        "uac_tap48": {
+          "insns": 134,
+          "loop": 99,
+          "div": 0,
+          "call": 0,
+          "cost": 504
+        },
+        "fm1_alnk0_irq": {
+          "insns": 2114,
+          "loop": 2000,
+          "div": 16,
+          "call": 70,
+          "cost": 40609
+        }
+      }
+    },
+    {
+      "name": "candidate4",
+      "image_bytes": 447928,
+      "image_sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "cost": {
+        "uac_tap48": {
+          "insns": 134,
+          "loop": 99,
+          "div": 0,
+          "call": 0,
+          "cost": 504
+        },
+        "fm1_alnk0_irq": {
+          "insns": 2114,
+          "loop": 2000,
+          "div": 16,
+          "call": 70,
+          "cost": 40609
+        }
+      }
+    },
+    {
+      "name": "candidate8",
+      "image_bytes": 478700,
+      "image_sha256": "4a2452a0b1b9a49aa4b0a1e09e93136fbc4fa3c0cf3d877aac406b410ac4aa68",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 478700 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+      ],
+      "cost": {
+        "uac_tap48": {
+          "insns": 162,
+          "loop": 120,
+          "div": 0,
+          "call": 0,
+          "cost": 555
+        },
+        "fm1_alnk0_irq": {
+          "insns": 2342,
+          "loop": 2217,
+          "div": 16,
+          "call": 80,
+          "cost": 54302
+        }
+      }
+    },
+    {
+      "name": "frozen8",
+      "image_bytes": 478716,
+      "image_sha256": "32e3eceaa74a4329e17fed0b7812e1d99c37c0e7e2430648f6e4d1886c9a6baa",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 478716 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+      ],
+      "cost": {
+        "uac_tap48": {
+          "insns": 162,
+          "loop": 120,
+          "div": 0,
+          "call": 0,
+          "cost": 555
+        },
+        "fm1_alnk0_irq": {
+          "insns": 2345,
+          "loop": 2220,
+          "div": 16,
+          "call": 80,
+          "cost": 55487
+        }
+      }
+    }
+  ],
+  "frozen_host_receipt": "cases=42016 checks=211114 failures=0 silent=0 unadmitted=0 arrangements=6 audible_arrangements=6 audio_state_trace=aeb1daebac64c4a8",
+  "normal_frozen_candidate": "pass",
+  "inherited_sanitizer_frozen_candidate": "pass",
+  "four_track_golden_renders": {
+    "total": 92,
+    "changed": 0,
+    "gone": 0
+  },
+  "delivery_limits": {
+    "uac_tap48": 554.4,
+    "fm1_alnk0_irq": 41252.2
+  },
+  "eight_track_delivery_gate": "FAIL",
+  "hardware_tests": "not run",
+  "full_local_suite": "not run for bounded optimization"
+}
