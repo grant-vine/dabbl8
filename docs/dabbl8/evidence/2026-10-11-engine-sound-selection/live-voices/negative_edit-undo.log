@@ -1,0 +1,8 @@
+Mutation firmware/src/ui_layer.c
+    int rc;
+    if (e < NENGINES) {
+ ->     int rc;
+    if (!lys.loaded) undo.keep = 0;
+    if (e < NENGINES) {
+source SHA256 3d303a8b77bc22331f44925eda63b7641d171b88aeddc861f03d8dee4af135f5
+FAIL line 46: !memcmp(&before.undo, &(undo), sizeof(undo))

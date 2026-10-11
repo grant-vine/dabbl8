@@ -1,0 +1,5 @@
+Mutation firmware/src/upreset.c
+if (up_load_mask(k, mask)) return;
+ -> (void)up_load_mask(k, mask);
+source SHA256 6ab3d921842b65a5b7a68ed19c64ed9156ca0b526a973f0247244b21b4bd43d3
+FAIL line 46: !memcmp(&before.ui, &(ui), sizeof(ui))

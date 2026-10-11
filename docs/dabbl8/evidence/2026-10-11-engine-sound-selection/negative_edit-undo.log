@@ -1,0 +1,7 @@
+Mutation firmware/src/ui_layer.c
+    int rc;
+    if (e < NENGINES) {
+ ->     int rc;
+    if (!lys.loaded) undo.keep = 0;
+    if (e < NENGINES) {
+FAIL line 46: !memcmp(&before.undo, &(undo), sizeof(undo))

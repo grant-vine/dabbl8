@@ -1,0 +1,2 @@
+COMMAND ['clang', '-O2', '-w', '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=0', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_adoption_test.c', '-lm', '-o', '/private/tmp/d8-engine-sound-selection-evidence/normal_8_0_0_adoption']
+engine adoption: tracks=8 FM4=0 SLICE=0 proofs=388 PASS; live-state refusal and legacy target checks, host only
