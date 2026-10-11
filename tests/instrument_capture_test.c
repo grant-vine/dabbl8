@@ -169,6 +169,7 @@ static int bridge(void){char line[2048];fixture();while(fgets(line,sizeof line,s
  else return 2;
  fflush(stdout);continue;
  }uint8_t frame[1024];unsigned n=0;char *p=line,*end;while(*p){unsigned long v=strtoul(p,&end,16);if(end==p)break;if(v>255||n==sizeof frame)return 2;frame[n++]=(uint8_t)v;p=end;}if(n<6||frame[0]!=0xf0||frame[n-1]!=0xf7)return 2;ed_n=0;ed_handle(frame+1,n-2);so_r=so_w;printhex(ed_out,ed_n);}return failures?1:0;}
+#ifndef D8_INSTRUMENT_CAPTURE_NO_MAIN
 int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return bridge();
  cold_capture_cases();rotating_autosave_capture_cases();
  fixture();memcpy(baseline,nor,sizeof nor);begin_capture(1);CHECK(!status());scan();CHECK(ed_capture.phase==2);
@@ -217,3 +218,5 @@ int main(int argc,char **argv){if(argc==2&&!strcmp(argv[1],"--bridge"))return br
  printf("Cold capture: %u cases; rotated native autosave: %u blocks; no native binding/session or physical qualification\n",cold_cases,rotating_cases);
  printf("Instrument capture: %u checks, %u failures; actual editor/native capture, virtual NOR, no physical qualification\n",checks,failures);return failures!=0;
 }
+
+#endif
