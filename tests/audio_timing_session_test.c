@@ -15,7 +15,7 @@ static void integrity(void)
 }
 int main(void)
 {
-    assert(sizeof audio_timing==1064);
+    assert(sizeof audio_timing==1140);
     assert(!audio_timing_stop());
     audio_timing_record(1,2,1);
     assert(!audio_timing.render.count);
