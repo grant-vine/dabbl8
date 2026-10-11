@@ -52,32 +52,71 @@ target. CANONICAL rejects DIGITAL and assumes historical normalization has alrea
 run; it does not examine PHYS model parameters or migrate native projects. These
 helpers do not adopt patches or preset parameters. Factory preset range/modulo
 policy and the actual DIGITAL patch conversion remain the adoption caller's job.
-All refusal results preserve the helper's output. This is not a guarantee that
-live firmware state is preserved: publication paths do not consume the helpers yet.
+All refusal results preserve the helper's output. Project/native adoption now
+consumes these helpers through the compatibility adapter described below; other
+UI/editor sound-publication paths remain outstanding.
 
 `core.h` exposes an immutable `D8ENGINE_EFFECTIVE_MASK` observation of the existing
 Felucca SLICE/FM4 build switches. It does not change NENGINES, NENG_SHOWN, sentinel
 values or runtime behaviour. Attempting to override that macro or to inject the
 generator's `D8CARD_REQUESTED_ENGINE_MASK` now refuses compilation, including an
-attempted full mask. Candidate outputs remain research material. The helpers are
-not included in `felucca.c`; no selectable reduced-profile firmware is enabled,
+attempted full mask. Candidate outputs remain research material. The helpers are now included through `engines.c` for project-adoption checks;
+no selectable reduced-profile firmware is enabled,
 no engine or state is excluded, no availability capability is advertised, and no
 profile memory or physical timing qualification follows from this preparation.
 The policy registry covers the current 13 selectable engines with DIGITAL retired;
 optional historical `FELUCCA_FM4=1` behaviour remains untouched in shipping firmware
-and must be explicitly reconciled before runtime helper integration.
+and is retained by the project-adoption compatibility adapter.
 In particular, the observational mask includes DIGITAL when FM4 is enabled,
 whereas the current-card policy deliberately excludes that retired ID and
 converts LEGACY_SELECT requests to FM6. The observation is not a policy-ready mask for
-that compatibility build: integration must preserve its existing FM4 browsing
-and defaults or explicitly handle the configuration before enabling profiles.
+that compatibility build: `eng_runtime_target` checks the actual compiled mask,
+handles implemented DIGITAL directly and strips its bit before invoking the
+current-card helpers. Further UI/editor integration must preserve existing FM4
+browsing/defaults or explicitly handle the configuration before enabling profiles.
 
 Host fixtures exhaust every nonempty current-engine subset, display order and
 wraparound, exact IDs, effective migration targets, safe fallback defaults and
 unchanged refusal outputs. Actual `core.h` preprocessing checks the four existing
 SLICE/FM4 combinations and refusal of command-line/header profile overrides.
 The pure policy also runs strict ASan/UBSan without DSP exclusions. These are helper
-and preprocessing checks, not native-adoption transactions or target/device tests.
+and preprocessing checks; the separate adoption fixtures below exercise actual
+runtime transactions on the host. Neither supplies target/device qualification.
+
+### Used project/native adoption slice
+
+`project_restore_runtime` now routes production loads through availability checks
+using the immutable full compiled-engine mask. A bounded preview uses eight local
+parameter values and the existing PHYS/PERC migrations to determine each track's
+normalized engine. It also checks both initially published engines and late
+`PROJ_DEF_SOUND` / `PROJ_DEF_KEEP` targets. Missing engines refuse before project
+workspace acquisition, input normalization, transport/panic requests, undo,
+patch adoption, arrangement invalidation or live-state publication. Checks repeat
+after the existing normalization as a final pre-publication guard. Caller-owned
+structured project bytes remain unchanged on refusal.
+
+The native D8P1 loader first performs its existing structural/reference checks,
+then previews the validated schema-1 track bytes using the same target rules
+before borrowing the display/project arena. The decoded project still passes its
+existing semantic validators and the final structured guard before adoption.
+`D8RT_MISSING_ENGINE` reports a known engine-policy refusal; it is not a promise
+that every later semantic/resource/asset check would pass. Invalid masks and IDs
+outside the compiled ID range refuse as BAD. Production APIs offer no configurable
+mask; private mask-argument functions are a host-test seam. Cache/runtime/patch
+state and external wire bytes remain unchanged on refusal; staging may still
+change on other existing late busy/decode failures.
+
+`tests/engine_adoption_test.c` exercises these actual functions with sounding
+notes and snapshots tracks/voices, song, motion, chain/cache, patches/generations,
+undo/UI, pattern metadata, project identity, panic/transport/count-in and pending
+LCD DMA/fences. Cases cover missing engines, malformed masks/IDs, historical
+DIGITAL, PHYS/GM/PERC drum migration, late legacy sound aliases and valid
+normal stored SAMPLE parameters whose preset number alone must not cause a
+factory conversion. Existing FM4 and SLICE build combinations retain their
+engine meanings. Normal and sanitizer checks cover both four/eight-track paths;
+adoption sanitizer runs retain the existing upstream DSP exclusions, while the
+standalone policy checks remain strict. No hardware timing or memory saving
+claim follows from this host evidence.
 
 Runtime stage completion still requires all of the following:
 
@@ -86,9 +125,8 @@ Runtime stage completion still requires all of the following:
   refusal rather than announcing or acknowledging success.
 - Use filtered available counts throughout preset/favourite browsing, editor-layer
   keys/LEDs/drawing, startup and added-track defaults; preserve unavailable records.
-- Normalize historical native projects, then validate their final sound targets
-  before cache invalidation or publication, including legacy default-sound/drum
-  aliases; snapshot complete runtime/cache/patch/undo/transport state on refusal.
+- Complete all remaining publication paths beyond the project/native adoption
+  slice; retain transactional refusal tests and target regression evidence.
 - Define referenced-project compatibility precisely, including the existing late
   failure semantics during arrangement preparation.
 - Negotiate an explicit availability mask separately from the unchanged 15-byte

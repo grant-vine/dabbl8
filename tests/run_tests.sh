@@ -236,6 +236,15 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "eight-part display/project workspace: asynchronous DMA and drawing ownership" "$OUT/main_workspace_test" tests/fixtures/projects/fun9.bin
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "D8P1 stopped runtime adoption: full state, retained metadata and late-start refusal" "$OUT/d8p1_runtime_test"
+    for n in 4 8; do
+        for fm4 in 0 1; do
+            for slice in 0 1; do
+                label="engine_adoption${n}_fm${fm4}_slice${slice}"
+                $CC -O2 -w -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$label" firmware/src/d8p1.c tests/engine_adoption_test.c -lm
+                run "project/native availability refusal: $n tracks FM4=$fm4 SLICE=$slice, full state and LCD preservation" "$OUT/$label"
+            done
+        done
+    done
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
     run "native coherent canonical dirty signature: arrangement, music and UI exclusions" "$OUT/native_signature_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
@@ -512,6 +521,15 @@ else
     run "ASan/UBSan: eight-part asynchronous display/project workspace" "$A/main_workspace_test" tests/fixtures/projects/fun9.bin
     $SCC -o "$A/d8p1_runtime_test" firmware/src/d8p1.c tests/d8p1_runtime_test.c -lm
     run "ASan/UBSan: D8P1 stopped runtime adoption and full refusal preservation" "$A/d8p1_runtime_test"
+    for n in 4 8; do
+        for fm4 in 0 1; do
+            for slice in 0 1; do
+                label="engine_adoption${n}_fm${fm4}_slice${slice}"
+                $SCC -DNPART=$n -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -o "$A/$label" firmware/src/d8p1.c tests/engine_adoption_test.c -lm
+                run "ASan/UBSan: project/native availability refusal: $n tracks FM4=$fm4 SLICE=$slice" "$A/$label"
+            done
+        done
+    done
     $SCC -o "$A/native_signature_test" firmware/src/d8p1.c tests/native_signature_test.c -lm
     run "ASan/UBSan: native coherent canonical dirty signature" "$A/native_signature_test"
     $SCC -o "$A/native_signature_equivalence_test" firmware/src/d8p1.c tests/native_signature_equivalence_test.c -lm
