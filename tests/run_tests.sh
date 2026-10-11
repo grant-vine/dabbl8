@@ -526,6 +526,9 @@ fi
 run "regression: target cost of the render loops (pi32v2 disassembly)" python3 tests/target_budget.py \
     build/felucca.dis tests/target_budget.txt
 
+$CC -O2 -w -DDABBL8_IDENTITY=1 -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_branded_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+run "Dabbl8 visible editor family: actual branded INFO and no NOR mutation" node web/test_d8identity.mjs "$OUT/instrument_capture_branded_test" "Dabbl8 Editor"
+run "Dabbl8 visible editor family: actual inherited INFO and no NOR mutation" node web/test_d8identity.mjs "$OUT/instrument_capture_test" "Felucca Editor"
 run "Dabbl8 identity profile: namespace, bounds and unchanged loader model" python3 tests/d8identity_test.py
 for identity in upstream dabbl8 loader; do
     identity_flags=""

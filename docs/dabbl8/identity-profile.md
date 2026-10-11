@@ -19,7 +19,17 @@ The app USB product is Dabbl8, manufacturer Dabbl; editor, console, splash
 and About identify Dabbl8. About retains Felucca authors, foundation,
 upstream links and complete notices. Browser editor and sample upload
 recognise both old Felucca and Dabbl8 port names; names grant no capabilities.
-Actual native CAPS negotiation and validation remain required.
+Actual native CAPS negotiation and validation remain required. The browser
+editor starts with a neutral Felucca / Dabbl8 title and displays the connected
+firmware family from actual INFO; this is cosmetic and grants no authority.
+Disconnect restores the neutral title. The Dabbl8 mock identifies itself as
+MOCK, not as device evidence.
+
+The existing `web/make_site.py` release/site generator deliberately still
+accepts only upstream FM-1_9XY packages. Experimental FM-1_8XYZ packages are
+refused before site output, so this option supplies no public download or
+installation page. Extending release/site generation requires separately
+verified release evidence; it does not follow from software identity tests.
 
 The FM-1 model prefix, package codec/marker, loader `ota-FM-1_900`,
 Felucca Update descriptor and `FELUCCA-LOADER-1` signature are preserved.
