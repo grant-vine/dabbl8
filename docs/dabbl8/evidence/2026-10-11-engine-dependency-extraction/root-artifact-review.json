@@ -1,0 +1,25 @@
+{
+  "source_files_verified": 13,
+  "binary_pairs_verified": 24,
+  "type_config_pairs_verified": 8,
+  "memory_budget_pairs_verified": 8,
+  "scope": "Exact source and artifact comparisons, not performance or release qualification",
+  "target_budget_statuses": {
+    "4-fm0-sl0-parent": 1,
+    "4-fm0-sl0-candidate": 1,
+    "4-fm0-sl1-parent": 0,
+    "4-fm0-sl1-candidate": 0,
+    "4-fm1-sl0-parent": 1,
+    "4-fm1-sl0-candidate": 1,
+    "4-fm1-sl1-parent": 0,
+    "4-fm1-sl1-candidate": 0,
+    "8-fm0-sl0-parent": 1,
+    "8-fm0-sl0-candidate": 1,
+    "8-fm0-sl1-parent": 1,
+    "8-fm0-sl1-candidate": 1,
+    "8-fm1-sl0-parent": 1,
+    "8-fm1-sl0-candidate": 1,
+    "8-fm1-sl1-parent": 1,
+    "8-fm1-sl1-candidate": 1
+  }
+}

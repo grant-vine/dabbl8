@@ -37,15 +37,7 @@
  * PHASE WIRE 1510, TRIO CHIP CHOIR 1455, WHEEL FULL ORGAN 1413 (8 keys, no sends). State: per part the grain pool, the reverse windows and the index
  * (gr_p, in the pool section); per voice s[0] the zone, s[1] the countdown to the next grain,
  * s[2] the low-pass, voice_t's phases are unused. */
-#define GR_POLY 3                /* voices per part */
-#define GR_NG 12                 /* grains per part */
-#define GR_SEG_LOG2 8
-#define GR_SEG (1u << GR_SEG_LOG2)   /* seek index interval, source samples */
-#define GR_NIDX 1024             /* seek index entries per part (sized for the retired PERC: 1001; it keeps user slots room) */
-#define GR_MAXZ 32               /* zones per set (a user slot <= 16; the retired PERC had 24) */
-#define GR_RB 128                /* reverse window, source samples */
-#define GR_STEP_MAX (2u << 16)   /* grain rate cap: 2 source samples per output sample */
-#define GR_LOAD_MAX (8u << 16)   /* decodes per output sample of all a part's grains (a reverse grain counts twice) */
+#include "grain_limits.h"
 
 /* sin^2(pi i / 256), Q15: the grain window */
 static const int16_t GR_HANN[257] = {
@@ -74,33 +66,7 @@ static const int16_t GR_NORM[GR_NG + 1] = {32767, 32767, 23170, 18918, 16384, 14
 #if NPART >= NVOICE
 #include "heavy_state.h"
 #else
-typedef struct {
-    const smp_zone_t *z;
-    uint32_t pos;                /* forward: the next sample to decode; reverse: the index of a */
-    int32_t frac;                /* Q16 between a and b */
-    uint32_t step;               /* Q16 source samples per output sample */
-    uint32_t wph, winc;          /* window phase: one turn = the grain */
-    uint32_t left;               /* output samples to go */
-    int32_t a, b;                /* the two source samples around the read position */
-    int32_t pred, idx;           /* ADPCM state (forward) */
-    uint32_t rlo;                /* reverse: the source index of rb[0] */
-    int32_t gain;                /* Q15 */
-    uint8_t owner;               /* voice index + 1, 0 = free */
-    uint8_t rev;
-    uint8_t zl;                  /* its zone in the set */
-} gr_grain_t;
-
-typedef struct {
-    gr_grain_t g[GR_NG];
-    int16_t rb[GR_NG][GR_RB];    /* reverse windows */
-    int16_t ipred[GR_NIDX];      /* seek index: the state before sample k * GR_SEG of a zone */
-    uint8_t iidx[GR_NIDX];
-    uint16_t zbase[GR_MAXZ], zcnt[GR_MAXZ], zdone[GR_MAXZ];   /* entries of a zone: first, all, built */
-    uint32_t stamp;              /* what the index was built for (user slots: smp_user_gen) */
-    int32_t rng;
-    uint8_t src;                 /* SRC + 1 the index holds, 0 = none */
-    uint8_t nz;
-} gr_part_t;
+#include "grain_state.h"
 #endif
 #if NPART < NVOICE
 static gr_part_t gr_p[NPART] __attribute__((section(".pool")));

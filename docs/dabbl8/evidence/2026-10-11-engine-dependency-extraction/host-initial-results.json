@@ -1,0 +1,146 @@
+[
+  {
+    "name": "preprocess-parent-4-fm0-sl0",
+    "status": 0,
+    "stdout_sha256": "5014b1a664f1c414a6c4d84aa9b77dd019b5e50aa3b78c243507bab88cc315d1",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preprocess-candidate-4-fm0-sl0",
+    "status": 0,
+    "stdout_sha256": "d1643a89ebfc7bb8629b59cd18f707fb36f24ac1d81b21963798b48fd7fe3379",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-parent-legacy_fixture_test-4-fm0-sl0-normal",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-legacy_fixture_test-4-fm0-sl0-normal",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-candidate-legacy_fixture_test-4-fm0-sl0-normal",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-legacy_fixture_test-4-fm0-sl0-normal",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-parent-legacy_fixture_test-4-fm0-sl0-san",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-legacy_fixture_test-4-fm0-sl0-san",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-candidate-legacy_fixture_test-4-fm0-sl0-san",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-legacy_fixture_test-4-fm0-sl0-san",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preprocess-parent-4-fm0-sl1",
+    "status": 0,
+    "stdout_sha256": "aa3219487bf435199d3adfc902ee340857760d397b2e97063983abef653b5d48",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preprocess-candidate-4-fm0-sl1",
+    "status": 0,
+    "stdout_sha256": "23219483d782f3334e42d922339bc343e60f7bb9fbc96ebc9caf22fe05c9e7f3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-parent-legacy_fixture_test-4-fm0-sl1-normal",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-legacy_fixture_test-4-fm0-sl1-normal",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-candidate-legacy_fixture_test-4-fm0-sl1-normal",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-legacy_fixture_test-4-fm0-sl1-normal",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-parent-legacy_fixture_test-4-fm0-sl1-san",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-legacy_fixture_test-4-fm0-sl1-san",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-candidate-legacy_fixture_test-4-fm0-sl1-san",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "candidate-legacy_fixture_test-4-fm0-sl1-san",
+    "status": 0,
+    "stdout_sha256": "d8816b545531bc7d58c0507aa663a866b82021e308606762865bb9299afc3f6f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preprocess-parent-4-fm1-sl0",
+    "status": 0,
+    "stdout_sha256": "6be4068cdf9a861436f566c52b598e185091b0d2c8b9e738b23a4f6a0a235191",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preprocess-candidate-4-fm1-sl0",
+    "status": 0,
+    "stdout_sha256": "080b6492bca269b8002cf32a762ae4492e969d0a65b570feb9b7b0fe357950b1",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "compile-parent-legacy_fixture_test-4-fm1-sl0-normal",
+    "status": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "parent-legacy_fixture_test-4-fm1-sl0-normal",
+    "status": 1,
+    "stdout_sha256": "352972e2ee6f8371958963eb663e4070593cdd1c3ece9f17321a8710e2c3779d",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

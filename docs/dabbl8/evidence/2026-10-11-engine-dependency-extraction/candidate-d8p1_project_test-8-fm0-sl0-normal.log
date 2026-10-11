@@ -1,0 +1,6 @@
+COMMAND ['python3', 'tests/d8p1_project_test.py', '/private/tmp/d8-engine-dependency-extraction/candidate-d8p1_project_test-8-fm0-sl0-normal']
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 54761 checks, 0 failures; staged state only, no runtime/flash adoption
+D8P1 project fixtures: 13 legacy originals and all canonical references remain pristine
+
+STATUS 0

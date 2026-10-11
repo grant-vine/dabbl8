@@ -32,7 +32,7 @@
  * partials whose gain moved: percussion, rotary, knobs); the bar levels, the rotor and the
  * percussion run once per block. State: the per-track rotor and bar gains (drw_trk) and the
  * per-voice phases / gains (drw_vc) live here, indexed by part and voice; voice_t is unused. */
-#define DRW_NP 9                 /* partials */
+#include "wheel_limits.h"
 #define DRW_FOLD 584366000u      /* ~6 kHz as a phase increment: partials above fold down an octave */
 #define DRW_XOVER 77915000u      /* ~800 Hz: below the low rotor, above the high rotor */
 
@@ -104,14 +104,7 @@ typedef struct {                 /* per part, once per block (wheel_block) */
     int32_t fm[2];               /* this block's pitch offset, Q16 of the increment, per rotor */
 } drw_trk_t;
 
-typedef struct {                 /* per voice */
-    uint32_t ph[DRW_NP];
-    int32_t gp[DRW_NP];          /* each partial's gain at the end of the last block (the ramp start) */
-    int32_t perc;                /* percussion envelope, Q15 */
-    int32_t clk;                 /* click envelope, Q15 */
-    int32_t nz, hp;              /* click noise state, its high-pass state */
-    uint8_t gate, init;
-} drw_vc_t;
+#include "wheel_state.h"
 
 static drw_trk_t drw_t[NPART];
 #if NPART >= NVOICE

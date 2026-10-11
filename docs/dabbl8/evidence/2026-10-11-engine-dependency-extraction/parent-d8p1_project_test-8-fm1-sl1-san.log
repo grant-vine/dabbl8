@@ -1,0 +1,15 @@
+COMMAND ['python3', 'tests/d8p1_project_test.py', '/private/tmp/d8-engine-dependency-extraction/parent-d8p1_project_test-8-fm1-sl1-san']
+Native staged state: 9536 bytes (host layout, not target fit)
+D8P1 project adapter: 54761 checks, 2 failures; staged state only, no runtime/flash adoption
+FAIL: legacy semantics equal unchanged upstream canonical FUN9 reference
+FAIL: legacy semantics equal unchanged upstream canonical FUN9 reference
+Traceback (most recent call last):
+  File "/private/tmp/d8-engine-dependency-extraction/parent/tests/d8p1_project_test.py", line 15, in <module>
+    subprocess.run(args, cwd=root, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['/private/tmp/d8-engine-dependency-extraction/parent-d8p1_project_test-8-fm1-sl1-san', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/d8p1/minimal.d8p', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/d8p1/maximum.d8p', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/d8p1/unknown-optional.d8p', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun1-digital.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun1.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun2.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun3.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun4-phys-drum.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun4.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun5.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun6.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun7.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun8-perc.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun8.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun9-digital.bin', '/private/tmp/d8-engine-dependency-extraction/parent/tests/fixtures/projects/fun9.bin']' returned non-zero exit status 1.
+
+STATUS 1

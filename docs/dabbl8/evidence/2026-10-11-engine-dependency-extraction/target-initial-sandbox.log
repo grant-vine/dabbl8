@@ -1,0 +1,14 @@
+permission denied while trying to connect to the docker API at unix:///Users/grantv/.docker/run/docker.sock
+Traceback (most recent call last):
+  File "/private/tmp/d8-engine-dependency-extraction/target_verify.py", line 8, in <module>
+    env['container']=json.loads(subprocess.check_output(['docker','image','inspect',image],text=True))[0];assert env['container']['Architecture']=='amd64' and env['container']['Os']=='linux'
+                                ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 473, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+               **kwargs).stdout
+               ^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['docker', 'image', 'inspect', 'debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587']' returned non-zero exit status 1.

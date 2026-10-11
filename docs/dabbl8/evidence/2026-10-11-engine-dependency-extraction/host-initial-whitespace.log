@@ -1,0 +1,7 @@
+preprocess-parent-4-fm0-sl0 0
+preprocess-candidate-4-fm0-sl0 0
+Traceback (most recent call last):
+  File "/private/tmp/d8-engine-dependency-extraction/host_verify.py", line 20, in <module>
+    assert outs[0]==outs[1],name+' preprocessing drift'
+           ^^^^^^^^^^^^^^^^
+AssertionError: 4-fm0-sl0 preprocessing drift
