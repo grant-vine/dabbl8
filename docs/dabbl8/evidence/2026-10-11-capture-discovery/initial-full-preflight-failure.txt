@@ -1,0 +1,1 @@
+Full runner NOT STARTED: generated29 manifest includes build/genwav/D CHAT.wav outside build/gen; copied all29 manifest paths in corrected orchestration before retry. Source0a3c unchanged.
