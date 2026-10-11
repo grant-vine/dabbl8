@@ -1,0 +1,44 @@
+{
+  "source_commit": "919ad3d1261ac3cd2607525c2894d848736ab775",
+  "base": "3174e63e190e44f9905ceddc9911e90696b5009a",
+  "scope": "Independent root final source/evidence hash review plus pinned app-only target compilation. Host suites were run by implementation agent and not rerun here. Main now includes separate PR115; these app controls explicitly use frozen3174, not that newer source union. No loader/package/install or calibrated hardware timing/stack qualification.",
+  "four_app_and_elf_identical": true,
+  "eight_code_delta_bytes": 256,
+  "data_and_pool_unchanged": true,
+  "static_budget_exits": [
+    0,
+    0,
+    1,
+    1
+  ],
+  "preflight_local_stack_reservation": {
+    "base_bytes": 12,
+    "candidate_bytes": 152,
+    "base_register_push": "rets,r13-r4",
+    "candidate_register_push": "rets,r15-r4",
+    "scope": "Single compiler-generated function reservation only; inlining and nested calls change, so this does not measure maximum call-chain or physical nested-interrupt stack usage."
+  },
+  "source_hashes": {
+    "firmware/src/d8p1_pool_runtime.c": "1eaf0f375c7522e016319be2eca3aa7742e77cf71773cc5aa4194764ee4d58ad",
+    "tests/shared_pool_scan_test.c": "28407edfd7472f728a5efb13d0e71b5030f14d944c1a0abf8de8961f01fefee8"
+  },
+  "generated_header_hashes": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "binary_hashes": {
+    "8-candidate-felucca.elf": "b124d7f29048106781b1fee86a4e08a55c8620c381ed4775b516666ed723ec1f",
+    "4-main-control-felucca.elf": "71ba1f1c654d4a479ee287614c4c883ece3eb7e1731b42cbe955c67456f3d92d",
+    "8-main-control-felucca.elf": "1dd4d7649818b08e0961b49b97a46bfa175d68da9743fab8cb77e5aaa4a0701c",
+    "4-candidate-felucca.elf": "71ba1f1c654d4a479ee287614c4c883ece3eb7e1731b42cbe955c67456f3d92d",
+    "4-candidate-felucca.bin": "a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096",
+    "8-candidate-felucca.bin": "162dda683447ae355cbf2969e4bee13be7fe6eb29004843ba0ff6c227b2543fa",
+    "4-main-control-felucca.bin": "a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096",
+    "8-main-control-felucca.bin": "36b2b0000e6d5457219b29242a1601c734059aab39acc263779ffa51b270b24d"
+  }
+}

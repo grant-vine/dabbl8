@@ -20,28 +20,66 @@ static d8pool d8pr_guard(const d8pool *s)
 /* Check the entire native set before making any stored identity available.
  * Unknown/invalid metadata in even a different current object refuses use.
  * No missing object is claimed to exist and no blank pool authorizes erase. */
-static int d8pr_preflight(const d8pool *s,d8pool_index *index,d8p1_stage_workspace **stage,d8p1_project_catalog *catalog)
+/* Private synchronous preflight ownership, never a cached storage receipt.
+ * Recursive pool runtime preflight entrants from a backend callback refuse before
+ * borrowing or replacing the shared arena. */
+static uint8_t d8pr_preflight_active;
+static int d8pr_same_index(const d8pool_index *a,const d8pool_index *b)
 {
-    int rc;
+    if(a->present!=b->present)return 0;
+    for(unsigned o=0;o<D8POOL_OBJECTS;o++)if(a->present&(1u<<o)) {
+        const d8pool_record *x=&a->object[o],*y=&b->object[o];
+        if(x->block!=y->block||x->sequence!=y->sequence||x->length!=y->length||x->crc!=y->crc)return 0;
+    }
+    return 1;
+}
+/* Only records from this call's complete inventory enter here. A copied body
+ * is checked against that inventory's CRC and actual codec/reference policy.
+ * A final complete inventory below checks every current identity and foreign
+ * allocation before the staged catalog or write preflight can be published. */
+static int d8pr_copy_record(const d8pool *s,const d8pool_record *r,uint8_t *wire,unsigned mask)
+{
+    d8p1_view view;
+    if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
+    if(s->read(s->context,r->block*D8POOL_BLOCK+D8POOL_HEADER,wire,r->length))return D8POOL_IO;
+    if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
+    if(d8p1_crc32(wire,r->length)!=r->crc||d8p1_read(&view,wire,r->length)!=1||
+       !d8p1_refs_available(&view,mask))return D8POOL_INVALID;
+    return D8POOL_OK;
+}
+static int d8pr_preflight_owned(const d8pool *s,d8pool_index *index,d8p1_stage_workspace **stage,d8p1_project_catalog *catalog)
+{
+    int rc;uint32_t epoch=d8_capture_change.epoch;
     if(!d8pr_ready(s))return D8POOL_INVALID;
     if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
     rc=d8pool_inventory(s,index);if(rc)return rc;
     if(!index->present)return D8POOL_EMPTY;
     *stage=main_d8p1_workspace_try();
     if(!*stage)return D8POOL_BUSY;
-    if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
+    if(!d8pr_stopped((void *)s)||epoch!=d8_capture_change.epoch)return D8POOL_BUSY;
     for(unsigned o=0;o<D8POOL_OBJECTS;o++)if(index->present&(1u<<o)) {
-        size_t n=0;
-        rc=d8pool_load(s,o,(*stage)->wire,sizeof (*stage)->wire,&n,index->present&7u);
+        const d8pool_record *r=&index->object[o];
+        rc=d8pr_copy_record(s,r,(*stage)->wire,index->present&7u);
         if(rc)return rc;
-        if(!d8p1_project_decode(&(*stage)->state,(*stage)->wire,n,index->present&7u))return D8POOL_INVALID;
+        if(!d8p1_project_decode(&(*stage)->state,(*stage)->wire,r->length,index->present&7u))return D8POOL_INVALID;
         if(catalog&&o<3) {
             memcpy(catalog->name[o],(*stage)->state.project.name,12);
             catalog->name[o][12]=0;catalog->present|=(uint8_t)(1u<<o);
         }
-        if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
+        if(!d8pr_stopped((void *)s)||epoch!=d8_capture_change.epoch)return D8POOL_BUSY;
     }
+    d8pool_index after;
+    rc=d8pool_inventory(s,&after);if(rc)return rc;
+    if(!d8pr_stopped((void *)s)||epoch!=d8_capture_change.epoch||!d8pr_same_index(index,&after))return D8POOL_BUSY;
     return D8POOL_OK;
+}
+static int d8pr_preflight(const d8pool *s,d8pool_index *index,d8p1_stage_workspace **stage,d8p1_project_catalog *catalog)
+{
+    if(d8pr_preflight_active)return D8POOL_BUSY;
+    d8pr_preflight_active=1;
+    int rc=d8pr_preflight_owned(s,index,stage,catalog);
+    d8pr_preflight_active=0;
+    return rc;
 }
 static int d8pr_runtime_status(int rc)
 { return rc==D8RT_OK?D8POOL_OK:rc==D8RT_BUSY?D8POOL_BUSY:D8POOL_INVALID; }
