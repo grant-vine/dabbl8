@@ -1,0 +1,45 @@
+{
+  "4": {
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "bytes": 447928,
+    "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "hardware": "NOT_RUN"
+  },
+  "8": {
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "bytes": 467100,
+    "sha256": "bf2614a3b0d30f084f7c2f956c4d6861ee36d0b4bfc2951830bf5bdcc19a04c0",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 467100 B; RAM .data+.bss 95812 B of 98304; pool 334316 B of 344064"
+    ],
+    "hardware": "NOT_RUN"
+  },
+  "dabbl8": {
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "bytes": 467160,
+    "sha256": "77f9be85d54f821cf83c3822420b539000f4a9221ce882f8e322b2cb8823d7c3",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 467160 B; RAM .data+.bss 95812 B of 98304; pool 334316 B of 344064"
+    ],
+    "hardware": "NOT_RUN"
+  },
+  "package": {
+    "bytes": 610086,
+    "sha256": "f3a8f961b1b22adbba28456d05ac72cfd973de94f7884720cc9f0588224a104a",
+    "identity": "FM-1_8010",
+    "version": "v0.1.0-dev",
+    "loader_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "python_browser_identity_equal": true,
+    "hardware": "NOT_RUN",
+    "release_qualified": false
+  }
+}

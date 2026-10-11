@@ -220,6 +220,35 @@ def installs():
         ok(True, "sample upload: a malformed SMP_INFO reply is an error")
 
 
+def dabbl8_installs():
+    from d8identity import dabbl8_identity
+    product = dabbl8_identity("0.1-dev").product
+    raw = package(product=product)
+    image = I.logical_image(raw)
+    p = pkgfile("dabbl8-0.1.0-dev.fwsc", raw)
+    dev = FakeFM1(image, identity="FM-1_900", name="Felucca", after_write=product)
+    rc, out, err = cli([p, "--yes"], dev)
+    ok(rc == 0 and dev.bad == 0 and dev.identity == product and dev.upgrades == 2,
+       "Dabbl8: upstream app -> unchanged Felucca loader -> exact Dabbl8 identity (simulated)")
+    dev = FakeFM1(image, identity=product, name="Dabbl8", after_write=product)
+    rc, out, err = cli([p, "--yes"], dev)
+    ok(rc == 0 and dev.bad == 0 and dev.identity == product,
+       "Dabbl8: branded app port discovered and same-model update succeeds (simulated)")
+    dev = FakeFM1(image, identity="ota-FM-1_900", name="Felucca Update", after_write=product)
+    rc, out, err = cli([p, "--yes"], dev)
+    ok(rc == 0 and dev.bad == 0 and dev.upgrades == 1,
+       "Dabbl8: unchanged loader resumes exact package (simulated)")
+    dev = FakeFM1(image, after_write="FM-1_900")
+    rc, out, err = cli([p, "--yes"], dev)
+    ok(rc == 6 and "reports FM-1_900" in err, "Dabbl8: wrong post-reboot identity refused")
+    dev = FakeFM1(image, identity="XY-9_8010", name="Dabbl8")
+    rc, out, err = cli([p, "--yes"], dev)
+    ok(rc == 6 and dev.upgrades == 0, "Dabbl8: wrong model refused before writes")
+    dev = FakeFM1(image)
+    rc, out, err = cli([pkgfile("dabbl8-no-loader.fwsc",package(product=product,marker=False)), "--yes"], dev)
+    ok(rc == 2 and dev.sent == [], "Dabbl8: missing loader marker refused before MIDI")
+
+
 def errors():
     raw = package()
     image = I.logical_image(raw)
@@ -308,6 +337,7 @@ def official():
 
 wire()
 installs()
+dabbl8_installs()
 errors()
 against_js()
 official()

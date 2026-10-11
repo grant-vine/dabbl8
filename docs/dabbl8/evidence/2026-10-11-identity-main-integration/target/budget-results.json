@@ -1,0 +1,26 @@
+{
+  "4": {
+    "exit": 0,
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "failures": [],
+    "hardware": "NOT_RUN"
+  },
+  "8": {
+    "exit": 1,
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "failures": [
+      "target: fm1_alnk0_irq    2318 instructions, 2193 in loops, 16 divides, 80 calls there: cost 54935 (budget 37502) OVER BUDGET (+46 %, limit +10 %)",
+      "target: uac_tap48         158 instructions,  126 in loops, 0 divides,  0 calls there: cost   570 (budget 504) OVER BUDGET (+13 %, limit +10 %)"
+    ],
+    "hardware": "NOT_RUN"
+  },
+  "dabbl8": {
+    "exit": 1,
+    "source": "193fcb7c668452026db15bf99e1f38b5ebc58bb8",
+    "failures": [
+      "target: fm1_alnk0_irq    2318 instructions, 2193 in loops, 16 divides, 80 calls there: cost 54935 (budget 37502) OVER BUDGET (+46 %, limit +10 %)",
+      "target: uac_tap48         158 instructions,  126 in loops, 0 divides,  0 calls there: cost   570 (budget 504) OVER BUDGET (+13 %, limit +10 %)"
+    ],
+    "hardware": "NOT_RUN"
+  }
+}

@@ -544,6 +544,21 @@ fi
 run "regression: target cost of the render loops (pi32v2 disassembly)" python3 tests/target_budget.py \
     build/felucca.dis tests/target_budget.txt
 
+if command -v node >/dev/null 2>&1 && [ -f build/gen/felucca_tables.h ] && [ -x "$OUT/instrument_capture_test" ]; then
+$CC -O2 -w -DDABBL8_IDENTITY=1 -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_branded_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
+run "Dabbl8 visible editor family: actual branded INFO and no NOR mutation" node web/test_d8identity.mjs "$OUT/instrument_capture_branded_test" "Dabbl8 Editor"
+run "Dabbl8 visible editor family: actual inherited INFO and no NOR mutation" node web/test_d8identity.mjs "$OUT/instrument_capture_test" "Felucca Editor"
+else
+    echo "== skip Dabbl8 visible identity (needs node, generated tables and capture fixture)"
+fi
+run "Dabbl8 identity profile: namespace, bounds and unchanged loader model" python3 tests/d8identity_test.py
+for identity in upstream dabbl8 loader; do
+    identity_flags=""
+    [ "$identity" = upstream ] || identity_flags="-DDABBL8_IDENTITY=1"
+    [ "$identity" != loader ] || identity_flags="$identity_flags -DFELUCCA_LOADER=1 -DFELUCCA_USB_PID=2"
+    $CC $identity_flags -o "$OUT/d8identity_usb_test" tests/d8identity_usb_test.c
+    run "Dabbl8 identity descriptors: $identity" "$OUT/d8identity_usb_test"
+done
 run "installer CLI (fm1_install.py) against a simulated FM-1" python3 tests/install_test.py
 
 if command -v node >/dev/null 2>&1; then

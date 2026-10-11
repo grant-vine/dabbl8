@@ -8,6 +8,19 @@ The build makes three files in `build/`:
 | `loader/ota.bin` | the update loader |
 | `felucca.fwsc` | the installable package (app + loader) |
 
+## Experimental Dabbl8 profile
+
+With the verified dependencies below, `./build.sh --dabbl8 0.1-dev` creates
+`build/dabbl8-0.1.0-dev.fwsc`. This explicitly selects eight tracks sharing
+eight sounding voices and the coordinated Dabbl8 app identity. It preserves
+the compatible Felucca loader and does not enable quarantined native writes.
+This is a local experimental build; hardware timing, recovery, stack and
+release approval remain open. The inherited USB IDs are test IDs.
+See [identity profile](docs/dabbl8/identity-profile.md) for the version and
+numeric OTA convention. The existing upstream site/release generator still
+refuses this experimental numeric family; no public installation page or
+verified download is produced by this option.
+
 ## Prerequisites (macOS)
 
 - Python 3 with Pillow and fontTools: `pip3 install Pillow fonttools` (the UI font and icons are

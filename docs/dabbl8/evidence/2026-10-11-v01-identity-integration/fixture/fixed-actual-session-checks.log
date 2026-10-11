@@ -1,0 +1,10 @@
+editor: old completion cannot release new connection's busy count true
+editor: operation release is idempotent and never goes negative true
+editor: late reply from an unplugged device is rejected true
+editor: captured request cannot write through a replacement connection true
+editor: interrupted initial load cannot paint or unlock a new session true
+editor: unplug during library adoption aborts the old load true
+editor: a current connection still completes its initial load true
+editor: actual load updates the document and visible title from branded INFO true
+editor: library storage delay cannot send a save to a new device true
+Actual editor session fixture: 9 checks passed; no early-load hang and actual INFO title verified

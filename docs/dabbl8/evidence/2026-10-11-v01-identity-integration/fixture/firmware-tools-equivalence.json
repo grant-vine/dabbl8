@@ -1,0 +1,9 @@
+{
+  "source": "f913ce765e994290554b06b51d6bca6260934cbb",
+  "prior_target_source": "e8049c897a2f6cd7edcc5589435cf9710c2e0235",
+  "firmware_tools_and_license_diff_paths": [],
+  "fresh_binary_package_hashes_equal": true,
+  "fixture_checks": 9,
+  "old_full_result": 1,
+  "corrected_full_result": "LIVE18019; not yet proven"
+}

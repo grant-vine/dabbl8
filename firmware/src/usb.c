@@ -25,6 +25,7 @@
 #ifndef FELUCCA_USB_HAL
 #define FELUCCA_USB_HAL "../hal/fm1_usb.h"
 #endif
+#include "identity.h"
 #include FELUCCA_USB_HAL /* default hardware; host tests may supply a simulated HAL */
 #ifndef FELUCCA_CDC
 #define FELUCCA_CDC 0
@@ -342,11 +343,17 @@ static uint8_t usb_cdc_on = FELUCCA_CDC_DEFAULT != 0;      /* the console is pre
 #endif
 #define UAC_AS_IF (AUD_IF + 2u)
 static const uint8_t STR0[4] = {4, 3, 0x09, 0x04};
+#if DABBL8_IDENTITY && !defined(FELUCCA_LOADER)
+static const uint8_t STR1[] = {12, 3, 'D', 0, 'a', 0, 'b', 0, 'b', 0, 'l', 0};
+#else
 static const uint8_t STR1[] = {42, 3, 'H', 0, 0xFC, 0, 'g', 0, 'e', 0, 'l', 0, 't', 0, 'o', 0, 'n', 0, ' ', 0, 'I', 0,
                                'n', 0, 's', 0, 't', 0, 'r', 0, 'u', 0, 'm', 0, 'e', 0, 'n', 0, 't', 0, 's', 0};
+#endif
 #ifdef FELUCCA_LOADER
 static const uint8_t STR2[] = {30, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0, ' ', 0, 'U', 0, 'p', 0,
                                'd', 0, 'a', 0, 't', 0, 'e', 0};
+#elif DABBL8_IDENTITY
+static const uint8_t STR2[] = {14, 3, 'D', 0, 'a', 0, 'b', 0, 'b', 0, 'l', 0, '8', 0};
 #else
 static const uint8_t STR2[] = {16, 3, 'F', 0, 'e', 0, 'l', 0, 'u', 0, 'c', 0, 'c', 0, 'a', 0};
 #endif

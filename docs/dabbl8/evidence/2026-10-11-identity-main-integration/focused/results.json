@@ -1,0 +1,132 @@
+[
+  {
+    "name": "profile",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "upstream-opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "upstream-opt",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "dabbl8-opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "dabbl8-opt",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "loader-opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "loader-opt",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-legacy-opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-legacy-opt-identity",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-branded-opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-branded-opt-identity",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "upstream-san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "upstream-san",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "dabbl8-san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "dabbl8-san",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "loader-san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "loader-san",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-legacy-san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-legacy-san-identity",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-branded-san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "capture-branded-san-identity",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "four-bridge-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "branded-discovery",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "installer",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "local-editor-site",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "experimental-site-refusal",
+    "exit": 1,
+    "expected_exit": 1
+  }
+]

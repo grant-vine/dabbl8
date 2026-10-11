@@ -1,0 +1,16 @@
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import {d8InfoDiscovery,d8EditorTitle} from '/Users/grantv/Code/dabbl8/.local-baseline/v01-session-fixture-fix/web/d8info.js';
+const r='/Users/grantv/Code/dabbl8/.local-baseline/v01-session-fixture-fix';
+const html=readFileSync(r+'/web/editor.html','utf8');
+const proto=html.slice(html.indexOf('/*PROTO-BEGIN*/'),html.indexOf('/*PROTO-END*/'));
+const E=vm.runInNewContext(proto+';({d8Request})',{setTimeout,clearTimeout,setInterval,clearInterval,console,d8InfoDiscovery});
+const file=readFileSync(r+'/web/test_web.mjs','utf8');
+const fn=file.slice(file.indexOf('async function editorSessions()'),file.indexOf('\nfunction editorTabs()',file.indexOf('async function editorSessions()')));
+let count=0;
+const ok=(cond,what)=>{count++;console.log(what,cond);if(!cond)throw Error(what)};
+let timer;
+await Promise.race([vm.runInNewContext(fn+';editorSessions()',{html,E,vm,ok,console,Promise,Error,Date,d8EditorTitle}),new Promise((_,reject)=>timer=setTimeout(()=>reject(Error('session fixture timed out')),2000))]);
+clearTimeout(timer);
+if(count!==9)throw Error('unexpected actual session checks '+count);
+console.log('Actual editor session fixture: '+count+' checks passed; no early-load hang and actual INFO title verified');

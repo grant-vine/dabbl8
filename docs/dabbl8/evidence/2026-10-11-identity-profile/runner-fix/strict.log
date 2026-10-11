@@ -1,0 +1,17 @@
+Dabbl8 identity descriptors: upstream
+upstream product UTF-16 length/content                                   ok
+upstream display identity                                                ok
+upstream manufacturer bytes retained                                     ok
+unchanged test VID                                                       ok
+no assigned USB ID claim                                                 ok
+Dabbl8 identity descriptors: dabbl8
+Dabbl8 product UTF-16 length/content                                     ok
+Dabbl manufacturer UTF-16 length/content                                 ok
+Dabbl8 display identity                                                  ok
+unchanged test VID                                                       ok
+no assigned USB ID claim                                                 ok
+Dabbl8 identity descriptors: loader
+unchanged loader product UTF-16 length/content                           ok
+upstream manufacturer bytes retained                                     ok
+unchanged test VID                                                       ok
+no assigned USB ID claim                                                 ok

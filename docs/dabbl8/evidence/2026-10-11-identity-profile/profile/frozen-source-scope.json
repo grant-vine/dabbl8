@@ -1,0 +1,31 @@
+{
+  "source": "d86711a1764d3228ca61a6279f4a103dfac5b12c",
+  "parent": "e63164bc41c563fa02fe6d5bb4affecaca05adbd",
+  "source_sha256": {
+    "docs/dabbl8/identity-profile.md": "daf317b6b6f2c34a9cba7dc9ce7fb819f02e88716fad2a7eabc0781ca0aa040f",
+    "firmware/src/console.c": "522e75f4949213e22b5ae76d5fec81ba96ca08f13daa625ca5f46d09b88f0d69",
+    "firmware/src/core.h": "ab2ba2e34a691f59ada310ab31088c8b52bc41eebd280ed7ada8f84359eccaa4",
+    "firmware/src/editor.c": "89874d40548c4b54e90fb063c80ab9e621eed50ed080970de9065f534300485b",
+    "firmware/src/felucca.c": "95c49388411e4fc239ae6297cb7a3dc8e5042bf1b4bd90dde9579f029ae2b99d",
+    "firmware/src/identity.h": "9eab114d7d7a93942725ca172cee05b945ad1b69533e908ef33d562bc48ec8e8",
+    "firmware/src/ui_draw.c": "c11ea23c93a41cfe4d59555fb98c359261b5071fc5eccd308c1774a8259a0f8d",
+    "firmware/src/ui_menu.c": "3199cfe8e0d3c262c27696bbd2c3c72a9aff053887b940266a6a608cfd5602a5",
+    "firmware/src/usb.c": "81bb2bea844b1abbe468980362779a21fadb3f099229bce168f47184ef6e9133",
+    "tests/d8identity_test.py": "5cb22f67d259502cf1e48a8bc5e9b930e2c136e61c8862bd490e976f42e87653",
+    "tests/d8identity_usb_test.c": "4457e6e2be2c62cf512369194d524e016ece57b3140086928bff3f8f31e6e8eb",
+    "tests/install_test.py": "25cfc723405157df7778f95a993f79445bb1329d791b65507636c2f83ceb0450",
+    "tests/run_tests.sh": "19a4fc6aa888568203afe6435608b2fc7520e6218b2c669ae071c0ce855ce893",
+    "tools/build.py": "52b77ff1c097cda6682417e402fd5efc4156eb39299c23acccb9b21c1233277f",
+    "tools/d8identity.py": "6d4320e75dbfd20e85837219f53077ea370793e3fd6b1e73478f981b56e76792",
+    "tools/fm1_install.py": "0741b44d0190e6f5ad66043f6c44fffe77f89ea837fa3decbd31137f17d7f2f4",
+    "tools/fm1_sample_upload.py": "a72f056519e7b9d0459bbe98e535178c447719d13a2d208980c9d4113a7e5164",
+    "web/d8info.js": "650aedcc028da66a24b22032588fa4663bba6638f21837273cf228d20ea58e1b",
+    "web/editor.html": "cf70bbef59096c8164a911c5b468deb096b2a89fd4b3107b52edae1297939cac"
+  },
+  "focused": "PASS38profile/strict6descriptorvariants/6additionalupdatercases/8portcases",
+  "actual_branded_INFO_discovery": 95,
+  "hardware": "NOT_RUN",
+  "release_qualified": false,
+  "compiler_warning": "Inherited native_migration_capture_binding volatile-pointer qualifier warning observed; target tool stderr in session output",
+  "editor_scope": "Device INFO branding and discovery; existing browser page static title still Felucca, coordinated visible title followup required after immutable full suite terminal"
+}

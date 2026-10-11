@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Known modern INFO trailer only. Identity strings and track count grant nothing.
 // The capture extension stays last for the independent read-only collector.
+export function d8PortName(name) { return /(?:felucca|dabbl8)/i.test(name || ""); }
+// Cosmetic naming only; unknown identities retain a neutral title.
+export function d8EditorTitle(version) {
+  if (/^DABBL8(?: |$)/.test(version || "")) return "Dabbl8 Editor";
+  if (/^FELUCCA(?: |$)/.test(version || "")) return "Felucca Editor";
+  return "Felucca / Dabbl8 Editor";
+}
 const TAGS = Object.freeze([
   [0, 16], [1, 0x55], [2, 1], [4, 0x4d], [5, 1], [6, 64], [7, 1],
   [8, 0x42], [9, 1], [11, 0x46], [12, 1], [14, 0], [15, 0x53], [16, 1],

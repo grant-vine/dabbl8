@@ -1,0 +1,12 @@
+{
+  "source": "b74b4b33e497cf11868452ab9c00abb5afb3a813",
+  "prior_failed_full_source": "d86711a1764d3228ca61a6279f4a103dfac5b12c",
+  "changed_from_visible_integration": [
+    "tests/run_tests.sh"
+  ],
+  "firmware_build_tools_loader_unchanged": true,
+  "actual_runner_loop_optimized_and_strict": "PASS",
+  "prior_full_suite": "FAIL: loader fixture omitted production PID flag",
+  "exact_published_tree_full_CI": "REQUIRED",
+  "hardware": "NOT_RUN"
+}

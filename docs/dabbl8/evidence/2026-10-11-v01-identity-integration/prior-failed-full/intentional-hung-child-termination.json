@@ -1,0 +1,9 @@
+{
+  "pid": 91114,
+  "command": "node web/test_web.mjs",
+  "cwd": "/Users/grantv/Code/dabbl8/.local-baseline/v01-combined-candidate",
+  "signal": "SIGTERM",
+  "reason": "Confirmed missing document/title dependencies in actual editor session VM; indefinite adoption wait reproduced independently",
+  "source": "e8049c897a2f6cd7edcc5589435cf9710c2e0235",
+  "restart": false
+}
