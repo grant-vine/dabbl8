@@ -1,0 +1,12 @@
+{
+  "source": "448a4a625731fe2a2aca80445948cf22d9902057",
+  "exit": 0,
+  "elapsed_seconds": 922.594034910202,
+  "six_baseline_unchanged": true,
+  "generated29_unchanged": true,
+  "golden_cost_refs_unchanged": true,
+  "actual_default4_dis_sha256": "ecbb4b2b86fc0962574bfd0db1decf0b8cccaea4817643ce827aa8ae6c5fb9aa",
+  "native8_static_failures": 1,
+  "hardware": "NOT_RUN",
+  "release_qualified": false
+}

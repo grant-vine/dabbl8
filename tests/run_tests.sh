@@ -238,9 +238,11 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
     run "eight-track solo: actual banked gestures, all masks, dry/send isolation and cold gain" "$OUT/eight_track_performance_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_tail_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_tail_test.c -lm
-    run "native resident tails: real DSP counter oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
+    run "native resident tails: real DSP silence oracles, silent echo gaps and late writes" "$OUT/native_fx_tail_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
-    run "native FX publication: actual nested TIMER5 and complete post-block counters" "$OUT/native_fx_counter_boundary_test"
+    run "native FX publication: actual nested TIMER5 and complete post-block silence" "$OUT/native_fx_counter_boundary_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_reverb_zero_sweep_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_reverb_zero_sweep_test.c -lm
+    run "native reverb zero sweep: full resident buffers and conservative silence" "$OUT/native_reverb_zero_sweep_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
     run "native logical output queues: actual DMA/USB service, drain and late writes" "$OUT/native_output_queue_test"
     $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
@@ -483,6 +485,8 @@ else
     run "ASan/UBSan: resident DSP tails and every late mutation refusal" "$A/native_fx_tail_test"
     $SCC -o "$A/native_fx_counter_boundary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_fx_counter_boundary_test.c -lm
     run "ASan/UBSan: actual audio/TIMER5 counter publication boundaries" "$A/native_fx_counter_boundary_test"
+    $SCC -o "$A/native_reverb_zero_sweep_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_reverb_zero_sweep_test.c -lm
+    run "ASan/UBSan: actual reverb zero sweep and independent full-buffer oracle" "$A/native_reverb_zero_sweep_test"
     $SCC -o "$A/native_output_queue_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm
     run "ASan/UBSan: actual logical audio/USB queues and late refusal" "$A/native_output_queue_test"
     $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_output_queue_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_output_queue_test.c -lm

@@ -20,9 +20,13 @@ static void oracle(void)
     for(unsigned i=0;i<DLY_LEN;i++)d+=dly_buf[i]!=0;
     for(unsigned i=0;i<CHO_LEN;i++)c+=cho_buf[i]!=0;
     for(unsigned i=0;i<sizeof rev_comb/sizeof rev_comb[0];i++)r+=rev_comb[i]!=0;
-    if(fx.rtype)for(unsigned i=0;i<4*(SP_N+1);i++)a+=rev_u.sp[i]!=0;
-    else for(unsigned i=0;i<sizeof rev_ap/sizeof rev_ap[0];i++)a+=rev_ap[i]!=0;
-    CHECK(d==fx_tail.delay&&c==fx_tail.chorus&&r==fx_tail.comb&&a==fx_tail.ap);
+    for(unsigned i=0;i<sizeof rev_ap/sizeof rev_ap[0];i++)a+=rev_ap[i]!=0;
+    CHECK(d==fx_tail.delay&&c==fx_tail.chorus);
+    /* Actual full-buffer oracle: eligibility implies silence, independently
+     * of conservative sweep metadata and external tracked-store guards. */
+    CHECK(!r || fx_tail.comb || fx_rev_wait.comb);
+    CHECK(!a || fx_tail.ap || fx_rev_wait.ap);
+    if(fx_resident_quiet())CHECK(!d&&!c&&!r&&!a);
 }
 static void disturb_tail(void)
 {
