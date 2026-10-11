@@ -1,0 +1,12 @@
+{
+  "firmware/src/ui.c": "0023c079b4385e856668e22172755e469a0f66aa386abe17f4c825c1abf4bd04",
+  "firmware/src/ui_input.c": "96113f2a54d5ef5b1bb4b32a444e69cf317c675ab50512ef5a8862f6ec4e2cab",
+  "firmware/src/ui_layer.c": "d2c31c0320ddd902a07414fbd90d76eaaf923f209679561ed5155ae2fd6ca94a",
+  "firmware/src/upreset.c": "4d32e8c7064a2ed965222bf0fe1f43fbd97cf6f81a6602a511ef1e975d593801",
+  "firmware/src/editor.c": "58986fbc86d84495dc13935e25cedcea6253d6e94210f49eb8baff9759996fa9",
+  "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+  "firmware/src/d8engine_policy.c": "faea936acbe145a0f75dc1acaf3c8809b7de57ef87df3eb9e78d11a596a68160",
+  "firmware/src/d8engine_policy.h": "d79f0161fbdff29404e0e67e29bc4536831a5eff5a7549af63dbc21e076971e5",
+  "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+  "firmware/src/favorites.c": "7506c3454bdfd5982e747cf0c671bc410a27d2baf0fc8b7032fc4788408220e3"
+}

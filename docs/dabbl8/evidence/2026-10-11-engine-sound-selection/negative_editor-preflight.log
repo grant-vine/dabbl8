@@ -1,0 +1,4 @@
+Mutation firmware/src/editor.c
+if (factory_ready(a[0], a[1], mask)) { ed_d8_error(cmd, 5u); return; }
+ -> /* negative control: no editor preflight */
+FAIL line 76: host_wire_n==9 && host_wire[4]==ED_D8_ERROR && host_wire[5]==1 && host_wire[6]==cmd && host_wire[7]==5

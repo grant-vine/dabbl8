@@ -1,0 +1,18 @@
+{
+  "source_commit": "e1bd9eea8ab1bc131ca6f0b5092c74d01e1dceae",
+  "control_commit": "6cfef34a7b1960caa8adf8f3394bcb3c16b2ac48",
+  "matrix_verified": [
+    48,
+    32
+  ],
+  "review_production_hashes_verified": true,
+  "target_production_hashes_verified": true,
+  "target_app_hashes_verified": true,
+  "target_deltas_bytes": {
+    "four": 356,
+    "eight": 384
+  },
+  "static_memory_unchanged": true,
+  "eight_static_budget": "FAIL",
+  "limits": "Pinned app-only source snapshot predates latest main USB integration. No loader/package/device, calibrated timing or stack high-water qualification. Inherited sanitizer exclusions remain unchanged."
+}

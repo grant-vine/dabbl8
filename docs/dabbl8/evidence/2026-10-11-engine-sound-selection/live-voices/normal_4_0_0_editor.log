@@ -1,0 +1,2 @@
+COMMAND ['clang', '-O2', '-w', '-DNPART=4', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=0', '-Ibuild/gen', '-Ifirmware/src', 'firmware/src/d8p1.c', 'tests/engine_sound_selection_test.c', '-lm', '-o', '/private/tmp/d8-engine-sound-selection-evidence/voice-rerun/normal_4_0_0_editor']
+sound selection: 3087 proofs tracks=4 FM4=0 SLICE=0 actual editor

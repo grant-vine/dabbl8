@@ -1,0 +1,44 @@
+# Transactional engine sound selection
+
+Base: `6cfef34a7b1960caa8adf8f3394bcb3c16b2ac48`. Host evidence recorded 2026-10-11.
+
+Actual firmware setters, factory presets, favourite selection, user-preset loading, EDIT-layer audition, sound undo and legacy editor commands now check exact IDs and their effective legacy targets before sound publication. DIGITAL converts to FM6 only when FM4 is absent; historical SAMPLE/PERC factory preset 4 targets DRUM. User SAMPLE records use the selection rule, retaining SAMPLE. Unavailable structural user records and favourites remain valid and stored.
+
+Refusal precedes load/undo preparation, panic, parameter/patch changes and success labels. EDIT-layer no-op/refusal preserves undo.keep. Successful legacy preset numbers still wrap and preserve existing parameter/patch conversion semantics. Factory alias selection labels the final effective engine rather than an intermediate SAMPLE engine. ED_SET/G_ENGSEL no longer clamps malformed engine IDs; ED_PRESET no longer aliases them. Both explicitly reply ED_D8_ERROR `[1, original-command, 5]` when the exact/effective sound target is refused. ED_UP_LOAD retains its existing nonzero failure status. The expanded-track legacy write-family gate remains closed.
+
+Mask arguments are synchronous internal testing/integration seams. Production wrappers always pass D8ENGINE_EFFECTIVE_MASK, which is the immutable full compiled mask; build-time overrides/reduced profiles remain rejected. Engine filtering, available startup defaults, profile capability negotiation, engine exclusion, card variants, target timing and release qualification remain separate gates. This does not claim complete engine-card runtime enforcement. Project/native adoption, loader, flash maps, native write quarantine, DSP goldens and budgets are unchanged.
+
+Validation: all 48 normal/sanitized matrix executables passed: four/eight tracks × FM4 on/off × SLICE on/off × actual UI, actual editor and existing native/project adoption. Four-track editor fixtures exercise actual ED_PRESET, ED_SET/G_ENGSEL and ED_UP_LOAD; eight-track fixtures verify the existing family gate instead of enabling quarantined editor writes. UI fixtures exercise the real EDIT layer and undo. Snapshot checks include tracks, song, motion, arrangement, patch bytes/generations/slots, user records/private patches, favourites, labels, undo, selected-preset hints and editor shadow or layer state. Single-engine masks and missing effective targets are exercised. Tests keep complete compiled engines; they do not demonstrate memory savings or target deadlines.
+
+Existing editor, UI (including the upstream random-frame soak) and actual adopted-native undo suites passed normally and under the repository's established ASan/UBSan exclusions. Compiler preprocessing verified all 36 full-mask/profile-build guard checks. No audio hashes were regenerated, and the complete upstream render suite was not rerun by this sound-only slice.
+
+Four separately compiled negative controls deliberately bypassed effective-mask enforcement, removed the editor preset preflight, falsely announced a refused user load, or cleared EDIT undo before refusal. Each failed at the expected status/state check; exact mutations and assertion failures are retained in the negative logs. These are mutant sensitivity controls, not unchanged-baseline performance comparisons.
+
+The manifest pins source, generated inputs, test binaries and raw log SHA-256 hashes. Raw evidence is retained in `/private/tmp/d8-engine-sound-selection-evidence`; selected logs are copied beside this summary. Host HAL stubs do not establish hardware interrupt behavior, target stack/text costs or physical device stability. Root performs independent source review and vendor-toolchain comparison before delivery.
+
+## Independent review follow-up
+
+The read-only independent source review found no production blocker and requested stronger fixture evidence. Commit `ccb462fcda9b67c456cdc2a568049c79b71960c9` and its original manifest/logs remain preserved. The subsequent test-only fixture starts actual mono notes on every track, renders a host block and asserts `voices_busy() == NTRK` before refusal snapshots. The track snapshots include actual embedded voice states. Singleton-mask expectations now derive legacy identities independently of `eng_runtime_target` and include successful singleton publications.
+
+All 32 normal/sanitized actual UI/editor combinations passed again with this fixture; the four separately compiled negative controls were detected again with live voices. The unchanged native/project fixture's 16 matrix executions and six earlier legacy regressions were not redundantly repeated. All ten reviewed production hashes match the independent review exactly. Original test-fixture hashes in the review and previous manifest refer to the preserved earlier fixture, while `live-voices/manifest.json` pins the strengthened fixture and reruns. These are simulated host voices, not physical audio-timing qualification.
+
+## Pinned target comparison
+
+Root verified production hashes at source `e1bd9ee` against the independent
+review and compiled app-only target images against parent `6cfef34` with the
+pinned JieLi compiler, SDK and linux/amd64 container. Four-track app grows
+356 bytes to 449,008; eight-track grows 384 bytes to 481,408. Static RAM and
+audio pool are unchanged (92,116/331,332 bytes four-track; 96,068/335,240
+eight-track). Four-track static budgets pass; eight-track static budgets fail.
+Target logs, environment, hashes and review are in `target/`. These measurements
+predate the current-main USB correction and do not qualify a later combined
+image, package, stack high-water, physical timing or recovery. Full final-source
+CI remains a separate gate.
+
+## Current prerequisite integration
+
+Exact source `9f8755921c901986e6961a303ef72d9de4a1f697` integrates native
+adoption PR #120 and current-main USB correction. All 48 local normal/sanitized
+UI/editor/native-adoption configurations passed again; raw logs and hashes are
+in `current-union/`. The earlier target measurements do not represent this
+combined source. Final CI and target/device qualification remain separate.
