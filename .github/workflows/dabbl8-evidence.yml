@@ -35,13 +35,18 @@ jobs:
           python -m venv .local-baseline/ci/venv
           .local-baseline/ci/venv/bin/python -m pip install -r ci/requirements.txt
           echo "$PWD/.local-baseline/ci/venv/bin" >> "$GITHUB_PATH"
+      - name: Verify dependency integrity refusal regressions
+        id: integrity
+        run: |
+          python tests/dependency_integrity_test.py
+          python tests/evidence_session_test.py
       - name: Acquire hash-verified target dependencies
         id: acquire
         run: python ci/bootstrap.py
       - name: Build and verify; record failures and skips
         if: always()
         env:
-          D8_SETUP_OK: ${{ steps.python.outcome == 'success' && steps.node.outcome == 'success' && steps.hostdeps.outcome == 'success' && steps.acquire.outcome == 'success' }}
+          D8_SETUP_OK: ${{ steps.python.outcome == 'success' && steps.node.outcome == 'success' && steps.hostdeps.outcome == 'success' && steps.integrity.outcome == 'success' && steps.acquire.outcome == 'success' }}
         run: python ci/run_evidence.py
       - name: Build pinned browser converter and verify actual native parity
         if: always()

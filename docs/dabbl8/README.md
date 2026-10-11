@@ -44,3 +44,7 @@ The [stopped native state API](d8p1-runtime-state.md) loads/captures actual eigh
 - [Native staged save-as naming and commit-only publication](native-save-as.md)
 
 - [Three-project native menu, cached inventory and legacy-writer refusal](native-project-menu.md)
+
+- [First-device evidence plan](target-evidence-plan.md): original retention, separate
+  install authorisation, timing/late-counter observation limits and remaining
+  physical recovery/release acceptance gates.

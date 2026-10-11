@@ -14,7 +14,7 @@ Generated tables, patches, UI fonts/icons, samples, menus and keycaps are produc
 
 ## Evidence and qualification
 
-`ci/run_evidence.py` records each command's exit status, raw logs, actual dependency versions, SDK commit, compiler/container identity, source/worktree status, reference and package hashes, and explicit skips in `build/ci-evidence/results.json`. A failed target build skips host tests with a reason. A failed workflow setup produces a failed preflight and skip, not an apparent pass. Required sanitizer skips fail the job.
+`ci/run_evidence.py` records each command's exit status, raw logs, actual dependency versions, SDK commit, compiler/container identity, source/worktree status, reference and package hashes, and explicit skips in `build/ci-evidence/run-*/results.json`. Each invocation uses a fresh folder and records its path in `evidence_directory`; previous evidence remains historical and is never scanned as current logs. Browser conversion uses the same policy under `build/browser-conversion-evidence/run-*/`. Raw log hashes cover only the current invocation. This isolates evidence logs, not the ordinary generated build outputs. A failed target build skips host tests with a reason. A failed workflow setup produces a failed preflight and skip, not an apparent pass. Required sanitizer skips fail the job.
 
 Artifacts contain review evidence and UI reports, not stock firmware, private backups, secrets or installable release downloads. Package files are built and hashed locally in the job but not uploaded as downloads. Evidence expires after 14 days; a qualification PR must preserve relevant text manifests/logs in the repository. Failed job setup before the driver can start remains authoritative in GitHub job-step logs.
 
@@ -25,3 +25,28 @@ Hardware qualification is always recorded as SKIP/not performed. USB/TRS physica
 ## Current verification status
 
 Hosted run37991665831 passed dependency setup, package build, complete host regressions and artifact upload; downloaded raw results were inspected and preserved in evidence/2026-10-09-ci-hosted. Inspection also found omissions missing from the original structured skip list; the corrected reporter and graphics-library/asset provenance require verification in a subsequent hosted artifact. Issue #18 remains open until that verification. Linux and Mac package bytes differ, so no cross-platform bit-identity is claimed. See the issue for live run evidence.
+
+
+## Invocation isolation verification (2026-10-11)
+
+This follow-up to dependency-content verification puts both evidence drivers in
+fresh `run-*` folders. Each report identifies its `evidence_directory`; relative
+log names resolve inside that folder. Older root-level logs/reports are left
+untouched and are not inspected as current evidence. Existing workflow artifact
+uploads already include these subfolders recursively. Consumers of the old
+fixed `results.json` path must select the printed current invocation path.
+
+Eight dependency/driver regression tests pass with Python 3.14.8 and
+`CC=clang-18`; two additional evidence-directory lifecycle tests pass. Driver
+fixtures preserve a historical sanitizer-skip log and previous browser-parity
+log, prove those logs are excluded from the current report, and run browser
+conversion twice with distinct raw log contents while proving the first report
+and log remain byte-identical. No real compiler/build/network/device is invoked
+by these fixtures. Both unchanged parent drivers fail the new fresh-directory
+assertions in the negative control; its expected failures are retained.
+
+Python/shell syntax and diff whitespace checks pass. Independent read-only
+review found no blocking issue. [Raw evidence](evidence/2026-10-11-evidence-invocations/)
+is preserved with a hash manifest. Full hosted build/parity validation is pending.
+This change isolates evidence reports and logs, not generated build products,
+compiler cache cleanup, concurrent build execution, or diagnostic package names.

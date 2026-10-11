@@ -1,0 +1,28 @@
+....E...
+======================================================================
+ERROR: test_evidence_refusal_never_executes_target_compiler_or_build (__main__.IntegrityTests.test_evidence_refusal_never_executes_target_compiler_or_build)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/grantv/Code/dabbl8/.local-baseline/dependency-integrity/tests/dependency_integrity_test.py", line 122, in test_evidence_refusal_never_executes_target_compiler_or_build
+    runpy.run_path(str(repo / 'ci/run_evidence.py'), run_name='__main__')
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpyau6i4ne/driver/ci/run_evidence.py", line 20, in <module>
+    'host': platform.platform(), 'checks': [], 'skips': [], 'artifacts': {},
+            ~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/platform.py", line 1399, in platform
+    bits, linkage = architecture(sys.executable)
+                    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/platform.py", line 806, in architecture
+    fileout = _syscmd_file(executable, '')
+  File "/opt/homebrew/Cellar/python@3.14/3.14.8/Frameworks/Python.framework/Versions/3.14/lib/python3.14/platform.py", line 764, in _syscmd_file
+    return output.decode('latin-1')
+           ^^^^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'decode'. Did you mean: 'encode'?
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.986s
+
+FAILED (errors=1)
