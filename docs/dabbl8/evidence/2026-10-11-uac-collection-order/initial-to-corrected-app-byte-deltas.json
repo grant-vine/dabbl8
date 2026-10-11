@@ -1,0 +1,50 @@
+{
+  "4": {
+    "initial_sha256": "4577b1bef8ce627764652cfb6b237ec51121b9c843197f801e3220ce66057fbd",
+    "corrected_sha256": "4b0e34259475d81083691d0362dc335d816651ecdaf3bca86929551db2964825",
+    "deltas": [
+      {
+        "offset": 370819,
+        "old": 41,
+        "new": 97
+      },
+      {
+        "offset": 370837,
+        "old": 40,
+        "new": 96
+      }
+    ]
+  },
+  "8": {
+    "initial_sha256": "3d575b34b80cac356688a79082f3b9c95937d5c8f7352513734d7138cd43e526",
+    "corrected_sha256": "513f5ea4364fafb5b6bf58b2a0c5344f2c66fba5a65a32d5626b907128fcb51d",
+    "deltas": [
+      {
+        "offset": 412253,
+        "old": 41,
+        "new": 97
+      },
+      {
+        "offset": 412271,
+        "old": 40,
+        "new": 96
+      }
+    ]
+  },
+  "dabbl8": {
+    "initial_sha256": "23b08c4df8e27cd584f37e2a92f89b4e993b9260e9c349bbe84f0de11eeb46ae",
+    "corrected_sha256": "19ac8ab46913c0692bb06bdb1be825c6efc3427d1d3decbc6c571a33ce5ab8ec",
+    "deltas": [
+      {
+        "offset": 412317,
+        "old": 41,
+        "new": 97
+      },
+      {
+        "offset": 412335,
+        "old": 40,
+        "new": 96
+      }
+    ]
+  }
+}

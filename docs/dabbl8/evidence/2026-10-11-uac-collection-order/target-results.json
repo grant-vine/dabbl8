@@ -1,0 +1,45 @@
+{
+  "4": {
+    "source": "c5da5988b055c9a9924a0b330f7095f3806c2eba",
+    "bytes": 447928,
+    "sha256": "4b0e34259475d81083691d0362dc335d816651ecdaf3bca86929551db2964825",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "hardware": "NOT_RUN",
+    "static_budget_exit": 0
+  },
+  "8": {
+    "source": "c5da5988b055c9a9924a0b330f7095f3806c2eba",
+    "bytes": 478716,
+    "sha256": "513f5ea4364fafb5b6bf58b2a0c5344f2c66fba5a65a32d5626b907128fcb51d",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 478716 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+    ],
+    "hardware": "NOT_RUN",
+    "static_budget_exit": 1
+  },
+  "dabbl8": {
+    "source": "c5da5988b055c9a9924a0b330f7095f3806c2eba",
+    "bytes": 478780,
+    "sha256": "19ac8ab46913c0692bb06bdb1be825c6efc3427d1d3decbc6c571a33ce5ab8ec",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 478780 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+    ],
+    "hardware": "NOT_RUN",
+    "static_budget_exit": 1
+  },
+  "private_package": {
+    "bytes": 610086,
+    "sha256": "dc381dd87816216b446815d6a611f0b39057ae48bcfdc4a7592b5b9dcb7f6e69",
+    "product": "FM-1_8010",
+    "loader_sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b",
+    "release_qualified": false
+  }
+}
