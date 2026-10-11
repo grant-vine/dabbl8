@@ -260,6 +260,11 @@ if [ -f build/gen/felucca_tables.h ]; then
     done
     # One invocation contains normal and inherited sanitizer profile matrices.
     run "curated diagnostic apps: actual eight-track ISR off/paused/collect parity" env CC="$CC" SANITIZE="${SANITIZE:-1}" python3 tests/engine_profile_timing_test.py
+    for profile in 1 2; do
+        midi_bin="$OUT/curated_midi_$profile"
+        $CC -O1 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$midi_bin" tests/midi_control_test.c -lm
+        run "curated profile=$profile complete MIDI controls/clock" "$midi_bin"
+    done
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
     run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
@@ -719,6 +724,11 @@ else
                 run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
             done
         fi
+    done
+    for profile in 1 2; do
+        midi_bin="$A/curated_midi_$profile"
+        $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -o "$midi_bin" tests/midi_control_test.c -lm
+        run "ASan/UBSan: curated profile=$profile complete MIDI controls/clock (inherited DSP exclusions)" "$midi_bin"
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
