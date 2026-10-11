@@ -1,0 +1,33 @@
+{
+  "source": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "parents": [
+    "eff86a9817a0b8ea5c02cd64ad3d0971bd18f1ba",
+    "6d02271a8bec007a1a4773b90adb396c954dd7b6"
+  ],
+  "merge_conflicts": [],
+  "changed_files_vs_parent": [
+    "docs/dabbl8/native-arrangement-playback.md",
+    "firmware/src/d8arr_prepare.c",
+    "firmware/src/d8p1_pool_runtime.c",
+    "firmware/src/d8p1_runtime.c",
+    "firmware/src/felucca.c",
+    "firmware/src/midi_clock.c",
+    "firmware/src/midi_control.c",
+    "firmware/src/motion.c",
+    "firmware/src/project.c",
+    "firmware/src/project_native_flash.c",
+    "firmware/src/project_native_frontend.h",
+    "firmware/src/seq.c",
+    "firmware/src/song_chain.c",
+    "firmware/src/ui.c",
+    "firmware/src/ui_draw.c",
+    "firmware/src/ui_input.c",
+    "tests/native_arrangement_test.c",
+    "tests/run_tests.sh"
+  ],
+  "source_diff_sha256": "36309fac1e5ed28b3cf8479ebdf4c2679e7a1dd3531f3739939d956f4efb9800",
+  "full_suite_session": 32582,
+  "full_suite_status": "TERMINAL_PASS",
+  "hardware": "NOT_RUN",
+  "physical_activation": false
+}
