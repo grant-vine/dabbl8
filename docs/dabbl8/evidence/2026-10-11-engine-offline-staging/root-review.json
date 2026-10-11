@@ -1,0 +1,16 @@
+{
+  "source_commit": "370ac2d108be3de6cd258ded66cda179218198d8",
+  "source_tree": "b3ad1d3002c05cba4ab80572df927c946dbfd535",
+  "base": "f0e8043d4e611f0c5df9dbd46888ec2e380bad43",
+  "manifest_sha256": "8359ff98c49703273f85a7345b4cb4bbe4831131d4ce1d37f0bac774bb495fd7",
+  "verified_raw_log_count": 40,
+  "fixture_hashes_verified": 26,
+  "final_profile_matrix_runs": 8,
+  "additional_CI_runner_scopes_verified": 8,
+  "production_and_C_fixture_review_hashes_match": true,
+  "independent_review_sha256": "0e34f65e75f0e3c4f6a22c98e5af88107ab50ba730f4b7011607a93f4dabd157",
+  "documentation_drift_since_independent_review": [
+    "docs/dabbl8/software-voice-cards.md"
+  ],
+  "review_scope": "Root read source/test/runner diffs, independently verified exact source, raw-log/fixture hashes and final matrix/runner outcomes. Author executed host/native/WASM/mutant checks; independent reviewer ran no tests. Root did not rerun execution. CI, target stack/resources, physical timing/recovery and user-facing profile workflow unqualified."
+}

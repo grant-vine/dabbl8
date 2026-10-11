@@ -1,0 +1,1 @@
+FAIL line 51: !memcmp(result.project.fm6[t],patch,sizeof patch)

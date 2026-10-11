@@ -81,6 +81,7 @@ static void error_reply(unsigned cmd)
     REQUIRE(host_wire_n==9 && host_wire[4]==ED_D8_ERROR && host_wire[5]==1 && host_wire[6]==cmd && host_wire[7]==5);
 }
 #endif
+#ifndef ENGINE_SOUND_TEST_NO_MAIN
 int main(void)
 {
     const unsigned full=D8ENGINE_EFFECTIVE_MASK, nofm=full&~(1u<<ENGI_FM6), nodrum=full&~(1u<<ENGI_DRUM);
@@ -157,3 +158,5 @@ int main(void)
 #endif
     );return 0;
 }
+
+#endif

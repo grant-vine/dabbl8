@@ -1,0 +1,44 @@
+{
+  "base": "f0e8043d4e611f0c5df9dbd46888ec2e380bad43",
+  "source_status": "Uncommitted candidate. Header remains frozen and matches initial author matrix; fixture received positive-sentinel follow-up during review, now identified by current hash. Final matrix pending author.",
+  "result": "No static production blocker found.",
+  "scope": "Independent read-only source/diff/spec/evidence review. No compilation/tests/target/device operations by reviewer. Author executed checks remain separately attributed.",
+  "source_sha256": {
+    "firmware/src/d8p1_project.h": "aa54f24a37fcbcec9a2b79fab29c841c2202c6f9e6122bc4d131c6610361802f",
+    "firmware/src/project.c": "da93d328d5adec2cbcbf6c785e2e62806a103726d52b7b7e17761f1e7fcdb4df",
+    "firmware/src/engines.c": "fc2907038d5b3f2647ffd7f21f5555a02577c624d794b13196a3a54ed791f20d",
+    "firmware/src/ui.c": "274306d2f511524c7d4d08fa4f7e5aa47e8beff2ffb8a05668be19b7bce13bb4",
+    "firmware/src/eng_fm6.c": "4c71db761dcc7ce2c35642f341725bd8bdf8e939e6ec540b96d51b43ce5111c3",
+    "tests/engine_offline_staging_test.c": "c9b4b5a58ffd5fd9da29814fff8e0a822aeff98bddebb5243048ac44c9a57602",
+    "tests/engine_sound_selection_test.c": "27f3c5dfb9ec72074fd3be6c0d97978299fc3f01d8914dca879fe9d1e08a52cb",
+    "docs/dabbl8/software-voice-cards.md": "ee045adc85e3b99349ce3a84db07c6e0ca573d9fc5d9c8236abe8b627ada4827",
+    "docs/dabbl8/offline-project-conversion.md": "07e09671750084dc9468a50597dc12e9cdcd5ac0e682279372d93b3e3fab09bf"
+  },
+  "initial_author_matrix_receipt": "/private/tmp/d8-engine-offline-staging-evidence/matrix.json",
+  "initial_author_matrix_sha256": "4155046dfece5d6fd08ea7c06318a6a6674eb304326837a66f1c3eda5e935e94",
+  "initial_tested_hashes": {
+    "firmware/src/d8p1_project.h": "aa54f24a37fcbcec9a2b79fab29c841c2202c6f9e6122bc4d131c6610361802f",
+    "tests/engine_offline_staging_test.c": "b2be467e221b93a9a1efff4fb06bf61ce098c1e1a03f49b07f7ed422a061c427"
+  },
+  "static_checks": [
+    "New *_profile_v1 APIs are opt-in; ordinary stage/convert bodies unchanged. Full-mask output/report comparisons against ordinary importer cover frozen fixture variants. Existing CLI/browser is not activated.",
+    "Input alignment/null/mask/overlap guards preserve original/report/output; only supplied staging scratch may change on refusal. Public output publication follows successful validation.",
+    "Exact known historical envelope size, magic/length and checksum precede unsupported-source engine diagnosis; serialized parameter extent validation precedes field indexing. Unsupported-field status explicitly does not certify all remaining fields.",
+    "Actual historical importer and PHYS/DIGITAL/PERC canonicalization run before original track0..3 availability checks. No original track fallback; canonical and late DEF_SOUND/KEEP targets required. First-four staged tracks/patches and arrangement remain ordinary conversion values.",
+    "Only unavailable added defaults substitute: first available display engine receives actual preset0 edit/env/filter/voice/FX defaults and silent steps; FM6 uses actual factory-slot unpack/sanitize+pack. Inactive non-FM6 patches use FM6_INIT.",
+    "Full mask preserves ordinary added sentinel/default output exactly; real FM4/SLICE options and closed profile overrides remain.",
+    "Conversion invokes no runtime sound/undo/cache/patch setters. Existing fixture snapshot seed starts actual simulated sounding voices.",
+    "Positive restricted DEF_SOUND/KEEP fixtures now present and independently use SAMPLE|DRUM and ANALOG|DRUM; compare first-four/patch/report/source invariants rather than helpers under test. Author final execution receipt pending."
+  ],
+  "documentation_review_requirements": [
+    "Describe separately named opt-in APIs and unchanged CLI/browser behavior.",
+    "Report fields remain first-four migration metadata, not added-fallback/profile/asset proof.",
+    "Scratch may change on refusal and must be discarded; never use it as active state.",
+    "Retain initial sanitizer warnings/failures and label final fatal policy accurately. No target/default binary, memory, physical timing/recovery, full CI or actual exclusion claim."
+  ],
+  "remaining_gates": [
+    "Author final matrix for positive-sentinel fixture hash c9b4b5a58ffd5fd9da29814fff8e0a822aeff98bddebb5243048ac44c9a57602.",
+    "Root source-union CI, target comparison and interface/public caller review."
+  ],
+  "communication": "Coordinated directly with audit_storage; suggested positive sentinel tests were adopted without production source change."
+}

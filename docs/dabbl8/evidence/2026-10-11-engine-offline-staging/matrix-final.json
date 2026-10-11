@@ -1,0 +1,17 @@
+{
+  "base": "f0e8043d4e611f0c5df9dbd46888ec2e380bad43",
+  "scopes": [
+    "profile-fm0-slice0-final",
+    "profile-fm0-slice0-san-clean",
+    "profile-fm0-slice1-final",
+    "profile-fm0-slice1-san-clean",
+    "profile-fm1-slice0-final",
+    "profile-fm1-slice0-san-clean",
+    "profile-fm1-slice1-final",
+    "profile-fm1-slice1-san-clean"
+  ],
+  "source_hashes": {
+    "firmware/src/d8p1_project.h": "aa54f24a37fcbcec9a2b79fab29c841c2202c6f9e6122bc4d131c6610361802f",
+    "tests/engine_offline_staging_test.c": "c9b4b5a58ffd5fd9da29814fff8e0a822aeff98bddebb5243048ac44c9a57602"
+  }
+}
