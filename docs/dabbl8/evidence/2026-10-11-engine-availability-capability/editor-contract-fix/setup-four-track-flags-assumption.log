@@ -1,0 +1,13 @@
+schema-4-0-0-normal PASS
+schema-4-0-0-san PASS
+schema-4-0-1-normal PASS
+schema-4-0-1-san PASS
+schema-4-1-0-normal PASS
+schema-4-1-0-san PASS
+schema-4-1-1-normal PASS
+schema-4-1-1-san PASS
+Traceback (most recent call last):
+  File "/private/tmp/d8-capability-editor-contract-fix/run.py", line 15, in <module>
+    rows.append({'name':name,'command':cmd,'build_exit':b.returncode,'run_exit':a.returncode if a else None});assert a and a.returncode==0,(name,b.stderr,a.stdout+a.stderr if a else '')
+                                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('schema-8-0-0-normal', '', 'editor: D8 capabilities: family/schema and actual track/step/voice/event limits FAIL\neditor: INFO appends D8 discovery without replacing the legacy reply           ok\neditor: unsupported capability schema has an explicit version error, no mutation ok\neditor: schema-2 capability query with trailing args has a bounds error, no mutation ok\neditor: schema-2 observation reports stable compiled IDs, no new authority or mutation ok\neditor: eight-track protocol policy denies old editor sound/project/preset writes ok\neditor: eight-track policy permits identity and bounded reads; schema command remains distinct ok\neditor: four-track new firmware keeps old editor commands compatible           ok\n')
