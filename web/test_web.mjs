@@ -17,6 +17,7 @@ import { join } from "node:path";
 import vm from "node:vm";
 import { logicalImage, productOf } from "./fm1pkg.js";
 import { Updater, pack7, unpack7 } from "./fm1ota.js";
+import { d8InfoDiscovery } from "./d8info.js";
 
 let failed = 0;
 const ok = (cond, what) => { console.log(`${what.padEnd(64)} ${cond ? "ok" : "FAIL"}`); if (!cond) failed++; };
@@ -41,7 +42,7 @@ const E = vm.runInNewContext(proto + `
    FM4, fromDigital, fromPerc, DRUM_KIT_E,
    MENU: typeof MENU === "undefined" ? null : MENU, MENU_TABS: typeof MENU_TABS === "undefined" ? null : MENU_TABS,
    readDeviceMenu: typeof readDeviceMenu === "undefined" ? null : readDeviceMenu })`,
-{ setTimeout, clearTimeout, setInterval, clearInterval, console });
+{ setTimeout, clearTimeout, setInterval, clearInterval, console, d8InfoDiscovery });
 
 async function editorMock() {
   const m = E.makeMockDevice();
@@ -491,7 +492,7 @@ async function editorFm4() {
       async function libWrite(a) { written.push(...a); }
       ${adopt}
       ;({ libAdopt, set: (l, m) => { lib = l; libMeta = m; written.length = 0; }, lib: () => lib, written: () => written })`,
-    { setTimeout, clearTimeout, setInterval, clearInterval, console });
+    { setTimeout, clearTimeout, setInterval, clearInterval, console, d8InfoDiscovery });
     const dv = { keys, info: { engines: info.engines, pe0: info.pe0 } };
     const entry = () => [{ id: "a", name: "OLD PAD", engine: 1, engineName: "DIGITAL", p: pad.slice(), pattern: null, tags: ["x"],
       created: "2026-01-01T00:00:00.000Z", modified: "2026-01-01T00:00:00.000Z" },
@@ -1337,9 +1338,9 @@ function editorTabs() {
   const odd = [...ja].filter((k) => !en.has(k)).concat([...en].filter((k) => !ja.has(k)));
   ok(!miss.length && !odd.length, `editor: every string in ja and en (${used.size} used${miss.length ? ", missing " + miss : ""}${odd.length ? ", one language only " + odd : ""})`);
   /* the page script parses (the browser's view of it) */
-  const script = html.slice(html.indexOf("<script>") + 8, html.lastIndexOf("</script>"));
+  const script = html.match(/<script type="module">([\s\S]*?)<\/script>/)?.[1];
   let err = null;
-  try { new vm.Script(script); } catch (e) { err = e.message; }
+  try { if (!script) throw Error("module script missing"); execFileSync(process.execPath, ["--input-type=module", "--check"], { input: script, stdio: ["pipe", "pipe", "pipe"] }); } catch (e) { err = e.message; }
   ok(!err, "editor: page script compiles" + (err ? ` (${err})` : ""));
   ok(!/#[0-9a-f]{3,6}\b/i.test(html.slice(html.indexOf("[hidden]") - 6000, html.indexOf("[hidden]")).replace(/:root[^}]*\}/g, "")),
     "editor: no colours beyond the black / white tokens in the new styles");
@@ -1603,9 +1604,10 @@ async function d8Pairings() {
   ok(!(await E.d8Negotiate({...info,ntrk:3}, async () => caps)).writable, "D8: INFO/capability mismatch is read-only");
   ok(!(await E.d8Negotiate(info, async () => { throw Error("timeout"); })).writable, "D8: timeout is read-only");
   const infoReply = await link.request(E.req.info());
-  const tagged = E.parse[E.CMD.INFO]([...infoReply,68,56,1]);
+  ok(E.parse[E.CMD.INFO]([...infoReply,68,56,1]).d8Schema === 0, "D8: shortened historical trailer plus tag cannot grant modern discovery");
+  const tagged = d8info;
   ok(tagged.d8Schema === 1 && tagged.ntrk === legacy.ntrk && tagged.pcount === legacy.pcount,
-    "D8: appended discovery tag preserves the legacy INFO fields");
+    "D8: known modern discovery trailer preserves the legacy INFO fields");
   let errorLink;
   errorLink = new E.Link(d => { const f = E.unframe(d); errorLink.receive(E.frame(E.CMD.D8_ERROR,[1,f.cmd,2])); }, { timeout:1000 });
   let explicit = false;

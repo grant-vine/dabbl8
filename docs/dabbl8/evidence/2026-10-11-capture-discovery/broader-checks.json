@@ -1,0 +1,152 @@
+[
+  {
+    "name": "descdump-build",
+    "args": [
+      "clang",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "build/host/descdump",
+      "tests/descdump.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-eight-build",
+    "args": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-DNPART=8",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/eight",
+      "tests/track_client_bridge.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-d8tracks",
+    "args": [
+      "node",
+      "web/test_d8tracks.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-d8midi",
+    "args": [
+      "node",
+      "web/test_d8midi.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-d8companion",
+    "args": [
+      "node",
+      "web/test_d8companion.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-capture",
+    "args": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/capture"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "opt-collector",
+    "args": [
+      "python3",
+      "tests/instrument_capture_collector_test.py",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/opt/capture"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-eight-build",
+    "args": [
+      "clang",
+      "-O1",
+      "-g",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-DNPART=8",
+      "-o",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/eight",
+      "tests/track_client_bridge.c",
+      "-lm"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-d8tracks",
+    "args": [
+      "node",
+      "web/test_d8tracks.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-d8midi",
+    "args": [
+      "node",
+      "web/test_d8midi.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-d8companion",
+    "args": [
+      "node",
+      "web/test_d8companion.mjs",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/eight",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/four"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-capture",
+    "args": [
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/capture"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "san-collector",
+    "args": [
+      "python3",
+      "tests/instrument_capture_collector_test.py",
+      "/Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/build/host/san/capture"
+    ],
+    "exit": 0
+  },
+  {
+    "name": "web-existing",
+    "args": [
+      "node",
+      "web/test_web.mjs"
+    ],
+    "exit": 0
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "audit_source": "30b11571de98a743c4418fe8794cf6663bb89995",
+  "helper": "existing native-workspace-callers actual C capture-test bridge",
+  "qualification": "Host C ED_INFO production tag seam; fixture version TEST; not physical device or complete new-parent build",
+  "observed_tail": [
+    68,
+    56,
+    1,
+    67,
+    56,
+    1,
+    78
+  ],
+  "parsed_tracks": 8,
+  "discovery": 0,
+  "editable": false,
+  "reason": "This firmware has no supported Dabbl8 handshake."
+}

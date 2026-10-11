@@ -1,0 +1,12 @@
+{
+  "source": "0a3c1aaea1cda1a0ef7a97d39746351826e3683d",
+  "exit": 0,
+  "elapsed_seconds": 935.3338539600372,
+  "tracked_source_unchanged": true,
+  "six_baseline_unchanged": true,
+  "generated29_unchanged": true,
+  "target_compile": "NOT_RUN: comment-only firmware diff, parent226 actual disassembly reused",
+  "native_static_failures": 3,
+  "hardware": "NOT_RUN",
+  "release_qualified": false
+}

@@ -572,7 +572,7 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         ed_b(0x4E); ed_b(1); ed_b(ED_MENU_N);   /* MENU settings: cmds 72, 73; the items MENU_DESC offers */
         ed_b(0x52); ed_b(1); ed_b(4);   /* RATCH: a step's ratchet (1..4 hits) after its chance */
         ed_b(0x4C); ed_b(1); ed_b(1);   /* 1.1 parameter locks: MOTION ops 5..7, the kinds after the records */
-        ed_b('D'); ed_b('8'); ed_b(1u); /* final discovery tag: query D8_CAPS, do not infer support from NTRK */
+        ed_b('D'); ed_b('8'); ed_b(1u); /* discovery tag before optional C8: query D8_CAPS, never infer support from NTRK */
 #if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
         ed_b('C');ed_b('8');ed_b(1u);ed_b(ED_D8_CAPTURE); /* read-only capture; no restore capability */
 #endif
