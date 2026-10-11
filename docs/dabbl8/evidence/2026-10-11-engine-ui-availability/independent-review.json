@@ -1,0 +1,37 @@
+{
+  "scope": "Independent read-only static candidate source review. Candidate is uncommitted and owned by storage agent; hashes pin reviewed bytes. No builds/tests/CI/device operations executed by reviewer.",
+  "base_head": "e1bd9eea8ab1bc131ca6f0b5092c74d01e1dceae",
+  "source_hashes": {
+    "firmware/src/engines.c": "fc2907038d5b3f2647ffd7f21f5555a02577c624d794b13196a3a54ed791f20d",
+    "firmware/src/main.c": "ef269a3bb96402281a81d129bed3bbc45ed3031013b7c9ef17b7939b6b0f8d2d",
+    "firmware/src/ui.c": "274306d2f511524c7d4d08fa4f7e5aa47e8beff2ffb8a05668be19b7bce13bb4",
+    "firmware/src/ui_draw.c": "7d042f280220106dc805d4394463253ff84a080ca5e64bcbeea2bab876445736",
+    "firmware/src/ui_graph.c": "959dc65010f39c475a3b1c967765c367ad3f866cb9f68152633f98781a9d3f5d",
+    "firmware/src/ui_input.c": "b571c2e4bbd55b246fd698b2b6bbda8385b2d167a8e9906da4d9a46bc6c7196a",
+    "firmware/src/ui_layer.c": "f851c8be84c38b2d6b9642fc91c4d7a28348654623efa036ba363e9071c851de",
+    "firmware/src/upreset.c": "b0c10fed084c62b5321440b4a306a2ab50d13529fc9294144ee7df807538e886",
+    "tests/engine_sound_selection_test.c": "27f3c5dfb9ec72074fd3be6c0d97978299fc3f01d8914dca879fe9d1e08a52cb",
+    "tests/engine_ui_availability_test.c": "8979fcc5ed51b8b4119f379e36b96a3eb5d4f924714f875ab1cb16fa44d69ca6"
+  },
+  "verdict": "No blocking source defect found in candidate under immutable production compiled-mask scope.",
+  "reasoning": [
+    "ENGINE_ORDER remains unchanged stable-ID order, including actual FM4 DIGITAL and optional SLICE. Count, exact-position, rank and step operate on availability bits without renumbering persisted IDs. Invalid/out-of-range selections return NENGINES rather than aliasing a valid entry.",
+    "Sound user-preset views call up_ready, which maps historical DIGITAL to actual FM6 when FM4 is absent; boot/import already normalizes PHYS/PERC records. Existing up_count/up_nth/up_pat_* structural and pattern views are untouched. Filtering does not erase records or favourite bits.",
+    "Preset browser enumerates supported canonical factories and supported user slots; stored SAMPLE/PERC factory alias stays excluded by inherited preset_orig/preset_shown rules, while direct factory adoption checks its DRUM target. Favourite filter evaluates retained bits only after the sound list is filtered.",
+    "EDIT key selection, LEDs and drawing all use the same mask-dependent count/order, with INIT immediately after the last engine and no selectable cells for an empty mask. Compile-time maximum count still fits white-key capacity.",
+    "Startup resolves actual historical target or first available display engine preset0 before track_defaults and sound mutation. Only track_startup/eng_startup_sound use fallback. Project/native adoption and direct user/factory sound paths retain explicit refusal and never call fallback. Added native startup tracks use zero-initialized TRK_DEF rows and resolve independently.",
+    "Full immutable production wrappers preserve actual FM4/SLICE engine meanings and initial track defaults. core.h profile overrides remain closed. main startup ignores rc only under the guaranteed nonempty compiled full mask."
+  ],
+  "fixture_review": [
+    "Literal expected stable order and effective DIGITAL mapping are independent of policy helpers. Candidate fixture inspects list identity, actual knob loading, favourite preservation, exact request refusal, startup parameter values, keys/INIT, LEDs and drawing text across full/single-engine/drop-one masks.",
+    "Inherited engine sound selection snapshots include user banks, FM6 records, favourites and runtime state. Wrapper no-main addition makes reuse possible without weakening its original assertions.",
+    "The new fixture does not itself exercise full production init entry, callback-raced refusal, missing engine negotiated persistence, or all display geometry/pixel differences. Existing integration/UI render checks and target evidence remain important.",
+    "No test outcomes or compiled parent controls were read or executed for this in-progress candidate."
+  ],
+  "caveats": [
+    "preset_go_mask intentionally still addresses the full production preset index, while new preset_browse_go_mask addresses the filtered list. These distinct internal seams should be documented to prevent future callers mixing index spaces.",
+    "Subset mask seams are synchronous arguments, not retained firmware configuration. A confirmation opened under a test-only subset still dispatches through production full-mask wrappers; do not advertise this as dynamically configurable reduced firmware.",
+    "up_engine uses the immutable production mask while engine-specific lists accept test masks; behavior is coherent with current compiled engine table and DIGITAL mapping. Future selectable profiles must consistently thread the configured immutable profile through all paths before opening guards.",
+    "No target latency, size, memory, stack or improved audio timing claim follows from static filtering review."
+  ]
+}

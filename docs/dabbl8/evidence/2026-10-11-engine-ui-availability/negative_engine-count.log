@@ -1,0 +1,8 @@
+Mutation firmware/src/engines.c
+static unsigned eng_count_mask(unsigned mask)
+{
+ -> static unsigned eng_count_mask(unsigned mask)
+{
+    mask=D8ENGINE_EFFECTIVE_MASK;
+source SHA256 b218cc2074f3a1eae9f33acb8dbcb63a6c013c9480224bbad3d577997a118dc0
+FAIL line 40: eng_count_mask(mask)==expected_count
