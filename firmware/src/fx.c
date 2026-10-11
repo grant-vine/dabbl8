@@ -488,12 +488,20 @@ static int32_t send_c[CTL], send_d[CTL], send_r[CTL], wet[CTL], mix_l[CTL], mix_
 
 /* one synth part into the dry mix and the sends; a part with no voice sounding costs
  * the LFO tick and a cleared buffer only (after the DIST tail has run out) */
+#if NTRK == 8
+static void mix_part_tuned(track_t *t, uint32_t n, global_tuning_t tuning)
+#else
 static void mix_part(track_t *t, uint32_t n)
+#endif
 {
     int32_t *b = part_buf;
     uint32_t i;
     mod_begin(t);                                       /* the matrix's per-block values into t->p (mod.c) */
+#if NTRK == 8
+    if (track_render_tuned(t, b, n, tuning))
+#else
     if (track_render(t, b, n))
+#endif
         t->tail = 16;                                   /* blocks of DIST state to run out after the last voice */
     else if ((!t->tail || !t->p[P_DIST] || !--t->tail) && !slicer_busy(t)) {
         slicer_track(t, 0, n);                          /* (the SLICER's step clock runs on) */
@@ -534,6 +542,14 @@ static void mix_part(track_t *t, uint32_t n)
         mod_end(t);                                     /* the stored values back */
 }
 
+#if NTRK == 8
+/* Host/direct callers retain fresh tuning; the full mix passes one snapshot. */
+static void mix_part(track_t *t, uint32_t n)
+{
+    mix_part_tuned(t, n, global_tuning());
+}
+#endif
+
 /* the master with the FX layer's effects between its level and master_out (perform.c) */
 static __attribute__((noinline)) void perf_master(int32_t *out, uint32_t n)
 {
@@ -561,8 +577,14 @@ static void mix_block(int32_t *out, uint32_t n)
         send_c[i] = send_d[i] = send_r[i] = mix_l[i] = mix_r[i] = 0;
     events_block(n);
     perf = perf_begin(n);                               /* the FX hold layer at work (perform.c) */
+#if NTRK == 8
+    global_tuning_t tuning = global_tuning();
+    for (i = 0; i < NPART; i++)
+        mix_part_tuned(&trk[i], n, tuning);
+#else
     for (i = 0; i < NPART; i++)
         mix_part(&trk[i], n);
+#endif
     if (perf)
         perf_pre(mix_l, mix_r, send_d, send_r, n);
     fx_buses(send_c, send_d, send_r, wet, n);
