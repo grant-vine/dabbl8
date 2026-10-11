@@ -1,0 +1,988 @@
+{
+  "record_license": "GPL-3.0-only",
+  "delivery_parent": "406de63335eb55248db21005efd17261b167b03a",
+  "production_delta": "firmware/src/voice.c native NTRK==8 fine-bend calculation only",
+  "source_sha256": {
+    "firmware/src/voice.c": "f56d9fed032a28a5d1612f3ab7bec359b73735002165937a4b42553858b5ca2d",
+    "tests/bend_fine_table_test.py": "885fbf7b6ffc9e03737cad7da95b19b8f29cd24f8cc5b24dca65982b9f72ad90",
+    "tests/run_tests.sh": "980e8f27dbe3ce4046eb9bda072728a33a0b3d0bf87e80f20f5c937983ad3398"
+  },
+  "curated_scope": {
+    "topic": "84aac1d8235e3a1da395951a46736f759213ec27",
+    "private_current_union_tree": "bbf7ce7e9c216de3563f6a3957ba5c1c55ac13de",
+    "delta_vs_topic": [
+      "docs/dabbl8/d8p1-codec.md",
+      "docs/dabbl8/d8p1-runtime-state.md",
+      "docs/dabbl8/d8p1-storage-model.md"
+    ],
+    "release_qualified": false
+  },
+  "arithmetic": [
+    {
+      "source": "/private/tmp/d8-bend-fine-current/current-candidate/firmware/src/voice.c",
+      "sha256": "f56d9fed032a28a5d1612f3ab7bec359b73735002165937a4b42553858b5ca2d",
+      "literal_table": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        12,
+        13
+      ],
+      "independent_formula": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        12,
+        13
+      ],
+      "checked_values": 12803,
+      "supported_bend_target_bound": 6397,
+      "negative_floor_and_defined_edge_cases": true
+    },
+    {
+      "source": "/private/tmp/d8-bend-fine-current/curated-candidate/firmware/src/voice.c",
+      "sha256": "978e40d67c351dc1fa8faa338b8589abf740f37d98c7e3219ab73aca57d3f863",
+      "literal_table": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        12,
+        13
+      ],
+      "independent_formula": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        12,
+        13
+      ],
+      "checked_values": 12803,
+      "supported_bend_target_bound": 6397,
+      "negative_floor_and_defined_edge_cases": true
+    }
+  ],
+  "generated_headers": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "host": {
+    "audio_state_executions": 44,
+    "exact_pointer_aware_pairs": 22,
+    "sequencer_pitch_automation_bend_executions": 8,
+    "pointer_oracle_executions": 2,
+    "actual_renderer_mutants_detected": 4,
+    "maintained_arithmetic_mutants_detected": 6,
+    "regression_executions": 112,
+    "regression_pass": 80,
+    "matched_existing_failures": 32,
+    "original_native_midi_failures": 16,
+    "original_native_motion_normal_failures": 8,
+    "original_native_motion_sanitizer_overflows": 8,
+    "separate_overlay139_native_motion_passes": 16,
+    "mod_cost_stdout_caveat": {
+      "changed_pairs": 9,
+      "changed_lines": 15,
+      "scope": "Every changed stdout line independently matched one of two exact known mod_test kernel instruction measurement formats. All numeric values and original raw lines retained, no output normalization or target-cycle claim."
+    },
+    "strict_arithmetic": "NTRK4/8 each12803 inputs PASS normal and full ASan/UBSan; no DSP exclusions",
+    "full_renderer_sanitizer_exclusions": [
+      "signed-integer-overflow",
+      "shift",
+      "bounds",
+      "object-size",
+      "pointer-overflow"
+    ]
+  },
+  "operation_scope": "Actual instrumented voice_render fine-bend calculation:64 idle or loaded blocks with8tracks remove512 integer divisions, replace512 table queries. This is a source operation count, not cycles.",
+  "target_environment": {
+    "toolchain": {
+      "archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+      "regular_files": 599,
+      "symlinks": 44,
+      "entries": 694,
+      "extra_entries": 0
+    },
+    "sdk_use": "None; app-only helper",
+    "image": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+    "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+    "container": {
+      "Id": "sha256:d4c45f66efc59f89b0597d343a9bd72808493c0eacecde5285961743252cee23",
+      "RepoTags": [
+        "debian:bookworm-slim"
+      ],
+      "RepoDigests": [
+        "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+        "mirror.gcr.io/library/debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587"
+      ],
+      "Comment": "debuerreotype 0.17",
+      "Created": "2026-10-05T00:00:00Z",
+      "Config": {
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "Cmd": [
+          "bash"
+        ]
+      },
+      "Architecture": "amd64",
+      "Os": "linux",
+      "Size": 74870277,
+      "GraphDriver": {
+        "Data": {
+          "MergedDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/merged",
+          "UpperDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/diff",
+          "WorkDir": "/var/lib/docker/overlay2/984135b415f4c16b637e097217e7e5318d84008d323aad6407044fb750bd2718/work"
+        },
+        "Name": "overlay2"
+      },
+      "RootFS": {
+        "Type": "layers",
+        "Layers": [
+          "sha256:e58989146fcec76699871403b9897b5c014af1ccd85f5a9300a215e7975525d7"
+        ]
+      },
+      "Metadata": {
+        "LastTagTime": "0001-01-01T00:00:00Z"
+      }
+    },
+    "compiler_version": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /opt/jieli/pi32v2/bin\n"
+  },
+  "target": [
+    {
+      "name": "current-4-profile0-control",
+      "app_bytes": 449240,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 449240 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 0,
+      "binary_sha256": "97fa3f9d40f7e692b2713c4be86588b422b6b64b2978f3043b1df6725fb62cef",
+      "elf_sha256": "3c3e9c9f76c28e9f77cfcbfc7f137ccc18544df3749eaf574c86eb6ee362ee69",
+      "disassembly_sha256": "7ecb9b7fba33b8d50739c51d58966b24bbc6ed7ed4e91de8e60085cc8aeabf94"
+    },
+    {
+      "name": "current-4-profile0-candidate",
+      "app_bytes": 449240,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 449240 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 0,
+      "binary_sha256": "97fa3f9d40f7e692b2713c4be86588b422b6b64b2978f3043b1df6725fb62cef",
+      "elf_sha256": "3c3e9c9f76c28e9f77cfcbfc7f137ccc18544df3749eaf574c86eb6ee362ee69",
+      "disassembly_sha256": "7ecb9b7fba33b8d50739c51d58966b24bbc6ed7ed4e91de8e60085cc8aeabf94"
+    },
+    {
+      "name": "current-8-profile0-control",
+      "app_bytes": 482096,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 482096 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "c525bde00af6bc65f90909f78f5f831151288bb825c17612351743a09ec44f11",
+      "elf_sha256": "af79c6c713288108e1e3aebf66b7fa055ff16b1e66a167f0dd55c8d6eaa6badd",
+      "disassembly_sha256": "8dffde64f24ead8ad34f5c07150444729bf393fc306ba7bf9d92c498aaea257a"
+    },
+    {
+      "name": "current-8-profile0-candidate",
+      "app_bytes": 482112,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 482112 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "b8c814f226d1f646ece224dd5c4ede2a0bd66ed79e4e7f24fb04f70572b55b32",
+      "elf_sha256": "568f333be46a508eb9171c4043939bbfde10ec958219b78c811fb69baebd7708",
+      "disassembly_sha256": "bb66751dc5f7195002248819b93a7ef12e51887b958f71db6c002a847378ff2b"
+    },
+    {
+      "name": "curated-8-profile0-control",
+      "app_bytes": 482096,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 482096 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "c525bde00af6bc65f90909f78f5f831151288bb825c17612351743a09ec44f11",
+      "elf_sha256": "af79c6c713288108e1e3aebf66b7fa055ff16b1e66a167f0dd55c8d6eaa6badd",
+      "disassembly_sha256": "8dffde64f24ead8ad34f5c07150444729bf393fc306ba7bf9d92c498aaea257a"
+    },
+    {
+      "name": "curated-8-profile0-candidate",
+      "app_bytes": 482112,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 482112 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "b8c814f226d1f646ece224dd5c4ede2a0bd66ed79e4e7f24fb04f70572b55b32",
+      "elf_sha256": "568f333be46a508eb9171c4043939bbfde10ec958219b78c811fb69baebd7708",
+      "disassembly_sha256": "bb66751dc5f7195002248819b93a7ef12e51887b958f71db6c002a847378ff2b"
+    },
+    {
+      "name": "curated-8-profile1-control",
+      "app_bytes": 446500,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 446500 B; RAM .data+.bss 90324 B of 98304; pool 293672 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=1",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "b991c5ff06554626cb5ee0288a4fa8a2a7d8533f5dbc9618809aa734eebb44f5",
+      "elf_sha256": "baa3e6ed6bcbccf6a3e4b46244efbba72a86ca7fe33da7511a6f37dbd8168143",
+      "disassembly_sha256": "958fc602cf42a92e237042506ecf68d17137eee97ef88beb595799f3117b6b3c"
+    },
+    {
+      "name": "curated-8-profile1-candidate",
+      "app_bytes": 446516,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 446516 B; RAM .data+.bss 90324 B of 98304; pool 293672 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=1",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "079e66bafe49e5292066a0da9bbc1eccd7914a534c55c69c85bf46ab7fceb60c",
+      "elf_sha256": "0a3f89ca673961c2f2079602bcca934398c7f0ed9de225ef2fa9aa255ff1bf3c",
+      "disassembly_sha256": "98741f3dab7214f6a6ea334514f0505fe65a47120a1ba0c58337bce94556df95"
+    },
+    {
+      "name": "curated-8-profile2-control",
+      "app_bytes": 456428,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 456428 B; RAM .data+.bss 95300 B of 98304; pool 293672 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=2",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "fbceffa19c31dd6f237caac48b44af314b4022b2617fb06d5b7d7dfba05c3522",
+      "elf_sha256": "08262f0587290fb6a34c43dec936b01b1268f4e62fe2dbdce36b9cd9031575db",
+      "disassembly_sha256": "f44e66ab12c066b9208c3811172be67fb67869abd0ec02d43a058e2fd388b32c"
+    },
+    {
+      "name": "curated-8-profile2-candidate",
+      "app_bytes": 456444,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 456444 B; RAM .data+.bss 95300 B of 98304; pool 293672 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=8",
+        "-DD8BUILD_PROFILE=2",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "f224551a803252b1a17b37d268d641e67d1e3ea04c2616c8421d11a03432642d",
+      "elf_sha256": "e9325c05edee772fb590f59a099f13ca54b0d5916ff96f96d83693a580a21fa4",
+      "disassembly_sha256": "38ee0ccc894785bc8bf724635f8d409f2474dd147c6e19ca2be1872e269a0ea6"
+    },
+    {
+      "name": "current-4-profile0-fm0-slice0-control",
+      "app_bytes": 438112,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 438112 B; RAM .data+.bss 83044 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "02a326185922ce6d3f447b1e1c8c9714c4faa64c25c185834b8d0c78b4469a37",
+      "elf_sha256": "73018d21013992c0f0c233d1e1060266f37abcab745e024abc12ccfeb0807ed0",
+      "disassembly_sha256": "cba52172da866975f549bf49df3a5b20bcae2a538a06349f58297a80ef5d4aca"
+    },
+    {
+      "name": "current-4-profile0-fm0-slice0-candidate",
+      "app_bytes": 438112,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 438112 B; RAM .data+.bss 83044 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "02a326185922ce6d3f447b1e1c8c9714c4faa64c25c185834b8d0c78b4469a37",
+      "elf_sha256": "73018d21013992c0f0c233d1e1060266f37abcab745e024abc12ccfeb0807ed0",
+      "disassembly_sha256": "cba52172da866975f549bf49df3a5b20bcae2a538a06349f58297a80ef5d4aca"
+    },
+    {
+      "name": "current-4-profile0-fm1-slice0-control",
+      "app_bytes": 439396,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 439396 B; RAM .data+.bss 83684 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "3f8741f6dc3de389ca057a8d7cc1b5d6a08604b37a6cd009a72d1d6afacc7985",
+      "elf_sha256": "5fcff50e84e1c6ab023496b8aba4f9fd9c83c2a3af62c9db995814e623c6266e",
+      "disassembly_sha256": "3fc45280f65879da1bcc7155628808eb3c849b83b327987cd89286c901e8e57e"
+    },
+    {
+      "name": "current-4-profile0-fm1-slice0-candidate",
+      "app_bytes": 439396,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 439396 B; RAM .data+.bss 83684 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 1,
+      "binary_sha256": "3f8741f6dc3de389ca057a8d7cc1b5d6a08604b37a6cd009a72d1d6afacc7985",
+      "elf_sha256": "5fcff50e84e1c6ab023496b8aba4f9fd9c83c2a3af62c9db995814e623c6266e",
+      "disassembly_sha256": "3fc45280f65879da1bcc7155628808eb3c849b83b327987cd89286c901e8e57e"
+    },
+    {
+      "name": "current-4-profile0-fm1-slice1-control",
+      "app_bytes": 450444,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 450444 B; RAM .data+.bss 92756 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 0,
+      "binary_sha256": "bb36c80e302f62bb5146825f2116d01f472acf34b4fada0f647e5e332a68037e",
+      "elf_sha256": "c8d85069bf843a76f520432459224e46ad46b7a66b6d18e584099ee25689bb40",
+      "disassembly_sha256": "6035566dd3801d90054d3b78cfc6aad07c0f06ca33fe13f4067b757c9486c3b3"
+    },
+    {
+      "name": "current-4-profile0-fm1-slice1-candidate",
+      "app_bytes": 450444,
+      "memory": [
+        ".ram_text: 916 insns, no calls",
+        "image 450444 B; RAM .data+.bss 92756 B of 98304; pool 331332 B of 344064"
+      ],
+      "flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-DNPART=4",
+        "-DD8BUILD_PROFILE=0",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-D__DATE__=\"Oct 11 2026\"",
+        "-Wno-builtin-macro-redefined"
+      ],
+      "check_errors": [],
+      "budget_exit": 0,
+      "binary_sha256": "bb36c80e302f62bb5146825f2116d01f472acf34b4fada0f647e5e332a68037e",
+      "elf_sha256": "c8d85069bf843a76f520432459224e46ad46b7a66b6d18e584099ee25689bb40",
+      "disassembly_sha256": "6035566dd3801d90054d3b78cfc6aad07c0f06ca33fe13f4067b757c9486c3b3"
+    }
+  ],
+  "target_comparisons": [
+    {
+      "control": "current-4-profile0-control",
+      "candidate": "current-4-profile0-candidate",
+      "app_delta": 0,
+      "app_equal": true,
+      "elf_equal": true,
+      "dis_equal": true,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 449240 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 449240 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ]
+    },
+    {
+      "control": "current-8-profile0-control",
+      "candidate": "current-8-profile0-candidate",
+      "app_delta": 16,
+      "app_equal": false,
+      "elf_equal": false,
+      "dis_equal": false,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 482096 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 482112 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ]
+    },
+    {
+      "control": "curated-8-profile0-control",
+      "candidate": "curated-8-profile0-candidate",
+      "app_delta": 16,
+      "app_equal": false,
+      "elf_equal": false,
+      "dis_equal": false,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 482096 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 482112 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ]
+    },
+    {
+      "control": "curated-8-profile1-control",
+      "candidate": "curated-8-profile1-candidate",
+      "app_delta": 16,
+      "app_equal": false,
+      "elf_equal": false,
+      "dis_equal": false,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 446500 B; RAM .data+.bss 90324 B of 98304; pool 293672 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 446516 B; RAM .data+.bss 90324 B of 98304; pool 293672 B of 344064"
+      ]
+    },
+    {
+      "control": "curated-8-profile2-control",
+      "candidate": "curated-8-profile2-candidate",
+      "app_delta": 16,
+      "app_equal": false,
+      "elf_equal": false,
+      "dis_equal": false,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 456428 B; RAM .data+.bss 95300 B of 98304; pool 293672 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 456444 B; RAM .data+.bss 95300 B of 98304; pool 293672 B of 344064"
+      ]
+    },
+    {
+      "control": "current-4-profile0-fm0-slice0-control",
+      "candidate": "current-4-profile0-fm0-slice0-candidate",
+      "app_delta": 0,
+      "app_equal": true,
+      "elf_equal": true,
+      "dis_equal": true,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 438112 B; RAM .data+.bss 83044 B of 98304; pool 331332 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 438112 B; RAM .data+.bss 83044 B of 98304; pool 331332 B of 344064"
+      ]
+    },
+    {
+      "control": "current-4-profile0-fm1-slice0-control",
+      "candidate": "current-4-profile0-fm1-slice0-candidate",
+      "app_delta": 0,
+      "app_equal": true,
+      "elf_equal": true,
+      "dis_equal": true,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 439396 B; RAM .data+.bss 83684 B of 98304; pool 331332 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 439396 B; RAM .data+.bss 83684 B of 98304; pool 331332 B of 344064"
+      ]
+    },
+    {
+      "control": "current-4-profile0-fm1-slice1-control",
+      "candidate": "current-4-profile0-fm1-slice1-candidate",
+      "app_delta": 0,
+      "app_equal": true,
+      "elf_equal": true,
+      "dis_equal": true,
+      "memory_control": [
+        ".ram_text: 916 insns, no calls",
+        "image 450444 B; RAM .data+.bss 92756 B of 98304; pool 331332 B of 344064"
+      ],
+      "memory_candidate": [
+        ".ram_text: 916 insns, no calls",
+        "image 450444 B; RAM .data+.bss 92756 B of 98304; pool 331332 B of 344064"
+      ]
+    }
+  ],
+  "static": {
+    "current-4-profile0-control": {
+      "irq_cost": 40609,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 0,
+      "explicit_checker_errors": []
+    },
+    "current-4-profile0-candidate": {
+      "irq_cost": 40609,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 0,
+      "explicit_checker_errors": []
+    },
+    "current-8-profile0-control": {
+      "irq_cost": 55767,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 440,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: fm1_alnk0_irq    2380 instructions, 2251 in loops, 16 divides, 81 calls there: cost 55767 (budget 37502) OVER BUDGET (+49 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "current-8-profile0-candidate": {
+      "irq_cost": 55063,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 16,
+      "irq_local_reserve": 440,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: fm1_alnk0_irq    2377 instructions, 2248 in loops, 15 divides, 81 calls there: cost 55063 (budget 37502) OVER BUDGET (+47 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile0-control": {
+      "irq_cost": 55767,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 440,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: fm1_alnk0_irq    2380 instructions, 2251 in loops, 16 divides, 81 calls there: cost 55767 (budget 37502) OVER BUDGET (+49 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile0-candidate": {
+      "irq_cost": 55063,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 16,
+      "irq_local_reserve": 440,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: fm1_alnk0_irq    2377 instructions, 2248 in loops, 15 divides, 81 calls there: cost 55063 (budget 37502) OVER BUDGET (+47 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile1-control": {
+      "irq_cost": 59270,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 444,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL phase_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL sample_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL formant_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_pass not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL phys_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL noise_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_memb_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_excite not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_symp_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: drum_render      2217 instructions,  567 in loops, 14 divides, 14 calls there: cost  3145 (budget 86) OVER BUDGET (+3557 %, limit +10 %)",
+        "target: fm1_alnk0_irq    2421 instructions, 2292 in loops, 16 divides, 81 calls there: cost 59270 (budget 37502) OVER BUDGET (+58 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile1-candidate": {
+      "irq_cost": 58566,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 16,
+      "irq_local_reserve": 444,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL phase_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL sample_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL formant_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_pass not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL phys_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL noise_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_memb_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_excite not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_symp_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: drum_render      2217 instructions,  567 in loops, 14 divides, 14 calls there: cost  3145 (budget 86) OVER BUDGET (+3557 %, limit +10 %)",
+        "target: fm1_alnk0_irq    2418 instructions, 2289 in loops, 15 divides, 81 calls there: cost 58566 (budget 37502) OVER BUDGET (+56 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile2-control": {
+      "irq_cost": 58359,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 444,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL phase_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL lofi_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL formant_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_pass not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL phys_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL noise_render not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_memb_block not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_excite not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_symp_run not found in /private/tmp/d8-bend-fine-current/curated-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: drum_render      2217 instructions,  567 in loops, 14 divides, 14 calls there: cost  3145 (budget 86) OVER BUDGET (+3557 %, limit +10 %)",
+        "target: fm1_alnk0_irq    2422 instructions, 2293 in loops, 16 divides, 81 calls there: cost 58359 (budget 37502) OVER BUDGET (+56 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "curated-8-profile2-candidate": {
+      "irq_cost": 57639,
+      "uac_cost": 562,
+      "raw_irq_divide_listings": 16,
+      "irq_local_reserve": 444,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL phase_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL lofi_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL formant_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL trio_pass not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL wheel_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL grain_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL phys_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL noise_render not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_modal_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_memb_block not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_excite not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_string_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL px_symp_run not found in /private/tmp/d8-bend-fine-current/curated-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: drum_render      2217 instructions,  567 in loops, 14 divides, 14 calls there: cost  3145 (budget 86) OVER BUDGET (+3557 %, limit +10 %)",
+        "target: fm1_alnk0_irq    2418 instructions, 2289 in loops, 15 divides, 81 calls there: cost 57639 (budget 37502) OVER BUDGET (+54 %, limit +10 %)",
+        "target: uac_tap48         162 instructions,  124 in loops, 0 divides,  0 calls there: cost   562 (budget 504) OVER BUDGET (+12 %, limit +10 %)"
+      ]
+    },
+    "current-4-profile0-fm0-slice0-control": {
+      "irq_cost": 40039,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/current-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/current-control/build/felucca.dis (renamed? inlined? update FUNCS)"
+      ]
+    },
+    "current-4-profile0-fm0-slice0-candidate": {
+      "irq_cost": 40039,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/current-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/current-candidate/build/felucca.dis (renamed? inlined? update FUNCS)"
+      ]
+    },
+    "current-4-profile0-fm1-slice0-control": {
+      "irq_cost": 40039,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/current-control/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/current-control/build/felucca.dis (renamed? inlined? update FUNCS)"
+      ]
+    },
+    "current-4-profile0-fm1-slice0-candidate": {
+      "irq_cost": 40039,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 1,
+      "explicit_checker_errors": [
+        "target: FAIL slice_render not found in /private/tmp/d8-bend-fine-current/current-candidate/build/felucca.dis (renamed? inlined? update FUNCS)",
+        "target: FAIL slc_rev not found in /private/tmp/d8-bend-fine-current/current-candidate/build/felucca.dis (renamed? inlined? update FUNCS)"
+      ]
+    },
+    "current-4-profile0-fm1-slice1-control": {
+      "irq_cost": 40609,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 0,
+      "explicit_checker_errors": []
+    },
+    "current-4-profile0-fm1-slice1-candidate": {
+      "irq_cost": 40609,
+      "uac_cost": 503,
+      "raw_irq_divide_listings": 17,
+      "irq_local_reserve": 424,
+      "checker_exit": 0,
+      "explicit_checker_errors": []
+    }
+  },
+  "sealed_evidence": {
+    "directory": ".local-baseline/bend-fine-table-current-qualification/406-and-84",
+    "entries": 712,
+    "report_sha256": "9a9506c57b86860d4a989424358658a4cdd8dd4b8c40b99c4ceee88cdacc4b69",
+    "manifest_sha256": "737b11b9140b740df5e2aa0288d86756892d975297bc142bef0f96a44fb1ccfc",
+    "strict_cost_comparator_report_sha256": "e8691e8d9ed702a20072fcd8d6e7f5e820a1280fe830bf5376fefc1b6f8d037b"
+  },
+  "limits": [
+    "Initial seal falsely required byte-identical mod_test host instruction cost prints and aborted; raw failure retained. Assertions/non-cost output match, kernel measurements remain distinct and unnormalized.",
+    "Native IRQ and UAC scores still FAIL against inherited37502/504 and +10% limits41252.2/554.4. Reduced profiles additionally report absent excluded functions; checker unchanged.",
+    "Static instruction/count scores are not measured cycles.512 divisions replaced with512 byte-table queries per64 native idle/loaded blocks; target ROM access/net latency unmeasured.",
+    "No hardware deadline/full call stack, flash, loader/package, release or recovery qualification.",
+    "Current nativeMIDI legacy channel1-4 expectations produce five same failures per configuration (16 executions). Original native motion yields eight normal failures/eight ASan stack overflows; separate139fixture overlay16passes does not replace the original failures.",
+    "Actual vendor4/8 default andcurated8 profile0/1/2; four-track FM4/SLICE4pairs app/ELF/dis byte-identical. Native profiles each+16B with unchanged RAM/pool.",
+    "Profile source84+406 is fixed separate experimental composition, not a profile-on-main or completed136/138CI claim.",
+    "Raw GRAIN-heavy hash mismatch preserved; no audio/golden or broad nonpointer-state normalization.",
+    "Inherited DSP sanitizer exclusions retained for full renderer fixtures; maintained arithmetic-only test uses strict ASan/UBSan with no exclusions.",
+    "No voice-cache/zero-send experiments, golden/budget edits or user checkout modifications."
+  ]
+}

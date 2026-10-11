@@ -608,7 +608,15 @@ static uint32_t track_render(track_t *t, int32_t *out, uint32_t n)
     }
     bend = midi_bend_q8[ti];
     bend16 = bend >= 0 ? bend / 16 : -((-bend + 15) / 16);
+#if NTRK == 8
+    /* floor(bend / 16) leaves residue 0..15, also for negative bends.
+     * Exact truncating quotient (residue * 2367) / 2560. The unsigned low
+     * bits give that residue without relying on a signed right shift. */
+    static const uint8_t BEND_FINE[16] = {0,0,1,2,3,4,5,6,7,8,9,10,11,12,12,13};
+    bend_fine = BEND_FINE[(uint32_t)bend & 15u];
+#else
     bend_fine = (bend - bend16 * 16) * 2367 / 2560;
+#endif
     uint32_t nr = 0, fade = t->xf_on && t->xf;
     int16_t pe_new[8];
     for (i = 0; i < n; i++)

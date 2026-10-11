@@ -120,6 +120,7 @@ run() { echo "== $1"; shift; "$@" || fail=1; }
 run "pinned dependency integrity: corrupted cache refusal, hidden SDK edits and fresh browser extraction" python3 tests/dependency_integrity_test.py
 
 run "evidence invocation isolation: preserve historical files and refuse creation errors" python3 tests/evidence_session_test.py
+run "actual bend arithmetic: four/eight tracks, full MIDI domain and defined signed edges" python3 tests/bend_fine_table_test.py --cc "$CC"
 
 run "current tracked source notice and asset validation" python3 tools/license_inventory.py
 run "source notice validation: real Git negative controls and shallow checkout" python3 tests/license_inventory_test.py
@@ -557,6 +558,7 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    run "strict ASan/UBSan: actual bend arithmetic (no DSP exclusions)" python3 tests/bend_fine_table_test.py --cc "${CC%% *}" --sanitize
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
     run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
     $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
