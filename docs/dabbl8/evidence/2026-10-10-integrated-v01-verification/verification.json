@@ -1,0 +1,43 @@
+{
+  "functional_candidate": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "merged_main": "baae18074f444b5681e04b45f3d0373aea9e101b",
+  "trees_identical": true,
+  "tested_ci_merge": "5abbbee80427412f41175ff203d326631f0f0354",
+  "ci_run": 38086303575,
+  "github_zip_sha256": "659a01d1914f55f47b59db635e7f2095a48fae659d225ccd94fe526b3f6b9b8c",
+  "historical_unchanged_upstream_reference": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "hardware": "SKIP",
+  "firmware_release": false,
+  "production_ownership_grant": false,
+  "mac_source_files_checked": 1248,
+  "mac_source_files_unchanged": true,
+  "mac_generated_pins_checked": 29,
+  "mac_sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "mac_explicit_omissions": [
+    "DaisySP reference",
+    "Vendor V15 restore fixture",
+    "One legacy editor MENU fixture",
+    "Full browser emulator; separate converter parity passes"
+  ],
+  "native_static_cost_remaining_failures": {
+    "uac_tap48": {
+      "cost": 570,
+      "budget": 504
+    },
+    "rev_room": {
+      "cost": 296,
+      "budget": 218
+    },
+    "rev_spring": {
+      "cost": 176,
+      "budget": 126
+    }
+  },
+  "native_static_cost_provenance": "Separately measured pinned target by integration owner, not Linux default CI host timing."
+}

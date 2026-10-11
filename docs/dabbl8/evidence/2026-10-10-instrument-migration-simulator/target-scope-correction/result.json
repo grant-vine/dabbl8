@@ -1,0 +1,30 @@
+{
+  "frozen_executable_source": "381537968d16da8f911f4d1ee0ae579f42ca1c3c",
+  "initial_evidence_head": "3ddb05439c0245eb20754f7dff83dc79d7255e20",
+  "full_suite_head": "381537968d16da8f911f4d1ee0ae579f42ca1c3c",
+  "initial_full_suite_exit": 0,
+  "initial_full_suite_target_cost_scope": "reference baseline disassembly from a660 capture, not current parent6f73 target",
+  "correction": "sole disassembly consumer rerun using actual parent6f73 default4 target; all other host results retained unchanged",
+  "sole_consumer": "tests/run_tests.sh:490-491 -> tests/target_budget.py",
+  "parent_target_source": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "parent_current_default4_image": {
+    "tracks": 4,
+    "bytes": 447928,
+    "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "audited_v115_hash_matches": false
+  },
+  "initial_reference_disassembly_sha256": "07516f57220e1277e70ce14ea4b2122e63bc862da2536d5893139d7566001b6f",
+  "correct_parent_disassembly_sha256": "7e7f2d4f1d5c4949e50f61d1211985b7bb936f3285be484f11cfe1b3ce339c6f",
+  "focused_target_budget_exit": 0,
+  "new_target_build": false,
+  "full_suite_rerun": false,
+  "six_baseline_reference_hashes_unchanged": true,
+  "generated_29_inputs_unchanged": true,
+  "native_budget_qualification": false,
+  "hardware_qualification": false
+}

@@ -1,0 +1,30 @@
+eight-track legacy write refused before native binding ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates all legacy project copies ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+native ownership gates legacy autosave copies  ok
+refusal is before reads/erase/program, all physical bytes retained ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+every legacy application object refuses before IO ok
+quarantine preserves all objects before reads/erase/program ok
+cold/unbound context cannot write the fourth legacy pair ok
+Native storage gate: 0 failures; simulated legacy driver only

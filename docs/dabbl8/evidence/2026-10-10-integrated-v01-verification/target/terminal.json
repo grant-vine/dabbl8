@@ -1,0 +1,10 @@
+{
+  "source": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "target_builds": "PASS",
+  "default_baseline_identity": false,
+  "baseline_difference": "Deliberately retained upstream v1.1.5.1 wake fix; selected pristine v1.1.5 measurement baseline unchanged",
+  "six_baseline_hashes_unchanged": true,
+  "generated_inputs_unchanged": true,
+  "native_budget_qualification": false,
+  "hardware": "NOT_RUN"
+}
