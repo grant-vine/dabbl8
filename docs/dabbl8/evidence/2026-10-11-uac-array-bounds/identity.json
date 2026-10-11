@@ -1,0 +1,12 @@
+{
+  "base": "fbadbca894419c9626306eb773f38ae22baed52d",
+  "usb_source_sha256": "57ad5a6fcdf4df2c9b8c62583d324d7bc7694330f2c57637619fd2a95775ed3e",
+  "main_candidate_app_elf_disassembly_identical": [
+    4,
+    8
+  ],
+  "array_bound_proof": "s is 0..RS_H-1; existing static assertion requires UAC_FIR_N<=RS_H. Each channel accesses indices s..s+UAC_FIR_N-1<=2*RS_H-2 in its own array of 2*RS_H elements. Final pointer advance remains within the array or one past.",
+  "standard_reference": "WG14 N1570 6.5.6p8: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf",
+  "hardware": "SKIP",
+  "timing_improvement": "None claimed; target code identical and native static budget failures unchanged."
+}
