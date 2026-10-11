@@ -116,3 +116,24 @@ audio/MIDI timing or hardware/recovery qualification was executed here. Native
 cold-load checks add code and bounded preview work; target image/stack/budget and
 unchanged-default/golden verification remain required before release. No loader,
 flash boundary, budget, golden, device, release or website changes were made.
+
+## Root integration and target verification
+
+The initial agent lane above did not execute target builds. Root separately
+preserved pinned target builds of production source `6cfef34` against foundation
+`48254c2`: four-track app size increases by 700 bytes and eight-track by 740
+bytes; static RAM and audio pool remain unchanged (92,116/331,332 bytes for four
+tracks; 96,068/335,240 for eight). Four-track static budgets pass; eight-track
+static budgets still fail. These are costs of the adoption guards, not memory
+savings or hardware timing qualification.
+
+After integrating foundation `54a7874` and its current-main USB correction, root
+reran all sixteen host adoption configurations at exact union `47da5e6`: all
+5,936 assertions passed. Raw logs, source hashes, target receipts and independent
+static review are committed under
+`docs/dabbl8/evidence/2026-10-11-engine-availability-adoption/`.
+The target measurements above predate this USB integration; they do not qualify
+the final union target image, package, stack, golden suite or device timing.
+Full final-source CI and hardware/recovery gates remain pending. Higher-level
+load wrappers still report generic invalid-project errors for a missing engine;
+the distinct internal refusal reason is not a negotiated editor capability.
