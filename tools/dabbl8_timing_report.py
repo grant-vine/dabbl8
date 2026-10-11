@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
-"""Validate paused D8T1 timing reports and nearest-rank percentile bounds.
+"""Validate paused D8T1/D8T2 timing reports and nearest-rank percentile bounds.
 No device transport, installation, clock calibration or hardware qualification.
 """
 import argparse
@@ -58,7 +58,7 @@ def report(record):
 HEX = re.compile(r'[0-9A-F]{8}')
 
 
-def parse_report(text, expected_generation=None, expected_boots=None):
+def _parse_d8t1(text, expected_generation=None, expected_boots=None):
     """Accept exactly one complete frame, including its canonical numeric CRC.
 
     Console echoes/prompts outside the frame are allowed. No serial connection,
@@ -150,6 +150,64 @@ def parse_report(text, expected_generation=None, expected_boots=None):
         ],
     }
 
+
+def parse_report(text, expected_generation=None, expected_boots=None):
+    """D8T1 historical decoding is unchanged; D8T2 adds an aligned logical window."""
+    if not isinstance(text, str) or 'd8t2 begin' not in text:
+        return _parse_d8t1(text, expected_generation, expected_boots)
+    if len(text) > 65536 or not text.isascii() or any(ord(c)<32 and c not in '\r\n' for c in text):
+        raise ValueError('bounded ASCII console text required')
+    if not re.search(r'(?m)^d8t2 end [0-9A-F]{8} [0-9A-F]{8} [0-9A-F]{8}\r?\n', text):
+        raise ValueError('complete terminated footer required')
+    lines = text.splitlines()
+    starts = [i for i,l in enumerate(lines) if l.startswith(('d8t1 begin','d8t2 begin'))]
+    if len(starts)!=1: raise ValueError('exactly one timing frame required')
+    start=starts[0];frame=lines[start:start+7]
+    if len(frame)!=7 or any(l.startswith(('d8t1 ','d8t2 ')) for l in lines[:start]+lines[start+7:]):
+        raise ValueError('extra or truncated timing frame data')
+    data=[]
+    for line,label,size in zip(frame,['begin','config','state','window','render','inclusive','end'],[2,6,4,13,BINS+2,BINS+2,3]):
+        words=line.split(' ')
+        if words[:2]!=['d8t2',label] or len(words)!=size+2 or not all(HEX.fullmatch(w) for w in words[2:]):
+            raise ValueError('invalid D8T2 row')
+        data.append([int(w,16) for w in words[2:]])
+    begin,config,state,window,render,inclusive,end=data
+    words=[0x44385432,*begin,*config,*state,*window,0x52,*render,0x49,*inclusive]
+    if zlib.crc32(struct.pack('<'+'I'*len(words),*words))!=end[2] or begin!=end[:2]:
+        raise ValueError('timing report CRC/identity mismatch')
+    first,last,lo,hi,boots,late,under,over,aux0,aux1,aux2,taint,uac=window
+    if taint or uac not in (0,1) or (not uac and (under or over)):
+        raise ValueError('tainted/unsupported timing window')
+    # Reuse the historical histogram/paired-sequence validation exactly after
+    # independently validating D8T2's own ordered words and CRC.
+    oldwords=[0x44385431,*begin,*config,*state,0x52,*render,0x49,*inclusive]
+    oldcrc=zlib.crc32(struct.pack('<'+'I'*len(oldwords),*oldwords))
+    labels=['begin','config','state','render','inclusive','end']
+    oldrows=[begin,config,state,render,inclusive,[*begin,oldcrc]]
+    legacy=''.join('d8t1 '+label+' '+ ' '.join(f'{n:08X}' for n in row)+'\r\n' for label,row in zip(labels,oldrows))
+    result=_parse_d8t1(legacy,expected_generation,expected_boots)
+    elapsed=(hi<<32)|lo
+    if result['samples']:
+        if boots!=begin[1] or ((last-first)&U32_MAX)!=lo or elapsed<inclusive[1] or elapsed>result['samples']*0x7fffffff or late>result['samples']:
+            raise ValueError('inconsistent elapsed/boot window')
+    elif any(window[:-1]):
+        raise ValueError('empty run has a nonempty window')
+    result['format']='D8T2'
+    result['window']={'first_ticks':first,'last_ticks':last,'elapsed_ticks':elapsed,
+        'nominal_elapsed_seconds':elapsed/(config[3]*1000000),
+        'late_publications':late,'uac_enabled':bool(uac),
+        'uac_underrun_publications':under if uac else None,
+        'uac_overrun_publications':over if uac else None,
+        'alnk_aux_pending_observations':[aux0,aux1,aux2], 'taint':taint,
+        'boundary':'First accepted half entry snapshot through last accepted half endpoint snapshot; neither console command time nor lifetime counters.'}
+    result['limits'] += [
+        'D8T2 snapshots use one bounded counter double-read around each timer read; any observed change taints the run.',
+        'Snapshot metadata before the entry timer read and after the endpoint read, recorder code and assembly are excluded from inclusive durations.',
+        'Unsigned modular deltas require each observation gap/counter delta below 2^31; unseen whole wraps, ABA or externally reset values that alias wraps cannot be excluded.',
+        'ALNK auxiliary bits are observed pending flags, not verified DMA error meanings. Late/UAC counts are software counter publications within the logical window.',
+        'External elapsed/reset evidence and pinned diagnostic overhead remain mandatory; this is not physical deadline qualification.',
+    ]
+    return result
 
 def main():
     parser = argparse.ArgumentParser(description='Validate a paused diagnostic console report; no device access.')

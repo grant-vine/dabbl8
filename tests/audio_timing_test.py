@@ -22,7 +22,7 @@ source_paths = ['firmware/src/audio.c', 'firmware/src/audio_timing.h', 'firmware
                 'tools/dabbl8_timing_report.py', 'tests/audio_test.c', 'tests/audio_timing_isr_test.c',
                 'tests/audio_timing_session_test.c', 'tests/audio_timing_console_test.py',
                 'tests/dabbl8_timing_report_test.py', 'tests/timing_build_isolation_test.py',
-                'tests/audio_timing_test.py']
+                'tests/audio_timing_test.py', 'tests/dabbl8_timing_window_test.py', 'tests/audio_timing_window_test.c', 'docs/dabbl8/evidence/2026-10-11-timing-diagnostic/host/console/normal-flag1.frame']
 receipt = {'source_hashes': {name: hashlib.sha256((SOURCE / name).read_bytes()).hexdigest()
                              for name in source_paths}, 'scope': 'Simulated clocks/DMA/CDC only; no device or target timing proof.',
            'result': 'FAIL', 'checks': [], 'skips': []}
@@ -51,6 +51,10 @@ try:
         run('session-' + mode + '-build', [*CC, *flags, '-Wall',
             'tests/audio_timing_session_test.c', '-o', str(binary)])
         run('session-' + mode, [str(binary)])
+    for mode, flags in modes:
+        binary = OUT / ('window-' + mode)
+        run('window-' + mode + '-build', [*CC, *flags, '-Wall', 'tests/audio_timing_window_test.c', '-o', str(binary)])
+        run('window-' + mode, [str(binary)])
     for tracks in (4, 8):
         for mode, flags in modes:
             # The actual DSP uses upstream's intentional wrap/XIP exclusions.
@@ -74,6 +78,8 @@ try:
     run('console', [sys.executable, 'tests/audio_timing_console_test.py'],
         dict(ENV, D8_TIMING_CONSOLE_OUT=str(console_out)))
     run('parser', [sys.executable, 'tests/dabbl8_timing_report_test.py'],
+        dict(ENV, D8_TIMING_TEST_FRAME=str(SOURCE / 'docs/dabbl8/evidence/2026-10-11-timing-diagnostic/host/console/normal-flag1.frame')))
+    run('parser-window', [sys.executable, 'tests/dabbl8_timing_window_test.py'],
         dict(ENV, D8_TIMING_TEST_FRAME=str(console_out / 'normal-flag1.frame')))
     run('output-isolation', [sys.executable, 'tests/timing_build_isolation_test.py'])
     receipt['result'] = 'PASS'

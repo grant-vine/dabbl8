@@ -18,6 +18,7 @@ preamble=r'''
 #ifndef DABBL8_TIMING_DIAGNOSTIC
 #define DABBL8_TIMING_DIAGNOSTIC 1
 #endif
+#define FELUCCA_UAC 1
 #define NTRK 8
 #define HALF_FRAMES 128
 #define FS 44100
@@ -69,17 +70,24 @@ int main(void) {
     command("timingstart\r");assert(!audio_timing.enabled);
     command("timing start\r");assert(audio_timing.enabled && audio_timing.generation==1);
     command("timing start\r");assert(audio_timing.generation==1);
-    command("timing report\r");assert(!strstr(captured,"d8t1 begin"));
-    for(uint32_t i=0;i<1024;i++)audio_timing_record(i*100,i*120,UINT32_MAX-20+i);
+    command("timing report\r");assert(!strstr(captured,"d8t2 begin"));
+    struct d8_timing_snapshot first={UINT32_MAX-100,17,UINT32_MAX-7,UINT32_MAX-8,UINT32_MAX-9,0};
+    for(uint32_t i=0;i<1024;i++) {
+        struct d8_timing_snapshot last=first;
+        last.ticks+=i*120;last.late++;last.under+=2;last.over+=3;
+        audio_timing_record_window(i*100,UINT32_MAX-20+i,&first,&last,
+                                  (i%2?0x10:0)|(i%3==0?0x20:0)|(i%5==0?0x40:0));
+        first=last;first.ticks+=50;
+    }
     command("timing stop junk\r");assert(audio_timing.enabled);
     command("timing stop\r");assert(!audio_timing.enabled);
     unsigned char state[sizeof audio_timing];
     memcpy(state,(const void*)&audio_timing,sizeof state);
     command("timing report\r");
     assert(!memcmp(state,(const void*)&audio_timing,sizeof state));
-    assert(strstr(captured,"d8t1 end") && drains && !con.stalled && !usb.uboot_req);
-    const char *begin=strstr(captured,"d8t1 begin");
-    const char *end=strstr(begin,"d8t1 end");end=strstr(end,"\r\n")+2;
+    assert(strstr(captured,"d8t2 end") && drains && !con.stalled && !usb.uboot_req);
+    const char *begin=strstr(captured,"d8t2 begin");
+    const char *end=strstr(begin,"d8t2 end");end=strstr(end,"\r\n")+2;
     assert(begin && end);
     fwrite(begin,1,(size_t)(end-begin),stdout);
     command("timing stop\r");assert(!memcmp(state,(const void*)&audio_timing,sizeof state));
@@ -87,12 +95,12 @@ int main(void) {
     /* A disconnected DTR reader produces an incomplete frame, not success. */
     captured_n=0;captured[0]=0;co_r=co_w;read_enabled=0;cdc.dtr=0;
     command("timing report\r");assert(con.stalled);
-    assert(strstr(captured,"d8t1 begin") && !strstr(captured,"d8t1 end"));
+    assert(strstr(captured,"d8t2 begin") && !strstr(captured,"d8t2 end"));
 #else
     assert(!audio_timing.enabled && !audio_timing.generation);
     command("timing start\r");assert(!audio_timing.enabled);
     command("help\r");assert(!strstr(captured,"timing start|"));
-    assert(!strstr(captured,"d8t1 begin") && !usb.uboot_req);
+    assert(!strstr(captured,"d8t2 begin") && !usb.uboot_req);
     command("status\r");assert(strstr(captured,"status stub"));
 #endif
     fprintf(stderr,"actual console slice: exact word parsing, argument refusal, dispatch, CDC framing, paused state, read-only status and DTR truncation PASS; simulated only\n");
