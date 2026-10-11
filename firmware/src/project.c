@@ -1176,7 +1176,7 @@ static void project_load(uint32_t slot)
 /* settings + learned panel table: one flash object. The flash copy wins at
  * boot (the .noinit copies are garbage after a power-off). */
 #include "settings_persist.c"
-#if FELUCCA_FLASH && FELUCCA_SLICE
+#if FELUCCA_FLASH && FELUCCA_SLICE && D8BUILD_HAS(13)
 #include "slice_store.c"                          /* SLICE's MAN slices, kept in the user slots */
 #endif
 #if FELUCCA_FLASH
@@ -1200,7 +1200,7 @@ static void persist_boot(void)                    /* before settings_init / pane
         return;
     fl_plain_window_init();                        /* flash above 0x93000 reads as plaintext through XIP
                                                     * (user sample sets are played from there) */
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     slc_store_boot();                              /* (the scans read each slot's stored slices) */
 #endif
     {
@@ -1316,7 +1316,7 @@ static void settings_poll(void)
 #endif
 #if FELUCCA_FLASH
     persist_t p;
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     slc_store_poll();                              /* SLICE's slices edited on the SLICES page */
 #endif
     if (!persist_pending || !flash_ok || transport_busy() ||
