@@ -28,7 +28,11 @@ static int unchanged(void){return !memcmp(before.tracks,trk,sizeof trk)&&!memcmp
  !memcmp(before.patches,fm6_patch,sizeof fm6_patch)&&!memcmp(before.generations,(const void *)fm6_pgen,sizeof fm6_pgen)&&!memcmp(&before.ui_state,&ui,sizeof ui)&&!memcmp(&before.undo_state,&undo,sizeof undo)&&
  before.panic==panic_req&&before.slot==proj_cur&&before.countin==cin_left;}
 static void reset(void){cut=read_error=request_after=-1;backend_busy=0;reads=writes=0;transport_req=0;}
-static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;proof(a<=D8POOL_BYTES&&n<=D8POOL_BYTES-a,"bounded read");reads++;if(read_error==0)return -1;if(read_error>0)read_error--;memcpy(p,nor+256+a,n);return 0;}
+static int rd(void *c,uint32_t a,void *p,uint32_t n){(void)c;proof(a<=D8POOL_BYTES&&n<=D8POOL_BYTES-a,"bounded read");reads++;if(read_error==0)return -1;if(read_error>0)read_error--;memcpy(p,nor+256+a,n);
+#ifdef D8POOL_RUNTIME_READ_HOOK
+ D8POOL_RUNTIME_READ_HOOK(a,p,n);
+#endif
+ return 0;}
 static int mutate(void){if(cut==0)return -1;if(cut>0)cut--;writes++;if(request_after>=0&&writes>=(unsigned)request_after)transport_req=1;return 0;}
 static int er(void *c,uint32_t a){(void)c;proof(a%4096==0&&a<=D8POOL_BYTES-4096,"bounded erase");if(mutate())return -1;memset(nor+256+a,255,4096);return 0;}
 static int pg(void *c,uint32_t a,const void *p,uint32_t n){(void)c;const uint8_t *q=p;proof(n&&n<=256&&a<=D8POOL_BYTES-n&&(a&255)+n<=256,"bounded program");if(mutate())return -1;for(unsigned i=0;i<n;i++)nor[256+a+i]&=q[i];return 0;}
