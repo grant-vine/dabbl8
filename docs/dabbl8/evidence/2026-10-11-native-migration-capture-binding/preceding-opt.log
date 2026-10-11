@@ -1,0 +1,4 @@
+line 24: rc==D8SV_CHANGED
+line 25: proposal(D8SV_CURRENT)==D8SV_CHANGED
+LIMITATION: unobserved RAM edit after seal requires coordinator edit exclusion; metadata is not permission
+Native migration capture binding: 12097674 checks, 2 failures; prior17-role identity; no device/production authority

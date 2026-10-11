@@ -1,0 +1,17 @@
+{
+  "source": "d53f7e6ecee444e1d960b9cc3afb3904096a22f2",
+  "targets": {
+    "4": {
+      "bytes": 447928,
+      "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+      "exact_current_date_PR94_binary_identity": true
+    },
+    "8": {
+      "bytes": 461396,
+      "sha256": "e908df6af2debb4028d477c151c6188f1f0eb0e5ff2352c7dc95840ac11b3119",
+      "exact_current_date_PR94_binary_identity": true
+    }
+  },
+  "active_component_footprint": "NOT_MEASURED: unused private helper eliminated",
+  "hardware": "NOT_RUN"
+}
