@@ -87,6 +87,10 @@ static void shed_voice(void)
 {
     uint32_t p, i;
     voice_t *best = 0;
+#if NPART >= NVOICE
+    voice_t *protected = 0;
+    uint32_t allow_protected = (shed_over & 3u) == 3u;
+#endif
     for (p = 0; p < NPART; p++)
         for (i = 0; i < NVOICE; i++) {
             voice_t *v = &trk[p].v[i];
@@ -108,19 +112,20 @@ static void shed_voice(void)
                 if (!best || v->age < best->age)
                     best = v;
             }
+#if NPART >= NVOICE
+            else if (allow_protected && v->active && v->gate && v->stage != 4u &&
+                     (!protected || v->age < protected->age))
+                protected = v;
+#endif
         }
     }
 #if NPART >= NVOICE
     /* Eight protected leads/basses can occupy the entire shared budget. Only
-     * sustained measured overload may use admission's oldest-protected fallback;
+     * sustained measured overload may retire the oldest protected note, matching admission;
      * released tails and extra held notes above retain their existing priority.
      * Native voice_kill retires immediately: no ninth overlapping fade voice. */
-    if (!best && (shed_over & 3u) == 3u) {
-        track_t *owner = 0;
-        uint32_t victim = voice_victim(0, 0, &owner);
-        if (victim < NVOICE)
-            best = &owner->v[victim];
-    }
+    if (!best)
+        best = protected;
 #endif
     if (best) {
         voice_kill(best);

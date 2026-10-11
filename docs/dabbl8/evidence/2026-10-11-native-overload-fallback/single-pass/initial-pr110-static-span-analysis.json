@@ -1,0 +1,120 @@
+{
+  "8-original": {
+    "cost": {
+      "insns": 2359,
+      "loop": 2239,
+      "div": 16,
+      "call": 81,
+      "cost": 55722
+    },
+    "largest_spans": [
+      {
+        "head": "0x2007aee",
+        "end": "0x20094d4",
+        "bytes": 6630,
+        "instructions": 2080
+      },
+      {
+        "head": "0x20079ae",
+        "end": "0x20083d8",
+        "bytes": 2602,
+        "instructions": 771
+      },
+      {
+        "head": "0x2008c46",
+        "end": "0x20093be",
+        "bytes": 1912,
+        "instructions": 635
+      },
+      {
+        "head": "0x2008c18",
+        "end": "0x200912c",
+        "bytes": 1300,
+        "instructions": 436
+      },
+      {
+        "head": "0x20084ac",
+        "end": "0x2008798",
+        "bytes": 748,
+        "instructions": 236
+      },
+      {
+        "head": "0x2008e42",
+        "end": "0x20090da",
+        "bytes": 664,
+        "instructions": 232
+      },
+      {
+        "head": "0x2008872",
+        "end": "0x2008b08",
+        "bytes": 662,
+        "instructions": 225
+      },
+      {
+        "head": "0x2007f7a",
+        "end": "0x200820c",
+        "bytes": 658,
+        "instructions": 194
+      }
+    ]
+  },
+  "8-candidate-off": {
+    "cost": {
+      "insns": 2379,
+      "loop": 2330,
+      "div": 17,
+      "call": 84,
+      "cost": 133953
+    },
+    "largest_spans": [
+      {
+        "head": "0x2007952",
+        "end": "0x20095ae",
+        "bytes": 7260,
+        "instructions": 2264
+      },
+      {
+        "head": "0x2007968",
+        "end": "0x200959a",
+        "bytes": 7218,
+        "instructions": 2251
+      },
+      {
+        "head": "0x2007aea",
+        "end": "0x20094d4",
+        "bytes": 6634,
+        "instructions": 2079
+      },
+      {
+        "head": "0x20079aa",
+        "end": "0x20083d8",
+        "bytes": 2606,
+        "instructions": 771
+      },
+      {
+        "head": "0x2008c46",
+        "end": "0x20093be",
+        "bytes": 1912,
+        "instructions": 635
+      },
+      {
+        "head": "0x2008c18",
+        "end": "0x200912c",
+        "bytes": 1300,
+        "instructions": 436
+      },
+      {
+        "head": "0x20084ac",
+        "end": "0x2008798",
+        "bytes": 748,
+        "instructions": 236
+      },
+      {
+        "head": "0x2008e42",
+        "end": "0x20090da",
+        "bytes": 664,
+        "instructions": 232
+      }
+    ]
+  }
+}

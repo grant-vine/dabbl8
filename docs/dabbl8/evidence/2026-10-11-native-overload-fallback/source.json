@@ -11,5 +11,6 @@
   },
   "private_diagnostic_included": false,
   "checks": "Four/eight normal and inherited-sanitizer focused tests; unchanged4 audio; original-main8 negative regression fails expected sustained fallback assertion; four fresh target apps. Full hosted suite pending.",
-  "remaining": "Native IRQ/UAC static budget failures unchanged thresholds, hardware deadlines/click quality/stack high-water and recovery unqualified. Immediate retirement reuses current native policy. No package, install, loader/map/write-gate modification."
+  "remaining": "Native IRQ/UAC static budget failures unchanged thresholds, hardware deadlines/click quality/stack high-water and recovery unqualified. Immediate retirement reuses current native policy. No package, install, loader/map/write-gate modification.",
+  "scope": "Initial helper-call implementation at d4002ed6798a6a2026c3a653b804efc96653a48b; current single-pass source pins/results are in single-pass/"
 }
