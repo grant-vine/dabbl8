@@ -258,6 +258,10 @@ static uint32_t div_samples(uint32_t div)
     return div < 6u ? quarter / DIV_DEN[div] : div < 10u ? quarter << (div - 5u) : quarter / DIV_DEN[div % 6u];
 }
 
+#if NTRK == 8
+/* Audio-owned transient scene layer. It never replaces editable parameters. */
+static struct { uint8_t apply,mute,level[8]; int8_t pan[8]; } d8arr_mix;
+#endif
 #include "perform.c"                                 /* the FX hold layer's effects (the master) */
 #include "click.c"                                   /* the metronome's click (after the master: audio.c) */
 
@@ -499,6 +503,9 @@ static void mix_part(track_t *t, uint32_t n)
     }
     {
         int32_t lvl = LEVEL_Q12[t->p[P_LEVEL] & 127], pan = t->p[P_PAN];
+#if NTRK == 8
+        if(d8arr_mix.apply&2u){unsigned k=(unsigned)(t-trk);lvl=LEVEL_Q12[d8arr_mix.level[k]];pan=d8arr_mix.pan[k];}
+#endif
         int32_t gl = 4096 - (pan > 0 ? pan * 64 : 0), gr = 4096 + (pan < 0 ? pan * 64 : 0);
         int32_t c = t->p[P_CHOR] * 258, d = t->p[P_DLY] * 258, r = t->p[P_REV] * 258, pk = t->peak;
         int32_t xmax = c > d ? c : d;

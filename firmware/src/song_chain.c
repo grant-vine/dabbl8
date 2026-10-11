@@ -16,12 +16,15 @@ enum { D8ARR_APPLY_MUTE=1, D8ARR_APPLY_MIX=2, D8ARR_APPLY_TRANSPOSE=4, D8ARR_NON
 typedef struct {
     uint8_t project[4][8], track[4][8], scene_bank[16];
     uint8_t row_scene[16], row_repeat[16], source_engine[3][8];
+    uint8_t fill_pending,fill_active,fill_return,fill_remaining;
+    uint32_t fill_generation;
     uint8_t banks, scenes, rows, valid, suspended, scene, bank, pending, preparing;
     uint32_t generation, pending_generation, store_epoch;
     uint32_t sequence[3], length[3], crc[3];
     uint32_t held[8][4],input_generation;
 } d8arr_state;
-_Static_assert(sizeof(d8arr_state)<=sizeof(chain_pattern_t), "native policy fits unused source");
+typedef struct { uint8_t apply,mute,level[8];int8_t pan[8],transpose[8]; } d8arr_scene;
+_Static_assert(sizeof(d8arr_state)+16*sizeof(d8arr_scene)<=sizeof(chain_pattern_t), "native policy and overlays fit unused source");
 static uint32_t motion_guard(void);
 static void motion_unguard(uint32_t);
 static unsigned d8arr_ui_rows(void);
@@ -36,7 +39,7 @@ static struct {
 #if NTRK == 8
     union {
         chain_pattern_t source[4];
-        struct { chain_pattern_t manual[3]; d8arr_state policy; } native;
+        struct { chain_pattern_t manual[3]; d8arr_state policy; d8arr_scene scene[16]; } native;
     };
 #else
     chain_pattern_t source[4];
@@ -96,9 +99,33 @@ static int d8arr_request_row(unsigned row)
     if(d8arr_running()&&chain.native.policy.valid&&row<chain.native.policy.rows){
         chain.native.policy.pending=(uint8_t)row;
         chain.native.policy.pending_generation=chain.native.policy.generation;
+        chain.native.policy.fill_pending=D8ARR_NONE;
         RING_PUBLISH();rc=0;
     }
     motion_unguard(f);return rc;
+}
+/* These copies occur only on a row boundary/Continue, not for each sample. */
+static void d8arr_scene_publish(void)
+{
+    const d8arr_scene *scene=&chain.native.scene[chain.native.policy.scene];
+    d8arr_mix.apply=scene->apply;d8arr_mix.mute=scene->mute;
+    memcpy(d8arr_mix.level,scene->level,8);memcpy(d8arr_mix.pan,scene->pan,8);
+}
+static int d8arr_request_fill(unsigned row)
+{
+    uint32_t f=motion_guard();int rc=2;d8arr_state *a=&chain.native.policy;
+    if(d8arr_running()&&a->valid&&row<a->rows&&a->pending==D8ARR_NONE){
+        a->fill_pending=(uint8_t)row;a->fill_generation=a->generation;RING_PUBLISH();rc=0;
+    }
+    motion_unguard(f);return rc;
+}
+static void d8arr_cancel_fill(void)
+{
+    uint32_t f=motion_guard();d8arr_state *a=&chain.native.policy;
+    a->fill_pending=D8ARR_NONE;
+    /* Active cancellation returns on the next master bar, preserving phase. */
+    if(d8arr_running()&&a->fill_active)a->fill_active=2;
+    motion_unguard(f);
 }
 static void d8arr_timing(void)
 {
@@ -115,7 +142,7 @@ static void d8arr_apply(unsigned row,uint32_t carry)
     /* This is bounded existing musical work, not merely O(1) publication:
      * <=96 note-offs and 8xP_COUNT motion restoration scans. No engines/patches. */
     for(unsigned i=0;i<NTRK;i++) {seq_release(&trk[i]);motion_restore(&trk[i]);}
-    d8arr_timing();
+    d8arr_timing();d8arr_scene_publish();
     for(unsigned i=0;i<NTRK;i++){
         track_t *t=&trk[i];t->seq_idx=(uint16_t)(t->p[P_SLEN]-1);t->seq_pos=0x7fffffffu;
         t->rh_n=t->rskip_n=t->rat_left=0;
@@ -128,13 +155,13 @@ static void d8arr_start(void)
         chain.rec=song.rec;
         for(unsigned i=0;i<NTRK;i++)memcpy(chain.timing[i],&trk[i].p[P_SLEN],sizeof chain.timing[i]);
     }
-    a->generation++;a->pending=D8ARR_NONE;a->suspended=0;
+    a->generation++;a->pending=D8ARR_NONE;a->fill_pending=D8ARR_NONE;a->fill_active=0;a->suspended=0;
     song.rec=0;chain.running=1;chain.armed=0;d8arr_apply(0,0);
 }
 static void d8arr_stop(void)
 {
     d8arr_state *a=&chain.native.policy;
-    chain.armed=0;a->preparing=0;a->generation++;a->pending=D8ARR_NONE;
+    chain.armed=0;a->preparing=0;a->generation++;a->pending=D8ARR_NONE;a->fill_pending=D8ARR_NONE;d8arr_mix.apply=0;
     if(!chain.running)return;
     for(unsigned i=0;i<NTRK;i++)memcpy(&trk[i].p[P_SLEN],chain.timing[i],sizeof chain.timing[i]);
     song.rec=chain.rec;chain.running=0;a->suspended=1;
@@ -149,7 +176,7 @@ static int d8arr_continue(void)
         a->preparing=0;return 0;
     }
     a->generation++;a->pending=D8ARR_NONE;a->suspended=0;
-    chain.running=1;chain.armed=0;song.rec=0;d8arr_timing();return 1;
+    chain.running=1;chain.armed=0;song.rec=0;d8arr_timing();d8arr_scene_publish();return 1;
 }
 /* Only an automatic next/final-row boundary reaches this seam. Its synchronous
  * cleanup/restore work and tail callees remain part of timing qualification. */
@@ -158,6 +185,26 @@ static __attribute__((noinline)) void d8arr_advance_auto(uint32_t carry)
     if((unsigned)chain.row+1>=chain.native.policy.rows){seq_stop();return;}
     d8arr_apply((unsigned)chain.row+1,carry);
 }
+/* Advance logical context without touching live/cache/source music. */
+static unsigned d8arr_next(unsigned row,unsigned *remaining)
+{
+    if(*remaining>1){--*remaining;return row;}
+    if(++row>=chain.native.policy.rows)return D8ARR_NONE;
+    *remaining=chain.native.policy.row_repeat[row];return row;
+}
+static void d8arr_fill_boundary(uint32_t carry)
+{
+    d8arr_state *a=&chain.native.policy;unsigned row,remaining;
+    if(a->fill_active){row=a->fill_return;remaining=a->fill_remaining;a->fill_active=0;}
+    else {remaining=chain.remaining;row=d8arr_next(chain.row,&remaining);}
+    unsigned fill=a->fill_pending;a->fill_pending=D8ARR_NONE;
+    if(row==D8ARR_NONE){seq_stop();return;} /* No unscheduled bar after end. */
+    if(fill!=D8ARR_NONE&&a->fill_generation==a->generation){
+        /* Fill replaces the upcoming scheduled bar, including its progression. */
+        a->fill_return=(uint8_t)d8arr_next(row,&remaining);a->fill_remaining=(uint8_t)remaining;
+        d8arr_apply(fill,carry);chain.remaining=1;a->fill_active=1;
+    }else {d8arr_apply(row,carry);chain.remaining=(uint8_t)remaining;}
+}
 static void d8arr_tick(uint32_t n,uint32_t pos,uint32_t step,uint32_t period)
 {
     d8arr_state *a=&chain.native.policy;
@@ -165,9 +212,13 @@ static void d8arr_tick(uint32_t n,uint32_t pos,uint32_t step,uint32_t period)
     uint32_t total=step*period+pos+n,bar=16u*period;
     if(total<bar)return;
     if(a->pending!=D8ARR_NONE&&a->pending_generation==a->generation){
-        unsigned row=a->pending;a->pending=D8ARR_NONE;d8arr_apply(row,total-bar);return;
+        unsigned row=a->pending;a->pending=D8ARR_NONE;a->fill_pending=D8ARR_NONE;a->fill_active=0;d8arr_apply(row,total-bar);return;
     }
     a->pending=D8ARR_NONE;
+    if(a->fill_active||(a->fill_pending!=D8ARR_NONE&&a->fill_generation==a->generation)){
+        d8arr_fill_boundary(total-bar);return;
+    }
+    a->fill_pending=D8ARR_NONE;
     if(chain.remaining>1){chain.remaining--;return;}
     d8arr_advance_auto(total-bar);
 }
