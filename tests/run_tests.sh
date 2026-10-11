@@ -258,6 +258,8 @@ if [ -f build/gen/felucca_tables.h ]; then
             done
         fi
     done
+    # One invocation contains normal and inherited sanitizer profile matrices.
+    run "curated diagnostic apps: actual eight-track ISR off/paused/collect parity" env CC="$CC" SANITIZE="${SANITIZE:-1}" python3 tests/engine_profile_timing_test.py
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
     run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
