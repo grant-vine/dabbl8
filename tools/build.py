@@ -14,7 +14,9 @@ The JieLi toolchain is Linux x86-64 only. JIELI_TOOLCHAIN points at it; on
 macOS (or with JIELI_DOCKER=1) each tool runs in a linux/amd64 container.
 """
 import argparse
+import datetime
 import hashlib
+import importlib.metadata
 import json
 import os
 import platform
@@ -54,6 +56,7 @@ SDK_SHA256 = {
 
 PRODUCT = "FM-1_900"                # package identity; release builds are FM-1_9XY
 DABBL8_VERSION = None
+APP_ONLY = False
 TIMING_DIAGNOSTIC = False
 VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/felucca.c)
 
@@ -108,7 +111,7 @@ def generate():
             [tools / "gen_tables.py", GEN / "felucca_tables.h"],
             [tools / "gen_fm6_patches.py", GEN / "felucca_fm6.h"],
             [tools / "gen_samples.py", GEN / "felucca_samples.h"]]
-    if TIMING_DIAGNOSTIC:
+    if TIMING_DIAGNOSTIC or APP_ONLY:
         cmds[-1].extend(["--workspace", OUT])
     procs = [subprocess.Popen([sys.executable, *map(str, c)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               text=True) for c in cmds]
@@ -183,8 +186,25 @@ def build_loader():
 
 # ---- app
 
-def build_app():
+def engine_profile_flags():
+    """Bounded app-only build selection; no package/storage/hardware grant."""
+    # Bounded curated implementation only; never consume arbitrary card headers.
+    profile = os.environ.get("DABBL8_ENGINE_PROFILE", "full")
+    profiles = {"full": 0, "core": 1, "breaks": 2}
+    if profile not in profiles:
+        raise SystemExit("Unsupported DABBL8_ENGINE_PROFILE; choose full, core or breaks")
+    if profile != "full":
+        if not DABBL8_VERSION:
+            raise SystemExit("Curated profiles require the explicit Dabbl8 eight-track build")
+        if os.environ.get("FELUCCA_FM4", "0") != "0" or os.environ.get("FELUCCA_SLICE", "1") != "1":
+            raise SystemExit("Curated profiles require FELUCCA_FM4=0 and FELUCCA_SLICE=1")
+        return [f"-DD8BUILD_PROFILE={profiles[profile]}"]
+    return []
+
+
+def app_flags():
     flags = [*CFLAGS, "-Ifirmware/hal", "-Ifirmware/src", "-I" + GEN.relative_to(SRC).as_posix()]
+    flags.extend(engine_profile_flags())
     if TIMING_DIAGNOSTIC:
         if os.environ.get("FELUCCA_CDC") == "0":
             raise SystemExit("--timing-diagnostic needs FELUCCA_CDC=1")
@@ -203,6 +223,11 @@ def build_app():
     flags.append(f'-DFELUCCA_ID="{PRODUCT}"')
     if VERSION:
         flags.append(f'-DFELUCCA_VERSION="{VERSION}"')
+    return flags
+
+
+def build_app():
+    flags = app_flags()
     # felucca.c goes to LLVM IR without the optimizer, the main-loop functions (UI, stores, editor) are
     # marked minsize (tools/size_fns.py), then the IR is compiled at -Os. FELUCCA_SIZE=0: -Os everywhere
     size = os.environ.get("FELUCCA_SIZE") != "0"
@@ -330,15 +355,159 @@ def mmio_check():
     return errors
 
 
+def app_source_inputs():
+    """Exact public build inputs; never scan output, local evidence or private backups."""
+    files = {}
+    for directory in ("firmware", "tools", "assets", "LICENSES"):
+        for path in sorted((SRC / directory).rglob("*")):
+            if "__pycache__" in path.parts:
+                continue
+            if path.is_symlink():
+                raise SystemExit("app-only source input is a symlink: " + path.relative_to(SRC).as_posix())
+            if path.is_file():
+                files[path.relative_to(SRC).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
+    for name in ("LICENSE", "LICENSING.md", "BUILDING.md", "requirements.txt", "ci/requirements.txt", "tests/target_budget.py", "tests/target_budget.txt"):
+        if (SRC / name).is_file():
+            files[name] = hashlib.sha256((SRC / name).read_bytes()).hexdigest()
+    return files
+
+
+def app_only_validate(ap, args):
+    if not args.dabbl8 or args.release or args.timing_diagnostic:
+        ap.error("--app-only requires --dabbl8 and cannot combine with --release or --timing-diagnostic")
+    for name in ("FELUCCA_FLASH", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY",
+                 "FELUCCA_CDC", "FELUCCA_UART", "FELUCCA_UAC", "FELUCCA_UAC_TONE", "FELUCCA_UAC_48K",
+                 "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_FM4", "FELUCCA_CDC_DEFAULT", "FELUCCA_SIZE",
+                 "JIELI_DOCKER"):
+        if name in os.environ and os.environ[name] not in ("0", "1"):
+            ap.error(name + " must be 0 or 1")
+    if "FELUCCA_USB_LAYOUT" in os.environ and os.environ["FELUCCA_USB_LAYOUT"] not in ("0", "1", "2", "3"):
+        ap.error("FELUCCA_USB_LAYOUT must be 0..3")
+    if os.environ.get("BUDGET_UPDATE") == "1" or os.environ.get("GOLDEN_UPDATE") == "1":
+        ap.error("app-only qualification cannot update budgets or goldens")
+
+
+def build_app_only():
+    """Isolated experimental application evidence, never an installable package."""
+    global OUT, GEN, LDR, DOCKER_IMAGE
+    source = app_source_inputs()  # validation before creating output
+    tool_root = toolchain()       # no dependency downloads or SDK access
+    requested_image = DOCKER_IMAGE
+    container = None
+    if use_docker():
+        container = json.loads(subprocess.check_output(["docker", "image", "inspect", DOCKER_IMAGE], text=True))[0]
+        if container.get("Architecture") != "amd64" or container.get("Os") != "linux":
+            raise SystemExit("app-only requires a linux/amd64 container image")
+        DOCKER_IMAGE = container["Id"]  # freeze the image actually used for every tool invocation
+        container = {key: container.get(key) for key in ("Id", "RepoDigests", "Architecture", "Os")}
+    compiler = tc("pi32v2/bin/clang", "--version")
+    git_source = None
+    probe = subprocess.run(["git", "-C", str(SRC), "rev-parse", "HEAD", "HEAD^{tree}"], capture_output=True, text=True)
+    if probe.returncode == 0:
+        commit, tree = probe.stdout.splitlines()
+        git_source = {"commit": commit, "tree": tree, "working_source_hashes_are_authoritative": True}
+    tool_inputs = {}
+    for item in sorted(tool_root.rglob("*")):
+        rel = item.relative_to(tool_root).as_posix()
+        if item.is_symlink():
+            tool_inputs[rel] = {"symlink": os.readlink(item)}
+        elif item.is_file():
+            tool_inputs[rel] = {"sha256": hashlib.sha256(item.read_bytes()).hexdigest()}
+    python_packages = {}
+    for package in ("Pillow", "fonttools", "numpy", "scipy"):
+        try:
+            python_packages[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            python_packages[package] = None
+    parent = SRC / "build" / "app-only" / os.environ.get("DABBL8_ENGINE_PROFILE", "full")
+    parent.mkdir(parents=True, exist_ok=True)
+    OUT = Path(tempfile.mkdtemp(prefix="run-", dir=parent))
+    GEN, LDR = OUT / "gen", OUT / "loader"
+    manifest = {
+        "schema": 1, "kind": "experimental_app_only", "phase": "configured",
+        "started_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "host_time_environment": {key: os.environ.get(key) for key in ("TZ", "SOURCE_DATE_EPOCH")},
+        "date_influence": "Inherited ui_menu uses __DATE__; compiler clock probe and run timestamps are observations, not cross-date binary reproducibility. Docker tools do not forward host time environment variables.",
+        "engine_profile": os.environ.get("DABBL8_ENGINE_PROFILE", "full"),
+        "product": PRODUCT, "version": VERSION, "tracks": 8, "shared_voices": 8,
+        "hardware_qualified": False, "recovery_qualified": False, "release_qualified": False,
+        "installable": False, "loader_built": False, "package_built": False,
+        "output_directory": OUT.relative_to(SRC).as_posix(),
+        "source_inputs": source, "git_source": git_source, "toolchain_inputs": tool_inputs,
+        "source_inputs_sha256": hashlib.sha256(json.dumps(source, sort_keys=True).encode()).hexdigest(),
+        "compiler_flags": app_flags(), "compiler_version": compiler,
+        "compiler_binary_sha256": hashlib.sha256((tool_root / "pi32v2/bin/clang").read_bytes()).hexdigest(),
+        "container": container, "requested_container_image": requested_image, "effective_container_image": DOCKER_IMAGE if container else None, "sdk_used": False,
+        "engine_mask": {"core": 0x1409, "breaks": 0x3411}.get(os.environ.get("DABBL8_ENGINE_PROFILE", "full"), ((1 << (13 if os.environ.get("FELUCCA_SLICE") == "0" else 14)) - 1) & (~2 if os.environ.get("FELUCCA_FM4", "0") == "0" else ~0)),
+        "python": sys.version, "python_packages": python_packages, "size_main_loop": os.environ.get("FELUCCA_SIZE") != "0",
+        "qualification": "Link/memory/static checks only; no measured target deadlines, stack, recovery or release qualification",
+    }
+    path = OUT / "app-only-manifest.json"
+    def save():
+        path.write_text(json.dumps(manifest, indent=2) + "\n")
+    save()
+    print("EXPERIMENTAL APP ONLY:", OUT.relative_to(SRC).as_posix())
+    try:
+        generate()
+        manifest["generated_inputs"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(GEN.iterdir()) if p.is_file()}
+        probe = OUT / "compiler-clock.c"
+        probe.write_text('__DATE__ " " __TIME__\n')
+        manifest["compiler_clock_probe"] = tc("cc", "-E", "-P", probe)
+        img, syms, dis, rt = build_app()
+        (OUT / "symbols.txt").write_text(syms)
+        (OUT / "ramtext.txt").write_text(rt)
+        errors, notes = check(img, syms, dis, rt)
+        errors.extend(mmio_check())
+        manifest["build_checks"] = {"errors": errors, "memory_reports": notes}
+        env = os.environ.copy()
+        env.pop("BUDGET_UPDATE", None)
+        budget = subprocess.run([sys.executable, SRC / "tests/target_budget.py", OUT / "felucca.dis",
+                                 SRC / "tests/target_budget.txt"], capture_output=True, env=env)
+        (OUT / "static-budget.stdout").write_bytes(budget.stdout)
+        (OUT / "static-budget.stderr").write_bytes(budget.stderr)
+        manifest["qualification_passed"] = not errors and budget.returncode == 0
+        manifest["static_budget"] = {"exit": budget.returncode, "passed": budget.returncode == 0,
+                                    "scope": "Static model; reduced profiles additionally report intentionally absent renderers"}
+        manifest["artifacts"] = {p.name: {"bytes": p.stat().st_size, "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+                                 for p in sorted(OUT.iterdir()) if p.is_file() and p != path}
+        manifest["source_unchanged"] = source == app_source_inputs()
+        if errors or not manifest["source_unchanged"]:
+            raise SystemExit("app-only build/source integrity checks failed")
+        manifest["completed_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        manifest["phase"] = "application_built_not_hardware_qualified"
+        save()
+        for note in notes:
+            print("  ok   ", note)
+        print("Static budget:", "PASS" if budget.returncode == 0 else "FAIL; retained in manifest/logs")
+        print("Manifest:", path)
+        return 0  # application built; manifest explicitly reports static FAIL independently
+    except BaseException as exc:
+        manifest["completed_utc"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        manifest["phase"] = "failed"
+        manifest["qualification_passed"] = False
+        manifest["failure"] = str(exc)
+        save()
+        raise
+
+
 def main():
-    global PRODUCT, VERSION, DABBL8_VERSION, TIMING_DIAGNOSTIC, OUT, GEN, LDR
+    global PRODUCT, VERSION, DABBL8_VERSION, TIMING_DIAGNOSTIC, APP_ONLY, OUT, GEN, LDR
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_9XY, version string vX.Y")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     ap.add_argument("--dabbl8", metavar="X.Y[.Z][-suffix]", help="experimental eight-track Dabbl8 package; no publication or hardware qualification")
     ap.add_argument("--timing-diagnostic", action="store_true",
                     help="optional paused timing histograms; no hardware qualification")
+    ap.add_argument("--app-only", action="store_true", help="isolated experimental Dabbl8 application and qualification manifest; no loader/package")
+    ap.add_argument("--engine-profile", choices=("full", "core", "breaks"), help="curated profile (default: $DABBL8_ENGINE_PROFILE or full)")
     a = ap.parse_args()
+    if a.engine_profile:
+        if "DABBL8_ENGINE_PROFILE" in os.environ and os.environ["DABBL8_ENGINE_PROFILE"] != a.engine_profile:
+            ap.error("--engine-profile conflicts with DABBL8_ENGINE_PROFILE")
+        os.environ["DABBL8_ENGINE_PROFILE"] = a.engine_profile
+    APP_ONLY = a.app_only
+    if APP_ONLY:
+        app_only_validate(ap, a)
     if a.timing_diagnostic and a.release:
         ap.error("timing diagnostics are not release builds")
     if a.timing_diagnostic and os.environ.get("FELUCCA_CDC") == "0":
@@ -361,6 +530,13 @@ def main():
             ap.error(str(exc))
         PRODUCT, VERSION, name = ident.product, ident.version, ident.package
         DABBL8_VERSION = VERSION
+    # Curated package identity/manifests and physical/recovery qualification are
+    # separate gates. Refuse before SDK reads, generation or loader work.
+    profile_flags = engine_profile_flags()
+    if APP_ONLY:
+        return build_app_only()
+    if profile_flags:
+        raise SystemExit("Curated engine profile packaging is disabled; isolated app-only qualification only")
     diagnostic_manifest = None
     if TIMING_DIAGNOSTIC:
         normal_name = name

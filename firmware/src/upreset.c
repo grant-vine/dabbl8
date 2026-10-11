@@ -321,7 +321,11 @@ static void up_auto_name(char *b, uint32_t e, uint32_t k)
 {
     char l[4];
     e %= NENGINES;
+#if D8BUILD_PROFILE != 0
+    str_cpy(b, ENGINES[e == ENGI_DIGITAL ? ENGI_FM6 : e]->name, 9);
+#else
     str_cpy(b, ENGINES[eng_ok(e) ? e : ENGI_FM6]->name, 9);   /* (a DIGITAL record plays as FM6) */
+#endif
     up_slot_label(l, k);
     str_cpy(b + str_len(b), " ", 2);
     str_cpy(b + str_len(b), l + 1, 3);
@@ -486,7 +490,14 @@ static void up_pat_load(track_t *t, uint32_t k)
 }
 
 /* the engine a used slot's sound plays on (a DIGITAL record: FM6, without FELUCCA_FM4) */
-static uint32_t up_engine(uint32_t k) { return eng_ok(up_rec(k)->engine) ? up_rec(k)->engine : ENGI_FM6; }
+static uint32_t up_engine(uint32_t k) {
+#if D8BUILD_PROFILE != 0
+    unsigned e = up_rec(k)->engine;
+    return e == ENGI_DIGITAL ? ENGI_FM6 : e;
+#else
+    return eng_ok(up_rec(k)->engine) ? up_rec(k)->engine : ENGI_FM6;
+#endif
+}
 
 static uint32_t up_count(void)                 /* used slots */
 {
