@@ -121,6 +121,9 @@ run "pinned dependency integrity: corrupted cache refusal, hidden SDK edits and 
 
 run "evidence invocation isolation: preserve historical files and refuse creation errors" python3 tests/evidence_session_test.py
 
+run "current tracked source notice and asset validation" python3 tools/license_inventory.py
+run "source notice validation: real Git negative controls and shallow checkout" python3 tests/license_inventory_test.py
+
 $CC -o "$OUT/storage_test" tests/storage_test.c
 run "flash storage (A/B, torn writes)" "$OUT/storage_test"
 

@@ -1,0 +1,1370 @@
+{
+  "SPDX-License-Identifier": "GPL-3.0-only",
+  "schema": 2,
+  "upstream_commit": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "notice_pin_commit": "b2466bf9bc1c675ed8b8f667d37af8f5e4e4b377",
+  "code_notice_lines": {
+    "build.sh": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "firmware/hal/fm1_adc.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_audio.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_cc.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_flash.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_gpio.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_guard.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_input.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_irq.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_lcd_hw.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_led_anim.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_sys.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_time.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_timer.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_uart.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_usb.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/hal/fm1_xip.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/loader/ldr_core.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/loader/loader.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/audio.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/chord.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/click.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/console.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/core.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/drum_voice.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/dsp.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/editor.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/editor_backup.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/editor_fm6.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/editor_menu.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/editor_preferences.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_analog.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_digital.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_drum.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_fm6.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_formant.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_grain.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_lofi.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_noise.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_phase.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_phys.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_sample.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_slice.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_trio.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/eng_wheel.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/engines.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/favorites.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/felucca.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/fm4_convert.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/fm6_core.c": [
+      "/* SPDX-License-Identifier: Apache-2.0",
+      "* Copyright 2012 Google Inc.",
+      "* Copyright 2016-2025 Pascal Gauthier."
+    ],
+    "firmware/src/fx.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/gfx.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/icons.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/lcd.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/libc.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/main.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/master.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/menu_items.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/midi_clock.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/midi_control.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/midi_uart.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/mod.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/motion.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ota.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ota_hw.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/panel.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/params.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/perform.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/phys_dsp.c": [
+      "/* SPDX-License-Identifier: MIT",
+      "* Copyright (c) 2020 Electrosmith, Corp, Emilie Gillet"
+    ],
+    "firmware/src/phys_symp.c": [
+      "/* SPDX-License-Identifier: MIT",
+      "* Copyright (c) 2015 Emilie Gillet"
+    ],
+    "firmware/src/project.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/seq.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/settings_persist.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only */"
+    ],
+    "firmware/src/slice_store.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/slicer.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/song_chain.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/storage.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/storage_hw.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/uac_fir.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_draw.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_events.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_graph.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_input.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_layer.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_menu.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_name.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_slice.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/ui_tools.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/up_fm6.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/upreset.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/usb.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "firmware/src/voice.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/audio_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/backup_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/chord_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/click_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/descdump.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/digital_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/drum_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/editor_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fm4_div0_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fm4_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fm6_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fuzz_ed.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fuzz_proj.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/fuzz_smp.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/hostsim.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/input_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/install_test.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/ldr_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/midi_control_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only"
+    ],
+    "tests/midi_uart_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/mod_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/motion_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/noise_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/ota_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/perform_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/persistence_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/phys_fixed.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/phys_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/pitch.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/project_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/ratchet_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/regress.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/reverb_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/robust_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/run_tests.sh": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/scale_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only */"
+    ],
+    "tests/settings_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only */"
+    ],
+    "tests/slice_loop.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/slice_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/slicer_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/speaker_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/storage_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/swing_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/target_budget.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/text_ref_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/text_spacing_test.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/theme_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only */"
+    ],
+    "tests/uac_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/ui_render.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/ui_render.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tests/ui_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/upreset_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/usb_desc_test.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tests/usb_desc_v10.h": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "tools/aa_raster.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/build.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/fetch_cc0.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/fm1_install.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/fm1_sample_upload.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/fm1pkg_make.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_aa_font.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments",
+      "\"Copyright 2022 The Inter Project Authors; see assets/fonts/OFL.txt) */\","
+    ],
+    "tools/gen_aa_icons.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_aa_keycaps.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_fm6_patches.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_panel_diagram.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_samples.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_tables.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_uac_fir.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments",
+      "\"/* SPDX-License-Identifier: GPL-3.0-only\",",
+      "\" * Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */\","
+    ],
+    "tools/gen_ui_palettes.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/gen_waves.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/get_toolchain.sh": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/lz4blk.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/sampleio.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/size_fns.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "tools/uac_tone_check.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/editor.html": [
+      "<!-- SPDX-License-Identifier: GPL-3.0-only",
+      "Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments -->"
+    ],
+    "web/emu/build.sh": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/emu/emu_test.mjs": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/emu/felucca_web.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/emu/index.html": [
+      "<!-- SPDX-License-Identifier: GPL-3.0-only",
+      "Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/emu/native_check.c": [
+      "/* SPDX-License-Identifier: GPL-3.0-only",
+      "* Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments */"
+    ],
+    "web/emu/worklet.js": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/fm1backup.js": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/fm1ota.js": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/fm1pkg.js": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/index_pkg.html": [
+      "<!-- SPDX-License-Identifier: GPL-3.0-only",
+      "Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments -->"
+    ],
+    "web/make_site.py": [
+      "# SPDX-License-Identifier: GPL-3.0-only",
+      "# Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/test_backup.mjs": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ],
+    "web/test_web.mjs": [
+      "// SPDX-License-Identifier: GPL-3.0-only",
+      "// Copyright (C) 2026 Leo Kuroshita (@kurogedelic), H\u00fcgelton Instruments"
+    ]
+  },
+  "port_first_comment_sha256": {
+    "firmware/src/phys_dsp.c": "fe5eb7ff81ed6e000b97edf48721f505d6f0b5dd00cb449730055a4233e95a6e",
+    "firmware/src/phys_symp.c": "489c130ebf9c167ab297e23f74a8413428387a8e3ff46922188e85dda01b6cab",
+    "firmware/src/fm6_core.c": "d213cccfead2264d5bd0f0b8f65f2e6c7ae83e3310bfa935d4f5a56b8d83d7f1"
+  },
+  "notice_asset_pins": {
+    "LICENSE": {
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "bytes": 35149,
+      "comparison": "exact"
+    },
+    "LICENSING.md": {
+      "sha256": "89c487f3dc19218cc0d1ec0d73466092a5cbc5ab842a98b9a2f625a215cb0e5e",
+      "bytes": 6722,
+      "comparison": "prefix"
+    },
+    "assets/samples-cc0/ATTRIBUTION.txt": {
+      "sha256": "d9b6171396bce707eb16836c1abf82651fae8b1d3eeda3365f5baacf33c1ae59",
+      "bytes": 1933,
+      "comparison": "exact"
+    },
+    "assets/fonts/OFL.txt": {
+      "sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58",
+      "bytes": 4383,
+      "comparison": "exact"
+    },
+    "assets/fonts/InterTight[wght].ttf": {
+      "sha256": "b81b73dcb64df3c230cabade7df6c5773bf863233f24c9ee51087519f1f88b6f",
+      "bytes": 581588,
+      "comparison": "exact"
+    },
+    "web/fukiai.ttf": {
+      "sha256": "312bc6abd697ba7783e3ce36250b819659998b0a778bcab259941856472be37a",
+      "bytes": 82696,
+      "comparison": "exact"
+    },
+    "web/FUKIAI-LICENSE.txt": {
+      "sha256": "fddeab17d69ab85a8e9c593beb0e93c279a9d74ff9504e1804bba123cb63e08e",
+      "bytes": 1166,
+      "comparison": "exact"
+    },
+    "web/emu/fonts/OFL.txt": {
+      "sha256": "5e59cab6d61d59a5b3110ed900dce715383cb2626a473dcf77c13c116aa839eb",
+      "bytes": 4401,
+      "comparison": "exact"
+    },
+    "web/emu/fonts/DotGothic16-subset.woff": {
+      "sha256": "64f5bf21134bb81ed79b6ab1f65e0a8c75d55cfd68b08a2501e21e571a3cc61f",
+      "bytes": 4324,
+      "comparison": "exact"
+    },
+    "LICENSES/Apache-2.0-msfa.txt": {
+      "sha256": "27dd23b62bc11d0806562397a1e782f86fc7dcacd1ba7a1b58d3c78a54795e62",
+      "bytes": 11024,
+      "comparison": "exact"
+    },
+    "LICENSES/Apache-2.0.txt": {
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357,
+      "comparison": "exact"
+    },
+    "LICENSES/MIT-DaisySP.txt": {
+      "sha256": "7fa755aede5b5c2a8131a6db692f5818ed8d21dcbe632f41618af03b6d698126",
+      "bytes": 3172,
+      "comparison": "exact"
+    },
+    "LICENSES/MIT-Fukiai.txt": {
+      "sha256": "fddeab17d69ab85a8e9c593beb0e93c279a9d74ff9504e1804bba123cb63e08e",
+      "bytes": 1166,
+      "comparison": "exact"
+    },
+    "LICENSES/MIT-Rings.txt": {
+      "sha256": "60cd097bf74b2a3a0cadadeddec5d80b6806f83039e6ce9cb0ba511a1f17a2be",
+      "bytes": 1758,
+      "comparison": "exact"
+    },
+    "LICENSES/OFL-DotGothic16.txt": {
+      "sha256": "5e59cab6d61d59a5b3110ed900dce715383cb2626a473dcf77c13c116aa839eb",
+      "bytes": 4401,
+      "comparison": "exact"
+    },
+    "LICENSES/OFL-InterTight.txt": {
+      "sha256": "50240ab035cf1b6b3307940235481d515c4b6de3ab1fa843dbe59e7892cb9d58",
+      "bytes": 4383,
+      "comparison": "exact"
+    }
+  },
+  "code_spdx_identifiers": {
+    "build.sh": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_adc.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_audio.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_cc.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_flash.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_gpio.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_guard.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_input.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_irq.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_lcd_hw.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_led_anim.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_sys.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_time.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_timer.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_uart.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_usb.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/hal/fm1_xip.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/loader/ldr_core.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/loader/loader.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/audio.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/chord.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/click.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/console.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/core.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/drum_voice.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/dsp.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/editor.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/editor_backup.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/editor_fm6.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/editor_menu.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/editor_preferences.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_analog.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_digital.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_drum.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_fm6.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_formant.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_grain.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_lofi.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_noise.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_phase.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_phys.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_sample.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_slice.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_trio.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/eng_wheel.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/engines.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/favorites.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/felucca.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/fm4_convert.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/fm6_core.c": [
+      "Apache-2.0"
+    ],
+    "firmware/src/fx.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/gfx.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/icons.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/lcd.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/libc.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/main.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/master.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/menu_items.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/midi_clock.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/midi_control.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/midi_uart.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/mod.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/motion.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ota.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ota_hw.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/panel.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/params.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/perform.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/phys_dsp.c": [
+      "MIT"
+    ],
+    "firmware/src/phys_symp.c": [
+      "MIT"
+    ],
+    "firmware/src/project.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/seq.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/settings_persist.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/slice_store.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/slicer.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/song_chain.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/storage.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/storage_hw.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/uac_fir.h": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_draw.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_events.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_graph.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_input.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_layer.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_menu.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_name.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_slice.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/ui_tools.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/up_fm6.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/upreset.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/usb.c": [
+      "GPL-3.0-only"
+    ],
+    "firmware/src/voice.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/audio_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/backup_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/chord_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/click_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/descdump.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/digital_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/drum_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/editor_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fm4_div0_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fm4_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fm6_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fuzz_ed.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fuzz_proj.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/fuzz_smp.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/hostsim.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/input_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/install_test.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/ldr_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/midi_control_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/midi_uart_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/mod_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/motion_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/noise_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/ota_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/perform_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/persistence_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/phys_fixed.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/phys_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/pitch.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/project_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/ratchet_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/regress.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/reverb_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/robust_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/run_tests.sh": [
+      "GPL-3.0-only"
+    ],
+    "tests/scale_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/settings_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/slice_loop.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/slice_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/slicer_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/speaker_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/storage_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/swing_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/target_budget.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/text_ref_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/text_spacing_test.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/theme_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/uac_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/ui_render.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/ui_render.py": [
+      "GPL-3.0-only"
+    ],
+    "tests/ui_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/upreset_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/usb_desc_test.c": [
+      "GPL-3.0-only"
+    ],
+    "tests/usb_desc_v10.h": [
+      "GPL-3.0-only"
+    ],
+    "tools/aa_raster.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/build.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/fetch_cc0.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/fm1_install.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/fm1_sample_upload.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/fm1pkg_make.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_aa_font.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_aa_icons.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_aa_keycaps.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_fm6_patches.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_panel_diagram.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_samples.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_tables.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_uac_fir.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_ui_palettes.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/gen_waves.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/get_toolchain.sh": [
+      "GPL-3.0-only"
+    ],
+    "tools/lz4blk.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/sampleio.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/size_fns.py": [
+      "GPL-3.0-only"
+    ],
+    "tools/uac_tone_check.py": [
+      "GPL-3.0-only"
+    ],
+    "web/editor.html": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/build.sh": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/emu_test.mjs": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/felucca_web.c": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/index.html": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/native_check.c": [
+      "GPL-3.0-only"
+    ],
+    "web/emu/worklet.js": [
+      "GPL-3.0-only"
+    ],
+    "web/fm1backup.js": [
+      "GPL-3.0-only"
+    ],
+    "web/fm1ota.js": [
+      "GPL-3.0-only"
+    ],
+    "web/fm1pkg.js": [
+      "GPL-3.0-only"
+    ],
+    "web/index_pkg.html": [
+      "GPL-3.0-only"
+    ],
+    "web/make_site.py": [
+      "GPL-3.0-only"
+    ],
+    "web/test_backup.mjs": [
+      "GPL-3.0-only"
+    ],
+    "web/test_web.mjs": [
+      "GPL-3.0-only"
+    ]
+  }
+}
