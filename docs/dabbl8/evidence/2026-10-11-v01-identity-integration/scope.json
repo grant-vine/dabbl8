@@ -1,0 +1,53 @@
+{
+  "measured_source": "f913ce765e994290554b06b51d6bca6260934cbb",
+  "measured_tree": "998da7c7bc83df15cbd23da1d9cea81cf2d45ed3",
+  "actual_main": "832df855adb1f33c8517ebc5b8e8b11e4fb84c2c",
+  "integrates_prs": [
+    100,
+    101,
+    102
+  ],
+  "usb_pr_head": "68cbf1f7bf5eac29a502527f31d42dbd13ef29de",
+  "source_sha256": {
+    "firmware/src/console.c": "522e75f4949213e22b5ae76d5fec81ba96ca08f13daa625ca5f46d09b88f0d69",
+    "firmware/src/core.h": "d44f2281454e0a039904b855c924bf54eacfcc0d4b25d324189ecba63cae5b07",
+    "firmware/src/editor.c": "5a1ce97d8706e5d913cb7b3687801546c2fbd7f81d58109107fd476d51801cc7",
+    "firmware/src/felucca.c": "0246ed4e935c2b5b4431fc4a8b01bf12ddd5827de7671ffed9ae8c337aea43bf",
+    "firmware/src/identity.h": "9eab114d7d7a93942725ca172cee05b945ad1b69533e908ef33d562bc48ec8e8",
+    "firmware/src/ui_draw.c": "b5c2aab7e7e19ddb09cb5c369a37e127696d0527bc678957e71322fe95b7be14",
+    "firmware/src/ui_menu.c": "3199cfe8e0d3c262c27696bbd2c3c72a9aff053887b940266a6a608cfd5602a5",
+    "firmware/src/usb.c": "094b546b891cf0c17d2476eba5a9d1103abbd5f2836755f5b5401a89b9539ef0",
+    "tests/d8identity_test.py": "5cb22f67d259502cf1e48a8bc5e9b930e2c136e61c8862bd490e976f42e87653",
+    "tests/d8identity_usb_test.c": "4457e6e2be2c62cf512369194d524e016ece57b3140086928bff3f8f31e6e8eb",
+    "tests/fixtures/uac/e631-uac-tap48.inc": "105d0508b25d9474d029cf8fa0de10df8889a69ef034e999692be5ea47ed3ed9",
+    "tests/install_test.py": "25cfc723405157df7778f95a993f79445bb1329d791b65507636c2f83ceb0450",
+    "tests/native_uac_history_test.c": "6a45ebabd8eb1c99d86bc38888c8c31dc7f4c677a6cbfd1ec1dc1ad0b899e284",
+    "tests/run_tests.sh": "50fd12d2e16096ffda5b657823f61af4fcfb6196d06751e44d8815cc9b1a2a27",
+    "tools/build.py": "52b77ff1c097cda6682417e402fd5efc4156eb39299c23acccb9b21c1233277f",
+    "tools/d8identity.py": "6d4320e75dbfd20e85837219f53077ea370793e3fd6b1e73478f981b56e76792",
+    "tools/fm1_install.py": "0741b44d0190e6f5ad66043f6c44fffe77f89ea837fa3decbd31137f17d7f2f4",
+    "tools/fm1_sample_upload.py": "a72f056519e7b9d0459bbe98e535178c447719d13a2d208980c9d4113a7e5164",
+    "web/d8info.js": "2b9a837875fb8757c188a8e2bdf73fbe9a9e8bef5ccc936c85e35cbcba95fda5",
+    "web/editor.html": "404829b5e0fa15aec967730c64166b7c4cd64a26ac9a0d70b2b773ca154add31",
+    "web/test_d8identity.mjs": "64b41a867f0f78cadea579373f1d4f81c1710aa1721d57c1da3b60545b27f708",
+    "web/test_web.mjs": "4e80175f1d90cb6434101e232dbe4ef7800636f7184ad1272b0fbae07fe26490"
+  },
+  "corrected_full_suite": {
+    "status": "PENDING",
+    "measured_source": "f913ce765e994290554b06b51d6bca6260934cbb",
+    "result_not_borrowed": true
+  },
+  "exact_published_tree_CI": "REQUIRED before merge",
+  "original_identity_CI": "38104607878 CANCELLED; no qualification/no artifacts/empty logs ZIP",
+  "original_combined_full": "e8049c897a2f6cd7edcc5589435cf9710c2e0235 exit1 after exact-source editor hang, preserved",
+  "fixture_correction": "61a82bd8468c9d98030018e0df5ac73c735eaac7 test-only; actual helper/document, early-load failure surfaced, title asserted; nine actual extracted session checks PASS; independent review PASS",
+  "target": "Fresh4/8/branded/package and unchanged rebuilt loader PASS, exact hashes in target-results",
+  "static_budget": "e804 native IRQ55487/37502 and UAC555/504 FAIL original10%; firmware/tools byte-identical f913 and fresh images equal; no fresh f913 budget pass claim",
+  "sanitizers": "strict descriptor none excluded; actual capture inherits signed-integer-overflow,shift,bounds,object-size,pointer-overflow exclusions",
+  "warning": "Inherited volatile qualifier warning retained; not warning-free",
+  "release_qualified": false,
+  "physical_hardware": "NOT_RUN",
+  "native_storage": "QUARANTINED",
+  "loader_flash_boundaries_golden_thresholds": "UNCHANGED",
+  "license_scope": "Tracked-source SPDX/notices inventory; external SDK/package distribution bundle not audited"
+}
