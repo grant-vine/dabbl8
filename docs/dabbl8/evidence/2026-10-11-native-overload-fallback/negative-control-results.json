@@ -1,0 +1,14 @@
+[
+  {
+    "tracks": 4,
+    "exit": 0,
+    "expected": 0,
+    "log": "overload: tracks=4 assertions=24 sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n"
+  },
+  {
+    "tracks": 8,
+    "exit": -6,
+    "expected": "regression fails protected fallback assertion",
+    "log": "Assertion failed: (shed_count==1 && voices_busy()==8-1), function sustained, file native_overload_test.c, line 29.\n"
+  }
+]
