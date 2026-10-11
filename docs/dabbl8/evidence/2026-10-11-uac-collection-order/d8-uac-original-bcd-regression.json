@@ -1,0 +1,42 @@
+{
+  "source": "76b3e3cd38e97deaf1d636f149074212484e0e5c",
+  "cases": [
+    {
+      "rate": 1,
+      "layout": 1,
+      "bcdDevice": "0x31b",
+      "valid": false
+    },
+    {
+      "rate": 1,
+      "layout": 2,
+      "bcdDevice": "0x31d",
+      "valid": false
+    },
+    {
+      "rate": 1,
+      "layout": 3,
+      "bcdDevice": "0x31f",
+      "valid": false
+    },
+    {
+      "rate": 2,
+      "layout": 1,
+      "bcdDevice": "0x32b",
+      "valid": false
+    },
+    {
+      "rate": 2,
+      "layout": 2,
+      "bcdDevice": "0x32d",
+      "valid": false
+    },
+    {
+      "rate": 2,
+      "layout": 3,
+      "bcdDevice": "0x32f",
+      "valid": false
+    }
+  ],
+  "invalid_count": 6
+}

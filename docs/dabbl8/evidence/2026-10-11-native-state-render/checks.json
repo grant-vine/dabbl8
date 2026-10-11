@@ -1,0 +1,32 @@
+[
+  {
+    "name": "opt-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "opt",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "san-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "san",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "parent-ui-build",
+    "exit": 0,
+    "expected_exit": 0
+  },
+  {
+    "name": "parent-ui",
+    "exit": 1,
+    "expected_exit": 1
+  }
+]

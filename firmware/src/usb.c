@@ -36,9 +36,14 @@
 #ifndef FELUCCA_UAC_48K
 #define FELUCCA_UAC_48K 1
 #endif
+#ifndef FELUCCA_UAC_AS_FIRST
+#define FELUCCA_UAC_AS_FIRST 1
+#endif
 #if !FELUCCA_UAC
 #undef FELUCCA_UAC_48K
 #define FELUCCA_UAC_48K 0
+#undef FELUCCA_UAC_AS_FIRST
+#define FELUCCA_UAC_AS_FIRST 0
 #endif
 enum { S_FADDR = 0, S_POWER = 1, S_INTRTX1 = 2, S_INTRTX2 = 3, S_INTRRX1 = 4, S_INTRRX2 = 5, S_INTRUSB = 6,
        S_INTRTX1E = 7, S_INTRTX2E = 8, S_INTRRX1E = 9, S_INTRRX2E = 10, S_INTRUSBE = 11, S_FRAME1 = 12,
@@ -214,7 +219,8 @@ static void midi_out_event(uint32_t pkt)            /* from the audio ISR */
 /* Two functions: audio + MIDI (0 audio control, 1 MIDI streaming, 2 audio streaming with FELUCCA_UAC)
  * and, with FELUCCA_CDC, the CDC-ACM console (communication + data). The endpoints never move:
  * EP1 MIDI, EP2 CDC notify, EP3 CDC data, EP4 audio.
- * bcdDevice: 3.00 MIDI, +0.10 the audio input (+0.20 since 1.1: 44.1 and 48 kHz, FELUCCA_UAC_48K), +0.01 CDC
+ * bcdDevice: 3.00 MIDI, +0.10 the audio input (+0.20 since 1.1: 44.1 and 48 kHz, FELUCCA_UAC_48K), +0.40 audio-first (reserved decimal band, BCD encoded)
+ * (FELUCCA_UAC_AS_FIRST: distinct descriptor cache identity), +0.01 CDC
  * (+0.02 per FELUCCA_USB_LAYOUT step, so a host never reuses what it learnt about another layout).
  * FELUCCA_USB_LAYOUT, how the CDC build presents itself (#67: macOS 13-15 attach Apple's CDC composite
  * driver to a misc / IAD device that has a CDC function, and their kernel audio driver then never
@@ -251,9 +257,17 @@ static void midi_out_event(uint32_t pkt)            /* from the audio ISR */
 #define FMT_LEN 0
 #endif
 #if FELUCCA_UAC
+/* Upstream 1.5.1 (#67): audio first in the AC collection avoids the older
+ * AppleUSBAudio parser shortening its MIDI-containing interface array before
+ * reaching audio. Interface/endpoint numbers stay fixed. Legacy order is opt-out. */
+#if FELUCCA_UAC_AS_FIRST
+#define AC_COLL(a) (a) + 2, (a) + 1
+#else
+#define AC_COLL(a) (a) + 1, (a) + 2
+#endif
 #define D_AC(a)                                                                                      \
     9, 4, (a), 0, 0, 1, 1, 0, 0,                                                                     \
-    10, 0x24, 1, 0x00, 0x01, 31, 0, 2, (a) + 1, (a) + 2,   /* AC header 1.00: MIDI + audio streaming */ \
+    10, 0x24, 1, 0x00, 0x01, 31, 0, 2, AC_COLL(a),         /* AC header 1.00: audio + MIDI streaming */ \
     12, 0x24, 2, 1, 0x03, 0x06, 0, 2, 0x03, 0x00, 0, 0,    /* input terminal 1: line, 2 ch (L R) */      \
     9, 0x24, 3, 2, 0x01, 0x01, 0, 1, 0,                    /* output terminal 2: USB streaming, from 1 */
 #define D_AS(s)                                                                                      \
@@ -293,7 +307,8 @@ static void midi_out_event(uint32_t pkt)            /* from the audio ISR */
     7, 5, 0x03, 2, 64, 0, 0,                               /* EP3 OUT bulk */                           \
     7, 5, 0x83, 2, 64, 0, 0,                               /* EP3 IN bulk */
 #define CDC_LEN 66                                         /* with its IAD */
-#define BCD_LO(cdc) (0x10 * (FELUCCA_UAC + FELUCCA_UAC_48K) + ((cdc) ? 0x01 + 2 * FELUCCA_USB_LAYOUT : 0))
+#define BCD_MINOR(cdc) (10 * (FELUCCA_UAC + FELUCCA_UAC_48K) + 40 * FELUCCA_UAC_AS_FIRST + ((cdc) ? 1 + 2 * FELUCCA_USB_LAYOUT : 0))
+#define BCD_LO(cdc) (((BCD_MINOR(cdc) / 10) << 4) | (BCD_MINOR(cdc) % 10))
 #define D_DEV(bcdusb, cls, sub, proto, cdc)                                                          \
     18, 1, (bcdusb) & 0xFF, (bcdusb) >> 8, (cls), (sub), (proto), 64, 0x09, 0x12, FELUCCA_USB_PID & 0xFF, \
     FELUCCA_USB_PID >> 8, BCD_LO(cdc), 0x03, 1, 2, 0, 1

@@ -964,6 +964,7 @@ static struct {
     d8p1_arrangement arrangement;
     uint8_t valid;
 } d8p1_runtime_cache __attribute__((section(".pool")));
+static int d8arr_ui_native(void) { return d8p1_runtime_cache.valid!=0; }
 static unsigned d8arr_ui_rows(void)
 { return d8p1_runtime_cache.valid?d8p1_runtime_cache.arrangement.rows:0; }
 static int d8arr_ui_row(unsigned row,char name[13],unsigned *repeat)

@@ -938,6 +938,23 @@ static uint32_t graph_signature(void)
         h ^= (uint32_t)t->engine * 389u;             /* (MONO and kits follow the sounding engine) */
     }
     if (pg->graph == GR_SONG) {
+#if NTRK == 8
+        unsigned rows=d8arr_ui_rows();
+        if(d8arr_ui_native()){
+            h^=ui.song_row*40503u+rows*7919u;
+            for(unsigned r=0;r<rows;r++){
+                char name[13]={0};unsigned repeat=0;
+                if(!d8arr_ui_row(r,name,&repeat)){name[0]=0;repeat=0;}
+                h=str_hash(h,name)^repeat*104729u;
+            }
+            if(d8arr_running()){
+                const d8arr_state *a=&chain.native.policy;
+                h^=(chain.row+1u)*1299709u+chain.remaining*7919u;
+                h^=(a->pending+1u)*2654435761u+(a->fill_pending+1u)*40503u+a->fill_active*104729u;
+            }
+            return h;
+        }
+#endif
         h ^= ui.song_row * 40503u + chain_config.count * 7919u;
         for (i = 0; i < CHAIN_ROWS; i++)
             h = (h ^ (chain_config.row[i].slot + 4u * chain_config.row[i].repeat)) * 16777619u;
@@ -1505,6 +1522,32 @@ static void graph_scope(uint16_t c)
  * PROJECT A..D; loading a project still restores its sound, SONG borrows steps. */
 static void graph_song(void)
 {
+#if NTRK == 8
+    unsigned rows=d8arr_ui_rows();
+    if(d8arr_ui_native()){
+        if(!rows){panel_note("NO SCENES","ARRANGEMENT EMPTY",0);return;}
+        unsigned selected=ui.song_row<rows?ui.song_row:rows-1u;
+        unsigned first=selected>2u?selected-2u:0u;
+        for(unsigned r=first;r<rows&&r<first+7u;r++){
+            char name[13],b[16];unsigned repeat=0;
+            int used=d8arr_ui_row(r,name,&repeat),sel=r==selected;
+            int32_t y=LIST_Y(r-first);
+            uint16_t bg=sel?T_THEME:T_SURF,col=sel?T_INK:T_TEXT,dim=sel?T_INK:T_DIM;
+            if(sel)cv_rrect(6,y,228,16,4,T_THEME,T_SURF);
+            int running=d8arr_running(),current=running&&r==chain.row;
+            if(current)cv_icon_on(9,y+2,12,ICON_X_RIGHT,sel?T_INK:T_ACCENT,bg);
+            fmt_int(b,(int32_t)r+1);cv_text_on(24,y+1,&AF_S,b,sel?T_INK:T_MID,bg);
+            cv_free_text(54,y+1,&AF_S,used?name:"--",col,bg,104);
+            b[0]='x';fmt_int(b+1,(int32_t)repeat);cv_text_on(164,y+1,&AF_S,b,col,bg);
+            const char *status="";
+            if(running&&r==chain.native.policy.pending)status="NEXT";
+            else if(current)status=chain.native.policy.fill_active==2?"RET":chain.native.policy.fill_active?"FILL":"RUN";
+            else if(running&&r==chain.native.policy.fill_pending)status="ARM";
+            cv_text_on(194,y+1,&AF_S,status,dim,bg);
+        }
+        return;
+    }
+#endif
     uint32_t first = ui.song_row > 2u ? ui.song_row - 2u : 0u, i;
     if (!chain_config.count) {
         panel_note("PAT A x4 > B x1", "[K2] ADD PATTERN", "[SAVE] PROJECT A-D");

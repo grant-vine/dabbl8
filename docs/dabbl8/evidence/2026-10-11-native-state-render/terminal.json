@@ -1,0 +1,12 @@
+{
+  "source": "781ab9a857160a09f122b2e913ef151f2547ef0f",
+  "parent_ui_source": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "parent_ui_sha256": {
+    "firmware/src/ui_draw.c": "b5c2aab7e7e19ddb09cb5c369a37e127696d0527bc678957e71322fe95b7be14",
+    "firmware/src/ui_graph.c": "a2d89269843da79b9b1ff0b8ee47868ab47f2bb1d5cb1007a45b4d6a2d2edd0e"
+  },
+  "focused": "PASS",
+  "parent_ui_expected_negative": "exit1",
+  "sanitizer": "inherited actual DSP exclusions: signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+  "hardware": "NOT_RUN"
+}

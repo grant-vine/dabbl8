@@ -1,0 +1,9 @@
+# Locked GLO transport regression
+
+Functional source `ebe1574ce1ce5cfca227cd035dd47c9729a2bb0d`, parent `984f4802ba3e284cd9cd08f4c3606d363877eb49`. When GLO was locked by a real double tap but its button was no longer held, PLAY was consumed as RESTART. The one-condition fix from [Felucca88f103](https://github.com/hugelton/Felucca/commit/88f10300b55b35fed444525b38ad256579fbf565) requires the physical GLO button for restart. Existing author/GPL-3.0-only notices remain.
+
+The unchanged parent's regression fails16/32 checks across4/8tracks. Corrected normal and inherited-ASan/UBSan runs pass68/136 cases. Each track exercises actual double-tap input/frames, unheld playing/stopped/external-clock/count-in, physically held restart/start/external refusal and running-chain routing. STOP also executes actual events_block; other cases prove dispatcher requests, not complete physical transport. Existing full four-track UI, eight-track bank/mixer renders and quick-layer ownership tests pass.
+
+Reproduce with `clang -O2 -w -DNPART=4 -Ibuild/gen -Ifirmware/src tests/glo_transport_test.c -lm -o /tmp/glo-test` and run from the repository; repeat NPART=8. Generated assets must come from the pinned build setup. Exact commands and logs are retained. The sanitizer suite inherits exclusions for signed-integer-overflow,shift,bounds,object-size,pointer-overflow; it is not strict whole-engine UBSan. All raw focused sanitizer logs are free of diagnostics. Runner now includes both track counts in normal and sanitizer phases.
+
+Four-track behavior deliberately also receives this fix; its binary is not claimed byte-identical to the parent. No project format, automation addresses, DSP/golden/CPU budget references, loader or flash boundary change. Complete target/full-source CI is pending at publication. Native static budget failures and hardware timing/stack/persistence/recovery/second-tester gates remain open. No install/release/site action follows. Related #10 and #14.

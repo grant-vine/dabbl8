@@ -65,8 +65,9 @@ static void test_descriptors(void)
     char name[96];
 
     check("device descriptor: 18 bytes, type 1, EP0 64", DEV_DESC[0] == 18 && DEV_DESC[1] == 1 && DEV_DESC[7] == 64);
-    check("bcdDevice bumped for the audio input at 44.1 / 48 kHz (x.2x)", (DEV_DESC[12] & 0xF0u) == 0x20u &&
-          DEV_DESC[13] == 3);
+    unsigned minor = 20 + 40 * FELUCCA_UAC_AS_FIRST + (T_CDC ? 1 : 0);
+    check("bcdDevice preserves rate identity and valid audio-order cache band",
+          DEV_DESC[12] == (minor / 10) * 16 + minor % 10 && DEV_DESC[13] == 3);
     check(T_CDC ? "device class misc / IAD (EF 02 01)" : "device class 0 (per interface)",
           T_CDC ? DEV_DESC[4] == 0xEF && DEV_DESC[5] == 2 && DEV_DESC[6] == 1 : DEV_DESC[4] == 0);
     check("configuration: type 2, wTotalLength = the bytes sent", c[1] == 2 && total == n);
