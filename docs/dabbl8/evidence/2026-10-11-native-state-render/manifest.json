@@ -1,0 +1,42 @@
+{
+  "functional_source": "781ab9a857160a09f122b2e913ef151f2547ef0f",
+  "base_main": "984f4802ba3e284cd9cd08f4c3606d363877eb49",
+  "files_sha256": {
+    "final-target-budget-8.log": "f21a20a8d0f8eba38823e3b06e570164671a7b6435fdaa7c038810bd0202239b",
+    "final-generated-inputs.json": "b37263c8c5ef62613815898a578f3ba9a214b6d898f7e2fda474a93113a8093b",
+    "preview.png": "5df9650b39d3eca270dfe45993b484c77f6c3d0781a3f01b97facb9f58fa8a22",
+    "verify-focused.py": "3264050c5c5945f8e686ad871bef1f441383bcd6ac9c3baf13a8509d0e787c4a",
+    "final-environment.json": "0c4225fdda6feab41db5544b8ff17c3a5cf269c338f8ed2b23b762a864229589",
+    "final-terminal.json": "689b198676b4da4cde921a1c55122bb1fe7e6648d8ced4569bc05a6e834c2dcb",
+    "san.log": "476a06086b66d0a38604ab53ae713132f9d5ff8c012c141e5dac2268baeb0cdf",
+    "opt.log": "476a06086b66d0a38604ab53ae713132f9d5ff8c012c141e5dac2268baeb0cdf",
+    "final-target-results.json": "bfe777693cd5ce775aa568b0a3e0e0ecd7d55220504c3a54b1751a9c7ce9d234",
+    "opt-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "results.json": "a82a58704399ec1b41b71c22f568e386ccad5cd7698ebe8e3d1c8166a4cf38d8",
+    "prior-3be-target-budget-4.log": "d4c8eb1242a2356cae3cddf8128603baa53326f9b0ba2f0f4c1c5578f30f84f4",
+    "parent-ui-negative-excerpt.log": "562c0c2f4f00639a30152e9cdc5c3e4776330c25a9c36b96082bd85dce6c7260",
+    "checks.json": "6e465a1514854dc369d8c4d52ca6f10beeb10aae3b9117a683f7e9850dbd5f0f",
+    "README.md": "9bc4fbc7056fedb6fd74d6029e0f62efe636ce3e48d64126f44b4eead6563284",
+    "final-target-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-verify.py": "d9ed497a28d75c2a66103fec2056261909edb77a3d1917ac91ec19f9d26af709",
+    "prior-3be-terminal.json": "56bde359f672b71af957e1315ab80e44c61935f49e3cceff5a81b07e32c8ffa2",
+    "terminal.json": "4c8bffe9ea6e4da7bcc004575237283e0fee97fc16d77f927a798ac44132bd01",
+    "prior-3be-target-results.json": "cb41aa35d6433e5bffb68e4ddd176b0c800a4c2fd8793c1817f427c0ab9fdb47",
+    "final-checks.json": "ff7e1a362932eb32f2278c9a78da2bcb8187a71046a46e397fc24bb11fb5a445",
+    "final-before-artifacts.json": "49e6b539992dc0db739693eb62442e6864261be6b3d5893554d216554e5548cc",
+    "san-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "source_sha256": {
+    "firmware/src/project.c": "c6fb1849fd917002ba4df9d1c5d359daf3ff3fbece2e2be84f6d4f6be38b3009",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/ui_draw.c": "b056b61c593ba2e30ce00f02e41244fe38bfcb82a373fce023236288318e100a",
+    "firmware/src/ui_graph.c": "8b7cc524f6f2038238478e524fe6239511ece3ab44de09cc3f04e29d1dca7928",
+    "tests/native_state_render_test.c": "c73527022db7b52215ac3ed1740d1f106d112a0f865a47844bd651c70fbd5d82",
+    "tests/run_tests.sh": "d8ecca0de36efce7fd30f7b21d6c6c2a05e47e6429e68f38c2f3755c0c3c4b45",
+    "tests/ui_render.c": "dad1cbfd95efa496c3f66132125433e2bff1abeff96c7eddbfb8c0c967d0b9ac",
+    "tests/ui_test.c": "9c0b0f850380dcc0eee3748e9f775b2807ad9e15e2719c4f94195426e562d556",
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "tests/fixtures/d8p1/minimal.d8p": "a8cb53dabf1bd6b054822d100d8c76b38ee66a7093f3d29c559b23d3e6438fa7"
+  }
+}

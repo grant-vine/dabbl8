@@ -27,6 +27,7 @@ typedef struct { uint8_t apply,mute,level[8];int8_t pan[8],transpose[8]; } d8arr
 _Static_assert(sizeof(d8arr_state)+16*sizeof(d8arr_scene)<=sizeof(chain_pattern_t), "native policy and overlays fit unused source");
 static uint32_t motion_guard(void);
 static void motion_unguard(uint32_t);
+static int d8arr_ui_native(void);
 static unsigned d8arr_ui_rows(void);
 static void d8arr_held_build(uint32_t [8][4]);
 static void d8arr_held_refresh(track_t *,unsigned);

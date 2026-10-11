@@ -1,0 +1,37 @@
+FAIL SONG_STOPPED/GREY/style0/large0/track1: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track1: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track1: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track1: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track1: actual native graph repeats
+FAIL SONG_STOPPED/GREY/style0/large0/track1: actual native graph scene names
+FAIL SONG_STOPPED/GREY/style0/large0/track2: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track2: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track2: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track2: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track2: actual native graph repeats
+FAIL SONG_STOPPED/GREY/style0/large0/track2: actual native graph scene names
+FAIL SONG_STOPPED/GREY/style0/large0/track3: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track3: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track3: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track3: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track3: actual native graph repeats
+FAIL SONG_STOPPED/GREY/style0/large0/track3: actual native graph scene names
+FAIL SONG_STOPPED/GREY/style0/large0/track4: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track4: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track4: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track4: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track4: actual native graph repeats
+FAIL SONG_STOPPED/GREY/style0/large0/track4: actual native graph scene names
+FAIL SONG_STOPPED/GREY/style0/large0/track5: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track5: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track5: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track5: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track5: actual native graph repeats
+FAIL SONG_STOPPED/GREY/style0/large0/track5: actual native graph scene names
+FAIL SONG_STOPPED/GREY/style0/large0/track6: no clipping/overlap/alignment findings
+FAIL SONG_STOPPED/GREY/style0/large0/track6: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track6: only explicitly designated user text may ellipsise
+FAIL SONG_STOPPED/GREY/style0/large0/track6: native graph never advertises legacy pattern or four-slot actions
+FAIL SONG_STOPPED/GREY/style0/large0/track6: actual native graph repeats
+[excerpt; complete 16377-line raw log retained privately]
+native_state_render: 36228 checks, 3361 frames, 16252 failures; actual adopted native catalog/arrangement, no device qualification

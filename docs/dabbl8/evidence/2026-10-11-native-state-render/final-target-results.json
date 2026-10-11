@@ -1,0 +1,12 @@
+{
+  "8": {
+    "tracks": 8,
+    "bytes": 480012,
+    "sha256": "d3063ff2884d96d5a1db14876fdc5ccb0b8d8a63764757a96661bbe082160c74",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 480012 B; RAM .data+.bss 95812 B of 98304; pool 335240 B of 344064"
+    ]
+  }
+}
