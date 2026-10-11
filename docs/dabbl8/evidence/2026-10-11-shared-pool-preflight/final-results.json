@@ -1,0 +1,61 @@
+[
+  {
+    "mode": "normal",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-shared-pool-scan-evidence/final-normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/shared_pool_scan_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "safety_exit": 0
+  },
+  {
+    "mode": "san",
+    "command": [
+      "clang",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-shared-pool-scan-evidence/final-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/shared_pool_scan_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "safety_exit": 0
+  },
+  {
+    "mode": "control",
+    "command": [
+      "clang",
+      "-O2",
+      "-w",
+      "-Ibuild/gen",
+      "-Ifirmware/src",
+      "-o",
+      "/private/tmp/d8-shared-pool-scan-evidence/final-control",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "tests/shared_pool_scan_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "cost_exit": 0,
+    "negative_exit": 1
+  }
+]
