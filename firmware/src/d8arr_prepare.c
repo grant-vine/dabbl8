@@ -3,9 +3,24 @@
  * read-only, stopped main loop. No ownership receipt or production boot grant. */
 #ifndef DABBL8_ARR_PREPARE_C
 #define DABBL8_ARR_PREPARE_C
-static int d8arr_prepare_pool(const d8pool *s)
+/* Pattern references do not adopt source instruments. Only destination
+ * canonical sound targets need the compiled profile; provenance stays exact. */
+static int d8arr_destinations_available(unsigned mask)
+{
+    if(!mask || (mask&~D8ENGINE_EFFECTIVE_MASK))return D8POOL_INVALID;
+    for(unsigned t=0;t<NTRK;t++) {
+        unsigned target;
+        if(eng_runtime_target(&target,mask,trk[t].eng_req,0,D8ENGINE_CANONICAL))
+            return D8POOL_UNSUPPORTED;
+    }
+    return D8POOL_OK;
+}
+/* Internal synchronous test seam; production retains its immutable full
+ * compiled mask. No configurable profile or fallback is enabled here. */
+static int d8arr_prepare_pool_mask(const d8pool *s,unsigned engine_mask)
 {
     d8pool_index index,after;d8p1_stage_workspace *stage;d8arr_state next;
+    int available=d8arr_destinations_available(engine_mask);if(available)return available;
     if(cv_cpu_active||migration_owner||!d8p1_runtime_cache.valid)return D8POOL_BUSY;
     const d8p1_arrangement *a=&d8p1_runtime_cache.arrangement;
     if(!a->banks||a->banks>4||!a->scenes||a->scenes>16||!a->rows||a->rows>16)return D8POOL_INVALID;
@@ -74,10 +89,14 @@ static int d8arr_prepare_pool(const d8pool *s)
        !metadata_same||epoch!=d8_capture_change.epoch||next.input_generation!=chain.native.policy.input_generation){
         motion_unguard(f);rc=D8POOL_BUSY;goto failed;
     }
+    available=d8arr_destinations_available(engine_mask);
+    if(available){motion_unguard(f);rc=available;goto failed;}
     next.valid=1;next.store_epoch=epoch;
     memcpy(&chain.native.policy,&next,sizeof next);RING_PUBLISH();chain.armed=1;transport_req=1;
     motion_unguard(f);return D8POOL_OK;
 failed:
     chain.native.policy.valid=0;chain.native.policy.preparing=0;chain.armed=0;return rc;
 }
+static int d8arr_prepare_pool(const d8pool *s)
+{ return d8arr_prepare_pool_mask(s,D8ENGINE_EFFECTIVE_MASK); }
 #endif

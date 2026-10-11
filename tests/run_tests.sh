@@ -274,6 +274,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native shared-pool preflight: bounded scans, copied-body integrity and late mutation/reentry refusals" "$OUT/shared_pool_scan_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "actual native reference arrangement, master bars, clocks and held gates" "$OUT/native_arrangement_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/arrangement_engine_compatibility_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/arrangement_engine_compatibility_test.c -lm
+    run "pattern-only sources retain provenance and destination engine refusal" "$OUT/arrangement_engine_compatibility_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arp_key_mapping_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arp_key_mapping_test.c -lm
     run "native held ARP keys: scale controls, captured chords and adoption" "$OUT/native_arp_key_mapping_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
@@ -580,6 +582,8 @@ else
     run "ASan/UBSan: native shared-pool bounded scans and late read-boundary refusals" "$A/shared_pool_scan_test"
     $SCC -o "$A/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "ASan/UBSan: actual native arrangement transport and source refusals" "$A/native_arrangement_test"
+    $SCC -o "$A/arrangement_engine_compatibility_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/arrangement_engine_compatibility_test.c -lm
+    run "ASan/UBSan: pattern-only source and destination availability policy" "$A/arrangement_engine_compatibility_test"
     $SCC -o "$A/native_arp_key_mapping_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arp_key_mapping_test.c -lm
     run "ASan/UBSan: native held ARP keys, chords and adoption" "$A/native_arp_key_mapping_test"
     $SCC -o "$A/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm

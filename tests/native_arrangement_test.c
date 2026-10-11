@@ -301,6 +301,7 @@ static void fill_cases(void)
  seq_stop();transport_req=0;
 }
 
+#ifndef D8ARR_TEST_NO_MAIN
 int main(void)
 {
  seed();snapshot();proof(!chain_prepare()&&live_same()&&!writes,"preparation preserves editable music, undo and FM6");
@@ -444,3 +445,5 @@ int main(void)
  proof(!writes,"arrangement path never writes NOR");
  printf("Native arrangement: %u checks, %u failures; actual runtime/sequencer/clock/motion, virtual NOR only\n",checks,failures);return !!failures;
 }
+
+#endif

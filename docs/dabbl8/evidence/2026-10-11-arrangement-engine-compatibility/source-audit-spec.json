@@ -1,0 +1,47 @@
+{
+  "commit": "9fcf06dce71624ae7339b0ef458307b0613ba56b",
+  "scope": "Read-only exact source audit/specification. No edits, builds or tests. Engine availability implementation remains separate.",
+  "source_hashes": {
+    "firmware/src/d8arr_prepare.c": "2609f82bdedb7e729064e36b61a2f749a9b59f61fe6041c003371d4ee2b81e98",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/motion.c": "533ea04cbb9d3ae658efd24d7d35fbb685be522df28aec845b4aad442044c168",
+    "firmware/src/seq.c": "6155b811350a0e7f552f543295139136d8c88f92c7473a8b68314c5c8306c776",
+    "firmware/src/d8p1_project.h": "f310056786875ecd2322eff28c34b4792e649d6e471ef9451f3147870f44b623",
+    "firmware/src/d8p1_pool_runtime.c": "223ce1e54a158d5082bb46b193554c6deddbb646daf9faff6eacd4be88b3c7c1",
+    "docs/dabbl8/native-arrangement-playback.md": "cdecea529175dd0b2667b7a8ee8878eb4728c96678cb78d42933c98996d844e0",
+    "tests/native_arrangement_test.c": "fb07aeb097ed8a9e4c76a4272e63a9cb2ce3a6b0a07d79a8a9e7d4de0d71ba2c"
+  },
+  "decision": "Allow a structurally valid referenced source project/track whose stored engine is unavailable when the destination sounding engine is available. A reference supplies a pattern, not a sound adoption transaction. Do not apply full project engine availability guards to pattern-only preflight/decode.",
+  "actual_dataflow": {
+    "referenced_source": "Preparation copies steps, four timing values LEN/DIV/SWING/GATE and whole motion store into immutable chain source; stored engine ID is retained only as per-track motion provenance. Project engine parameters, presets, sound envelopes, FM6 patch bytes, global settings and instruments are not adopted.",
+    "sounding_destination": "seq_step looks up destination ENGINES[t->eng_req], mapping keys, scale, transpose behavior and note rendering. Existing destination mix/sound/FM6 patches/voice ownership remain underneath scene overrides.",
+    "common_motion": "Eligible IDs below P_FM1_ATK use source owner/place but destination param_desc and param_fit. They apply across engine differences. This includes supported envelopes, common sound controls, FX sends, pan, glide and detune admitted by motion_param.",
+    "engine_specific_motion": "IDs >=P_FM1_ATK require exact stored source_engine == destination eng_req: FM envelope/levels61..80, DRUM lane levels83..90, engine E0..E791..98. The same predicate is used both for applying automation/locks and resolving automation when locks unlock. Destination motion_base and locked bitsets are independently indexed per destination.",
+    "assets": "Source preset/patch/sample data is not adopted. Notes and compatible locks can exercise destination-owned engine/sample resources, including SET/KIT edits; engine component and sample availability remain destination capability obligations. A missing source asset is not itself a pattern-reference refusal. Structural/source CRC/reference integrity remains required."
+  },
+  "historical_normalization": [
+    "Native schema decoder pins parts8/phys2 but does not normalize DIGITAL/PERC on pattern preparation. Raw source engine provenance is intentionally compared exactly; do not map DIGITAL provenance to FM6 and then replay historical FM4 parameter semantics unchanged.",
+    "Offline historical import does run actual PHYS/drum, DIGITAL conversion and PERC normalization and removes incompatible motion records before encoding canonical native sources. Its resulting source IDs/motion are the canonical provenance.",
+    "Direct native records with DIGITAL or parameter-based PERC aliases can still supply generic patterns/common motion; mismatched destination engines skip source-specific records. No sound substitution occurs. A future normalized-provenance optimization would need the actual motion migration, not just ID rewriting."
+  ],
+  "necessary_refusal_points": [
+    "Retain structural/source CRC, foreign/future/ambiguous pool metadata, bounds, references, stopped/backend/arena ownership, input/storage generation and final inventory/metadata checks. Missing referenced object still refuses; object3 never aliases autosave.",
+    "If a reduced compiled profile is eventually enabled, check destination actual selectable engine availability for every destination at preparation before old-cache invalidation, then defensively recheck under final publication guard. Do not require source engine presence in that mask. Supported public sound setters/adoption must enforce destination availability separately.",
+    "Unsupported engine-specific source motion is skipped by existing compatibility predicate, not substituted or reinterpreted. Unsupported destination sound must refuse without selecting another engine.",
+    "Do not make shared structural d8pr_preflight reject all unavailable stored engines: catalogs and pattern preparation must remain usable without sound adoption. Full engine guards belong to d8p1_load_runtime/project restore/sound load, not copied pattern-source validation."
+  ],
+  "cache_semantics": [
+    "Failures before policy invalidation preserve existing prepared/suspended cache. Once copying starts, preparation marks native policy invalid/preparing and disarms old route; late failure may discard prior suspended preparation but cannot publish partial sources. Live editable music remains unchanged.",
+    "Final publication verifies source inventory metadata, retained arrangement CRC, store epoch, preparation state and held-input generation; no transaction-wide concurrent-writer protection is claimed.",
+    "Fresh Start/Continue during copying cancels preparation. Successful sound/project adoption and source mutation retain existing invalidation behavior; pattern-only availability policy should not weaken it."
+  ],
+  "implementation_tests": [
+    "Use actual native pool fixture with unavailable source engine and available destination: SONG prepare/start succeeds, source notes/timing/common pan/FX automation and locks apply, exact destination engine/parameters outside motion/FM6 patch/cache identity/undo/project/raw source bytes remain intact.",
+    "Add incompatible source E0, lane and FM-envelope automation+locks; assert skipped values and unlock restore destination base. Repeat for two destinations aliasing one source with distinct base values, and same-engine compatible control.",
+    "Use raw DIGITAL source with FM6 destination in FM4-off build; common motion applies, historical FM-specific records remain skipped. Canonically migrated DIGITAL/PERC/PHYS fixtures assert actual removed motion and resulting provenance instead of simple alias substitution.",
+    "An unavailable engine on an unused source track or unreferenced structurally valid project must not block referenced pattern playback. Missing object, invalid IDs/CRC/reference/foreign format remain refusals.",
+    "Test unavailable destination engine initial refusal preserves old cache and zero LCD/live/patch/undo mutation; inject late destination invalidation during actual LCD/backend read and assert conservative invalid cache with unchanged live music and no armed/transport start.",
+    "Use real compile-time immutable profile seams only as test arguments until gates open; do not remove backend write quarantine or build-profile refusal. Preserve existing late activity/store-change/start, scene overlay and held-owner tests."
+  ],
+  "qualification": "Existing source test covers common alias pan/lock/unlock and changed destination engine filtering of FM envelope. It does not yet prove unavailable source masks or all suggested cases. Source inspection is not executed-check or physical timing evidence."
+}
