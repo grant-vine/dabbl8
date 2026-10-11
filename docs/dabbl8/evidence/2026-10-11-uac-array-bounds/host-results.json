@@ -1,0 +1,95 @@
+{
+  "base": "fbadbca894419c9626306eb773f38ae22baed52d",
+  "usb_source_sha256": "57ad5a6fcdf4df2c9b8c62583d324d7bc7694330f2c57637619fd2a95775ed3e",
+  "scope": "Frozen-parent exact resampler and independent history/ring oracles, no device timing. Inherited sanitizer exclusions retained.",
+  "runs": [
+    {
+      "name": "normal-tone0",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_UAC_TONE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds/normal-tone0"
+      ],
+      "exit": 0,
+      "output": "Native SRC history: 2246436 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n"
+    },
+    {
+      "name": "normal-tone1",
+      "build": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DFELUCCA_UAC_TONE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds/normal-tone1"
+      ],
+      "exit": 0,
+      "output": "Native SRC history TONE: 2277636 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n"
+    },
+    {
+      "name": "inherited-san-tone0",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DFELUCCA_UAC_TONE=0",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds/inherited-san-tone0"
+      ],
+      "exit": 0,
+      "output": "Native SRC history: 2246436 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n"
+    },
+    {
+      "name": "inherited-san-tone1",
+      "build": [
+        "clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DFELUCCA_UAC_TONE=1",
+        "-Ibuild/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/native_uac_history_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-uac-array-bounds/inherited-san-tone1"
+      ],
+      "exit": 0,
+      "output": "Native SRC history TONE: 2277636 checks, 0 failures; 31200 exact frozen-parent cases (160 phases x lengths 0..64 x 3 histories), independent full-buffer oracles; no physical timing claim\n"
+    }
+  ]
+}
