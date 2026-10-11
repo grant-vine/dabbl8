@@ -1,0 +1,14 @@
+{
+  "source": "226440712db0808001abb3ad3dba3cfb5a786f1b",
+  "exit": 0,
+  "elapsed_seconds": 882.7096180915833,
+  "six_baseline_unchanged": true,
+  "generated29_unchanged": true,
+  "golden_cost_refs_unchanged": true,
+  "actual_default4_dis_sha256": "d14497a43b2cfdfeed31a9baa774d834108816c61555231676a389f1ed562898",
+  "native8_static_failures": 3,
+  "hardware": "NOT_RUN",
+  "release_qualified": false,
+  "full_suite_session": 32582,
+  "browser_emulator": "SKIP: no emcc"
+}
