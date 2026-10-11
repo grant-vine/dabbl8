@@ -4,8 +4,8 @@ This is preparation for issues #13, #14 and #20, not a completed install or a
 hardware-qualified release. The current plan was refreshed on 2026-10-11 against
 the experimental diagnostic candidate in draft PR #138, `53d20f03cea3959b730c0afb9ae2b0baf779301e`, tree
 `6e981b76a50818d22b3623a7b47f8b0709bd6a6b`. Timing instrumentation is implemented,
-including the D8T2 aligned window from merged PR #133; current curated-profile
-and diagnostic build integration has separate draft PRs #136 and #138. These
+including the D8T2 aligned window from merged PR #133; at that preparation, curated-profile
+and diagnostic build integration had separate draft PRs #136 and #138. These
 statuses do not establish installation or hardware qualification. The original
 plan was prepared at `fbadbca894419c9626306eb773f38ae22baed52d`; its references
 to draft PR #113 and D8T1-only collection are historical. The unchanged audited
@@ -128,7 +128,7 @@ separate owner installation authorisation and recovery preparation, while leavin
 final issue acceptance open. Original V15 data need not already be migrated to the
 native pool to measure volatile eight-track audio.
 
-Production application flash writes and the native migration coordinator's write
+Eight-track production application flash writes and the native migration coordinator's write
 backend are both intentionally closed. Read-only verified `RESUME` can release its
 workspace and establish catalog/autosave policy; that policy does not grant physical
 write authority. An actual physical native write backend, per-operation authority,
