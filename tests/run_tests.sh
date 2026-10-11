@@ -416,8 +416,12 @@ if [ -f build/gen/felucca_tables.h ]; then
     done; done; done
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
     run "RATCH: x1..x4 in a step (notes, chords, drum hits), gates, chance, swing, projects, user presets, CHANCE page" "$OUT/ratchet_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/midi_control_test" tests/midi_control_test.c -lm
-    run "USB/TRS clock, bend, sustain, ownership and panic recovery" "$OUT/midi_control_test"
+    # Full historical/native MIDI harness; protocol constants stay independent of track count.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$OUT/midi_control_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$midi_bin" tests/midi_control_test.c -lm
+        run "complete MIDI controls/clock: tracks=$tracks FM4=$fm4 SLICE=$slice" "$midi_bin"
+    done; done; done
     $CC -O1 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/digital_test" tests/digital_test.c -lm
     run "DIGITAL (retired, built here with FELUCCA_FM4=1): operator envelopes/levels" "$OUT/digital_test"
     $CC -O2 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/fm4_test" tests/fm4_test.c -lm
@@ -672,6 +676,11 @@ else
         done
     done
     # END complete project/backup historical/native matrix (san)
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$A/midi_control_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$midi_bin" tests/midi_control_test.c -lm
+        run "ASan/UBSan: complete MIDI controls/clock tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$midi_bin"
+    done; done; done
     for n in 4 8; do
         $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
         run "ASan/UBSan: actual locked/held GLO transport, $n tracks" "$A/glo_transport_test$n"

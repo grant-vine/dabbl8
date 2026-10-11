@@ -230,9 +230,14 @@ static int usb_burst_test(void)
     events_block(CTL);
     return bad;
 }
-/* GLO > SYSTEM ROUT (#68): CH1-4 listens to channels 1..4 only, channels 5..16 are free for other instruments
- * (notes, bend, CCs, aftertouch, panic and reset all ignored, from USB and TRS); SEL plays the selected track
- * from every channel; a switch to CH1-4 lets go of what channels 5..16 held */
+#if NPART == 8
+#define ROUT_MSG(historical, native) native
+#else
+#define ROUT_MSG(historical, native) historical
+#endif
+/* GLO > SYSTEM ROUT (#68): channel mode listens to 1..NPART; higher MIDI channels are free for other instruments.
+ * Notes, bend, CCs, aftertouch, panic and reset from those channels are ignored on USB and TRS. SEL listens
+ * to all sixteen channels; returning to channel mode releases only owners above the compiled track count. */
 static int any_gate(void)
 {
     for (uint32_t i = 0; i < NTRK * NVOICE; i++) if (trk[i / NVOICE].v[i % NVOICE].active && trk[i / NVOICE].v[i % NVOICE].gate) return 1;
@@ -241,40 +246,43 @@ static int any_gate(void)
 static int route_test(void)
 {
     int bad = 0; uint32_t ch, src, owned = 0;
+    int16_t negative_params[NPART][P_COUNT]; uint8_t negative_mod[NPART][3];
     midi_test_reset(); song.sel = 2;
-    bad += check("ROUT defaults to CH1-4", song.g[G_ROUTE] == 0);
+    bad += check(ROUT_MSG("ROUT defaults to CH1-4", "ROUT defaults to CH1-8"), song.g[G_ROUTE] == 0);
     for (src = 1; src <= 2u; src++)
-        for (ch = 4; ch < 16u; ch++) queued(0x90 | ch, 60 + ch, 100, src);
-    for (ch = 4; ch < 16u; ch++) owned |= midi_notes[ch][60 + ch];
-    bad += check("CH1-4: note-ons on channels 5..16 (USB and TRS) play nothing", !any_gate() && !owned && !midi_owners[2] && !midi_hint);
+        for (ch = NPART; ch < 16u; ch++) queued(0x90 | ch, 60 + ch, 100, src);
+    for (ch = NPART; ch < 16u; ch++) owned |= midi_notes[ch][60 + ch];
+    bad += check(ROUT_MSG("CH1-4: note-ons on channels 5..16 (USB and TRS) play nothing", "CH1-8: note-ons on channels 9..16 (USB and TRS) play nothing"), !any_gate() && !owned && !midi_owners[2] && !midi_hint);
     queued(0x91, 62, 100, 1); queued(0x93, 40, 100, 2);
-    bad += check("CH1-4: channels 2 and 4 still play parts 2 and 4", gate_note(&trk[1], 62) && midi_notes[1][62] == 2u && midi_notes[3][40] == 4u);
-    queued(0xE4, 127, 127, 1); queued(0xEF, 0, 0, 2); queued(0xE9, 127, 127, 1);
-    bad += check("CH1-4: pitch bend on channels 5, 10, 16 bends no part", !midi_bend_target[0] && !midi_bend_target[1] && !midi_bend_target[2] && !midi_ch[4].bend && !midi_ch[15].bend);
-    queued(0xB4, 1, 99, 1); queued(0xB9, 11, 10, 2); queued(0xDF, 77, 0, 1);
-    bad += check("CH1-4: CC1 / CC11 and aftertouch on channels 5..16 reach no MOD source", !trk[2].mw && !trk[2].ex_off && !trk[2].at && !trk[0].mw && !trk[0].at);
-    queued(0xB4, 101, 0, 1); queued(0xB4, 100, 0, 1); queued(0xB4, 6, 24, 1);
-    bad += check("CH1-4: RPN on channel 5 changes nothing", midi_ch[4].semis != 24u);
-    queued(0xB4, 64, 127, 1); queued(0x81, 62, 0, 1);
-    bad += check("CH1-4: a channel 5 sustain pedal does not hold channel 2's note", !gate_note(&trk[1], 62) && !midi_notes[1][62]);
+    bad += check(ROUT_MSG("CH1-4: channels 2 and 4 still play parts 2 and 4", "CH1-8: channels 2 and 4 still play parts 2 and 4"), gate_note(&trk[1], 62) && midi_notes[1][62] == 2u && midi_notes[3][40] == 4u);
+    queued((0xE0 | NPART), 127, 127, 1); queued(0xEF, 0, 0, 2); queued(0xE9, 127, 127, 1);
+    bad += check(ROUT_MSG("CH1-4: pitch bend on channels 5, 10, 16 bends no part", "CH1-8: pitch bend on channels 9, 10, 16 bends no part"), !midi_bend_target[0] && !midi_bend_target[1] && !midi_bend_target[2] && !midi_ch[NPART].bend && !midi_ch[15].bend);
+    for (ch=0;ch<NPART;ch++) { memcpy(negative_params[ch],trk[ch].p,sizeof negative_params[ch]); negative_mod[ch][0]=trk[ch].mw; negative_mod[ch][1]=trk[ch].ex_off; negative_mod[ch][2]=trk[ch].at; }
+    queued((0xB0 | NPART), 1, 99, 1); queued(0xB9, 11, 10, 2); queued(0xDF, 77, 0, 1);
+    int no_mod=1; for(ch=0;ch<NPART;ch++) no_mod &= !memcmp(negative_params[ch],trk[ch].p,sizeof negative_params[ch]) && negative_mod[ch][0]==trk[ch].mw && negative_mod[ch][1]==trk[ch].ex_off && negative_mod[ch][2]==trk[ch].at;
+    bad += check(ROUT_MSG("CH1-4: CC1 / CC11 and aftertouch on channels 5..16 reach no MOD source", "CH1-8: CC1 / CC11 and aftertouch on channels 9..16 reach no MOD source"), no_mod && !trk[2].mw && !trk[2].ex_off && !trk[2].at && !trk[0].mw && !trk[0].at);
+    queued((0xB0 | NPART), 101, 0, 1); queued((0xB0 | NPART), 100, 0, 1); queued((0xB0 | NPART), 6, 24, 1);
+    bad += check(ROUT_MSG("CH1-4: RPN on channel 5 changes nothing", "CH1-8: RPN on channel 9 changes nothing"), midi_ch[NPART].semis != 24u);
+    queued((0xB0 | NPART), 64, 127, 1); queued(0x81, 62, 0, 1);
+    bad += check(ROUT_MSG("CH1-4: a channel 5 sustain pedal does not hold channel 2's note", "CH1-8: a channel 9 sustain pedal does not hold channel 2's note"), !gate_note(&trk[1], 62) && !midi_notes[1][62]);
     queued(0x91, 62, 100, 1); queued(0xB1, 1, 50, 1);
-    queued(0xB4, 120, 0, 1); queued(0xB9, 123, 0, 2); queued(0xBF, 121, 0, 1);
-    bad += check("CH1-4: CC120 / CC123 / CC121 on channels 5..16 leave parts 1..4 sounding", gate_note(&trk[1], 62) && gate_note(&trk[3], 40) && midi_owners[1] == 1u && trk[1].mw == 50);
+    queued((0xB0 | NPART), 120, 0, 1); queued(0xB9, 123, 0, 2); queued(0xBF, 121, 0, 1);
+    bad += check(ROUT_MSG("CH1-4: CC120 / CC123 / CC121 on channels 5..16 leave parts 1..4 sounding", "CH1-8: CC120 / CC123 / CC121 on channels 9..16 leave parts 1..4 sounding"), gate_note(&trk[1], 62) && gate_note(&trk[3], 40) && midi_owners[1] == 1u && trk[1].mw == 50);
     queued(0xB1, 123, 0, 1); queued(0x83, 40, 0, 2);
-    bad += check("CH1-4: panic on channel 2 still works", !gate_note(&trk[1], 62) && !midi_owners[1] && !midi_owners[3]);
+    bad += check(ROUT_MSG("CH1-4: panic on channel 2 still works", "CH1-8: panic on channel 2 still works"), !gate_note(&trk[1], 62) && !midi_owners[1] && !midi_owners[3]);
 
     midi_test_reset(); song.sel = 2; song.g[G_ROUTE] = 1; trk[2].p[P_VOICE] = V_POLY; trk[2].p[P_SUS] = 127; events_block(CTL);
-    queued(0x90, 60, 100, 1); queued(0x94, 62, 100, 2); queued(0x99, 64, 100, 1); queued(0x9F, 65, 100, 2);
-    bad += check("SEL: channels 1, 5, 10, 16 all play the selected track", gate_note(&trk[2], 60) && gate_note(&trk[2], 62) && gate_note(&trk[2], 64) && gate_note(&trk[2], 65) && !gate_note(&trk[0], 60) && midi_owners[2] == 4u);
-    queued(0xEF, 127, 127, 1); queued(0xB9, 1, 66, 2); queued(0xD4, 33, 0, 1);
-    bad += check("SEL: bend, CC1 and aftertouch from channels 5..16 reach the selected track", midi_bend_target[2] == 512 && trk[2].mw == 66 && trk[2].at == 33);
-    queued(0xB4, 64, 127, 1); queued(0x84, 62, 0, 2);
-    bad += check("SEL: channel 5 pedal holds its note", gate_note(&trk[2], 62) && (midi_notes[4][62] & MIDI_PEDAL_NOTE));
+    queued(0x90, 60, 100, 1); queued((0x90 | NPART), 62, 100, 2); queued(0x99, 64, 100, 1); queued(0x9F, 65, 100, 2);
+    bad += check(ROUT_MSG("SEL: channels 1, 5, 10, 16 all play the selected track", "SEL: channels 1, 9, 10, 16 all play the selected track"), gate_note(&trk[2], 60) && gate_note(&trk[2], 62) && gate_note(&trk[2], 64) && gate_note(&trk[2], 65) && !gate_note(&trk[0], 60) && midi_owners[2] == 4u);
+    queued(0xEF, 127, 127, 1); queued(0xB9, 1, 66, 2); queued((0xD0 | NPART), 33, 0, 1);
+    bad += check(ROUT_MSG("SEL: bend, CC1 and aftertouch from channels 5..16 reach the selected track", "SEL: bend, CC1 and aftertouch from channels 9..16 reach the selected track"), midi_bend_target[2] == 512 && trk[2].mw == 66 && trk[2].at == 33);
+    queued((0xB0 | NPART), 64, 127, 1); queued((0x80 | NPART), 62, 0, 2);
+    bad += check(ROUT_MSG("SEL: channel 5 pedal holds its note", "SEL: channel 9 pedal holds its note"), gate_note(&trk[2], 62) && (midi_notes[NPART][62] & MIDI_PEDAL_NOTE));
     song.g[G_ROUTE] = 0; events_block(CTL);
-    bad += check("SEL -> CH1-4 releases channels 5..16's notes (pedal-held too), keeps channel 1's",
+    bad += check(ROUT_MSG("SEL -> CH1-4 releases channels 5..16's notes (pedal-held too), keeps channel 1's", "SEL -> CH1-8 releases channels 9..16's notes (pedal-held too), keeps channel 1's"),
                  !gate_note(&trk[2], 62) && !gate_note(&trk[2], 64) && !gate_note(&trk[2], 65) && gate_note(&trk[2], 60) &&
-                 !midi_notes[4][62] && !midi_notes[9][64] && !midi_notes[15][65] && midi_owners[2] == 1u && !midi_ch[4].pedal);
-    bad += check(".. and resets their bend: each part follows its own channel 1..4", !midi_bend_target[2] && !midi_ch[15].bend);
+                 !midi_notes[NPART][62] && !midi_notes[9][64] && !midi_notes[15][65] && midi_owners[2] == 1u && !midi_ch[NPART].pedal);
+    bad += check(ROUT_MSG(".. and resets their bend: each part follows its own channel 1..4", ".. and resets their bend: each part follows its own channel 1..8"), !midi_bend_target[2] && !midi_ch[15].bend);
     queued(0x80, 60, 0, 1);
     bad += check("channel 1's note-off still releases its note after the switch", !any_gate() && !midi_owners[2]);
     return bad;
@@ -327,10 +335,13 @@ static int cc_map_test(void)
     bad += check("CC121 resets no mapped parameter (RP-015)", !memcmp(before, trk[0].p, sizeof before));
     queued(0xB0, 20, 99, 1); queued(0xB0, 76, 99, 1); queued(0xB0, 95, 99, 1);
     bad += check("CCs outside the map change nothing", !memcmp(before, trk[0].p, sizeof before));
+    int16_t ignored_before[NPART][P_COUNT];
+    for(i=0;i<NPART;i++) memcpy(ignored_before[i],trk[i].p,sizeof ignored_before[i]);
     memcpy(before, trk[2].p, sizeof before);
-    queued(0xB4, 7, 5, 1); queued(0xB9, 74, 5, 2); queued(0xBF, 91, 5, 1);
+    queued((0xB0 | NPART), 7, 5, 1); queued(0xB9, 74, 5, 2); queued(0xBF, 91, 5, 1);
     ok = !memcmp(before, trk[2].p, sizeof before) && trk[0].p[P_LEVEL] != 5 && trk[3].p[P_LEVEL] != 5;
-    bad += check("ROUT CH1-4: mapped CCs on channels 5..16 reach no part", ok);
+    for(i=0;i<NPART;i++) ok &= !memcmp(ignored_before[i],trk[i].p,sizeof ignored_before[i]);
+    bad += check(ROUT_MSG("ROUT CH1-4: mapped CCs on channels 5..16 reach no part", "ROUT CH1-8: mapped CCs on channels 9..16 reach no part"), ok);
     song.g[G_ROUTE] = 1; song.sel = 2; events_block(CTL);
     queued(0xB9, 7, 5, 2);
     bad += check("ROUT SEL: channel 10's CC7 sets the selected track's LEVEL", trk[2].p[P_LEVEL] == 5 && trk[0].p[P_LEVEL] != 5);
@@ -351,9 +362,15 @@ static int cc_map_test(void)
     bad += check("not armed: the CC is the new value, no event", trk[0].p[P_E4] == 77 && motion.count == 1u);
     return bad;
 }
+#if NPART == 8
+#include "midi_native_controls_test.h"
+#endif
 int main(void)
 {
     int bad = controls_test() + sustain_test() + ownership_test() + clock_test(1) + clock_test(2) + clock_arp_and_boundaries() +
               arp_ext_stop_test() + usb_burst_test() + route_test() + cc_map_test();
+#if NPART == 8
+    bad += native_controls_test();
+#endif
     printf("%s\n", bad ? "MIDI CONTROL/CLOCK TEST FAILED" : "MIDI control/clock integration tests passed"); return bad != 0;
 }

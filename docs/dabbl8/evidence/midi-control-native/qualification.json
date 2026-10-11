@@ -1,0 +1,57 @@
+{
+  "measured_commit": "36b6f45cb1a3bb04a38c15392c6dbcd41ffa3b8d",
+  "measured_tree": "037908aa1b250fedba6d232c942a1391820c758f",
+  "parent": "406de63335eb55248db21005efd17261b167b03a",
+  "source_sha256": {
+    "tests/midi_control_test.c": "fbbbbfe53954241ce9fb8d8fc5dd831c3ac845c4d80e0c8703b956f0ddb61d14",
+    "tests/midi_native_controls_test.h": "b33cfca67939f11dfc399d4d831e4a04d82c1d3f281f7fbd45ad996a6c5afca7",
+    "tests/run_tests.sh": "275aeb6748d7b8907efe2ebb3138816997e911f4e428c817df747a0fee650c98"
+  },
+  "source_snapshot_sha256": "7bff9114c2bc4b7e4506d19fadfe0a7b9042a3fc3a66c79f21a0881dd4038219",
+  "report_sha256": "0a3d6f3855647227b11a6a962847b7bd136aaa1adcd839487e84652387011890",
+  "manifest_sha256": "189f55ace1c2ab5573c75abae53c2dbbe60c05cfea1875ed08225f62831320c1",
+  "matrix": {
+    "candidate": 16,
+    "four_track_checks": 95,
+    "native_checks": 171,
+    "four_track_parent_stdout_pairs": 8,
+    "original_native_parent_assertion_failures": 5
+  },
+  "negative_controls": [
+    {
+      "name": "four-channel-routing",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "failed_assertions": 66
+    },
+    {
+      "name": "lost-target-bit7",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "failed_assertions": 10
+    },
+    {
+      "name": "forget-valid-pedal",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "failed_assertions": 2
+    },
+    {
+      "name": "uncapped-rpn",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "failed_assertions": 16
+    }
+  ],
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "scope": "Host actual firmware harness; inherited whole-DSP sanitizer exclusions signed-integer-overflow,shift,bounds,object-size,pointer-overflow. No device/target/timing/stack/build/golden qualification. Test-only three paths, production unchanged.",
+  "historical_stages": "Initial matrix snapshot was during execution; final-matrix guarded 25 predates G_TUNE strengthening. final-tune-native has nine literal executions despite inherited 25-execution summary text. sealed-final-matrix is definitive exact-final guarded 25; final-mutants is definitive exact-final four controls; prior raw stages preserved.",
+  "raw_evidence": "ignored .local-baseline/midi-control-native-qualification/main406; definitive sealed-final-matrix and final-mutants",
+  "hardware_qualified": false
+}
