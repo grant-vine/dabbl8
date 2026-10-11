@@ -1,0 +1,14 @@
+from pathlib import Path
+import subprocess,os,json,hashlib,shutil
+b=Path('/Users/grantv/Code/dabbl8/.local-baseline');r=b/'native-uac-occupancy-main';e=b/'native-uac-occupancy-main-focused-check';e.mkdir(exist_ok=True);h='d450d49e42dda5f8cc345c5be9d212c2dbb4eef6';assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==h
+shutil.copy2(__file__,e/'verify.py');env=os.environ.copy();env.update(ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1');checks=[]
+def run(name,args):
+ with (e/(name+'.log')).open('w') as f:p=subprocess.run(args,cwd=r,env=env,stdout=f,stderr=subprocess.STDOUT)
+ checks.append({'name':name,'exit':p.returncode});(e/'checks.json').write_text(json.dumps(checks,indent=2)+'\n');print(name,p.returncode,flush=True);assert p.returncode==0
+common=['clang','-w','-Ibuild/gen','-Ifirmware/src'];sources=['firmware/src/d8p1.c','firmware/src/d8pool.c','firmware/src/d8pool_mapped.c']
+for mode,flags in [('opt',['-O2']),('san',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow','-fno-sanitize-recover=all'])]:
+ for tone in (0,1):
+  name='history-'+mode+('-tone' if tone else '');exe=e/name;run(name+'-build',common+flags+(['-DFELUCCA_UAC_TONE=1'] if tone else [])+['-o',str(exe),*sources,'tests/native_uac_history_test.c','-lm']);run(name,[str(exe)])
+fixture=r/'tests/fixtures/uac/e631-uac-tap48.inc';text=fixture.read_text();fn=text[text.index('static __attribute__'):];orig=subprocess.check_output(['git','show','e63164bc41c563fa02fe6d5bb4affecaca05adbd:firmware/src/usb.c'],cwd=r,text=True);start=orig.index('static __attribute__((noinline)) void uac_tap48(');end=orig.index('\n}\n#endif',start)+2;assert fn==orig[start:end]+'\n';assert hashlib.sha256(fn.encode()).hexdigest() in text
+assert subprocess.check_output(['git','rev-parse','HEAD'],cwd=r,text=True).strip()==h;assert not subprocess.check_output(['git','status','--porcelain'],cwd=r,text=True).strip()
+(e/'terminal.json').write_text(json.dumps({'source':h,'reference_function_exact_parent':'e63164bc41c563fa02fe6d5bb4affecaca05adbd','reference_function_sha256':hashlib.sha256(fn.encode()).hexdigest(),'cases_per_mode':31200,'four_modes':'normal/TONE optimized plus inherited DSP ASan/UBSan','hardware':'NOT_RUN'},indent=2)+'\n');print('Final retained matrix all four modes PASS',flush=True)
