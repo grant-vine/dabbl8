@@ -1,0 +1,19 @@
+{
+  "base_commit": "3174e63e190e44f9905ceddc9911e90696b5009a",
+  "supersedes_inline_candidate_commit": "ee916df7bbef05145d3f14f8309f6cb551266bd1",
+  "source_hashes": {
+    "firmware/src/voice.c": "6e5930cda0a38e48cbb2c23d089c9462951a8357c028be3e6ed985ad57ece046",
+    "tests/voice_budget_test.c": "95426f3b54e16f6fbbc8f17f5b13dd1b03a5b0929b879bbd450eeb29a02f002c",
+    "tests/native_overload_test.c": "c6a8fdc139de0d89562b21e24817cfeff0b1a53cf3df878eb893a24793d3338d"
+  },
+  "ordinary_voice_start_local_stack_bytes": 24,
+  "main_control_voice_start_local_stack_bytes": 20,
+  "inline_experiment_voice_start_local_stack_bytes": 88,
+  "rare_voice_compaction_local_stack_bytes": 64,
+  "stack_scope": "Explicit vendor function reservations, excluding register pushes, callers, memset, nesting and guards. Rare function adds another frame; no total high-water or deadline qualification.",
+  "four_track_app_and_elf_identical": true,
+  "negative_control_scope": "New direct-helper state snapshot omitted on unchanged source; allocation boundary assertions compile and fail at runtime.",
+  "sanitizer": "Inherited DSP exclusions retained; not strict whole-DSP sanitizer coverage.",
+  "full_ci": "Pending final-source integration; existing live run covers earlier inline head only.",
+  "hardware": "SKIP; no loader/package/install or elapsed-life/physical timing evidence."
+}

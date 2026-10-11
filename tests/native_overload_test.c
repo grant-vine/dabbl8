@@ -124,6 +124,15 @@ int main(void)
     sustained();transient_and_recovery();
 #if NPART >= NVOICE
     priorities();protected_modes_and_retrigger();
+    fresh(); vage = UINT32_MAX - 4u;
+    for (unsigned p = 0; p < NPART; p++) {
+        trk[p].p[P_VOICE] = V_MONO;
+        trk_note_on(&trk[p], 40 + p, 100);
+    }
+    shed_over = 3; shed_voice();
+    REQUIRE(shed_count == 1 && !trk[0].v[0].active);
+    for (unsigned p = 1; p < NPART; p++) REQUIRE(trk[p].v[0].active);
+    REQUIRE(vage > 0 && vage < 100);
 #endif
     printf("overload: tracks=%u assertions=%u sustained fallback, priorities, transient/recovery and auxiliary exclusion PASS; simulated clock only\n",NPART,assertions);
     return 0;
