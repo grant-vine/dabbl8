@@ -1,0 +1,29 @@
+{
+  "source_commit": "6cfef34a7b1960caa8adf8f3394bcb3c16b2ac48",
+  "base": "48254c2c4c2e7fdf6a9d679fea32322568b0c7ce",
+  "source_hashes": {
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/project.c": "da93d328d5adec2cbcbf6c785e2e62806a103726d52b7b7e17761f1e7fcdb4df",
+    "firmware/src/d8p1_runtime.c": "e5d3f90c18a4e05aa5d00d6d599bef61a4d85e4d081ef6e06adc3d3153df4c05"
+  },
+  "four_code_delta_bytes": 700,
+  "eight_code_delta_bytes": 740,
+  "data_and_pool_unchanged": true,
+  "static_budget_exits": [
+    0,
+    0,
+    1,
+    1
+  ],
+  "binary_hashes": {
+    "8-candidate-felucca.elf": "3fc6714f5b71303af2d8235d672ddf69645b7796d8894c623714ed7929cea3de",
+    "4-main-control-felucca.elf": "71ba1f1c654d4a479ee287614c4c883ece3eb7e1731b42cbe955c67456f3d92d",
+    "8-main-control-felucca.elf": "1dd4d7649818b08e0961b49b97a46bfa175d68da9743fab8cb77e5aaa4a0701c",
+    "4-candidate-felucca.elf": "f8c37dc61e73b39582e57e01cbe90700f5c64f050187bfa09b8dacd9d1d16cd1",
+    "4-candidate-felucca.bin": "eeeab9e1bc138d754ff846b00d552ea7c075e847982fe4f073e28e64f32459db",
+    "8-candidate-felucca.bin": "88c853896bf728c93b0bb1ce2aa69851e5a3d4322a95b8d382f9d057fab59731",
+    "4-main-control-felucca.bin": "a3a87f6fe62d427bfb0f7ebc8c3f5905717e8fa636c641bd94886240331ae096",
+    "8-main-control-felucca.bin": "36b2b0000e6d5457219b29242a1601c734059aab39acc263779ffa51b270b24d"
+  },
+  "scope": "App-only exact committed adoption source versus frozen policy foundation. No loader/package/device or full CI source-union claim. These changes affect cold adoption paths, but physical time/stack high-water not measured. Default4 no longer binary-identical; host compatibility evidence and final-source CI separately required."
+}

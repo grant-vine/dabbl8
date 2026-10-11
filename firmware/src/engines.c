@@ -88,6 +88,25 @@ static const uint8_t ENGINE_ORDER[NENG_SHOWN] = {
     10,                          /* DRUM */
 };
 
+/* Availability policy is now used by project adoption. Compatibility builds
+ * retain their actual compiled DIGITAL/SLICE meanings; card profiles stay
+ * disabled until every UI/editor/publication path is covered. */
+#include "d8engine_policy.c"
+static int eng_runtime_target(unsigned *out,unsigned mask,unsigned requested,unsigned preset,unsigned source)
+{
+    if(!mask || (mask&~D8ENGINE_EFFECTIVE_MASK))return D8ENGINE_INVALID_MASK;
+    if(!out || requested>=NENGINES || source>D8ENGINE_LEGACY_FACTORY)return D8ENGINE_INVALID_REQUEST;
+#if FELUCCA_FM4
+    /* This is an implemented DIGITAL engine, not a retired archive alias. */
+    if(requested==ENGI_DIGITAL){
+        if(!(mask&2u))return D8ENGINE_UNAVAILABLE;
+        *out=ENGI_DIGITAL;return D8ENGINE_OK;
+    }
+    if(!(mask&D8CARD_ALL))return D8ENGINE_UNAVAILABLE;
+#endif
+    return d8engine_target(out,mask&D8CARD_ALL,requested,preset,source);
+}
+
 /* the engines one can pick (engine 1 only with FELUCCA_FM4), in ENGINE_ORDER: eng_ok(e), the n-th of them
  * eng_vis(n), e's place among them eng_rank(e), the next / previous one eng_step(e, dir) (wraps) */
 static int eng_ok(uint32_t e) { return e < NENGINES && (FELUCCA_FM4 || e != ENGI_DIGITAL); }

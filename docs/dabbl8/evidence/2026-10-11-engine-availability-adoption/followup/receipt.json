@@ -1,0 +1,752 @@
+{
+  "scope": "Host-only test follow-up, production sources unchanged at 6cfef34; isolated modified-candidate negative controls, not pristine-parent controls.",
+  "source_sha256": {
+    "firmware/src/midi_uart.c": "459cf47e648a91523713b27886448d8992ab8629288c76f6e5d317be54c4435f",
+    "firmware/src/ui_name.c": "a1192f3703e2217accf524874b0d6350be8b3a0e8fff1f6344e848e85d4dbcf0",
+    "firmware/src/gfx.c": "9d42b43d0018ccd089f7c3cb1581231196071b50dcd19317758bfefbbe281f91",
+    "firmware/src/native_migration_preflight.h": "26082f962d9bef067df3a6f77ae39676f13143f4fa2a72b03ac36edab8a6de83",
+    "firmware/src/panel.c": "4ab1fdb3300edce1bae16675ea2bdd76a00efb71fe1ec7d7734b6a03eeefe414",
+    "firmware/src/d8card.c": "6590ba07ed27c429b0bfc1d688362db664bcc46bd474dff0e8d3b82d9406b94c",
+    "firmware/src/project_native_frontend.h": "8e4d47940a587fdf534b7e684459485949f2db2fc7879b91cd95643d48b7340e",
+    "firmware/src/instrument_write_gate.h": "44f4c821c90f851981c8396f9776276b8c2aef4de36ee88b2fa446550b80fe32",
+    "firmware/src/ui_input.c": "8f296a19c2247b4d54c96af45ee564971f13221eaa335d8238954b5f5947a349",
+    "firmware/src/d8p1.c": "ade527da0f804e695b01b1fb7c3296e3c6e04f0a0d12e78b989818da301ac3ec",
+    "firmware/src/editor_preferences.c": "e1b3169476d6f7499eff24bfe6104d4a959a768c16624d6c81168bbf2308683e",
+    "firmware/src/core.h": "02c623fd711db442c37b16f56a63ca3843c6985ff78e19327d0b415d33271d6a",
+    "firmware/src/eng_drum.c": "2f3ff37c6fc0a5e4a169ced8562876c07ab8a1beaf2a9101f9b73b0ac197ae08",
+    "firmware/src/motion.c": "533ea04cbb9d3ae658efd24d7d35fbb685be522df28aec845b4aad442044c168",
+    "firmware/src/d8pool.c": "0969b5ab713309e1d79b4b7bc6a906e69f726977dca917d586dc3c7081b21895",
+    "firmware/src/eng_analog.c": "dc93a7a1f1669b088a7f5bd23a47a8e737ef37cd9d4f807b8021120634e5ddf7",
+    "firmware/src/eng_trio.c": "7bf65c3662f72dfb893dd8897ef26025ffe551a664c70256e374d826f1fd163a",
+    "firmware/src/slicer.c": "3d28592799f12cee99bf9a11cbf24a371e1389ad349dd3ee61959b47c36e233b",
+    "firmware/src/dsp.c": "f3bb643947d1d80e46aeb23985f0f61cefc02c222952a06d79f79153acdf01e7",
+    "firmware/src/storage_hw.c": "3f90a6e4501bb9653536504711260ef685e570b80fe91b419c936fd0c23f8dca",
+    "firmware/src/eng_lofi.c": "c0f36264951950d5ad374d2e466eadf36836daa6a1e8cf10e9bf49de56bddf4d",
+    "firmware/src/track_limits.h": "859531183b2ccdb5d376364802e9691e6570de7598d264c2619c38a787b9fb6a",
+    "firmware/src/uac_fir.h": "063535c30132a6731d01975ed35c39cb78c33f9a4aef825ce943f9999e4b5f1b",
+    "firmware/src/phys_dsp.c": "5d39a4037b7686001189360a098edea64ff70aa2d9099ea1a448c792ae003e7c",
+    "firmware/src/native_migration_capture_binding.h": "fc6b83209136687f97ff081924cf48e1f399c141fd5ddd33a109ec0a4274efa7",
+    "firmware/src/usb.c": "754ea1adc162f18fdb0d2e6dcf85e66a9db01359cbba6ceb119c0404817ba691",
+    "firmware/src/master.c": "f5249eb1545f742d066eef8320b9f5615507f48ac218cfdb711136629e187f38",
+    "firmware/src/native_migration_execute.c": "0c6815b7df7b0bc4ec81ae827e58c1d4a932ad1f02d7179e294a2b8d4ccd5c13",
+    "firmware/src/d8engine_policy.h": "d79f0161fbdff29404e0e67e29bc4536831a5eff5a7549af63dbc21e076971e5",
+    "firmware/src/editor_fm6.c": "52ec53224e586674e75fef00abf7e68da58ed812ac0720fd3b21a05a1634ed78",
+    "firmware/src/eng_noise.c": "db5761651cd606a3e40cf277cc6fd2a37e38613512f4edf18725ffb4656106c1",
+    "firmware/src/slice_store.c": "bccb9f2937e3366c8234b079f2be7fb9c883559f07093713719f767cf043cf06",
+    "firmware/src/d8arr_prepare.c": "2609f82bdedb7e729064e36b61a2f749a9b59f61fe6041c003371d4ee2b81e98",
+    "firmware/src/storage.c": "07f0a0dd8349bccb709ae1480b9d80b813a82f6630e443a2b3c2beae95e98908",
+    "firmware/src/ui_events.c": "7147806f43d72734944f661183ad580c7bd578851acfe5afa105a8e84ab7e31e",
+    "firmware/src/up_fm6.c": "4daf50c2914ddd1b89f67f0beae7d6f66fe908564b884b6daadf4f0960600b81",
+    "firmware/src/mod.c": "7d2f5efcad1f437208d0ca51a433a53340cc0500a9d0802fc1763a22dcfef0b6",
+    "firmware/src/ui_slice.c": "6f1a44a7b12cae7ff89da32b3793a2c9d959b4c6c9a95fd868d7e8b9c67a66bb",
+    "firmware/src/settings_persist.c": "0ed380b004554fd91ec5b1e504c93e48bf0edb3b6f8d1e326939ca68bec55edb",
+    "firmware/src/heavy_state.h": "33644daf789a4e57e2afd7d02bd2476f3f732847f699f290fd82e3c2a0b2564c",
+    "firmware/src/engines.c": "154deb6dc6f1f3ab3f4c25da88d96be936d66df3ef451e07df017003027e5868",
+    "firmware/src/audio_timing.h": "4de7e6df4c942e8a71abeb28275492dcb6724d1fb305303c8d7f97f338b026a6",
+    "firmware/src/ui_layer.c": "e39c3efdb3150676ba80f7602dcf9772a0654b7e0f7ce0781a7da701f31831c6",
+    "firmware/src/d8p1_project.h": "f310056786875ecd2322eff28c34b4792e649d6e471ef9451f3147870f44b623",
+    "firmware/src/libc.c": "344b09afe33da826feefeb1ea2a1a7c50732f91c133fee30174819645edc131a",
+    "firmware/src/eng_fm6.c": "4c71db761dcc7ce2c35642f341725bd8bdf8e939e6ec540b96d51b43ce5111c3",
+    "firmware/src/editor_backup.c": "05bbd4546ed2ace46d96d217350555c34bd18a0c20d352f48dcee7221848c603",
+    "firmware/src/click.c": "6c22d8313a0429d03f86e28cdfa7918ab70e1e5f1f6ddffe6addeb9b8fae04c8",
+    "firmware/src/d8p1_pool_runtime.c": "223ce1e54a158d5082bb46b193554c6deddbb646daf9faff6eacd4be88b3c7c1",
+    "firmware/src/perform.c": "279893499145f1fdfa59d259f278f3e35eeba160e060a5bfcc3a2acf907d6c2f",
+    "firmware/src/project.c": "da93d328d5adec2cbcbf6c785e2e62806a103726d52b7b7e17761f1e7fcdb4df",
+    "firmware/src/voice.c": "b995d9de974c6f331f2d7a1fa55c6640435fc89a6086cd0b8967b87aa0413657",
+    "firmware/src/ui_graph.c": "8b7cc524f6f2038238478e524fe6239511ece3ab44de09cc3f04e29d1dca7928",
+    "firmware/src/native_autosave_session.c": "13f81960f91fa14f6b2b4048491de844b538c707f1e4a93431cdacc7c820364a",
+    "firmware/src/project_native_flash.c": "6e0733f46d4850bfd70ee488dd4568d5d8befeaf88d72c2abc6e60843e7fe9af",
+    "firmware/src/d8store.c": "839a31d98132512dd513fcafdb1683af38bb53863bd521b3ce879db08c0996c9",
+    "firmware/src/eng_sample.c": "59a1ecce6d1c5ee190beceec32bc61bc221270fa5624dae85d393adc6453a5fd",
+    "firmware/src/d8pool_mapped.h": "b28239e4bb6e8314ebadd3b256f8ca7e2eab4b53759322527555238ec39b8060",
+    "firmware/src/native_source_equivalence.h": "2fa95841b9ed9d87d8299f94eb240dfbd3c19407c1c84ba1ff1b91ecbf75bdde",
+    "firmware/src/ota.c": "9ebbac3ddd8db939951a7d28958d85d43aaaf04191464bea0803f1ade5bb40ab",
+    "firmware/src/native_migration_session.c": "14e949f64ce6e91e7f61de1e79f132e5ecee3098f474771a888c9be3d3090843",
+    "firmware/src/midi_control.c": "c34dd9d6ec67037c33ae562d50767c6ce130c22e73425e34a79f56f42a520def",
+    "firmware/src/ota_hw.c": "9bf6ff8eef0c1d0a430efcc99f5ab7a270b7537e96afd259c5c9dc49dd6c53b7",
+    "firmware/src/favorites.c": "7506c3454bdfd5982e747cf0c671bc410a27d2baf0fc8b7032fc4788408220e3",
+    "firmware/src/eng_slice.c": "cde290b861d9e2bf84f1d81e278caa95f1d97c0b10f190c046386e263e4c0044",
+    "firmware/src/d8pool.h": "ce008b58ca544dfbc867c77ce5f9b2b85a32a8779f714e91afba7787e4c9b1d1",
+    "firmware/src/ui_menu.c": "3199cfe8e0d3c262c27696bbd2c3c72a9aff053887b940266a6a608cfd5602a5",
+    "firmware/src/fm6_core.c": "1ced3d7398be5968be7a37d8ad062bdad6aad8004d3d4ac002e58a8e88728325",
+    "firmware/src/d8p1.h": "db41e112d76d239589d9de5ec8c7ee3035e228eec5238d600c052a748d47aa6b",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/d8card.h": "294c452097af5eab5b38585ffd508f789c6bee2ff1519e971500d0a8be9c9243",
+    "firmware/src/console.c": "958b8a00ab51bb4e4c297965ce3000e31e0b5320f0a977d11c76b2c42e259e9c",
+    "firmware/src/drum_voice.c": "ea56db5b417c80dbcfefe12c543677f9a0f889d5ea1d89d64500e4fb42cee589",
+    "firmware/src/d8p1_runtime.c": "e5d3f90c18a4e05aa5d00d6d599bef61a4d85e4d081ef6e06adc3d3153df4c05",
+    "firmware/src/project_types.h": "7d2c726e5d35931d9d641bbd0d71a685e83a8d81f8059e20344292151e91d013",
+    "firmware/src/identity.h": "9eab114d7d7a93942725ca172cee05b945ad1b69533e908ef33d562bc48ec8e8",
+    "firmware/src/upreset.c": "86ac3a09705e843fedf8f5ae01c133e2037a1df97d3590dbde11825653e482ff",
+    "firmware/src/main.c": "f16b5e949d1a6ccf51649d07f8b698f7a440e87cca069b1a4dba6ba5cf919b25",
+    "firmware/src/editor.c": "5a1ce97d8706e5d913cb7b3687801546c2fbd7f81d58109107fd476d51801cc7",
+    "firmware/src/fm4_convert.c": "d711d4cf65bc4ac7e01e007045d461cc9f382b7b66118cae92e21e889dc8d633",
+    "firmware/src/chord.c": "c1e7e7a1e62015a1ae1a357bdfad3fea4c5d47762adb4a1ac8dbb51937d1e4c1",
+    "firmware/src/native_migration_preflight.c": "00e0d924ae700c653d6317bcc57cc34ad6fd711d4f78b56716c045b30304c33d",
+    "firmware/src/eng_wheel.c": "f98b0fa831032588074d6ef20be4521ac135ffaab94b63d283c74834818479be",
+    "firmware/src/d8p1_flash_runtime.c": "0d96dcf15d5230c6302acbe2a4d83842f4e0e616d9977cfa6860c72cb8403dfa",
+    "firmware/src/editor_menu.c": "a93bbc26c688ec6c4a330d110c6d9e7936c1dd329dead6d3004950d19bf87258",
+    "firmware/src/fx.c": "cee06f65ba826ce6066d0a3123f8529d783e04b09bd874bffc90981699185f6a",
+    "firmware/src/d8engine_policy.c": "faea936acbe145a0f75dc1acaf3c8809b7de57ef87df3eb9e78d11a596a68160",
+    "firmware/src/native_migration_execute.h": "d65efee79c799fa92072694ae33974978d859e67765b33d57ffa60000a530483",
+    "firmware/src/ui_tools.c": "f6f560906392d2c1a39869ead9988fa235a4a5e96848691b8656569d486713c6",
+    "firmware/src/ui.c": "b754d9da21a7a8a8ee1588cc10770f9cb66b2c6c9fc4329680badfcb75aa444e",
+    "firmware/src/native_migration_capture_binding.c": "3a062c581a89f05d8b73a7260a9b313f2179be5f2b8530a4a5e8fc86501317c7",
+    "firmware/src/phys_symp.c": "75408d329c2b39a0a2a52833f9e5875b7da2c4bd9d87bd9fc146895844788a47",
+    "firmware/src/seq.c": "6155b811350a0e7f552f543295139136d8c88f92c7473a8b68314c5c8306c776",
+    "firmware/src/params.c": "ba58e0be02a96a9fd93c5e893c766f57b4cb1b852bbdc22a02cb72cc2ad63a4a",
+    "firmware/src/d8p1_pool_runtime.h": "0589989d92271700f49561917e19b2d9c99781dcc76f39b44d6090eaca27c89f",
+    "firmware/src/lcd.c": "bd2e7421d1e309ba3addd3e7071ef41694fc2083ccf23467cf1b6b99a19bb50b",
+    "firmware/src/audio_timing_console.h": "d708a1f9527297feeb1f1e328d1a4ccb6358190538972261aa9aa03fc4b4c2f1",
+    "firmware/src/ui_draw.c": "b056b61c593ba2e30ce00f02e41244fe38bfcb82a373fce023236288318e100a",
+    "firmware/src/motion_codec.h": "35ff24880a06975c7e953e05567cc46cce92d5f46c6d7efcb145a7f1c451b669",
+    "firmware/src/icons.c": "9fd71489c849eeb7344a3ec5e87b60c012361ca4f88bb562bddcf59bf2b371c0",
+    "firmware/src/d8p1_project_types.h": "dd2f9fa799a2eb6ff78f0bd977695bb30cf03676c2ab1f2c3c4e8290f49624b2",
+    "firmware/src/midi_clock.c": "9d82b71e73c3a1f0240bd47f76fee8129b294296a9447ce06e5184dfb7284314",
+    "firmware/src/menu_items.c": "04b880c07266c602e387f4f1c007ded8102f19574e1d22dd20e8eaf8e95196fb",
+    "firmware/src/editor_capture.c": "91563082bcacfe03de18bd6380c5f249dd67742f89d543aaf9625ebb28ba8212",
+    "firmware/src/eng_formant.c": "bada7712521bb982f95a8bde0b0ed544f12d9aa72ba9a9b881d1a5ff82940511",
+    "firmware/src/eng_phys.c": "6c7af93ab76bf0f873a573e30e368536314d25a118b3c8fd5465ae2370941505",
+    "firmware/src/felucca.c": "6fa2bf9d5dd69b45ad1b1c35c208685701f62476dc0357ea3c9e9a402ac52a02",
+    "firmware/src/d8card.def": "7e8f5f1447bc8a421e55c4f90c7a6d07cbd357af085984322489b145f531a319",
+    "firmware/src/audio.c": "8ee712b32cdbf0e8863220213749a582c940de42b513e1c580af3a7db4f6db0d",
+    "firmware/src/native_migration_session.h": "2d9a0f19b8729e485d8b154064c28f64c3fefdf9523bac85cc62bbef68a72a36",
+    "firmware/src/native_source_equivalence.c": "122fec5b3d016bac5bfcaefe698c72c3fc1c075ba810160ec209bfa148020842",
+    "firmware/src/d8pool_mapped.c": "493e58cb3841477197f14615091afbc91c8731039a0d65067b9e083905fc4e89",
+    "firmware/src/eng_grain.c": "92ed26f4ed9c1b34af077a88ea5dff717b1fd13e92da9f0d64a3a137ac2cf92e",
+    "firmware/src/eng_digital.c": "d1bff3595454d9e22a166d81fd92bcb4f78b798688e57cc831de52fedf63c0cd",
+    "firmware/src/eng_phase.c": "172dc2beab85c618068d58eaf06ac4c757b3fa07ed8f918d2523e992bccfe204",
+    "firmware/src/d8store.h": "5e33009d47f6dd0f01af62467a4b035b0f437c99eda9de563376d86b4b932bea",
+    "firmware/src/native_autosave_session.h": "31c3fef4d33f5c6d3ef3b671a591dc8d1811b750a1814f8da9d11596a5bc946c",
+    "tests/engine_adoption_test.c": "0b50ec457fd4f951907bd487c6ac92d80bd9cc3e79369545e66c2719fc89d920",
+    "tests/ui_test.c": "9c0b0f850380dcc0eee3748e9f775b2807ad9e15e2719c4f94195426e562d556",
+    "tests/hostsim.c": "ff30dfafdeeb5a8fb02a66eb070e4f520803e989294ee779b781c27c8fb3d41a",
+    "tests/d8p1_runtime_test.c": "eeda4ead635c60c47b9157b157d07d555e54303c74ae8b4196498214cb6ea5f5",
+    "tests/project_test.c": "a632aca25292603663db4e8f810069f6afcae8f878d28497265b7ffc4d6416aa",
+    "tests/editor_test.c": "ff6ebb4297750739775373331bf6b886129066ec913c68006da0120fd442ff29",
+    "tests/versioned_track_test.c": "db54ca465fa79399d715f5bda7b64c8be53ba37c4a9bf3828ce70534d652722b",
+    "tests/d8p1_pool_runtime_test.c": "8a9cf123b9e039d5f20d88c14d0efe310e87a208ca7259a01f95cc25c8c119dc",
+    "tests/run_tests.sh": "2a2a8218241e96be04f4e9b95a4076ee4ee5a85b8c4c5d0fa0303f0e9a87bc8e",
+    "docs/dabbl8/software-voice-cards.md": "d70968cd1f436c948fe8d52ccafc76cf755a1248f6a6673091f8e663ee09c582"
+  },
+  "generated_sha256": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "previous_receipt": "/private/tmp/d8-engine-availability-adoption/final-1obe632t/receipt.json",
+  "commands": [
+    {
+      "name": "adopt-normal-4-fm0-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-4-fm0-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "975a683a8c905df7508fc361ec71f5b9ab477e0c9d598dda0145d48c30f9f357",
+      "text": "engine adoption: tracks=4 FM4=0 SLICE=0 proofs=277 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-4-fm0-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-4-fm0-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "9ccc1a903aadb29412db8b548c17805c8a43e71b05bfec56c839d8f32312c9ab",
+      "text": "engine adoption: tracks=4 FM4=0 SLICE=1 proofs=280 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-4-fm1-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-4-fm1-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "690feb8ed61a012977ff7f8bfd7b29c890fc2408054708ebbfe246fcb4947ce2",
+      "text": "engine adoption: tracks=4 FM4=1 SLICE=0 proofs=277 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-4-fm1-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-4-fm1-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-4-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "dbe26e38cbbadfc7c80f0c863c0ef313f04db470e344a5e9a48a354cca1ba0ce",
+      "text": "engine adoption: tracks=4 FM4=1 SLICE=1 proofs=280 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-8-fm0-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-8-fm0-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "07f250306f9af0d7cd51fcfe3112d37f2f6b9f0820b6a12955ce64f7038a790e",
+      "text": "engine adoption: tracks=8 FM4=0 SLICE=0 proofs=472 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-8-fm0-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-8-fm0-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "4b5e02edaf3e396e64cf7be5cfc80689cd0c916e13375f4a7ce09f2830789a00",
+      "text": "engine adoption: tracks=8 FM4=0 SLICE=1 proofs=455 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-8-fm1-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-8-fm1-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "6f6dc351d3a8f26d76eae3dcf9e452704b03c56bb8ecf992e419cb93d9c68847",
+      "text": "engine adoption: tracks=8 FM4=1 SLICE=0 proofs=472 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-normal-8-fm1-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-normal-8-fm1-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-normal-8-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "b1f1b19b685436a0135388b1c18b2877667f38236cefea2dda2f4c2650c035d6",
+      "text": "engine adoption: tracks=8 FM4=1 SLICE=1 proofs=455 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-4-fm0-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-4-fm0-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "975a683a8c905df7508fc361ec71f5b9ab477e0c9d598dda0145d48c30f9f357",
+      "text": "engine adoption: tracks=4 FM4=0 SLICE=0 proofs=277 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-4-fm0-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-4-fm0-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "9ccc1a903aadb29412db8b548c17805c8a43e71b05bfec56c839d8f32312c9ab",
+      "text": "engine adoption: tracks=4 FM4=0 SLICE=1 proofs=280 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-4-fm1-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-4-fm1-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "690feb8ed61a012977ff7f8bfd7b29c890fc2408054708ebbfe246fcb4947ce2",
+      "text": "engine adoption: tracks=4 FM4=1 SLICE=0 proofs=277 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-4-fm1-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=4",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-4-fm1-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-4-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "dbe26e38cbbadfc7c80f0c863c0ef313f04db470e344a5e9a48a354cca1ba0ce",
+      "text": "engine adoption: tracks=4 FM4=1 SLICE=1 proofs=280 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-8-fm0-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-8-fm0-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm0-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "07f250306f9af0d7cd51fcfe3112d37f2f6b9f0820b6a12955ce64f7038a790e",
+      "text": "engine adoption: tracks=8 FM4=0 SLICE=0 proofs=472 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-8-fm0-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-8-fm0-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm0-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "4b5e02edaf3e396e64cf7be5cfc80689cd0c916e13375f4a7ce09f2830789a00",
+      "text": "engine adoption: tracks=8 FM4=0 SLICE=1 proofs=455 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-8-fm1-sl0-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=0",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-8-fm1-sl0",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm1-sl0"
+      ],
+      "exit": 0,
+      "log_sha256": "6f6dc351d3a8f26d76eae3dcf9e452704b03c56bb8ecf992e419cb93d9c68847",
+      "text": "engine adoption: tracks=8 FM4=1 SLICE=0 proofs=472 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "adopt-san-8-fm1-sl1-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O1",
+        "-g",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-sanitize-recover=undefined",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=1",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "adopt-san-8-fm1-sl1",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/adopt-san-8-fm1-sl1"
+      ],
+      "exit": 0,
+      "log_sha256": "b1f1b19b685436a0135388b1c18b2877667f38236cefea2dda2f4c2650c035d6",
+      "text": "engine adoption: tracks=8 FM4=1 SLICE=1 proofs=455 PASS; live-state refusal and legacy target checks, host only\n"
+    },
+    {
+      "name": "late-guard-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/late-guard/fixture"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "late-guard",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/late-guard/fixture"
+      ],
+      "exit": 1,
+      "log_sha256": "dd6e6f8da8da729c85f76df1b015d189be65d8e9a1e9b34bbda9840e0e8114f1",
+      "text": "FAIL line 59: !memcmp(before.tracks,trk,sizeof trk)\n"
+    },
+    {
+      "name": "wire-preview-bypass-build",
+      "command": [
+        "/usr/bin/clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-DFELUCCA_FM4=0",
+        "-DFELUCCA_SLICE=1",
+        "-I/Users/grantv/Code/dabbl8/.local-baseline/uac-array-bounds/build/gen",
+        "-Ifirmware/src",
+        "firmware/src/d8p1.c",
+        "tests/engine_adoption_test.c",
+        "-lm",
+        "-o",
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/wire-preview-bypass/fixture"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "text": ""
+    },
+    {
+      "name": "wire-preview-bypass",
+      "command": [
+        "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/wire-preview-bypass/fixture"
+      ],
+      "exit": 1,
+      "log_sha256": "a17ca7cf08231f7aac5a073c92a2b4f83febb2a25653e46cadefff4daea7a60d",
+      "text": "FAIL line 68: !memcmp(&before.pending_dma,&dma,sizeof dma) && before.fences==lcd_fences\n"
+    }
+  ],
+  "negative_controls": [
+    {
+      "name": "late-guard",
+      "mutated_file": "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/late-guard/firmware/src/project.c",
+      "sha256": "68dfd73fb5ea01b73eb652e7a636c9e5df25a7d47038062883807b874fc6a93e",
+      "expected_failure": "FAIL line 59: !memcmp(before.tracks,trk,sizeof trk)\n"
+    },
+    {
+      "name": "wire-preview-bypass",
+      "mutated_file": "/private/tmp/d8-engine-availability-adoption/followup-v18otfj1/wire-preview-bypass/firmware/src/d8p1_runtime.c",
+      "sha256": "cfae1d17cfe6fbdd613fcc615ffaf6ef68fa6c148c546b11d945be70349e4bab",
+      "expected_failure": "FAIL line 68: !memcmp(&before.pending_dma,&dma,sizeof dma) && before.fences==lcd_fences\n"
+    }
+  ],
+  "result": "PASS all 16 matrix runs; both guard-placement negative controls failed as expected",
+  "generated_verification": "All 7 borrowed generated headers re-hashed unchanged after follow-up runs.",
+  "binary_sha256": {
+    "adopt-normal-4-fm1-sl1": "40688d026e912292f2c21d6cb22c36aeb17e5029a12570be8efe4095f8769b2c",
+    "adopt-normal-4-fm0-sl1": "7e717fc0be737f5048d2fdcded257376b00e6bd3153e20004c9f5d7bbae0dafd",
+    "adopt-normal-4-fm1-sl0": "17675e869354d26829a6c2bb3fd5c64502a0fa990b164c8105632d99e9798e5b",
+    "adopt-normal-4-fm0-sl0": "80c150a40a07bd9f6127c38bb3ed728d3d952f2e1de85c464c19720ac9b37036",
+    "adopt-san-8-fm0-sl1": "549c7e55646284bee5de0340425b1dee476c460af0881a3d7e25cdbb6404652d",
+    "adopt-san-8-fm1-sl1": "4f359d55050fd7d57d0ee2810c81d88c831e4bce6ea07eee92d1727eb4ca2890",
+    "adopt-san-8-fm0-sl0": "2caa25b754fda3d2180af1d32100ce3c162393d64053d685c30a017d77a7c75a",
+    "adopt-san-8-fm1-sl0": "3ae7bedd2b2816deb0882ff6f4b3c669cf5adf8191ae2d3e3a50b23d1c7bcb33",
+    "adopt-san-4-fm1-sl1": "93e0b62f2bdf44eced88ecc970455acb15dabcfacaae74118a767bc7992a6480",
+    "adopt-san-4-fm0-sl1": "9b8f20ecf9fe446f9660e1575914ace5931c7acbfa1fecf204f9fc70fc63e98d",
+    "adopt-san-4-fm1-sl0": "dce677d4963f8ff3e3c12ec3d683c8d54acb8f129a528256dfe237540a9f14c2",
+    "adopt-san-4-fm0-sl0": "b9989d013452ce0c0ccb54b4ea312d19c0a9e8315db3bdb8341907e82d6c981a",
+    "adopt-normal-8-fm0-sl1": "1988af4e397e9cdff08b88148f27e9b1ef43274155d5af1e4b424e9c15a38bf0",
+    "adopt-normal-8-fm1-sl1": "7b19f062fae5e9d52443fa3053668f5e4ac7857e766f543d8065b904cd1465d6",
+    "adopt-normal-8-fm0-sl0": "301004c06d7221be8c11850456a9291fd0d30581595be81b3ec6509337769cd1",
+    "adopt-normal-8-fm1-sl0": "b6b8c6e8a1e4445e5dfb8850ba416047561223ab490a2a8a9133d8223d6eb0fe"
+  },
+  "orchestration_failures": "/private/tmp/d8-engine-availability-adoption/followup-orchestration-notes.txt",
+  "handoff_commit": "b9f6137"
+}

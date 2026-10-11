@@ -973,13 +973,54 @@ static int d8arr_ui_row(unsigned row,char name[13],unsigned *repeat)
     if(!d8p1_runtime_cache.valid||row>=a->rows||a->row[row].scene>=a->scenes)return 0;
     memcpy(name,a->scene[a->row[row].scene].name,12);name[12]=0;*repeat=a->row[row].repeat;return 1;
 }
-static int project_restore_runtime_mode(const project_t *input, int require_stopped)
-#else
-static int project_restore_runtime(const project_t *input)
 #endif
+/* Pure bounded preview of every engine the adoption transaction can publish.
+ * Original projects (including arena inputs) stay unchanged on policy refusal;
+ * no workspace/LCD acquisition, undo, panic, transport or patch changes.
+ * Preview uses the same PHYS/PERC migrations on eight local values, never a
+ * full second project copy. Both initial publication and late legacy aliases
+ * must be available: historical four-track loads enable IRQ before late loads. */
+static int proj_runtime_track_available(unsigned k,unsigned e,unsigned preset,const int16_t *parameters,
+                                        unsigned parts,unsigned phys,unsigned mask)
+{
+    unsigned target;int16_t values[8];memcpy(values,parameters,sizeof values);
+    if(k==PROJ_LEGACY_NTRK-1u && parts!=PROJ_LEGACY_NTRK && parts!=NPART){
+        e=ENGI_DRUM;preset=PROJ_DEF_KEEP;
+    }
+    if(phys<PROJ_PHYS && e==ENGI_PHYS){
+        if(!phys)phys_legacy(values);
+        if(drum_from_phys(e,values)){e=ENGI_DRUM;preset=0;}
+    }
+#if !FELUCCA_FM4
+    if(e==ENGI_DIGITAL)e=ENGI_FM6;
+#endif
+    if(drum_from_perc(e,values)){
+        e=ENGI_DRUM;if(preset<PROJ_DEF_KEEP)preset=0;
+    }
+    if(eng_runtime_target(&target,mask,e,0,D8ENGINE_CANONICAL))return 0;
+    if(preset==PROJ_DEF_KEEP)
+        return eng_runtime_target(&target,mask,ENGI_DRUM,0,D8ENGINE_CANONICAL)==0;
+    if(preset==PROJ_DEF_SOUND)
+        return eng_runtime_target(&target,mask,e,TRK_DEF[k][1],D8ENGINE_LEGACY_FACTORY)==0;
+    return 1;
+}
+static int proj_runtime_engines_ok(const project_t *q,unsigned mask)
+{
+    for(unsigned k=0;k<NTRK;k++){
+        const proj_trk_t *t=&q->t[k];
+        if(!proj_runtime_track_available(k,t->engine,t->preset,&t->p[P_E0],q->parts,q->phys,mask))return 0;
+    }
+    return 1;
+}
+enum { PROJ_RUNTIME_MISSING_ENGINE=3 };
+/* Internal policy seam for host transactional fixtures. Production callers
+ * below always pass the immutable compiled mask; no mutable profile selector. */
+static int project_restore_runtime_mask(const project_t *input,int require_stopped,unsigned engine_mask)
 {
     uint32_t i, k;
-    if (!proj_ok(input) || !proj_engines_ok(input)) return 1;
+    if (!input || !proj_ok(input) || !proj_engines_ok(input)) return 1;
+    if (!engine_mask || (engine_mask&~D8ENGINE_EFFECTIVE_MASK)) return 1;
+    if (!proj_runtime_engines_ok(input,engine_mask)) return PROJ_RUNTIME_MISSING_ENGINE;
 #if NPART >= NVOICE
     /* Already-decoded arena input has completed its LCD fence. Do not open a
      * second nested acquisition after the caller has staged its wire/cache. */
@@ -997,6 +1038,7 @@ static int project_restore_runtime(const project_t *input)
     proj_phys(p);                                       /* .. before PHYS lost DUST and DRUM */
     proj_fm4(p);                                        /* .. that had DIGITAL tracks */
     proj_perc(p);                                       /* .. or SAMPLE PERC tracks */
+    if (!proj_runtime_engines_ok(p,engine_mask)) return PROJ_RUNTIME_MISSING_ENGINE;
 #if NPART >= NVOICE
     fm1_irq_off();
     /* Final coherent guard: a pending start/count-in may arrive during decode.
@@ -1085,11 +1127,15 @@ static int project_restore_runtime(const project_t *input)
     return 0;
 }
 #if NPART >= NVOICE
-static int project_restore_runtime(const project_t *input)
+static int project_restore_runtime_mode(const project_t *input,int require_stopped)
 {
-    return project_restore_runtime_mode(input, 0);
+    return project_restore_runtime_mask(input,require_stopped,D8ENGINE_EFFECTIVE_MASK);
 }
 #endif
+static int project_restore_runtime(const project_t *input)
+{
+    return project_restore_runtime_mask(input,0,D8ENGINE_EFFECTIVE_MASK);
+}
 #if NPART >= NVOICE
 static int project_load(uint32_t slot)
 {
