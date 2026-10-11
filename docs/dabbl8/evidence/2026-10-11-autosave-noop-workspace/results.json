@@ -1,0 +1,66 @@
+[
+  {
+    "mode": "normal",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/voice-age-rollover/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-autosave-workspace-qualification/normal",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/competing_workspace_callers_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Competing workspace callers: 235 checks, 0 failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\n"
+  },
+  {
+    "mode": "inherited-san",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/voice-age-rollover/build/gen",
+      "-Ifirmware/src",
+      "-O1",
+      "-g",
+      "-fsanitize=address,undefined",
+      "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+      "-fno-sanitize-recover=undefined",
+      "-o",
+      "/private/tmp/d8-autosave-workspace-qualification/inherited-san",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "tests/competing_workspace_callers_test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "Competing workspace callers: 235 checks, 0 failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\n"
+  },
+  {
+    "mode": "parent-negative",
+    "command": [
+      "clang",
+      "-w",
+      "-I/Users/grantv/Code/dabbl8/.local-baseline/voice-age-rollover/build/gen",
+      "-Ifirmware/src",
+      "-O2",
+      "-o",
+      "/private/tmp/d8-autosave-workspace-qualification/parent-negative",
+      "firmware/src/d8p1.c",
+      "firmware/src/d8pool.c",
+      "firmware/src/d8pool_mapped.c",
+      "/private/tmp/d8-autosave-workspace-qualification/parent-test.c",
+      "-lm"
+    ],
+    "build_exit": 0,
+    "run_exit": 1,
+    "output": "Competing workspace callers: 235 checks, 11 failures; actual historical/project/editor/boot/drawing, early and LCD-late refusal; no authority/device qualification\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\nline138: lcd_fences==fences&&cv_canvas_valid&&!memcmp(arena_before,&main_workspace,sizeof main_workspace)\n"
+  }
+]
