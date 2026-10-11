@@ -1,0 +1,231 @@
+{
+  "base": "370ac2d108be3de6cd258ded66cda179218198d8",
+  "scope": "Explicit optional offline CLI + Python project/migration proposal workflow; browser selector and firmware reduced profiles remain closed",
+  "sources": {
+    "tools/dabbl8_project_convert.c": "31d13301edf9b2859719b585b8cd7e8e02f13b6a7508157320d542fec09a7d87",
+    "tools/dabbl8_project_convert.py": "f20bb733742538444cf4c93f9fd78b1fd0264b1169b1cf7f2295e657fa019dc7",
+    "tools/dabbl8_migration_bundle.py": "ea35ac65fe0ab5c2baad0a37fd04654153f7970a8f1f58293fa55c9c2fd94c2a",
+    "tests/engine_offline_profile_workflow_test.py": "af30f108292db9b998b8b57157ef7315058a4d3cd427111c79949c3af0907953",
+    "tests/fixtures/engine-profile-ordinary-cli.json": "86faf5eddfe117dd830e5f919579c1979248e5e699a7a804491d5bf33f14629e",
+    "tests/run_tests.sh": "e5e00784ddf220d474df3b522468391e53b747bca01bdc526c944d32f2ee39a7",
+    "firmware/src/d8p1_project.h": "aa54f24a37fcbcec9a2b79fab29c841c2202c6f9e6122bc4d131c6610361802f",
+    "web/d8project-conversion.js": "9f19baf3af8a2820e03e9dcecd69220b095965d933fcf548cd0dd0ec4bae924f"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "python": "Python 3.9.6",
+  "node": "v26.11.0",
+  "browser_node": "v24.19.0",
+  "Emscripten": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.17 (bb11bae9af3a6551132655a0908f86889d2d423b)\nCopyright (C) 2025 the Emscripten authors (see AUTHORS.txt)\nThis is free and open source software under the MIT license.\nThere is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n",
+  "matrix": {
+    "workflow-fm0-slice0-san.log": "Offline profile workflow: 452 checks PASS; FM4=0 SLICE=0; C CLI/Python proposals only",
+    "workflow-fm0-slice0.log": "Offline profile workflow: 452 checks PASS; FM4=0 SLICE=0; C CLI/Python proposals only",
+    "workflow-fm0-slice1-san.log": "Offline profile workflow: 484 checks PASS; FM4=0 SLICE=1; C CLI/Python proposals only",
+    "workflow-fm0-slice1.log": "Offline profile workflow: 484 checks PASS; FM4=0 SLICE=1; C CLI/Python proposals only",
+    "workflow-fm1-slice0-san.log": "Offline profile workflow: 484 checks PASS; FM4=1 SLICE=0; C CLI/Python proposals only",
+    "workflow-fm1-slice0.log": "Offline profile workflow: 484 checks PASS; FM4=1 SLICE=0; C CLI/Python proposals only",
+    "workflow-fm1-slice1-san.log": "Offline profile workflow: 516 checks PASS; FM4=1 SLICE=1; C CLI/Python proposals only",
+    "workflow-fm1-slice1.log": "Offline profile workflow: 516 checks PASS; FM4=1 SLICE=1; C CLI/Python proposals only"
+  },
+  "exact_added_CI_commands": {
+    "runner-workflow-fm0-slice0-san.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 413 checks PASS; FM4=0 SLICE=0; C CLI/Python proposals only",
+    "runner-workflow-fm0-slice0.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 413 checks PASS; FM4=0 SLICE=0; C CLI/Python proposals only",
+    "runner-workflow-fm0-slice1-san.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 445 checks PASS; FM4=0 SLICE=1; C CLI/Python proposals only",
+    "runner-workflow-fm0-slice1.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 445 checks PASS; FM4=0 SLICE=1; C CLI/Python proposals only",
+    "runner-workflow-fm1-slice0-san.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 445 checks PASS; FM4=1 SLICE=0; C CLI/Python proposals only",
+    "runner-workflow-fm1-slice0.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 445 checks PASS; FM4=1 SLICE=0; C CLI/Python proposals only",
+    "runner-workflow-fm1-slice1-san.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 477 checks PASS; FM4=1 SLICE=1; C CLI/Python proposals only",
+    "runner-workflow-fm1-slice1.log": "Exact added normal CC or inherited SCC runner flags; pinned parent receipt verification only, no generation\nOffline profile workflow: 477 checks PASS; FM4=1 SLICE=1; C CLI/Python proposals only"
+  },
+  "regressions": {
+    "ordinary_bundles_normal_and_strict_san": 314,
+    "ordinary_migration_normal_and_strict_san": 127,
+    "ordinary_WASM_native": 218,
+    "closed_build_guards": 36
+  },
+  "parent_comparison": "Four exact-parent rebuilt configs passed before freezing ordinary CLI receipts; all eight matrix runs additionally compare actual stdout/stderr/status to parent and frozen receipts. CI only verifies pinned receipts, no update mode.",
+  "profile_sanitizers": "Strict ASan+UBSan, no DSP exclusions, -fno-sanitize-recover=all; ASAN_OPTIONS=detect_leaks=0 on Mac, UBSAN_OPTIONS=halt_on_error=1. CI additionally tests inherited SCC flags independently.",
+  "negative_controls": "c-profile-bypass DETECTED\nproject-profile-ignored DETECTED\nmigration-profile-ignored DETECTED\nwrong-reply-mask-trusted DETECTED\nboolean-requested-id-trusted DETECTED\nlate-cleanup-disabled DETECTED",
+  "explicit_failures": [
+    "Initial ordinary bundle run failed its late-verification injection because internal ordinary run_converter call acquired an unnecessary fifth argument. Corrected to preserve exact four-argument ordinary call seam; original failure log retained and final ordinary314 passes."
+  ],
+  "unchanged_gates": [
+    "No browser profile UI/wrapper, firmware profile override, engine/state exclusion, capability advertisement, device I/O, loader/map/budget/audio golden changes or target claim.",
+    "Archival-only fourth legacy slot remains original bytes and ordinary structural validation, never profile-substituted/emitted.",
+    "Hardware, sample assets/patch compatibility, target resource/stack allocation and physical timing SKIP/unqualified."
+  ],
+  "artifacts": {
+    "parent-fm0-slice1": {
+      "bytes": 394992,
+      "sha256": "cb222985dded9c99ca1ea0461df0a459176979c3c5faa1f828fc1d482872d89e"
+    },
+    "workflow-fm0-slice0-san": {
+      "bytes": 1214088,
+      "sha256": "27176a4b8f7c48f71e5bb6d734ae900225fd2b6835eb6fe104f1e6d4231096b1"
+    },
+    "workflow-fm0-slice1-san": {
+      "bytes": 1251272,
+      "sha256": "2c1fc6089c7e76aef64f856b5fd3e9fe27b9d87a5e9df04c7c2228c9454dfddb"
+    },
+    "initializer": {
+      "bytes": 34760,
+      "sha256": "d9eba26931a216ebe1e03eef00af3e8202a44684c08820d93786078eb81b94aa"
+    },
+    "parent-fm0-slice0": {
+      "bytes": 394560,
+      "sha256": "2385ed390a23c5450abffef5728374011681cfe66000207a7a20923fd240d244"
+    },
+    "candidate-fm0-slice0": {
+      "bytes": 394984,
+      "sha256": "6b4c5a313d7401877295b5e84ff008654711fce7037d105fc91ead8571e4906b"
+    },
+    "runner-workflow-fm0-slice0": {
+      "bytes": 394984,
+      "sha256": "e8e9fefcf1bd36324562045a346bb86fe7da838375a6ce3979826cbe3436b7da"
+    },
+    "candidate-fm0-slice1": {
+      "bytes": 411928,
+      "sha256": "6c78a665f262f754ffb667c6ee9447cfff2144f71a38aab941ef8dcab271cfdb"
+    },
+    "runner-workflow-fm1-slice1-san": {
+      "bytes": 948912,
+      "sha256": "6eaf3f4150b059176d271aaaf26aea94228580d044214528a8d8037a556fc800"
+    },
+    "converter": {
+      "bytes": 474840,
+      "sha256": "bb3a7c76fe75fdc3577276eb5cca1621c7ed5c15696ee62fee04b8fb4ecc4928"
+    },
+    "runner-workflow-fm1-slice0-san": {
+      "bytes": 928432,
+      "sha256": "af4ea70db6558796e51a411d7556658b5afe206cc3de47b497d20bc13a1d09b0"
+    },
+    "runner-workflow-fm0-slice1": {
+      "bytes": 411928,
+      "sha256": "77285860d4543b2f4ec46f52bc8e98f2c05497f75aee1ebde5cc99c5ed30c395"
+    },
+    "workflow-fm0-slice0": {
+      "bytes": 394976,
+      "sha256": "e92c4d04d082e0a1912e15311f63ccca21c3b4f9c90a9033801db07757740eee"
+    },
+    "workflow-fm0-slice1": {
+      "bytes": 411920,
+      "sha256": "a4360c7c5c3b2db2bbba98865a9193a449b334181f098e875393e275f0b96a15"
+    },
+    "parent-fm1-slice0": {
+      "bytes": 394512,
+      "sha256": "8691457413baddf8bfe77590e78b27a19a5525d25dfbe758a1754e288c67ad75"
+    },
+    "runner-workflow-fm0-slice1-san": {
+      "bytes": 948096,
+      "sha256": "2c3acc81900354bd3d8f5d9fb2b32c8287d537482450ab3188bc51a23ab6796c"
+    },
+    "parent-fm1-slice1": {
+      "bytes": 394928,
+      "sha256": "e90f0655fffddbcc13cc42d2308fa22de5541517826f9c93679a43843ce667b4"
+    },
+    "runner-workflow-fm0-slice0-san": {
+      "bytes": 927616,
+      "sha256": "43d41e9889bbb33fb489f79fb441cbe90ce27bd4ac57e2dec0cab8a9c632f1a7"
+    },
+    "workflow-fm1-slice0-san": {
+      "bytes": 1198120,
+      "sha256": "3df89ce68224381e7b6ed3988477b3689aaae24bc590f21f3447eec2a161124c"
+    },
+    "runner-workflow-fm1-slice1": {
+      "bytes": 411896,
+      "sha256": "6bc9e5bfd03774169086646a0cf25f769ca369c1e0799e5ad63bbb085f13082c"
+    },
+    "candidate-fm1-slice1": {
+      "bytes": 411896,
+      "sha256": "5a96fde08161e8af18c8fe7d429b2367c8c84051dd97005892488db65b172daf"
+    },
+    "workflow-fm1-slice1-san": {
+      "bytes": 1251544,
+      "sha256": "d08fe634e2ffc0a212941ff3ab066967dc8b5b79e1e08afa334ed968fdf7a289"
+    },
+    "runner-initializer-san": {
+      "bytes": 73288,
+      "sha256": "44508e81d91c3aaa5e2be521f0f29c93f0b1b45d992cfe1dbb67f74594a8b5f6"
+    },
+    "runner-workflow-fm1-slice0": {
+      "bytes": 394952,
+      "sha256": "847e28176df9023509ebeaf0258342cb5801f924add87069f0b5a84556a6f7c7"
+    },
+    "candidate-fm1-slice0": {
+      "bytes": 394952,
+      "sha256": "6cf856b61655d04ed75122c8ab304ffd67d940955c1102272b730496736f012a"
+    },
+    "workflow-fm1-slice1": {
+      "bytes": 411888,
+      "sha256": "d7df5188ecfbb158cffba84b4dc781eeea38dc813aa6a0191a12febef7f3ba4c"
+    },
+    "workflow-fm1-slice0": {
+      "bytes": 394944,
+      "sha256": "af48406bb6f10fe9c592487a66bf41376bc14b3cab0cb52f994724ea9de81f71"
+    },
+    "initializer-san": {
+      "bytes": 74288,
+      "sha256": "6ef6e7cfcd245d11bb048c1cf8ab56ff0d99624cd59efcdde8a21368d0367d2f"
+    },
+    "initial-full.d8p": {
+      "bytes": 6765,
+      "sha256": "fc137ef6d5997d54f370c01d73c12d4527c50092fd8ac0a52064d3c0d35f41fe"
+    }
+  },
+  "WASM_artifacts": {
+    "dabbl8_project_convert.wasm": {
+      "bytes": 277678,
+      "sha256": "9a18eec2f3bbd4004553ca2063deffb1ec3bbe71d935c496e8e9dbda16c2eee7"
+    },
+    "compiler-version.txt": {
+      "bytes": 330,
+      "sha256": "a15564b7d1ba91e7773478e36124bd4b2cf5e0bffbcb1a82c4d61991887c00d9"
+    },
+    "dabbl8_project_convert.mjs": {
+      "bytes": 60278,
+      "sha256": "3c517bd31420101747c3946857b065c98ddac5f156cb3177d1d7c1f70611b297"
+    }
+  },
+  "logs": {
+    "negative-controls.log": "536d61ba98f320127b7ccaaefca8d84ae1ea0686083a601ca6b15e5ced208091",
+    "ordinary-migration-final.log": "1bedc4adb873018fdc562f829825632cc1f0b86f881df16aefbfee009c69e4ae",
+    "ordinary-bundles-corrected.log": "26a6a4d64129c06d9b107e06776beb76cc602b72c3d590e7cf8dd09ece16e01f",
+    "bringup.log": "b62c6701dba65c13933f828d2503b929b25af3bb90af8251fe8d54726fc872e2",
+    "profile-guards.log": "5333fcab52426887cc85ad99e1b1f8d298406cb85f07e9c7fdc9ad74f63e7f2a",
+    "c-profile-bypass.log": "27cbce279d59d6fccdfe1493152e7afa8ce5e1135b5a665a785bedc9de3f7e0a",
+    "migration-profile-ignored.log": "e6463ed0e1d0c1ef4749e57b0a4b62ca4b3377a9ac79aca939ea18ea74f66af1",
+    "wasm-build.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "workflow-fm1-slice0.log": "4a094a7d3c97a7c69353f3a7889b29888651f9523323e8ada98921acbb0d3fcc",
+    "ordinary-migration-san.log": "1bedc4adb873018fdc562f829825632cc1f0b86f881df16aefbfee009c69e4ae",
+    "workflow-fm1-slice1-san.log": "ec808530559752bf5a728879df9938ab8ead936208188a8461bdf1b432fbb040",
+    "workflow-fm1-slice1.log": "ec808530559752bf5a728879df9938ab8ead936208188a8461bdf1b432fbb040",
+    "workflow-fm0-slice0-san.log": "9f39ad9b11cec9f9bb9712299cee5e39055b4e5b6e8883fccd383c987766bad5",
+    "wrong-reply-mask-trusted.log": "a3390ce612ac8f82dd45624c31046274a2f8a882b114f47e0963dc6816c30ea2",
+    "receipt-fm1-slice1.log": "3b64b111869f5f6907a93997265c3041dadfc393435cf20ddbc5637cef534664",
+    "receipt-fm1-slice0.log": "9d09ec8201e3fbf16790dfb9753218e08859bd84df63336bd50e6871580a1710",
+    "project-profile-ignored.log": "6414509bb5b0ce25c560a310e7a0631c56334a3aba348aec23dc4ec6fd05a049",
+    "workflow-fm1-slice0-san.log": "4a094a7d3c97a7c69353f3a7889b29888651f9523323e8ada98921acbb0d3fcc",
+    "runner-workflow-fm0-slice1.log": "6cbba84066b8d21e65ece1326455639d6c2d82d4c4da39118474f0385573a894",
+    "runner-workflow-fm0-slice0.log": "301eb17f2fb39defc73f62d6ba43d27e58d30d7e7d800ecb9fa7a85cb46e9170",
+    "workflow-fm0-slice1-san.log": "4a8ec8ebfc43cd77a32d22b872a7575afbefaaddd7d2320faea5c8e716ffec05",
+    "ordinary-browser-parity.log": "3238482e324176201a5bff7a1e988ca221080e5c9c6cf2f88f807dabc5231268",
+    "ordinary-bundles-san.log": "26a6a4d64129c06d9b107e06776beb76cc602b72c3d590e7cf8dd09ece16e01f",
+    "runner-workflow-fm1-slice1-san.log": "760fe5f2073638e015a71d2305f6ae95496dc445b7d9d43fad3d9d6137fbbaba",
+    "runner-workflow-fm0-slice0-san.log": "301eb17f2fb39defc73f62d6ba43d27e58d30d7e7d800ecb9fa7a85cb46e9170",
+    "late-cleanup-disabled.log": "e64540f00659696ccf729300bef83081bba3b8c3329267cb5550085b868a9551",
+    "bringup-corrected.log": "b62c6701dba65c13933f828d2503b929b25af3bb90af8251fe8d54726fc872e2",
+    "contract-strengthening.log": "fdf194b520a26e686f7edd542cfcfc0b15a884a6713895d49b59348ef6b59b92",
+    "runner-workflow-fm1-slice0-san.log": "36fe10325bb33723b86d5401a1f2e41c98aa428bdcfacf7756f2b721a2ac6c33",
+    "ordinary-bundles-final.log": "26a6a4d64129c06d9b107e06776beb76cc602b72c3d590e7cf8dd09ece16e01f",
+    "runner-workflow-fm0-slice1-san.log": "6cbba84066b8d21e65ece1326455639d6c2d82d4c4da39118474f0385573a894",
+    "receipt-fm0-slice1.log": "fdf194b520a26e686f7edd542cfcfc0b15a884a6713895d49b59348ef6b59b92",
+    "receipt-fm0-slice0.log": "80ca11ab93dffa09e910919ce20ecff5283a8266062d7ef47d1f540293dad931",
+    "ordinary-migration.log": "1bedc4adb873018fdc562f829825632cc1f0b86f881df16aefbfee009c69e4ae",
+    "runner-workflow-fm1-slice1.log": "760fe5f2073638e015a71d2305f6ae95496dc445b7d9d43fad3d9d6137fbbaba",
+    "boolean-requested-id-trusted.log": "47b95b78d42e982053bc8588561ce370bd04e8c72eb26911e8a064ea360bf663",
+    "runner-workflow-fm1-slice0.log": "36fe10325bb33723b86d5401a1f2e41c98aa428bdcfacf7756f2b721a2ac6c33",
+    "workflow-fm0-slice0.log": "9f39ad9b11cec9f9bb9712299cee5e39055b4e5b6e8883fccd383c987766bad5",
+    "strengthened.log": "af24f1d995812b478a2fd9de10d61c3a884f1a1faa5c78df39ce332c2a6147c1",
+    "ordinary-bundles.log": "7347a185c8cc608f50a3829d40d2a6fff6ebd4014d4ab9f7a6a778ec8b1dee26",
+    "workflow-fm0-slice1.log": "4a8ec8ebfc43cd77a32d22b872a7575afbefaaddd7d2320faea5c8e716ffec05"
+  }
+}

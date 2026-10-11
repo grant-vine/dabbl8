@@ -1,0 +1,5 @@
+Mutation firmware/src/upreset.c
+n += !up_ready(k, mask);
+ -> n += up_used(k);
+source SHA256 7989a75947c94fb5660e25460ed63dd6a2ab45fbd44d1411533b406b1d90feed
+FAIL line 55: up_count()==NENGINES && up_sound_count(mask)==user_n

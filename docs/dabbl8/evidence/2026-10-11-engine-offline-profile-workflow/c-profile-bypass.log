@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-5a7fhqjr/tests/engine_offline_profile_workflow_test.py", line 119, in <module>
+    check(row == {'track': t + 1, 'requested_engine': 0, 'engine': expected, 'preset': 0, 'fallback': True, 'default_kind': 'factory_preset_0'}, 'independent actual default metadata')
+  File "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/d8-profile-mutant-5a7fhqjr/tests/engine_offline_profile_workflow_test.py", line 36, in check
+    raise AssertionError(label)
+AssertionError: independent actual default metadata

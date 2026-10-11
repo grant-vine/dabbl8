@@ -1,0 +1,6 @@
+c-profile-bypass DETECTED
+project-profile-ignored DETECTED
+migration-profile-ignored DETECTED
+wrong-reply-mask-trusted DETECTED
+boolean-requested-id-trusted DETECTED
+late-cleanup-disabled DETECTED
