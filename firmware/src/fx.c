@@ -33,7 +33,9 @@ static inline void fx_sweep_model(uint8_t model)
 }
 static inline uint32_t fx_zero_sweep(uint32_t wait,uint32_t dirty,uint32_t samples,uint32_t span)
 { return dirty ? span : samples >= wait ? 0u : wait-samples; }
-#define FTR16(d,p,v) do { int16_t fv=(int16_t)(v); *(p)=fv; (d)|=(uint32_t)(int32_t)fv; \
+/* A pre-store nonzero value may conservatively retain a wait even if its
+ * truncation stores zero; a zero summary always means actual zero stores. */
+#define FTR16(d,p,v) do { int32_t fv=(v); *(p)=(int16_t)fv; (d)|=(uint32_t)fv; \
     FT_RENDER_STORE_HOOK(); } while(0)
 #define FTR32(d,p,v) do { int32_t fv=(v); *(p)=fv; (d)|=(uint32_t)fv; \
     FT_RENDER_STORE_HOOK(); } while(0)
