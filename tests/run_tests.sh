@@ -306,8 +306,15 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "native autosave session: committed reconciliation, idle/wear/retry/boot and logical queue gates" "$OUT/native_autosave_session_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
-    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
-    run "read-only engine availability during capture and owned arena" "$OUT/engine_availability_capture_test"
+    # Native capture exists only at eight tracks; four-track schema/refusal
+    # preservation is covered by engine_caps_4_* above, never mislabeled capture.
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            name="engine_capture_8_${fm4}_${slice}"
+            $CC -O2 -w -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+            run "read-only engine availability during actual native capture and owned arena FM4=$fm4 SLICE=$slice" "$OUT/$name"
+        done
+    done
     run "read-only instrument capture: actual handler, fixed stores, current state and interruption" "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
     run "pre-migration quarantine: actual boot, application writers, binding and read-only capture" "$OUT/instrument_write_quarantine_test"
@@ -614,8 +621,15 @@ else
     $SCC -o "$A/native_autosave_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_session_test.c -lm
     run "ASan/UBSan: native autosave session canonical reconciliation and policy" "$A/native_autosave_session_test"
     $SCC -o "$A/instrument_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_capture_test.c -lm
-    $SCC -o "$A/engine_availability_capture_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
-    run "ASan/UBSan: engine availability during capture and owned arena" "$A/engine_availability_capture_test"
+    # Native capture exists only at eight tracks; four-track schema/refusal
+    # preservation is covered by engine_caps_4_* above, never mislabeled capture.
+    for fm4 in 0 1; do
+        for slice in 0 1; do
+            name="engine_capture_8_${fm4}_${slice}"
+            $SCC -DNPART=8 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$A/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/engine_availability_capture_test.c -lm
+            run "ASan/UBSan: engine availability during actual native capture and owned arena FM4=$fm4 SLICE=$slice" "$A/$name"
+        done
+    done
     run "ASan/UBSan: read-only instrument capture and actual USB/storage interruption" "$A/instrument_capture_test"
     $SCC -o "$A/instrument_write_quarantine_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/instrument_write_quarantine_test.c -lm
     run "ASan/UBSan: actual pre-migration application write quarantine" "$A/instrument_write_quarantine_test"

@@ -78,8 +78,14 @@ The host test uses the actual USB parser and editor, retaining the original
 schema-1 bytes, all 128 request schemas and malformed trailing bytes across
 four/eight tracks and both FM4/SLICE switches. It starts actual simulated sounding
 voices and snapshots runtime/UI/undo/patch/preset state on refusals. A separate
-actual capture fixture verifies active capture and migration-owned arena bytes
-survive queries/refusals against virtual NOR. These tests do not perform physical
+actual native eight-track capture fixture verifies full capture/session and
+workspace bytes, caller input, owner/generation and NOR read/write counters
+survive exact queries/refusals against virtual NOR, across both FM4/SLICE
+switches in normal and inherited sanitizer modes. It covers all 128 schemas
+with one, two and three argument bytes during initial capture, after one poll
+and with an exclusively owned migration arena. Four-track firmware has no native
+capture/owned-arena protocol; its separate actual editor fixture covers response
+and runtime-state preservation. See [supplemental matrix evidence](engine-capability-capture-matrix-evidence.md). These tests do not perform physical
 MIDI, flash or target qualification.
 
 The Node/browser-module test runs through the real C bridge for four/eight-track,
