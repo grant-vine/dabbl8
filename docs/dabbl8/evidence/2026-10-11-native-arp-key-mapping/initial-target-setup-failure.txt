@@ -1,0 +1,1 @@
+Before building: FileNotFoundError tests/cpu.txt. Correct actual tracked reference paths are tests/cpu_baseline.txt and tests/target_budget.txt. No compiler/build ran in initial attempt.

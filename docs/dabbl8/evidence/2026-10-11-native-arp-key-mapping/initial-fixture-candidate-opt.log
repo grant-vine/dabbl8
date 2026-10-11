@@ -1,0 +1,72 @@
+track=1 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=1 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=1 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=1 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=1 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=1 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=1 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=1 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=2 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=2 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=2 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=2 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=2 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=2 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=2 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=2 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=3 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=3 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=3 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=3 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=3 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=3 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=3 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=3 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=4 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=4 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=4 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=4 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=4 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=4 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=4 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=4 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=5 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=5 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=5 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=5 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=5 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=5 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=5 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=5 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=6 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=6 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=6 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=6 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=6 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=6 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=6 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=6 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=7 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=7 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=7 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=7 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=7 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=7 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=7 hold=1 change=2 original=61 expected=255 actual=0 held=1
+track=7 hold=1 change=3 original=60 expected=72 actual=72 held=1
+track=8 hold=0 change=0 original=60 expected=62 actual=62 held=1
+track=8 hold=0 change=1 original=65 expected=67 actual=67 held=1
+track=8 hold=0 change=2 original=61 expected=255 actual=0 held=1
+track=8 hold=0 change=3 original=60 expected=72 actual=72 held=1
+track=8 hold=1 change=0 original=60 expected=62 actual=62 held=1
+track=8 hold=1 change=1 original=65 expected=67 actual=67 held=1
+track=8 hold=1 change=2 original=61 expected=255 actual=0 held=1
+tFAIL: distinct mapped keys converging keep duplicate rhythm slots
+FAIL: mapped CHORD retains duplicate note semantics
+FAIL: mapped REPEAT uses last surviving mapped key
+FAIL: REPEAT skips silent final black key and maps last surviving key
+FAIL: all-silent remapping releases prior voice before list indexing
+rack=8 hold=1 change=3 original=60 expected=72 actual=72 held=1
+metadata_state_bytes=257 key_octave_range=-3..3
+arp_mapping_probe: 512 checks 0 failures
+native_arp_key_mapping: 22584 checks 5 failures; host only

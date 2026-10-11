@@ -1,0 +1,7 @@
+tests/native_arp_key_mapping_test.c:85:5: error: redefinition of 'main'
+   85 | int main(void){mapping_cases();native_cases();compatibility_cases();printf("native_arp_key_mapping: %u checks %u failures; host only\n",checks,failures);return failures?1:0;}
+      |     ^
+tests/native_arrangement_test.c:304:5: note: previous definition is here
+  304 | int main(void)
+      |     ^
+1 error generated.

@@ -1,0 +1,74 @@
+{
+  "source": "a403f2a308487170445c115f9c7c845dedeeb92f",
+  "production_source": "362385768a4173f4133c592a1849622cc798971d",
+  "base": "89a489da5581f0442cd587024c8ba65070434094",
+  "production_byte_identical": true,
+  "source_clean": true,
+  "fixture_lines": 50,
+  "fixture_reduction": "446 to50 lines; only actual shared pool/frontend/seed/prepare/boundary dependencies remain, no copied unused test cases/main.",
+  "checks": {
+    "trimmed_previous_scope": {
+      "checks": 22584,
+      "failures": 0,
+      "mode": "optimized",
+      "exit": 0
+    },
+    "new_ARP_optimized": {
+      "checks": 23864,
+      "failures": 0,
+      "exit": 0
+    },
+    "new_ARP_inherited_DSP_SAN": {
+      "checks": 23864,
+      "failures": 0,
+      "exit": 0
+    },
+    "actual_native_arrangement_and_held_oracle": {
+      "checks": 625904,
+      "failures": 0,
+      "modes": [
+        "optimized",
+        "inherited_DSP_SAN"
+      ]
+    },
+    "resident_FX_tail": {
+      "checks": 1257832,
+      "failures": 0,
+      "modes": [
+        "optimized",
+        "inherited_DSP_SAN"
+      ],
+      "scope": "600 actual DSP/oracle blocks;42 states\u00d729 late cuts/postcommit; no queued-device-output proof"
+    },
+    "default_four_regression": {
+      "goldens": 92,
+      "changed": 0,
+      "gone": 0,
+      "health_failures": 0,
+      "voice_routing_failures": 0,
+      "CPU_over_budget": 0,
+      "CPU_notes": 2,
+      "crashes": 0,
+      "exit": 0
+    }
+  },
+  "new_chord_scope": "128 actual panel CHRD combinations:8 tracks\u00d7HOLD off/on\u00d7fixedMAJ/diatonicDIA3\u00d7ROOT/SCALE/QNT/TRN;1280 additional checks. Poly/CLOSE triads, actual key_on/chord_build captured kb_chord intervals and signed held_dt, DIA3 minor differs from MAJ, real SCL controls and sounding ARP output, all-silent/release and HOLD cleanup. Captured harmonic intervals remain as pressed; no claim of re-harmonizing held chord to new scale or covering every VOIC/inversion/seventh/clamp combination.",
+  "runner": "Four additive lines inside existing normal/gen and sanitizer guards; exact focused commands executed, not full runner/fullsuite.",
+  "SAN_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "target_provenance": "No fresh target for test-only descendant. Firmware/tools byte-identical362; prior actual target/source/input pins retained unchanged in native-arp-key-mapping-check. Four447952 a3a87f6f exact89parent; eight4802200726552f RAM96068pool335240; image+224/RAM+256. Correct parent IRQ54302 vs55722 +1420/+2.615%; UAC555/504 FAIL. Whole physical stack/deadlines unresolved.",
+  "root_normal_command": "clang -O2 -w -Ibuild/gen -Ifirmware/src -o /private/tmp/d8-arp-root-review firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arp_key_mapping_test.c -lm; then run binary from isolated worktree",
+  "fullsuite": "NOT_RUN",
+  "CI": "NOT_RUN",
+  "hardware": "NOT_RUN",
+  "publication": "Prepared reviewable documentation; no release/device qualification.",
+  "production_target_flags": [
+    "-DNPART=8"
+  ],
+  "production_target_four": "Default4, no identity override; exact control447952/a3a87f6f."
+}

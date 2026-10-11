@@ -1,0 +1,15 @@
+{
+  "control": "89a489da5581f0442cd587024c8ba65070434094",
+  "comparison": {
+    "candidate": {
+      "preprocessed_sha256": "c734f39e6f99eec52a2144410fc28dc05223c6890be6bfb3b44b87a95e8cbb2e",
+      "object_sha256": "f1a8455a424deb603dba5385d7f1023e2fc1358ad7233ded29b39e3e8ebc212b"
+    },
+    "control": {
+      "preprocessed_sha256": "c734f39e6f99eec52a2144410fc28dc05223c6890be6bfb3b44b87a95e8cbb2e",
+      "object_sha256": "f1a8455a424deb603dba5385d7f1023e2fc1358ad7233ded29b39e3e8ebc212b"
+    }
+  },
+  "equal": true,
+  "scope": "Actual default-four UI/engine translation unit preprocessed tokens and optimized host object; target equality separately required"
+}

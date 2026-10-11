@@ -1,0 +1,27 @@
+{
+  "source": "a403f2a308487170445c115f9c7c845dedeeb92f",
+  "production_source": "362385768a4173f4133c592a1849622cc798971d",
+  "parent": "89a489da5581f0442cd587024c8ba65070434094",
+  "upstream_mapping_reference": "a4d7ca2e5d52a4c35e2468401f00d883cadbda03",
+  "files_sha256": {
+    "firmware/src/seq.c": "6155b811350a0e7f552f543295139136d8c88f92c7473a8b68314c5c8306c776",
+    "firmware/src/voice.c": "b995d9de974c6f331f2d7a1fa55c6640435fc89a6086cd0b8967b87aa0413657",
+    "firmware/src/fx.c": "cee06f65ba826ce6066d0a3123f8529d783e04b09bd874bffc90981699185f6a",
+    "firmware/src/audio.c": "22ff55fee43acccc2d93adad5e7e05769df0f95e885e69ff6c425b3f192429ca",
+    "firmware/src/main.c": "f16b5e949d1a6ccf51649d07f8b698f7a440e87cca069b1a4dba6ba5cf919b25",
+    "firmware/src/midi_control.c": "c34dd9d6ec67037c33ae562d50767c6ce130c22e73425e34a79f56f42a520def",
+    "firmware/src/chord.c": "c1e7e7a1e62015a1ae1a357bdfad3fea4c5d47762adb4a1ac8dbb51937d1e4c1",
+    "firmware/src/project.c": "c6fb1849fd917002ba4df9d1c5d359daf3ff3fbece2e2be84f6d4f6be38b3009",
+    "firmware/src/song_chain.c": "9d69c81bfdf2039caa464fac9f02696863c31a3a6a6753d3f18fd92ab0da639a",
+    "firmware/src/d8p1_runtime.c": "c6b1320c218f50557ad74baa96a6b8a083e57ba2f82346c2320e356c1865c4af",
+    "firmware/src/d8arr_prepare.c": "2609f82bdedb7e729064e36b61a2f749a9b59f61fe6041c003371d4ee2b81e98",
+    "firmware/src/core.h": "d44f2281454e0a039904b855c924bf54eacfcc0d4b25d324189ecba63cae5b07",
+    "tools/build.py": "52b77ff1c097cda6682417e402fd5efc4156eb39299c23acccb9b21c1233277f",
+    "tests/native_arp_key_mapping_test.c": "eabeb934e5c74e2b5bcbcfc99344bcbddfbe650cf1103c3c20d5f57d1bbea46e",
+    "tests/native_arp_arrangement_fixture.c": "78aaa04a04c77991343f996306b51441727581b7dfda915892867584dd9313cb",
+    "tests/run_tests.sh": "a34a215fe086a274a0120240e98d17d3c00da4129f7977d22fa001f41cd95ee0",
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  }
+}

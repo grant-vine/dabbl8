@@ -1,0 +1,10 @@
+{
+  "source": "362385768a4173f4133c592a1849622cc798971d",
+  "target_builds": "PASS",
+  "default4_exact_parent_image_equal": true,
+  "generated29_and_source_and_goldens_unchanged": true,
+  "hardware": "NOT_RUN",
+  "loader": "NOT_BUILT",
+  "package": "NOT_BUILT",
+  "fullsuite": "NOT_RUN"
+}

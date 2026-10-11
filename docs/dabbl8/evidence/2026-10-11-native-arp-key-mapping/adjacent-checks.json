@@ -1,0 +1,50 @@
+[
+  {
+    "name": "trim-only-compile",
+    "exit": 0
+  },
+  {
+    "name": "trim-only22584",
+    "exit": 0
+  },
+  {
+    "name": "native_arrangement_test-opt-compile",
+    "exit": 0
+  },
+  {
+    "name": "native_arrangement_test-opt",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-opt-compile",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-opt",
+    "exit": 0
+  },
+  {
+    "name": "native_arrangement_test-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "native_arrangement_test-san",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-san-compile",
+    "exit": 0
+  },
+  {
+    "name": "native_fx_tail_test-san",
+    "exit": 0
+  },
+  {
+    "name": "regress-default-four-compile",
+    "exit": 0
+  },
+  {
+    "name": "regress-default-four",
+    "exit": 0
+  }
+]
