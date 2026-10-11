@@ -1,0 +1,8 @@
+{
+  "source": "a80c2bbceae0fe5f36801eca0ac2e3a9ee35321a",
+  "parent": "c5c96236ce275072adaaaca35c2046098384b2e9",
+  "bytes": 1161568,
+  "sha256": "3c1933b827e532b8a000b21d5f37796c467e3accf2317ff68f5ffad628067f07",
+  "scope": "All 0..CTL input lengths across four input modes, actual HAL service packets; actual 80 DAC halves at each USB rate; complete ring/resampler/DAC/packet bytes",
+  "identical": true
+}

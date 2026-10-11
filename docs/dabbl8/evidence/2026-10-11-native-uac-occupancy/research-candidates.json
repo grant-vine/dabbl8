@@ -1,0 +1,98 @@
+{
+  "parent": "e63164bc41c563fa02fe6d5bb4affecaca05adbd",
+  "candidates": [
+    {
+      "name": "pointer-end",
+      "source": "e0e589a769cd2d0c16a6bdf103da3c0fd6689380",
+      "usb_sha256": "a9b525ed17e12c71a052788f573c954a5c1235405c4709d2be2b9c5384937471",
+      "uac_proxy": 570,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "dual-pointer",
+      "source": "dabfb4962f09ee639afd946b192a5d698ffbafd4",
+      "usb_sha256": "58e9e52f6c81dbf768a25ff7ccf29f9a035309102384ddf0dfe73d4e5b3a0254",
+      "uac_proxy": 570,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "zero-history",
+      "source": "63f8adf4a1876cc206d64fa8d115ad07978f1484",
+      "usb_sha256": "3b4a0a9bead765d45f9cd9fa1f64eeeaa67ff7ee6557162e2094ea4156e89e8b",
+      "uac_proxy": 600,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "history-recount",
+      "source": "08e134d67d185a8a9bcd355beadd34fe8cac29fd",
+      "usb_sha256": "91acdb8924f111cd6cab1e816c161485493a463f23fb685c48a3e2fa8de2a26d",
+      "uac_proxy": 557,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 28
+    },
+    {
+      "name": "history-or-recount",
+      "source": "afc707df3a73c10f495d7ebd2746e5ed77d07140",
+      "usb_sha256": "a83f5d4ed6f7f0681e9d4b074ec1f59da2bd52ebd2b6890884f6b1d2b9bb0d19",
+      "uac_proxy": 555,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "history-pair-recount",
+      "source": "0360e71d5806cc21549f4df1f58191fd66fe44c3",
+      "usb_sha256": "4f437acf18070eccdaaab72fd4ee4ccd4874905053a8889386e1a2718d214963",
+      "uac_proxy": 606,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 32
+    },
+    {
+      "name": "history-builtin-recount",
+      "source": "a4fa24f98e0b2c991ef835f18f14c98840234bf9",
+      "usb_sha256": "78a2fb13f87a5b798842def56546a852f25d1ac4ca4e2ec80c5a485d58e1eea2",
+      "uac_proxy": 559,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "history-reverse-recount",
+      "source": "71047834c54aeedb2991591d99ab7741022f4d1c",
+      "usb_sha256": "919c246bea05234314038d5b431459472285c0fd9ac43b9753d252b8900f2910",
+      "uac_proxy": 555,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "history-dual-reverse",
+      "source": "ee6a68f6a046ce884421a703b8cad58f723e123e",
+      "usb_sha256": "0ac7b62b1013efe07a696e98ee442af50e7a5d4d02653d82cf9acb20371f3bae",
+      "uac_proxy": 555,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    },
+    {
+      "name": "history-conditional-ring",
+      "source": "dabc9de22a1b22ad8e85fa14b9c10bee86618a35",
+      "usb_sha256": "bb69260ae035cfb226313708a70d2c585404f8b090bd2a4e0974f045815a2b88",
+      "uac_proxy": 555,
+      "uac_gate_pass": false,
+      "default4_identity": true,
+      "uac_frame_local_bytes": 24
+    }
+  ],
+  "not_included_zero_history": "Real silent-load shortcut; active cost600, not a fix for worst-case gate",
+  "not_included_reverse_cross_array": "7104783 introduces cross-array pointer arithmetic; separate-pointer successoree6a retained, no extra benefit",
+  "raw_private_evidence": "native-uac-optimization-summary plus candidate check directories, no binaries copied"
+}

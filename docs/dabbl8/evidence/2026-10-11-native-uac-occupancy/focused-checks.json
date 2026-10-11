@@ -1,0 +1,34 @@
+[
+  {
+    "name": "history-opt-build",
+    "exit": 0
+  },
+  {
+    "name": "history-opt",
+    "exit": 0
+  },
+  {
+    "name": "history-opt-tone-build",
+    "exit": 0
+  },
+  {
+    "name": "history-opt-tone",
+    "exit": 0
+  },
+  {
+    "name": "history-san-build",
+    "exit": 0
+  },
+  {
+    "name": "history-san",
+    "exit": 0
+  },
+  {
+    "name": "history-san-tone-build",
+    "exit": 0
+  },
+  {
+    "name": "history-san-tone",
+    "exit": 0
+  }
+]
