@@ -233,6 +233,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "actual native reference arrangement, master bars, clocks and held gates" "$OUT/native_arrangement_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
+    run "actual native catalog and arrangement render matrix" "$OUT/native_state_render_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "actual runtime through guarded existing-driver adapter" "$OUT/d8p1_flash_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/eight_track_performance_test" tests/eight_track_performance_test.c -lm
@@ -486,6 +488,8 @@ else
     run "ASan/UBSan: actual native runtime shared-pool persistence and refusals" "$A/d8p1_pool_runtime_test"
     $SCC -o "$A/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "ASan/UBSan: actual native arrangement transport and source refusals" "$A/native_arrangement_test"
+    $SCC -o "$A/native_state_render_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_state_render_test.c -lm
+    run "ASan/UBSan: actual native catalog and arrangement render matrix" "$A/native_state_render_test"
     $SCC -o "$A/d8p1_flash_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/d8p1_flash_runtime_test.c -lm
     run "ASan/UBSan: actual runtime through atomic physical adapter" "$A/d8p1_flash_runtime_test"
     $SCC -o "$A/eight_track_performance_test" tests/eight_track_performance_test.c -lm

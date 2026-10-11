@@ -404,6 +404,13 @@ static void card_mot_of(const int16_t *vp)
 #define LG_VB 49                                        /* the value's band: L capitals rows 49..69 */
 #define LG_UY 73                                        /* the unit's line (S capitals rows 76..84) */
 #define LG_GY 92                                        /* the gauge, 3 px */
+#if NTRK == 8
+/* Native scene names are user text; only their displayed value may ellipsise. */
+static uint8_t card_native_name;
+#define card_value_text(x,y,f,s,fg,bg,w) (card_native_name ? cv_free_text(x,y,f,s,fg,bg,w) : cv_text_fit(x,y,f,s,fg,bg,w))
+#else
+#define card_value_text cv_text_fit
+#endif
 static void draw_column_tall(uint32_t c, const char *label, const char *val, const char *unit, uint16_t vc, int32_t ratio,
                              uint32_t icon, int hot, int mot, int32_t kid)
 {
@@ -460,7 +467,7 @@ static void draw_column_tall(uint32_t c, const char *label, const char *val, con
         vy = vf == &AF_L ? LG_VB - AF_L_CAP_Y : vf == &AF_M ? LG_VB + HALF_UP(AF_L_CAP_H - AF_M_CAP_H) - AF_M_CAP_Y
                                                           : LG_VB + HALF_UP(AF_L_CAP_H - AF_S_CAP_H) - AF_S_CAP_Y;
         if (vf == &AF_S && ink_w(vf, val) > COL_W - 4) {   /* (a value always fits: the lint reports one cut) */
-            cv_text_fit(2, vy, vf, val, vc, T_SURF, COL_W - 4);
+            card_value_text(2, vy, vf, val, vc, T_SURF, COL_W - 4);
         } else {
             GFX_HOOK_ALIGN(0, LG_VB, COL_W, LG_VB + AF_L_CAP_H, AL_HV, "large card value centred");
             cv_text_in(0, vy, COL_W, vf, val, vc, T_SURF);
@@ -591,7 +598,7 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
                 GFX_HOOK_ALIGN(0, ROLL_Y, COL_W, ROLL_Y + ROLL_H, AL_V, "card value in its roll window");
             x = roll_text(c, 5, 17, val, vc);
         } else
-            x = cv_text_fit(5, 20, vf, val, vc, T_SURF, room - uw);
+            x = card_value_text(5, 20, vf, val, vc, T_SURF, room - uw);
         if (unit[0]) {
             GFX_HOOK_ALIGN(0, 0, 0, vf == &AF_M ? 17 + AF_M.asc : 20 + AF_S.asc, AL_B, "card unit on its value's baseline");
             cv_text_on(x + 3, 20, &AF_S, unit, T_MID, T_SURF);     /* on the value's baseline (S) */
@@ -797,14 +804,15 @@ static void draw_columns(void)
             unsigned row=ui.song_row<rows?ui.song_row:rows-1,repeat=0;char name[13];
             int used=d8arr_ui_row(row,name,&repeat);
             fmt_int(val,(int32_t)row+1);draw_column(0,"ROW",val,"",VAL(0u),-1,ICON_X_SONG);
-            str_cpy(val,used?name:"--",sizeof val);draw_column(1,"SCENE",val,"",T_DIM,-1,ICON_X_PATTERN);
+            card_native_name=(uint8_t)used;
+            draw_column(1,"SCENE",used?name:"--","",T_DIM,-1,ICON_X_PATTERN);card_native_name=0;
             if(d8arr_running())str_cpy(val,chain.native.policy.fill_active==2?"RET":chain.native.policy.fill_active?"RUN":chain.native.policy.fill_pending!=D8ARR_NONE?"ARM":"OFF",sizeof val);
             else fmt_int(val,(int32_t)repeat);
             draw_column(2,d8arr_running()?"FILL +/-":"REPS",val,"",d8arr_running()?VAL(2u):T_DIM,-1,ICON_AUTO);
             if(d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE)fmt_int(val,(int32_t)chain.native.policy.pending+1);
             else if(d8arr_running())fmt_int(val,(int32_t)chain.row+1);
             else str_cpy(val,"--",sizeof val);
-            draw_column(3,d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE?"NEXT":"PLAYROW",val,"",d8arr_running()?VAL(3u):T_DIM,-1,ICON_X_SONG);return;
+            draw_column(3,d8arr_running()&&chain.native.policy.pending!=D8ARR_NONE?"NEXT":"PLAY",val,"",d8arr_running()?VAL(3u):T_DIM,-1,ICON_X_SONG);return;
         }
 #endif
         uint32_t row = ui.song_row < CHAIN_ROWS ? ui.song_row : CHAIN_ROWS - 1u;
