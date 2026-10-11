@@ -1,0 +1,26 @@
+{
+  "4": {
+    "tracks": 4,
+    "bytes": 447928,
+    "sha256": "3ced057d74785ecd0cc2ccc8f274a1c9e94caa4a6b1203c846014a890d4720fc",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+    ],
+    "parent_quarantine_sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+    "parent_byte_identity": false
+  },
+  "8": {
+    "tracks": 8,
+    "bytes": 461396,
+    "sha256": "e908df6af2debb4028d477c151c6188f1f0eb0e5ff2352c7dc95840ac11b3119",
+    "errors": [],
+    "notes": [
+      ".ram_text: 916 insns, no calls",
+      "image 461396 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+    ],
+    "parent_quarantine_sha256": "63451d5200f4b1da211543e25e6926bf68f3c66bee9c54cf2b89a317173e096a",
+    "parent_byte_identity": false
+  }
+}

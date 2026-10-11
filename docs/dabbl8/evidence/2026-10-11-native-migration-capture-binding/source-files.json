@@ -1,0 +1,12 @@
+{
+  "source": "d53f7e6ecee444e1d960b9cc3afb3904096a22f2",
+  "sha256": {
+    "docs/dabbl8/native-migration-capture-binding.md": "ab28f60549edf0bceb2f81f9584057268a53eee7d2a571c6d5763c3603acad9d",
+    "firmware/src/felucca.c": "c87d414b747bbf31f6df628c4a15722477cc41a9cd97e0296314cc18953dc868",
+    "firmware/src/native_migration_capture_binding.c": "3a062c581a89f05d8b73a7260a9b313f2179be5f2b8530a4a5e8fc86501317c7",
+    "firmware/src/native_migration_capture_binding.h": "fc6b83209136687f97ff081924cf48e1f399c141fd5ddd33a109ec0a4274efa7",
+    "tests/native_migration_capture_binding_test.c": "0decce43b3144c742146a508e2e9cb1ea2d2f35fddc27a818ba6c95afa4d649f",
+    "tests/native_source_equivalence_test.c": "367bfd54d9e66cf6ddc8816b258ab42b3bef44f58a6043bf5a9544b6dfd182db",
+    "tests/run_tests.sh": "d4b2b102c40c4b91e0feaf3fe8e18b9843d81fb885ca3519db67636bd123ce86"
+  }
+}
