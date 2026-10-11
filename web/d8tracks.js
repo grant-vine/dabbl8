@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Dabbl8 companion's bounded in-memory track client. No project/flash operations.
+import { d8InfoDiscovery } from "./d8info.js";
 const CMD = Object.freeze({ INFO: 1, CAPS: 75, TRACK: 77 });
 export const TRACK_OP = Object.freeze({ SELECT: 27, MIX: 28, DUMP: 29, STEP: 30, PARAM: 31 });
 const fail = (message) => { throw new Error(message); };
@@ -17,8 +18,7 @@ export function parseTrackInfo(a) {
   const version = string(), engines = byte(), params = byte(), globals = byte(), steps = byte(), engineParam = byte();
   const names = []; for (let n = 0; n < engines; n++) names.push(string());
   const tracks = i < a.length ? byte() : 0;
-  const tagged = a.length - i >= 3 && a.at(-3) === 68 && a.at(-2) === 56;
-  return Object.freeze({ version, engines, params, globals, steps, engineParam, names: Object.freeze(names), tracks, discovery: tagged ? a.at(-1) : 0 });
+  return Object.freeze({ version, engines, params, globals, steps, engineParam, names: Object.freeze(names), tracks, discovery: d8InfoDiscovery(a.slice(i)) });
 }
 export function parseTrackCaps(a) {
   wire(a);

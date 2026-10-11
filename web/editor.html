@@ -348,7 +348,8 @@
     <span data-t="foot"></span> M-VAVE and FM-1 are trademarks of their respective owners.<br>
     <a href="FUKIAI-LICENSE.txt" data-t="iconsCredit"></a></footer>
 </main>
-<script>
+<script type="module">
+import { d8InfoDiscovery } from "./d8info.js";
 "use strict";
 /*PROTO-BEGIN*/
 /* ---------------------------------------------------------------- protocol --- */
@@ -503,7 +504,7 @@ const parse = {
       if (trailer[r] === 0x4E && trailer[r + 1] === 1) r += 3;                            /* and the MENU settings (1.0.4) */
       if (o.syncCaps && trailer[r] === 0x52 && trailer[r + 1] === 1) o.ratchet = trailer[r + 2];   /* RATCH: max hits */
     }
-    o.d8Schema = trailer.length >= 3 && trailer.at(-3) === 68 && trailer.at(-2) === 56 ? trailer.at(-1) : 0;
+    o.d8Schema = d8InfoDiscovery(trailer);
     return o;
   },
   [CMD.UI_STATE](a) {

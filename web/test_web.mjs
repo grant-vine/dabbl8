@@ -17,6 +17,7 @@ import { join } from "node:path";
 import vm from "node:vm";
 import { logicalImage, productOf } from "./fm1pkg.js";
 import { Updater, pack7, unpack7 } from "./fm1ota.js";
+import { d8InfoDiscovery } from "./d8info.js";
 
 let failed = 0;
 const ok = (cond, what) => { console.log(`${what.padEnd(64)} ${cond ? "ok" : "FAIL"}`); if (!cond) failed++; };
@@ -41,7 +42,7 @@ const E = vm.runInNewContext(proto + `
    FM4, fromDigital, fromPerc, DRUM_KIT_E,
    MENU: typeof MENU === "undefined" ? null : MENU, MENU_TABS: typeof MENU_TABS === "undefined" ? null : MENU_TABS,
    readDeviceMenu: typeof readDeviceMenu === "undefined" ? null : readDeviceMenu })`,
-{ setTimeout, clearTimeout, setInterval, clearInterval, console });
+{ setTimeout, clearTimeout, setInterval, clearInterval, console, d8InfoDiscovery });
 
 async function editorMock() {
   const m = E.makeMockDevice();
@@ -491,7 +492,7 @@ async function editorFm4() {
       async function libWrite(a) { written.push(...a); }
       ${adopt}
       ;({ libAdopt, set: (l, m) => { lib = l; libMeta = m; written.length = 0; }, lib: () => lib, written: () => written })`,
-    { setTimeout, clearTimeout, setInterval, clearInterval, console });
+    { setTimeout, clearTimeout, setInterval, clearInterval, console, d8InfoDiscovery });
     const dv = { keys, info: { engines: info.engines, pe0: info.pe0 } };
     const entry = () => [{ id: "a", name: "OLD PAD", engine: 1, engineName: "DIGITAL", p: pad.slice(), pattern: null, tags: ["x"],
       created: "2026-01-01T00:00:00.000Z", modified: "2026-01-01T00:00:00.000Z" },
