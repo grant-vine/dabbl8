@@ -67,6 +67,38 @@ clock-source change, timeout and broken MIDI input are explicitly gated or
 cancelled through the existing transport. A physical epoch is 32 bits; complete
 wrap between checks is not qualified as a new authority/coherence proof.
 
+## Engine-card compatibility policy
+
+References select patterns, not sounds. A structurally valid source can use an
+engine absent from a destination build: preparation copies only its steps,
+LEN/DIV/SWING/GATE and motion, and retains its exact stored engine ID as
+provenance. It never adopts source instruments, presets, FM6 patches or sample
+assets. Generic eligible motion transfers to the current destination sound;
+FM envelope/level, DRUM lane and E0..E7 automation and locks require exact
+source/destination engine identity, including when a lock unlocks. DIGITAL or
+PERC provenance is not silently relabelled. Historical conversion must perform
+its real parameter/motion migration before producing canonical source records.
+
+Preparation checks every destination's canonical requested engine before
+borrowing the arena or changing prior preparation, and rechecks under the
+final publication guard. An unavailable destination returns
+`D8POOL_UNSUPPORTED`; invalid mask arguments return `D8POOL_INVALID`. It never
+chooses another sound. Initial refusal preserves prior live/cache/canvas/DMA
+state. Late refusal uses the existing invalid/disarmed preparation path:
+editable music stays intact, partial sources cannot run, and Continue or fresh
+Start cannot use that invalid preparation until preparation succeeds again.
+Source integrity, reference, ownership, transport and generation guards remain.
+
+The mask argument is an internal synchronous test seam. Production always
+passes the immutable full compiled engine mask, including actual FM4/SLICE
+compatibility options; reduced-profile build guards remain closed. This slice
+does not enable downloadable engine cards, negotiate assets, or grant writes.
+`tests/arrangement_engine_compatibility_test.c` exercises real pool preparation,
+pattern notes/timing, matching and mismatched automation/lock/unlock, source
+byte preservation, complete initial refusal and late discard. Unchanged-parent
+and deliberately source-restricting negative controls are recorded separately.
+No timing or hardware qualification follows from these host checks.
+
 ## Memory and bounded work
 
 Three immutable source snapshots and a small typed policy occupy the existing
