@@ -1,6 +1,9 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Exact frozen parent producer plus independent full-buffer occupancy oracles.
  * No device, physical FIFO, IRQ-off deadline or whole-stack qualification. */
+#ifndef FELUCCA_UAC_TONE
+#define FELUCCA_UAC_TONE 0
+#endif
 #define D8OUTPUT_QUEUE_NO_MAIN 1
 #include "native_output_queue_test.c"
 #define uac_tap48 uac_tap48_reference
