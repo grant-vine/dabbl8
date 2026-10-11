@@ -1,0 +1,33 @@
+{
+  "measured_source": "048df569ca6035490cc2199fc76d3078e1e093cc",
+  "integration_source": "40a3326ccc0241f37e72f2b6ab5fd742e26a06ab",
+  "integration_parent": "e63164bc41c563fa02fe6d5bb4affecaca05adbd",
+  "functional_delta_files": [
+    "docs/dabbl8/native-arrangement-playback.md",
+    "firmware/src/d8arr_prepare.c",
+    "firmware/src/fx.c",
+    "firmware/src/perform.c",
+    "firmware/src/seq.c",
+    "firmware/src/song_chain.c",
+    "firmware/src/ui_draw.c",
+    "firmware/src/ui_input.c",
+    "tests/native_arrangement_test.c"
+  ],
+  "hardware": "NOT_RUN",
+  "physical_write": "NOT_RUN",
+  "release_qualified": false,
+  "native_static_budget": "FAIL_IRQ_UAC",
+  "whole_stack_upper_bound": "NOT_ESTABLISHED",
+  "published_tree_full_ci": "SEPARATE_REQUIRED_GATE",
+  "source_blobs": {
+    "docs/dabbl8/native-arrangement-playback.md": "b43368c4da4004f36e7fe6fa47b6a571b6bfb686",
+    "firmware/src/d8arr_prepare.c": "26ac60b3549faa2684c693e3e9d542107f5bd20d",
+    "firmware/src/fx.c": "d8dc2301875b00130b872741b1fc7fcdfee9bad0",
+    "firmware/src/perform.c": "1cf5fdc3351aa5246cd12c4ffb75095d0a4fa8cf",
+    "firmware/src/seq.c": "89946045e5dba8da0d67f70cba6331449a9371b4",
+    "firmware/src/song_chain.c": "02a31da6509ed93efbfbfe9c28d319b064319b2c",
+    "firmware/src/ui_draw.c": "9ed9ec5e13b8d9c2e9c2c56e23a52eef14e92982",
+    "firmware/src/ui_input.c": "36b58437cd15feaeae31d99e4e8f6a43fab93ef5",
+    "tests/native_arrangement_test.c": "2c88ce4c866e44624479892a30eb2a83da331499"
+  }
+}

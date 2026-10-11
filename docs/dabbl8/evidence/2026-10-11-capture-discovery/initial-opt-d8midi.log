@@ -1,0 +1,16 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: framed INFO/caps handshake
+    at ok (file:///Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/web/test_d8midi.mjs:8:36)
+    at file:///Users/grantv/Code/dabbl8/.local-baseline/capture-discovery-handshake/web/test_d8midi.mjs:27:1 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.11.0

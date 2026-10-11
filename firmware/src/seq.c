@@ -741,6 +741,9 @@ static __attribute__((noinline)) void seq_step(track_t *t, const step_t *s, uint
      * or another engine that maps the keys itself. seq_notes keeps the notes that sound: their note-offs match */
     const engine_t *e = ENGINES[eng_idx(t->eng_req)];
     uint32_t qseq = t->p[P_QUANT] == QN_SEQ && !(e->keys && e->keys(t, 0) >= 0);
+#if NTRK == 8
+    int transpose=d8arr_running()&&(chain.native.scene[chain.native.policy.scene].apply&D8ARR_APPLY_TRANSPOSE)&&!(e->keys&&e->keys(t,0)>=0)?chain.native.scene[chain.native.policy.scene].transpose[trk_index(t)]:0;
+#endif
     if (!(skip & SEQ_REP)) {
         t->rat_left = 0;
         if ((skip & SEQ_MISS) ||
@@ -767,8 +770,15 @@ static __attribute__((noinline)) void seq_step(track_t *t, const step_t *s, uint
     }
     for (i = 0; i < s->n && i < 4u; i++) {
         uint32_t x = s->note[i];
+#if NTRK == 8
+        if(transpose)x=(uint32_t)clamp((int32_t)x+transpose,0,127);
+#endif
         if (qseq) {                                 /* QNT SEQ: onto the scale now; two notes snapping */
             x = (uint32_t)clamp(scale_snap(t, (int32_t)x), 0, 127);   /* together play once */
+#if NTRK == 8
+        }
+        if(qseq||transpose){
+#endif
             for (j = 0; j < m && nn[j] != x; j++)
                 ;
             if (j < m)
@@ -797,6 +807,9 @@ static __attribute__((noinline)) void seq_step(track_t *t, const step_t *s, uint
             for (j = 0; j < m && nn[j] != t->seq_notes[i]; j++)
                 ;
             if (j == m)
+#if NTRK == 8
+                if(!d8arr_running()||!((chain.native.policy.held[trk_index(t)][t->seq_notes[i]/32u]>>(t->seq_notes[i]%32u))&1u))
+#endif
                 trk_note_off(t, t->seq_notes[i]);
         }
     t->seq_n = 0;
@@ -1003,7 +1016,7 @@ static void events_block(uint32_t n)
     panic_req = 0;
     if (midi_in_overflow) {                            /* a lost note-off must never leave a held note */
 #if NTRK == 8
-        if(chain.native_mode){chain.native.policy.pending=D8ARR_NONE;chain.native.policy.preparing=0;chain.native.policy.generation++;}
+        if(chain.native_mode){chain.native.policy.pending=D8ARR_NONE;chain.native.policy.fill_pending=D8ARR_NONE;chain.native.policy.preparing=0;chain.native.policy.generation++;}
 #endif
         mi_r = mi_w;
         memset(midi_sel_on, 0, sizeof midi_sel_on);

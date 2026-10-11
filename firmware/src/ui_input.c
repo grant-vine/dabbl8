@@ -673,7 +673,10 @@ static void edit_param(uint32_t slot, int32_t steps)
         unsigned rows=d8arr_ui_rows();
         if(rows){
             if(slot==0u)ui.song_row=(uint8_t)clamp((int32_t)ui.song_row+steps,0,(int32_t)rows-1);
-            else if(slot==3u&&d8arr_running()) {
+            else if(slot==2u&&d8arr_running()){
+                if(steps>0){if(!d8arr_request_fill(ui.song_row))ui_message("FILL QUEUED");}
+                else if(steps<0){d8arr_cancel_fill();ui_message("FILL CANCELLED");}
+            } else if(slot==3u&&d8arr_running()) {
                 if(!d8arr_request_row(ui.song_row))ui_message("ROW QUEUED");
             } else ui_message("NATIVE ROW READ ONLY");
             return;

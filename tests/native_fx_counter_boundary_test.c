@@ -15,7 +15,7 @@ static void local_store_hook(void){
  if(!hook_enabled)return;
  CHECK(queue_audio_dbg.in_audio==1);unsigned rd=reads,wr=writes;
  hs_regs[4][17]=0;fm1_timer5_irq();CHECK(reads==rd&&writes==wr);
- if(!(hook_calls%100)){uint32_t c=0;for(unsigned i=0;i<sizeof rev_comb/2;i++)c+=rev_comb[i]!=0;if(c!=fx_tail.comb)stale++;}
+ if(!(hook_calls%100)){uint32_t c=0;for(unsigned i=0;i<sizeof rev_comb/2;i++)c+=rev_comb[i]!=0;if(c&&!fx_tail.comb&&!fx_rev_wait.comb)stale++;}
  hook_calls++;
 }
 static void tails_oracle(void){
@@ -23,9 +23,13 @@ static void tails_oracle(void){
  for(unsigned i=0;i<DLY_LEN;i++)d+=dly_buf[i]!=0;
  for(unsigned i=0;i<CHO_LEN;i++)c+=cho_buf[i]!=0;
  for(unsigned i=0;i<sizeof rev_comb/2;i++)r+=rev_comb[i]!=0;
- if(fx.rtype)for(unsigned i=0;i<4*(SP_N+1);i++)a+=rev_u.sp[i]!=0;
- else for(unsigned i=0;i<sizeof rev_ap/2;i++)a+=rev_ap[i]!=0;
- CHECK(d==fx_tail.delay&&c==fx_tail.chorus&&r==fx_tail.comb&&a==fx_tail.ap);
+ for(unsigned i=0;i<sizeof rev_ap/2;i++)a+=rev_ap[i]!=0;
+ CHECK(d==fx_tail.delay&&c==fx_tail.chorus);
+    /* Actual full-buffer oracle: eligibility implies silence, independently
+     * of conservative sweep metadata and external tracked-store guards. */
+    CHECK(!r || fx_tail.comb || fx_rev_wait.comb);
+    CHECK(!a || fx_tail.ap || fx_rev_wait.ap);
+    if(fx_resident_quiet())CHECK(!d&&!c&&!r&&!a);
 }
 int main(void){
  cold();tails_oracle();CHECK(fx_resident_quiet());stream(1);host_preset(&trk[0],0,5);trk[0].p[P_SLCR]=0;trk[0].p[P_AMODE]=0;
@@ -33,6 +37,6 @@ int main(void){
  hook_enabled=1;
  for(unsigned b=0;b<80;b++){song.g[G_RTYPE]=(b/10)&1u;qa_half=b&1u;fm1_alnk0_irq();tails_oracle();oracle();CHECK(!queue_audio_dbg.in_audio&&!df_automatic_quiet());}
  hook_enabled=0;CHECK(hook_calls>1000&&stale>0&&scans==hook_calls&&queue_audio_dbg.nested==hook_calls);CHECK(hs_sends>0);
- printf("Native FX publication: %u checks, %u failures; %u actual nested TIMER5 IRQs, %u stale-in-flight comb observations, 80 real audio halves with complete counter oracles; main-loop-only reader contract, no device timing claim\n",checks,failures,hook_calls,stale);
+ printf("Native FX publication: %u checks, %u failures; %u actual nested TIMER5 IRQs, %u unpublished in-flight comb observations, 80 real audio halves with complete silence oracles; main-loop-only reader contract, no device timing claim\n",checks,failures,hook_calls,stale);
  return failures!=0;
 }
