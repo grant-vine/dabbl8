@@ -1,0 +1,53 @@
+{
+  "functional_commit": "8a25353699be97c0a53c599ac9e4bded44c250e3",
+  "parent": "f000b3f18f1cd3a62d8626c440e9805e4f702374",
+  "source_sha256": {
+    "firmware/src/d8p1_pool_runtime.c": "17b9461244936461ade0960742b7d2908d45141febc8ac8ab757ae1802f27533",
+    "firmware/src/d8p1_runtime.c": "892bb8feca7648385a54d8df7cdc1df4efce03fe2bf4e46029d53307a2db21fe",
+    "firmware/src/editor_capture.c": "91563082bcacfe03de18bd6380c5f249dd67742f89d543aaf9625ebb28ba8212",
+    "firmware/src/gfx.c": "64c29ad2bc43d0a779e84b6ed79a40bc7a488f167a22f4668a3ae38026d7d4f8",
+    "firmware/src/project.c": "9bb4a265b368da7f1f5ef1b067f2fef99c3ed30ac1828882a0ddbbd2bf28794b",
+    "tests/instrument_capture_test.c": "f752454742e7b29596c9a047bef2371b25ee8ac348988891f711229df77623d6",
+    "tests/native_migration_preflight_test.c": "5259aa676020e232c5c449666948798e71694d04781e154f499f51ebbffa97b8"
+  },
+  "full_suite_exit": 0,
+  "new_checks_per_mode": 2611,
+  "capture_checks_per_mode": 408934,
+  "collector_checks_per_mode": 287,
+  "unchanged_golden_renders": 92,
+  "focused_sanitizer": "address,undefined with no DSP exclusions",
+  "full_suite_sanitizer": "upstream inherited five DSP exclusions",
+  "target_results": {
+    "4": {
+      "tracks": 4,
+      "bytes": 447928,
+      "sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 447928 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+      ],
+      "parent_quarantine_sha256": "7e89ae7fd6815748419c60948ac69f0d368f92be8d729608f82218721153ec0b",
+      "parent_byte_identity": true
+    },
+    "8": {
+      "tracks": 8,
+      "bytes": 460452,
+      "sha256": "0a48877a955a0a866a9d7a9dd19d1d6c0cddeb1bd171cd547b9c1f265d2cd41f",
+      "errors": [],
+      "notes": [
+        ".ram_text: 916 insns, no calls",
+        "image 460452 B; RAM .data+.bss 95780 B of 98304; pool 334312 B of 344064"
+      ],
+      "parent_quarantine_sha256": "5f39587e0047fd8ed4c524c7267a28ea18a29e1b60c5ef16950ff5959baf7bdf",
+      "parent_byte_identity": false
+    }
+  },
+  "limits": [
+    "No coordinator activation, write authorization or physical mutation.",
+    "Historical/one-shot competing callers remain a separate implementation gate.",
+    "Native USB, ROOM and SPRING static budgets still fail.",
+    "Virtual NOR and target links do not prove hardware recovery, stack or deadline qualification.",
+    "Four-track byte identity is to exact local parent, not pristine276 baseline or Linux fonts."
+  ]
+}

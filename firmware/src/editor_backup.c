@@ -33,11 +33,19 @@ static void ed_bk_pack(const uint8_t *p, uint32_t n)
 }
 static const uint8_t *ed_bk_object(uint32_t id, uint32_t *len)
 {
+#if NPART >= NVOICE
+    int used=0;
+    if(id>=2u&&id<=5u){used=project_used(id-2u);if(used<0)return NULL;}
+#endif
     *len = 0;
     if (id == 0u) { *len = sizeof(project_store_t); return ED_BK_RAW; }
     if (id == 1u) { *len = sizeof ed_bk_settings; return (const uint8_t *)&ed_bk_settings; }
     if (id >= 2u && id <= 5u) {
+#if NPART >= NVOICE
+        if(used) *len=sizeof proj_slot[0];
+#else
         if (project_used(id - 2u)) *len = sizeof proj_slot[0];
+#endif
         return (const uint8_t *)&proj_slot[id - 2u];
     }
     if (id == 6u || id == 7u) {
@@ -61,9 +69,14 @@ static const uint8_t *ed_bk_object(uint32_t id, uint32_t *len)
 }
 static uint32_t ed_bk_capture(void)
 {
+#if NPART >= NVOICE
+    project_t *p=main_project_workspace_try();if(!p)return 3;
+#else
+    project_t *p=&proj_scratch;
+#endif
     if (ed_flash_stop()) return 3;
-    project_capture(&proj_scratch);
-    if (!proj_pack((project_store_t *)ED_BK_RAW, &proj_scratch)) return 2;
+    project_capture(p);
+    if (!proj_pack((project_store_t *)ED_BK_RAW, p)) return 2;
     ed_bk_gen = ++proj_wire_gen;
 #if FELUCCA_FLASH
     ed_bk_settings = persist_saved;                 /* fields absent from this build survive */
@@ -90,19 +103,24 @@ static int ed_bk_panel_valid(const panel_t *p)
 }
 static uint32_t ed_bk_commit(void)
 {
+#if NPART >= NVOICE
+    project_t *p=main_project_workspace_try();if(!p)return 3;
+#else
+    project_t *p=&proj_scratch;
+#endif
     uint8_t *raw = ED_BK_RAW;
     uint32_t obj;
     if (ed_bk_pos != ed_bk_len || st_crc32(raw, ed_bk_len) != ed_bk_crc) return 2;
     if (ed_bk_id == 0u || (ed_bk_id >= 2u && ed_bk_id <= 5u)) {
-        if (ed_bk_len && !proj_import(&proj_scratch, raw, (int)ed_bk_len)) return 2;
+        if (ed_bk_len && !proj_import(p, raw, (int)ed_bk_len)) return 2;
         if (ed_bk_len) {                            /* an older format becomes FUN9 inside its ranges */
-            proj_bound(&proj_scratch);
-            if (!proj_pack((project_store_t *)raw, &proj_scratch)) return 2;
+            proj_bound(p);
+            if (!proj_pack((project_store_t *)raw, p)) return 2;
             ed_bk_len = sizeof(project_store_t);
         }
         if (ed_bk_id == 0u) {
             if (!ed_bk_len) return 2;
-            return project_restore_runtime(&proj_scratch) ? 2u : 0u;
+            return project_restore_runtime(p) ? 2u : 0u;
         }
         obj = OBJ_PROJECT0 + ed_bk_id - 2u;
     } else if (ed_bk_id == 1u) {

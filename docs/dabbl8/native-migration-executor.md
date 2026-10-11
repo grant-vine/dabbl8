@@ -1,0 +1,9 @@
+# Bounded native migration execution component
+
+This internal stopped main-loop engine consumes the complete canonical preflight plan. Before its first erase, it reads all twelve fixed physical capture roles in bounded chunks and compares their supplied original CRCs, then checks the sealed plan again. It writes only the five existing project/autosave allocation pairs, second sector first and each sector header last, verifies every sector, verifies the complete final pool, and rechecks unaffected roles and the sealed plan before reporting completion.
+
+Each step performs at most one read or program of 256 bytes, or one 4 KiB erase. That limit does not establish a CPU deadline: canonical validation and complete-plan CRC scans also run in stopped main-loop context. Failed physical callbacks are uncertain and require exact expected readback; partially changed data refuses completion. The whole migration is not power atomic. External originals remain necessary for recovery.
+
+The callback contract requires private authority and stopped/session checks inside every actual physical driver IRQ boundary. Tests simulate this contract. The component is not called by production and cannot open the constant-closed application write gate. A real coordinator must still establish retained originals, source-to-plan equivalence and explicit selection; implement driver-boundary authority and revocation; reconcile and adopt intended live state; initialize native ownership and persistence; and define interrupted/clean boot recovery policy. Catalog recognition, CRCs and a caller authorization boolean cannot substitute for those obligations.
+
+[Exact frozen verification](evidence/2026-10-11-native-migration-executor/README.md) preserves failures, skips, cut coverage, source and binary hashes. Passing host tests and fitting the uncalled target component do not qualify Dabbl8 v0.1 for installation or release.

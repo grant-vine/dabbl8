@@ -1,0 +1,10 @@
+{
+  "head": "6f73dba1576ad12bdc3fa30eac1509cd674dc0a5",
+  "archive_sha256": "a172211cdacc54ff11ccb084465e10c3db9eecee0a700bfdbff6fef31b73b59c",
+  "tracked_tree": "0eaf6d698e5011b9d32a60f581f1ff9ba9699541",
+  "baseline_tests": {
+    "tests/golden.txt": "23e89a71231ab288501feda95e8a1ae838641eb5528037d8253617d399333500",
+    "tests/cpu_baseline.txt": "4f4c5dbbda3d766637f54c887704235bbbe7a5f60879d893da24780364e7cdaf",
+    "tests/target_budget.txt": "a25ff85d4defe8ea8dea6ad884c10443b98fdee90f9ee6aa9fcc8849d2984f0e"
+  }
+}

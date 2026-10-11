@@ -1,0 +1,2 @@
+line 30: restore_ops==1404
+Instrument migration executor: 6398 checks, 1 failures; 180 APPLY calls x2 cuts, 1401 RESTORE calls; simulator only, quarantine retained, no production ownership

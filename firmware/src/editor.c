@@ -478,6 +478,9 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
     uint32_t cmd = f[3], i;
     const uint8_t *a = f + 4;
     uint32_t na = n - 4u;
+#if NPART >= NVOICE
+    if((cmd==ED_PROJECT||(cmd>=ED_BACKUP_LIST&&cmd<=ED_BACKUP_PUT))&&!main_project_workspace_try())return;
+#endif
 #if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
     if(cmd==ED_D8_CAPTURE){ed_begin(cmd);ed_capture_handle(a,na);ed_send();return;}
     /* Any other editor transaction conservatively ends this private session. */
@@ -660,6 +663,9 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
         break;
     }
     case ED_PROJECT:                                       /* 0 = load, 1 = save, 2 = query; slot 0..3 */
+#if NPART >= NVOICE
+        if(!main_project_workspace_try())return; /* legacy reply has no BUSY/error field */
+#endif
         if (na < 2u || a[0] > 2u || a[1] >= PROJECT_UI_SLOTS)
             return;
         if (a[0] == 1u) {
@@ -667,10 +673,19 @@ static void ed_handle(const uint8_t *f, uint32_t n)   /* f: the bytes between F0
                 return;                              /* the legacy reply has no failure bit: do not confirm a failed save */
         }
         else if (a[0] == 0u)
+#if NPART >= NVOICE
+            {if(project_load(a[1]&3u))return;}
+#else
             project_load(a[1] & 3u);
+#endif
+#if NPART >= NVOICE
+        {int used=project_used(a[1]&3u);if(used<0)return;
+        ed_b(a[0]);ed_b(a[1]&3u);ed_b(used);}
+#else
         ed_b(a[0]);
         ed_b(a[1] & 3u);
         ed_b(project_used(a[1] & 3u));
+#endif
         break;
     case ED_NAMES:                                         /* preset names of an engine */
         if (na < 1u || a[0] >= NENGINES)
