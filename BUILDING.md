@@ -104,6 +104,21 @@ MIDI out, the editor, updates), TRS MIDI and the user sample slots. A build of i
 
 ## Tests
 
+For Dabbl8 development, checks run locally. GitHub Actions are disabled, and
+changes do not trigger hosted builds or release packaging. First inspect the
+affected-check plan, then run that selection:
+
+```
+python3 ci/local_checks.py --base origin/main
+python3 ci/local_checks.py --base origin/main --run
+```
+
+See [ci/README.md](ci/README.md) for focused checks and existing dependency
+requirements. Unmapped changes need an explicit test selection; they do not
+silently pass or trigger the full suite. Reuse unchanged verification evidence.
+
+The following upstream suite is a manual broad check, not the default for every PR:
+
 ```
 tests/run_tests.sh
 ```

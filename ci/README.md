@@ -1,0 +1,47 @@
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+# Local affected checks
+
+GitHub stores source; local checks are the default. Inspect a plan first:
+
+```sh
+python3 ci/local_checks.py --base origin/main
+python3 ci/local_checks.py --base origin/main --run
+```
+
+Without `--base`, compare the current worktree to local `HEAD`, including staged,
+unstaged and untracked files. Nothing is fetched. Use `--paths PATH...` to state
+changed paths explicitly. The default prints `PLAN`; it does not execute checks
+or create output directories. Unknown mappings and missing inputs return
+`REFUSED` with exit 2. They are never treated as passing or silently skipped.
+
+The small selector covers documentation (diff check), its own runner (shell
+syntax and selector tests), historical UI fixtures (four/eight tracks), legacy
+storage quarantine, read-only native boot, and focused source-local SAMPLE/GRAIN/SLICE range and render fixtures.
+C checks use local compiler/generated headers only. Storage runs both the actual
+historical torn-write tests and native legacy-write quarantine. Legacy/boot/storage checks
+use strict ASan/UBSan; sampler range/render checks retain only the inherited signed-overflow/shift
+exclusions, with bounds/object/pointer checks active. They require the actual
+`sample_source_range_test.c` and `slice_render_source_range_test.c` fixtures; if
+these are absent, selection refuses rather than substituting weaker fuzzing. FM4 is off and
+SLICE is on for these selected checks; this is not the full configuration matrix.
+
+For an unmapped area, select a reviewed scope explicitly, for example:
+
+```sh
+python3 ci/local_checks.py --paths docs/dabbl8/README.md --check docs --run
+python3 ci/local_checks.py --paths firmware/src/audio.c --check sampler
+```
+
+Explicit selection retains unmapped paths in the report; it does not establish
+coverage of them. Add/review an actual recipe when a change needs a different
+check. Do not use a documentation check to qualify firmware. `--cc 'clang-18'`
+selects a compiler; `CC` is also supported without shell evaluation.
+
+Execution writes commands, exits, stdout/stderr, source HEAD and available
+header hashes under ignored `build/local-checks/run-*/results.json`. Each command has a 120-second timeout (exit 124 with partial logs). It stops on
+the first failure. `SELECTED_CHECKS_PASS` means only those recorded checks passed.
+No dependencies are downloaded, headers generated, vendor build/package created,
+firmware installed or hosted workflow triggered. Update-golden/budget overrides
+are refused. Broad qualification remains an explicit, separate upstream
+`sh tests/run_tests.sh` invocation with its existing prerequisites; there is no
+full-suite fallback or `--full` flag in this small runner.
