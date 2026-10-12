@@ -49,11 +49,21 @@ The [first-use classifier](../../firmware/src/native_first_use.c) and
 
 ## Connected editor, capture and restore limitations
 
-The current browser keeps ordinary eight-track track/project editing closed;
-its separately negotiated command-80 sample replacement is a narrow exception,
-not native project import or full backup restoration. Legacy project/backup
-writes remain refused on eight tracks. Legacy BACKUP_GET/PUT must not be treated
-as a D8P1 project-set round trip.
+The [Dabbl8 companion](../../web/d8companion.html) already supports negotiated
+eight-track editing in memory through command 77, including track selection,
+level/mute, parameters and step patterns. Physical MIDI qualification remains
+pending. It does not yet provide connected native project backup/import/restore.
+
+The [legacy editor](../../web/editor.html) remains a four-track interface. Its
+separately negotiated command-80 sample replacement is a narrow exception to its
+eight-track write refusal, not native project import or full backup restoration.
+Legacy project/backup writes remain refused on eight tracks. Legacy BACKUP_GET/PUT
+must not be treated as a D8P1 project-set round trip.
+
+Firmware command 81 now implements bounded own-project-set export/restore with
+visible SAVE confirmation; see [protocol and interruption limits](native-project-transfer.md).
+Its host/virtual-NOR checks do not establish physical MIDI operation. Browser
+backup/import integration and physical qualification remain pending.
 
 Command 78 provides read-only capture preparation: twelve raw-store roles, or
 seventeen roles including the live D8P1 project and current ancillary state.
