@@ -14,6 +14,7 @@ static struct {
 static int d8up_ui_begin(unsigned,unsigned,const char *);
 static int d8up_save(unsigned,const void *,uint32_t,int);
 static void d8up_ui_end(void);
+static int d8settings_commit(const void *,uint32_t);
 static int d8up_recover_banks(void);
 #ifndef D8_UP_LCD_FAULT_COUNT
 #define D8_UP_LCD_FAULT_COUNT() fm1_lcd_timeouts

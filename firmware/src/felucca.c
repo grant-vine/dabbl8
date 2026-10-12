@@ -145,6 +145,7 @@
 #endif
 #if NTRK == 8 && FELUCCA_FLASH
 #include "native_preset_session.c"
+#include "native_settings_session.c"
 #endif
 #if FELUCCA_CDC
 #include "console.c"
