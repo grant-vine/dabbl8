@@ -42,7 +42,7 @@ static int ls_scan(d8pool_index *index,uint32_t crc[5])
  int rc=d8pool_mapped_open_readonly(&m,&io);d8p1_stage_workspace *stage;
  if(!rc)rc=d8pr_preflight(&m.pool,index,&stage,NULL);
  uint8_t page[256],header[32];
- if(!rc&&!(index->present&8u))rc=D8POOL_UNSUPPORTED;
+
  unsigned used=0;
  for(unsigned object=0;!rc&&object<4;object++)if(index->present&(1u<<object))used|=1u<<index->object[object].block;
  for(unsigned block=0;!rc&&block<5;block++) {

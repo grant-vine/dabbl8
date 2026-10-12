@@ -12,6 +12,7 @@ static struct {
 enum { LS_IDLE,LS_CONSENT,LS_RELEASE,LS_EXECUTE };
 static int d8ls_blocked(void) { return d8ls.phase!=LS_IDLE||d8ls.busy; }
 static void d8ls_revoke(void) { if(d8ls_blocked()){d8ls.revoked=1;d8ls.shown=0;} }
+static int ls_scan(d8pool_index *,uint32_t [5]);
 static void d8ls_reset(void);
 static void d8ls_offline(void);
 static int d8ls_autosave_begin(void);

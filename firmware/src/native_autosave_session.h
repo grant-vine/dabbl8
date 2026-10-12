@@ -8,7 +8,8 @@
  * without writing until a later musical change. RESTORE LAST controls writes.
  * The private local committed-SAVE path instead baselines the verified stored
  * AS signature, permitting unchanged current music to synchronize after idle.
- * It requires an existing verified AS record; it never writes during begin.
+ * Genuinely absent AS baselines current RAM after a full residue scan; corrupt
+ * AS refuses. Begin never writes.
  * End revokes this session only, never changes storage ownership. */
 int d8p1_autosave_session_begin(int completed_migration_authorized,int clean_boot);
 void d8p1_autosave_session_end(void);

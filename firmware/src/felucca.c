@@ -133,6 +133,11 @@
 #include "native_migration_capture_binding.c" /* private earlier-capture binding */
 #include "native_migration_session.c" /* connected initializer remains quarantined */
 #include "native_local_session.c" /* actual local native operation coordinator */
+#if D8_FIRST_USE_SESSION
+#define D8_FIRST_USE_AMALGAMATED 1
+#include "native_first_use.c"
+#include "native_first_use_session.c"
+#endif
 #endif
 #endif
 #if FELUCCA_CDC

@@ -272,6 +272,9 @@ static void fm1_main(void)
         felucca_dbg.stage = 1;
         ui_input();
 #if NTRK == 8 && D8_MIGRATION_SESSION
+        #if D8_FIRST_USE_SESSION
+        d8fi_poll();
+#endif
         d8mc_poll();
         d8ls_poll();
 #endif

@@ -1221,6 +1221,12 @@ static void persist_boot(void)                    /* before settings_init / pane
         return;
     fl_plain_window_init();                        /* flash above 0x93000 reads as plaintext through XIP
                                                     * (user sample sets are played from there) */
+#if D8_FIRST_USE_SESSION
+    if(d8fi_boot_classify()) {
+        memset(&settings,0,sizeof settings);memset(&panel,0,sizeof panel);
+        memset(proj_slot,0,sizeof proj_slot);return;
+    }
+#endif
 #if FELUCCA_SLICE && D8BUILD_HAS(13)
     slc_store_boot();                              /* (the scans read each slot's stored slices) */
 #endif
@@ -1527,6 +1533,10 @@ static int st_load_autosave(void *,uint32_t);
 #endif
 static int autosave_boot(int allowed)
 {
+#if D8_FIRST_USE_SESSION
+    if(d8fi_blocked()){project_native.mode=2;project_native.ready=0;return 0;}
+#endif
+
 #if NTRK == 8 && (FELUCCA_FLASH || defined(D8_NATIVE_READONLY_BOOT_TEST))
     int native=project_native_boot_readonly(allowed);
     if(native||project_native_owns_storage()) {
