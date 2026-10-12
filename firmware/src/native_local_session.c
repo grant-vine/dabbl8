@@ -28,6 +28,12 @@ static void ls_fail(int attempted)
 }
 static int ls_stopped(void *c)
 { (void)c;return !d8ls.revoked&&ls_quiet(); }
+/* Both expected names are already canonical13-byte buffers. Incoming C names
+ * are validated and bounded before equality; the target has no strcmp libc. */
+static int ls_name_equal(const char expected[13],const char *name)
+{
+ char canonical[13];return d8pr_name_copy(canonical,name)&&!memcmp(expected,canonical,sizeof canonical);
+}
 static int ls_noerase(void*c,uint32_t a){(void)c;(void)a;return -1;}
 static int ls_noprogram(void*c,uint32_t a,const void*p,uint32_t n){(void)c;(void)a;(void)p;(void)n;return -1;}
 static int ls_scan(d8pool_index *index,uint32_t crc[5])
@@ -102,7 +108,7 @@ static int d8ls_request(unsigned operation,unsigned object,const char *name)
  while(last&&nm.s[last-1]==' ')last--;while(first<last&&nm.s[first]==' ')first++;
  unsigned length=last-first;if(length>12||!name)return D8POOL_INVALID;
  memset(expected,0,sizeof expected);memcpy(expected,nm.s+first,length);
- if(strcmp(expected,name))return D8POOL_UNSUPPORTED;
+ if(!ls_name_equal(expected,name))return D8POOL_UNSUPPORTED;
  if(d8mc.phase!=MC_IDLE&&d8mc.phase!=MC_FAILED&&d8mc.phase!=MC_READY)return D8POOL_BUSY;
  int rc=ls_proposal(operation,object,name);
  if(rc){ui_message(rc==D8POOL_BUSY?"STOP TO SAVE":"STORAGE ERROR");return rc;}
@@ -121,7 +127,7 @@ static void d8ls_input(uint32_t pressed,uint32_t notes)
 static int d8ls_native_begin(unsigned operation,unsigned object,const char *name)
 {
  if(d8ls.writing||d8ls.busy||!d8ls.intent||d8ls.phase!=LS_EXECUTE||operation!=d8ls.operation||object!=d8ls.object||
-    (operation!=1&&(!name||strcmp(name,d8ls.name))))return D8POOL_UNSUPPORTED;
+    (operation!=1&&(!name||!ls_name_equal(d8ls.name,name))))return D8POOL_UNSUPPORTED;
  if(!ls_lifetime())return D8POOL_BUSY;
  d8ls.busy=1;d8pool_index index;uint32_t crc[5],sig=0;
  int rc=d8pr_runtime_status(d8p1_signature_runtime(&sig));

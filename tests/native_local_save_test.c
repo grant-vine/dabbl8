@@ -81,6 +81,12 @@ static unsigned ls_test_level(unsigned object)
 }
 int main(void)
 {
+ /* Bounded name equivalence uses the actual firmware helper, including empty
+  * and full12-byte names. Overlong/malformed/NULL input cannot mint a match. */
+ char empty[13]={0},one[13]="A",twelve[13]="ABCDEFGHIJKL";
+ CHECK(ls_name_equal(empty,"")&&ls_name_equal(one,"A")&&ls_name_equal(twelve,"ABCDEFGHIJKL"));
+ CHECK(!ls_name_equal(one,"")&&!ls_name_equal(one,"AB")&&!ls_name_equal(twelve,"ABCDEFGHIJKLM")&&!ls_name_equal(twelve,"ABCDEFGHIJK"));
+ CHECK(!ls_name_equal(empty,NULL)&&!ls_name_equal(one,"A\n")&&!ls_name_equal(one,"A\x7f")&&!ls_name_equal(one,"A\x80"));
  ls_test_boot(0);ls_test_name(0,0);CHECK(msg_is("SAVE TO CONFIRM")&&!writes&&!physical_calls);
  ls_test_commit();CHECK(msg_is("SAVED")&&physical_calls&&d8ls.intent&&native_as.ready);CHECK(ls_test_level(0)==91);
  unsigned calls=physical_calls;CHECK(d8p1_save_as_flash(1,"FABRICATED",1)==D8POOL_UNSUPPORTED&&physical_calls==calls);
