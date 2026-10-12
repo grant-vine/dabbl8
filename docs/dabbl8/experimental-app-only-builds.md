@@ -47,8 +47,7 @@ initialisation has completed. Invalid arguments, configuration and missing toolc
 are refused before creating output. Missing Python generator libraries fail during
 generation and leave the failed manifest.
 
-`--app-only` requires `--dabbl8`; it cannot combine with `--release` or
-`--timing-diagnostic`. The CLI profile must agree with `DABBL8_ENGINE_PROFILE` when
+`--app-only` requires `--dabbl8`; it cannot combine with `--release`. Diagnostic app-only builds require CDC enabled. The CLI profile must agree with `DABBL8_ENGINE_PROFILE` when
 both are supplied. Invalid flag values and budget/golden-update requests are refused.
 Normal reduced-profile packaging is still refused before SDK, generation, loader or
 package work. Existing FULL compilation and packaging routes are preserved.
@@ -58,7 +57,26 @@ refusals execute the real CLI; positive orchestration uses controlled tool fixtu
 assert that loader/package/SDK paths cannot run. Actual pinned vendor app builds are
 separate evidence. This document offers no firmware download or installation procedure.
 
-Curated timing-diagnostic applications are a separate follow-on gate: this route
-currently refuses `--app-only --timing-diagnostic`, while normal curated packaging
-is disabled. Instrumented variant builds must gain their own source/configuration,
-overhead, host and target qualification before that combination is supported.
+Diagnostic applications can be selected explicitly with `--timing-diagnostic`:
+
+```sh
+python tools/build.py --dabbl8 0.1.0 --app-only --engine-profile core --timing-diagnostic
+python tools/build.py --dabbl8 0.1.0 --app-only --engine-profile breaks --timing-diagnostic
+```
+
+These remain applications, not installable packages. They use a `-timing` version,
+retain the selected profile and stable IDs, and record `timing_diagnostic: true`,
+`timing_report_schema: D8T2` and `stack_qualified: false`. Collection starts stopped.
+The existing paused console start/stop/report controls and aligned-window limits
+remain unchanged. The build manifest records fixed linked user/supervisor stack
+windows. Those allocations do not establish stack use, interrupt nesting headroom,
+or high-water measurements. The unchanged image/RAM/pool and static-budget checks
+still run; failed static budgets do not become passed physical deadlines.
+
+Pair diagnostic-on/off applications with the same profile, explicit version and
+flags before attributing measured code/RAM overhead. `--dabbl8 0.1.0-timing`
+without diagnostics gives the same version identity as `--dabbl8 0.1.0
+--timing-diagnostic`; output directories remain separate. Physical timer calibration,
+external elapsed/reset evidence, stress mixtures, interrupt nesting, transport state,
+stack high water and recovery remain separate gates. Retain the manifest with each
+D8T2 report: the wire frame does not identify the selected engine profile itself.

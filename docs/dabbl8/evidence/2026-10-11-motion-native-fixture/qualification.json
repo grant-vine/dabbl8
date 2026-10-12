@@ -1,0 +1,257 @@
+{
+  "record_license": "GPL-3.0-only",
+  "measured_parent": "a01ac4bb990f20e14246230c9f869e680235f529",
+  "delivery_parent": "406de63335eb55248db21005efd17261b167b03a",
+  "docs_only_parent_delta": [
+    "docs/dabbl8/d8p1-codec.md",
+    "docs/dabbl8/d8p1-runtime-state.md",
+    "docs/dabbl8/d8p1-storage-model.md"
+  ],
+  "exact_source_paths": {
+    "tests/motion_test.c": "c3ea0539a4cbc3a46ce26c68bf83f26aa5d9a8467ca1330d100156347293cf36",
+    "tests/motion_native_fixture.h": "13fe6981a0e90c086dbefc526b4e430b4fb952af4129eb47490c9971d88e58fc",
+    "tests/run_tests.sh": "ee0ed2754b2a17240b7357e99f3356f34bbc3d47007eb0bd8cfea9daf71d4fe8"
+  },
+  "generated_header_pins": {
+    "build/gen/ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "build/gen/felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "build/gen/ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "build/gen/felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "build/gen/felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "build/gen/ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "build/gen/ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "bounded_reuse": {
+    "equal_tracked_qualification_inputs": 398,
+    "fresh_execution": false,
+    "reason": "Only three planning documentation files differ between measured and delivery parents; all retained source/fixture/runner/tool inputs match the sealed execution."
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "matrix": [
+    {
+      "configuration": "motion-4-fm0-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm0-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm0-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm0-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm1-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm1-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm1-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-4-fm1-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 123
+    },
+    {
+      "configuration": "motion-8-fm0-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm0-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm0-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm0-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm1-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm1-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm1-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    },
+    {
+      "configuration": "motion-8-fm1-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "assertions": 161
+    }
+  ],
+  "original_four_track_controls": [
+    {
+      "configuration": "parent4-fm0-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm0-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm0-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm0-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm1-slice0-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm1-slice0-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm1-slice1-normal",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    },
+    {
+      "configuration": "parent4-fm1-slice1-san",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "stdout_byte_identical": true
+    }
+  ],
+  "negative_controls": [
+    {
+      "configuration": "address-alias-normal",
+      "changed_source": "firmware/src/motion.c",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "address-alias-san",
+      "changed_source": "firmware/src/motion.c",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "codec-paired-alias-normal",
+      "changed_source": "firmware/src/motion_codec.h",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "codec-paired-alias-san",
+      "changed_source": "firmware/src/motion_codec.h",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "refusal-mutates-normal",
+      "changed_source": "firmware/src/project.c",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "refusal-mutates-san",
+      "changed_source": "firmware/src/project.c",
+      "compile_exit": 0,
+      "run_exit": 1,
+      "detected": true
+    },
+    {
+      "configuration": "v6-loop-reexpanded-normal",
+      "changed_source": "tests/motion_test.c",
+      "compile_exit": 0,
+      "run_exit": 0,
+      "detected": false
+    },
+    {
+      "configuration": "v6-loop-reexpanded-san",
+      "changed_source": "tests/motion_test.c",
+      "compile_exit": 0,
+      "run_exit": -6,
+      "detected": true
+    }
+  ],
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "sealed_evidence": {
+    "local_directory": ".local-baseline/motion-native-port-qualification/current-a01ac4",
+    "entries": 524,
+    "report_sha256": "b947a4729e866c212ab8366448abd79364e2f264c13cf18eb7bf6961a065e5ff",
+    "manifest_sha256": "a0f47e714f58afea8b2c68b634c897b395f16cf1002b4c49b84bf70150e873b0",
+    "original_failure_directory": ".local-baseline/motion-native-port-qualification/0a577ed"
+  },
+  "limits": [
+    "Actual host C fixture tests only, no full CI/suite, vendor/device/timing/flash qualification.",
+    "Current native save remains quarantined; historical read fixture seeds are independently validated only after asserted refusal.",
+    "Host sample-slot arrays are mocks, not physical storage.",
+    "Unsanitized historical-loop mutant passes; sanitizer detects overflow. No 8/8 negative detection claim.",
+    "Existing editor/robust/backup/project runner loops retained. No bend optimization, golden, budget, loader or firmware-source delta."
+  ]
+}

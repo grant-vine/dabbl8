@@ -3,6 +3,7 @@
  * Real sequencer/project/UI sources: motion lifecycle and compact migration. */
 #define UI_TEST_NO_MAIN 1
 #include "ui_test.c"
+#include "motion_native_fixture.h"
 
 static int motion_recording(void)
 {
@@ -17,8 +18,8 @@ static int motion_recording(void)
     bad += check("sounding values never replace the original patch base", t->p[P_REV] == 110 && motion_base_value(t, P_REV) == 23);
     project_t q; project_store_t packed;
     project_capture(&q);
-    bad += check("project snapshot saves base + independent events while sounding", q.t[0].p[P_REV] == 23 && q.motion.event[0].value == 110 &&
-        proj_pack(&packed, &q) && sizeof packed == 3648u);
+    bad += check(MOTION_HIST("snapshot captures bases/events; independent first-four FUN9 fixture validates","project snapshot saves base + independent events while sounding"), q.t[0].p[P_REV] == 23 && q.motion.event[0].value == 110 &&
+        motion_fixture_pack(&packed, &q) && sizeof packed == 3648u);
     seq_stop();
     bad += check("stop before another step restores the original parameter", t->p[P_REV] == 23);
     seq_start(); seq_tick(t, CTL);
@@ -77,9 +78,9 @@ static int compact_project(void)
     motion_set_event(t, 3, P_REV, 110);
     project_t before, after; project_store_t packed, corrupt;
     project_capture(&before);
-    bad += check("FUN9 fits the retained and flash extent", sizeof(proj_slot) == 4u * 3648u && proj_pack(&packed, &before));
-    bad += check("FUN9 round trip preserves signed values/FM params/probability/motion", proj_import(&after, &packed, sizeof packed) &&
-        !memcmp(&before, &after, sizeof before));
+    bad += check(MOTION_HIST("historical four-track FUN9 fixture fits retained extent","FUN9 fits the retained and flash extent"), sizeof(proj_slot) == 4u * 3648u && motion_fixture_pack(&packed, &before));
+    bad += check(MOTION_HIST("historical first-four FUN9 import preserves values/FM params/chance/motion","FUN9 round trip preserves signed values/FM params/probability/motion"), proj_import(&after, &packed, sizeof packed) &&
+        motion_fixture_same(&before,&after));
     corrupt = packed; corrupt.raw[112] ^= 1u;
     bad += check("FUN7 torn or corrupted payload is refused", !proj_import(&after, &corrupt, sizeof corrupt));
     corrupt = packed; corrupt.raw[68] = 255; uint32_t sum = proj_hash(corrupt.raw, sizeof corrupt - 4u);
@@ -89,8 +90,8 @@ static int compact_project(void)
     sum = proj_hash(corrupt.raw, sizeof corrupt - 4u); memcpy(corrupt.raw + sizeof corrupt - 4u, &sum, 4);
     bad += check("invalid probability is refused even with a correct hash", !proj_import(&after, &corrupt, sizeof corrupt));
     project_v6_t old; memset(&old, 0, sizeof old); old.magic = PROJ_MAGIC_V6; old.size = sizeof old;
-    memcpy(old.g, before.g, sizeof old.g); old.parts = NPART; old.phys = PROJ_PHYS;
-    for (uint32_t k = 0; k < NTRK; k++) {
+    memcpy(old.g, before.g, sizeof old.g); old.parts = PROJ_LEGACY_NTRK; old.phys = PROJ_PHYS;
+    for (uint32_t k = 0; k < PROJ_LEGACY_NTRK; k++) {
         for (uint32_t j = 0; j < 61u; j++) old.t[k].p[j] = before.t[k].p[j];
         for (uint32_t j = 0; j < 8u; j++) old.t[k].p[61u + j] = before.t[k].p[P_E0 + j];
         old.t[k].engine = before.t[k].engine; old.t[k].preset = before.t[k].preset;
@@ -100,10 +101,10 @@ static int compact_project(void)
     bad += check("real FUN6 disk image migrates with FM defaults/100% chance/no motion", proj_import(&after, &old, sizeof old) &&
         after.t[0].p[P_E0] == before.t[0].p[P_E0] && after.t[0].p[P_ED_FLT] == -50 &&
         after.t[0].p[P_FM1_LEVEL] == 127 && !after.motion.count && step_chance(&after.t[0].step[3]) == 100u);
-    bad += check("migrated FUN6 can be written as fixed-size FUN7", proj_pack(&packed, &after));
-    project_save(1); motion_clear(t); t->p[P_FM1_LEVEL] = 127; step_set_chance(&t->step[3], 100);
+    bad += check(MOTION_HIST("independent historical writer encodes migrated four-track FUN6","migrated FUN6 can be written as fixed-size FUN7"), motion_fixture_pack(&packed, &after));
+    motion_fixture_save(1); motion_clear(t); t->p[P_FM1_LEVEL] = 127; step_set_chance(&t->step[3], 100);
     project_load(1);
-    bad += check("actual project save/load restores motion, chance and operator settings", motion_count(t) == 1u &&
+    bad += check(MOTION_HIST("refused save then seeded historical load restores motion/chance/operator values","actual project save/load restores motion, chance and operator settings"), motion_count(t) == 1u &&
         step_chance(&t->step[3]) == 25u && t->p[P_FM1_LEVEL] == 80);
     return bad;
 }
@@ -113,8 +114,8 @@ static void pack_fun7_89(project_store_t *out, const project_t *q, const motion_
 {
     uint8_t *b = out->raw; uint32_t pos = 68u, t, i, magic = PROJ_MAGIC, size = PROJ_STORE_SIZE, sum;
     memset(out, 0, sizeof *out); memcpy(b, &magic, 4); memcpy(b + 4, &size, 4);
-    memcpy(b + 8, q->g, sizeof q->g); b[62] = q->sel; b[63] = q->parts; b[64] = q->phys; b[66] = 89;
-    for (t = 0; t < NTRK; t++) {
+    memcpy(b + 8, q->g, sizeof q->g); b[62] = q->sel; b[63] = PROJ_LEGACY_NTRK; b[64] = q->phys; b[66] = 89;
+    for (t = 0; t < PROJ_LEGACY_NTRK; t++) {
         for (i = 0; i < 89u; i++) b[pos++] = (uint8_t)(q->t[t].p[i < 81u ? i : P_E0 + i - 81u] + 64);
         b[pos++] = q->t[t].engine; b[pos++] = q->t[t].preset;
         for (i = 0; i < NSTEP; i++) {
@@ -147,7 +148,7 @@ static int fun7_89(void)
     m.event[2] = (motion_event_t){6, 61, 20};                      /* FM OP1 ATK: 61 then and now */
     pack_fun7_89(&old, &before, &m);
     ok = proj_import(&after, &old, sizeof old);
-    for (k = 0; ok && k < NTRK; k++) {
+    for (k = 0; ok && k < PROJ_LEGACY_NTRK; k++) {
         for (i = 0; i < 8u; i++) ok &= after.t[k].p[P_E0 + i] == before.t[k].p[P_E0 + i];
         for (i = 0; i < 81u; i++) ok &= after.t[k].p[i] == before.t[k].p[i];
         ok &= after.t[k].p[P_CHRD] == 0 && after.t[k].p[P_VOIC] == 0;
@@ -158,8 +159,8 @@ static int fun7_89(void)
     bad += check("  its motion: E0 (81) -> P_E0, REV and FM OP1 ATK (61) kept",
         after.motion.count == 3u && after.motion.event[0].param == P_REV && after.motion.event[1].param == P_E0 &&
         after.motion.event[1].value == 40 && after.motion.event[2].param == P_FM1_ATK);
-    bad += check("  written again (P_COUNT parameters): the same project", proj_pack(&old, &after) && old.raw[66] == P_COUNT &&
-        proj_import(&before, &old, sizeof old) && !memcmp(&before, &after, sizeof before));
+    bad += check(MOTION_HIST("independent historical writer preserves first-four P_COUNT projection","  written again (P_COUNT parameters): the same project"), motion_fixture_pack(&old, &after) && old.raw[66] == P_COUNT &&
+        proj_import(&before, &old, sizeof old) && motion_fixture_same(&before,&after));
     pack_fun7_89(&old, &before, &m);                                /* SONG: a slot of the old firmware */
     memcpy(&proj_slot[2], &old, sizeof old);
     chain_config.count = 1; chain_config.row[0] = (chain_row_t){2, 1};
@@ -189,7 +190,7 @@ static int loads_and_song(void)
     undo_swap(); bad += check("sound undo restores the original motion pool and base", motion_count(t) == 2u && t->p[P_REV] == 21 &&
                               t->eng_req == e0);
     undo_swap(); bad += check("sound redo restores the loaded motion state", motion_count(t) == 1u && t->eng_req == e1);
-    undo_swap(); project_save(0);
+    undo_swap(); motion_fixture_save(0);
     t->p[P_REV] = 43; t->step[0].note[0] = 72; chain_config.count = 1; chain_config.row[0] = (chain_row_t){0, 1};
     bad += check("song preparation imports saved motion alongside steps", chain_prepare() == 0 && chain.source[0].motion.count == 2u);
     seq_start(); seq_tick(t, CTL);
@@ -540,19 +541,19 @@ static int lock_project(void)
     uint32_t i, ok = 1;
     motion_set_event(t, 1, P_REV, 33);                   /* no lock: as every project before 1.1 */
     project_capture(&before);
-    ok = proj_pack(&a, &before) && proj_import(&after, &a, sizeof a) && proj_pack(&b, &after) && !memcmp(&a, &b, sizeof a);
+    ok = motion_fixture_pack(&a, &before) && proj_import(&after, &a, sizeof a) && motion_fixture_pack(&b, &after) && !memcmp(&a, &b, sizeof a);
     for (i = 0; i < before.motion.count; i++)
         ok &= before.motion.event[i].param < 128u && !(before.motion.event[i].param & MOTION_LOCK);
     bad += check("a project without locks: the bytes as before (ids < 128), the same round trip", ok);
     motion_set_lock(t, 2, P_REV, 101); motion_set_lock(t, 7, P_E4, 77);
     project_capture(&before);
-    ok = proj_pack(&a, &before) && proj_import(&after, &a, sizeof a) && !memcmp(&before, &after, sizeof before);
-    bad += check("FUN9 round trip keeps the locks (bit 7 of the id byte), their values and steps", ok &&
+    ok = motion_fixture_pack(&a, &before) && proj_import(&after, &a, sizeof a) && motion_fixture_same(&before,&after);
+    bad += check(MOTION_HIST("historical first-four FUN9 fixture preserves lock bits/values/steps","FUN9 round trip keeps the locks (bit 7 of the id byte), their values and steps"), ok &&
         after.motion.event[1].param == (P_REV | MOTION_LOCK) && after.motion.event[2].value == 77);
-    project_save(2);
+    motion_fixture_save(2);
     motion_clear(t);
     project_load(2);
-    bad += check("  saved and loaded: the locks play again", motion_lock_count(t) == 2u && lock_passes(t,
+    bad += check(MOTION_HIST("refused save then seeded historical load plays locks again","  saved and loaded: the locks play again"), motion_lock_count(t) == 2u && lock_passes(t,
         (const int16_t[8]){20, 33, 101, 33, 33, 33, 33, 33}));
     seq_stop();
     {   /* a lock on an engine id of a store of fewer parameters (a FUN7 of 89, before the chord keys; a FUN8 of 91,
@@ -817,10 +818,68 @@ static int auto_list(void)
     ui_prefs &= ~PREF_LARGE;
     return bad;
 }
+
+#if NPART == 8
+static int native_eight_track_motion(void)
+{
+    int bad=0,ok=1;ui_power_on();song.rec=255;
+    for(unsigned k=0;k<8;k++)trk[k].p[P_REV]=(int16_t)(20+k);
+    seq_start();for(unsigned k=0;k<8;k++)seq_tick(&trk[k],CTL);
+    for(unsigned k=0;k<8;k++){song.sel=k;trk[k].p[P_REV]=(int16_t)(40+k);ok &= !motion_capture(&trk[k],P_REV,40+k);}
+    ok &= motion.count==8&&motion.on==255;
+    for(unsigned k=0;k<8;k++)ok &= motion.event[k].place==64u*k&&motion.event[k].value==40+k;
+    bad += check("all eight selected/armed tracks record distinct wide addresses",ok);
+    track_t lower[4];memcpy(lower,trk,sizeof lower);song.sel=4;trk[4].p[P_REV]=91;motion_capture(&trk[4],P_REV,91);
+    bad += check("track5 overwrite preserves track1 record and all lower-track state",motion.count==8&&motion.event[4].value==91&&motion.event[0].value==40&&!memcmp(lower,trk,sizeof lower));
+    seq_stop();ok=1;for(unsigned k=0;k<8;k++)ok &= trk[k].p[P_REV]==20+k;
+    bad += check("stop restores eight independent automation bases",ok);
+    seq_start();for(unsigned k=0;k<8;k++)seq_tick(&trk[k],CTL);ok=1;
+    for(unsigned k=0;k<8;k++)ok &= trk[k].p[P_REV]==(k==4?91:40+k);
+    bad += check("real sequencer plays tracks5–8 without aliasing tracks1–4",ok);seq_stop();
+
+    ui_power_on();ok=1;
+    for(unsigned k=0;k<8;k++){
+        track_t*t=&trk[k];t->p[P_REV]=10+k;t->p[P_SLEN]=8;
+        for(unsigned j=0;j<8;j++)t->step[j]=(step_t){{48+k},1,ST_NOTE,0,100};
+        ok &= !motion_set_lock(t,2,P_REV,80+k)&&!motion_set_event(t,4,P_REV,40+k)&&!motion_set_lock(t,6,P_REV,100-k);
+    }
+    ok &= motion.count==24&&motion.on==255;
+    for(unsigned k=0;k<8;k++)for(unsigned j=0;j<3;j++)ok &= motion.event[3*k+j].place==64u*k+2u+2u*j;
+    bad += check("eight-track locks/events retain literal independent track/step addresses",ok);
+    uint8_t wire[MOTION_V1_MAX],before_wire[MOTION_V1_MAX];motion_store_t decoded,before_decode;
+    memset(wire,0xA5,sizeof wire);memcpy(before_wire,wire,sizeof wire);
+    bad += check("native motion short output refuses before altering bytes",!motion_v1_encode(wire,127,&motion)&&!memcmp(wire,before_wire,sizeof wire));
+    unsigned n=motion_v1_encode(wire,sizeof wire,&motion);ok=n==128&&wire[4]==24&&wire[5]==255;
+    for(unsigned k=0;k<8;k++)for(unsigned j=0;j<3;j++){unsigned a=8+(3*k+j)*5;ok &= wire[a]==k&&wire[a+1]==2+2*j&&wire[a+2]==(j==1?P_REV:P_REV|MOTION_LOCK);}
+    ok &= motion_v1_decode(&decoded,wire,n)&&decoded.count==24&&decoded.on==255;
+    for(unsigned k=0;k<24;k++)ok &= decoded.event[k].place==motion.event[k].place&&decoded.event[k].param==motion.event[k].param&&decoded.event[k].value==motion.event[k].value;
+    bad += check("D8M1 literal eight-track wire fields and real decoder preserve every lock/event",ok);
+    memset(&decoded,0xA5,sizeof decoded);before_decode=decoded;wire[8]=8;
+    bad += check("invalid native ninth-track index refuses without changing decoded output",!motion_v1_decode(&decoded,wire,n)&&!memcmp(&decoded,&before_decode,sizeof decoded));
+    uint8_t legacy[260],legacy_before[260];memset(legacy,0xA5,sizeof legacy);memcpy(legacy_before,legacy,sizeof legacy);
+    bad += check("historical four-track motion codec refuses upper-track events without truncation",!motion_legacy_encode(legacy,&motion)&&!memcmp(legacy,legacy_before,sizeof legacy));
+    for(unsigned k=0;k<8;k++){
+        const int16_t want[8]={10+k,10+k,80+k,10+k,40+k,40+k,100-k,40+k};
+        bad += check("eight-track actual lock/automation playback keeps each track's own values",lock_passes(&trk[k],want));seq_stop();
+    }
+    seq_start();seq_tick(&trk[7],CTL);memcpy(lower,trk,sizeof lower);motion_store_t before=motion;
+    motion_set_enabled(&trk[7],0);
+    bad += check("track8 bypass preserves all records and lower-track runtime",motion.count==before.count&&(motion.on&127)==(before.on&127)&&!(motion.on&128)&&trk[7].p[P_REV]==17&&!memcmp(lower,trk,sizeof lower));
+    motion_set_enabled(&trk[7],1);seq_stop();memcpy(lower,trk,sizeof lower);motion_clear(&trk[4]);ok=motion.count==21&&!(motion.on&16)&&!memcmp(lower,trk,sizeof lower);
+    for(unsigned k=0;k<8;k++)ok &= motion_count(&trk[k])==(k==4?0:3)&&motion_lock_count(&trk[k])==(k==4?0:2);
+    bad += check("track5 clear preserves tracks1–4 and tracks6–8 without address alias",ok);
+    return bad;
+}
+#endif
+
 int main(void)
 {
     int bad = motion_recording() + motion_capacity() + probability_playback() + compact_project() + fun7_89() + loads_and_song() + repeat_mode();
     bad += arp_new_modes();
     bad += lock_playback() + lock_edit() + lock_project() + lock_ui() + lock_undo() + auto_list();
-    printf("%s\n", bad ? "MOTION TEST FAILED" : "motion/chance/compact storage tests passed"); return bad != 0;
+#if NPART == 8
+    bad += native_eight_track_motion();
+    printf("native scope: eight-track runtime/D8M1; historical first-four inputs; persistence refused\n");
+#endif
+    printf("%s\n", (bad||motion_fixture_bad) ? "MOTION TEST FAILED" : "motion/chance/compact storage tests passed"); return bad != 0 || motion_fixture_bad != 0;
 }

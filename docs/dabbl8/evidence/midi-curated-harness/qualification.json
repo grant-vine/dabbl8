@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "qualification": "focused host MIDI harness only",
+  "actual_main": "9ec215e3d8c2315b5ecd4fda3b715a7c22b3f4ea",
+  "actual_main_tree": "4e2a20c73267b19ecb07a083a03f538fb6e4ba81",
+  "tested_source_sha256": {
+    "tests/ui_test.c": "4fb01191d7c592a5ac416268297541ff7a4648ed815ab087fccd6c245eb08a12",
+    "tests/midi_control_test.c": "59efda0f8e435bc3e51dcc2fc666f0dcb96872ccaf0468abd97f6efe7c87303b",
+    "tests/run_tests.sh": "24fa9f304bb567a4a83eba6ac8041004a8ed18fbc9fa0899d7b61b84b91e75fd"
+  },
+  "current_date": "2026-10-12",
+  "fresh_FULL_pre_correction_configurations": 16,
+  "fresh_reduced_post_correction_configurations": 4,
+  "checks_four": 95,
+  "checks_eight": 171,
+  "current_whole_PP_and_dependency_identity_configurations": 20,
+  "current_FULL_runtime_binding": "Pre-correction FULL16 runs apply to correction through exact preprocessed input equality, not a second set of16 runtime executions.",
+  "historical_negative_controls": {
+    "count": 6,
+    "date": "2026-10-11",
+    "current_rerun": false,
+    "scope": "Wrong startup preset and removed SLICE/SAMPLE guards, normal/inheritedSAN; preserved original outcomes."
+  },
+  "evidence": {
+    "Oct12_compiled_inputs": {
+      "report_sha256": "bf495084fa80078e32d0d6101ef8d644d01675059e67369e30abf31c4a89d9dd",
+      "manifest_sha256": "2be46ac37b03f1678edf595a48f8a74936b550cb99720f3d44ea7b3fe9faf937"
+    },
+    "Oct12_FULL_inputs": {
+      "report_sha256": "110a95edbc2ad789fb560926da0f93c0f8757f74ee80392ed81594be2950c52d",
+      "manifest_sha256": "828ab8a45323d58c06a3d969b3bd1c679bf6eaac4e49411968695914a2d56838"
+    },
+    "Oct12_FULL_runtime": {
+      "report_sha256": "818ecb60d033a795938214ffe62860788e9680ac9f0d071e9966c3a3bba51787",
+      "manifest_sha256": "7cd04ac4ee0d3517f22a5333e041fb6fb3b69e0cec98410cf332f442f0588ca8"
+    },
+    "Oct12_reduced_runtime": {
+      "report_sha256": "75822182d695940e71cf9173b28d2d1b9ecb070846c259925e46927cc79a250d",
+      "manifest_sha256": "4d7e9580ed7c25cfb0dc3b3c4168ae138835051fcfe4d44908ab7f0f692b9543"
+    },
+    "Oct11_original20_and_negatives": {
+      "report_sha256": "2194e26c3b25ce5937778f786e73d6767f510572cc16f9f20915f126530d5330",
+      "manifest_sha256": "fc46c026cd9ba249a0c8433ae9c074790678224f7f4da1e868bac09706ac4217"
+    }
+  },
+  "date_drift": "Only About-screen date literal changed; raw drift preserved, no normalization. Fresh applicable runtime configurations repeated.",
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "whole_ci_qualified": false,
+  "hardware_qualified": false,
+  "new_target_execution": false,
+  "production_changes": false
+}

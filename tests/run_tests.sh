@@ -258,6 +258,13 @@ if [ -f build/gen/felucca_tables.h ]; then
             done
         fi
     done
+    # One invocation contains normal and inherited sanitizer profile matrices.
+    run "curated diagnostic apps: actual eight-track ISR off/paused/collect parity" env CC="$CC" SANITIZE="${SANITIZE:-1}" python3 tests/engine_profile_timing_test.py
+    for profile in 1 2; do
+        midi_bin="$OUT/curated_midi_$profile"
+        $CC -O1 -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -Ibuild/gen -Ifirmware/src -o "$midi_bin" tests/midi_control_test.c -lm
+        run "curated profile=$profile complete MIDI controls/clock" "$midi_bin"
+    done
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/phys_pool_test" tests/phys_pool_test.c -lm
     run "PHYS eight-part shared state: ownership, model/engine changes, retriggers and full-pool refusal" "$OUT/phys_pool_test"
     $CC -O2 -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_pool_test" tests/fm6_pool_test.c -lm
@@ -406,12 +413,20 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "offline legacy import preview: preserve originals, report migrations and refuse unknown data" python3 tests/offline_import_test.py "$OUT/dabbl8_import_preview"
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_v1_test" tests/motion_v1_test.c -lm
     run "D8M1: all 512 addresses and locks, version/range/duplicate/truncation refusal" "$OUT/motion_v1_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/motion_test" tests/motion_test.c -lm
-    run "motion, whole-step chance, FUN7 migration, song restore, ARP repeat and the 1.2 ARP modes" "$OUT/motion_test"
+    # Keep historical fixture extents separate from the actual native eight-track lifecycle.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$OUT/motion_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$motion_bin" tests/motion_test.c -lm
+        run "motion lifecycle: tracks=$tracks FM4=$fm4 SLICE=$slice; historical inputs/native write refusal" "$motion_bin"
+    done; done; done
     $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/ratchet_test" tests/ratchet_test.c -lm
     run "RATCH: x1..x4 in a step (notes, chords, drum hits), gates, chance, swing, projects, user presets, CHANCE page" "$OUT/ratchet_test"
-    $CC -O1 -w -Ibuild/gen -Ifirmware/src -o "$OUT/midi_control_test" tests/midi_control_test.c -lm
-    run "USB/TRS clock, bend, sustain, ownership and panic recovery" "$OUT/midi_control_test"
+    # Full historical/native MIDI harness; protocol constants stay independent of track count.
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$OUT/midi_control_${tracks}_${fm4}_${slice}"
+        $CC -O1 -w -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -Ibuild/gen -Ifirmware/src -o "$midi_bin" tests/midi_control_test.c -lm
+        run "complete MIDI controls/clock: tracks=$tracks FM4=$fm4 SLICE=$slice" "$midi_bin"
+    done; done; done
     $CC -O1 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/digital_test" tests/digital_test.c -lm
     run "DIGITAL (retired, built here with FELUCCA_FM4=1): operator envelopes/levels" "$OUT/digital_test"
     $CC -O2 -w -DFELUCCA_FM4=1 -Ibuild/gen -Ifirmware/src -o "$OUT/fm4_test" tests/fm4_test.c -lm
@@ -579,6 +594,11 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        motion_bin="$A/motion_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$motion_bin" tests/motion_test.c -lm
+        run "ASan/UBSan: motion lifecycle tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$motion_bin"
+    done; done; done
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
     run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
     $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
@@ -661,6 +681,11 @@ else
         done
     done
     # END complete project/backup historical/native matrix (san)
+    for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
+        midi_bin="$A/midi_control_${tracks}_${fm4}_${slice}"
+        $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$midi_bin" tests/midi_control_test.c -lm
+        run "ASan/UBSan: complete MIDI controls/clock tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$midi_bin"
+    done; done; done
     for n in 4 8; do
         $SCC -DNPART=$n -o "$A/glo_transport_test$n" tests/glo_transport_test.c -lm
         run "ASan/UBSan: actual locked/held GLO transport, $n tracks" "$A/glo_transport_test$n"
@@ -699,6 +724,11 @@ else
                 run "ASan/UBSan: curated profile=$profile actual $fixture" "$A/$name"
             done
         fi
+    done
+    for profile in 1 2; do
+        midi_bin="$A/curated_midi_$profile"
+        $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=$profile -o "$midi_bin" tests/midi_control_test.c -lm
+        run "ASan/UBSan: curated profile=$profile complete MIDI controls/clock (inherited DSP exclusions)" "$midi_bin"
     done
     $SCC -DNPART=8 -o "$A/track_client_bridge8" tests/track_client_bridge.c -lm
     $SCC -o "$A/track_client_bridge4" tests/track_client_bridge.c -lm
