@@ -12,8 +12,8 @@
 static struct {
  d8fu format;
  uint32_t epoch,own,usb,started,generation,shown,wire_crc;
- uint32_t length,offset,header_crc,lcd_faults;
- uint8_t phase,classification,revoked,busy,usb_config,commit_phase,attempted;
+ uint32_t length,offset,header_crc,lcd_faults,ancillary_crc;
+ uint8_t phase,classification,revoked,busy,usb_config,commit_phase,attempted,foundation;
 } d8fi __attribute__((section(".pool")));
 enum { FI_IDLE,FI_REQUIRED,FI_UNCERTAIN,FI_REFUSED,FI_RELEASE,FI_EXECUTE,FI_FAILED };
 static int d8fi_blocked(void){return d8fi.phase!=FI_IDLE;}

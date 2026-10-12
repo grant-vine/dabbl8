@@ -48,12 +48,44 @@ static int fi_lifetime(void *c)
 }
 static int fi_read(void*c,uint32_t a,void*p,uint32_t n)
 {(void)c;if(!fi_lifetime(NULL))return -1;int rc=st_read(a,p,n);return fi_lifetime(NULL)?rc:-1;}
+static unsigned fi_foundation_object(void)
+{
+ static const uint8_t objects[4]={OBJ_UPRESET0,OBJ_UPRESET0+1,OBJ_UPFM6,OBJ_SETTINGS};
+ return d8fi.foundation<4?objects[d8fi.foundation]:OBJ_COUNT;
+}
+static const void *fi_foundation_data(uint32_t *n)
+{
+ unsigned obj=fi_foundation_object();
+ if(obj==OBJ_UPRESET0||obj==OBJ_UPRESET0+1){*n=sizeof(up_bank_t);return &up_bank[obj-OBJ_UPRESET0];}
+ if(obj==OBJ_UPFM6){*n=sizeof upf;return &upf;}
+ if(obj==OBJ_SETTINGS){*n=sizeof persist_saved;return &persist_saved;}
+ *n=0;return NULL;
+}
+static int fi_foundation_ticket(unsigned program,uint32_t a,const void*p,uint32_t n)
+{
+ unsigned obj=fi_foundation_object();uint32_t length=0;const void *data=fi_foundation_data(&length);
+ if(!data||length!=d8fi.length||
+    d8fi.wire_crc!=d8p1_crc32(main_workspace.migration.stage.wire,d8fi.format.length)||
+    d8fi.ancillary_crc!=st_crc32(data,length)||
+    d8fi.ancillary_crc!=st_crc32(st_buf,length))return 0;
+ uint32_t base=st_sector(obj,0);
+ if(!program)return d8fi.commit_phase==0&&a==base&&n==4096;
+ if(d8fi.commit_phase!=1||!p)return 0;
+ if(a==base&&n==32) {
+  st_hdr_t h;memcpy(&h,p,sizeof h);
+  return d8fi.offset==length&&h.magic==ST_MAGIC&&h.type==obj&&!h.slot&&h.seq==1&&h.len==length&&
+   h.crc==d8fi.ancillary_crc&&h.rsv[0]==~0u&&h.rsv[1]==~0u&&h.hcrc==st_crc32(&h,sizeof h-4u);
+ }
+ uint32_t expected=length-d8fi.offset;if(expected>256)expected=256;
+ return expected&&a==base+ST_PAYLOAD_OFF+d8fi.offset&&n==expected&&p==st_buf+d8fi.offset;
+}
 static int fi_ticket(unsigned program,uint32_t a,const void*p,uint32_t n)
 {
  if(!fi_lifetime(NULL)||d8fi.busy||!FL_STORE_OK(a,n)||
     d8_capture_change.epoch==UINT32_MAX||d8fi.own==UINT32_MAX)return 0;
  if(d8fi.format.phase==1)return !program&&n==4096&&a==d8fu_address(d8fi.format.sector);
  if(d8fi.format.phase!=3)return 0;
+ if(d8fi.foundation<4)return fi_foundation_ticket(program,a,p,n);
  uint8_t *wire=main_workspace.migration.stage.wire;
  if(d8p1_crc32(wire,d8fi.length)!=d8fi.wire_crc)return 0;
  uint32_t base=d8pool_mapped_address(0);
@@ -75,7 +107,11 @@ static int fi_driver(unsigned program,uint32_t a,const void*p,uint32_t n)
   d8fi.busy=1;d8fi.attempted=1;d8_capture_store_changed();d8fi.own++;
   rc=program?D8_FI_PROGRAM(a,p,n,&took):D8_FI_ERASE(a,&took);
   if(!fi_lifetime(NULL))rc=-1;
-  if(!rc&&d8fi.format.phase==3) {
+  if(!rc&&d8fi.format.phase==3&&d8fi.foundation<4) {
+   if(!program)d8fi.commit_phase=1;
+   else if(a==st_sector(fi_foundation_object(),0))d8fi.commit_phase=2;
+   else d8fi.offset+=n;
+  } else if(!rc&&d8fi.format.phase==3) {
    if(!program)d8fi.commit_phase++;
    else if(a==d8pool_mapped_address(0))d8fi.commit_phase=3;
    else d8fi.offset+=n;
@@ -125,10 +161,36 @@ static void fi_fail(void)
  d8fi.generation=0;d8fi.phase=FI_FAILED;d8fi.shown=0;project_native.mode=2;project_native.ready=0;
  d8ls_offline();ui.force=1;ui_message("INITIALIZATION STOPPED");
 }
+static void fi_factory_ancillary(void)
+{
+ /* Construct factory data; never export possibly inherited/current caches as
+  * defaults. The existing globals are reset only in the disclosed formatter. */
+ memset(up_bank,0,sizeof up_bank);
+ for(unsigned b=0;b<2;b++){up_bank[b].magic=UP_BANK_MAGIC;up_bank[b].rsize=sizeof(up_rec_t);up_bank[b].nslot=UP_PER_BANK;}
+ upf_empty();
+ memset(&persist_saved,0,sizeof persist_saved);persist_saved.magic=PERSIST_MAGIC;
+ persist_saved.palette=palette_to_stored(UI_GREY_INDEX);persist_saved.panel=PANEL_DEFAULT;
+ settings_import(&persist_saved,sizeof persist_saved);settings_init();panel_init();persist_pending=0;
+}
+static int fi_foundation_erase(uint32_t a){return fi_driver(0,a,NULL,4096);}
+static int fi_foundation_program(uint32_t a,const void*p,uint32_t n){return fi_driver(1,a,p,n);}
+static int fi_foundation_step(void)
+{
+ uint32_t n=0;const void *data=fi_foundation_data(&n);unsigned obj=fi_foundation_object();
+ if(!data||!fi_lifetime(NULL)||d8fi.wire_crc!=d8p1_crc32(main_workspace.migration.stage.wire,d8fi.format.length))return 0;
+ d8fi.length=n;d8fi.offset=0;d8fi.commit_phase=0;d8fi.ancillary_crc=st_crc32(data,n);
+ /* Copy0 and sequence1 only, after every approved sector was verified erased.
+  * The native marker remains absent until all four commit/readback checks pass. */
+ int rc=st_save_commit(obj,data,n,0,fi_foundation_erase,fi_foundation_program);
+ if(rc||!fi_lifetime(NULL)||d8fi.commit_phase!=2)return 0;
+ d8fi.foundation++;d8fi.offset=256;d8fi.commit_phase=0;d8fi.length=(uint32_t)d8fi.format.length;
+ return 1;
+}
 static int fi_stage_default(void)
 {
  /* Only fresh factory state is captured. No foreign user cache was imported. */
  uint32_t flags=irq_save();
+ fi_factory_ancillary();
  chain_defaults(&chain_config);memset(&motion,0,sizeof motion);memset(motion_active,0,sizeof motion_active);motion_base_valid=0;
  for(unsigned g=0;g<G_COUNT;g++)song.g[g]=GP[g].def;
  fm6_init();undo_depth++;
@@ -152,7 +214,7 @@ static int fi_stage_default(void)
     fm1_lcd_timeouts!=d8fi.lcd_faults||headers!=d8fi.header_crc||!fi_quiet()||
     staged_crc!=d8p1_crc32(w->wire,n))return 0;
  d8fi.length=(uint32_t)n;d8fi.wire_crc=staged_crc;
- d8fi.own=0;d8fi.offset=256;d8fi.commit_phase=0;d8fi.phase=FI_EXECUTE;
+ d8fi.own=0;d8fi.foundation=0;d8fi.offset=256;d8fi.commit_phase=0;d8fi.phase=FI_EXECUTE;
  d8pool_physical io={NULL,fi_read,fi_erase,fi_program,fi_lifetime};
  return d8fu_begin(&d8fi.format,&io,w->wire,n,d8fi.classification==D8FU_UNCERTAIN)==D8FU_MORE;
 }
@@ -165,15 +227,19 @@ static void d8fi_poll(void)
   if(!fi_stage_default()){fi_fail();return;}
  }
  if(d8fi.phase!=FI_EXECUTE)return;
+ if(d8fi.format.phase==3&&d8fi.foundation<4) {
+  if(!fi_foundation_step())fi_fail();
+  return;
+ }
  int rc=d8fu_step(&d8fi.format);
  if(rc==D8FU_MORE)return;
  if(rc!=D8FU_COMPLETE||d8fi.commit_phase!=3){fi_fail();return;}
  main_migration_end(d8fi.generation);d8fi.generation=0;
- /* Ancillary state was never imported. Re-scan the now-empty native-owned
-  * instrument areas; normal initial settings/panel defaults were already used. */
+ /* Ancillary state was never imported. Re-scan empty samples and canonical initialized
+  * banks; factory settings/panel defaults were committed before the marker. */
 #if FELUCCA_FLASH
  for(unsigned k=0;k<SMP_USER_SLOTS;k++)smp_user_scan(k);
- up_boot();memset(&persist_saved,0,sizeof persist_saved);persist_pending=0;
+ up_boot();persist_pending=0;
 #endif
  d8fi.phase=FI_IDLE;d8ls_reset();d8ls.intent=1;project_native.mode=1;project_native.ready=0;
  if(project_native_bind_flash(1)||d8p1_autosave_local_begin()){fi_fail();return;}
