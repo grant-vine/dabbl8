@@ -192,6 +192,10 @@ ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_proj
 run "offline native project-set archive: exact originals, sparse roles and whole-set readback" python3 tests/native_project_archive_test.py "$OUT/dabbl8_project_archive"
 
 if [ -f build/gen/felucca_tables.h ]; then
+    for tracks in 4 8; do
+        $CC -w -DNPART=$tracks -Ibuild/gen -Ifirmware/src -o "$OUT/ui_legacy_v6_$tracks" tests/ui_legacy_v6_bounds_test.c -lm
+        run "UI FUN6 fixture: historical four tracks into $tracks-track canonical state" "$OUT/ui_legacy_v6_$tracks"
+    done
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
     ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
@@ -809,6 +813,10 @@ else
     run "ASan/UBSan: native signature canonical wire equivalence and refusals" "$A/native_signature_equivalence_test"
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/native_storage_gate_test" tests/native_storage_gate_test.c
     run "ASan/UBSan: strict eight-track application object write refusal" "$A/native_storage_gate_test"
+    for tracks in 4 8; do
+        ${CC%% *} -std=c11 -D_POSIX_C_SOURCE=200809L -O1 -g -w -fsanitize=address,undefined -fno-sanitize-recover=all -DNPART=$tracks -Ibuild/gen -Ifirmware/src -o "$A/ui_legacy_v6_$tracks" tests/ui_legacy_v6_bounds_test.c -lm
+        run "strict ASan/UBSan: UI FUN6 fixture historical four tracks into $tracks-track canonical state" "$A/ui_legacy_v6_$tracks"
+    done
     $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
     run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"
     $SCC -o "$A/d8p1_pool_runtime_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/d8p1_pool_runtime_test.c -lm
