@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-/* Eight-track existing-driver adapter. No scheduler, migration or menu hook.
+/* Eight-track existing-driver adapter with separately checked operation tickets.
  * Main loop, IRQs enabled on entry: upstream helpers always restore STI and
  * do not preserve nesting. Each call mutates at most one sector/page. */
 #include "d8pool_mapped.h"
@@ -24,7 +24,7 @@ static int df_stopped(void *context);
 static int df_erase(void *context,uint32_t off)
 {
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return df_stopped(context)?d8mc_driver_erase(off):-1;
+    return df_stopped(context)?(d8ls_writing()?d8ls_driver_erase(off):d8mc_driver_erase(off)):-1;
 #else
     uint32_t flags=irq_save();
     int rc=df_stopped(context)?st_erase(off):-1;
@@ -34,7 +34,7 @@ static int df_erase(void *context,uint32_t off)
 static int df_program(void *context,uint32_t off,const void *in,uint32_t n)
 {
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return df_stopped(context)?d8mc_driver_program(off,in,n):-1;
+    return df_stopped(context)?(d8ls_writing()?d8ls_driver_program(off,in,n):d8mc_driver_program(off,in,n)):-1;
 #else
     uint32_t flags=irq_save();
     int rc=df_stopped(context)?st_prog(off,in,n):-1;
@@ -43,19 +43,23 @@ static int df_program(void *context,uint32_t off,const void *in,uint32_t n)
 }
 static int df_stopped(void *context)
 { return flash_ok&&!cv_cpu_active&&!transport_busy()&&!transport_req&&
-         (!context||df_automatic_quiet()); }
-/* native_authorized must come from a separately approved completed migration,
- * not from recognizing one record. No present caller grants that policy. */
+         (!context||df_automatic_quiet())
+#if NTRK == 8 && D8_MIGRATION_SESSION
+         &&(!d8ls_writing()||d8ls_storage_stopped())
+#endif
+         ; }
+/* Caller authorization alone never grants a write. Shipping operations require
+ * the local UI/scheduler ticket or the separately quarantined migration path. */
 int d8p1_save_flash(unsigned object,int native_authorized)
 {
     if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     #if NTRK == 8 && D8_MIGRATION_SESSION
-    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    int ticket=(d8ls.intent?d8ls_native_begin(0,object,NULL):d8mc_native_begin(object));if(ticket)return ticket;
     #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
@@ -63,7 +67,7 @@ int d8p1_save_flash(unsigned object,int native_authorized)
     if(!rc)rc=d8p1_save_pool(&mapped.pool,object);
     d8pool_mapped_close(&mapped);
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return d8mc_native_finish(rc);
+    return d8ls_writing()?d8ls_native_finish(rc):d8mc_native_finish(rc);
 #else
     return rc;
 #endif
@@ -73,7 +77,7 @@ int d8p1_load_flash(unsigned object,int native_authorized)
     if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;
@@ -90,7 +94,7 @@ int d8p1_catalog_flash(d8p1_project_catalog *catalog,int native_authorized)
     if(!catalog)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;
@@ -104,11 +108,11 @@ int d8p1_rename_flash(unsigned object,const char *name,int native_authorized)
     if(object>=3||!name)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     #if NTRK == 8 && D8_MIGRATION_SESSION
-    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    int ticket=(d8ls.intent?d8ls_native_begin(2,object,name):d8mc_native_begin(object));if(ticket)return ticket;
     #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
@@ -116,7 +120,7 @@ int d8p1_rename_flash(unsigned object,const char *name,int native_authorized)
     if(!rc)rc=d8p1_rename_pool(&mapped.pool,object,name);
     d8pool_mapped_close(&mapped);
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return d8mc_native_finish(rc);
+    return d8ls_writing()?d8ls_native_finish(rc):d8mc_native_finish(rc);
 #else
     return rc;
 #endif
@@ -127,11 +131,11 @@ int d8p1_save_as_flash(unsigned object,const char *name,int native_authorized)
     if(object>=3)return D8POOL_INVALID;
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     #if NTRK == 8 && D8_MIGRATION_SESSION
-    int ticket=d8mc_native_begin(object);if(ticket)return ticket;
+    int ticket=(d8ls.intent?d8ls_native_begin(0,object,name):d8mc_native_begin(object));if(ticket)return ticket;
     #endif
     d8pool_mapped mapped;
     d8pool_physical io={NULL,df_read,df_erase,df_program,df_stopped};
@@ -139,7 +143,7 @@ int d8p1_save_as_flash(unsigned object,const char *name,int native_authorized)
     if(!rc)rc=d8p1_save_as_pool(&mapped.pool,object,name);
     d8pool_mapped_close(&mapped);
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return d8mc_native_finish(rc);
+    return d8ls_writing()?d8ls_native_finish(rc):d8mc_native_finish(rc);
 #else
     return rc;
 #endif
@@ -153,13 +157,13 @@ int d8p1_autosave_flash(int native_authorized)
 {
     if(!native_authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     uint8_t quiet_policy=1;
     if(!df_stopped(&quiet_policy))return D8POOL_BUSY;
     #if NTRK == 8 && D8_MIGRATION_SESSION
-    int ticket=d8mc_native_begin(3);if(ticket)return ticket;
+    int ticket=(d8ls.intent?d8ls_native_begin(1,3,NULL):d8mc_native_begin(3));if(ticket)return ticket;
     #endif
     d8pool_mapped mapped;
     d8pool_physical io={&quiet_policy,df_read,df_erase,df_program,df_stopped};
@@ -167,7 +171,7 @@ int d8p1_autosave_flash(int native_authorized)
     if(!rc)rc=d8p1_save_pool(&mapped.pool,3);
     d8pool_mapped_close(&mapped);
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    return d8mc_native_finish(rc);
+    return d8ls_writing()?d8ls_native_finish(rc):d8mc_native_finish(rc);
 #else
     return rc;
 #endif
@@ -177,7 +181,7 @@ int d8p1_autosave_snapshot_flash(uint32_t *signature,d8pool_record *record,int a
 {
     if(!authorized)return D8POOL_UNSUPPORTED;
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     if(!flash_ok)return D8POOL_IO;
     d8pool_mapped mapped;

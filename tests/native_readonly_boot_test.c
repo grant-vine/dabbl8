@@ -13,6 +13,9 @@ static void boot_lcd_hook(void);
 static int boot_inject=-1,boot_event,boot_lcd_late;
 static void boot_lcd_hook(void)
 {
+#ifdef D8_LOCAL_LCD_HOOK
+ D8_LOCAL_LCD_HOOK();
+#endif
  if(boot_lcd_late&&!--boot_lcd_late){if(boot_event==1)mi_w=mi_r+1;else if(boot_event==2)usb.ota_req=1;else transport_req=1;}
 }
 static void boot_read_hook(void)
@@ -27,13 +30,13 @@ static void boot_seed(void)
 {
  cold();blank();flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;
  memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);
- project_native_reset();native_as.ready=0;
+ project_native_reset();native_as.ready=0;d8ls_reset();
  FILE*f=fopen("tests/fixtures/d8p1/minimal.d8p","rb");CHECK(f!=NULL);size_t n=fread(wire,1,sizeof wire,f);CHECK(!ferror(f)&&fgetc(f)==EOF);fclose(f);
  CHECK(!d8p1_load_runtime(wire,n,0));int32_t audio[CTL*2];mix_block(audio,CTL);
  for(unsigned t=0;t<8;t++){trk[t].p[P_LEVEL]=(int16_t)(20+t);trk[t].p[P_SLCR]=trk[t].p[P_AMODE]=0;trk[t].nheld=0;sl[t].w=sl[t].loop=0;}
  strcpy(proj_name,"BOOT EIGHT");proj_cur=PROJ_NO_SLOT;project_capture(&expected_boot);n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n));
  for(unsigned o=0;o<4;o++)CHECK(!d8pool_save(&seed,o,wire,n,7));expected_cache=d8p1_runtime_cache;
- cold();project_native_reset();native_as.ready=0;memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);
+ cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);
  memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;
  ui_prefs&=~PREF_RESTORE_OFF;mix_block(audio,CTL);reset();physical_calls=0;memcpy(baseline,nor,sizeof nor);
 }
@@ -48,6 +51,7 @@ static void boot_preserved(void)
  CHECK(rc==0&&project_native_owns_storage()&&!memcmp(&before,&after,sizeof before));
  CHECK(!writes&&!physical_calls&&!memcmp(nor,baseline,sizeof nor)&&!native_as.ready&&!mc_write_enabled());
 }
+#ifndef D8_NATIVE_READONLY_BOOT_NO_MAIN
 int main(void)
 {
  boot_seed();d8pool_mapped readonly;
@@ -119,3 +123,5 @@ int main(void)
  boot_seed();blank();memcpy(baseline,nor,sizeof nor);CHECK(!autosave_boot(1)&&!project_native_owns_storage()&&!writes);
  printf("Native readonly boot: %u checks, %u failures; actual autosave_boot entry, zero native authority\n",checks,failures);return failures!=0;
 }
+
+#endif /* D8_NATIVE_READONLY_BOOT_NO_MAIN */

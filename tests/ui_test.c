@@ -77,6 +77,9 @@ static void fm1_irq_on(void) {
     UI_IRQ_ON_HOOK();
 #endif
 }
+/* Same observable counter as the target HAL; host LCD faults are explicitly
+ * injected. No fallback is supplied to target firmware. */
+static uint32_t fm1_lcd_timeouts;
 static uint16_t host_screen[240 * 240];
 #ifdef UI_ASYNC_LCD
 static void lcd_sync(void);
@@ -99,7 +102,7 @@ static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
 static struct { const uint16_t *p; uint32_t x,y,w,h,hash; } dma;
 static uint32_t dma_errors, dma_consumed, sync_calls;
 static uint32_t pixels_hash(const uint16_t *p, uint32_t n) {
-    uint32_t h=2166136261u; for (uint32_t i=0;i<n;i++) h=(h^p[i])*16777619u; return h;
+    uint32_t h=2166136261u; for (uint32_t i=0;i<n;i++) { uint16_t pixel;memcpy(&pixel,(const uint8_t *)(const void *)p+i*2u,2);h=(h^pixel)*16777619u; } return h;
 }
 static void lcd_sync(void) {
     sync_calls++;
@@ -110,7 +113,8 @@ static void lcd_sync(void) {
     if (pixels_hash(dma.p,dma.w*dma.h)!=dma.hash) dma_errors++;
     for(uint32_t j=0;j<dma.h && dma.y+j<240u;j++)
         for(uint32_t i=0;i<dma.w && dma.x+i<240u;i++)
-            host_screen[(dma.y+j)*240u+dma.x+i]=dma.p[j*dma.w+i];
+            memcpy(&host_screen[(dma.y+j)*240u+dma.x+i],
+                   (const uint8_t *)(const void *)dma.p+(j*dma.w+i)*2u,2);
     dma.p=0; dma_consumed++;
 }
 #else
@@ -143,7 +147,8 @@ static void lcd_blit(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const uint1
     uint32_t i, j;
     host_blit_rows += h;
     for (j = 0; j < h && y + j < 240u; j++)
-        for (i = 0; i < w && x + i < 240u; i++) host_screen[(y + j) * 240u + x + i] = p[j * w + i];
+        for (i = 0; i < w && x + i < 240u; i++) memcpy(&host_screen[(y + j) * 240u + x + i],
+                   (const uint8_t *)(const void *)p+(j*w+i)*2u,2);
 #endif
 }
 static struct { uint32_t stage; } felucca_dbg;

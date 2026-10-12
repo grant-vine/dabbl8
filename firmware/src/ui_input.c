@@ -1083,6 +1083,7 @@ static void ui_input(void)
     int32_t s, sel = 0, ks[4] = {0, 0, 0, 0};
     static uint32_t lock_ms;                            /* BPM LOCK: the last locked SELECT turn (fm1_ms | 1; 0 none) */
 #if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8ls_blocked()){d8ls_input(pressed,notes);return;}
     if(d8mc_blocked()){d8mc_input(pressed,notes);return;}
 #endif
     fm6_poll();                                         /* FM6: PTCH turned -> its patch */

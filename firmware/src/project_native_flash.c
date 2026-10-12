@@ -21,7 +21,7 @@ static int pnf_rename(void *c,unsigned slot,const char *name)
 int project_native_bind_flash(int completed_migration_authorized)
 {
 #if NTRK == 8 && D8_MIGRATION_SESSION
-    if(!d8mc_session_valid())return D8POOL_UNSUPPORTED;
+    if(!d8mc_session_valid()&&!d8ls_read_ready())return D8POOL_UNSUPPORTED;
 #endif
     project_native_ops ops={NULL,pnf_catalog,pnf_save,pnf_load,pnf_rename,pnf_prepare_arrangement};
     return project_native_bind(&ops,completed_migration_authorized);

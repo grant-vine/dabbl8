@@ -27,7 +27,7 @@ static int nas_reconcile(void)
     native_as.pending=0;
     return D8POOL_OK;
 }
-int d8p1_autosave_session_begin(int authorized,int clean_boot)
+static int nas_begin(int authorized,int clean_boot,int stored_baseline)
 {
     if(!authorized||project_native_status()!=1)return D8POOL_UNSUPPORTED;
     if(native_as.ready)return D8POOL_BUSY;
@@ -42,13 +42,22 @@ int d8p1_autosave_session_begin(int authorized,int clean_boot)
     if(rc)return d8pr_runtime_status(rc);
     rc=d8p1_autosave_snapshot_flash(&stored,&record,1);
     if(rc!=D8POOL_OK&&rc!=D8POOL_EMPTY)return rc;
+    if(stored_baseline&&rc==D8POOL_EMPTY)return D8POOL_EMPTY;
     memset(&native_as,0,sizeof native_as);
-    native_as.saved=native_as.seen=current;
+    native_as.saved=stored_baseline?stored:current;native_as.seen=current;
     native_as.idle=native_as.poll=fm1_ms;
     native_as.enabled=!(ui_prefs&PREF_RESTORE_OFF);
     if(!rc){native_as.record=1;native_as.sequence=record.sequence;}
     native_as.ready=1;return D8POOL_OK;
 }
+int d8p1_autosave_session_begin(int authorized,int clean_boot)
+{ return nas_begin(authorized,clean_boot,0); }
+#if NTRK == 8 && D8_MIGRATION_SESSION
+/* Only the committed local UI path selects the verified existing AS baseline.
+ * Intent does not waive any ownership, freshness or per-operation checks. */
+static int d8p1_autosave_local_begin(void)
+{ return nas_begin(d8ls.intent,0,1); }
+#endif
 int d8p1_autosave_session_poll(void)
 {
     uint32_t now=fm1_ms;
@@ -78,8 +87,14 @@ int d8p1_autosave_session_poll(void)
     if(rc!=D8POOL_OK&&rc!=D8POOL_EMPTY){native_as.idle=now;return rc;}
     native_as.record=!rc;
     if(!rc){native_as.sequence=record.sequence;if(stored==sig){native_as.saved=stored;return D8POOL_OK;}}
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8ls.intent){rc=d8ls_autosave_begin();if(rc){native_as.idle=now;return rc;}}
+#endif
     native_as.last=now;native_as.attempted=1;native_as.pending=1;native_as.err=1;
     rc=d8p1_autosave_flash(1);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    d8ls_autosave_finish(rc); /* retire even a pre-driver refusal */
+#endif
     /* Even OK is reconciled from the committed record, not the pre-save hash.
      * Late changes may produce a different capture or a different current RAM. */
     int checked=nas_reconcile();

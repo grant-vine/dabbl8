@@ -236,6 +236,12 @@ static void name_ok(void)
         ui_message("STOP TO SAVE");
         return;
     }
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(nm.kind==NK_PROJ_SAVE||nm.kind==NK_PROJ_RENAME) {
+        if(d8ls_request(nm.kind==NK_PROJ_SAVE?0u:2u,nm.slot,b)==D8POOL_OK)name_close();
+        return;
+    }
+#endif
     switch (nm.kind) {
     case NK_USER_SAVE:
         up_ui_named(2, nm.slot, b);

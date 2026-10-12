@@ -348,6 +348,7 @@ static void mc_handle_core(const uint8_t*a,uint32_t n)
   if(n!=10||!mc_wire_u32(a+2,&token)||a[7]>1||a[8]>1||(a[7]&&a[8]!=D8SV_PERSISTED)||a[9]!=1){mc_reply(status);return;}
   if(d8mc.phase!=MC_IDLE&&d8mc.phase!=MC_FAILED){mc_reply(MC_BUSY);return;}
   if(!edc_valid()||!ed_capture.full||ed_capture.phase!=4||ed_capture.token!=token||!mc_quiet()){mc_reply(MC_CHANGED);return;}
+  d8ls_offline(); /* a competing migration owner revokes local session intent */
   memset(&d8mc,0,sizeof d8mc);d8mc_edit.revoked=0;d8mc_edit.locked=1;
   d8mc.started=d8mc.last=fm1_ms;d8mc.epoch=d8_capture_change.epoch;d8mc.usb=usb.resets;
   d8mc.token=token;d8mc.resume=a[7];d8mc.choice=a[8];d8mc.rolling=~0u;
@@ -388,6 +389,6 @@ static void mc_handle_core(const uint8_t*a,uint32_t n)
  mc_reply(status);
 }
 static void d8mc_handle(const uint8_t*a,uint32_t n)
-{ if(d8mc_edit.busy){mc_reply(MC_BUSY);return;}d8mc_edit.busy=1;mc_handle_core(a,n);d8mc_edit.busy=0; }
+{ if(d8ls_blocked()){d8ls_revoke();mc_reply(MC_BUSY);return;} if(d8mc_edit.busy){mc_reply(MC_BUSY);return;}d8mc_edit.busy=1;mc_handle_core(a,n);d8mc_edit.busy=0; }
 
 #endif
