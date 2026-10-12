@@ -1,0 +1,76 @@
+{
+  "status": "Reviewable optimization; hardware timing and stack qualification remain open",
+  "parent": "561f7d77302dc597ab54884d4ce25d8025e64c4f",
+  "measured_prototype": "75976d35bbfb5874b036e1c7e66cf010101bbd12",
+  "measured_prototype_parent": "e5d64a5c4f54a55a8950ea87a53ea682db154582",
+  "fresh_delivery_runner_configurations": 4,
+  "packet_cases_each": 74880,
+  "packet_assertions_each": 673955,
+  "retained_original_host": {
+    "positive_executables": 18,
+    "native_executables": 14,
+    "standalone_historical_UAC": 4,
+    "compiled_negative_controls": 4,
+    "scope": "14native:10unchangedSRC/queue/quiet +4packet oracle;4dedicatedCDC0/1normal/strict UAC specify noNTRK and exercise historical branch."
+  },
+  "retained_vendor_builds": {
+    "configurations": 4,
+    "source": "e5/75976 FULL4/8, defaultFM4offSLICEon, timingdiagnostic off, original -Os/-fno-builtin",
+    "compile_clock_UTC": "2026-10-12T00:14:35Z",
+    "fresh_delivery_builds": false,
+    "input_equivalence_count": 211,
+    "parent_main_delta": "Only workflow timeout60\u219290; all211firmware/tool/CIverification/generatedinputs match measuredcandidate byte-for-byte. Additionalfixture/runner/docs do not enter vendorbuild.",
+    "four_track_bin_ELF_dis_symbols_ramtext_identity": true,
+    "native_parent_candidate_app_bytes": 482096,
+    "native_parent_candidate_RAM": 96068,
+    "native_parent_candidate_pool": 335240,
+    "service_code_bytes": [
+      500,
+      492
+    ],
+    "service_saved_register_bytes": [
+      36,
+      44
+    ],
+    "service_local_stack_bytes": [
+      0,
+      0
+    ],
+    "native_static_IRQ": 55767,
+    "native_static_UAC": 562,
+    "native_static_TIMER5": 35919,
+    "native_static_budget_exit": 1,
+    "invocation_scope": "Imported build_app with inherited -Os/-ffunction-sections/-fno-builtin and -DNPART=4/8, retained generated headers; not public --dabbl8 CLI or package qualification."
+  },
+  "dynamic_emitted_loop_scope": {
+    "parent_copy_loop_instructions": 7,
+    "candidate_copy_loop_instructions": 8,
+    "removed_separate_reduction_loop_instructions": 5,
+    "fully_copied_packet_body_saved_listed_instruction_executions": "4*n,172\u2013196 for n43\u201349; excludes setup/prologue/callees/latency.",
+    "removed_packet_word_reads": "n perpacket; originalringread/store/barriers unchanged."
+  },
+  "sanitizer_scope": {
+    "native_inherited_exclusions": [
+      "signed-integer-overflow",
+      "shift",
+      "bounds",
+      "object-size",
+      "pointer-overflow"
+    ],
+    "standalone_UAC_strict": true
+  },
+  "raw_report_pins": {
+    "host119_report": "631ccb88b9ff6f26d2f359db1fe2d7b759d3b67c05c8c163cdc755bf12808db2",
+    "host119_manifest": "bf92803480cc2cb728784a44427f70d52bb99b2a09c7f9492ba08c2d026930c7",
+    "target50_report": "ccfd582caa9934f07117ab23966c1a434ed28141a140640ccf8a8c70a4382235",
+    "target50_manifest": "e9891e23707da78b264a4993dda51dffac7a7be5b4a33d662b9f4c7ac72421f2",
+    "probe15_manifest": "2880f25838c3ca40e906ca6f603dece80717dfbcd8d1b4968e9f876580e85307"
+  },
+  "limits": [
+    "No fullcurrentCI execution claimed; only4newrunnerconfigurations executed freshly on delivery source.",
+    "Native IRQ/UAC static gates stillFAIL; fixedsaved-register frame is not stackhigh-water proof.",
+    "No reducedCoreBreaks/TONEvendor, diagnosticpackage, SDKmutation, loader/package, device/flash/recovery/release qualification.",
+    "Mac fullproducer instruction/time differences below0.1%/0.4% are noisyobservations, not native speed ordeadline claims.",
+    "Originalnegative-runner format assertion failure retained; actualomitted-tail mutant exited1 with144 failures. Revised4compilednegative controls caught intended defects."
+  ]
+}

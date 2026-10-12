@@ -1217,9 +1217,18 @@ static __attribute__((noinline)) void uac_tap(const int32_t *out, uint32_t n)   
 
 /* the next packet into d: 44 / 45 frames (+-1 to hold the ring's fill), from the ring or, until it is
  * primed, silence. An empty ring repeats the last frame. Returns the frame count. */
+#if NTRK == 8
+/* Local packet reduction only; service publishes the completed packet later.
+ * Inline into the same consumer, never a separate scan or persistent cache. */
+static inline __attribute__((always_inline)) uint32_t uac_packet_summary(uint32_t *d, uint32_t *summary)
+#else
 static uint32_t uac_packet(uint32_t *d)
+#endif
 {
     uint32_t n = 44u, r, fill, k, i, lo = UA_LO, hi = UA_HI;
+#if NTRK == 8
+    uint32_t nonzero = 0;
+#endif
 #if FELUCCA_UAC_48K
     if (uac.r48) {                                      /* 48 frames a ms, no pattern */
         n = 48u;
@@ -1237,6 +1246,9 @@ static uint32_t uac_packet(uint32_t *d)
     if (!uac.go || uac.ring48 != uac.r48) {             /* not primed (at this rate) yet */
         for (i = 0; i < n; i++)
             d[i] = 0;
+#if NTRK == 8
+        if (summary) *summary = 0;
+#endif
         return n;
     }
     if (uac.fill_min > hi) {
@@ -1250,21 +1262,40 @@ static uint32_t uac_packet(uint32_t *d)
     fill = ua_w - r;
     RING_PUBLISH();                                     /* the slots after the index */
     k = fill < n ? fill : n;
+#if NTRK == 8
+    for (i = 0; i < k; i++) {
+        uint32_t value = ua_ring[(r + i) & (UA_N - 1u)];
+        d[i] = value;
+        nonzero |= value;
+    }
+#else
     for (i = 0; i < k; i++)
         d[i] = ua_ring[(r + i) & (UA_N - 1u)];
+#endif
     if (k < n) {
         uint32_t last = k ? d[k - 1u] : uac.last;
         uac.underruns++;
         for (; i < n; i++)
             d[i] = last;
+#if NTRK == 8
+        if (n) nonzero |= last;
+#endif
     }
     uac.last = d[n - 1u];
     RING_PUBLISH();
     ua_r = r + k;
     uac.pkts++;
     uac.frames += n;
+#if NTRK == 8
+    if (summary) *summary = nonzero;
+#endif
     return n;
 }
+
+#if NTRK == 8
+/* Standalone callers retain the original packet-generation contract. */
+static uint32_t uac_packet(uint32_t *d) { return uac_packet_summary(d, 0); }
+#endif
 
 #if NTRK == 8
 /* Logical firmware buffers only: peripheral FIFOs/codec/host capture and
@@ -1305,11 +1336,12 @@ static void uac_service(void)
     }
     uac.queued = 1;
     uac.wait = 0;
-    n = uac_packet(ep4tx);
 #if NTRK == 8
-    uint32_t nonzero=0;
-    for(unsigned i=0;i<n;i++)nonzero|=ep4tx[i];
+    uint32_t nonzero;
+    n = uac_packet_summary(ep4tx, &nonzero);
     uq.packet=(uint8_t)(nonzero!=0); /* actual packet replacing the completed one */
+#else
+    n = uac_packet(ep4tx);
 #endif
     fm1_usb_ep4_send(ep4tx, n * 4u);
     sie_wr(S_TXCSR1, 0x01);                             /* TxPktRdy (and UnderRun cleared) */
