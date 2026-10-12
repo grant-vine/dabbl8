@@ -7,7 +7,7 @@
 int main(int argc,char **argv){
  if(argc!=2)return 2;
  for(unsigned pal=0;pal<NPALETTES;pal++){
-  ui_power_on();palette_set(pal);draw_splash();
+  ui_power_on();settings.palette=pal;palette_set(pal);draw_splash();
   CHECK(!dma.p&&!dma_errors);CHECK(!cv_cpu_active);
   unsigned ink=0;
   for(unsigned y=95;y<145;y++)for(unsigned x=40;x<200;x++)ink+=host_screen[y*240+x]!=swap16(T_RAISE);

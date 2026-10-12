@@ -1160,7 +1160,12 @@ static void draw(int s)
              * RAISE, BG just outside; its text's ink 16 px in from the left and the top (the bottom: AL_B, the hook) */
             const int32_t q0 = 32, q1 = 32 + 176 - 1;
             uint16_t bg = host_screen[0], ra = host_screen[(uint32_t)(q0 + 1) * 240u + (uint32_t)q0 + 1];
-            int32_t i, x, y, ix = 999, iy = 999, bad = ra == bg;
+            #if DABBL8_IDENTITY
+            uint32_t brand_sign = settings.palette == UI_DABBL_DARK_INDEX || settings.palette == UI_DABBL_LIGHT_INDEX;
+#else
+            uint32_t brand_sign = 0;
+#endif
+            int32_t i, x, y, ix = 999, iy = 999, bad = !brand_sign && ra == bg;
             for (i = q0 - 1; i <= q1 + 1; i++) {
                 int32_t in = i >= q0 && i <= q1;
                 bad |= host_screen[(uint32_t)(q0 - 1) * 240u + (uint32_t)i] != bg || host_screen[(uint32_t)(q1 + 1) * 240u + (uint32_t)i] != bg
@@ -1178,7 +1183,8 @@ static void draw(int s)
 #if DABBL8_IDENTITY
             /* Approved graphic replaces the old name text. Check its actual
              * pixels through the existing theme ramp, plus square boundaries. */
-            const uint16_t *rv = ramp(T_THEME, T_RAISE);
+            const uint16_t *rv = ramp(brand_sign ? UI_PALETTES[UI_DABBL_LIGHT_INDEX].text : T_THEME,
+                                      brand_sign ? UI_PALETTES[UI_DABBL_DARK_INDEX].theme : T_RAISE);
             for (uint32_t k = 0; k < 160u * 50u; k++) {
                 uint32_t a = (D8_WORDMARK_ALPHA[k >> 1] >> ((k & 1u) ? 0 : 4)) & 15u;
                 bad |= host_screen[(95u + k / 160u) * 240u + 40u + k % 160u] != rv[a];
