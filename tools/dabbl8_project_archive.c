@@ -84,19 +84,21 @@ static int inspect(const char *path,d8pool_index *index) {
             nonempty++;residue=1;
             break;
         }
-        unsigned trusted=u32(h+28)==d8p1_crc32(h,28)&&u32(h)==D8POOL_MAGIC&&h[4]==1&&u32(h+8)<4;
+        unsigned trusted=u32(h+28)==d8p1_crc32(h,28)&&u32(h)==D8POOL_MAGIC&&(h[4]==1||h[4]==D8POOL_TOMBSTONE_VERSION)&&u32(h+8)<4;
         /* A damaged sole copy can otherwise look like an absent identity.
-         * An unknown torn spare is safe for export only when no role is absent. */
-        if(residue&&!trusted&&index->present!=15u) {
+         * An unknown torn spare is safe only when every role has a current
+         * live or canonical deletion anchor; deleted roles are exact absence. */
+        if(residue&&!trusted&&index->anchors!=15u) {
             fprintf(stderr,"Unrecognized nonempty residue cannot prove sparse absence\n");
             return 0;
         }
-        if(trusted&&!(index->present&(1u<<u32(h+8)))) {
+        if(trusted&&!(index->present&(1u<<u32(h+8)))&&
+           (!(index->anchors&(1u<<u32(h+8)))||index->object[u32(h+8)].length||index->object[u32(h+8)].crc)) {
             fprintf(stderr,"Unrecoverable committed object cannot be declared absent\n");
             return 0;
         }
     }
-    if(!index->present&&nonempty) {
+    if(!index->anchors&&nonempty) {
         fprintf(stderr,"Nonempty pool is not proven empty\n");
         return 0;
     }

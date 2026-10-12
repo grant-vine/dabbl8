@@ -51,8 +51,8 @@ The [first-use classifier](../../firmware/src/native_first_use.c) and
 
 The [Dabbl8 companion](../../web/d8companion.html) already supports negotiated
 eight-track editing in memory through command 77, including track selection,
-level/mute, parameters and step patterns. Physical MIDI qualification remains
-pending. It does not yet provide connected native project backup/import/restore.
+level/mute, parameters and step patterns. It now includes own-project
+backup/restore using command 81. Physical MIDI qualification remains pending.
 
 The [legacy editor](../../web/editor.html) remains a four-track interface. Its
 separately negotiated command-80 sample replacement is a narrow exception to its
@@ -62,8 +62,7 @@ must not be treated as a D8P1 project-set round trip.
 
 Firmware command 81 now implements bounded own-project-set export/restore with
 visible SAVE confirmation; see [protocol and interruption limits](native-project-transfer.md).
-Its host/virtual-NOR checks do not establish physical MIDI operation. Browser
-backup/import integration and physical qualification remain pending.
+Its host/virtual-NOR and browser checks do not establish physical MIDI operation.
 
 Command 78 provides read-only capture preparation: twelve raw-store roles, or
 seventeen roles including the live D8P1 project and current ancillary state.
