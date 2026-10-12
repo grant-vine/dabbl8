@@ -16,7 +16,7 @@ static int32_t render_sample(void)
  int32_t z=0,w=0;fx_buses(&z,&z,&z,&w,1);
  int32_t l=((w>>2)*(int32_t)song.master_q12)>>10,r=l;master_out(&l,&r);CHECK(l==r);return l;
 }
-int main(void)
+static void room_seed(void)
 {
  fresh_fx();
  for(unsigned i=0;i<DLY_LEN;i++)dly_buf[i]=-1;
@@ -26,8 +26,17 @@ int main(void)
  song.g[G_DFDBK]=60;song.g[G_DMIX]=90;song.g[G_RSIZE]=90;song.g[G_RDAMP]=60;
  song.master_q12=1914;fx.dly_lp=-2;for(unsigned i=0;i<4;i++)fx.comb_lp[i]=-11;
  fx_tail.delay=DLY_LEN;fx_uniform_wait.delay=DLY_LEN;fx_uniform_wait.comb=1356;fx_uniform_wait.ap=556;fx_uniform_wait.ap_fixed=441;
- dc_l=dc_r=-1344;CHECK(!fx_resident_quiet());
- for(unsigned i=0;i<DLY_LEN;i++){int32_t output=render_sample();CHECK(output==0);if(i+1<DLY_LEN)CHECK(!fx_resident_quiet());}
+ dc_l=dc_r=-1344;}
+static void render_chunk(unsigned n)
+{
+ int32_t z[CTL]={0},wet[CTL]={0};fx_buses(z,z,z,wet,n);
+ for(unsigned i=0;i<n;i++){int32_t l=((wet[i]>>2)*(int32_t)song.master_q12)>>10,r=l;master_out(&l,&r);CHECK(!l&&!r);}
+}
+int main(void)
+{
+ room_seed();unsigned span=delay_samples();if(span<1356)span=1356;
+ CHECK(!fx_resident_quiet());
+ for(unsigned i=0;i<span;i++){CHECK(render_sample()==0);if(i+1<span)CHECK(!fx_resident_quiet());}
  CHECK(fx_resident_quiet()&&dc_l==-1344&&fx.dly_lp==-2&&rev_comb[0]==-10&&rev_ap[0]==-81);
  /* Changes to the equation revoke positive proof without touching DSP state. */
  song.master_q12=4096;CHECK(!fx_resident_quiet());song.master_q12=1914;CHECK(fx_resident_quiet());
@@ -48,6 +57,6 @@ int main(void)
  CHECK(!fx_resident_quiet());unsigned sounded=0;
  for(unsigned i=0;i<200;i++){int32_t out=render_sample();if(out)sounded=1;if(i<100)CHECK(!fx_resident_quiet());}
  CHECK(sounded);
- printf("Stationary FX: %u checks, %u failures; exact ROOM/delay attractor, output0, parameter revocation, future impulse refusal\n",checks,failures);
+ printf("Stationary FX: %u checks, %u failures; exact ROOM/AP2 and SPRING, block1/17/64, parameter/model/external revocation, future impulse refusal\n",checks,failures);
  return failures!=0;
 }

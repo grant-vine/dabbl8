@@ -25,8 +25,8 @@ static volatile struct { uint32_t delay, chorus, comb, ap; } fx_tail;
  * write cannot be forgotten by an active-model sweep. */
 static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
 /* Each zero wait certifies all cells equal their line's entry0, including actual
- * old and stored values. Any changed entry0 resets the complete sweep. */
-static volatile struct { uint32_t delay,comb,ap,ap_fixed; } fx_uniform_wait;
+ * old and stored values. Delay also binds its computed length; reverb uses\n * line entry0. Any changed reference resets the complete active sweep. */
+static volatile struct { uint32_t delay,comb,ap,ap_fixed,delay_span; } fx_uniform_wait;
 #define FTU16(d,u,p,ref,v) do { int32_t uv=(v); int16_t ur=(ref); \
  (u)|=(uint32_t)((*(p)^ur)|((int16_t)uv^ur)); FTR16(d,p,uv); } while(0)
 static inline void fx_sweep_model(uint8_t model)
@@ -57,7 +57,7 @@ static inline void ft_store16(volatile uint32_t *count,int16_t *p,int16_t value)
      * mixed render/external stores can never underflow or wrap it to zero. */
     if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
     else {*count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
-        if(count==&fx_tail.delay)fx_uniform_wait.delay=DLY_LEN;}
+        if(count==&fx_tail.delay)fx_uniform_wait.delay=fx_uniform_wait.delay_span?fx_uniform_wait.delay_span:DLY_LEN;}
     *p=value;
 }
 static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
@@ -67,7 +67,7 @@ static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
      * mixed render/external stores can never underflow or wrap it to zero. */
     if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
     else {*count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
-        if(count==&fx_tail.delay)fx_uniform_wait.delay=DLY_LEN;}
+        if(count==&fx_tail.delay)fx_uniform_wait.delay=fx_uniform_wait.delay_span?fx_uniform_wait.delay_span:DLY_LEN;}
     *p=value;
 }
 #define FT16(c,p,v) ft_store16(&fx_tail.c,(p),(int16_t)(v))
@@ -431,6 +431,7 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
     uint32_t cinc = LFO_INC[song.g[G_CRATE] & 127] / CTL;
 #if NTRK == 8
     uint32_t delay_nz=fx_tail.delay,chorus_nz=fx_tail.chorus,delay_uniform=0;
+    if(dl!=fx_uniform_wait.delay_span){fx_uniform_wait.delay=dl;fx_uniform_wait.delay_span=dl;}
 #endif
     for (i = 0; i < n; i++) {
         int32_t y = 0, x, r;
@@ -450,7 +451,10 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
         fx.dly_lp += mulq15(x - fx.dly_lp, col);
         int16_t value=(int16_t)clamp((dly_in[i] >> 1) + mulq15(fx.dly_lp, fb), -32768, 32767);
 #if NTRK == 8
-        delay_uniform|=(uint32_t)((dly_buf[fx.dly_w & (DLY_LEN-1u)]^dly_buf[0])|(value^dly_buf[0]));
+        /* Only the dl-sample history can be read while this computed delay is
+         * unchanged. A changing reference or read resets the whole history. */
+        int16_t ref=dly_buf[(fx.dly_w-1u)&(DLY_LEN-1u)];
+        delay_uniform|=(uint32_t)((x^ref)|(value^ref));
 #endif
         FTL16(delay_nz,&dly_buf[fx.dly_w & (DLY_LEN - 1u)],value);
         fx.dly_w++;
@@ -459,7 +463,7 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
     }
 #if NTRK == 8
     fx_tail.delay=delay_nz;fx_tail.chorus=chorus_nz;
-    fx_uniform_wait.delay=fx_zero_sweep(fx_uniform_wait.delay,delay_uniform,n,DLY_LEN);
+    fx_uniform_wait.delay=fx_zero_sweep(fx_uniform_wait.delay,delay_uniform,n,dl);
 #endif
     rt = song.g[G_RTYPE] == 1;
     if (rt != fx.rtype) {                               /* the model changed: the old one's block fades out, */
@@ -491,8 +495,8 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
  * SPRING permits only its certified zero-buffer/scalar deadband fixedpoint. */
 static int fx_stationary_quiet(void)
 {
-    if(fx_uniform_wait.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||pf.src!=PF_N)return 0;
-    int32_t d=dly_buf[0],lp=fx.dly_lp;
+    if(fx_uniform_wait.delay||fx_uniform_wait.delay_span!=delay_samples()||fx_tail.chorus||fx_tail.comb||fx_tail.ap||pf.src!=PF_N)return 0;
+    int32_t d=dly_buf[(fx.dly_w-1u)&(DLY_LEN-1u)],lp=fx.dly_lp;
     int32_t fb=song.g[G_DFDBK]*230,col=2000+song.g[G_DCOLOR]*240;
     if(lp < -32768||lp>32767||mulq15(d-lp,col)||mulq15(lp,fb)!=d)return 0;
     int32_t lo=0,hi=0;
