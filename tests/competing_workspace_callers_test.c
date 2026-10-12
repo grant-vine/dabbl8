@@ -153,8 +153,35 @@ static void autosave_workspace_cases(void){
  }
  transport_req=0;fm1_in.notes=0;
 }
+/* Boot classification owns native allocation even if restoration cannot borrow
+ * the arena. These are separate native scenes, checked completely before the
+ * following erased/historical scene resets its binding. */
+static void native_boot_workspace_cases(void){
+ for(unsigned late=0;late<2;late++){
+  native_fixture();project_native_reset();memset(&native_as,0,sizeof native_as);memset(&as,0,sizeof as);
+  transport_req=0;fm1_in.notes=fm1_in.buttons=0;cv_cpu_active=0;cv_draw_deferred=0;usb.ota_req=usb.uboot_req=0;
+  for(unsigned p=0;p<NTRK;p++)for(unsigned v=0;v<NVOICE;v++)trk[p].v[v].active=0;
+  project_capture(&before_live);old_cache=d8p1_runtime_cache;memcpy(before,nor,sizeof before);reads=erases=programs=0;
+  late_acquired=0;inject=0;if(late)inject=1;else hold();
+  CHECK(autosave_boot(1)==0);
+  CHECK(project_native.mode==2&&!project_native.ready&&project_native.readonly&&project_native_owns_storage());
+  CHECK(!project_native.ops.save&&!project_native.ops.rename&&!native_as.ready);
+  CHECK(as.saved==as.seen&&as.seen==autosave_sig()&&as.t==fm1_ms);
+  if(late)CHECK(late_acquired==1&&held&&migration_owner==held);else CHECK(held&&migration_owner==held);
+  project_capture(&after_live);CHECK(!memcmp(&before_live,&after_live,sizeof before_live));
+  CHECK(!memcmp(arena_before,&main_workspace,sizeof main_workspace)&&!memcmp(&old_cache,&d8p1_runtime_cache,sizeof old_cache));
+  CHECK(!memcmp(before,nor,sizeof before)&&!erases&&!programs);release();
+  printf("Native competing boot: %s owned/offline readonly, actual owner/arena/music/cache/NOR preserved\n",late?"LCD-late":"held");
+ }
+}
 int main(void){
- memset(nor,255,sizeof nor);flash_ok=1;panel=PANEL_DEFAULT;settings_init();host_tracks_init();native_fixture();project_native_reset();
+ memset(nor,255,sizeof nor);flash_ok=1;panel=PANEL_DEFAULT;settings_init();host_tracks_init();
+ native_boot_workspace_cases();
+ /* Independent original historical/unbound scenarios: fully erased allocation
+  * retains legacy fallback. Keep every original early/LCD-late BUSY assertion;
+  * native ownership above must never be silently reset inside its own case. */
+ native_fixture();for(unsigned b=0;b<D8POOL_BLOCKS;b++)memset(nor+d8pool_mapped_address(b),255,D8POOL_BLOCK);
+ project_native_reset();memset(&as,0,sizeof as);memset(&native_as,0,sizeof native_as);inject=late_acquired=0;
  FILE*f=fopen("tests/fixtures/projects/fun9.bin","rb");CHECK(f!=NULL);if(!f)return 2;CHECK(fread(&proj_slot[0],1,sizeof proj_slot[0],f)==sizeof proj_slot[0]);fclose(f);
  for(unsigned p=0;p<NPAGES;p++)if(PAGES[p].graph==GR_SLOTS){ui.page=p;break;}ui.home=0;
  chain_config.count=1;chain_config.row[0].slot=0;chain_config.row[0].repeat=1;

@@ -39,7 +39,7 @@ static int d8p1_runtime_engines(const d8p1_view *view,unsigned mask)
  * available_projects is verified context, not a promise to fetch those slots.
  * Return codes preserve active music/cache on refusal; staging may change on a
  * late busy refusal. Existing engine migrations and parameter fitting apply. */
-static int d8p1_load_runtime_mask(const void *raw,size_t n,unsigned available_projects,unsigned engine_mask)
+static int d8p1_load_runtime_mask_guarded(const void *raw,size_t n,unsigned available_projects,unsigned engine_mask,int (*admit)(void))
 {
     d8p1_view view;
     if (!engine_mask || (engine_mask&~D8ENGINE_EFFECTIVE_MASK) || !raw || n>D8P1_LIMIT || available_projects>15 ||
@@ -52,13 +52,15 @@ static int d8p1_load_runtime_mask(const void *raw,size_t n,unsigned available_pr
     if (!stage) return D8RT_BUSY;
     if (raw != stage->wire) memcpy(stage->wire,raw,n);
     if (!d8p1_project_decode(&stage->state,stage->wire,n,available_projects)) return D8RT_BAD;
-    int rc=project_restore_runtime_mask(&stage->state.project,1,engine_mask);
+    int rc=project_restore_runtime_mask_guarded(&stage->state.project,1,engine_mask,admit);
     if (rc) return rc==PROJ_RUNTIME_MISSING_ENGINE ? D8RT_MISSING_ENGINE : rc==2 ? D8RT_BUSY : D8RT_BAD;
     d8arr_invalidate();
     memcpy(&d8p1_runtime_cache.arrangement,&stage->state.arrangement,sizeof d8p1_runtime_cache.arrangement);
     d8p1_runtime_cache.valid=1;
     return D8RT_OK;
 }
+static int d8p1_load_runtime_mask(const void *raw,size_t n,unsigned projects,unsigned engines)
+{ return d8p1_load_runtime_mask_guarded(raw,n,projects,engines,NULL); }
 int d8p1_load_runtime(const void *raw,size_t n,unsigned available_projects)
 {
     return d8p1_load_runtime_mask(raw,n,available_projects,D8ENGINE_EFFECTIVE_MASK);

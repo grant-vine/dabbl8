@@ -682,7 +682,7 @@ static uint8_t proj_cur = PROJ_NO_SLOT;      /* the slot the music was loaded fr
 static struct {
     project_native_ops ops;
     d8p1_project_catalog catalog;
-    uint8_t mode, ready; /* 0 historical read-only; 1 bound native; 2 native offline */
+    uint8_t mode, ready, readonly; /* 0 historical read-only; 1 bound native; 2 native offline */
 } project_native __attribute__((section(".pool")));
 static int project_native_owns_storage(void) { return project_native.mode!=0; }
 static void project_native_reset(void) { memset(&project_native,0,sizeof project_native); }
@@ -723,7 +723,18 @@ static int project_native_bind(const project_native_ops *ops,int authorized)
     d8arr_invalidate();
     project_native.mode=2;project_native.ready=0;ui.force=1;
     if(!next.catalog||!next.save||!next.load||!next.rename)return D8POOL_INVALID;
-    project_native.ops=next;project_native.mode=1;
+    project_native.ops=next;project_native.mode=1;project_native.readonly=0;
+    int rc=project_native_refresh();
+    if(rc)project_native.mode=2;
+    return rc;
+}
+/* Recognition and read validation are not a completed migration grant. */
+static int project_native_bind_readonly(const project_native_ops *ops)
+{
+    project_native.mode=2;project_native.ready=0;project_native.readonly=1;
+    ui.force=1;
+    if(!ops||!ops->catalog||!ops->load)return D8POOL_INVALID;
+    project_native.ops=*ops;project_native.mode=1;
     int rc=project_native_refresh();
     if(rc)project_native.mode=2;
     return rc;
@@ -740,6 +751,7 @@ static int pn_action(unsigned op,uint32_t slot,const char *name)
     if(slot>=3)return pn_result(D8POOL_INVALID,"");
     if(!pn_quiet())return pn_result(D8POOL_BUSY,"");
     if(project_native.mode!=1)return pn_result(D8POOL_UNSUPPORTED,"");
+    if(op!=1&&project_native.readonly){ui_message("READ ONLY");return 1;}
     /* Hidden/stale inventory must never bypass overwrite confirmation.
      * Recovery requires a separate successful catalog refresh first. */
     if(op!=1&&!project_native.ready)return pn_result(D8POOL_IO,"");
@@ -1015,7 +1027,7 @@ static int proj_runtime_engines_ok(const project_t *q,unsigned mask)
 enum { PROJ_RUNTIME_MISSING_ENGINE=3 };
 /* Internal policy seam for host transactional fixtures. Production callers
  * below always pass the immutable compiled mask; no mutable profile selector. */
-static int project_restore_runtime_mask(const project_t *input,int require_stopped,unsigned engine_mask)
+static int project_restore_runtime_mask_guarded(const project_t *input,int require_stopped,unsigned engine_mask,int (*admit)(void))
 {
     uint32_t i, k;
     if (!input || !proj_ok(input) || !proj_engines_ok(input)) return 1;
@@ -1043,7 +1055,7 @@ static int project_restore_runtime_mask(const project_t *input,int require_stopp
     fm1_irq_off();
     /* Final coherent guard: a pending start/count-in may arrive during decode.
      * Refuse before changing transport, panic, runtime or retained metadata. */
-    if (require_stopped && (song.playing || chain_busy() || transport_req || seq_counting())) {
+    if ((admit&&!admit()) || (require_stopped && (song.playing || chain_busy() || transport_req || seq_counting()))) {
         fm1_irq_on();
         return 2;
     }
@@ -1126,6 +1138,10 @@ static int project_restore_runtime_mask(const project_t *input,int require_stopp
 #endif
     return 0;
 }
+/* Ordinary adoption retains its existing contract. A synchronous read-only
+ * storage caller may add a pure final check under the existing IRQ boundary. */
+static int project_restore_runtime_mask(const project_t *input,int stopped,unsigned mask)
+{ return project_restore_runtime_mask_guarded(input,stopped,mask,NULL); }
 #if NPART >= NVOICE
 static int project_restore_runtime_mode(const project_t *input,int require_stopped)
 {
@@ -1501,14 +1517,24 @@ static void autosave_poll(void)
 /* power-on, after the defaults (main.c): the autosave becomes the music when `allowed` (no crash, hang or failed boot
  * before) and RESTORE LAST is ON; an autosave that does not load (none, torn, damaged, another format) is ignored.
  * The music now (restored or not) is what is saved: nothing is written until it changes. 1 = restored */
+#if FELUCCA_FLASH || defined(D8_NATIVE_READONLY_BOOT_TEST)
+static int st_load_autosave(void *,uint32_t);
+#endif
 static int autosave_boot(int allowed)
 {
+#if NTRK == 8 && (FELUCCA_FLASH || defined(D8_NATIVE_READONLY_BOOT_TEST))
+    int native=project_native_boot_readonly(allowed);
+    if(native||project_native_owns_storage()) {
+        as.saved=as.seen=autosave_sig();as.t=fm1_ms;
+        return native==1?1:0;
+    }
+#endif
 #if NPART >= NVOICE
     project_t *as_work=project_work_try();
     if(!as_work)return D8POOL_BUSY;
 #endif
     int rc = 0;
-#if FELUCCA_FLASH
+#if FELUCCA_FLASH || defined(D8_NATIVE_READONLY_BOOT_TEST)
     if (flash_ok && allowed && !(ui_prefs & PREF_RESTORE_OFF)
 #if NPART >= NVOICE
         && !project_native_owns_storage()
@@ -1516,7 +1542,7 @@ static int autosave_boot(int allowed)
        ) {
         int n;
         proj_wire_gen++;
-        n = st_load(OBJ_AUTOSAVE, &proj_wire, sizeof proj_wire);
+        n = st_load_autosave(&proj_wire, sizeof proj_wire);
         if (n > 0 && proj_import(
 #if NPART >= NVOICE
             as_work

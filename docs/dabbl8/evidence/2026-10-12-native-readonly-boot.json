@@ -1,0 +1,157 @@
+{
+  "schema": "dabbl8-native-readonly-boot-evidence-v1",
+  "date": "2026-10-12",
+  "scope": "actual autosave_boot host paths and pinned FULL8 app-only pair; no device/package/loader",
+  "measured_source": "ea36071189b8b83e4ac0c14b12ef6cc84393189b",
+  "parent": "e5d64a5c4f54a55a8950ea87a53ea682db154582",
+  "targets": {
+    "parent": {
+      "commit": "e5d64a5c4f54a55a8950ea87a53ea682db154582",
+      "tree": "74311077eb781693437cf51e507d03a4470b3687",
+      "app": {
+        "bytes": 482152,
+        "sha256": "370b3b83cb44aea4cbc989881487542f525376e50b2cd06b6ccc4e13697f81e4"
+      },
+      "elf": {
+        "bytes": 535024,
+        "sha256": "0d219ce5617d13a229f336cb67d0efca9ac24ae029f9d5da39955e8a94cea7d7"
+      },
+      "disassembly": {
+        "bytes": 5977800,
+        "sha256": "666e776e9720644e149718de6b4afb9689092c7e8d231cc36d4b977e5f69a9e3"
+      },
+      "memory_report": [
+        ".ram_text: 916 insns, no calls",
+        "image 482152 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "generated_inputs": {
+        "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+        "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+        "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+        "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+        "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+        "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+        "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+      },
+      "compiler_clock": "\"Oct 12 2026\" \" \" \"00:08:56\"\n",
+      "compiler_version": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /opt/jieli/pi32v2/bin\n",
+      "compiler_flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-Ifirmware/hal",
+        "-Ifirmware/src",
+        "-Ibuild/app-only/full/run-98zz0m_u/gen",
+        "-DDABBL8_IDENTITY=1",
+        "-DNPART=8",
+        "-DFELUCCA_ID=\"FM-1_8010\"",
+        "-DFELUCCA_VERSION=\"v0.1.0\""
+      ],
+      "static_budget": {
+        "exit": 1,
+        "passed": false,
+        "scope": "Static model; reduced profiles additionally report intentionally absent renderers"
+      },
+      "frontend_bytes": 68,
+      "source_unchanged": true,
+      "sdk_used": false
+    },
+    "candidate": {
+      "commit": "ea36071189b8b83e4ac0c14b12ef6cc84393189b",
+      "tree": "e679cfdfa9786606b1b6532e7210be855684387a",
+      "app": {
+        "bytes": 482968,
+        "sha256": "02b854364792a4776d7ba6451223fd4c612e78d293371b2c2d0670c7360c33a6"
+      },
+      "elf": {
+        "bytes": 535540,
+        "sha256": "3d8de76245ab03c4a74ab9029eb725a690dffb71716b6ae7251a5588c2bb81f0"
+      },
+      "disassembly": {
+        "bytes": 5994005,
+        "sha256": "706f6a5c6d1794160ad3e177a7bd14ccbc99c98c5c1a4fc479e334698c3a4e55"
+      },
+      "memory_report": [
+        ".ram_text: 916 insns, no calls",
+        "image 482968 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+      ],
+      "generated_inputs": {
+        "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+        "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+        "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+        "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+        "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+        "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+        "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+      },
+      "compiler_clock": "\"Oct 12 2026\" \" \" \"00:09:10\"\n",
+      "compiler_version": "clang version 4.0.1 () ()\nTarget: x86_64-unknown-linux-gnu\nThread model: posix\nInstalledDir: /opt/jieli/pi32v2/bin\n",
+      "compiler_flags": [
+        "-Os",
+        "-ffunction-sections",
+        "-fno-builtin",
+        "-Wall",
+        "-Wno-unused-function",
+        "-Ifirmware/hal",
+        "-Ifirmware/src",
+        "-Ibuild/app-only/full/run-5ppimbw2/gen",
+        "-DDABBL8_IDENTITY=1",
+        "-DNPART=8",
+        "-DFELUCCA_ID=\"FM-1_8010\"",
+        "-DFELUCCA_VERSION=\"v0.1.0\""
+      ],
+      "static_budget": {
+        "exit": 1,
+        "passed": false,
+        "scope": "Static model; reduced profiles additionally report intentionally absent renderers"
+      },
+      "frontend_bytes": 68,
+      "source_unchanged": true,
+      "sdk_used": false
+    }
+  },
+  "toolchain_archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+  "docker_digest": "sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "sdk": {
+    "commit": "d179b4484759423312073f5fbb232501aa491047",
+    "populated": 5,
+    "omitted": 15253,
+    "before_after_verified": true,
+    "used_by_app_only": false
+  },
+  "host": {
+    "native_boot_normal": 4,
+    "native_boot_strict_asan_ubsan": 4,
+    "normal_checks": {
+      "slice0": 9272,
+      "slice1": 8371
+    },
+    "all_failures": 0,
+    "ordinary_four_track_editor": {
+      "configurations": 8,
+      "source_scope": "before final NPART8-only READ ONLY UI text/assertion correction; no blanket final-source claim"
+    },
+    "shipping_closed_session": {
+      "runs": 2,
+      "checks_each": 1211360,
+      "mutation_callbacks": 0,
+      "source_scope": "before NPART8-only READ ONLY correction"
+    },
+    "compiled_negatives": {
+      "count": 3,
+      "expected_nonzero": 3,
+      "scope": "pre UI-text correction; exact guard/readonly/routing fragments unchanged"
+    }
+  },
+  "limits": [
+    "native writes and autosave remain closed",
+    "local SAVE/coordinator software still incomplete",
+    "full main boot scheduling unmeasured",
+    "physical recovery and audio qualification absent",
+    "static IRQ/UAC budgets still FAIL",
+    "stack high-water and nesting unmeasured",
+    "not eligible firmware release/download/install"
+  ]
+}
