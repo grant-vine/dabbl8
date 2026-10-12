@@ -44,9 +44,35 @@ int main(void)
  song.g[G_RTYPE]=1;CHECK(!fx_resident_quiet());song.g[G_RTYPE]=0;
  FT16(ap,&rev_ap[556],-83);CHECK(!fx_resident_quiet());
 
+ /* Actual64 and varying block sizes prove the same active history. */
+ room_seed();unsigned total=0,block=0;
+ while(total<span){
+  unsigned n=(block++&1)?64:17;if(n>span-total)n=span-total;
+  render_chunk(n);total+=n;if(total<span)CHECK(!fx_resident_quiet());
+ }
+ CHECK(fx_resident_quiet());
+ unsigned bpm=(unsigned)song.g[G_BPM];
+ song.g[G_BPM]=(int16_t)(bpm+1);CHECK(!fx_resident_quiet());
+ uint32_t changed=delay_samples();render_chunk(64);
+ CHECK(fx_uniform_wait.delay_span==changed&&fx_uniform_wait.delay==changed-64);
+ CHECK(!fx_resident_quiet());
+ song.g[G_BPM]=(int16_t)bpm;CHECK(!fx_resident_quiet());
+ render_chunk(17);CHECK(fx_uniform_wait.delay_span==delay_samples()&&fx_uniform_wait.delay==delay_samples()-17);
+ while(fx_uniform_wait.delay)render_chunk(fx_uniform_wait.delay>64?64:fx_uniform_wait.delay);
+ CHECK(fx_resident_quiet());
+ /* AP2 full441 sweep: no receipt may mature before all cells are covered. */
+ fx_uniform_wait.ap_fixed=441;
+ for(unsigned i=0;i<441;i++){CHECK(!render_sample());if(i+1<441)CHECK(!fx_resident_quiet());}
+ CHECK(fx_resident_quiet());
+ uint32_t hidden=(fx.ap_i[1]+300u)%441u;
+ FT16(ap,&rev_ap[556+hidden],1000);CHECK(!fx_resident_quiet()&&fx_tail.ap);
+ int32_t zero[CTL]={0},wet[CTL];
+ for(unsigned i=0;i<7;i++)fx_buses(zero,zero,zero,wet,64);
+ CHECK(fx_uniform_wait.ap_fixed&&fx_tail.ap&&!fx_resident_quiet());
  /* SPRING's negative LP deadband has exact zero loop/AP input. */
  fresh_fx();fx.rtype=1;song.g[G_RTYPE]=1;fx.sp_lp=-1;fx.dly_lp=-1;song.g[G_DFDBK]=0;
- for(unsigned i=0;i<SP_LEN;i++)CHECK(render_sample()==0);
+ unsigned spring_span=delay_samples();if(spring_span<SP_LEN)spring_span=SP_LEN;
+ for(unsigned i=0;i<spring_span;i++)CHECK(render_sample()==0);
  CHECK(fx_resident_quiet()&&fx.sp_lp==-1&&fx.sp_hp==0);
  FT16(comb,&rev_comb[0],8192);CHECK(!fx_resident_quiet());rev_clear();
 

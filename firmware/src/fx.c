@@ -24,8 +24,9 @@ static volatile struct { uint32_t delay, chorus, comb, ap; } fx_tail;
  * comb/ap tracked-store guards remain separate, so an external tracked test
  * write cannot be forgotten by an active-model sweep. */
 static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
-/* Each zero wait certifies all cells equal their line's entry0, including actual
- * old and stored values. Delay also binds its computed length; reverb uses\n * line entry0. Any changed reference resets the complete active sweep. */
+/* Each zero wait certifies the active history/line equal its reference, including
+ * old and stored values. Delay also binds its computed length; reverb uses
+ * line entry0. Any changed reference resets the complete active sweep. */
 static volatile struct { uint32_t delay,comb,ap,ap_fixed,delay_span; } fx_uniform_wait;
 #define FTU16(d,u,p,ref,v) do { int32_t uv=(v); int16_t ur=(ref); \
  (u)|=(uint32_t)((*(p)^ur)|((int16_t)uv^ur)); FTR16(d,p,uv); } while(0)
