@@ -4045,7 +4045,16 @@ function d8SampleReply(a, op, token) {
   const read = i => (a[i] | a[i+1]<<7 | a[i+2]<<14 | a[i+3]<<21 | a[i+4]<<28) >>> 0;
   const result = {rc:a[2], token:read(3), phase:a[8], offset:read(9)};
   if (token != null && result.token !== token) throw Error("Stale native sample reply");
-  if (result.rc) throw Error(`Native sample rc ${result.rc}`);
+  if (result.rc) {
+    const messages = {
+      1: "The sample was rejected. Check the source file and try again.",
+      2: "Stop playback and finish other operations on the instrument, then try again.",
+      3: "The connection or replacement session changed. Reconnect and try again.",
+      4: "The sample write failed. Keep the source file and check the slot before retrying.",
+      5: "Replacement was cancelled. The slot may be empty if writing had started. Keep the source file."
+    };
+    throw Error(messages[result.rc] || "The instrument returned an unsupported sample response. Reconnect before retrying.");
+  }
   return result;
 }
 async function d8SampleUpload(request, slot, hdr, data, progress = () => {}, wait = ms => new Promise(resolve => setTimeout(resolve,ms))) {
