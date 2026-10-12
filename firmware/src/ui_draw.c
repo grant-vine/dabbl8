@@ -1119,17 +1119,20 @@ static void draw_splash(void)
     lcd_fill(0, 0, 240, 240, T_BG);
     lcd_fill(SPL_X0, SPL_X0, SPL_SQ, SPL_SQ, T_RAISE);
 #if DABBL8_IDENTITY
-    /* Static alpha mask in flash: same canvas and theme ramp, no new RAM or delay. */
-    CV_DRAW_BEGIN(SPL_SQ, 72, T_RAISE);
-    cv_alpha(8, 8, 160, 36, D8_WORDMARK_ALPHA, ramp(T_TEXT, T_RAISE));
-    cv_text_on(SPL_PAD, 52, &AF_M, FELUCCA_VERSION, T_TEXT, T_RAISE);
-    cv_blit(SPL_X0, SPL_X0 + 12);
+    /* Painted logo centred on the display, small explicit upstream credit.
+     * Flash alpha mask and the existing canvas: no new RAM or startup delay. */
+    CV_DRAW_BEGIN(SPL_SQ, 124, T_RAISE);
+    cv_alpha(8, 11, 160, 50, D8_WORDMARK_ALPHA, ramp(T_THEME, T_RAISE));
+    cv_text_in(0, 66, SPL_SQ, &AF_M, FELUCCA_VERSION, T_TEXT, T_RAISE);
+    cv_text_in(0, 90, SPL_SQ, &AF_S, "Based on Felucca", T_MID, T_RAISE);
+    cv_text_in(0, 105, SPL_SQ, &AF_S, "H\xFCgelton + community", T_MID, T_RAISE);
+    cv_blit(SPL_X0, 84);
 #else
     splash_band(SPL_X0, (uint32_t)h, SPL_PAD - AF_M_CAP_Y, SPLASH_LINES, AL_V, SPL_PAD,
                 SPL_PAD + SPL_PITCH + AF_M_CAP_H, "splash name + version SPL_PAD from the top");
-#endif
     splash_band(SPL_X0 + SPL_SQ - (uint32_t)h, (uint32_t)h, lb - SPL_PITCH, SPLASH_LINES + 2, AL_B, 0, h - SPL_PAD,
                 "splash maker's baseline SPL_PAD from the bottom");
+#endif
     lcd_sync();
 }
 
