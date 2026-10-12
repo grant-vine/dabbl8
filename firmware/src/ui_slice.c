@@ -231,12 +231,13 @@ static void slice_env(uint32_t a, uint32_t b)
     if (!s || (sp.env_a == a && sp.env_b == b && sp.env_len == len && sp.env_src == src &&
                sp.env_gen == smp_user_gen))
         return;
+    const uint8_t *data = slc_data(s);
     slc_dec_at(&d, a, slc_state_at(s, a));
     for (c = 0; c < SP_COLS; c++) {
         int32_t lo = 32767, hi = -32768;
         e = a + (uint32_t)((uint32_t)(c + 1u) * (b - a) / SP_COLS);
         do {                                         /* at least one sample per column */
-            int32_t x = d.pos < len ? slc_dec_next(s, &d) : 0;
+            int32_t x = d.pos < len ? slc_dec_next(s, data, &d) : 0;
             lo = x < lo ? x : lo;
             hi = x > hi ? x : hi;
         } while (d.pos < e);

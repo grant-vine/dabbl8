@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "scope": "Source-address correctness; no installable or hardware-qualified firmware",
+  "delivery_base": "0356604e078fe608c08036443a2ed8b7ca40e174",
+  "production_hashes": {
+    "firmware/src/eng_sample.c": "5c6d5afda6dc1f9d6ddb100e769ad8ff764280bd43e0615ba96bacca5c0dce45",
+    "firmware/src/eng_grain.c": "222dfc6fbc973b36002086fdc4b436475ee5b4189f19835db5b0eff9be27211e",
+    "firmware/src/eng_slice.c": "4ee45e94c712f45ab048c9fdd408a9d97feaa92ce5e4dc46575dd9affb781e12",
+    "firmware/src/ui_graph.c": "da8c8cacbd2b43d8af76d07edd9588ca2fac7fe363a5b854aa40b415af1e0a15",
+    "firmware/src/ui_slice.c": "27501160394d322ec8b1ad238991438f8d444c38248256aa5b0867b70042e9d6"
+  },
+  "host": {
+    "retained_Apple21": {
+      "positive_runs": 34,
+      "fault_controls": 2,
+      "PCM_pairs": 8,
+      "SLICE_demo_pairs": 9,
+      "golden_runs": 2,
+      "goldens_each": 92,
+      "original_run": "FAIL after35thcontrolcompilepathcollision;2onlysupplementalcontrols detected intended6/4assertfails",
+      "combined_report_sha256": "250da33d336c165916986eaea617cb071c968fe97e0380b16f6bec464cd4cddc",
+      "seal_sha256": "30d35d78e09c741663191d0f768e6990f648a2cafe66573aa31c7c57b09d1df3"
+    },
+    "fresh_Linux18": {
+      "source_base": "0356604e078fe608c08036443a2ed8b7ca40e174",
+      "runtime_exit0_rows": 15,
+      "source_owned_range_render_rows": 12,
+      "fullstrict_fourtrack_editor_rows": 2,
+      "ordinary_fourtrack_golden_rows": 1,
+      "goldens": 92,
+      "detailed_final_log_rows": 9,
+      "capture_limitation": "Normal6stdout/stderr/JSON overwritten by samebasenames in SAN phase; initial and final all15runtimeexit0 retained in shell.stdout/xtrace, normal+SAN executables and PCM retained. No positive reruns. Normal range assertion count is not independently claimed from absentstdout.",
+      "source_before_after_equal": true,
+      "normal_SAN_PCM_pairs": [
+        {
+          "tracks": 4,
+          "normal_SAN_PCM_equal": true,
+          "bytes": 102400,
+          "sha256": "790d25848a8bba5c50888f6d8b36e490f882e1c4d107210de03fe3c34701ba31"
+        },
+        {
+          "tracks": 8,
+          "normal_SAN_PCM_equal": true,
+          "bytes": 102400,
+          "sha256": "790d25848a8bba5c50888f6d8b36e490f882e1c4d107210de03fe3c34701ba31"
+        }
+      ],
+      "receipt_sha256": "c0dc7e53ad60b5dc9758da0971f1f281f8411df5aaae01b7f866962b16130b7f",
+      "compiled_source_inventory_sha256": "ff1f90651ee1bc37d6edc1c4f8e7d4fd1a4d739fb8cfbdc3c5bdad30c934d07c",
+      "actual_versions": "Ubuntu clang version 18.1.3 (1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin\nPython 3.12.3\nclang-18\t1:18.1.3-1\n"
+    }
+  },
+  "vendor_application": {
+    "source_base": "d26458add409144a80223fccf987f18f81fa46d9",
+    "source_candidate": "a1ea40bc608212764b7e14466dc59504d4c22087",
+    "bounded_reuse": "Main0356604onlytest/docschanges; firmware/tools/ci/unchangedtargetchecker versus d264 literalGitdiffempty. Retained freshd264vendor4rows apply to identicalproduction5result files; no newvendorbuild or whole-currentCI claim.",
+    "rows": [
+      {
+        "tag": "4-parent",
+        "app_bytes": 449240,
+        "app_sha256": "5b171391e33f23bc4d8f53c09a6fc4894c1e0774ff434d5720b6841aaf5c09e5",
+        "artifacts": {
+          "felucca.bin": "5b171391e33f23bc4d8f53c09a6fc4894c1e0774ff434d5720b6841aaf5c09e5",
+          "felucca.elf": "2d155fbe10e0a7568283be24447498154b0c83d12ebc958a8fe3712be447122f",
+          "felucca.dis": "a15568a02cceba3cc7a5376ecd7fa029fc9322b5fc4d97f09c29b3a1cf27998a",
+          "symbols.txt": "781f5a1c4857b16ce76090aef5844a68e01831d8d626880ee670c18bae932d55",
+          "ramtext-disassembly.txt": "56dcc6d43d7cceef2b642e004f6d7c6eba19270a50f482a313ce697c3f5b869e"
+        },
+        "memory_notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 449240 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+        ],
+        "budget_exit": 0
+      },
+      {
+        "tag": "4-candidate",
+        "app_bytes": 449616,
+        "app_sha256": "890c7c0b1e5ee82a1bb5563ca0883ed45ee397a886334baf10976672daa759d6",
+        "artifacts": {
+          "felucca.bin": "890c7c0b1e5ee82a1bb5563ca0883ed45ee397a886334baf10976672daa759d6",
+          "felucca.elf": "1070310c5beee0b3f508f6255fdc24dcfef37f8e8fd0f0993346b13ccb9c0f41",
+          "felucca.dis": "16da0601b386ed34dd0ece6d9e467a1291ba4a6802f653b8405ffb0ba2b5ec0d",
+          "symbols.txt": "baab198a8210cbe26b4e11167266d9f0e48a372b65bc867e6df97744bb955728",
+          "ramtext-disassembly.txt": "fea7aa739c280c50b113d484985e737ab44fcc9c678a558099acddf9b149db68"
+        },
+        "memory_notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 449616 B; RAM .data+.bss 92116 B of 98304; pool 331332 B of 344064"
+        ],
+        "budget_exit": 0
+      },
+      {
+        "tag": "8-parent",
+        "app_bytes": 482968,
+        "app_sha256": "d1535764f2f1e68f57c1aef3b35efda9399d41c35b4805f971108210c8ce7aa8",
+        "artifacts": {
+          "felucca.bin": "d1535764f2f1e68f57c1aef3b35efda9399d41c35b4805f971108210c8ce7aa8",
+          "felucca.elf": "ece4b40f83c88a3c6ff5bd65531f00d988c24ce33d67e98609d3c403cde3286f",
+          "felucca.dis": "9aabd47e7e27ed2daccad6e75c1bfd86f1f29823af18bd20a47150fb0d955904",
+          "symbols.txt": "1f1faf219eb5d394ff84fa343c19344fdbfaf1575e7b6ccc31160bc2455c1509",
+          "ramtext-disassembly.txt": "16935ab7840b2c6fce89e2745b073466166cc31e574bfe7928b05ef5e5d2d391"
+        },
+        "memory_notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 482968 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+        ],
+        "budget_exit": 1
+      },
+      {
+        "tag": "8-candidate",
+        "app_bytes": 483304,
+        "app_sha256": "dc1fff1c2c6711d4433204e1491ed3a57a354da3c132a378f42b66a0fb3f614d",
+        "artifacts": {
+          "felucca.bin": "dc1fff1c2c6711d4433204e1491ed3a57a354da3c132a378f42b66a0fb3f614d",
+          "felucca.elf": "e29b80efbcc65c88fb4657f9a391f4c962d0e11a4b8ce6f3e31df7afb91abb82",
+          "felucca.dis": "bd747ff2431633b773f6f7ccc1b7cb7877b10bacc0a2cb73086b6cf541e532f1",
+          "symbols.txt": "51d1295e82f90aee48459bdfc1f36a15a2f810714c692e1c3e9a21bdbccf56c7",
+          "ramtext-disassembly.txt": "a0e5cba572996004b59ed215eb8f6a4ee6276f18a6f2c1ce43cc89a70538d1a0"
+        },
+        "memory_notes": [
+          ".ram_text: 916 insns, no calls",
+          "image 483304 B; RAM .data+.bss 96068 B of 98304; pool 335240 B of 344064"
+        ],
+        "budget_exit": 1
+      }
+    ],
+    "new_native8_failure": {
+      "slice_score_before": 494,
+      "slice_score_after": 517,
+      "baseline": 453,
+      "tolerance": 0.1,
+      "allowed_maximum": 498.3
+    },
+    "unchanged_native8_failures": {
+      "fm1_alnk0_irq": {
+        "score": 55063,
+        "baseline": 37502
+      },
+      "uac_tap48": {
+        "score": 562,
+        "baseline": 504
+      }
+    },
+    "ram_bytes": {
+      "four": 92116,
+      "eight": 96068
+    },
+    "pool_bytes": {
+      "four": 331332,
+      "eight": 335240
+    }
+  },
+  "unqualified": [
+    "Whole-eight-track suite/UI",
+    "All curated engine profiles",
+    "Physical deadline/cycles or complete stack high-water",
+    "Loader/package/installability/recovery/device operations",
+    "New CI terminal success"
+  ],
+  "unchanged": [
+    "golden hashes",
+    "target budgets/model",
+    "flash boundaries",
+    "legacy wire layouts",
+    "shared eight sounding voices",
+    "GPL-3.0-only and dependency notices"
+  ],
+  "excluded_experiment": "c842 local decoder state: score516 stillfails with extra out-of-line decoder ownframe"
+}

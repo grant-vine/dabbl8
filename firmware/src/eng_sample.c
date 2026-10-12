@@ -18,6 +18,9 @@ typedef struct {
     uint16_t z0, nz;
 } smp_set_t;
 #include "felucca_samples.h"
+#ifndef SMP_READ_BYTE
+#define SMP_READ_BYTE(data, off) ((data)[off])
+#endif
 #if defined(SMP_PERC_SLOT) && SMP_PERC_SLOT != SMP_SET_PERC
 #error "tools/gen_samples.py PERC_SLOT != core.h SMP_SET_PERC"
 #endif
@@ -56,7 +59,7 @@ typedef struct {
     uint32_t data_len, crc, rsv2[2];
     smp_zone_t zone[16];
 } smp_user_hdr_t;                                   /* 32 + 16 x 28 = 480 B, data at +512 */
-static smp_zone_t usr_zone[SMP_USER_SLOTS][16];     /* RAM copy, off rebased onto SMP_DATA */
+static smp_zone_t usr_zone[SMP_USER_SLOTS][16];     /* RAM copy, off relative to its source data */
 static uint8_t usr_nz[SMP_USER_SLOTS];
 static const char *const SMP_ALL_NAMES[SMP_NALL] = {SMP_SET_NAMES_INIT, "USR1", "USR2", "USR3"};
 
@@ -64,6 +67,12 @@ static const char *const SMP_ALL_NAMES[SMP_NALL] = {SMP_SET_NAMES_INIT, "USR1", 
 #define SMP_USER_XIP(k) fm1_xip_ptr(SMP_USER_BASE + (k) * SMP_USER_SIZE)
 #endif
 static const uint8_t *smp_user_xip(uint32_t k) { return SMP_USER_XIP(k); }
+/* Keep runtime zone offsets source-local, like the stored header. Built-in
+ * bytes and user XIP/host allocations are distinct C objects. */
+static const uint8_t *smp_set_data(uint32_t src)
+{
+    return src < SMP_NSETS ? SMP_DATA : smp_user_xip((src - SMP_NSETS) % SMP_USER_SLOTS) + SMP_USER_DATA;
+}
 #if FELUCCA_SLICE && D8BUILD_HAS(13)
 static void slc_user_scan(uint32_t k, int valid);   /* eng_slice.c: SLICE's slice table of the slot */
 #else
@@ -78,13 +87,12 @@ static void smp_user_scan(uint32_t k)
 {
     const smp_user_hdr_t *h = (const smp_user_hdr_t *)smp_user_xip(k);
     smp_zone_t zt[16];
-    uint32_t i, base, nz = 0;
+    uint32_t i, nz = 0;
     smp_user_gen++;
     usr_nz[k] = 0;
     slc_user_scan(k, 0);
     if (h->magic == SMP_USER_MAGIC && h->version == 1 && h->nz && h->nz <= 16u &&
         h->data_len <= SMP_USER_SIZE - SMP_USER_DATA) {
-        base = (uint32_t)(uintptr_t)(smp_user_xip(k) + SMP_USER_DATA) - (uint32_t)(uintptr_t)SMP_DATA;
         for (nz = h->nz, i = 0; i < nz; i++) {
             smp_zone_t *z = &zt[i];
             *z = h->zone[i];
@@ -93,7 +101,6 @@ static void smp_user_scan(uint32_t k)
                 nz = 0;                             /* zone outside the data or malformed: slot unusable */
                 break;
             }
-            z->off += base;
         }
     }
     for (i = 0; i < 16u; i++)
@@ -134,12 +141,19 @@ static inline const smp_zone_t *smp_zone(uint32_t zi)
     return zi < 0x8000u ? &SMP_ZONES[zi] : &usr_zone[(zi >> 5) & 3u][zi & 31u];
 }
 
+/* Resolve once outside the decoder loop; zi retains its stable zone encoding. */
+static const uint8_t *smp_zone_data(uint32_t zi, const smp_zone_t *z)
+{
+    const uint8_t *base = zi < 0x8000u ? SMP_DATA : smp_user_xip((zi >> 5) & 3u) + SMP_USER_DATA;
+    return base + z->off;
+}
+
 /* voice: ph[0] position (samples), ph[1] fraction Q16, s[0] predictor, s[1] step
  * index, s[2] previous sample, s[3] current sample, s[4] zone, s[5] step Q16 */
 #if D8BUILD_HAS(4)
-static inline int32_t sample_next(const smp_zone_t *z, voice_t *v, int loop)
+static inline int32_t sample_next(const uint8_t *data, const smp_zone_t *z, voice_t *v, int loop)
 {
-    uint32_t pos = v->ph[0], b = SMP_DATA[z->off + (pos >> 1)];
+    uint32_t pos = v->ph[0], b = SMP_READ_BYTE(data, pos >> 1);
     uint32_t code = (pos & 1u) ? (b >> 4) : (b & 15u);
     int32_t step = IMA_STEP[(uint32_t)v->s[1] <= 88u ? v->s[1] : 88], vd = step >> 3;
     if (code & 4u)
@@ -210,8 +224,9 @@ static void sample_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, cons
         v->active = 0;
         return;
     }
+    const uint8_t *data = smp_zone_data((uint32_t)v->s[4], z);
     if (v->ph[0] == 0 && v->ph[1] == 0 && v->s[3] == 0)
-        v->s[3] = sample_next(z, v, p[P_E3]);         /* prime the interpolator */
+        v->s[3] = sample_next(data, z, v, p[P_E3]);         /* prime the interpolator */
     for (i = 0; i < n; i++) {
         int32_t s;
         frac += stepq;
@@ -227,7 +242,7 @@ static void sample_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, cons
                 }
                 break;
             }
-            v->s[3] = sample_next(z, v, p[P_E3]);
+            v->s[3] = sample_next(data, z, v, p[P_E3]);
         }
         s = v->s[2] + (((v->s[3] - v->s[2]) * (int32_t)(frac >> 1)) >> 15);
         if (sh)                                       /* BITS: 0 = clean, up to 12 bits removed */
