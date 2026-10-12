@@ -25,6 +25,7 @@
 #define FELUCCA_CDC 1                    /* as src/felucca.c: MENU > USB SERIAL is there (nothing behind it) */
 #endif
 #define FELUCCA_FLASH 1
+#define D8_PRESET_SESSION 1
 #define FELUCCA_OTA 0
 #define FELUCCA_UAC 0
 #define FELUCCA_UART 0
@@ -118,6 +119,7 @@ static void fm1_irq_on(void) {}
 /* ----------------------------------------------------------- the screen --- */
 static uint16_t web_fb[240 * 240];       /* RGB565 as the panel gets it (high byte first) */
 static uint32_t web_draws;
+static uint32_t fm1_lcd_timeouts; /* synchronous simulation; observable fault counter */
 static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
 {
     uint32_t i, j;
@@ -135,7 +137,11 @@ static void lcd_blit(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const uint1
             web_fb[(y + j) * 240u + x + i] = p[j * w + i];
     web_draws++;
 }
-static void lcd_sync(void) {}
+static void lcd_sync(void) {
+#ifdef D8_EMU_LCD_SYNC_HOOK
+    D8_EMU_LCD_SYNC_HOOK();
+#endif
+}
 static void lcd_power(uint32_t s)              /* MENU > SCREEN OFF (lcd.c): off, the page dark; on: redrawn before */
 {
     if (!s) {
@@ -206,6 +212,15 @@ static void fl_plain_window_init(void) {}
 #include "../../firmware/src/d8p1_flash_runtime.c"
 #include "../../firmware/src/project_native_flash.c"
 #include "../../firmware/src/native_autosave_session.c"
+#define D8_UP_ENCODER_VALUE(i) web_enc_steps[i]
+#ifndef D8_UP_ERASE
+#define D8_UP_ERASE(a,t) ((void)(t),st_erase(a))
+#endif
+#ifndef D8_UP_PROGRAM
+#define D8_UP_PROGRAM(a,p,n,t) ((void)(t),st_prog(a,p,n))
+#endif
+#define D8_UP_RANGE_OK(a,n) ((a)<sizeof nor&&(n)<=sizeof nor-(a))
+#include "../../firmware/src/native_preset_session.c"
 #endif
 
 /* ------------------------------------------------- main.c and its HAL --- */

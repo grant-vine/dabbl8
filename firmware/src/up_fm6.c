@@ -140,12 +140,16 @@ static int upf_save(void)
     int to = -1;
     if (!flash_ok)
         return 3;
-#if NTRK > 4
+#if NTRK > 4 && !D8_PRESET_SESSION
     if(!d8_instrument_write_allowed())return 2;
 #endif
     if (st_current(OBJ_UPFM6, &h) < 0)
         to = st_current(OBJ_FM6BANK, &h) == 0 ? 1 : 0;
+#if NTRK == 8 && D8_PRESET_SESSION
+    return d8up_save(OBJ_UPFM6,&upf,sizeof upf,to)?2:0;
+#else
     return st_save_to(OBJ_UPFM6, &upf, sizeof upf, to) ? 2 : 0;
+#endif
 #else
     return 3;
 #endif

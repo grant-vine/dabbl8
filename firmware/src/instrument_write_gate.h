@@ -4,12 +4,10 @@
 #include "track_limits.h"
 #if NTRK > 4
 #define D8_INSTRUMENT_QUARANTINED (-10)
-/* Pre-migration protection only. There is deliberately no grant, setter,
- * retained permission or protocol authorization. Native recognition/binding
- * cannot prove originals retention, completed migration or RAM adoption.
- * Local native operation tickets use a separate narrow RAM-driver path.
- * This general gate stays closed for historical/settings/sample writes and
- * connected initialization; recognition alone never authorizes any writer. */
+/* The general legacy/raw/settings/sample write route remains closed.
+ * Clean first-use formatting and own-format local project/preset operations
+ * use separate, narrowly validated transaction tickets and RAM driver paths.
+ * Recognition, a caller Boolean or a remote packet never grants this route. */
 static int d8_instrument_write_allowed(void) { return 0; }
 #endif
 #endif

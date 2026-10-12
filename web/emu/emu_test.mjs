@@ -15,6 +15,8 @@ import { storeSectors, restoreSectors } from "./worklet.js";
 
 const wasmPath = process.argv[2] || "build/emu/felucca.wasm", nativePath = process.argv[3];
 const bytes = fs.readFileSync(wasmPath);
+// Optional manufactured own-format NOR fixture; original assertions stay intact.
+const ownNor = process.argv[4] ? fs.readFileSync(process.argv[4]) : null;
 const B = { FX: 0, SCL: 1, ENV: 2, LFO: 3, EDIT: 4, GLO: 5, HOME: 6, SAVE: 7, ARP: 8, SEQ: 9, PLAY: 10, REC: 11, OCTDN: 12, OCTUP: 13 };
 const EN = { SELECT: 0, ALGO: 1, PRESETS: 2, K1: 3, K2: 4, K3: 5, K4: 6 };
 let fails = 0;
@@ -25,6 +27,10 @@ async function device(saved) {
   const ex = instance.exports, mem = ex.memory;
   ex._initialize();
   ex.web_nor_erase();
+  if (ownNor) {
+    if (ownNor.length !== ex.web_nor_size()) throw new Error("wrong own NOR fixture length");
+    new Uint8Array(mem.buffer, ex.web_nor(), ex.web_nor_size()).set(ownNor);
+  }
   if (saved) restoreSectors(new Uint8Array(mem.buffer, ex.web_nor(), ex.web_nor_size()), saved);
   ex.web_boot();
   const d = { ex, mem, peak: 0, sig: 0, rec: false, frames: 0, kept: [] };

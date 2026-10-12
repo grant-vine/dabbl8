@@ -70,6 +70,9 @@
 #if NTRK == 8 && FELUCCA_FLASH && FELUCCA_OTA
 #define D8_MIGRATION_SESSION 1
 #endif
+#if NTRK == 8 && FELUCCA_FLASH
+#define D8_PRESET_SESSION 1
+#endif
 #include "core.h"
 #include "engines.c"             /* dsp.c, the eng_*.c files, the factory patterns */
 #if NPART >= NVOICE
@@ -139,6 +142,9 @@
 #include "native_first_use_session.c"
 #endif
 #endif
+#endif
+#if NTRK == 8 && FELUCCA_FLASH
+#include "native_preset_session.c"
 #endif
 #if FELUCCA_CDC
 #include "console.c"
