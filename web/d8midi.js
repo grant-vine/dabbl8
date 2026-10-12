@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // One owner for selected ports. Track requests plus optional read-only discovery.
+import { D8Projects } from './d8projects.js';
 import { D8Tracks, TrackProtocolError } from './d8tracks.js';
 import { parseEngineAvailability, validateEngineHandshake } from './d8engines.js';
 const owners = new WeakMap();
@@ -7,7 +8,7 @@ const pushes = new Set([23, 24, 26, 32]);
 const byte = (n) => Number.isInteger(n) && n >= 0 && n <= 127;
 export class D8MidiSession {
   #input; #output; #timeout; #alive = true; #ready = false; #pending = null;
-  #client = null; #engines = null; #engineReason = "Not negotiated"; #discardEngineReply = false; #opening; #cleanup = null; #signal; #notify;
+  #client = null; #projects = null; #projectBusy = false; #projectReason = "Not negotiated"; #engines = null; #engineReason = "Not negotiated"; #discardEngineReply = false; #opening; #cleanup = null; #signal; #notify;
   #receive = (e) => this.#message(e.data);
   #state = () => {
     if (this.#input.state !== 'connected' || this.#output.state !== 'connected' ||
@@ -15,11 +16,11 @@ export class D8MidiSession {
       this.close('MIDI port disconnected or closed.');
   };
   #abort = () => { this.close('Connection cancelled.'); };
-  constructor(input, output, { timeout = 1500, signal, engineAvailability = false, onClose = () => {} } = {}) {
+  constructor(input, output, { timeout = 1500, signal, engineAvailability = false, ownProjects = false, onClose = () => {} } = {}) {
     if (input?.type !== 'input' || output?.type !== 'output' || input === output ||
         [input, output].some((p) => !['open', 'close', 'addEventListener', 'removeEventListener'].every((k) => typeof p[k] === 'function')) ||
         typeof output.send !== 'function' || !Number.isInteger(timeout) || timeout < 1 || timeout > 30000 ||
-        typeof engineAvailability !== 'boolean' || typeof onClose !== 'function' || (signal !== undefined &&
+        typeof ownProjects !== 'boolean' || typeof engineAvailability !== 'boolean' || typeof onClose !== 'function' || (signal !== undefined &&
         (typeof signal?.aborted !== 'boolean' || typeof signal?.addEventListener !== 'function' || typeof signal?.removeEventListener !== 'function'))) throw Error('Invalid MIDI ports or connection options.');
     if (owners.has(input) || owners.has(output)) throw Error('MIDI ports are already in use by a Dabbl8 session.');
     if (signal?.aborted) throw Error('Connection cancelled.');
@@ -53,17 +54,31 @@ export class D8MidiSession {
           session.#engines = caps; session.#engineReason = '';
         } catch (error) { session.#engineReason = error.message; }
       }
+      if (options?.ownProjects === true) {
+        if (session.#client.editable && (session.#client.caps.features & 16)) {
+          session.#projects = await D8Projects.connect(r => session.#request(r, false, true), () => {
+            if (!session.connected || session.#projectBusy || session.#pending) throw Error('MIDI session is busy.');
+            session.#projectBusy = true;
+            return () => { session.#projectBusy = false; };
+          }, reason => { void session.close(reason); });
+          session.#projectReason = '';
+        } else session.#projectReason = 'This firmware does not advertise own-project transfer.';
+      }
       if (!session.#alive) { session.#client.close(); throw Error('Connection cancelled or disconnected.'); }
       return session;
     } catch (error) { await session.close(error.message); throw error; }
   }
   get tracks() { return this.#client; }
+  get projects() { return this.#projects; }
+  get projectAvailability() { return Object.freeze({available: this.connected && Boolean(this.#projects?.available),reason:this.connected?this.#projectReason:"Disconnected"}); }
+  get projectBusy() { return this.#projectBusy; }
   get engineAvailability() { return Object.freeze({ caps: this.connected ? this.#engines : null,
     reason: this.connected ? this.#engineReason : 'Disconnected' }); }
   get connected() { return this.#alive && this.#ready; }
-  #request([cmd, args], optionalEngine = false) {
+  #request([cmd, args], optionalEngine = false, ownProject = false) {
     if (!this.connected) return Promise.reject(Error('Disconnected.'));
-    if (![1, 75, 77].includes(cmd) || !Array.isArray(args) || args.length > 594 || !args.every(byte))
+    if (this.#projectBusy && !ownProject) return Promise.reject(new TrackProtocolError(4));
+    if (!(ownProject ? cmd === 81 : [1, 75, 77].includes(cmd)) || !Array.isArray(args) || args.length > 594 || !args.every(byte))
       return Promise.reject(Error('Unsupported MIDI request.'));
     if (this.#pending) return Promise.reject(Error('Another MIDI request is pending.'));
     return new Promise((resolve, reject) => {
@@ -109,7 +124,7 @@ export class D8MidiSession {
   }
   close(reason = 'Disconnected.') {
     if (this.#cleanup) return this.#cleanup;
-    this.#alive = false; this.#engines = null; this.#client?.close(); this.#finish(null, Error(reason));
+    this.#alive = false; this.#engines = null; this.#projects?.close(); this.#projects = null; this.#projectBusy = false; this.#client?.close(); this.#finish(null, Error(reason));
     this.#input.removeEventListener('midimessage', this.#receive);
     this.#input.removeEventListener('statechange', this.#state); this.#output.removeEventListener('statechange', this.#state);
     this.#signal?.removeEventListener('abort', this.#abort);
