@@ -1309,6 +1309,9 @@ static void ui_draw_page(uint32_t counting);
 static void ui_draw(void)
 {
 #if NTRK == 8 && D8_MIGRATION_SESSION
+    #if D8_FIRST_USE_SESSION
+    if(d8fi_blocked()){d8fi_draw();return;}
+#endif
     if(d8ls_blocked()){d8ls_draw();return;}
 #endif
 #if NPART >= NVOICE

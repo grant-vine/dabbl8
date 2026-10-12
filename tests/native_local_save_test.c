@@ -35,6 +35,9 @@ static void local_primitive_hook(void)
 
 static void local_lcd_hook(void)
 {
+#ifdef D8_LOCAL_FIRST_USE_LCD_HOOK
+ D8_LOCAL_FIRST_USE_LCD_HOOK();
+#endif
  if(local_lcd_count){local_lcd_count--;if(local_lcd_count)return;}
  unsigned event=local_lcd_event;local_lcd_event=0;
  if(event==1)d8ls.generation++;
@@ -112,17 +115,17 @@ static void ls_test_initial_autosave(void)
  calls=physical_calls;fm1_ms+=AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls);
  fm1_ms+=AS_IDLE_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&ls_test_level(3)==105);
  ls_test_reboot();CHECK(trk[7].p[P_LEVEL]==105);
- /* Already disclosed intent cannot fabricate an absent or corrupt AS
-  * baseline. Fail before initializing state and before any primitive. */
+ /* Genuinely erased AS can baseline current RAM, but corrupt AS must refuse
+  * before initializing state and before any primitive. */
  for(unsigned invalid=0;invalid<2;invalid++) {
   ls_test_boot(0);ls_test_name(0,0);ls_test_commit();CHECK(d8ls.intent);d8p1_autosave_session_end();
   d8pool_index index;CHECK(!d8pool_inventory(&seed,&index));uint32_t address=d8pool_mapped_address(index.object[3].block);
   if(invalid)nor[address+D8POOL_HEADER]^=1;else memset(nor+address,255,D8POOL_BLOCK);
   __typeof__(native_as) before=native_as;calls=physical_calls;memcpy(local_before,nor,sizeof nor);
-  /* Existing pool CRC policy reports a missing/torn record as EMPTY;
-   * neither erased nor corrupt bytes may become a fabricated baseline. */
-  int rc=d8p1_autosave_local_begin();CHECK(rc==D8POOL_EMPTY);
-  CHECK(!native_as.ready&&!memcmp(&before,&native_as,sizeof before)&&physical_calls==calls&&!memcmp(nor,local_before,sizeof nor));
+  int rc=d8p1_autosave_local_begin();
+  if(invalid)CHECK(rc!=D8POOL_OK&&!native_as.ready&&!memcmp(&before,&native_as,sizeof before));
+  else {uint32_t current=0;CHECK(!d8p1_signature_runtime(&current));CHECK(!rc&&native_as.ready&&!native_as.record&&native_as.saved==current);}
+  CHECK(physical_calls==calls&&!memcmp(nor,local_before,sizeof nor));
  }
  /* Disabled means no synchronization; enabling starts a full idle window. */
  ls_test_boot(0);ui_prefs|=PREF_RESTORE_OFF;ls_test_name(0,0);ls_test_commit();calls=physical_calls;
@@ -148,6 +151,7 @@ static void ls_test_initial_autosave(void)
   calls=physical_calls;fm1_ms+=AS_RETRY_MS+AS_IDLE_MS;CHECK(d8p1_autosave_session_poll()==D8POOL_UNSUPPORTED&&physical_calls==calls);
  }
 }
+#ifndef D8_NATIVE_LOCAL_SAVE_NO_MAIN
 int main(void)
 {
  ls_test_initial_autosave();
@@ -275,3 +279,5 @@ int main(void)
  }
  printf("Local native coordinator: %u checks, %u failures; actual UI/save/rename/autosave, sparse creation, visible consent and primitive cuts; no virtual permission define\n",checks,failures);return failures!=0;
 }
+
+#endif /* D8_NATIVE_LOCAL_SAVE_NO_MAIN */

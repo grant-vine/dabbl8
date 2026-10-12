@@ -42,9 +42,17 @@ static int nas_begin(int authorized,int clean_boot,int stored_baseline)
     if(rc)return d8pr_runtime_status(rc);
     rc=d8p1_autosave_snapshot_flash(&stored,&record,1);
     if(rc!=D8POOL_OK&&rc!=D8POOL_EMPTY)return rc;
-    if(stored_baseline&&rc==D8POOL_EMPTY)return D8POOL_EMPTY;
+
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(stored_baseline&&rc==D8POOL_EMPTY) {
+        /* EMPTY alone also covers a corrupt AS body. Only the full native
+         * residue scan can prove genuinely absent AS; it never grants writes. */
+        d8pool_index index;uint32_t crc[5];int scan=ls_scan(&index,crc);
+        if(scan)return scan;
+    }
+#endif
     memset(&native_as,0,sizeof native_as);
-    native_as.saved=stored_baseline?stored:current;native_as.seen=current;
+    native_as.saved=stored_baseline&&!rc?stored:current;native_as.seen=current;
     native_as.idle=native_as.poll=fm1_ms;
     native_as.enabled=!(ui_prefs&PREF_RESTORE_OFF);
     if(!rc){native_as.record=1;native_as.sequence=record.sequence;}
