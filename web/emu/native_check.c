@@ -4,7 +4,9 @@
  * gestures and the same render calls: its samples, float32 L R interleaved, to OUT. emu_test.mjs compares the
  * WebAssembly build's against them (the browser plays what the host build plays).
  *   cc -O2 -ffp-contract=off -w -Ibuild/gen -Ifirmware/src -o build/emu/native_check web/emu/native_check.c -lm
- *   build/emu/native_check OUT.f32 */
+ *   build/emu/native_check OUT.f32 [OWN_NOR_FIXTURE]
+ * Optional synthetic own-format NOR gives native8 the same actual initialized
+ * storage used by the browser parity check; it never initializes a device. */
 #include "felucca_web.c"
 
 static FILE *out;
@@ -27,6 +29,14 @@ int main(int argc, char **argv)
     if (argc < 2 || !(out = fopen(argv[1], "wb")))
         return 2;
     web_nor_erase();
+    if (argc > 2) {
+        FILE *seed = fopen(argv[2], "rb");
+        if (!seed) return 2;
+        size_t n = fread(nor, 1, sizeof nor, seed);
+        int extra = fgetc(seed);
+        fclose(seed);
+        if (n != sizeof nor || extra != EOF) return 2;
+    }
     web_boot();
     render(500);
     web_test_heavy();

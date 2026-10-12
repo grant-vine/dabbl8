@@ -27,6 +27,10 @@
 #define FELUCCA_FLASH 1
 #define D8_PRESET_SESSION 1
 #define FELUCCA_OTA 0
+#if NPART == 8
+#define D8_MIGRATION_SESSION 1
+#define D8_FIRST_USE_SESSION 1
+#endif
 #define FELUCCA_UAC 0
 #define FELUCCA_UART 0
 #ifndef FELUCCA_VERSION
@@ -129,12 +133,15 @@ static void lcd_fill(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint16_t c)
             web_fb[(y + j) * 240u + x + i] = sw;
     web_draws++;
 }
+/* DMA input can be byte-backed workspace memory; copy bytes without typed
+ * aliasing/alignment assumptions. This is display transport, not DSP state. */
 static void lcd_blit(uint32_t x, uint32_t y, uint32_t w, uint32_t h, const uint16_t *p)
 {
     uint32_t i, j;
     for (j = 0; j < h && y + j < 240u; j++)
         for (i = 0; i < w && x + i < 240u; i++)
-            web_fb[(y + j) * 240u + x + i] = p[j * w + i];
+            memcpy(&web_fb[(y + j) * 240u + x + i],
+                   (const uint8_t *)(const void *)p + (j*w+i)*2u, 2);
     web_draws++;
 }
 static void lcd_sync(void) {
@@ -197,21 +204,66 @@ static void irq_restore(uint32_t f) { (void)f; }
 static uint32_t fl_jedec_ram(void) { return 0x856014u; }             /* the FM-1's part (project.c) */
 static void fl_plain_window_init(void) {}
 #define FL_FAR(fn) (fn)
+/* Exact user-store declarations from firmware/hal/fm1_flash.h. */
+#define FL_DATA_LO      0x00097000u                /* Felucca main store */
+#define FL_DATA_HI      0x000E0000u
+#define FL_GLOB_LO      0x000FC000u                /* Felucca superblock / globals */
+#define FL_GLOB_HI      0x000FF000u
+#define FL_OTA_LO       0x000E0000u                /* M-UPGRADE loader staging, ota.c */
+#define FL_OTA_HI       0x000E5000u
+#define FL_AUTO_LO      0x000E5000u                /* 1.2: the autosave (storage.c OBJ_AUTOSAVE), A/B, just above */
+#define FL_AUTO_HI      0x000E7000u                /* the OTA staging; 0xE7000 stays free */
+/* [off, off + n) inside [lo, hi), without wrapping: off + n can overflow, and
+ * the 1 MiB part ignores the high address bits, so a wrapped range lands low. */
+#define FL_IN(off, n, lo, hi) ((uint32_t)(off) >= (lo) && (uint32_t)(off) <= (hi) && \
+                               (uint32_t)(n) <= (hi) - (uint32_t)(off))
+/* Felucca's own store (projects, user samples; settings; the autosave) */
+#define FL_STORE_OK(off, n) (FL_IN(off, n, FL_DATA_LO, FL_DATA_HI) || FL_IN(off, n, FL_GLOB_LO, FL_GLOB_HI) || \
+                             FL_IN(off, n, FL_AUTO_LO, FL_AUTO_HI))
+static int fl_erase4k_ram(uint32_t a,uint32_t*t){(void)t;return st_erase(a);}
+static int fl_prog_ram(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;return st_prog(a,p,n);}
 #include "../../firmware/src/storage.c"
 #include "../../firmware/src/upreset.c"
 #include "../../firmware/src/project.c"
 #if NTRK == 8
-/* Match the target runtime composition: real native validation and read-only
- * boot, backed by this emulator's NOR. No initializer or write session is
- * authorized by boot; OTA and migration remain disabled above. */
+/* Actual native boot/local/first-use lifecycle over simulated NOR. Blank
+ * storage requires visible destructive disclosure and SAVE press/release;
+ * recognized own data is preserved. No physical-device authority follows. */
 #include "../../firmware/src/d8p1.c"
 #include "../../firmware/src/d8p1_runtime.c"
 #include "../../firmware/src/d8pool.c"
+#include "../../firmware/src/native_migration_preflight.c"
 #include "../../firmware/src/d8p1_pool_runtime.c"
+#include "../../firmware/src/d8arr_prepare.c"
 #include "../../firmware/src/d8pool_mapped.c"
 #include "../../firmware/src/d8p1_flash_runtime.c"
 #include "../../firmware/src/project_native_flash.c"
 #include "../../firmware/src/native_autosave_session.c"
+#define D8_MC_ENCODER_VALUE(i) web_enc_steps[i]
+#define D8_MC_PENDING_PRESS() (web_pressed||web_notes_pressed)
+/* Editor/capture helpers supply shared production guards only. OTA stays off,
+ * no browser wire transport is exposed, and remote migration writes stay closed. */
+#define FELUCCA_ID "FM-1_WEB"
+#define SXQ 128u
+static uint32_t so_w,so_r;
+static void fl_inval(uint32_t a,uint32_t n){(void)a;(void)n;}
+static void audio_silence(void){}
+static int fl_erase4k(uint32_t a,uint32_t*t){(void)a;(void)t;return -10;}
+static int fl_write(uint32_t a,const void*p,uint32_t n){(void)a;(void)p;(void)n;return -10;}
+static uint32_t ota_now_ms(void){return fm1_ms;}
+static void ota_idle(void){}
+#include "../../firmware/src/ota.c"
+#include "../../firmware/src/editor.c"
+#include "../../firmware/src/native_migration_execute.c"
+#include "../../firmware/src/native_source_equivalence.c"
+#include "../../firmware/src/native_migration_capture_binding.c"
+#include "../../firmware/src/native_migration_session.c"
+#include "../../firmware/src/native_local_session.c"
+#define D8_FIRST_USE_AMALGAMATED 1
+#define D8_FI_ERASE(a,t) ((void)(t),st_erase(a))
+#define D8_FI_PROGRAM(a,p,n,t) ((void)(t),st_prog(a,p,n))
+#include "../../firmware/src/native_first_use.c"
+#include "../../firmware/src/native_first_use_session.c"
 #define D8_UP_ENCODER_VALUE(i) web_enc_steps[i]
 #ifndef D8_UP_ERASE
 #define D8_UP_ERASE(a,t) ((void)(t),st_erase(a))
@@ -221,6 +273,7 @@ static void fl_plain_window_init(void) {}
 #endif
 #define D8_UP_RANGE_OK(a,n) ((a)<sizeof nor&&(n)<=sizeof nor-(a))
 #include "../../firmware/src/native_preset_session.c"
+#include "../../firmware/src/native_settings_session.c"
 #endif
 
 /* ------------------------------------------------- main.c and its HAL --- */
@@ -298,6 +351,12 @@ static void web_frame(void)
     master_poll();
     felucca_dbg.ui_frames++;
     ui_input();
+
+#if NTRK == 8 && D8_FIRST_USE_SESSION
+    d8fi_poll();
+    d8mc_poll();
+    d8ls_poll();
+#endif
     settings_poll();
     autosave_poll();
     ui_leds();
