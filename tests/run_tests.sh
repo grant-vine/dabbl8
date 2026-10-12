@@ -113,6 +113,7 @@ export AC79_SDK="${AC79_SDK:-$HOME/fw-AC79_AIoT_SDK}"
 cd "$(dirname "$0")/.."
 OUT=build/host
 mkdir -p "$OUT"
+D8_LIFECYCLE_CC="${CC:-cc}"
 CC="${CC:-cc} -O1 -Wall -Wno-unused-function"
 fail=0
 run() { echo "== $1"; shift; "$@" || fail=1; }
@@ -384,6 +385,10 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "native migration capture binding: earlier full capture, exact proposal and readback isolation" "$OUT/native_migration_capture_binding_test"
     run "instrument capture collector: actual C bridge and hostile replies" python3 tests/instrument_capture_collector_test.py "$OUT/instrument_capture_test"
+    run "read-only MIDI capture adapter: injected ports and actual C full capture" python3 tests/readonly_midi_adapter_test.py "$OUT/instrument_capture_test"
+    run "RtMidi extracted lifecycle: poison allocator and two-site repair" env CC="$D8_LIFECYCLE_CC" python3 tests/rtmidi_native_lifecycle_test.py
+    run "native MIDI CLI remains unqualified before imports" python3 tests/native_midi_qualification_guard_test.py
+    run "raw CoreMIDI inventory: duplicate-preserving fake ports and actual capture" python3 tests/raw_coremidi_inventory_test.py "$OUT/instrument_capture_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
     run "connected native migration/session: exact source, consent, own tickets, cuts, adoption and explicit reboot resume" "$OUT/native_migration_session_test"
     $CC -O2 -w -DD8_MC_PRODUCTION_TEST -Ibuild/gen -Ifirmware/src -o "$OUT/native_migration_session_closed" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
@@ -849,6 +854,8 @@ else
     ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_capture_binding_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_capture_binding_test.c -lm
     run "strict ASan/UBSan: private earlier-capture binding and metadata-only scratch guards" "$A/native_migration_capture_binding_test"
     run "ASan/UBSan: instrument collector through actual instrument bridge" python3 tests/instrument_capture_collector_test.py "$A/instrument_capture_test"
+    run "ASan/UBSan: read-only MIDI capture adapter through actual C bridge" python3 tests/readonly_midi_adapter_test.py "$A/instrument_capture_test"
+    run "ASan/UBSan: strict raw CoreMIDI inventory through actual capture" python3 tests/raw_coremidi_inventory_test.py "$A/instrument_capture_test"
     ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm
     run "strict ASan/UBSan: connected native migration, exact own tickets, all cuts and readonly reboot resume" "$A/native_migration_session_test"
     ${CC%% *} -O1 -g -w -DD8_MC_PRODUCTION_TEST -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/native_migration_session_closed" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_migration_session_test.c -lm

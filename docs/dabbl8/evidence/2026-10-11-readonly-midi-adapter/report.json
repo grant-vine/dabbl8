@@ -1,0 +1,248 @@
+{
+  "head": "9b8c1798c40e25fab528ce2ffb431050db4972ca",
+  "tree": "d28501fd59ead24ed2c96ecb0ae1da60b2e87e9d",
+  "parents": [
+    "1466d4b4f0fb4244f0491fbf3cb4103bfd3b675d",
+    "441fb281e69000bb432a84c7bdc8f8d944ccde04"
+  ],
+  "authoritative_main": "1466d4b4f0fb4244f0491fbf3cb4103bfd3b675d",
+  "changed_paths": [
+    "docs/dabbl8/readonly-midi-capture.md",
+    "tests/readonly_midi_adapter_test.py",
+    "tests/run_tests.sh",
+    "tools/dabbl8_readonly_midi.py"
+  ],
+  "clean": true,
+  "production_firmware_unchanged": true,
+  "capture_session_collector_sources_unchanged": true,
+  "native_midi_contact": false,
+  "dependencies_installed": false,
+  "hardware_qualified": false,
+  "migration_or_restore_authority": false,
+  "scope": "Persistent read-only command78 transport foundation only. No command79 session/live physical handoff, device contact, native CoreMIDI, installation or physical qualification. Actual C handlers use virtual NOR via injected MIDI ports.",
+  "matrix": [
+    {
+      "name": "actual-4-normal-compile",
+      "argv": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=4",
+        "-I/private/tmp/d8-readonly-midi-adapter-main1466-evidence/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-normal",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/instrument_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-4-normal-test",
+      "argv": [
+        "python3",
+        "tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-normal",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-normal-capture"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-4-san-compile",
+      "argv": [
+        "clang",
+        "-O1",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-omit-frame-pointer",
+        "-DNPART=4",
+        "-I/private/tmp/d8-readonly-midi-adapter-main1466-evidence/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-san",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/instrument_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-4-san-test",
+      "argv": [
+        "python3",
+        "tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-san",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-4-san-capture"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-8-normal-compile",
+      "argv": [
+        "clang",
+        "-O2",
+        "-w",
+        "-DNPART=8",
+        "-I/private/tmp/d8-readonly-midi-adapter-main1466-evidence/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-normal",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/instrument_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-8-normal-test",
+      "argv": [
+        "python3",
+        "tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-normal",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-normal-capture"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-8-san-compile",
+      "argv": [
+        "clang",
+        "-O1",
+        "-w",
+        "-fsanitize=address,undefined",
+        "-fno-sanitize=signed-integer-overflow,shift,bounds,object-size,pointer-overflow",
+        "-fno-omit-frame-pointer",
+        "-DNPART=8",
+        "-I/private/tmp/d8-readonly-midi-adapter-main1466-evidence/gen",
+        "-Ifirmware/src",
+        "-o",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-san",
+        "firmware/src/d8p1.c",
+        "firmware/src/d8pool.c",
+        "firmware/src/d8pool_mapped.c",
+        "tests/instrument_capture_test.c",
+        "-lm"
+      ],
+      "exit": 0
+    },
+    {
+      "name": "actual-8-san-test",
+      "argv": [
+        "python3",
+        "tests/readonly_midi_adapter_test.py",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-san",
+        "/private/tmp/d8-readonly-midi-adapter-main1466-evidence/actual-8-san-capture"
+      ],
+      "exit": 0
+    }
+  ],
+  "checks_per_completed_row": 246,
+  "families": [
+    "4 tracks FM4off SLICEon",
+    "8 tracks FM4off SLICEon"
+  ],
+  "sanitizer_exclusions": [
+    "signed-integer-overflow",
+    "shift",
+    "bounds",
+    "object-size",
+    "pointer-overflow"
+  ],
+  "retained_capture_modes": [
+    "full17",
+    "raw12",
+    "wrong-read-role",
+    "wrong-read-offset",
+    "wrong-read-crc"
+  ],
+  "private_transcript_retention": "actual-*-capture/*/received-frames.jsonl (all exact requests/replies); no real user data",
+  "guards": [
+    {
+      "name": "command-allowlist-bypass",
+      "exit": 1,
+      "replacement": [
+        "op = request_operation(frame)",
+        "op = 0"
+      ],
+      "failed_as_expected": true
+    },
+    {
+      "name": "duplicate-reply-bypass",
+      "exit": 1,
+      "replacement": [
+        " or self.reply is not None",
+        ""
+      ],
+      "failed_as_expected": true
+    },
+    {
+      "name": "token-binding-bypass",
+      "exit": 1,
+      "replacement": [
+        "if self.operation >= 2 and token != r32(self.request[7:12]):",
+        "if False:"
+      ],
+      "failed_as_expected": true
+    },
+    {
+      "name": "reply-size-bypass",
+      "exit": 1,
+      "replacement": [
+        "if len(frame) != expected:",
+        "if False:"
+      ],
+      "failed_as_expected": true
+    }
+  ],
+  "source_unchanged": true,
+  "gen_provenance": "Copied unchanged 7 headers from exact53 isolated previously qualified generation, each pinned below; no vendor compiler or regeneration in this host scope",
+  "generated_headers": {
+    "ui_keycaps.h": "7194c54438deeeb77d91fcbe5bae361155e2b883ffefff359910d883441a9008",
+    "felucca_tables.h": "a975289289c52b9f9fd2ff985a147b199f8a3afa9fb416e95f99cb83131993cb",
+    "ui_fonts.h": "ccec7fcead654ccd6a279f56db4d74e4e62f275e92a13714006788568b43ed54",
+    "felucca_fm6.h": "d1859b8194443ecbe099505909d6ea4db866d919100c81d738bb06d56004f791",
+    "felucca_samples.h": "d72405f100494dce4c3bff53de584423b0ab96cf9b196a85487b13206ae032bc",
+    "ui_icons.h": "ff211885beaa45b6dc7046b32d018d71aa444e9d8a75300f64aac6f7979d6882",
+    "ui_palettes.h": "e87e29243c6129e8bd238cae5b185ca0357483f6a1787f78f63ecf54ce8dad05"
+  },
+  "source_files": {
+    "docs/dabbl8/readonly-midi-capture.md": "21e1d957990b5295e12ef9d5980380ab7ea323c7fe97bbd042eac1b4e2088330",
+    "tests/readonly_midi_adapter_test.py": "95f62a587595fd819e868731c4066edac62e5f232ef95130a1b4cbc93c669048",
+    "tests/run_tests.sh": "12dbd1253d96803a37855fc84b17d46e29230c105604c4c7204fe03a2f9f84ec",
+    "tools/dabbl8_readonly_midi.py": "f5b0681a7cbe7d8f7355ef039b904760cd10b87334a5209e9a2bd7696651b93a"
+  },
+  "python": "3.9.6 (default, May 22 2026, 11:13:45) \n[Clang 21.0.0 (clang-2100.1.1.101)]",
+  "clang": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "optional_dependencies": "mido/python-rtmidi absent in qualified build venv, neither imported nor installed; CoreMIDI backend unexercised",
+  "primary_docs_checked_utc": "2026-10-11",
+  "primary_docs": [
+    "https://mido.github.io/mido/backends/rtmidi.html",
+    "https://spotlightkid.github.io/python-rtmidi/rtmidi.html"
+  ],
+  "ci_runner": "Two exact calls added after normal/inheritedSAN collector; entire suite not rerun",
+  "checks": [
+    "diff --check PASS",
+    "sh -n runner PASS",
+    "immutable notice scan; exact counts in notices.json"
+  ],
+  "prior_evidence": "Original441 exact358-entry seal remains untouched; this is fresh1466 union scope. Whole-Capture preprocessor differs, so no previous capture execution reused.",
+  "closure_summary": {
+    "pairs": 16,
+    "literal_preprocessor_identical": 12,
+    "literal_dependency_identical": 12,
+    "changed_family": "instrument_capture_test.c all4FULL configs; fresh actual execution required",
+    "raw_receipt": "closure-comparison.json"
+  },
+  "tool_and_test_original_identity": {
+    "tools/dabbl8_readonly_midi.py": true,
+    "tests/readonly_midi_adapter_test.py": true
+  }
+}

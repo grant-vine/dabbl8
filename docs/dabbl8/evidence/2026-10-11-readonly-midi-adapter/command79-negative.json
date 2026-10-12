@@ -1,0 +1,16 @@
+{
+  "source": "9b8c1798c40e25fab528ce2ffb431050db4972ca",
+  "rows": [
+    {
+      "name": "original",
+      "exit": 0,
+      "module_sha256": "f5b0681a7cbe7d8f7355ef039b904760cd10b87334a5209e9a2bd7696651b93a"
+    },
+    {
+      "name": "request-guard-removed",
+      "exit": 1,
+      "module_sha256": "cb463764bdea3218273ccdf20d4aa645c121d48e1747b878bf30d1d372150545"
+    }
+  ],
+  "scope": "Targeted command79 first-request control: unchanged source refuses before any send; removing exact request guard emits command79 and fails explicit assertion. Supersedes weaker broad-suite control that encountered empty-request reply IndexError first. Original488 and358 seals untouched; production code unchanged."
+}

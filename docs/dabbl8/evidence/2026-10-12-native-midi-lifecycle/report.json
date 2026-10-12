@@ -1,0 +1,232 @@
+{
+  "status": "PASS finalcompiler correction, original377immutable",
+  "base": "167e17eb87ff37aa204949ec73ca5f6d1b0bb818",
+  "source_hashes": {
+    "tools/dabbl8_readonly_midi.py": "dc45a71575eebe0ee614b45887a7bedcb9f3a80c60b38c147b95b04d1236d996",
+    "tests/run_tests.sh": "2b7b3aaa721d146843115a53fb57fbcfed4b3580b4967185eeef18f78d391865",
+    "tests/native_midi_qualification_guard_test.py": "da25621548910a97d7a9de3c673cdfe0618e5d260d9b71a817c934f9ecac6bea",
+    "tests/rtmidi_native_lifecycle_mock.cpp": "c468e034b6847fa5416eac9f51822b8f13572ea1b14290b08e7fa9a14c621e54",
+    "tests/rtmidi_native_lifecycle_test.py": "baab6246e42f1b455843f5deb5ce51234af90eaa56ec0c222467e657a769f591",
+    "tools/patches/python-rtmidi-1.5.8-coredata-value-init.patch": "ab326d5dbd0fbfcad5d05c8553697e55617bdd59d93452c52688833e330a7e56",
+    "docs/dabbl8/readonly-midi-capture.md": "5cf9e801911e17ba7d3313fcafa4d94e5e9c9e1a5f4ac0989bc805ca7e7cfeac",
+    "docs/dabbl8/native-midi-lifecycle.md": "4e433fe2b16cd76c314bd3bba69bccb77d1664c1a180e1465519cd9170e63403"
+  },
+  "cpp_driver_final": {
+    "compiler": {
+      "selection": "paired from CC=clang",
+      "argv": [
+        "clang++"
+      ],
+      "actual_program": "/usr/bin/clang++",
+      "version_stdout": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+      "version_stderr": ""
+    },
+    "source_sha256": "c468e034b6847fa5416eac9f51822b8f13572ea1b14290b08e7fa9a14c621e54",
+    "rows": [
+      {
+        "variant": "original",
+        "sanitizer": false,
+        "exit": 0,
+        "expected_exit": 0,
+        "stdout": "poisoned-dispose-attempts=2 valid-seeded-disposals=2 fake-client=77 no-OS-API\nPASS actual extracted C++ lifecycle against fake CoreMIDI",
+        "stderr": "",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/original.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/originalFalse"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "original",
+        "sanitizer": true,
+        "exit": 0,
+        "expected_exit": 0,
+        "stdout": "poisoned-dispose-attempts=2 valid-seeded-disposals=2 fake-client=77 no-OS-API\nPASS actual extracted C++ lifecycle against fake CoreMIDI",
+        "stderr": "",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/original.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/originalTrue"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "fixed",
+        "sanitizer": false,
+        "exit": 0,
+        "expected_exit": 0,
+        "stdout": "poisoned-dispose-attempts=0 valid-seeded-disposals=2 fake-client=77 no-OS-API\nPASS actual extracted C++ lifecycle against fake CoreMIDI",
+        "stderr": "",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/fixed.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/fixedFalse"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "fixed",
+        "sanitizer": true,
+        "exit": 0,
+        "expected_exit": 0,
+        "stdout": "poisoned-dispose-attempts=0 valid-seeded-disposals=2 fake-client=77 no-OS-API\nPASS actual extracted C++ lifecycle against fake CoreMIDI",
+        "stderr": "",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/fixed.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/fixedTrue"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "input-reverted",
+        "sanitizer": false,
+        "exit": 1,
+        "expected_exit": 1,
+        "stdout": "poisoned-dispose-attempts=1 valid-seeded-disposals=2 fake-client=77 no-OS-API",
+        "stderr": "FAIL unexpected poisoned or valid disposal count",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/input-reverted.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/input-revertedFalse"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "input-reverted",
+        "sanitizer": true,
+        "exit": 1,
+        "expected_exit": 1,
+        "stdout": "poisoned-dispose-attempts=1 valid-seeded-disposals=2 fake-client=77 no-OS-API",
+        "stderr": "FAIL unexpected poisoned or valid disposal count",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/input-reverted.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/input-revertedTrue"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "output-reverted",
+        "sanitizer": false,
+        "exit": 1,
+        "expected_exit": 1,
+        "stdout": "poisoned-dispose-attempts=1 valid-seeded-disposals=2 fake-client=77 no-OS-API",
+        "stderr": "FAIL unexpected poisoned or valid disposal count",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/output-reverted.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/output-revertedFalse"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      },
+      {
+        "variant": "output-reverted",
+        "sanitizer": true,
+        "exit": 1,
+        "expected_exit": 1,
+        "stdout": "poisoned-dispose-attempts=1 valid-seeded-disposals=2 fake-client=77 no-OS-API",
+        "stderr": "FAIL unexpected poisoned or valid disposal count",
+        "compiler_argv": [
+          "clang++",
+          "-std=c++11",
+          "-O0",
+          "-fsanitize=address,undefined",
+          "-fno-omit-frame-pointer",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/output-reverted.cpp",
+          "-o",
+          "/var/folders/0f/gwk3z6xx1031sqk7gdbp02zm0000gn/T/tmpfvyfdcjd/output-revertedTrue"
+        ],
+        "compile_exit": 0,
+        "compile_stdout": "",
+        "compile_stderr": ""
+      }
+    ],
+    "status": "PASS",
+    "scope": "eight actual extracted C++ fake-API builds/runs only; no native MIDI imports, frameworks or OS calls"
+  },
+  "compiler_selection": [
+    {
+      "name": "unsupportedCC",
+      "env": {
+        "CC": "unknown-c-compiler"
+      },
+      "exit": 1,
+      "reason": "AssertionError: No known C++ pair for CC; set CXX explicitly"
+    },
+    {
+      "name": "flaggedCC",
+      "env": {
+        "CC": "clang -O2"
+      },
+      "exit": 1,
+      "reason": "AssertionError: Set CXX explicitly for a wrapped or flagged CC"
+    },
+    {
+      "name": "missingCXX",
+      "env": {
+        "CXX": "missing-cxx-for-test"
+      },
+      "exit": 1,
+      "reason": "AssertionError: Selected C++ compiler unavailable; no unrelated fallback"
+    },
+    {
+      "name": "paired18-selection",
+      "scope": "actual driver selection prefix with mocked resolution/version only; not clang18 compilequalification",
+      "selected": [
+        "clang++-18"
+      ],
+      "status": "PASS"
+    }
+  ],
+  "cli_guard_stdout": "native MIDI qualification gate: refusal before import/construct, help lazy PASS\n",
+  "prior377": {
+    "report_sha256": "f7c194829b3b0dabce4bccc99f9e13327996874a1dc779d9881ec0d4319ab7ce",
+    "manifest_sha256": "f124c0d618a10e12f3633c4689f39467f55f851c8f95df350dfde6929dc0d4c5",
+    "scope": "Fresh4actualCbuilds+8wrappercollector executions remainexactbytebound: tool, bothPythoncapturefixtures and firmware unchanged. Only C++drivercompilerselection/negative stderrassertion and documentation wordcorrected. No rerun of priorcapture matrix claimed."
+  },
+  "native_extension_compiled": false,
+  "public_operations": 0
+}
