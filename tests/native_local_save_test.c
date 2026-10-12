@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Actual UI and shipping coordinator; private NOR primitive spies, no device. */
+#include <stdint.h>
 static void local_read_hook(void);
 #define D8_LOCAL_READ_HOOK local_read_hook
 static void local_lcd_hook(void);
@@ -39,6 +40,7 @@ static void local_lcd_hook(void)
  if(event==1)d8ls.generation++;
  if(event==2)d8_capture_store_changed();
  if(event==3)usb.resets++;
+ if(event==4)fm1_lcd_timeouts++;
 }
 static void ls_test_boot(unsigned sparse)
 {
@@ -203,7 +205,7 @@ int main(void)
  unsigned valid_block=d8ls.block;d8ls.block=5;CHECK(d8ls_driver_erase(0)==-10&&physical_calls==calls);d8ls.block=(uint8_t)valid_block;
  CHECK(d8ls_driver_program(d8pool_mapped_address(valid_block),&byte,UINT32_MAX)==-10&&physical_calls==calls);
  /* No draw, a pre-render key, and events during LCD sync never grant consent. */
- for(unsigned event=0;event<7;event++) {
+ for(unsigned event=0;event<8;event++) {
   ls_test_boot(0);ls_test_name(0,0);
   if(event){if(event<4){boot_lcd_late=(int)consent_syncs;boot_event=(int)event;}else {local_lcd_event=event-3;local_lcd_count=consent_syncs;}ui_draw();CHECK(!d8ls.shown);}
   mc_ship_tap(B_SAVE);d8ls_poll();CHECK(!d8ls.intent&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));

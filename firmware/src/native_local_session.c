@@ -226,8 +226,12 @@ static void d8ls_autosave_finish(int rc)
 {
  if(d8ls.operation==1&&d8ls.phase==LS_EXECUTE&&!d8ls.writing)ls_fail((rc&&rc!=D8POOL_BUSY)||d8ls.attempted);
 }
+#ifndef D8_LS_LCD_FAULT_COUNT
+#define D8_LS_LCD_FAULT_COUNT() fm1_lcd_timeouts
+#endif
 static void d8ls_draw(void)
 {
+ uint32_t lcd_faults=D8_LS_LCD_FAULT_COUNT();
  uint32_t generation=d8ls.generation,epoch=d8_capture_change.epoch;
  unsigned phase=d8ls.phase;
  d8ls.shown=0;
@@ -244,7 +248,7 @@ static void d8ls_draw(void)
   * arriving during that transfer invalidate this exact proposal. */
  if(phase!=LS_CONSENT)return; /* Held SAVE/release frames cannot grant anew. */
  uint32_t flags=irq_save();
- if(d8ls.phase==LS_CONSENT&&!d8ls.busy&&!d8ls.revoked&&generation==d8ls.generation&&
+ if(D8_LS_LCD_FAULT_COUNT()==lcd_faults&&d8ls.phase==LS_CONSENT&&!d8ls.busy&&!d8ls.revoked&&generation==d8ls.generation&&
     epoch==d8_capture_change.epoch&&epoch==d8ls.epoch&&usb.resets==d8ls.usb&&
     usb.config==d8ls.usb_config&&ls_quiet())d8ls.shown=generation;
  else d8ls.revoked=1;
