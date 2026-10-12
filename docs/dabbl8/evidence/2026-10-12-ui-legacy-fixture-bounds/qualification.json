@@ -1,0 +1,28 @@
+{
+  "base": "752e8deb21395d79b00df139d1d48d6ed58fd138",
+  "measured_test_hashes": {
+    "tests/ui_test.c": "8888aeb7c1523433e116fa4d873151ace128efd62660ef322adb12f29c89dcb2",
+    "tests/ui_legacy_v6_bounds_test.c": "b02446ac5e09f196cc0e027f36bfc179baac8c2966becdb5f23e47dce5523afe",
+    "tests/run_tests.sh": "5a3a7f46bb0758d0ebbb1a89136739932ab9f9fcad80d92e92564f1a7d0ef19c"
+  },
+  "focus_configurations": 16,
+  "strict_sanitizers": "address,undefined; no exclusions; no recovery",
+  "checks_per_run": {
+    "tracks4": 797,
+    "tracks8": 805
+  },
+  "complete_four_track_stdout_equal_pairs": 2,
+  "fresh_production_changes": false,
+  "source_before_after_equal": true,
+  "historical_negative_scope": {
+    "original_manifest_sha256": "1d48cd530091b2f14217461c953d5d97b33f57d117cc6a82b42a1b8232b64312",
+    "scope": "Original parent native8 historical-array sanitizer failure, reverted-NTRK negative and omitted-track4 negative remain separate; not rerun on current source."
+  },
+  "local_report_sha256": "84b0db8e4c20f1c785565931125b43aa7f41c3613fc8d9d6396b6cb4e8258fd3",
+  "limits": [
+    "Focused actual shared historical-v6 fixture copy/import only; full native8 UI suite not passed or claimed.",
+    "Eight-track RAM capture supplies historical fixture data because legacy-sector writes are quarantined; no production persistence changes.",
+    "Fresh16focus uses strict ASan/UBSan without DSP exclusions; four-track complete UI stdout checks use normal builds.",
+    "No whole runner/CI/vendor/physical qualification; existing FM6 rows retained and not rerun by this check."
+  ]
+}
