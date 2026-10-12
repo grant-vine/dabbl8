@@ -3,12 +3,16 @@ static void fi_lcd_test_hook(void);
 static void fi_stage_test_hook(void);
 #define D8_FI_STAGE_HOOK fi_stage_test_hook
 #define D8_LOCAL_FIRST_USE_LCD_HOOK fi_lcd_test_hook
+#define D8_SETTINGS_SESSION_TEST 1
 #define D8_FIRST_USE_SESSION 1
 #define D8_FIRST_USE_WRITE_ENABLED 1
 #define D8_NATIVE_LOCAL_SAVE_NO_MAIN 1
 #include "native_local_save_test.c"
-static int fi_test_erase(uint32_t a,uint32_t*t){(void)t;return mc_virtual_erase(a);}
-static int fi_test_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;return mc_virtual_program(a,p,n);}
+#ifndef D8_FI_TEST_RESULT
+#define D8_FI_TEST_RESULT(rc,a,n) (rc)
+#endif
+static int fi_test_erase(uint32_t a,uint32_t*t){(void)t;int rc=mc_virtual_erase(a);return D8_FI_TEST_RESULT(rc,a,4096);}
+static int fi_test_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;int rc=mc_virtual_program(a,p,n);return D8_FI_TEST_RESULT(rc,a,n);}
 #define D8_FI_ERASE(a,t) fi_test_erase(a,t)
 #define D8_FI_PROGRAM(a,p,n,t) fi_test_program(a,p,n,t)
 #include "../firmware/src/native_first_use.c"
@@ -16,6 +20,7 @@ static int fi_test_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)
 static unsigned fi_lcd_event,fi_stage_event;
 static void fi_stage_test_hook(void){if(fi_stage_event==1){fi_stage_event=0;d8_capture_store_changed();}else if(fi_stage_event==2){fi_stage_event=0;main_workspace.migration.stage.wire[200]^=1;}}
 static void fi_lcd_test_hook(void){if(fi_lcd_event==1){fi_lcd_event=0;fm1_lcd_timeouts++;}else if(fi_lcd_event==2){fi_lcd_event=0;usb.resets++;}}
+#ifndef D8_FIRST_USE_SESSION_NO_MAIN
 int main(void)
 {
  boot_seed();CHECK(!d8fi_boot_classify());CHECK(!writes&&!physical_calls);
@@ -76,3 +81,5 @@ int main(void)
  }
  printf("First-use actual panel/ticket: %u checks, %u failures; virtual NOR only\n",checks,failures);return failures!=0;
 }
+
+#endif /* D8_FIRST_USE_SESSION_NO_MAIN */
