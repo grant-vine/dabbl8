@@ -29,8 +29,12 @@ static void room_seed(void)
  dc_l=dc_r=-1344;}
 static void render_chunk(unsigned n)
 {
- int32_t z[CTL]={0},wet[CTL]={0};fx_buses(z,z,z,wet,n);
- for(unsigned i=0;i<n;i++){int32_t l=((wet[i]>>2)*(int32_t)song.master_q12)>>10,r=l;master_out(&l,&r);CHECK(!l&&!r);}
+ /* Match the real render's CTL subdivision of a64-sample caller request. */
+ while(n){
+  unsigned count=n>CTL?CTL:n;int32_t z[CTL]={0},wet[CTL]={0};fx_buses(z,z,z,wet,count);
+  for(unsigned i=0;i<count;i++){int32_t l=((wet[i]>>2)*(int32_t)song.master_q12)>>10,r=l;master_out(&l,&r);CHECK(!l&&!r);}
+  n-=count;
+ }
 }
 int main(void)
 {
@@ -67,7 +71,7 @@ int main(void)
  uint32_t hidden=(fx.ap_i[1]+300u)%441u;
  FT16(ap,&rev_ap[556+hidden],1000);CHECK(!fx_resident_quiet()&&fx_tail.ap);
  int32_t zero[CTL]={0},wet[CTL];
- for(unsigned i=0;i<7;i++)fx_buses(zero,zero,zero,wet,64);
+ for(unsigned i=0;i<14;i++)fx_buses(zero,zero,zero,wet,CTL);
  CHECK(fx_uniform_wait.ap_fixed&&fx_tail.ap&&!fx_resident_quiet());
  /* SPRING's negative LP deadband has exact zero loop/AP input. */
  fresh_fx();fx.rtype=1;song.g[G_RTYPE]=1;fx.sp_lp=-1;fx.dly_lp=-1;song.g[G_DFDBK]=0;
@@ -83,6 +87,6 @@ int main(void)
  CHECK(!fx_resident_quiet());unsigned sounded=0;
  for(unsigned i=0;i<200;i++){int32_t out=render_sample();if(out)sounded=1;if(i<100)CHECK(!fx_resident_quiet());}
  CHECK(sounded);
- printf("Stationary FX: %u checks, %u failures; exact ROOM/AP2 and SPRING, block1/17/64, parameter/model/external revocation, future impulse refusal\n",checks,failures);
+ printf("Stationary FX: %u checks, %u failures; exact ROOM/AP2 and SPRING, request1/17/64 (CTL subdivision), parameter/model/external revocation, future impulse refusal\n",checks,failures);
  return failures!=0;
 }
