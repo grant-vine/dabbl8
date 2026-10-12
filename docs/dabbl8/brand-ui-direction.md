@@ -20,7 +20,7 @@ alongside colour. Golden yellow must not carry cream small text. Dark and light
 colours must be checked after RGB565 quantisation and actual renderer blends.
 The first light-mode contrast check failed for cream ink on the blended teal
 selection (3.79<4.5). Darken that teal tone instead of relaxing the threshold;
-final generator contrast checks pass. This is a draft preview, not device proof.
+final generator contrast checks pass. The approved design passes the generator contrast gates; it is not device proof.
 
 DejaVu is the owner's website font family (https://dejavu-fonts.github.io/).
 The firmware may retain its current Inter Tight raster fonts. No DejaVu font
@@ -29,8 +29,9 @@ any later font change separately for240px readability, glyph coverage, licensing
 and flash cost. Preserve font/dependency notices if adopted.
 
 The preview appends DABBL DARK/LIGHT palette records, preserving all prior indices.
-It does not yet change the shipped default, stored owner preferences, firmware
-packages or boot art. The currently added track colours are derived brand tones,
+Dabbl dark is the default written by a new first-use installation. Existing
+Dabbl8 settings retain their theme selection; firmware packages and boot art
+were not rebuilt by the preview itself. The currently added track colours are derived brand tones,
 not eight additional brand colours. All existing themes remain selectable.
 
 Local preview:576 actual-renderer frames across12 palettes, two sizes, eight

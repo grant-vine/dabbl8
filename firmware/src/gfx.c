@@ -188,6 +188,11 @@ static struct {
 #define T_LANE ux.lane           /* the piano roll: an in-scale row (SURF -> THEME 10 %) */
 #define T_GRID ux.grid           /* the piano roll: a step line (SURF -> TEXT 6 %; beats and C rows: RAISE) */
 #define NPALETTES UI_NPALETTES
+#if DABBL8_IDENTITY
+#define UI_DEFAULT_INDEX UI_DABBL_DARK_INDEX
+#else
+#define UI_DEFAULT_INDEX UI_GREY_INDEX
+#endif
 
 static inline uint16_t ux_gray(uint32_t x5) { return (uint16_t)((x5 << 11) | (x5 << 6) | x5); }
 /* a + (b - a) * pct / 100 per channel, rounded; GREY on the red channel, so it stays gray */
