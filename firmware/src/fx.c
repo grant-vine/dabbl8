@@ -286,7 +286,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
 #if NTRK == 8
     uint32_t comb_dirty=0,ap_dirty=0,comb_uniform=0,ap_uniform=0,ap_fixed_dirty=0;
-    int32_t fixed_a=rev_ap[0]-(rev_comb[0]+rev_comb[1116]+rev_comb[2304]+rev_comb[3581]);
+    int32_t fixed_low=2*(rev_ap[0]-(rev_comb[0]+rev_comb[1116]+rev_comb[2304]+rev_comb[3581]))-1;
     fx_sweep_model(1);
 #endif
     for (i = 0; i < n; i++) {
@@ -312,33 +312,34 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
             a += o;
             c += REV_COMB[k];
         }
-        c = rev_ap;
-        for (k = 0; k < 2u; k++) {
 #if NTRK == 8
-            uint32_t position=fx.ap_i[k];
-            int32_t o = c[position];
-#else
-            int32_t o = c[fx.ap_i[k]];
-#endif
-            int32_t v = a + (o >> 1);
-#if NTRK == 8
-            if(!k)FTU16(ap_dirty,ap_uniform,&c[position],c[0],clamp(v, -32768, 32767));
-            else {
-                int16_t stored=(int16_t)clamp(v,-32768,32767);
-                ap_fixed_dirty|=(uint32_t)((o!=2*fixed_a-1&&o!=2*fixed_a)||
-                    (stored!=2*fixed_a-1&&stored!=2*fixed_a));
-                FTR16(ap_dirty,&c[position],stored);
-            }
-            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
-            fx.ap_i[k]=(uint16_t)(position+1u>=REV_AP[k]?0u:position+1u);
-#else
-            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
-            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
-            if (++fx.ap_i[k] >= REV_AP[k])
-                fx.ap_i[k] = 0;
-#endif
-            c += REV_AP[k];
+        /* Two fixed allpass stages, observed without a per-stage branch. */
+        {
+            uint32_t position=fx.ap_i[0];int32_t o=rev_ap[position];
+            int32_t v=a+(o>>1);
+            FTU16(ap_dirty,ap_uniform,&rev_ap[position],rev_ap[0],clamp(v,-32768,32767));
+            a=o-a;fx.ap_i[0]=(uint16_t)(position+1u>=556u?0u:position+1u);
         }
+        {
+            uint32_t position=fx.ap_i[1];int16_t *line=rev_ap+556;
+            int32_t o=line[position];int16_t stored=(int16_t)clamp(a+(o>>1),-32768,32767);
+            /* A valid fixedpoint minus lower endpoint is exactly0 or1.
+             * OR all unsigned differences, then test once at render exit.
+             * Any outsider sets a bit above bit0; no cancellation is possible. */
+            ap_fixed_dirty|=(uint32_t)(o-fixed_low)|(uint32_t)(stored-fixed_low);
+            FTR16(ap_dirty,&line[position],stored);
+            a=o-a;fx.ap_i[1]=(uint16_t)(position+1u>=441u?0u:position+1u);
+        }
+#else
+        c=rev_ap;
+        for(k=0;k<2u;k++){
+            int32_t o=c[fx.ap_i[k]],v=a+(o>>1);
+            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v,-32768,32767));
+            a=o-a;
+            if(++fx.ap_i[k]>=REV_AP[k])fx.ap_i[k]=0;
+            c+=REV_AP[k];
+        }
+#endif
         out[i] += a;
     }
 #if NTRK == 8
@@ -346,7 +347,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,556u);
     fx_uniform_wait.comb=fx_zero_sweep(fx_uniform_wait.comb,comb_uniform,n,1356u);
     fx_uniform_wait.ap=fx_zero_sweep(fx_uniform_wait.ap,ap_uniform,n,556u);
-    fx_uniform_wait.ap_fixed=fx_zero_sweep(fx_uniform_wait.ap_fixed,ap_fixed_dirty,n,441u);
+    fx_uniform_wait.ap_fixed=fx_zero_sweep(fx_uniform_wait.ap_fixed,ap_fixed_dirty>1u,n,441u);
 #endif
 }
 
