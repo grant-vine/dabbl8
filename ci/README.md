@@ -65,3 +65,11 @@ This fixture does not include the sample-upload ranges header. There is no
 header generation, download or full-suite fallback. This scope establishes
 resident-state proof controls; it does not qualify DSP changes generally,
 ISR timing, memory use or release readiness.
+
+Whole own-project transfer has a separate `--check own-project-transfer` recipe:
+actual command-81 handler, UI confirmation, retained virtual NOR and runtime
+adoption, with the existing inherited DSP sanitizer exclusions only. It uses
+existing generated inputs and HAL range header; it never downloads dependencies,
+opens MIDI ports, builds vendor packages or runs hosted CI. Pure pool tombstone
+checks are a separate dependency proof. No selected check establishes physical
+backup/restore, target budgets or release readiness.

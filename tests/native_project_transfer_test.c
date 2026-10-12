@@ -1,0 +1,75 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+#define D8_PROJECT_TRANSFER_SESSION 1
+#define D8_NATIVE_LOCAL_SAVE_NO_MAIN 1
+#include "native_local_save_test.c"
+#define FL_FAR(fn) fn
+#define fl_erase4k_ram mc_ram_erase_spy
+#define fl_prog_ram mc_ram_program_spy
+#include "../firmware/src/native_project_transfer.c"
+#undef fl_prog_ram
+#undef fl_erase4k_ram
+#undef FL_FAR
+static uint8_t message[600],source_pool[D8POOL_BYTES],source_live[D8P1_LIMIT];
+static unsigned pt_request(unsigned n){uint8_t f[600]={0x7d,0x46,0x4c,81};memcpy(f+4,message,n);ed_handle(f,n+4);so_r=so_w;CHECK(ed_out[4]==81&&ed_out[5]==1);return ed_out[7];}
+static void pt_token(unsigned op){memset(message,0,sizeof message);message[0]=1;message[1]=(uint8_t)op;mc_put32(message+2,d8ls.generation);}
+static unsigned pt_pack_test(const uint8_t*p,unsigned n,uint8_t*out){unsigned z=0;while(n){unsigned k=n>7?7:n,m=0;for(unsigned i=0;i<k;i++)m|=(p[i]>>7)<<i;out[z++]=(uint8_t)m;for(unsigned i=0;i<k;i++)out[z++]=p[i]&127;p+=k;n-=k;}return z;}
+static int source_rd(void*c,uint32_t a,void*p,uint32_t n){(void)c;memcpy(p,source_pool+a,n);return 0;}
+static int source_er(void*c,uint32_t a){(void)c;memset(source_pool+a,255,4096);return 0;}
+static int source_pg(void*c,uint32_t a,const void*p,uint32_t n){(void)c;for(unsigned i=0;i<n;i++)source_pool[a+i]&=((const uint8_t*)p)[i];return 0;}
+static d8pool source_store={NULL,source_rd,source_er,source_pg,stop};
+static unsigned archived_live_len;
+static unsigned import_start(unsigned present){memset(message,0,sizeof message);message[0]=1;message[1]=2;message[2]=(uint8_t)present;mc_put32(message+3,archived_live_len);mc_put32(message+8,d8p1_crc32(source_live,archived_live_len));mc_put32(message+13,d8p1_crc32(source_pool,sizeof source_pool));return pt_request(18);}
+static void import_receive(void){
+ for(unsigned selector=0;selector<2;selector++){const uint8_t*p=selector?source_live:source_pool;unsigned length=selector?archived_live_len:sizeof source_pool;
+  for(unsigned off=0;off<length;off+=256){unsigned count=length-off;if(count>256)count=256;pt_token(4);message[7]=(uint8_t)selector;mc_put32(message+8,off);unsigned n=13+pt_pack_test(p+off,count,message+13);CHECK(pt_request(n)==PT_OK);unsigned before=physical_calls;CHECK(pt_request(n)==PT_OK&&physical_calls==before);}}
+}
+static void approve_restore(void){pt_token(5);CHECK(pt_request(7)==PT_OK&&pt_phase()==PT_CONSENT);d8ls_draw();CHECK(d8ls.shown==d8ls.generation);mc_ship_tap(B_SAVE);CHECK(pt_phase()==PT_RELEASE);d8ls_poll();CHECK(pt_phase()==PT_APPROVED);}
+static void target_fresh(void){boot_seed();CHECK(autosave_boot(1)==1);int32_t audio[CTL*2];mix_block(audio,CTL);cut=-1;partial_failure=0;physical_calls=0;}
+static void target_only_zero(void){target_fresh();d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx));for(unsigned o=1;o<4;o++)memset(nor+d8pool_mapped_address(idx.object[o].block),255,D8POOL_BLOCK);d8p1_autosave_session_end();}
+static void retained_reboot(void){cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;ui_prefs&=~PREF_RESTORE_OFF;int32_t audio[CTL*2];mix_block(audio,CTL);reset();unsigned before=physical_calls;(void)autosave_boot(1);CHECK(project_native_owns_storage()&&physical_calls==before);}
+static void verify_restored(unsigned present){d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx)&&idx.present==present);for(unsigned o=0;o<4;o++)if(present&(1u<<o)){d8pool_index src;CHECK(!d8pool_inventory(&source_store,&src));CHECK(idx.object[o].length==src.object[o].length&&idx.object[o].crc==src.object[o].crc);}size_t n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n)&&n==archived_live_len&&!memcmp(wire,source_live,n));}
+int main(void){
+ boot_seed();CHECK(autosave_boot(1)==1);int32_t audio[CTL*2];mix_block(audio,CTL);
+ message[0]=1;message[1]=0;CHECK(pt_request(2)==PT_OK);
+ trk[7].p[P_LEVEL]=91;message[1]=1;unsigned beginrc=pt_request(2);CHECK(beginrc==PT_OK&&pt_phase()==PT_EXPORT&&!physical_calls);if(beginrc)return 1;
+ memcpy(source_pool,pt_workspace()->plan,sizeof source_pool);unsigned live_length=d8ls.length;archived_live_len=live_length;memcpy(source_live,pt_workspace()->stage.wire,live_length);
+ pt_token(8);CHECK(pt_request(7)==PT_OK&&!migration_owner);
+ memset(message,0,sizeof message);message[0]=1;message[1]=2;message[2]=15;mc_put32(message+3,live_length);mc_put32(message+8,d8p1_crc32(source_live,live_length));mc_put32(message+13,d8p1_crc32(source_pool,sizeof source_pool));
+ CHECK(pt_request(18)==PT_OK&&pt_phase()==PT_RECEIVE);
+ for(unsigned selector=0;selector<2;selector++){const uint8_t*p=selector?source_live:source_pool;unsigned length=selector?live_length:sizeof source_pool;
+  for(unsigned off=0;off<length;off+=256){unsigned count=length-off;if(count>256)count=256;pt_token(4);message[7]=(uint8_t)selector;mc_put32(message+8,off);unsigned n=13+pt_pack_test(p+off,count,message+13);CHECK(pt_request(n)==PT_OK);}}
+ pt_token(5);CHECK(pt_request(7)==PT_OK&&pt_phase()==PT_CONSENT&&!physical_calls);
+ d8ls_draw();CHECK(d8ls.shown==d8ls.generation);mc_ship_tap(B_SAVE);CHECK(pt_phase()==PT_RELEASE);d8ls_poll();CHECK(pt_phase()==PT_APPROVED);
+ pt_token(7);CHECK(pt_request(7)==PT_OK&&d8ls.phase==LS_IDLE&&!migration_owner);CHECK(native_as.ready&&project_native_status()==1&&!d8_instrument_write_allowed());
+ uint32_t adopted_sig=0;CHECK(!d8p1_signature_runtime(&adopted_sig)&&native_as.saved==adopted_sig);d8pool_record preserved_as;CHECK(!d8pool_current(&seed,3,&preserved_as));unsigned before_idle=physical_calls;fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==before_idle);d8pool_record after_idle;CHECK(!d8pool_current(&seed,3,&after_idle)&&!memcmp(&after_idle,&preserved_as,sizeof after_idle));
+
+ /* Exact sparse role restoration, mutually referenced projects on a fresh
+  * existing own store, independent AS absence and unchanged outside pool. */
+ memset(source_pool,255,sizeof source_pool);d8p1_project_state cyclic;
+ CHECK(d8p1_project_decode(&cyclic,source_live,archived_live_len,0));
+ cyclic.arrangement.banks=cyclic.arrangement.scenes=cyclic.arrangement.rows=1;cyclic.arrangement.row[0].repeat=1;
+ for(unsigned o=1;o<=2;o++){for(unsigned t=0;t<8;t++){cyclic.arrangement.bank[0].project[t]=(uint8_t)(3-o);cyclic.arrangement.bank[0].track[t]=(uint8_t)t;}size_t n=0;CHECK(d8p1_project_encode(wire,sizeof wire,&n,&cyclic));CHECK(!d8pool_save(&source_store,o,wire,n,6));}
+ target_only_zero();CHECK(import_start(6)==PT_OK);import_receive();approve_restore();memcpy(local_before,nor,sizeof nor);pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(6);
+ CHECK(!memcmp(nor,local_before,0x97000)&&!memcmp(nor+0x9f000,local_before+0x9f000,0x46000)&&!memcmp(nor+0xe7000,local_before+0xe7000,sizeof nor-0xe7000));
+ unsigned operations=physical_calls;CHECK(operations>4);pt_token(7);unsigned before=physical_calls;CHECK(pt_request(7)==PT_OK&&physical_calls==before);pt_token(8);CHECK(pt_request(7)==PT_OK);
+ /* Cut at first payload, between cyclic roles, and tombstone header. Retained
+  * archive retry gets a new visible confirmation, never cached READY authority. */
+ unsigned points[]={2,operations/2,operations-1};
+ for(unsigned k=0;k<3;k++){target_only_zero();CHECK(import_start(6)==PT_OK);import_receive();approve_restore();cut=(int)points[k];partial_failure=17;pt_token(7);CHECK(pt_request(7)==PT_IO&&d8ls.phase==LS_IDLE&&!migration_owner);cut=-1;partial_failure=0;transport_req=0;retained_reboot();CHECK(import_start(6)==PT_OK);import_receive();approve_restore();pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(6);}
+ /* Actual grammar/token/source CRC/unknownfuture and quiet/LCD guards refuse
+  * before any destructive primitive. Host source remains available for retry. */
+ target_fresh();CHECK(import_start(6)==PT_OK);unsigned untouched=physical_calls;pt_token(5);CHECK(pt_request(7)==PT_INCOMPLETE&&physical_calls==untouched);
+ pt_token(4);message[7]=0;mc_put32(message+8,256);unsigned malformed=13+pt_pack_test(source_pool,256,message+13);CHECK(pt_request(malformed)==PT_BAD&&physical_calls==untouched);pt_token(6);message[2]^=1;CHECK(pt_request(7)==PT_STALE&&physical_calls==untouched);pt_token(8);CHECK(pt_request(7)==PT_OK);
+ CHECK(import_start(6)==PT_OK);import_receive();pt_workspace()->plan[512]^=1;pt_token(5);CHECK(pt_request(7)==PT_BAD&&physical_calls==untouched);pt_token(8);CHECK(pt_request(7)==PT_OK);
+ CHECK(import_start(6)==PT_OK);import_receive();approve_restore();transport_req=1;d8ls_poll();CHECK(d8ls.phase==LS_IDLE&&!migration_owner&&physical_calls==untouched);transport_req=0;
+ CHECK(import_start(6)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_OK);local_lcd_event=4;d8ls_draw();CHECK(!d8ls.shown);mc_ship_tap(B_SAVE);d8ls_poll();CHECK(d8ls.phase==LS_IDLE&&!migration_owner&&physical_calls==untouched);
+ uint8_t kept_header[32];memcpy(kept_header,source_pool,32);source_pool[4]=99;uint32_t hc=d8p1_crc32(source_pool,28);for(unsigned i=0;i<4;i++)source_pool[28+i]=(uint8_t)(hc>>(8*i));
+ CHECK(import_start(6)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_BAD&&physical_calls==untouched);pt_token(8);CHECK(pt_request(7)==PT_OK);memcpy(source_pool,kept_header,32);
+ /* Empty own set remains positively owned via tombstones across reboot. */
+ memset(source_pool,255,sizeof source_pool);target_fresh();CHECK(import_start(0)==PT_OK);import_receive();approve_restore();pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(0);d8pool_index empty;CHECK(!d8pool_inventory(&seed,&empty)&&empty.anchors==15&&!empty.present);CHECK(project_native_boot_readonly(0)==-D8POOL_EMPTY&&project_native_status()==1);
+ /* Repeated empty restore is an exact no-write operation, while adopting live. */
+ pt_token(8);CHECK(pt_request(7)==PT_OK);retained_reboot();unsigned empty_calls=physical_calls;
+ CHECK(import_start(0)==PT_OK);import_receive();approve_restore();pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(0);CHECK(physical_calls==empty_calls);
+ pt_token(8);CHECK(pt_request(7)==PT_OK);
+ printf("Native own project transfer: %u checks %u failures\n",checks,failures);return failures!=0;
+}

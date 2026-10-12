@@ -72,6 +72,9 @@ static int d8ls_request(unsigned operation,unsigned object,const char *name)
 }
 static void d8ls_input(uint32_t pressed,uint32_t notes)
 {
+#if D8_PROJECT_TRANSFER_SESSION
+ if(d8ls.operation==4&&d8ls.phase!=LS_IDLE){d8pt_input(pressed,notes);return;}
+#endif
 #if D8_SAMPLE_SESSION
  if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_input(pressed,notes);return;}
 #endif
@@ -93,10 +96,10 @@ static int d8ls_native_begin(unsigned operation,unsigned object,const char *name
  if(!rc)rc=ls_scan(&index,crc);
  if(!rc&&(!d8pr_same_index(&index,&d8ls.index)||memcmp(crc,d8ls.crc,sizeof crc)||sig!=d8ls.signature||!ls_lifetime()))rc=D8POOL_BUSY;
  d8ls.busy=0;if(rc)return rc;
- unsigned used=0;for(unsigned o=0;o<4;o++)if(index.present&(1u<<o))used|=1u<<index.object[o].block;
+ unsigned used=0;for(unsigned o=0;o<4;o++)if(index.anchors&(1u<<o))used|=1u<<index.object[o].block;
  unsigned block=0;while(block<5&&(used&(1u<<block)))block++;
  if(block==5)return D8POOL_INVALID;
- d8ls.block=(uint8_t)block;d8ls.sequence=(index.present&(1u<<object))?index.object[object].sequence+1u:1u;
+ d8ls.block=(uint8_t)block;d8ls.sequence=(index.anchors&(1u<<object))?index.object[object].sequence+1u:1u;
  d8ls.offset=256;d8ls.write_phase=0;d8ls.writing=1;d8ls.attempted=0;d8ls.length=0;
  d8ls.previous_slot=proj_cur;memcpy(d8ls.previous_name,proj_name,13);return D8POOL_OK;
 }
@@ -156,6 +159,9 @@ static int d8ls_native_finish(int rc)
 }
 static void d8ls_poll(void)
 {
+#if D8_PROJECT_TRANSFER_SESSION
+ if(d8ls.operation==4&&d8ls.phase!=LS_IDLE){d8pt_poll();return;}
+#endif
 #if D8_SAMPLE_SESSION
  if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_poll();return;}
 #endif
@@ -193,6 +199,9 @@ static void d8ls_autosave_finish(int rc)
 #endif
 static void d8ls_draw(void)
 {
+#if D8_PROJECT_TRANSFER_SESSION
+ if(d8ls.operation==4&&d8ls.phase!=LS_IDLE){d8pt_draw();return;}
+#endif
 #if D8_SAMPLE_SESSION
  if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_draw();return;}
 #endif

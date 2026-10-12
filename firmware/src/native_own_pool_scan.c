@@ -22,7 +22,7 @@ static int d8own_scan(d8pool_index *index,uint32_t crc[5],int (*admit)(void *))
  uint8_t page[256],header[32];
 
  unsigned used=0;
- for(unsigned object=0;!rc&&object<4;object++)if(index->present&(1u<<object))used|=1u<<index->object[object].block;
+ for(unsigned object=0;!rc&&object<4;object++)if(index->anchors&(1u<<object))used|=1u<<index->object[object].block;
  for(unsigned block=0;!rc&&block<5;block++) {
   uint32_t base=block*D8POOL_BLOCK,rolling=~0u;unsigned erased=1;
   for(unsigned off=0;off<D8POOL_BLOCK;off+=sizeof page) {
@@ -33,18 +33,20 @@ static int d8own_scan(d8pool_index *index,uint32_t crc[5],int (*admit)(void *))
   crc[block]=rolling^~0u;if(rc||erased)continue;
   if(m.pool.read(m.pool.context,base,header,sizeof header)){rc=D8POOL_IO;break;}
   unsigned object=d8own_get(header+8);uint32_t length=d8own_get(header+16),sequence=d8own_get(header+12);
-  unsigned valid=d8own_get(header)==D8POOL_MAGIC&&header[4]==1&&header[5]==block&&!header[6]&&!header[7]&&
-    object<4&&length&&length<=D8P1_LIMIT&&d8own_get(header+24)==~0u&&d8own_get(header+28)==d8p1_crc32(header,28);
+  unsigned valid=d8own_get(header)==D8POOL_MAGIC&&(header[4]==1||header[4]==D8POOL_TOMBSTONE_VERSION)&&header[5]==block&&!header[6]&&!header[7]&&
+    object<4&&((header[4]==1&&length&&length<=D8P1_LIMIT)||(header[4]==D8POOL_TOMBSTONE_VERSION&&!length&&!d8own_get(header+20)))&&d8own_get(header+24)==~0u&&d8own_get(header+28)==d8p1_crc32(header,28);
   /* A full four-object recovered set already proves ownership of its sole
    * noncurrent shared spare. Sparse pools require positively erased absence
    * or a complete older native record: damaged residue never means empty. */
-  if(!valid){if(index->present==15&&!(used&(1u<<block)))continue;rc=D8POOL_UNSUPPORTED;break;}
-  if(!(index->present&(1u<<object))){rc=D8POOL_INVALID;break;}
+  if(!valid){if(index->anchors==15&&!(used&(1u<<block)))continue;rc=D8POOL_UNSUPPORTED;break;}
+  if(!(index->anchors&(1u<<object))){rc=D8POOL_INVALID;break;}
   const d8pool_record *current=&index->object[object];
   if(block!=current->block&&(! (current->sequence-sequence)||current->sequence-sequence>=0x80000000u)){rc=D8POOL_AMBIGUOUS;break;}
+  if(header[4]==D8POOL_TOMBSTONE_VERSION)continue; /* inventory proved canonical erased body */
+  unsigned mask=block==current->block?index->present&7u:7u;
   d8pool_record record={.block=block,.sequence=sequence,.length=length,.crc=d8own_get(header+20)};
-  rc=d8pr_copy_record(&m.pool,&record,stage->wire,index->present&7u);if(rc)break;
-  if(!d8p1_project_decode(&stage->state,stage->wire,length,index->present&7u)){rc=D8POOL_INVALID;break;}
+  rc=d8pr_copy_record(&m.pool,&record,stage->wire,mask);if(rc)break;
+  if(!d8p1_project_decode(&stage->state,stage->wire,length,mask)){rc=D8POOL_INVALID;break;}
   size_t encoded=0;
   if(!d8p1_project_encode(stage->wire,sizeof stage->wire,&encoded,&stage->state)||encoded!=length){rc=D8POOL_INVALID;break;}
   for(unsigned off=32;!rc&&off<D8POOL_BLOCK;off+=sizeof page) {

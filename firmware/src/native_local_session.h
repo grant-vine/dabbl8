@@ -6,6 +6,16 @@
 #ifndef D8_SAMPLE_SESSION
 #define D8_SAMPLE_SESSION 0
 #endif
+#ifndef D8_PROJECT_TRANSFER_SESSION
+#define D8_PROJECT_TRANSFER_SESSION 0
+#endif
+#if D8_PROJECT_TRANSFER_SESSION
+static void d8pt_input(uint32_t,uint32_t);
+static void d8pt_draw(void);
+static void d8pt_poll(void);
+static int d8pt_binding(void);
+static void d8pt_handle(const uint8_t *,uint32_t);
+#endif
 #if D8_SAMPLE_SESSION
 static void d8sm_input(uint32_t,uint32_t);
 static void d8sm_draw(void);
