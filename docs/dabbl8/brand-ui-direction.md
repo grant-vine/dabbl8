@@ -40,3 +40,7 @@ Fatal ASan/UBSan with inherited DSP overflow/shift exclusions. Full layout lint,
 actual device contrast/redraw timing and final target qualification remain pending.
 Prior palette/UI CI mapping is absent; this focused check was run explicitly.
 No hosted checks, flash, release, website edit or golden/budget changes.
+
+The compact menu labels are `DABBL D` (dark) and `DABBL L` (light).
+Long labels collided with COLOR in the large-font menu; shorten only the labels,
+retaining the approved colours and saved palette IDs.
