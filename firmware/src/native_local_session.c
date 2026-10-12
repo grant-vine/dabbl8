@@ -212,7 +212,7 @@ static void d8ls_poll(void)
   * receipt. Cancelling a proposal never destroys that earlier read receipt. */
  memset(&d8mc,0,sizeof d8mc);
  /* Bind only after a real local committed operation. This is not a boot grant. */
- if(project_native_bind_flash(1)||(!native_as.ready&&d8p1_autosave_session_begin(1,0))){ls_fail(1);ui_message("STORAGE ERROR");return;}
+ if(project_native_bind_flash(1)||(!native_as.ready&&d8p1_autosave_local_begin())){ls_fail(1);ui_message("STORAGE ERROR");return;}
  ui_message(d8ls.operation==0?"SAVED":"RENAMED");
 }
 /* Only the actual native scheduler calls this immediately before its stopped

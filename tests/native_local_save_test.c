@@ -79,8 +79,76 @@ static unsigned ls_test_level(unsigned object)
  size_t n=0;CHECK(!d8pool_load(&seed,object,out,sizeof out,&n,7));CHECK(d8p1_project_decode(&boot_state,out,n,7));
  return boot_state.project.t[7].p[P_LEVEL];
 }
+/* Actual boot entry with NOR retained, no fixture reseeding or host restore. */
+static void ls_test_reboot(void)
+{
+ cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);
+ memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;
+ ui_prefs&=~PREF_RESTORE_OFF;int32_t audio[CTL*2];mix_block(audio,CTL);reset();CHECK(autosave_boot(1)==1);
+}
+static void ls_test_initial_autosave(void)
+{
+ /* Deliberate SAVE does not immediately write AS, but the first unchanged
+  * stopped-idle window must synchronize it before RESTORE LAST after reboot. */
+ ls_test_boot(0);ls_test_name(0,0);ls_test_commit();CHECK(msg_is("SAVED")&&ls_test_level(0)==91&&ls_test_level(3)==27);
+ uint32_t stored=0,current=0;d8pool_record record;
+ CHECK(!d8p1_autosave_snapshot_flash(&stored,&record,1)&&!d8p1_signature_runtime(&current));
+ CHECK(native_as.saved==stored&&native_as.seen==current&&stored!=current);
+ unsigned calls=physical_calls;uint32_t start=native_as.idle;
+ fm1_ms=start+AS_IDLE_MS-AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls&&ls_test_level(3)==27);
+ fm1_ms=start+AS_IDLE_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&native_as.writes==1&&d8ls.phase==LS_IDLE&&ls_test_level(3)==91);
+ calls=physical_calls;ls_test_reboot();CHECK(trk[7].p[P_LEVEL]==91&&physical_calls==calls&&!d8ls.intent&&!native_as.ready);
+ /* First RENAME grants the same disclosed session policy without changing
+  * the selected slot's music; divergent RAM must still reach AS after idle. */
+ ls_test_boot(0);ls_test_name(0,1);ls_test_commit();CHECK(msg_is("RENAMED")&&native_as.ready&&ls_test_level(0)==27&&ls_test_level(3)==27);
+ calls=physical_calls;fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&ls_test_level(3)==91);
+ ls_test_reboot();CHECK(trk[7].p[P_LEVEL]==91);
+ /* The ready-session shortcut after a second deliberate SAVE still detects
+  * the newest RAM music, restarting the existing stopped idle window. */
+ ls_test_boot(0);ls_test_name(0,0);ls_test_commit();CHECK(native_as.ready);trk[7].p[P_LEVEL]=105;
+ ls_test_name(1,0);ls_test_commit();CHECK(msg_is("SAVED")&&native_as.ready&&ls_test_level(1)==105&&ls_test_level(3)==27);
+ calls=physical_calls;fm1_ms+=AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls);
+ fm1_ms+=AS_IDLE_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&ls_test_level(3)==105);
+ ls_test_reboot();CHECK(trk[7].p[P_LEVEL]==105);
+ /* Already disclosed intent cannot fabricate an absent or corrupt AS
+  * baseline. Fail before initializing state and before any primitive. */
+ for(unsigned invalid=0;invalid<2;invalid++) {
+  ls_test_boot(0);ls_test_name(0,0);ls_test_commit();CHECK(d8ls.intent);d8p1_autosave_session_end();
+  d8pool_index index;CHECK(!d8pool_inventory(&seed,&index));uint32_t address=d8pool_mapped_address(index.object[3].block);
+  if(invalid)nor[address+D8POOL_HEADER]^=1;else memset(nor+address,255,D8POOL_BLOCK);
+  __typeof__(native_as) before=native_as;calls=physical_calls;memcpy(local_before,nor,sizeof nor);
+  /* Existing pool CRC policy reports a missing/torn record as EMPTY;
+   * neither erased nor corrupt bytes may become a fabricated baseline. */
+  int rc=d8p1_autosave_local_begin();CHECK(rc==D8POOL_EMPTY);
+  CHECK(!native_as.ready&&!memcmp(&before,&native_as,sizeof before)&&physical_calls==calls&&!memcmp(nor,local_before,sizeof nor));
+ }
+ /* Disabled means no synchronization; enabling starts a full idle window. */
+ ls_test_boot(0);ui_prefs|=PREF_RESTORE_OFF;ls_test_name(0,0);ls_test_commit();calls=physical_calls;
+ fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls&&ls_test_level(3)==27);
+ ui_prefs&=~PREF_RESTORE_OFF;fm1_ms+=AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls);
+ fm1_ms+=AS_IDLE_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&ls_test_level(3)==91);
+ /* Identical music cannot schedule an unnecessary AS write. */
+ ls_test_boot(0);trk[7].p[P_LEVEL]=27;ls_test_name(0,0);ls_test_commit();calls=physical_calls;
+ CHECK(native_as.saved==native_as.seen);fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==calls);
+ /* Fresh automatic proposal refuses a late note without stale ticket/retry
+  * branch; clearing the fixture note permits a newly checked delayed attempt. */
+ ls_test_boot(0);ls_test_name(0,0);ls_test_commit();calls=physical_calls;local_auto_late=1;
+ fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(d8p1_autosave_session_poll()==D8POOL_BUSY&&physical_calls==calls&&d8ls.intent&&d8ls.phase==LS_IDLE&&ls_test_level(3)==27);
+ CHECK(fm1_in.notes==1);fm1_in.notes=host_notes=0;fm1_ms+=AS_RETRY_MS+AS_IDLE_MS+AS_POLL_MS;
+ CHECK(!d8p1_autosave_session_poll()&&physical_calls>calls&&ls_test_level(3)==91);
+ /* Interrupted initial synchronization keeps a decodable old/current AS and
+  * revokes failed authority; a poll cannot silently repeat a physical attempt. */
+ static const unsigned cuts[]={0,1,27,28};
+ for(unsigned c=0;c<sizeof cuts/sizeof *cuts;c++) {
+  ls_test_boot(0);ls_test_name(0,0);ls_test_commit();cut=(int)cuts[c];partial_failure=0;
+  fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(d8p1_autosave_session_poll()!=D8POOL_OK);
+  CHECK(!d8ls.intent&&!native_as.ready&&project_native_status()==2&&ls_test_level(3)==27&&ls_test_level(0)==91);
+  calls=physical_calls;fm1_ms+=AS_RETRY_MS+AS_IDLE_MS;CHECK(d8p1_autosave_session_poll()==D8POOL_UNSUPPORTED&&physical_calls==calls);
+ }
+}
 int main(void)
 {
+ ls_test_initial_autosave();
  /* Stable-field oracle is independent of either production helper. The
   * predicate has ordinary reads; this is not concurrent atomicity evidence. */
  static const uint8_t flags[]={0,1,2,255};
