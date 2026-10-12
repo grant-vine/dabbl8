@@ -9,7 +9,9 @@
 #if NTRK == 8 && D8_MIGRATION_SESSION
 #include "native_local_session.h"
 static struct { uint8_t locked,revoked,busy,writer,operation_revoked; } d8mc_edit;
-static int d8mc_blocked(void) { return d8mc_edit.locked||d8ls_blocked(); }
+_Static_assert(LS_IDLE==0,"idle native local phase is zero");
+/* Pure current-field predicate, no cached permission or atomic snapshot. */
+static int d8mc_blocked(void) { return (d8mc_edit.locked|d8ls.phase|d8ls.busy)!=0; }
 static void d8mc_revoke(void) { d8ls_revoke();if(d8mc_edit.locked){if(d8mc_edit.writer)d8mc_edit.operation_revoked=1;else d8mc_edit.revoked=1;} }
 static void d8mc_input(uint32_t pressed,uint32_t notes);
 static void d8mc_handle(const uint8_t *,uint32_t);

@@ -81,6 +81,16 @@ static unsigned ls_test_level(unsigned object)
 }
 int main(void)
 {
+ /* Stable-field oracle is independent of either production helper. The
+  * predicate has ordinary reads; this is not concurrent atomicity evidence. */
+ static const uint8_t flags[]={0,1,2,255};
+ uint8_t prior_locked=d8mc_edit.locked,prior_phase=d8ls.phase,prior_busy=d8ls.busy;
+ for(unsigned phase=0;phase<4;phase++)for(unsigned locked=0;locked<4;locked++)for(unsigned busy=0;busy<4;busy++) {
+  d8mc_edit.locked=flags[locked];d8ls.phase=(uint8_t)phase;d8ls.busy=flags[busy];
+  int expected=flags[locked]!=0||phase!=0||flags[busy]!=0;
+  CHECK(d8mc_blocked()==expected);
+ }
+ d8mc_edit.locked=prior_locked;d8ls.phase=prior_phase;d8ls.busy=prior_busy;
  /* Bounded name equivalence uses the actual firmware helper, including empty
   * and full12-byte names. Overlong/malformed/NULL input cannot mint a match. */
  char empty[13]={0},one[13]="A",twelve[13]="ABCDEFGHIJKL";
@@ -129,6 +139,28 @@ int main(void)
   ls_test_boot(0);ls_test_name(0,0);
   if(event){if(event<4){boot_lcd_late=(int)consent_syncs;boot_event=(int)event;}else {local_lcd_event=event-3;local_lcd_count=consent_syncs;}ui_draw();CHECK(!d8ls.shown);}
   mc_ship_tap(B_SAVE);d8ls_poll();CHECK(!d8ls.intent&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+ }
+ /* Actual between-block dispatcher: a blocked local proposal must revoke
+  * without consuming queued/external input, stopping audio or altering music.
+  * This is the precise source route compiled into ALNK, not a guard model. */
+ for(unsigned event=0;event<4;event++) {
+  ls_test_boot(0);ls_test_name(0,0);ui_draw();CHECK(d8ls.shown==d8ls.generation);
+  uint8_t tracks_before[sizeof trk],song_before[sizeof song],cache_before[sizeof d8p1_runtime_cache];
+  memcpy(tracks_before,trk,sizeof trk);memcpy(song_before,&song,sizeof song);memcpy(cache_before,&d8p1_runtime_cache,sizeof d8p1_runtime_cache);
+  if(event==0)transport_req=1;
+  if(event==1)midi_in_event(0x643c9009u);
+  if(event==2)midi_in_overflow=1;
+  if(event==3)fm1_in.notes=1;
+  uint32_t read=mi_r,write=mi_w,transport=transport_req,overflow=midi_in_overflow,notes=fm1_in.notes;
+  events_block(CTL);
+  CHECK(d8ls.revoked&&!d8ls.shown&&!d8ls.intent&&d8ls.phase==LS_CONSENT);
+  CHECK(mi_r==read&&mi_w==write&&transport_req==transport&&midi_in_overflow==overflow&&fm1_in.notes==notes);
+  CHECK(!memcmp(tracks_before,trk,sizeof trk)&&!memcmp(song_before,&song,sizeof song)&&!memcmp(cache_before,&d8p1_runtime_cache,sizeof d8p1_runtime_cache));
+  CHECK(!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+  d8ls_poll();CHECK(d8ls.phase==LS_IDLE&&!d8ls.intent&&!physical_calls);
+  /* External fixture release/drain only after proving the dispatcher retained
+   * the event. This is not production admission or cancellation behavior. */
+  mi_r=mi_w;midi_in_overflow=0;transport_req=0;fm1_in.notes=0;
  }
  /* Canonical initialization may leave all three slots genuinely absent; each
   * actual SAVE adds one stable slot without a new format or blank inference. */
