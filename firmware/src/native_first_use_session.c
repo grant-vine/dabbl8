@@ -3,7 +3,7 @@
  * host packet grants. Formatting is an explicit destructive first-use action. */
 #if D8_FIRST_USE_SESSION
 #ifndef D8_FIRST_USE_WRITE_ENABLED
-#define D8_FIRST_USE_WRITE_ENABLED 0
+#define D8_FIRST_USE_WRITE_ENABLED 1
 #endif
 #ifndef D8_FI_ERASE
 #define D8_FI_ERASE(a,t) FL_FAR(fl_erase4k_ram)(a,t)

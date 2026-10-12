@@ -5,7 +5,7 @@
 #define D8_FIRST_USE_SESSION (NTRK == 8 && FELUCCA_FLASH && D8_MIGRATION_SESSION)
 #endif
 #ifndef D8_FIRST_USE_WRITE_ENABLED
-#define D8_FIRST_USE_WRITE_ENABLED 0
+#define D8_FIRST_USE_WRITE_ENABLED 1
 #endif
 #if D8_FIRST_USE_SESSION
 #include "native_first_use.h"
