@@ -29,6 +29,17 @@ int main(int argc,char **argv)
     host_us=500;host_nest=30;
     memset(&pf,0,sizeof pf);pf.src=pf.next=PF_N;pf.lc=PF_TOP;
     for(unsigned i=0;i<NTRK;i++) {
+        #ifdef D8_TIMING_PROFILE_STRESS
+#if D8BUILD_PROFILE == 1
+        static const uint8_t selected[] = {0, 3, 10, 12};
+#elif D8BUILD_PROFILE == 2
+        static const uint8_t selected[] = {0, 4, 10, 12, 13};
+#else
+        static const uint8_t selected[] = {0, 3, 4, 10, 12, 13};
+#endif
+        host_preset(&trk[i], selected[i % (sizeof selected / sizeof selected[0])], 0);
+        assert(trk[i].engine == selected[i % (sizeof selected / sizeof selected[0])]);
+#endif
         pf.mg[i]=32768;
         trk[i].p[P_VOICE]=V_MONO;
         trk[i].p[P_DIST]=trk[i].p[P_CHOR]=trk[i].p[P_DLY]=trk[i].p[P_REV]=0;

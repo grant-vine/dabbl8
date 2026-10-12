@@ -945,7 +945,7 @@ static void draw_columns(void)
         draw_act_column(3, "SAVE", T_THEME, ICON_AUTO);
         return;
     }
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     if (cur_page()->graph == GR_SLICES) {                /* SLICE POS, then SPLIT JOIN (ui_slice.c) */
         uint32_t n = slice_count(), j = slice_sel(), src, div, ok = slice_src(&src, &div) && src;
         char u[8];

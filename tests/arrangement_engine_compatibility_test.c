@@ -93,6 +93,7 @@ static void late_refusal(void)
        "late refusal discards preparation but adds no live mutation or start");
  proof(!d8arr_continue()&&!chain.running,"discarded preparation cannot Continue");
 }
+#ifndef D8ARR_ENGINE_COMPAT_NO_MAIN
 int main(void)
 {
  early_refusal();pattern_only(9);pattern_only(1);pattern_only(4);pattern_only(0);pattern_only(13);
@@ -104,3 +105,5 @@ int main(void)
  printf("arrangement engine compatibility: %u checks, %u failures; pattern-only refs, exact provenance, apply/unlock and initial/late destination refusals; virtual NOR only\n",checks,failures);
  return !!failures;
 }
+
+#endif

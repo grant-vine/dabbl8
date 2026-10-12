@@ -3,7 +3,11 @@
 #define NPART 8
 #define UI_TEST_NO_MAIN 1
 #define UI_ASYNC_LCD 1
+#ifdef D8_ENGINE_PROFILE_HOST_SETUP
+#include "engine_profile_host.h"
+#else
 #include "ui_test.c"
+#endif
 #include "../firmware/src/d8p1_runtime.c"
 #include "../firmware/src/d8p1_pool_runtime.c"
 static uint8_t nor[D8POOL_BYTES+512],baseline[sizeof nor],wire[D8P1_LIMIT],out[D8P1_LIMIT],saved[4][D8P1_LIMIT];

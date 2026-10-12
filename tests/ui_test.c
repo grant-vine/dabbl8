@@ -194,6 +194,13 @@ static void ui_power_on(void)
     undo_depth++;
     for (i = 0; i < NTRK; i++) {
         track_t *t = &trk[i];
+#if D8BUILD_PROFILE != 0
+        /* Curated startup uses the actual production-only fallback path. */
+        if (track_startup(t, i) != D8ENGINE_OK) {
+            fprintf(stderr, "curated startup refused track %u\n", i);
+            abort();
+        }
+#else
         track_defaults(t);
         set_engine_of(t, TRK_DEF[i][0]);
         apply_preset_to(t, TRK_DEF[i][1]);
@@ -203,6 +210,7 @@ static void ui_power_on(void)
             load_pat16(t, PATTERNS[TRK_DEF[i][2] - 1u].note, PATTERNS[TRK_DEF[i][2] - 1u].flags);
         pat_sig[i] = steps_sig(t);
         pat_last[i] = TRK_DEF[i][2];
+#endif
     }
     undo_depth--;
     song.sel = 0;
@@ -2378,6 +2386,7 @@ static int test_product_ux(void)
         ok &= changed;
     }
     bad += check("all palettes: active column is subtle, stable-size, no zoom over graph", ok);
+#if D8BUILD_HAS(4)
     ui_power_on(); set_engine_of(TSEL, 4); open_family(FAM_EDIT);
     memset(&sample_wave, 0, sizeof sample_wave); last_note = 60;
     voice_t voices[NVOICE]; memcpy(voices, TSEL->v, sizeof voices);
@@ -2396,6 +2405,7 @@ static int test_product_ux(void)
     }
     ok &= !memcmp(lo, sample_wave.lo, sizeof lo) && !memcmp(hi, sample_wave.hi, sizeof hi);
     bad += check("sample waveform is bounded, matches audio IMA decode and leaves voices intact", ok);
+#endif
     ui_power_on(); return bad;
 }
 
@@ -3025,7 +3035,7 @@ static int test_sample_alert(void)
     frame();
     bad += check("GRAIN on an empty USR2: said", msg_is(nf));
     frames(1500);
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     set_engine_of(TSEL, 13u);                        /* SLICE, SRC USR3 */
     TSEL->p[P_E0] = 3;
     frame();
@@ -3057,7 +3067,7 @@ static int test_sample_alert(void)
     return bad;
 }
 
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
 /* SLICES (EDIT family, a SLICE track: ui_slice.c; the MAN slices of eng_slice.c, ported from hugelton/Felucca#27 by
  * andreahaku): in the EDIT cycle after EDIT 2 on SLICE only; BREAK shows its slices, edits need a user slot; the first
  * edit takes the slices shown (8 equal) as MAN and sets DIV MAN; KNOB 1 the marker (then END), KNOB 2 moves it,
@@ -7328,7 +7338,7 @@ int main(void)
     bad += test_browse_no_pattern();
     bad += test_name();
     bad += test_edit_cycle();
-#if FELUCCA_SLICE
+#if FELUCCA_SLICE && D8BUILD_HAS(13)
     bad += test_slices();
 #endif
     bad += test_sample_alert();
