@@ -499,6 +499,7 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/audio_test" tests/audio_test.c -lm
     run "audio: overload protection, bounded fades and DMA diagnostics" "$OUT/audio_test"
     run "optional timing diagnostics: simulated ISR parity, state/console/parser and isolated outputs" python3 tests/audio_timing_test.py
+    run "host timing capture: bounded allowlisted console session and failure preservation" python3 tests/dabbl8_timing_capture_test.py
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_overload4" tests/native_overload_test.c -lm
     run "audio: historical protected overload policy" "$OUT/native_overload4"
     $CC -w -DNPART=8 -Ibuild/gen -Ifirmware/src -o "$OUT/native_overload8" tests/native_overload_test.c -lm

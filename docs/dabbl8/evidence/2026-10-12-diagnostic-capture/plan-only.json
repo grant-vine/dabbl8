@@ -1,0 +1,17 @@
+{
+  "mode": "plan-only; no device access",
+  "identity": {
+    "source_commit": "02c3caffc15714f265f1e4e8e829297c36e53eb3",
+    "manifest_sha256": "891d665e9d1bd32386a4ac68029cc25353ba3a0db69b9fdbbc4adaa3dd496e61",
+    "diagnostic_package": "dabbl8-0.1.0-timing-diagnostic.fwsc",
+    "package_sha256": "cb1e0813132ce063fc03bd0b04b6ab1f4c156ead9bbfcd8afa1e08cafb83ace2",
+    "device_binary_identity_attested": false
+  },
+  "commands": [
+    "status",
+    "timing start",
+    "timing stop",
+    "timing report"
+  ],
+  "workload": "Plan only: eight-track baseline"
+}

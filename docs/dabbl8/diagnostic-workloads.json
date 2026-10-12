@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "kind": "unexecuted_first_device_workload_sheet",
+  "diagnostic_source": "02c3caffc15714f265f1e4e8e829297c36e53eb3",
+  "physical_rows_completed": 0,
+  "requires_separate_install_authorization": true,
+  "recovery_qualified": false,
+  "collection_seconds_progression": [5, 10, 30, 60],
+  "shared_sounding_voices": 8,
+  "preparation": [
+    "Verify unit revision, exact candidate checksum, recovery equipment and applicable rollback procedure.",
+    "Record Mac, USB descriptors, exact CDC/MIDI/audio endpoints and host sample-rate settings.",
+    "Configure the workload before collection; capture controls do not load patterns or play notes.",
+    "Record all eight track engines/presets, note density, tempo, release times, effect settings and sample identities.",
+    "Save raw reports and an independent audio recording when available; preserve failed runs too."
+  ],
+  "rows": [
+    {"id": "idle", "workload": "Stopped transport, idle interface, USB audio inactive", "status": "not_run"},
+    {"id": "track_growth", "workload": "Repeat one, two, four and eight active tracks with effects off and fixed musical material", "status": "not_run"},
+    {"id": "music", "workload": "Repeatable drum, bass, chords and lead arrangement; compare timing and audible note loss", "status": "not_run"},
+    {"id": "heavy_engines", "workload": "Maximum admitted shared voices with FM6 and physical-model engines, sustained release overlap", "status": "not_run"},
+    {"id": "slice", "workload": "SLICE reverse and boundary cases using identified available samples; do not import unknown data during capture", "status": "not_run"},
+    {"id": "effects", "workload": "Eight-track playback with dense sends, delay, ROOM then SPRING reverb; include long tails", "status": "not_run"},
+    {"id": "usb_44100", "workload": "Repeat heavy workload with active host USB audio at stable 44.1 kHz", "status": "not_run"},
+    {"id": "usb_48000", "workload": "Separate repeat at stable host USB audio 48 kHz; no rate switch inside a capture", "status": "not_run"},
+    {"id": "midi_ui", "workload": "Repeat MIDI bursts and physical knob/page/track-selection activity with eight-track playback", "status": "not_run"},
+    {"id": "stopped_tail", "workload": "Stop music and observe resident effects/output drain; stopping diagnostic collection alone does not stop music", "status": "not_run"}
+  ],
+  "separate_gates": [
+    "Independent clock and whole-interrupt observer/wrapper calibration",
+    "Nested interrupt and dynamic stack high-water measurement",
+    "Physical own-data save/reboot/backup/restore and interrupted-write behavior",
+    "Physical vendor rollback/recovery and its data-reset disclosure",
+    "Second tester reproduces installation, own-data restore and rollback",
+    "Separate authorization before any firmware release publication"
+  ],
+  "interpretation": "Accepted capture means a valid report, not hardware acceptance. Maximum observed time and zero software errors do not bound every interrupt or establish physical deadline safety."
+}
