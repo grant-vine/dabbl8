@@ -49,6 +49,9 @@ PALETTES = [
     ("NIGHT",  (0, 0, 0),       (0, 24, 10),     (150, 230, 170), (56, 220, 100),  (255, 255, 255)),
     # 1.0.2: black and white (the derived tokens are set, not blended: bw()); the old MONO is GREY (id 0)
     ("MONO",   (0, 0, 0),       (0, 0, 0),       (255, 255, 255), (255, 255, 255), (255, 255, 255)),
+    # Dabbl brand themes: append only, retaining existing saved theme IDs.
+    ("DABBL DARK", (37,39,36), (47,50,46), (246,240,228), (244,197,66), (231,123,100)),
+    ("DABBL LIGHT", (246,240,228), (233,226,214), (37,39,36), (15,78,85), (164,64,106)),
 ]
 BW = "MONO"
 BW_GREY = (82, 82, 82)             # MONO's one mid grey (RGB565 10/20/10): DIM LINE RAISE LANE

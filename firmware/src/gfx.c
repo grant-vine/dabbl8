@@ -236,6 +236,21 @@ static void palette_set(uint32_t i)
     ux.gen++;                                    /* the text ramps change with the coverage curve */
 }
 
+/* Stable track identity on colour themes. Numerals/state badges remain the
+ * primary cues; neutral themes preserve their original monochrome behaviour. */
+static uint16_t track_ink(uint32_t track)
+{
+#if DABBL8_IDENTITY && NTRK == 8
+    static const uint16_t dark[8] = {0xf628,0xebcc,0x8d58,0xd435,0xf79c,0xbed9,0xf6b2,0xf534};
+    static const uint16_t light[8] = {0x136e,0xa20d,0x9927,0x7b42,0x2104,0x32cc,0x9a0b,0x5948};
+    if (ux.mono || (ux.bg == 0 && ux.surf == 0 && ux.text == 0xffff && ux.theme == 0xffff))
+        return T_THEME;
+    return (ux.light ? light : dark)[track & 7u];
+#else
+    (void)track; return T_THEME;
+#endif
+}
+
 /* settings store a tagged id; ids below 20 are the palettes of earlier firmware */
 static uint32_t palette_from_stored(uint32_t v)
 {
