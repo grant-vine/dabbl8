@@ -20,7 +20,7 @@ Command 75 (`D8_CAPS`) takes no arguments. Its exact 15-byte reply is:
 | 10–11 | Parameter / engine ID schemas | 1 / 1 |
 | 12 | Motion section schema | 1 (D8M1) |
 | 13 | Live project-save schema | 9 (frozen FUN9; D8P1 is not live yet) |
-| 14 | Feature bits | Bit 0: versioned motion command 74; bit 1: original legacy writes are safe; bit 2: expanded in-memory track envelope 77 |
+| 14 | Feature bits | Bit 0: versioned motion command 74; bit 1: original legacy writes are safe; bit 2: expanded in-memory track envelope 77; bit 3: versioned own-sample replacement command 80 (only when compiled) |
 
 Every byte is seven-bit. Counts and schemas must match the separate INFO report. Unknown capabilities, unsupported layouts, timeout, malformed replies or inconsistent limits cannot grant writes. Unknown feature bits are ignored, rather than treated as an existing feature. Bit 1 is advertised only while the runtime retains at most four tracks. It must be cleared when eight tracks are enabled. Experimental expanded firmware advertises bit 2 for the separately versioned [track envelope](versioned-track-editing.md); it does not grant project, backup or other legacy writes. Default four-track firmware does not advertise that bit. The limits describe current behavior, not future implementation or hardware qualification.
 
@@ -64,3 +64,13 @@ uses command 75 with exact argument `[2]`. The original no-argument schema-1
 contains stable-ID slot count and immutable compiled-engine mask with flags 0;
 it grants no write/profile authorization. Explicitly opted-in clients must treat
 unsupported/malformed replies or timeout as unavailable, never assume a full mask.
+
+## Native sample replacement (development schema 1)
+
+Command 80 is a separate bounded transaction; legacy sample writes 11–14 remain refused on eight tracks. Advertise feature bit 3 only when the actual native sample module is included. Capability negotiation authorizes the protocol family, not a physical flash operation. PREPARE stages a validated 480-byte FSMP header; the instrument shows REPLACE SAMPLE and requires SAVE press/release before erasing. No remote packet or cached READY flag replaces that consent.
+
+Every request starts `[1, operation]`. PREPARE (operation 1) appends `slot0..2, pack7(header480)`. STATUS (2), COMMIT (4), CANCEL (5) append a five-byte seven-bit token (top byte at most15). WRITE (3) appends token, five-byte offset, then pack7 of at most256 bytes. Offsets start512, are256-aligned and strictly sequential; the final packet is exactly the remaining length. Only an identical most-recent page retry is accepted without another erase.
+
+The exact reply is `[1, operation, rc, token5, phase, next_offset5]` (14 payload bytes). rc0 is success; 1 malformed, 2 busy, 3 stale/notready, 4 I/O, 5 cancelled. Phases are0idle,1consent,2release,3upload. COMMIT verifies data CRC and the immutable header, writes header bytes4..479 first and magic bytes0..3 last, then checks readback. Repeating successful COMMIT or CANCEL preserves completed status.
+
+Replacement is in place. The previous sample is lost when the first sector is erased. Interruption can leave the selected slot empty; a completed final magic write with a lost/error acknowledgement can leave the complete new sample. There is no automatic restoration or retained A/B sample copy. Keep the source audio or own backup and restart from PREPARE after a cancelled/uncertain transfer. Other sample slots and project/autosave storage remain outside the transaction. This development protocol is not device/recovery qualification.

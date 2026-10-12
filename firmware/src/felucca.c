@@ -69,6 +69,7 @@
 /* ----------------------------------------------------------- sound --- */
 #if NTRK == 8 && FELUCCA_FLASH && FELUCCA_OTA
 #define D8_MIGRATION_SESSION 1
+#define D8_SAMPLE_SESSION 1
 #endif
 #if NTRK == 8 && FELUCCA_FLASH
 #define D8_PRESET_SESSION 1
@@ -136,6 +137,7 @@
 #include "native_migration_capture_binding.c" /* private earlier-capture binding */
 #include "native_migration_session.c" /* connected initializer remains quarantined */
 #include "native_local_session.c" /* actual local native operation coordinator */
+#include "native_sample_session.c" /* explicit own-sample replacement tickets */
 #if D8_FIRST_USE_SESSION
 #define D8_FIRST_USE_AMALGAMATED 1
 #include "native_first_use.c"

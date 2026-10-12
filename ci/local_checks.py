@@ -23,6 +23,8 @@ MAP = {
                       'firmware/src/project_native_frontend.h', 'tests/native_readonly_boot_test.c'},
     'sampler': {'firmware/src/eng_sample.c', 'firmware/src/eng_slice.c',
                 'firmware/src/eng_grain.c', 'tests/fuzz_smp.c'},
+    'sample-upload': {'firmware/src/native_sample_session.c',
+                      'tests/native_sample_session_test.c', 'tests/native_sample_client_test.mjs'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'tests/run_tests.sh'},
 }
 
@@ -65,7 +67,9 @@ def recipes(checks, cc, out, base):
                     ('native', None, 'tests/native_storage_gate_test.c')]
         elif name == 'legacy-ui':
             jobs = [(str(n), n, 'tests/ui_legacy_v6_bounds_test.c') for n in (4, 8)]
-        elif name == 'sampler':
+        elif name == 'sample-upload':
+            jobs = [('8', 8, 'tests/native_sample_session_test.c')]
+        elif name in ('sampler', 'sample-upload'):
             jobs = [(f'{n}-{fixture}', n, 'tests/' + fixture + '.c') for n in (4, 8)
                     for fixture in ('sample_source_range_test', 'slice_render_source_range_test')]
         else:
@@ -75,20 +79,25 @@ def recipes(checks, cc, out, base):
             binary = str(out / tag)
             flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
                      '-fsanitize=address,undefined', '-fno-sanitize-recover=all']
-            sources = pool + [fixture] if name == 'readonly-boot' else [fixture]
+            sources = pool + [fixture] if name in ('readonly-boot', 'sample-upload') else [fixture]
             inputs = [] if name == 'storage' else list(GEN)
             args = [str(out / (tag + '.trace'))] if fixture.endswith('slice_render_source_range_test.c') else []
             if tracks:
                 flags += [f'-DNPART={tracks}']
             if name != 'storage':
                 flags += ['-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1']
-            if name == 'sampler':
+            if name in ('sampler', 'sample-upload'):
                 # Same bounded range/render recipes: only inherited DSP arithmetic exclusions.
                 flags += ['-fno-sanitize=signed-integer-overflow,shift']
             flags += ['-Ibuild/gen', '-Ifirmware/src']
             steps += [{'name': tag + '-compile', 'argv': cc + flags + sources + ['-lm', '-o', binary],
-                       'requires': sources + ['build/gen/' + p for p in inputs]},
+                       'requires': sources + ['build/gen/' + p for p in inputs] +
+                       (['build/gen/d8_flash_store_ranges_test.h'] if name == 'sample-upload' else [])},
                       {'name': tag, 'argv': [binary, *args]}]
+    if 'sample-upload' in checks:
+        steps.append({'name': 'sample-upload-browser',
+                      'argv': ['node', 'tests/native_sample_client_test.mjs'],
+                      'requires': ['tests/native_sample_client_test.mjs', 'web/editor.html']})
     return steps
 
 

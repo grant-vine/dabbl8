@@ -45,3 +45,12 @@ firmware installed or hosted workflow triggered. Update-golden/budget overrides
 are refused. Broad qualification remains an explicit, separate upstream
 `sh tests/run_tests.sh` invocation with its existing prerequisites; there is no
 full-suite fallback or `--full` flag in this small runner.
+
+Native sample replacement has a separate `--check sample-upload` recipe: the
+actual eight-track virtual-NOR handler with bounded ASan/UBSan (only inherited
+DSP signed-overflow/shift exclusions), plus actual browser helper fake-reply
+tests. It requires the existing exact HAL-derived
+`build/gen/d8_flash_store_ranges_test.h`; missing input refuses without
+generation/download. Select this scope explicitly for shared editor/coordinator
+changes after reviewing their affected paths. It does not establish other editor
+features, vendor memory/timing or physical uploads.
