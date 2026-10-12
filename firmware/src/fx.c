@@ -586,24 +586,40 @@ static void mix_part(track_t *t, uint32_t n)
         int32_t gl = 4096 - (pan > 0 ? pan * 64 : 0), gr = 4096 + (pan < 0 ? pan * 64 : 0);
         int32_t c = t->p[P_CHOR] * 258, d = t->p[P_DLY] * 258, r = t->p[P_REV] * 258, pk = t->peak;
         int32_t xmax = c > d ? c : d;
-        xmax = 0x7FFFFFFF / ((xmax > r ? xmax : r) | 1);   /* sends: loud chords at a high LEVEL */
         track_dist(t, b, n);
         slicer_track(t, b, n);                          /* slicer.c: before the level, pan and sends */
         if ((pf.mute >> (t - trk)) & 1u)
             perf_mute((uint32_t)(t - trk), b, n);       /* perform.c: a black key in the FX layer */
-        for (i = 0; i < n; i++) {
-            int32_t x = ((b[i] >> 2) * lvl) >> 10, a = x < 0 ? -x : x;   /* pre-shift: 8 loud voices */
-            int32_t xs = clamp(x, -xmax, xmax);         /* sends: mulq15 would overflow */
-            if (a > pk)
-                pk = a;
-            if (c)
-                send_c[i] += mulq15(xs, c);
-            if (d)
-                send_d[i] += mulq15(xs, d);
-            if (r)
-                send_r[i] += mulq15(xs, r);
-            mix_l[i] += (x * gl) >> 12;
-            mix_r[i] += (x * gr) >> 12;
+#if NTRK == 8
+        /* Snapshot after mod_begin: zero stored sends can be modulated wet.
+         * Skip only unused send math. Distortion, slicer, performance, shared
+         * buses and their resident tails continue through the same paths. */
+        if (!(c | d | r)) {
+            for (i = 0; i < n; i++) {
+                int32_t x = ((b[i] >> 2) * lvl) >> 10, a = x < 0 ? -x : x;
+                if (a > pk)
+                    pk = a;
+                mix_l[i] += (x * gl) >> 12;
+                mix_r[i] += (x * gr) >> 12;
+            }
+        } else
+#endif
+        {
+            xmax = 0x7FFFFFFF / ((xmax > r ? xmax : r) | 1);
+            for (i = 0; i < n; i++) {
+                int32_t x = ((b[i] >> 2) * lvl) >> 10, a = x < 0 ? -x : x;   /* pre-shift: 8 loud voices */
+                int32_t xs = clamp(x, -xmax, xmax);         /* sends: mulq15 would overflow */
+                if (a > pk)
+                    pk = a;
+                if (c)
+                    send_c[i] += mulq15(xs, c);
+                if (d)
+                    send_d[i] += mulq15(xs, d);
+                if (r)
+                    send_r[i] += mulq15(xs, r);
+                mix_l[i] += (x * gl) >> 12;
+                mix_r[i] += (x * gr) >> 12;
+            }
         }
         t->peak = pk;
     }
