@@ -1116,16 +1116,24 @@ static void draw_splash(void)
 {
     int32_t h = SPL_PAD - AF_M_CAP_Y + SPL_PITCH + AF_M.h;     /* a band: its two lines, the descenders in */
     int32_t lb = h - SPL_PAD - AF_M_CAP_H - AF_M_CAP_Y;         /* the bottom band's last line: its top */
+#if DABBL8_IDENTITY
+    uint32_t brand_sign = settings.palette == UI_DABBL_DARK_INDEX || settings.palette == UI_DABBL_LIGHT_INDEX;
+    uint16_t splash_bg = brand_sign ? UI_PALETTES[UI_DABBL_DARK_INDEX].theme : T_RAISE;
+    uint16_t splash_ink = brand_sign ? UI_PALETTES[UI_DABBL_LIGHT_INDEX].text : T_THEME;
+    lcd_fill(0, 0, 240, 240, brand_sign ? splash_bg : T_BG);
+    lcd_fill(SPL_X0, SPL_X0, SPL_SQ, SPL_SQ, splash_bg);
+#else
     lcd_fill(0, 0, 240, 240, T_BG);
     lcd_fill(SPL_X0, SPL_X0, SPL_SQ, SPL_SQ, T_RAISE);
+#endif
 #if DABBL8_IDENTITY
     /* Painted logo centred on the display, small explicit upstream credit.
      * Flash alpha mask and the existing canvas: no new RAM or startup delay. */
-    CV_DRAW_BEGIN(SPL_SQ, 124, T_RAISE);
-    cv_alpha(8, 11, 160, 50, D8_WORDMARK_ALPHA, ramp(T_THEME, T_RAISE));
-    cv_text_in(0, 66, SPL_SQ, &AF_M, FELUCCA_VERSION, T_TEXT, T_RAISE);
-    cv_text_in(0, 90, SPL_SQ, &AF_S, "Based on Felucca", T_MID, T_RAISE);
-    cv_text_in(0, 105, SPL_SQ, &AF_S, "H\xFCgelton + community", T_MID, T_RAISE);
+    CV_DRAW_BEGIN(SPL_SQ, 124, splash_bg);
+    cv_alpha(8, 11, 160, 50, D8_WORDMARK_ALPHA, ramp(splash_ink, splash_bg));
+    cv_text_in(0, 66, SPL_SQ, &AF_M, FELUCCA_VERSION, brand_sign ? splash_ink : T_TEXT, splash_bg);
+    cv_text_in(0, 90, SPL_SQ, &AF_S, "Based on Felucca", brand_sign ? splash_ink : T_MID, splash_bg);
+    cv_text_in(0, 105, SPL_SQ, &AF_S, "H\xFCgelton + community", brand_sign ? splash_ink : T_MID, splash_bg);
     cv_blit(SPL_X0, 84);
 #else
     splash_band(SPL_X0, (uint32_t)h, SPL_PAD - AF_M_CAP_Y, SPLASH_LINES, AL_V, SPL_PAD,

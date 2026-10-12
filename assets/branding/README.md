@@ -23,3 +23,10 @@ Explicit offline regeneration with existing local `rsvg-convert` and Pillow:
 firmware builds do not need these tools or download anything.
 
 Original SVG SHA-256: `098e083f263ca4ba4b3b77a125284d35fac9025c044061e3321edcbff6a8dc62`.
+
+The owner's outside-wall sign is the primary splash/website colour reference.
+The two Dabbl themes use a full golden-yellow boot field with charcoal/black
+lettering and readable small credits, using the approved screen hex values rather
+than sampling lighting/shadows from the photograph. Other themes retain their
+existing splash treatment, including GREY/MONO accessibility. The Atlas Security
+sign in the photo is unrelated and is not copied into Dabbl assets.
