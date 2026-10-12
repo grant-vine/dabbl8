@@ -194,6 +194,19 @@ static void fl_plain_window_init(void) {}
 #include "../../firmware/src/storage.c"
 #include "../../firmware/src/upreset.c"
 #include "../../firmware/src/project.c"
+#if NTRK == 8
+/* Match the target runtime composition: real native validation and read-only
+ * boot, backed by this emulator's NOR. No initializer or write session is
+ * authorized by boot; OTA and migration remain disabled above. */
+#include "../../firmware/src/d8p1.c"
+#include "../../firmware/src/d8p1_runtime.c"
+#include "../../firmware/src/d8pool.c"
+#include "../../firmware/src/d8p1_pool_runtime.c"
+#include "../../firmware/src/d8pool_mapped.c"
+#include "../../firmware/src/d8p1_flash_runtime.c"
+#include "../../firmware/src/project_native_flash.c"
+#include "../../firmware/src/native_autosave_session.c"
+#endif
 
 /* ------------------------------------------------- main.c and its HAL --- */
 typedef struct { uint32_t magic, count, vec, pc, emu, dbg, rets; } fm1_crash_t;
