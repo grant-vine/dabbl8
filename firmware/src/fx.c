@@ -24,6 +24,12 @@ static volatile struct { uint32_t delay, chorus, comb, ap; } fx_tail;
  * comb/ap tracked-store guards remain separate, so an external tracked test
  * write cannot be forgotten by an active-model sweep. */
 static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
+/* Each zero wait certifies the active history/line equal its reference, including
+ * old and stored values. Delay also binds its computed length; reverb uses
+ * line entry0. Any changed reference resets the complete active sweep. */
+static volatile struct { uint32_t delay,comb,ap,ap_fixed,delay_span; } fx_uniform_wait;
+#define FTU16(d,u,p,ref,v) do { int32_t uv=(v); int16_t ur=(ref); \
+ (u)|=(uint32_t)((*(p)^ur)|((int16_t)uv^ur)); FTR16(d,p,uv); } while(0)
 static inline void fx_sweep_model(uint8_t model)
 {
     /* A caller that changes domains without the required rev_clear cannot
@@ -51,7 +57,8 @@ static inline void ft_store16(volatile uint32_t *count,int16_t *p,int16_t value)
      * Every external tracked update latches until the existing full clear;
      * mixed render/external stores can never underflow or wrap it to zero. */
     if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
-    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+    else {*count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+        if(count==&fx_tail.delay)fx_uniform_wait.delay=fx_uniform_wait.delay_span?fx_uniform_wait.delay_span:DLY_LEN;}
     *p=value;
 }
 static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
@@ -60,7 +67,8 @@ static inline void ft_store32(volatile uint32_t *count,int32_t *p,int32_t value)
      * Every external tracked update latches until the existing full clear;
      * mixed render/external stores can never underflow or wrap it to zero. */
     if(count==&fx_tail.comb||count==&fx_tail.ap)*count=1;
-    else *count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+    else {*count += (uint32_t)(value!=0)-(uint32_t)(*p!=0);
+        if(count==&fx_tail.delay)fx_uniform_wait.delay=fx_uniform_wait.delay_span?fx_uniform_wait.delay_span:DLY_LEN;}
     *p=value;
 }
 #define FT16(c,p,v) ft_store16(&fx_tail.c,(p),(int16_t)(v))
@@ -277,7 +285,8 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     uint32_t i, k;
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
 #if NTRK == 8
-    uint32_t comb_dirty=0,ap_dirty=0;
+    uint32_t comb_dirty=0,ap_dirty=0,comb_uniform=0,ap_uniform=0,ap_fixed_dirty=0;
+    int32_t fixed_low=2*(rev_ap[0]-(rev_comb[0]+rev_comb[1116]+rev_comb[2304]+rev_comb[3581]))-1;
     fx_sweep_model(1);
 #endif
     for (i = 0; i < n; i++) {
@@ -293,7 +302,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
 #endif
             fx.comb_lp[k] = o + mulq15(fx.comb_lp[k] - o, 32767 - damp);
 #if NTRK == 8
-            FTR16(comb_dirty,&c[position],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
+            FTU16(comb_dirty,comb_uniform,&c[position],c[0],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
             fx.comb_i[k]=(uint16_t)(position+1u>=REV_COMB[k]?0u:position+1u);
 #else
             FTR16(comb_dirty,&c[fx.comb_i[k]],clamp(in + mulq15(fx.comb_lp[k], size), -32768, 32767));
@@ -303,32 +312,42 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
             a += o;
             c += REV_COMB[k];
         }
-        c = rev_ap;
-        for (k = 0; k < 2u; k++) {
 #if NTRK == 8
-            uint32_t position=fx.ap_i[k];
-            int32_t o = c[position];
-#else
-            int32_t o = c[fx.ap_i[k]];
-#endif
-            int32_t v = a + (o >> 1);
-#if NTRK == 8
-            FTR16(ap_dirty,&c[position],clamp(v, -32768, 32767));
-            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
-            fx.ap_i[k]=(uint16_t)(position+1u>=REV_AP[k]?0u:position+1u);
-#else
-            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v, -32768, 32767));
-            a = o - a;                                  /* Freeverb: out = buf - in (o - v is a notch comb) */
-            if (++fx.ap_i[k] >= REV_AP[k])
-                fx.ap_i[k] = 0;
-#endif
-            c += REV_AP[k];
+        /* Two fixed allpass stages, observed without a per-stage branch. */
+        {
+            uint32_t position=fx.ap_i[0];int32_t o=rev_ap[position];
+            int32_t v=a+(o>>1);
+            FTU16(ap_dirty,ap_uniform,&rev_ap[position],rev_ap[0],clamp(v,-32768,32767));
+            a=o-a;fx.ap_i[0]=(uint16_t)(position+1u>=556u?0u:position+1u);
         }
+        {
+            uint32_t position=fx.ap_i[1];int16_t *line=rev_ap+556;
+            int32_t o=line[position];int16_t stored=(int16_t)clamp(a+(o>>1),-32768,32767);
+            /* A valid fixedpoint minus lower endpoint is exactly0 or1.
+             * OR all unsigned differences, then test once at render exit.
+             * Any outsider sets a bit above bit0; no cancellation is possible. */
+            ap_fixed_dirty|=(uint32_t)(o-fixed_low)|(uint32_t)(stored-fixed_low);
+            FTR16(ap_dirty,&line[position],stored);
+            a=o-a;fx.ap_i[1]=(uint16_t)(position+1u>=441u?0u:position+1u);
+        }
+#else
+        c=rev_ap;
+        for(k=0;k<2u;k++){
+            int32_t o=c[fx.ap_i[k]],v=a+(o>>1);
+            FTR16(ap_dirty,&c[fx.ap_i[k]],clamp(v,-32768,32767));
+            a=o-a;
+            if(++fx.ap_i[k]>=REV_AP[k])fx.ap_i[k]=0;
+            c+=REV_AP[k];
+        }
+#endif
         out[i] += a;
     }
 #if NTRK == 8
     fx_rev_wait.comb=fx_zero_sweep(fx_rev_wait.comb,comb_dirty,n,1356u);
     fx_rev_wait.ap=fx_zero_sweep(fx_rev_wait.ap,ap_dirty,n,556u);
+    fx_uniform_wait.comb=fx_zero_sweep(fx_uniform_wait.comb,comb_uniform,n,1356u);
+    fx_uniform_wait.ap=fx_zero_sweep(fx_uniform_wait.ap,ap_uniform,n,556u);
+    fx_uniform_wait.ap_fixed=fx_zero_sweep(fx_uniform_wait.ap_fixed,ap_fixed_dirty>1u,n,441u);
 #endif
 }
 
@@ -397,6 +416,7 @@ static void rev_clear(void)
     fx.sp_lp = fx.sp_hp = fx.sp_he = 0;
 #if NTRK == 8
     fx_tail.comb=fx_tail.ap=0;fx_rev_wait.comb=fx_rev_wait.ap=0;fx_rev_wait.model=0;
+    fx_uniform_wait.comb=fx_uniform_wait.ap=fx_uniform_wait.ap_fixed=0;
 #endif
 }
 
@@ -412,7 +432,8 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
     int32_t cdepth = song.g[G_CDEPTH] * 6, rt;
     uint32_t cinc = LFO_INC[song.g[G_CRATE] & 127] / CTL;
 #if NTRK == 8
-    uint32_t delay_nz=fx_tail.delay,chorus_nz=fx_tail.chorus;
+    uint32_t delay_nz=fx_tail.delay,chorus_nz=fx_tail.chorus,delay_uniform=0;
+    if(dl!=fx_uniform_wait.delay_span){fx_uniform_wait.delay=dl;fx_uniform_wait.delay_span=dl;}
 #endif
     for (i = 0; i < n; i++) {
         int32_t y = 0, x, r;
@@ -430,14 +451,21 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
         /* delay with a low-passed feedback */
         x = dly_buf[(fx.dly_w - dl) & (DLY_LEN - 1u)];
         fx.dly_lp += mulq15(x - fx.dly_lp, col);
-        FTL16(delay_nz,&dly_buf[fx.dly_w & (DLY_LEN - 1u)],
-            clamp((dly_in[i] >> 1) + mulq15(fx.dly_lp, fb), -32768, 32767));
+        int16_t value=(int16_t)clamp((dly_in[i] >> 1) + mulq15(fx.dly_lp, fb), -32768, 32767);
+#if NTRK == 8
+        /* Only the dl-sample history can be read while this computed delay is
+         * unchanged. A changing reference or read resets the whole history. */
+        int16_t ref=dly_buf[(fx.dly_w-1u)&(DLY_LEN-1u)];
+        delay_uniform|=(uint32_t)((x^ref)|(value^ref));
+#endif
+        FTL16(delay_nz,&dly_buf[fx.dly_w & (DLY_LEN - 1u)],value);
         fx.dly_w++;
         y += mulq15(x << 1, dmix);
         wet[i] = y;
     }
 #if NTRK == 8
     fx_tail.delay=delay_nz;fx_tail.chorus=chorus_nz;
+    fx_uniform_wait.delay=fx_zero_sweep(fx_uniform_wait.delay,delay_uniform,n,dl);
 #endif
     rt = song.g[G_RTYPE] == 1;
     if (rt != fx.rtype) {                               /* the model changed: the old one's block fades out, */
@@ -461,23 +489,64 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
 }
 
 #if NTRK == 8
-/* Bounded resident-state proof only: no queued USB/DAC or device timing claim.
- * Conservative fixed-point residuals may defer forever; never clear a tail to
- * manufacture eligibility. Main-loop readers only: local totals are incomplete
- * during rendering. Read fresh inside the existing IRQ-off write fence; never
- * call this predicate from an interrupt nested inside audio rendering. */
+/* ROOM and delay can retain constant fixed-point offsets through floor
+ * rounding. Permit only a certified uniform resident state whose exact current
+ * zero-input equations leave every cell/scalar unchanged and whose constant
+ * wet output is cancelled exactly by the DC blocker. No state/audio is changed.
+ * Waits are audio-owned; admission checks O(1) scalars, not a flash-time scan.
+ * SPRING permits only its certified zero-buffer/scalar deadband fixedpoint. */
+static int fx_stationary_quiet(void)
+{
+    if(fx_uniform_wait.delay||fx_uniform_wait.delay_span!=delay_samples()||fx_tail.chorus||fx_tail.comb||fx_tail.ap||pf.src!=PF_N)return 0;
+    int32_t d=dly_buf[(fx.dly_w-1u)&(DLY_LEN-1u)],lp=fx.dly_lp;
+    int32_t fb=song.g[G_DFDBK]*230,col=2000+song.g[G_DCOLOR]*240;
+    if(lp < -32768||lp>32767||mulq15(d-lp,col)||mulq15(lp,fb)!=d)return 0;
+    int32_t lo=0,hi=0;
+    if(fx.rtype==0&&song.g[G_RTYPE]==0&&fx_rev_wait.model==1){
+        if(fx_uniform_wait.comb||fx_uniform_wait.ap||fx_uniform_wait.ap_fixed)return 0;
+        int32_t a=0;unsigned pos=0;
+        int32_t size=25000+song.g[G_RSIZE]*50,damp=song.g[G_RDAMP]*200;
+        for(unsigned k=0;k<4;k++){
+            int32_t c=rev_comb[pos],l=fx.comb_lp[k];
+            if(l < -32768||l>32767||l!=c+mulq15(l-c,damp)||mulq15(l,size)!=c)return 0;
+            a+=c;pos+=REV_COMB[k];
+        }
+        int32_t c=rev_ap[0];
+        if(clamp(a+(c>>1),-32768,32767)!=c)return 0;
+        a=c-a;
+        /* AP2's certified cells belong to [2a-1,2a]. Each is an exact
+         * fixedpoint of a+(cell>>1); its output lies in [a-1,a]. */
+        lo=a-1;hi=a;
+    }else if(fx.rtype==1&&song.g[G_RTYPE]==1&&fx_rev_wait.model==2){
+        if(fx_rev_wait.comb||fx_rev_wait.ap)return 0;
+        int32_t l=fx.sp_lp,kl=26000-song.g[G_RDAMP]*160,g=19661+song.g[G_RSIZE]*85;
+        if(l < -32768||l>32767||mulq15(-l,kl))return 0;
+        int32_t o=l*g;
+        if(fx.sp_hp!=((o+((o>>31)&32767))>>15))return 0;
+        /* Entire active spring storage is certified zero. Constant feedback
+         * equal to HP state leaves HP/remainder/AP/loop zero input forever. */
+    }else return 0;
+    int32_t dw=mulq15(d*2,song.g[G_DMIX]*258);
+    int32_t mg=fx_usb_fixed?MASTER_FULL:(int32_t)song.master_q12;
+    if(mg<0||mg>MASTER_FULL)return 0;
+    int32_t left=(((lo+dw)>>2)*mg)>>10,right=(((hi+dw)>>2)*mg)>>10;
+    return left==right&&dc_l==left*64&&dc_r==left*64;
+}
+/* Main-loop only, fresh inside the existing IRQ-off primitive fence. Resident
+ * scalar checks never substitute for source, DAC/UAC queue or input quiet. */
 static int fx_resident_quiet(void)
 {
-    if(fx_tail.delay||fx_tail.chorus||fx_tail.comb||fx_tail.ap||fx_rev_wait.comb||fx_rev_wait.ap||fx.dly_lp||
-       fx.sp_lp||fx.sp_hp||(uint32_t)fx.sp_he>=64u||dc_l||dc_r||
-       (uint32_t)dce_l>=4096u||(uint32_t)dce_r>=4096u||
+    if((uint32_t)fx.sp_he>=64u||(uint32_t)dce_l>=4096u||(uint32_t)dce_r>=4096u||
        lc_l1||lc_l2||lc_r1||lc_r2||sb_lp1||sb_lp2||sb_lp3||sb_lp4||
        sb_env||sb_h1||sb_h2||sb_hl||click_req||clk.env)return 0;
-    for(unsigned i=0;i<4;i++)
-        if(fx.comb_lp[i]||(uint32_t)lce[i]>=32u)return 0;
+    for(unsigned i=0;i<4;i++)if((uint32_t)lce[i]>=32u)return 0;
     for(unsigned t=0;t<NTRK;t++)
         if(trk[t].tail&&(trk[t].dist_hp||trk[t].dist_lp1||trk[t].dist_lp2))return 0;
-    return 1;
+    unsigned dirty=fx_tail.delay|fx_tail.chorus|fx_tail.comb|fx_tail.ap|
+       fx_rev_wait.comb|fx_rev_wait.ap|(uint32_t)fx.dly_lp|
+       (uint32_t)fx.sp_lp|(uint32_t)fx.sp_hp|(uint32_t)dc_l|(uint32_t)dc_r;
+    for(unsigned i=0;i<4;i++)dirty|=(uint32_t)fx.comb_lp[i];
+    return !dirty||fx_stationary_quiet();
 }
 #endif
 

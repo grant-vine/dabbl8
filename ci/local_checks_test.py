@@ -37,6 +37,53 @@ class SelectionTest(unittest.TestCase):
             self.assertEqual(len(p['commands']), 5 if name == 'legacy-ui' else 9)
             self.assertEqual(p['status'], 'REFUSED')  # no generated inputs
 
+    def test_fx_quiet_selects_only_focused_recipe(self):
+        for path in ('firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'):
+            p = self.plan([path])
+            self.assertEqual(p['checks'], ['diff', 'fx-quiet'])
+            self.assertEqual([s['name'] for s in p['commands']],
+                             ['diff', 'fx-quiet-8-compile', 'fx-quiet-8'])
+            compile_step = p['commands'][1]
+            for arg in ('-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                        '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                        '-fno-sanitize=signed-integer-overflow,shift'):
+                self.assertIn(arg, compile_step['argv'])
+            self.assertIn('tests/native_fx_stationary_quiet_test.c', compile_step['argv'])
+            for header in checks.GEN:
+                self.assertIn('build/gen/' + header, compile_step['requires'])
+            # This fixture does not include the sample upload range header.
+            self.assertNotIn('build/gen/d8_flash_store_ranges_test.h', compile_step['requires'])
+            self.assertEqual(p['status'], 'REFUSED')
+            self.assertFalse(any('run_tests.sh' in s['argv'] for s in p['commands']))
+
+    def test_fx_quiet_inputs_are_required_without_execution(self):
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            steps = checks.recipes({'diff', 'fx-quiet'}, ['clang'], Path('out'), 'HEAD')
+            required = steps[1]['requires']
+            for name in required:
+                file = repo / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.touch()
+            def plan():
+                return checks.make_plan(repo, ['firmware/src/fx.c'], (),
+                                        ['clang'], Path('out'), 'HEAD')
+            with patch.object(checks.shutil, 'which', return_value='/usr/bin/clang'):
+                self.assertEqual(plan()['status'], 'PLAN')
+                for name in required:
+                    file = repo / name
+                    file.unlink()
+                    p = plan()
+                    self.assertEqual(p['status'], 'REFUSED')
+                    self.assertTrue(any(name in refusal for refusal in p['refusals']))
+                    file.touch()
+            with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                (repo / 'build/gen/felucca_tables.h').unlink()
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(checks.main(['--paths', 'firmware/src/fx.c', '--run']), 2)
+                run.assert_not_called()
+                self.assertFalse((repo / 'build/local-checks').exists())
+
     def test_deleted_workflow_selects_local_runner(self):
         selected, unknown = checks.select(['.github/workflows/old.yml'])
         self.assertIn('runner', selected)
