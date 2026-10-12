@@ -106,3 +106,14 @@ Dabbl8 retains Felucca's GPL-3.0-only license and the component notices above.
 Its source/dependency ledger is in `docs/dabbl8/license-provenance.md`. The ledger
 records inspected source snapshots and release gates; it does not relicense
 components or authorize distribution of vendor firmware.
+
+## Optional read-only Mac MIDI host dependencies
+
+The separate MIDI capture adapter preparation uses Mido 1.3.3 (MIT),
+python-rtmidi 1.5.8 (MIT, including RtMidi's modified MIT notice) and Mido's required
+Packaging 26.3 dependency (Apache-2.0 OR BSD-2-Clause). These host packages are
+installed separately; no wheels or library code are bundled in this repository or
+firmware. Their exact reviewed wheel hashes and complete retained licence locations
+are described in [Mac MIDI readiness](docs/dabbl8/coremidi-readiness.md). Preserve
+the dependencies' original notices when distributing them. Dabbl8's own adapter
+source remains GPL-3.0-only; this inventory makes no broader legal completeness claim.

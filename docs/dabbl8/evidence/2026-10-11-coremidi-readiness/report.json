@@ -1,0 +1,108 @@
+{
+  "utc": "2026-10-11T21:41:35.382608+00:00",
+  "scope": "Isolated dependency setup + read-only endpoint-name enumeration. No port opened, message sent, capture/restore/session/install/flash, or firmware source/authority change. Ephemeral CoreMIDI clients created/deleted internally by getnames.",
+  "source_commit": "c7c44de67f84349ba6b3d8ccb622a1f09848021a",
+  "adapter_sha256": "f5b0681a7cbe7d8f7355ef039b904760cd10b87334a5209e9a2bd7696651b93a",
+  "setup_environment": ".local-baseline/venv-readonly-midi",
+  "python": "3.9.6 existing Mac OS/CLT interpreter, arm64",
+  "macos": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.1\nBuildVersion:\t\t25G241\n",
+  "packages": [
+    {
+      "package": "mido",
+      "version": "1.3.3",
+      "filename": "mido-1.3.3-py3-none-any.whl",
+      "archive_sha256": "01033c9b10b049e4436fca2762194ca839b09a4334091dd3c34e7f4ae674fd8a",
+      "archive_bytes": 54614,
+      "primary_url": "https://files.pythonhosted.org/packages/fd/28/45deb15c11859d2f10702b32e71de9328a9fa494f989626916db39a9617f/mido-1.3.3-py3-none-any.whl",
+      "bundled_license_members": [
+        "mido-1.3.3.dist-info/LICENSE"
+      ],
+      "license": "MIT"
+    },
+    {
+      "package": "python-rtmidi",
+      "version": "1.5.8",
+      "filename": "python_rtmidi-1.5.8-cp39-cp39-macosx_11_0_arm64.whl",
+      "archive_sha256": "a706e9850e22acc57fa840c60fdc4541baafe462a05ff7631a6d9eb91c65e171",
+      "archive_bytes": 145350,
+      "primary_url": "https://files.pythonhosted.org/packages/4d/29/45cc82f68de966069d5884a0ae92f8f04c596f4045f0bf93955c3fe3c2a9/python_rtmidi-1.5.8-cp39-cp39-macosx_11_0_arm64.whl",
+      "bundled_license_members": [
+        "python_rtmidi-1.5.8.dist-info/LICENSE.md"
+      ],
+      "license": "MIT (Python wrapper) + modified MIT (RtMidi)"
+    },
+    {
+      "package": "packaging",
+      "version": "26.3",
+      "filename": "packaging-26.3-py3-none-any.whl",
+      "archive_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "archive_bytes": 129956,
+      "primary_url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+      "bundled_license_members": [
+        "packaging-26.3.dist-info/licenses/LICENSE",
+        "packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+        "packaging-26.3.dist-info/licenses/LICENSE.BSD"
+      ],
+      "license": "Apache-2.0 OR BSD-2-Clause"
+    }
+  ],
+  "installation": "Reviewed official binary wheels only, offline hashlocked no-deps target installation. Target contains only three distributions, no pip/setuptools. Existing OS-bundled pip21.2.4 wheel used temporarily, global environment unchanged.",
+  "initial_failure": {
+    "stage": "external isolated pip26.2.1 --python target3.9",
+    "failed": true,
+    "diagnostic": "This version of pip does not support python3.9 (requires >=3.10)",
+    "child_exit_not_separately_recorded": true,
+    "outer_shell_exit": 0,
+    "outer_shell_scope": "Following metadata probe determined no target distributions; initial installed-versions setup field described intended action, not successful installation. Historical first-attempt file retained, canonical successful versions separate.",
+    "raw_stderr": "install.stderr"
+  },
+  "payload_verification": [
+    {
+      "package": "mido",
+      "wheel_sha256": "01033c9b10b049e4436fca2762194ca839b09a4334091dd3c34e7f4ae674fd8a",
+      "installed_archive_files_byte_identical": 40,
+      "record_excluded": "installer regenerates RECORD; separately retained installed hash inventory"
+    },
+    {
+      "package": "python-rtmidi",
+      "wheel_sha256": "a706e9850e22acc57fa840c60fdc4541baafe462a05ff7631a6d9eb91c65e171",
+      "installed_archive_files_byte_identical": 8,
+      "record_excluded": "installer regenerates RECORD; separately retained installed hash inventory"
+    },
+    {
+      "package": "packaging",
+      "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "installed_archive_files_byte_identical": 28,
+      "record_excluded": "installer regenerates RECORD; separately retained installed hash inventory"
+    }
+  ],
+  "enumeration": {
+    "backend": "mido.backends.rtmidi/MACOSX_CORE",
+    "compiled_apis": [
+      "MACOSX_CORE"
+    ],
+    "loaded_before": false,
+    "loaded_after": true,
+    "input_names": [
+      "FM-1"
+    ],
+    "output_names": [
+      "FM-1"
+    ],
+    "opened_ports": 0,
+    "sent_messages": 0,
+    "ReadOnlyMidi_instantiated": false,
+    "stderr_bytes": 0,
+    "native_linkage": "CoreAudio/CoreMIDI/CoreFoundation/libc++/libSystem from installed cp39 arm64 .so; raw otool/file logs retained"
+  },
+  "limitations": [
+    "Endpoint-name listing is not functional MIDI/audio, pairing, capture/protocol or recovery evidence.",
+    "Mido1.3.3 get_devices coalesces equal names; fake-backend duplicate refusal is not native same-name endpoint identity proof.",
+    "Installed optional deps and one native enumeration do not requalify original offline adapter/capture tests against actual CoreMIDI.",
+    "Native protocol exchanges, persistent-session handoff79, restore and production writes remain unqualified/unperformed."
+  ],
+  "hardware_qualified": false,
+  "physical_capture_performed": false,
+  "firmware_installed": false,
+  "original_offline_receipts_unchanged": true
+}
