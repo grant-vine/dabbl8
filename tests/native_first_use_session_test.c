@@ -3,6 +3,8 @@ static void fi_lcd_test_hook(void);
 static void fi_stage_test_hook(void);
 #define D8_FI_STAGE_HOOK fi_stage_test_hook
 #define D8_LOCAL_FIRST_USE_LCD_HOOK fi_lcd_test_hook
+#define D8_PRESET_SESSION 1
+#define D8_UP_ENCODER_VALUE(i) host_enc[i]
 #define D8_SETTINGS_SESSION_TEST 1
 #define D8_FIRST_USE_SESSION 1
 #define D8_FIRST_USE_WRITE_ENABLED 1
@@ -13,6 +15,10 @@ static void fi_stage_test_hook(void);
 #endif
 static int fi_test_erase(uint32_t a,uint32_t*t){(void)t;int rc=mc_virtual_erase(a);return D8_FI_TEST_RESULT(rc,a,4096);}
 static int fi_test_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;int rc=mc_virtual_program(a,p,n);return D8_FI_TEST_RESULT(rc,a,n);}
+#define D8_UP_ERASE(a,t) fi_test_erase(a,t)
+#define D8_UP_PROGRAM(a,p,n,t) fi_test_program(a,p,n,t)
+#include "../firmware/src/native_preset_session.c"
+#include "../firmware/src/native_settings_session.c"
 #define D8_FI_ERASE(a,t) fi_test_erase(a,t)
 #define D8_FI_PROGRAM(a,p,n,t) fi_test_program(a,p,n,t)
 #include "../firmware/src/native_first_use.c"

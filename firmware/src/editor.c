@@ -496,6 +496,9 @@ static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: 
 #if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
 #if D8_MIGRATION_SESSION
     if(cmd==79u){ed_begin(cmd);d8mc_handle(a,na);ed_send();return;}
+#if D8_PROJECT_TRANSFER_SESSION
+    if(cmd==81u){ed_begin(cmd);d8pt_handle(a,na);ed_send();return;}
+#endif
 #if D8_SAMPLE_SESSION
     if(cmd==80u){ed_begin(cmd);d8sm_handle(a,na);ed_send();return;}
 #endif
@@ -550,6 +553,9 @@ static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: 
         ed_b(1u | (NTRK <= 4u ? 2u : 4u)
 #if D8_SAMPLE_SESSION
              |8u
+#endif
+#if D8_PROJECT_TRANSFER_SESSION
+             |16u
 #endif
         );         /* motion; legacy writes OR versioned track envelope */
         break;

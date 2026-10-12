@@ -48,7 +48,7 @@ static int dm_open(d8pool_mapped *m,const d8pool_physical *physical,int authoriz
     m->state=1;
     if(!dm_stopped(m)){m->state=0;return D8POOL_BUSY;}
     d8pool_index index;int rc=d8pool_inventory(&m->pool,&index);
-    if(!rc&&!index.present)rc=D8POOL_EMPTY;
+    if(!rc&&!index.anchors)rc=D8POOL_EMPTY;
     if(!rc&&!dm_stopped(m))rc=D8POOL_BUSY;
     if(rc){m->state=0;return rc;}
     m->state=writable?2:1;return D8POOL_OK;

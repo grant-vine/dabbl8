@@ -60,6 +60,11 @@ eight-track write refusal, not native project import or full backup restoration.
 Legacy project/backup writes remain refused on eight tracks. Legacy BACKUP_GET/PUT
 must not be treated as a D8P1 project-set round trip.
 
+Firmware command 81 now implements bounded own-project-set export/restore with
+visible SAVE confirmation; see [protocol and interruption limits](native-project-transfer.md).
+Its host/virtual-NOR checks do not establish physical MIDI operation. Browser
+backup/import integration and physical qualification remain pending.
+
 Command 78 provides read-only capture preparation: twelve raw-store roles, or
 seventeen roles including the live D8P1 project and current ancillary state.
 Raw capture is post-boot data, not an installable firmware image or restoration
