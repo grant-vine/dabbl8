@@ -364,7 +364,7 @@ const CMD = { INFO: 1, GET: 2, SET: 3, DUMP: 4, DESC: 5, STEP_GET: 6, STEP_SET: 
   UI_STATE: 34, UI_SET: 35, UI_PALETTES: 36, FAV_GET: 37, FAV_SET: 38,
   MOTION: 64, BACKUP_LIST: 65, BACKUP_GET: 66, BACKUP_PUT: 67,
   FM6_GET: 68, FM6_PUT: 69, FM6_LIST: 70, FM6_ERASE: 71,
-  D8_MOTION: 74, D8_CAPS: 75, D8_ERROR: 76 };
+  D8_MOTION: 74, D8_CAPS: 75, D8_ERROR: 76, D8_SAMPLE: 80 };
 /* Dabbl8 negotiation. Unknown devices are identity-only, never writable by guesswork. */
 function d8ParseCaps(a) {
   if (!Array.isArray(a) || a.length !== 15 || a.some(x => !Number.isInteger(x) || x < 0 || x > 127) ||
@@ -387,7 +387,7 @@ async function d8Negotiate(info, request) {
       return fallback("The firmware schema does not match this editor.");
     }
     /* This editor still has a four-track UI; the eight-track client is task #11. */
-    if (caps.tracks > 4 || (caps.features & 3) !== 3) return fallback("This editor does not support the firmware's editing features.");
+    if (caps.tracks > 4 || (caps.features & 3) !== 3) return { writable: false, sampleWritable: caps.tracks === 8 && !!(caps.features & 8), caps, reason: "Track editing is unavailable here; sample replacement requires confirmation on the instrument." };
     return { writable: true, reason: "", caps };
   } catch (e) {
     if (e.message === "closed") throw e;
@@ -408,7 +408,7 @@ function d8ReadRequest([cmd, a]) {
   return false;
 }
 async function d8Request(mode, request, r, opt) {
-  if (!mode?.writable && !d8ReadRequest(r)) throw new Error("Read-only connection: firmware editing is not supported.");
+  if (!mode?.writable && !(mode?.sampleWritable && r[0] === CMD.D8_SAMPLE && r[1][0] === 1 && r[1][1] >= 1 && r[1][1] <= 5) && !d8ReadRequest(r)) throw new Error("Read-only connection: firmware editing is not supported.");
   return request(r, opt);
 }
 
@@ -2815,6 +2815,7 @@ function renderPanels() {
     $("hint").hidden = true;
     document.querySelectorAll(".panel").forEach(p => { p.hidden = true; });
     $("trackbar").hidden = true;
+    if (dev.protocol.sampleWritable) { $("p-samples").hidden = false; renderSamples(); }
     return;
   }
   /* the Tracks tab only with a four-track firmware */
@@ -3035,7 +3036,7 @@ async function load(d) {
     document.title = $("editorTitle").textContent = d8EditorTitle(d.info.version);
     d.protocol = await d8Negotiate(d.info, (r, o) => sessionRequest(d, r, o));
     assertSession(d);
-    if (!d.protocol.writable) { renderPanels(); sayK("protocolReadOnly"); return; }
+    if (!d.protocol.writable) { if (d.protocol.sampleWritable) await smpInfo(d); renderPanels(); sayK("protocolReadOnly"); return; }
     const total = d.info.pcount + d.info.gcount;
     for (let i = 0; i < d.info.pcount; i++) { sayK("reading", `${i + 1}/${total}`); d.pdesc[i] = await getDescOrNull(0, i, d); }
     for (let i = 0; i < d.info.gcount; i++) { sayK("reading", `${d.info.pcount + i + 1}/${total}`); d.gdesc[i] = await getDescOrNull(1, i, d); }
@@ -3989,7 +3990,7 @@ function renderSamples() {
     const prog = el("progress", { max: 1, value: 0, hidden: true });
     const blk = el("div", { class: "smp", "data-k": k },
       el("div", { class: "head" }, el("b", { text: `USR${k + 1}` }), el("span", { text: status }), bar,
-        el("button", { ic: "symbol_trash", disabled: smpBusy || !u.zones, onclick: () => smpErase(k) }, t("erase"))),
+        el("button", { ic: "symbol_trash", disabled: smpBusy || !u.zones || !!dev.protocol?.sampleWritable, onclick: () => smpErase(k) }, t("erase"))),
       el("div", { class: "head" }, el("span", { text: t("smpName") }), name,
         el("button", { ic: "symbol_folder_open", disabled: smpBusy || recActive(), onclick: () => file.click() }, t("chooseFiles")), file,
         el("button", { ic: "symbol_upload", disabled: smpBusy || recActive() || !d.files.length || tooBig || !d.name, onclick: () => smpUpload(k, prog) }, t("upload")),
@@ -4037,12 +4038,47 @@ function renderSamples() {
 
 async function smpInfo(d = dev) { d.smp = parse[CMD.SMP_INFO](await sessionRequest(d, req.smpInfo())); }
 
+/* Versioned own-sample transaction. Draft/source files are never discarded. */
+const d8SampleU32 = value => Array.from({length:5}, (_,i) => (value >>> (7*i)) & 127);
+function d8SampleReply(a, op, token) {
+  if (!Array.isArray(a) || a.length !== 14 || a.some(x => !Number.isInteger(x) || x < 0 || x > 127) || a[0] !== 1 || a[1] !== op || a[7] > 15 || a[8] > 3 || a[13] > 15) throw Error("Malformed native sample reply");
+  const read = i => (a[i] | a[i+1]<<7 | a[i+2]<<14 | a[i+3]<<21 | a[i+4]<<28) >>> 0;
+  const result = {rc:a[2], token:read(3), phase:a[8], offset:read(9)};
+  if (token != null && result.token !== token) throw Error("Stale native sample reply");
+  if (result.rc) {
+    const messages = {
+      1: "The sample was rejected. Check the source file and try again.",
+      2: "Stop playback and finish other operations on the instrument, then try again.",
+      3: "The connection or replacement session changed. Reconnect and try again.",
+      4: "The sample write failed. Keep the source file and check the slot before retrying.",
+      5: "Replacement was cancelled. The slot may be empty if writing had started. Keep the source file."
+    };
+    throw Error(messages[result.rc] || "The instrument returned an unsupported sample response. Reconnect before retrying.");
+  }
+  return result;
+}
+async function d8SampleUpload(request, slot, hdr, data, progress = () => {}, wait = ms => new Promise(resolve => setTimeout(resolve,ms))) {
+  let token;
+  const call = async (op,args) => d8SampleReply(await request([CMD.D8_SAMPLE,args], {timeout:2000,retries:0}),op,token);
+  try {
+    token = (await call(1,[1,1,slot,...pack7(hdr)])).token;
+    let ready = false;
+    for (let tries=0;tries<1100;tries++) { progress(0); await wait(100); const status=await call(2,[1,2,...d8SampleU32(token)]); if(status.phase===3){ready=true;break;} if(!status.phase)throw Error("Sample replacement cancelled"); }
+    if (!ready) throw Error("Sample confirmation timed out");
+    for(let off=0;off<data.length;off+=256){
+      const bytes=data.subarray(off,off+256), args=[1,3,...d8SampleU32(token),...d8SampleU32(512+off),...pack7(bytes)];
+      const reply=await call(3,args);if(reply.offset!==512+off+bytes.length)throw Error("Unexpected sample offset");progress((off+bytes.length)/data.length);
+    }
+    const committed=await call(4,[1,4,...d8SampleU32(token)]);if(committed.phase!==0)throw Error("Sample commit incomplete");
+  } catch(error) { if(token!=null)try{await call(5,[1,5,...d8SampleU32(token)]);}catch{} throw error; }
+}
+
 async function smpUpload(k, prog) {
   const d = smpDraft[k];
   let built;
   try { built = buildSlot(d.name, d.files.map((f) => ({ s: f.s, root: f.root }))); }
   catch (e) { sayK("smpFail", e.message); return; }
-  if (!confirm(t("confirmUpload").replace("{n}", k + 1))) return;
+  if (!confirm(dev.protocol?.sampleWritable ? `Replace sample slot ${k + 1}? The previous sample is lost when replacement starts. An interruption can leave the slot empty. Keep your source audio or backup; confirm on the instrument with SAVE.` : t("confirmUpload").replace("{n}", k + 1))) return;
   const { hdr, data } = built;
   const session = dev;
   const releaseBusy = beginBusy();
@@ -4052,6 +4088,11 @@ async function smpUpload(k, prog) {
   prog.hidden = false;
   try {
     const t0 = performance.now();
+    if (session.protocol?.sampleWritable) {
+      await d8SampleUpload((r,o) => sessionRequest(session,r,o), k, hdr, data, value => { prog.value = value; say("Confirm REPLACE SAMPLE on the instrument with SAVE. Keep the source files until verification completes."); });
+      sayK("smpDone", `${k + 1}  ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+      return;
+    }
     let r = parse[CMD.SMP_BEGIN](await rq(req.smpBegin(k), { timeout: 1000, retries: 0 }));
     if (r.rc) throw new Error("begin rc " + r.rc);
     for (let off = 0; off < data.length; off += 256) {

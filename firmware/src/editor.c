@@ -496,6 +496,9 @@ static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: 
 #if NTRK > 4 && (FELUCCA_FLASH || defined(D8_INSTRUMENT_CAPTURE_TEST))
 #if D8_MIGRATION_SESSION
     if(cmd==79u){ed_begin(cmd);d8mc_handle(a,na);ed_send();return;}
+#if D8_SAMPLE_SESSION
+    if(cmd==80u){ed_begin(cmd);d8sm_handle(a,na);ed_send();return;}
+#endif
     if(d8mc_blocked()){d8mc_revoke();ed_d8_error(cmd,4u);return;}
 #endif
     if(cmd==ED_D8_CAPTURE){ed_begin(cmd);ed_capture_handle(a,na);ed_send();return;}
@@ -544,7 +547,11 @@ static void ed_handle_mask(const uint8_t *f, uint32_t n, unsigned mask)   /* f: 
         ed_b(P_COUNT); ed_b(G_COUNT); ed_b(NENGINES);
         ed_b(1u); ed_b(1u);                        /* stable parameter / engine ID schemas */
         ed_b(1u); ed_b(9u);                        /* D8M1 section schema; live saves still FUN9 */
-        ed_b(1u | (NTRK <= 4u ? 2u : 4u));         /* motion; legacy writes OR versioned track envelope */
+        ed_b(1u | (NTRK <= 4u ? 2u : 4u)
+#if D8_SAMPLE_SESSION
+             |8u
+#endif
+        );         /* motion; legacy writes OR versioned track envelope */
         break;
     case ED_D8_MOTION:
         ed_b(1u); a++; na--; /* reply schema, then explicit track/step records */

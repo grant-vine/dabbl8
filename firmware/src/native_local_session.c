@@ -72,6 +72,9 @@ static int d8ls_request(unsigned operation,unsigned object,const char *name)
 }
 static void d8ls_input(uint32_t pressed,uint32_t notes)
 {
+#if D8_SAMPLE_SESSION
+ if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_input(pressed,notes);return;}
+#endif
  uint32_t save=1u<<panel.btn[B_SAVE];
  if(notes||(pressed&~save))d8ls.revoked=1;
  for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))d8ls.revoked=1;
@@ -153,6 +156,9 @@ static int d8ls_native_finish(int rc)
 }
 static void d8ls_poll(void)
 {
+#if D8_SAMPLE_SESSION
+ if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_poll();return;}
+#endif
  if(d8ls.intent&&(!flash_ok||project_native.mode!=1||migration_owner||usb.ota_req||usb.uboot_req))d8ls_offline();
  if(!d8ls_blocked()||d8ls.busy)return;
  if(d8ls.revoked||(uint32_t)(fm1_ms-d8ls.started)>LS_DEADLINE_MS||
@@ -187,6 +193,9 @@ static void d8ls_autosave_finish(int rc)
 #endif
 static void d8ls_draw(void)
 {
+#if D8_SAMPLE_SESSION
+ if(d8ls.operation==3&&d8ls.phase!=LS_IDLE){d8sm_draw();return;}
+#endif
  uint32_t lcd_faults=D8_LS_LCD_FAULT_COUNT();
  uint32_t generation=d8ls.generation,epoch=d8_capture_change.epoch;
  unsigned phase=d8ls.phase;

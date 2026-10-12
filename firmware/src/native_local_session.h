@@ -3,6 +3,15 @@
 #define DABBL8_NATIVE_LOCAL_SESSION_H
 #if NTRK == 8 && D8_MIGRATION_SESSION
 #include "d8pool.h"
+#ifndef D8_SAMPLE_SESSION
+#define D8_SAMPLE_SESSION 0
+#endif
+#if D8_SAMPLE_SESSION
+static void d8sm_input(uint32_t,uint32_t);
+static void d8sm_draw(void);
+static void d8sm_poll(void);
+static void d8sm_handle(const uint8_t *,uint32_t);
+#endif
 static struct {
  d8pool_index index;
  uint32_t crc[5],generation,shown,epoch,started,usb,signature,own,sequence,offset,length,payload_crc;
