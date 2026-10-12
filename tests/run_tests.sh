@@ -122,6 +122,7 @@ run "pinned dependency integrity: corrupted cache refusal, hidden SDK edits and 
 
 run "evidence invocation isolation: preserve historical files and refuse creation errors" python3 tests/evidence_session_test.py
 run "experimental app-only builds: isolated outputs, exact manifests and closed loader/package paths" python3 tests/build_app_only_test.py
+run "actual bend arithmetic: four/eight tracks, full MIDI domain and defined signed edges" python3 tests/bend_fine_table_test.py --cc "$CC"
 
 run "current tracked source notice and asset validation" python3 tools/license_inventory.py
 run "source notice validation: real Git negative controls and shallow checkout" python3 tests/license_inventory_test.py
@@ -608,6 +609,7 @@ else
         $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$motion_bin" tests/motion_test.c -lm
         run "ASan/UBSan: motion lifecycle tracks=$tracks FM4=$fm4 SLICE=$slice (inherited DSP exclusions)" "$motion_bin"
     done; done; done
+    run "strict ASan/UBSan: actual bend arithmetic (no DSP exclusions)" python3 tests/bend_fine_table_test.py --cc "${CC%% *}" --sanitize
     ${CC%% *} -std=c11 -O1 -g -Wall -Wextra -Werror -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/engine_legacy_service_test" tests/engine_legacy_service_test.c
     run "ASan/UBSan: strict standalone historical PHYS service" "$A/engine_legacy_service_test"
     $SCC -o "$A/native_overload4" tests/native_overload_test.c -lm
