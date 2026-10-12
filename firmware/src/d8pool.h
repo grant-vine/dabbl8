@@ -9,10 +9,11 @@
 #define D8POOL_OBJECTS 4u /* projects 0..2, autosave 3 */
 #define D8POOL_BYTES (D8POOL_BLOCK*D8POOL_BLOCKS)
 #define D8POOL_HEADER 256u
+#define D8POOL_TOMBSTONE_VERSION 2u
 #define D8POOL_MAGIC 0x50533844u /* D8SP */
 enum { D8POOL_OK, D8POOL_INVALID, D8POOL_IO, D8POOL_EMPTY,
        D8POOL_BUSY, D8POOL_UNSUPPORTED, D8POOL_AMBIGUOUS };
-/* Virtual offsets only. Backend owns an explicitly migrated new-format pool.
+/* Virtual offsets only. Backend owns an explicitly initialized own-format pool.
  * Physical block 4 is noncontiguous: do not bind a contiguous 40KiB NOR range.
  * Synchronous stopped main-loop use, immutable input, no callback reentry or
  * concurrent writers. No physical driver or automatic legacy erase provided. */
@@ -24,7 +25,7 @@ typedef struct {
     int (*stopped)(void *);
 } d8pool;
 typedef struct { uint32_t sequence,length,crc; unsigned block; } d8pool_record;
-typedef struct { unsigned present; d8pool_record object[D8POOL_OBJECTS]; } d8pool_index;
+typedef struct { unsigned present,anchors; d8pool_record object[D8POOL_OBJECTS]; } d8pool_index;
 /* Complete streaming scan. Refusals preserve output. Foreign/future headers
  * and ambiguous generations prohibit use. No scan error authorizes erase. */
 int d8pool_inventory(const d8pool *,d8pool_index *);
@@ -35,5 +36,12 @@ int d8pool_load(const d8pool *,unsigned object,void *,size_t,size_t *,unsigned a
 /* Commit last into a noncurrent block; never erases a current object. Previous
  * remains until replacement commits; no permanent A/B guarantee after reuse.
  * A postcommit I/O/BUSY result may leave a valid new record: rescan on retry. */
+/* Canonical tombstone: D8SP, version2, actualblock byte5, flags6/7=0,
+ * u32 object@8, sequence@12, length0@16, crc0@20, FFFFFFFF@24,
+ * CRC32(first28)@28; all remaining block bytes FF. Header32 commits last.
+ * Logical present excludes tombstones; anchors protects newest live/deleted
+ * identity in allocation and sequencing. Deleted object[] keeps block/sequence
+ * with length0/crc0. Version2 is canonical deletion only; normal wire staysv1. */
+int d8pool_remove(const d8pool *,unsigned object);
 int d8pool_save(const d8pool *,unsigned object,const void *,size_t,unsigned available_projects);
 #endif

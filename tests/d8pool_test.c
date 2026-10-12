@@ -22,6 +22,7 @@ static void guards(void){for(unsigned i=0;i<256;i++)CHECK(nor[i]==0xa5&&nor[256+
 static int equal(unsigned object,const uint8_t *p,size_t n){size_t got=911;return !d8pool_load(&pool,object,out,sizeof out,&got,7)&&got==n&&!memcmp(p,out,n);}
 static void unchanged(const d8pool_index *want){d8pool_index got;CHECK(!d8pool_inventory(&pool,&got));CHECK(got.present==want->present);for(unsigned o=0;o<4;o++)if(want->present&(1u<<o))CHECK(!memcmp(&got.object[o],&want->object[o],sizeof got.object[o]));}
 static void header(unsigned b,unsigned o,uint32_t seq,const uint8_t *p,size_t n){uint8_t *h=nor+256+b*8192;memset(h,0,32);put(h,D8POOL_MAGIC);h[4]=1;h[5]=(uint8_t)b;put(h+8,o);put(h+12,seq);put(h+16,(uint32_t)n);put(h+20,d8p1_crc32(p,n));put(h+24,0xffffffffu);put(h+28,d8p1_crc32(h,28));memcpy(h+256,p,n);}
+#ifndef D8POOL_TEST_NO_MAIN
 int main(int argc,char **argv){
  CHECK(argc==4);if(argc!=4)return 2;old_n=fixture(argv[1],old);new_n=fixture(argv[2],fresh);
  blank();d8pool_index index,before,sentinel;memset(&sentinel,0xa5,sizeof sentinel);index=sentinel;
@@ -64,3 +65,5 @@ int main(int argc,char **argv){
  size_t count=99;CHECK(d8pool_load(&pool,0,out,1,&count,7)==D8POOL_INVALID&&count==99);size_t *alias=(size_t *)out;CHECK(d8pool_load(&pool,0,out,sizeof out,alias,7)==D8POOL_INVALID);read_error=0;CHECK(d8pool_load(&pool,0,out,sizeof out,&count,7)==D8POOL_IO&&count==99);reset();guards();
  printf("D8P1 shared pool: %u checks, %u failures; %u operation cuts, %zu program-byte cuts, 8194 erase prefixes, 1000 rotating saves; virtual NOR only\n",checks,failures,ops,new_n+32);return failures!=0;
 }
+
+#endif
