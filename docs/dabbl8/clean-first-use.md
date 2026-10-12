@@ -57,7 +57,6 @@ retained locally. No hosted CI, package generation, release or device operation
 was performed for this change. Physical first-use, interrupted-write recovery,
 restore, reboot retention and audio timing acceptance remain open.
 
-The failed/refused screen currently retains the SAVE instruction, although
-those states refuse input and cannot reset automatically. Reboot/read-only
-recovery messaging should be corrected before hardware testing; do not infer
-that pressing SAVE on an error screen restarts initialization.
+Failed/refused screens instruct the user to reboot for recovery; SAVE cannot
+restart those states. Required/uncertain screens retain explicit SAVE
+press/release confirmation. No automatic reset or write permission changes.

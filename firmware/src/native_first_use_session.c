@@ -111,7 +111,7 @@ static void d8fi_draw(void)
  draw_text_box(12,76,216,&AF_S,"ERASE ALL USER DATA",T_INK,1);
  draw_text_box(12,110,216,&AF_S,"Projects, samples, presets, settings",T_INK,1);
  draw_text_box(12,150,216,&AF_S,phase==FI_UNCERTAIN?"Damaged or unfinished storage":phase==FI_REFUSED||phase==FI_FAILED?"STORAGE ERROR - no automatic reset":"Fresh Dabbl8 storage",T_ACCENT,1);
- draw_text_box(12,190,216,&AF_M,"PRESS AND RELEASE SAVE",T_ACCENT,1);
+ draw_text_box(12,190,216,&AF_M,phase==FI_FAILED||phase==FI_REFUSED?"REBOOT FOR RECOVERY":"PRESS AND RELEASE SAVE",T_ACCENT,1);
  lcd_sync();uint32_t flags=irq_save();
  if((phase==FI_REQUIRED||phase==FI_UNCERTAIN)&&d8fi.phase==phase&&
     epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&!migration_owner&&fi_quiet()) {
