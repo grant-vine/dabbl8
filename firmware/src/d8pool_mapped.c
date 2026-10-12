@@ -36,7 +36,7 @@ static int dm_program(void *context,uint32_t off,const void *in,uint32_t n)
 }
 void d8pool_mapped_close(d8pool_mapped *m)
 { if(m)m->state=0; }
-int d8pool_mapped_open(d8pool_mapped *m,const d8pool_physical *physical,int authorized)
+static int dm_open(d8pool_mapped *m,const d8pool_physical *physical,int authorized,int writable)
 {
     if(!m)return D8POOL_INVALID;
     /* Copy first: callers may reuse &m->physical for a new session. */
@@ -51,5 +51,10 @@ int d8pool_mapped_open(d8pool_mapped *m,const d8pool_physical *physical,int auth
     if(!rc&&!index.present)rc=D8POOL_EMPTY;
     if(!rc&&!dm_stopped(m))rc=D8POOL_BUSY;
     if(rc){m->state=0;return rc;}
-    m->state=2;return D8POOL_OK;
+    m->state=writable?2:1;return D8POOL_OK;
 }
+
+int d8pool_mapped_open(d8pool_mapped *m,const d8pool_physical *io,int authorized)
+{ return dm_open(m,io,authorized,1); }
+int d8pool_mapped_open_readonly(d8pool_mapped *m,const d8pool_physical *io)
+{ return dm_open(m,io,1,0); }

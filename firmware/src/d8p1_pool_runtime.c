@@ -123,7 +123,7 @@ int d8p1_save_pool(const d8pool *s,unsigned object)
 { return d8pr_save(s,object,NULL); }
 int d8p1_save_as_pool(const d8pool *s,unsigned object,const char *name)
 { return object<3?d8pr_save(s,object,name):D8POOL_INVALID; }
-int d8p1_load_pool(const d8pool *s,unsigned object)
+int d8p1_load_pool_guarded(const d8pool *s,unsigned object,int (*admit)(void))
 {
     d8pool_index index;d8p1_stage_workspace *stage;size_t n=0;int rc;
     if(object>=D8POOL_OBJECTS)return D8POOL_INVALID;
@@ -131,10 +131,12 @@ int d8p1_load_pool(const d8pool *s,unsigned object)
     if(!(index.present&(1u<<object)))return D8POOL_EMPTY;
     rc=d8pool_load(s,object,stage->wire,sizeof stage->wire,&n,index.present&7u);
     if(rc)return rc;
-    rc=d8pr_runtime_status(d8p1_load_runtime(stage->wire,n,index.present&7u));
+    rc=d8pr_runtime_status(d8p1_load_runtime_mask_guarded(stage->wire,n,index.present&7u,D8ENGINE_EFFECTIVE_MASK,admit));
     if(!rc)proj_cur=object<3?(uint8_t)object:PROJ_NO_SLOT;
     return rc;
 }
+int d8p1_load_pool(const d8pool *s,unsigned object)
+{ return d8p1_load_pool_guarded(s,object,NULL); }
 int d8p1_restore_pool_autosave(const d8pool *s,int allowed)
 { return allowed?d8p1_load_pool(s,3):D8POOL_EMPTY; }
 

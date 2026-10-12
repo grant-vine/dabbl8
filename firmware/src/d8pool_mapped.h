@@ -22,6 +22,8 @@ typedef struct {
  * Use pool only through d8pool/runtime APIs after successful open, then close.
  * Current-object semantic validation remains the runtime controller's job. */
 int d8pool_mapped_open(d8pool_mapped *,const d8pool_physical *,int native_authorized);
+/* Read-only inventory admission never enables erase/program or migration authority. */
+int d8pool_mapped_open_readonly(d8pool_mapped *,const d8pool_physical *);
 void d8pool_mapped_close(d8pool_mapped *);
 /* Existing project pairs 0..3 and historical autosave pair, not new boundaries.
  * Returns zero for an invalid index. Physical block 4 is noncontiguous. */

@@ -25,6 +25,9 @@ int d8p1_rename_pool(const d8pool *,unsigned object,const char *name);
 int d8p1_save_as_pool(const d8pool *,unsigned object,const char *name);
 int d8p1_save_pool(const d8pool *,unsigned object);
 int d8p1_load_pool(const d8pool *,unsigned object);
+/* Pure synchronous extra admission check, called with IRQs disabled immediately
+ * before RAM publication. Never perform I/O, allocation or reenter runtime. */
+int d8p1_load_pool_guarded(const d8pool *,unsigned object,int (*admit)(void));
 /* Caller supplies the boot/recovery policy and RESTORE LAST decision. */
 int d8p1_restore_pool_autosave(const d8pool *,int allowed);
 /* Existing-driver adapter, only with FELUCCA_FLASH in an eight-track build.

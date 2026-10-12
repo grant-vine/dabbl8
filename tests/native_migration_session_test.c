@@ -111,6 +111,9 @@ static unsigned mc_preflight_note,mc_readback_note;
 static uint32_t mc_preflight_delay;
 static void mc_preflight_read_hook(void)
 {
+#ifdef D8_BOOT_READ_HOOK
+ D8_BOOT_READ_HOOK();
+#endif
  if(mc_preflight_delay&&d8mc_edit.writer&&!d8mc.write_active){uint32_t delay=mc_preflight_delay;mc_preflight_delay=0;fm1_ms+=delay;}
  if(mc_readback_note&&d8mc_edit.writer&&d8mc.write_phase==3){
   mc_readback_note=0;fm1_in.notes=host_notes=1;ui_input();fm1_in.notes=0;
@@ -240,6 +243,7 @@ static int mc_bridge(void)
  }
  return failures?1:0;
 }
+#ifndef D8_MIGRATION_SESSION_NO_MAIN
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--bridge"))return mc_bridge();
  if(argc==2&&!strcmp(argv[1],"--prewrite-only")){mc_prewrite_cases();
@@ -361,3 +365,5 @@ printf("Prewrite session identity: %u checks, %u failures\n",checks,failures);re
  }
  printf("Connected native migration session CUTS: %u checks, %u failures; private simulation only\n",checks,failures);return failures!=0;
 }
+
+#endif /* D8_MIGRATION_SESSION_NO_MAIN */

@@ -116,6 +116,31 @@ static int st_current(uint32_t obj, st_hdr_t *h)
     return -1;
 }
 
+/* Conservative eight-track storage-container classification, not musical
+ * schema validation. Every byte outside a CRC-valid
+ * historical commit/payload must remain erased: a staged native second sector
+ * cannot be mistaken for an old project after interrupted migration. */
+static int st_boot_legacy_pair(unsigned block)
+{
+    if(block>=5)return 0;
+    uint32_t obj=block<4?OBJ_PROJECT0+block:OBJ_AUTOSAVE;
+    uint8_t buf[256];
+    for(unsigned copy=0;copy<2;copy++) {
+        uint32_t base=st_sector(obj,copy);st_hdr_t h;
+        int valid=st_head(obj,copy,&h)==0;
+        if(valid&&st_body(h.type,copy,&h))return 0;
+        for(unsigned off=0;off<ST_SECTOR;off+=sizeof buf) {
+            if(st_read(base+off,buf,sizeof buf))return 0;
+            for(unsigned i=0;i<sizeof buf;i++) {
+                unsigned x=off+i;
+                if(valid&&(x<sizeof h||(x>=ST_PAYLOAD_OFF&&x<ST_PAYLOAD_OFF+h.len)))continue;
+                if(buf[i]!=255)return 0;
+            }
+        }
+    }
+    return 1;
+}
+
 /* load the whole object into dst; returns its length, or -1 if it does not fit */
 static int st_load(uint32_t obj, void *dst, uint32_t max)
 {
@@ -127,6 +152,10 @@ static int st_load(uint32_t obj, void *dst, uint32_t max)
         ((uint8_t *)dst)[i] = st_buf[i];
     return (int)h.len;
 }
+
+/* Narrow read entry used by the actual autosave boot path/host boot fixture. */
+static int st_load_autosave(void *dst,uint32_t max)
+{ return st_load(OBJ_AUTOSAVE,dst,max); }
 
 /* save into copy `to` (0 A, 1 B; -1: the one that is not the current copy, as st_save) */
 static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
