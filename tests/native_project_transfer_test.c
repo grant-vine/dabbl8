@@ -67,5 +67,9 @@ int main(void){
  CHECK(import_start(6)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_BAD&&physical_calls==untouched);pt_token(8);CHECK(pt_request(7)==PT_OK);memcpy(source_pool,kept_header,32);
  /* Empty own set remains positively owned via tombstones across reboot. */
  memset(source_pool,255,sizeof source_pool);target_fresh();CHECK(import_start(0)==PT_OK);import_receive();approve_restore();pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(0);d8pool_index empty;CHECK(!d8pool_inventory(&seed,&empty)&&empty.anchors==15&&!empty.present);CHECK(project_native_boot_readonly(0)==-D8POOL_EMPTY&&project_native_status()==1);
+ /* Repeated empty restore is an exact no-write operation, while adopting live. */
+ pt_token(8);CHECK(pt_request(7)==PT_OK);retained_reboot();unsigned empty_calls=physical_calls;
+ CHECK(import_start(0)==PT_OK);import_receive();approve_restore();pt_token(7);CHECK(pt_request(7)==PT_OK);verify_restored(0);CHECK(physical_calls==empty_calls);
+ pt_token(8);CHECK(pt_request(7)==PT_OK);
  printf("Native own project transfer: %u checks %u failures\n",checks,failures);return failures!=0;
 }
