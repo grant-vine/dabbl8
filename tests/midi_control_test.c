@@ -295,8 +295,25 @@ static int cc_map_test(void)
     };
     int bad = 0, ok = 1; uint32_t i, e; int16_t before[P_COUNT];
     midi_test_reset();
+#if D8BUILD_PROFILE == 2
+    /* Independent literal Breaks oracle: unavailable LOFI becomes ANALOG
+     * factory preset 0 (SAW LEAD), only at startup. Never derive this from
+     * eng_startup_sound or another availability/fallback helper. */
+    static const int16_t saw_lead[8] = {0, 12, 64, 0, 90, 30, 10, 64};
+    bad += check("Breaks startup: ANALOG, FM6, ANALOG SAW LEAD preset 0, DRUM",
+                 trk[0].eng_req == 0u && trk[1].eng_req == 12u &&
+                 trk[2].eng_req == 0u && trk[2].engine == 0u &&
+                 trk[3].eng_req == 10u && trk[2].preset == 0u && !trk[2].user &&
+                 !memcmp(&trk[2].p[P_E0], saw_lead, sizeof saw_lead) &&
+                 trk[2].p[P_ATK] == 4 && trk[2].p[P_DEC] == 70 &&
+                 trk[2].p[P_SUS] == 100 && trk[2].p[P_REL] == 50 &&
+                 trk[2].p[P_ED_FLT] == 20 && trk[2].p[P_VOICE] == V_LEGATO &&
+                 trk[2].p[P_DIST] == 0 && trk[2].p[P_CHOR] == 10 &&
+                 trk[2].p[P_DLY] == 45 && trk[2].p[P_REV] == 30);
+#else
     bad += check("power-on parts: ANALOG, FM6, LOFI, DRUM", trk[0].eng_req == 0u && trk[1].eng_req == ENGI_FM6 &&
                  trk[2].eng_req == 3u && trk[3].eng_req == ENGI_DRUM);
+#endif
     for (i = 0; i < NELEM(COMMON); i++) {
         queued(0xB0, COMMON[i].cc, 127, 1);
         ok &= trk[0].p[COMMON[i].id] == TP[COMMON[i].id].max;
