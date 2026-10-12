@@ -19,15 +19,26 @@ static int dp_scan(const d8pool *s,unsigned block,d8pool_record *r,unsigned *obj
     if(s->read(s->context,base,h,sizeof h))return D8POOL_IO;
     if(dp_get(h+28)!=d8p1_crc32(h,28)) {
         /* A torn write/erase may leave any magic bit between erased 1 and
-         * committed 0. Unrecognisable foreign bytes require migration. */
+         * committed 0. Unrecognisable foreign bytes require explicit first-use reset. */
         for(unsigned i=0;i<4;i++) {
             uint8_t expected=(uint8_t)(D8POOL_MAGIC>>(i*8));
             if((h[i]&expected)!=expected)return D8POOL_UNSUPPORTED;
         }
         return D8POOL_EMPTY;
     }
-    if(dp_get(h)!=D8POOL_MAGIC||h[4]!=1||h[6]||h[7]||dp_get(h+8)>=D8POOL_OBJECTS||dp_get(h+24)!=0xffffffffu)
+    if(dp_get(h)!=D8POOL_MAGIC||(h[4]!=1&&h[4]!=D8POOL_TOMBSTONE_VERSION)||h[6]||h[7]||dp_get(h+8)>=D8POOL_OBJECTS||dp_get(h+24)!=0xffffffffu)
         return D8POOL_UNSUPPORTED;
+    if(h[4]==D8POOL_TOMBSTONE_VERSION) {
+        if(h[5]!=block||dp_get(h+16)||dp_get(h+20))return D8POOL_UNSUPPORTED;
+        /* Canonical tombstones contain no payload or hidden old bytes. */
+        for(uint32_t off=32;off<D8POOL_BLOCK;off+=sizeof page) {
+            uint32_t n=D8POOL_BLOCK-off;if(n>sizeof page)n=sizeof page;
+            if(s->read(s->context,base+off,page,n))return D8POOL_IO;
+            for(unsigned i=0;i<n;i++)if(page[i]!=255)return D8POOL_UNSUPPORTED;
+        }
+        r->block=block;r->sequence=dp_get(h+12);r->length=r->crc=0;*object=dp_get(h+8);
+        return D8POOL_OK;
+    }
     if(h[5]!=block||!dp_get(h+16)||dp_get(h+16)>D8P1_LIMIT)return D8POOL_EMPTY;
     for(uint32_t off=0;off<dp_get(h+16);off+=sizeof page) {
         uint32_t n=dp_get(h+16)-off; if(n>sizeof page)n=sizeof page;
@@ -48,9 +59,9 @@ int d8pool_inventory(const d8pool *s,d8pool_index *out)
         if(rc==D8POOL_EMPTY)continue;
         if(rc)return rc;
         valid|=1u<<i; unsigned id=object[i];
-        if(!(index.present&(1u<<id))||
+        if(!(index.anchors&(1u<<id))||
            (records[i].sequence!=index.object[id].sequence&&records[i].sequence-index.object[id].sequence<0x80000000u))index.object[id]=records[i];
-        index.present|=1u<<id;
+        index.anchors|=1u<<id;
     }
     /* Require one unambiguous newest record, including cyclic wrap sets and
      * equal generations in distinct blocks. Shared-spare writers never
@@ -59,6 +70,7 @@ int d8pool_inventory(const d8pool *s,d8pool_index *out)
         d8pool_record *best=&index.object[object[i]];uint32_t d=best->sequence-records[i].sequence;
         if(d>=0x80000000u||(!d&&best->block!=records[i].block))return D8POOL_AMBIGUOUS;
     }
+    for(unsigned id=0;id<D8POOL_OBJECTS;id++)if((index.anchors&(1u<<id))&&index.object[id].length)index.present|=1u<<id;
     *out=index;return D8POOL_OK;
 }
 int d8pool_current(const d8pool *s,unsigned object,d8pool_record *out)
@@ -83,18 +95,17 @@ int d8pool_load(const d8pool *s,unsigned object,void *out,size_t capacity,size_t
     if(d8p1_crc32(out,r.length)!=r.crc||d8p1_read(&view,out,r.length)!=1||!d8p1_refs_available(&view,mask))return D8POOL_INVALID;
     *written=r.length;return D8POOL_OK;
 }
-int d8pool_save(const d8pool *s,unsigned object,const void *data,size_t length,unsigned mask)
+static int dp_commit(const d8pool *s,unsigned object,const void *data,size_t length,unsigned version)
 {
-    d8p1_view view;d8pool_index index;d8pool_record check;
+    d8pool_index index;d8pool_record check;
     uint8_t h[32]={0};unsigned used=0,dest,check_object;uint32_t base,sequence;int rc;
-    if(!dp_valid(s)||object>=D8POOL_OBJECTS||!data||!length||length>D8P1_LIMIT||mask>7||
-       d8p1_read(&view,data,length)!=1||!d8p1_refs_available(&view,mask))return D8POOL_INVALID;
     if(!s->stopped(s->context))return D8POOL_BUSY;
     rc=d8pool_inventory(s,&index);if(rc)return rc;
-    for(unsigned i=0;i<D8POOL_OBJECTS;i++)if(index.present&(1u<<i))used|=1u<<index.object[i].block;
+    if(version==D8POOL_TOMBSTONE_VERSION&&!(index.present&(1u<<object)))return D8POOL_OK;
+    for(unsigned i=0;i<D8POOL_OBJECTS;i++)if(index.anchors&(1u<<i))used|=1u<<index.object[i].block;
     for(dest=0;dest<D8POOL_BLOCKS;dest++)if(!(used&(1u<<dest)))break;
     if(dest==D8POOL_BLOCKS)return D8POOL_INVALID;
-    sequence=(index.present&(1u<<object))?index.object[object].sequence+1u:1u;base=dest*D8POOL_BLOCK;
+    sequence=(index.anchors&(1u<<object))?index.object[object].sequence+1u:1u;base=dest*D8POOL_BLOCK;
     /* A recovered pool can contain very old generations. Refuse a write that
      * would make the new sequence ambiguous against a retained old block. */
     for(unsigned i=0;i<D8POOL_BLOCKS;i++)if(i!=dest) {
@@ -103,8 +114,8 @@ int d8pool_save(const d8pool *s,unsigned object,const void *data,size_t length,u
         if(rc)return rc;
         if(check_object==object&&sequence-check.sequence>=0x80000000u)return D8POOL_AMBIGUOUS;
     }
-    dp_put(h,D8POOL_MAGIC);h[4]=1;h[5]=(uint8_t)dest;dp_put(h+8,object);dp_put(h+12,sequence);
-    dp_put(h+16,(uint32_t)length);dp_put(h+20,d8p1_crc32(data,length));dp_put(h+24,0xffffffffu);dp_put(h+28,d8p1_crc32(h,28));
+    dp_put(h,D8POOL_MAGIC);h[4]=(uint8_t)version;h[5]=(uint8_t)dest;dp_put(h+8,object);dp_put(h+12,sequence);
+    dp_put(h+16,(uint32_t)length);dp_put(h+20,version==D8POOL_TOMBSTONE_VERSION?0:d8p1_crc32(data,length));dp_put(h+24,0xffffffffu);dp_put(h+28,d8p1_crc32(h,28));
     for(uint32_t off=0;off<D8POOL_BLOCK;off+=D8POOL_SECTOR) {
         if(!s->stopped(s->context))return D8POOL_BUSY;
         if(s->erase(s->context,base+off))return D8POOL_IO;
@@ -119,4 +130,17 @@ int d8pool_save(const d8pool *s,unsigned object,const void *data,size_t length,u
     rc=dp_scan(s,dest,&check,&check_object);
     if(rc||check_object!=object||check.sequence!=sequence||check.length!=length||check.crc!=dp_get(h+20))return D8POOL_IO;
     return D8POOL_OK;
+}
+
+int d8pool_save(const d8pool *s,unsigned object,const void *data,size_t length,unsigned mask)
+{
+    d8p1_view view;
+    if(!dp_valid(s)||object>=D8POOL_OBJECTS||!data||!length||length>D8P1_LIMIT||mask>7||
+       d8p1_read(&view,data,length)!=1||!d8p1_refs_available(&view,mask))return D8POOL_INVALID;
+    return dp_commit(s,object,data,length,1);
+}
+int d8pool_remove(const d8pool *s,unsigned object)
+{
+    if(!dp_valid(s)||object>=D8POOL_OBJECTS)return D8POOL_INVALID;
+    return dp_commit(s,object,NULL,0,D8POOL_TOMBSTONE_VERSION);
 }
