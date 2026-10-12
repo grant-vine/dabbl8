@@ -381,6 +381,18 @@ static int gm_hits_play(track_t *t)
     return (int)ok;
 }
 
+/* FUN6 has exactly four tracks in both four/eight-track host configurations.
+ * Keep this fixture copy shared with its focused bounds/import witness. */
+static void ui_legacy_v6_tracks(project_v6_t *legacy, const project_t *decoded)
+{
+    for (uint32_t ti = 0; ti < PROJ_LEGACY_NTRK; ti++) {
+        memcpy(legacy->t[ti].p, decoded->t[ti].p, 61u * sizeof(int16_t));
+        memcpy(legacy->t[ti].p + 61, decoded->t[ti].p + P_E0, 8u * sizeof(int16_t));
+        legacy->t[ti].engine = decoded->t[ti].engine; legacy->t[ti].preset = decoded->t[ti].preset;
+        for (uint32_t st = 0; st < NSTEP; st++) memcpy(&legacy->t[ti].step[st], &decoded->t[ti].step[st], sizeof(step10_t));
+    }
+}
+
 /* sounds never touch the steps; the arp, the scale, the SLICER and the pattern parameters are the track's */
 static int test_sound_loads(void)
 {
@@ -547,16 +559,16 @@ static int test_sound_loads(void)
     project_save(1);
     project_v6_t legacy = {0};
     project_t decoded;
+#if NPART >= NVOICE
+    /* Native SAVE cannot populate the historical sector; capture RAM only. */
+    project_capture(&decoded);
+#else
     proj_import(&decoded, &proj_slot[1], sizeof proj_slot[1]);
+#endif
     legacy.magic = PROJ_MAGIC_V6; legacy.size = sizeof legacy;
     legacy.parts = 0; legacy.phys = PROJ_PHYS;
     memcpy(legacy.g, decoded.g, sizeof legacy.g);
-    for (uint32_t ti = 0; ti < NTRK; ti++) {
-        memcpy(legacy.t[ti].p, decoded.t[ti].p, 61u * sizeof(int16_t));
-        memcpy(legacy.t[ti].p + 61, decoded.t[ti].p + P_E0, 8u * sizeof(int16_t));
-        legacy.t[ti].engine = decoded.t[ti].engine; legacy.t[ti].preset = decoded.t[ti].preset;
-        for (uint32_t st = 0; st < NSTEP; st++) memcpy(&legacy.t[ti].step[st], &decoded.t[ti].step[st], sizeof(step10_t));
-    }
+    ui_legacy_v6_tracks(&legacy, &decoded);
     legacy.t[3].engine = 0;
     legacy.g[G_DRLVL] = 71; legacy.g[G_DRREV] = 43;
     legacy.g[G_RTYPE] = 10;                               /* (id 24 was the GM drum part's MIDI channel: 10) */
