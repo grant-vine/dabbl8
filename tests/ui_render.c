@@ -1148,7 +1148,7 @@ static void draw(int s)
     if (s == S_SPLASH) {                          /* the power-on splash (main.c, before the UI): its lines, the version
                                                    * shown FELUCCA_VERSION (run_tests.sh: src/felucca.c's) */
         #if DABBL8_IDENTITY
-        static const char WANT[] = FELUCCA_VERSION "|H\xFCgelton Instruments|with community";
+        static const char WANT[] = FELUCCA_VERSION "|Based on Felucca|H\xFCgelton + community";
 #else
         static const char WANT[] = APP_NAME "|" FELUCCA_VERSION "|H\xFCgelton Instruments|with community";
 #endif
@@ -1178,12 +1178,12 @@ static void draw(int s)
 #if DABBL8_IDENTITY
             /* Approved graphic replaces the old name text. Check its actual
              * pixels through the existing theme ramp, plus square boundaries. */
-            const uint16_t *rv = ramp(T_TEXT, T_RAISE);
-            for (uint32_t k = 0; k < 160u * 36u; k++) {
+            const uint16_t *rv = ramp(T_THEME, T_RAISE);
+            for (uint32_t k = 0; k < 160u * 50u; k++) {
                 uint32_t a = (D8_WORDMARK_ALPHA[k >> 1] >> ((k & 1u) ? 0 : 4)) & 15u;
-                bad |= host_screen[(52u + k / 160u) * 240u + 40u + k % 160u] != rv[a];
+                bad |= host_screen[(95u + k / 160u) * 240u + 40u + k % 160u] != rv[a];
             }
-            if (bad || ix < 8 || ix > 16 || iy < 20 || iy > 28) {
+            if (bad || ix < 8 || ix > 16 || iy < 63 || iy > 73) {
 #else
             if (bad || ix != 16 || iy != 16) {
 #endif

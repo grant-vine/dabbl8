@@ -7,10 +7,15 @@ for future website use. Do not overwrite it when revising firmware branding.
 are unchanged and an independently drawn outlined digit 8 is appended.
 Both masters remain vector artwork with transparent backgrounds.
 
-The firmware uses a static 160 × 36, 4-bit alpha mask in flash (2880 bytes),
+`dabbl8-painted-wordmark.svg` is the current firmware master. The original five
+letter paths are retained, with only the approved painted8 concept traced into
+separate paths using local Potrace. The previous outlined8 master remains.
+
+The firmware uses a static160 ×50, 4-bit alpha mask in flash (4000 bytes),
 blended through the existing theme ramp. No extra persistent RAM, animation,
-startup wait or runtime SVG renderer is introduced. The version and inherited
-Hügelton Instruments/community credits remain below it. Unbranded Felucca
+startup wait or runtime SVG renderer is introduced. The centred version, smaller "Based on Felucca" and
+"Hügelton + community" credits remain below it; full upstream attribution remains
+in About/licensing. The mask centre is the display centre (120,120). Unbranded Felucca
 builds retain the original splash.
 
 Explicit offline regeneration with existing local `rsvg-convert` and Pillow:
