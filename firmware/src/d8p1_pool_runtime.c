@@ -26,8 +26,8 @@ static d8pool d8pr_guard(const d8pool *s)
 static uint8_t d8pr_preflight_active;
 static int d8pr_same_index(const d8pool_index *a,const d8pool_index *b)
 {
-    if(a->present!=b->present)return 0;
-    for(unsigned o=0;o<D8POOL_OBJECTS;o++)if(a->present&(1u<<o)) {
+    if(a->present!=b->present||a->anchors!=b->anchors)return 0;
+    for(unsigned o=0;o<D8POOL_OBJECTS;o++)if(a->anchors&(1u<<o)) {
         const d8pool_record *x=&a->object[o],*y=&b->object[o];
         if(x->block!=y->block||x->sequence!=y->sequence||x->length!=y->length||x->crc!=y->crc)return 0;
     }
@@ -53,7 +53,7 @@ static int d8pr_preflight_owned(const d8pool *s,d8pool_index *index,d8p1_stage_w
     if(!d8pr_ready(s))return D8POOL_INVALID;
     if(!d8pr_stopped((void *)s))return D8POOL_BUSY;
     rc=d8pool_inventory(s,index);if(rc)return rc;
-    if(!index->present)return D8POOL_EMPTY;
+    if(!index->anchors)return D8POOL_EMPTY;
     *stage=main_d8p1_workspace_try();
     if(!*stage)return D8POOL_BUSY;
     if(!d8pr_stopped((void *)s)||epoch!=d8_capture_change.epoch)return D8POOL_BUSY;

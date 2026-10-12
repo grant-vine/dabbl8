@@ -981,3 +981,46 @@ static void draw_text_box(uint32_t x, uint32_t y, uint32_t w, const aafont_t *f,
 {
     draw_text_line(x, y, w, f, s, c, T_BG, align);
 }
+
+#if NTRK == 8 && D8_MIGRATION_SESSION
+/* Exclusive own-transfer display scratch; decoded state is disposable after
+ * whole-set validation. Immutable live wire and plan remain separately leased. */
+_Static_assert(offsetof(d8p1_stage_workspace,state)%2u==0,"LCD scratch alignment");
+_Static_assert(_Alignof(d8mp_workspace)>=2,"LCD scratch base alignment");
+static int own_transfer_text_strip(uint32_t generation,uint32_t y,const char *s,uint16_t fg,uint16_t bg)
+{
+ const aafont_t *f=&AF_S;const unsigned w=216;
+ d8mp_workspace *owner=main_migration_workspace(generation);
+ if(!owner||cv_cpu_active||!s||f->hc||!f->h||f->h>240||y>240u-f->h||
+    f->h>sizeof owner->stage.state/(w*2u)||text_w(f,s)>(int32_t)w)return 0;
+ lcd_sync();
+ if(main_migration_workspace(generation)!=owner||cv_cpu_active)return 0;
+ cv_cpu_active=1;
+ uint8_t *pixels=(uint8_t *)(void *)&owner->stage.state;
+ const uint16_t *rv=ramp(fg,bg);uint16_t background=swap16(bg);
+ for(unsigned i=0;i<w*f->h;i++)memcpy(pixels+i*2u,&background,2);
+ int32_t pen=0,err=0;uint32_t prev=0;const int32_t step=16>>f->psh;
+ int32_t x=ink_in(f,s,w);
+ for(;*s;s++){
+  uint32_t c=fold(f,(uint8_t)*s);if(prev)pen+=kern(f,prev,c);
+  const aag_t *g=&f->g[glyph(f,c)];int32_t pos;
+  if(f->psh&&g[1].off!=g->off){pos=pen-(pen&(step-1));int32_t d0=pos-pen-err,d1=d0+step;
+   if((d0<0?-d0:d0)>(d1<0?-d1:d1))pos+=step;
+   g+=((uint32_t)pos>>(4u-f->psh))&((1u<<f->psh)-1u);
+  }else pos=(pen+8)&~15;
+  err=pos-pen;const uint8_t *data=f->data+g->off;
+  for(unsigned gy=0,k=0;gy<g->bh;gy++)for(unsigned gx=0;gx<g->bw;gx++,k++){
+   int32_t py=g->by+(int32_t)gy,px=x+(pos>>4)+g->bx+(int32_t)gx;
+   unsigned alpha=(data[k>>1]>>((k&1u)?0:4))&15u;
+   if(alpha&&(uint32_t)px<w&&(uint32_t)py<f->h)
+    memcpy(pixels+((unsigned)py*w+(unsigned)px)*2u,rv+alpha,2);
+  }
+  pen+=g->adv;prev=c;
+ }
+ /* The real LCD path uses only this RAM address/count for DMA, no CPU
+  * uint16_t access into the declared byte array. */
+ lcd_blit(12,y,w,f->h,(const uint16_t *)(const void *)pixels);lcd_sync();
+ cv_cpu_active=0;cv_canvas_valid=0;
+ return main_migration_workspace(generation)==owner;
+}
+#endif
