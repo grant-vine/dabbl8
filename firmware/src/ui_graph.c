@@ -1328,10 +1328,16 @@ static void track_strip(uint32_t c, uint32_t sel, uint32_t st, uint32_t mute, ui
                         const char *b)
 {
     int32_t gw = CARD_W - 10, m = ts.meter[c] * gw / (TS_MH - 2), fx = (int32_t)lvl * gw / 127;
-    uint16_t vc = mute ? T_DIM : T_THEME;
+    uint16_t vc = mute ? T_DIM : track_ink(c);
     CV_DRAW_BEGIN(CARD_W, LG_H_GRAPH, T_BG);
     cv_rrect(0, 0, CARD_W, LG_H_GRAPH, 5, T_SURF, T_BG);
-    cv_icon_on(4, 4, 16, trk_icon(c, sel), sel ? T_ACCENT : T_MID, T_SURF);
+    cv_icon_on(4, 4, 16, trk_icon(c, sel),
+#if DABBL8_IDENTITY && NTRK == 8
+                sel ? T_ACCENT : track_ink(c),
+#else
+                sel ? T_ACCENT : T_MID,
+#endif
+                T_SURF);
     if (st)
         GFX_HOOK_ALIGN(0, 4, 0, 20, AL_V, "mixer badge on the cushion's line");
     if (st == 1u || st == 2u)
@@ -1384,7 +1390,18 @@ static void draw_tracks(void)
         uint16_t fg = t->p[P_MUTE] ? T_DIM : c == song.sel ? T_ACCENT : T_TEXT;
         char name[16];
         cv_rrect(x, y, 114, rh - 1, 3, bg, T_BG);
-        cv_icon_on(x + 3, y + 1, 12, trk_icon(c, c == song.sel), fg, bg);
+#if DABBL8_IDENTITY
+        /* Identity rail and a separate selection marker: colour is never the only cue. */
+        cv_rect(x, y + 3, 2, rh - 7, t->p[P_MUTE] ? T_DIM : track_ink(c));
+        if (c == song.sel) cv_rect(x + 4, y, 106, 1, T_ACCENT);
+#endif
+        cv_icon_on(x + 3, y + 1, 12, trk_icon(c, c == song.sel),
+#if DABBL8_IDENTITY
+                    t->p[P_MUTE] ? T_DIM : track_ink(c),
+#else
+                    fg,
+#endif
+                    bg);
         cv_free_text(x + 19, y + CAP_IN(S, 15), &AF_S, eng_abbr(e->name), fg, bg, 42);
         if (t->p[P_MUTE]) cv_icon_on(x + 65, y + 1, 12, ICON_MUTE, T_DIM, bg);
         if ((song.rec >> c) & 1u)
@@ -1396,7 +1413,7 @@ static void draw_tracks(void)
         }
         cv_rect(x + 19, y + rh - 2, 90, 1, T_DIM);
         int32_t level = (int32_t)trk_level(c) * 90 / 127;
-        if (level) cv_rect(x + 19, y + rh - 2, level, 1, t->p[P_MUTE] ? T_DIM : T_THEME);
+        if (level) cv_rect(x + 19, y + rh - 2, level, 1, t->p[P_MUTE] ? T_DIM : track_ink(c));
         int32_t meter = (int32_t)ts.meter[c] * 90 / (TS_MH - 2);
         if (meter) cv_rect(x + 19, y + rh - 2, meter, 1, T_ACCENT);
     }

@@ -307,7 +307,13 @@ static void draw_head(void)
     ui.head_sig = sig;
     metro_x = -1;
     CV_DRAW_BEGIN(240, H_HEAD, T_BG);
-    cv_icon_mid(HEAD_TRK_X, H_HEAD / 2, 16, trk_icon(song.sel, 1), T_ACCENT, T_BG);
+    cv_icon_mid(HEAD_TRK_X, H_HEAD / 2, 16, trk_icon(song.sel, 1),
+#if DABBL8_IDENTITY && NTRK == 8
+                track_ink(song.sel),
+#else
+                T_ACCENT,
+#endif
+                T_BG);
     draw_rec_mark(HEAD_REC_X, T_BG);
 #if NTRK == 8
     cv_text_on(38, HEAD_SY, &AF_S, mixer_bank() ? "5-8" : "1-4", T_MID, T_BG);

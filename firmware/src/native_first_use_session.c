@@ -169,7 +169,7 @@ static void fi_factory_ancillary(void)
  for(unsigned b=0;b<2;b++){up_bank[b].magic=UP_BANK_MAGIC;up_bank[b].rsize=sizeof(up_rec_t);up_bank[b].nslot=UP_PER_BANK;}
  upf_empty();
  memset(&persist_saved,0,sizeof persist_saved);persist_saved.magic=PERSIST_MAGIC;
- persist_saved.palette=palette_to_stored(UI_GREY_INDEX);persist_saved.panel=PANEL_DEFAULT;
+ persist_saved.palette=palette_to_stored(UI_DEFAULT_INDEX);persist_saved.panel=PANEL_DEFAULT;
  settings_import(&persist_saved,sizeof persist_saved);settings_init();panel_init();persist_pending=0;
 }
 static int fi_foundation_erase(uint32_t a){return fi_driver(0,a,NULL,4096);}

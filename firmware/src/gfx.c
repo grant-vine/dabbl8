@@ -188,6 +188,11 @@ static struct {
 #define T_LANE ux.lane           /* the piano roll: an in-scale row (SURF -> THEME 10 %) */
 #define T_GRID ux.grid           /* the piano roll: a step line (SURF -> TEXT 6 %; beats and C rows: RAISE) */
 #define NPALETTES UI_NPALETTES
+#if DABBL8_IDENTITY
+#define UI_DEFAULT_INDEX UI_DABBL_DARK_INDEX
+#else
+#define UI_DEFAULT_INDEX UI_GREY_INDEX
+#endif
 
 static inline uint16_t ux_gray(uint32_t x5) { return (uint16_t)((x5 << 11) | (x5 << 6) | x5); }
 /* a + (b - a) * pct / 100 per channel, rounded; GREY on the red channel, so it stays gray */
@@ -234,6 +239,21 @@ static void palette_set(uint32_t i)
         ux.tint = ux.grid = p->bg;
     }
     ux.gen++;                                    /* the text ramps change with the coverage curve */
+}
+
+/* Stable track identity on colour themes. Numerals/state badges remain the
+ * primary cues; neutral themes preserve their original monochrome behaviour. */
+static uint16_t track_ink(uint32_t track)
+{
+#if DABBL8_IDENTITY && NTRK == 8
+    static const uint16_t dark[8] = {0xf628,0xebcc,0x8d58,0xd435,0xf79c,0xbed9,0xf6b2,0xf534};
+    static const uint16_t light[8] = {0x136e,0xa20d,0x9927,0x7b42,0x2104,0x32cc,0x9a0b,0x5948};
+    if (ux.mono || (ux.bg == 0 && ux.surf == 0 && ux.text == 0xffff && ux.theme == 0xffff))
+        return T_THEME;
+    return (ux.light ? light : dark)[track & 7u];
+#else
+    (void)track; return T_THEME;
+#endif
 }
 
 /* settings store a tagged id; ids below 20 are the palettes of earlier firmware */

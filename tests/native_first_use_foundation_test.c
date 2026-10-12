@@ -6,12 +6,7 @@ static int foundation_result(int,uint32_t,uint32_t);
 #define D8_FI_TEST_RESULT(rc,a,n) foundation_result(rc,a,n)
 #define D8_FIRST_USE_SESSION_NO_MAIN 1
 #include "native_first_use_session_test.c"
-static int foundation_user_erase(uint32_t a,uint32_t*t){(void)t;return mc_virtual_erase(a);}
-static int foundation_user_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;return mc_virtual_program(a,p,n);}
-#define D8_UP_ERASE(a,t) foundation_user_erase(a,t)
-#define D8_UP_PROGRAM(a,p,n,t) foundation_user_program(a,p,n,t)
-#include "../firmware/src/native_preset_session.c"
-#include "../firmware/src/native_settings_session.c"
+/* The included session fixture already supplies preset/settings coordinators. */
 static unsigned after_cut,wire_disturb;
 static int foundation_result(int rc,uint32_t a,uint32_t n)
 {
@@ -44,7 +39,7 @@ static void foundation_records(void)
  st_hdr_t h;const unsigned objects[]={OBJ_UPRESET0,OBJ_UPRESET0+1,OBJ_UPFM6,OBJ_SETTINGS};
  for(unsigned i=0;i<4;i++)CHECK(st_current(objects[i],&h)==0&&h.seq==1&&h.slot==0);
  CHECK(st_load(OBJ_SETTINGS,&persist_saved,sizeof persist_saved)==sizeof persist_saved&&ds_payload(&persist_saved,sizeof persist_saved));
- CHECK(persist_saved.palette==palette_to_stored(UI_GREY_INDEX)&&!persist_saved.lowcut&&!persist_saved.favorites.filter&&!persist_saved.favorites.user);
+ CHECK(persist_saved.palette==palette_to_stored(UI_DEFAULT_INDEX)&&!persist_saved.lowcut&&!persist_saved.favorites.filter&&!persist_saved.favorites.user);
  CHECK(!memcmp(&persist_saved.panel,&PANEL_DEFAULT,sizeof PANEL_DEFAULT));
  CHECK(st_load(OBJ_UPRESET0,&up_bank[0],sizeof up_bank[0])==sizeof up_bank[0]);
  CHECK(st_load(OBJ_UPRESET0+1,&up_bank[1],sizeof up_bank[1])==sizeof up_bank[1]);
@@ -82,7 +77,7 @@ int main(void)
   memcpy(nor,baseline,sizeof nor);reset();physical_calls=0;cut=-1;partial_failure=0;
   persist_t p;CHECK(st_load(OBJ_SETTINGS,&p,sizeof p)==sizeof p);CHECK(settings_import(&p,sizeof p)==1);persist_saved=p;persist_pending=0;
   settings.palette=(UI_GREY_INDEX+1)%NPALETTES;cut=(int)c;settings_save();CHECK(persist_pending==2&&!d8up.active);
-  cut=-1;CHECK(st_load(OBJ_SETTINGS,&p,sizeof p)==sizeof p&&p.palette==palette_to_stored(UI_GREY_INDEX));
+  cut=-1;CHECK(st_load(OBJ_SETTINGS,&p,sizeof p)==sizeof p&&p.palette==palette_to_stored(UI_DEFAULT_INDEX));
  }
  CHECK(!d8_instrument_write_allowed());
  printf("First-use foundation: %u checks, %u failures; %u before + %u after foundation/native cuts+reboots, %u first settings cuts; host context %zu B; virtual NOR only\n",checks,failures,operations,operations,setting_ops,sizeof d8fi);return failures!=0;

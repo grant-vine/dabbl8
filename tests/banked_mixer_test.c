@@ -89,7 +89,7 @@ static int bank_renders(const char *out)
             song.rec = 0xA5u;
             for (uint32_t i = 0; i < NTRK; i++) { trk[i].p[P_MUTE] = (int16_t)(i & 1u); trk[i].peak = (int32_t)(i+1)*3500; }
         }
-        draw(scenes[j]); lint(); mono_check(); frames_checked++;
+        draw(scenes[j]); lcd_sync(); lint(); mono_check(); frames_checked++;
         if (scenes[j] == S_MIXER || scenes[j] == S_MIXER_PAN || scenes[j] == S_GLO_ACTIVE || scenes[j] == S_FX_HELD) {
             const char *expected = tr < 4u ? "1-4" : "5-8";
             const char *wrong = tr < 4u ? "5-8" : "1-4";
