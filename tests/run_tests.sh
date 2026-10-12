@@ -104,8 +104,8 @@
 #                   seeds: tests/fuzz_ed.c (editor SysEx and raw USB-MIDI packets), tests/fuzz_proj.c (mutated project
 #                   stores -> import -> restore -> render), tests/fuzz_smp.c (user sample slot headers -> scan -> SAMPLE /
 #                   GRAIN / SLICE). Longer runs: build/host/asan/fuzz_ed 300000 7 (iterations, seed), the same for the others.
-#                   UBSan leaves out the DSP's intended wraps (signed overflow, shifts) and the XIP rebase of a user zone's
-#                   offset (bounds, object-size, pointer-overflow: correct on the device's flat flash, not in C's model).
+#                   General UBSan sweeps retain historical exclusions for DSP wraps and indexed/pointer diagnostics.
+#                   Dedicated sample range/editor checks retain all categories; actual-render checks exclude only DSP wraps.
 # Change baseline entries only for reviewed, intentional differences in sound or cost;
 # retain every unaffected golden / CPU / target entry. VERBOSE=1: every render.
 set -e
@@ -195,6 +195,15 @@ if [ -f build/gen/felucca_tables.h ]; then
     for tracks in 4 8; do
         $CC -w -DNPART=$tracks -Ibuild/gen -Ifirmware/src -o "$OUT/ui_legacy_v6_$tracks" tests/ui_legacy_v6_bounds_test.c -lm
         run "UI FUN6 fixture: historical four tracks into $tracks-track canonical state" "$OUT/ui_legacy_v6_$tracks"
+    done
+    for tracks in 4 8; do for fm4 in 0 1; do
+        range_name="sample_source_range_${tracks}_${fm4}"
+        $CC -O2 -w -DNPART=$tracks -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=0 -Ibuild/gen -Ifirmware/src -o "$OUT/$range_name" tests/sample_source_range_test.c -lm
+        run "source-local sample ranges: FULL tracks=$tracks FM4=$fm4 SLICE=1" "$OUT/$range_name"
+    done; done
+    for tracks in 4 8; do
+        $CC -O2 -w -DNPART=$tracks -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=0 -Ibuild/gen -Ifirmware/src -o "$OUT/slice_source_render_$tracks" tests/slice_render_source_range_test.c -lm
+        run "SLICE source ranges: actual forward/reverse built-ins and three user slots, tracks=$tracks" "$OUT/slice_source_render_$tracks" "$OUT/slice_source_render_$tracks.pcm"
     done
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
@@ -816,6 +825,19 @@ else
     for tracks in 4 8; do
         ${CC%% *} -std=c11 -D_POSIX_C_SOURCE=200809L -O1 -g -w -fsanitize=address,undefined -fno-sanitize-recover=all -DNPART=$tracks -Ibuild/gen -Ifirmware/src -o "$A/ui_legacy_v6_$tracks" tests/ui_legacy_v6_bounds_test.c -lm
         run "strict ASan/UBSan: UI FUN6 fixture historical four tracks into $tracks-track canonical state" "$A/ui_legacy_v6_$tracks"
+    done
+    for tracks in 4 8; do for fm4 in 0 1; do
+        range_name="sample_source_range_${tracks}_${fm4}"
+        ${CC%% *} -std=c11 -D_POSIX_C_SOURCE=200809L -O1 -g -w -fsanitize=address,undefined -fno-sanitize-recover=all -DNPART=$tracks -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=0 -Ibuild/gen -Ifirmware/src -o "$A/$range_name" tests/sample_source_range_test.c -lm
+        run "strict ASan/UBSan: source-local sample ranges FULL tracks=$tracks FM4=$fm4 SLICE=1; bounds retained" "$A/$range_name"
+    done; done
+    for tracks in 4 8; do
+        ${CC%% *} -std=c11 -D_POSIX_C_SOURCE=200809L -O1 -g -w -fsanitize=address,undefined -fno-sanitize=signed-integer-overflow,shift -fno-sanitize-recover=all -DNPART=$tracks -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=0 -Ibuild/gen -Ifirmware/src -o "$A/slice_source_render_$tracks" tests/slice_render_source_range_test.c -lm
+        run "ASan/UBSan: actual SLICE source ranges tracks=$tracks (only inherited DSP signed-overflow/shift exclusions; bounds retained)" "$A/slice_source_render_$tracks" "$A/slice_source_render_$tracks.pcm"
+    done
+    for fm4 in 0 1; do
+        ${CC%% *} -std=c11 -D_POSIX_C_SOURCE=200809L -O1 -g -w -fsanitize=address,undefined -fno-sanitize-recover=all -DNPART=4 -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=1 -DD8BUILD_PROFILE=0 -Ibuild/gen -Ifirmware/src -o "$A/sample_editor_strict_$fm4" tests/editor_test.c -lm
+        run "strict ASan/UBSan: source-local sample editor FULL four tracks FM4=$fm4 SLICE=1; all sanitizer categories retained" "$A/sample_editor_strict_$fm4"
     done
     $SCC -o "$A/native_project_menu_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_project_menu_test.c -lm
     run "ASan/UBSan: actual native project menu/cache/ownership" "$A/native_project_menu_test"

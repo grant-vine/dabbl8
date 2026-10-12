@@ -39,7 +39,9 @@
 #include <stddef.h>
 #include <stdint.h>
 static uint32_t host_slots[3u * 0x14000u / 4u];          /* USR1..3 (zero: empty), as the flash at 0xA0000 */
+#ifndef SMP_USER_XIP
 #define SMP_USER_XIP(k) ((const uint8_t *)host_slots + (k) * SMP_USER_SIZE)
+#endif
 #define main hostsim_main
 #include "hostsim.c"
 #undef main
@@ -2411,7 +2413,7 @@ static int test_product_ux(void)
     int16_t lo[SAMPLE_WAVE_COLS] = {0}, hi[SAMPLE_WAVE_COLS] = {0};
     voice_t probe = {0}; const smp_zone_t *zone = sample_wave.zone;
     if (zone) for (i = 0; i < zone->n; i++) {
-        int32_t v = sample_next(zone, &probe, 0); uint32_t col = i * SAMPLE_WAVE_COLS / zone->n;
+        int32_t v = sample_next(smp_zone_data(sample_wave.key & 0xFFFFu, zone), zone, &probe, 0); uint32_t col = i * SAMPLE_WAVE_COLS / zone->n;
         if (v < lo[col]) lo[col] = (int16_t)v;
         if (v > hi[col]) hi[col] = (int16_t)v;
     }

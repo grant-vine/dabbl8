@@ -49,7 +49,7 @@
 #define SLC_HOP 32u                  /* AUTO detector: samples per hop */
 
 typedef struct {
-    uint32_t off, at, n;             /* data (SMP_DATA index), material position of its first sample, samples */
+    uint32_t off, at, n;             /* source-local byte offset, material position of its first sample, samples */
 } slc_seg_t;
 typedef struct {
     uint32_t len, rate, nseg, nauto; /* material samples (0 = none), rate (as smp_zone_t), segments, AUTO slices */
@@ -62,6 +62,19 @@ typedef struct {
 static const slc_src_t SLC_BREAK = SLC_BREAK_INIT;
 static const slc_src_t SLC_PIANO = SLC_PIANO_INIT;
 static slc_src_t slc_usr[SMP_USER_SLOTS];
+static uint32_t slc_slot_of(const slc_src_t *s)
+{
+    for (uint32_t k = 0; k < SMP_USER_SLOTS; k++)
+        if (s == &slc_usr[k]) return k;
+    return SMP_USER_SLOTS;
+}
+/* Resolve outside ADPCM loops. Pointer equality is valid across objects;
+ * no ordering/subtraction against the unrelated built-in sample allocation. */
+static const uint8_t *slc_data(const slc_src_t *s)
+{
+    uint32_t k = slc_slot_of(s);
+    return k < SMP_USER_SLOTS ? smp_user_xip(k) + SMP_USER_DATA : SMP_DATA;
+}
 #if NPART >= NVOICE
 typedef char slc_shared_size_check[SLC_RB == HEAVY_SLC_RB ? 1 : -1];
 #else
@@ -123,7 +136,7 @@ static inline uint32_t slc_dec_st(const slc_dec_t *d)
     return (uint32_t)(uint16_t)d->pred | (uint32_t)d->idx << 16 | d->seg << 24;
 }
 /* the sample at d->pos (< len), then the next position */
-static inline int32_t slc_dec_next(const slc_src_t *s, slc_dec_t *d)
+static inline int32_t slc_dec_next(const slc_src_t *s, const uint8_t *data, slc_dec_t *d)
 {
     const slc_seg_t *g = &s->seg[d->seg];
     uint32_t rel = d->pos - g->at, b, code;
@@ -135,7 +148,7 @@ static inline int32_t slc_dec_next(const slc_src_t *s, slc_dec_t *d)
         d->pred = 0;
         d->idx = 0;
     }
-    b = SMP_DATA[g->off + (rel >> 1)];
+    b = SMP_READ_BYTE(data, g->off + (rel >> 1));
     code = (rel & 1u) ? (b >> 4) : (b & 15u);
     step = IMA_STEP[d->idx];
     vd = step >> 3;
@@ -153,10 +166,7 @@ static inline int32_t slc_dec_next(const slc_src_t *s, slc_dec_t *d)
 
 static inline uint32_t slc_gpos(const slc_src_t *s, uint32_t k) { return (k * s->len) >> SLC_GRID_LOG2; }
 /* the user slot of s (0..2), SMP_USER_SLOTS for BREAK / PIANO; its MAN slices in use, 0 = none (BREAK, PIANO: none) */
-static uint32_t slc_slot_of(const slc_src_t *s)
-{
-    return s >= slc_usr && s < slc_usr + SMP_USER_SLOTS ? (uint32_t)(s - slc_usr) : SMP_USER_SLOTS;
-}
+
 static const slc_man_t *slc_man_of(const slc_src_t *s)
 {
     uint32_t k = slc_slot_of(s);
@@ -210,12 +220,13 @@ static void slc_bounds_v(const slc_src_t *s, const voice_t *v, uint32_t *a, uint
 /* the grid states and the AUTO slices of s (len samples; s->len stays 0 meanwhile): see the top */
 static void slc_scan(slc_src_t *s, uint32_t len)
 {
+    const uint8_t *data = slc_data(s);
     slc_dec_t d;
     uint32_t pos = 0, k = 0, gap = ((s->rate >> 4) * 44100u >> 12) / 20u, last = 0, h0 = 0, st0 = 0;
     int32_t prev = 0, pkd = 0, pkr = 0, envd = 0, envr = 0, thd, thr;
     slc_dec_at(&d, 0, 0);
     while (pos++ < len) {                               /* pass 1: the largest step and sample */
-        int32_t x = slc_dec_next(s, &d), a = x - prev;
+        int32_t x = slc_dec_next(s, data, &d), a = x - prev;
         a = a < 0 ? -a : a;
         pkd = a > pkd ? a : pkd;
         a = x < 0 ? -x : x;
@@ -236,7 +247,7 @@ static void slc_scan(slc_src_t *s, uint32_t len)
             int32_t x, a;
             while (k < SLC_GRID && ((k * len) >> SLC_GRID_LOG2) == pos)
                 s->grid[k++] = slc_dec_st(&d);
-            x = slc_dec_next(s, &d);
+            x = slc_dec_next(s, data, &d);
             a = x - prev;
             a = a < 0 ? -a : a;
             hd = a > hd ? a : hd;
@@ -301,6 +312,7 @@ static void slc_user_scan(uint32_t k, int valid)
 /* the decoder state before sample pos: decoded from the grid point at or below it */
 static uint32_t slc_state_at(const slc_src_t *s, uint32_t pos)
 {
+    const uint8_t *data = slc_data(s);
     slc_dec_t d;
     uint32_t k = (pos << SLC_GRID_LOG2) / s->len;            /* (pos < 2^18: a slot holds < 200 K samples) */
     k = k < SLC_GRID ? k : SLC_GRID - 1u;
@@ -310,7 +322,7 @@ static uint32_t slc_state_at(const slc_src_t *s, uint32_t pos)
         k++;
     slc_dec_at(&d, slc_gpos(s, k), s->grid[k]);
     while (d.pos < pos)
-        slc_dec_next(s, &d);
+        slc_dec_next(s, data, &d);
     return slc_dec_st(&d);
 }
 
@@ -493,7 +505,7 @@ static void slice_note_on(track_t *t, voice_t *v)
 
 /* the reverse window [ws, ws + n): decoded from the nearest checkpoint at or below ws (a grid point,
  * or a = the slice start with its state sa) */
-static void slc_fill(const slc_src_t *s, int16_t *rb, uint32_t ws, uint32_t n, uint32_t a, uint32_t sa)
+static void slc_fill(const slc_src_t *s, const uint8_t *data, int16_t *rb, uint32_t ws, uint32_t n, uint32_t a, uint32_t sa)
 {
     slc_dec_t d;
     uint32_t k = (ws << SLC_GRID_LOG2) / s->len, i;
@@ -504,9 +516,9 @@ static void slc_fill(const slc_src_t *s, int16_t *rb, uint32_t ws, uint32_t n, u
     else
         slc_dec_at(&d, slc_gpos(s, k), s->grid[k]);
     while (d.pos < ws)
-        slc_dec_next(s, &d);
+        slc_dec_next(s, data, &d);
     for (i = 0; i < n; i++)
-        rb[i] = (int16_t)slc_dec_next(s, &d);
+        rb[i] = (int16_t)slc_dec_next(s, data, &d);
 }
 
 /* LOOP: back to the slice's start; its end again too (MAN: a JOIN / move meanwhile changed it). Out of line: once
@@ -519,17 +531,17 @@ static __attribute__((noinline)) void slc_loop_fwd(const slc_src_t *s, voice_t *
     v->ph[2] = b;
 }
 /* the next source sample into *x; 0 = the slice ended */
-static inline int slc_fwd(const slc_src_t *s, voice_t *v, slc_dec_t *d, int loop, int32_t *x)
+static inline int slc_fwd(const slc_src_t *s, const uint8_t *data, voice_t *v, slc_dec_t *d, int loop, int32_t *x)
 {
     if (d->pos >= v->ph[2]) {
         if (!loop)
             return 0;
         slc_loop_fwd(s, v, d);
     }
-    *x = slc_dec_next(s, d);
+    *x = slc_dec_next(s, data, d);
     return 1;
 }
-static inline int slc_rev(const slc_src_t *s, voice_t *v, int16_t *rb, int loop, int32_t *x)
+static inline int slc_rev(const slc_src_t *s, const uint8_t *data, voice_t *v, int16_t *rb, int loop, int32_t *x)
 {
     uint32_t q = v->ph[0], ws = (uint32_t)v->s[0], a, b, st;
     if (q <= v->ph[2]) {
@@ -545,7 +557,7 @@ static inline int slc_rev(const slc_src_t *s, voice_t *v, int16_t *rb, int loop,
         if (q < a)                                      /* MAN: the start moved past this voice: it ends */
             return 0;
         ws = q + 1u >= a + SLC_RB ? q + 1u - SLC_RB : a;
-        slc_fill(s, rb, ws, q + 1u - ws, a, st);
+        slc_fill(s, data, rb, ws, q + 1u - ws, a, st);
         v->s[0] = (int32_t)ws;
     }
     *x = rb[q - ws];
@@ -570,17 +582,17 @@ static int32_t slice_amp(track_t *t, voice_t *v, int32_t adsr)
 static void slice_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const vmod_t *m)
 {
     const int16_t *p = t->p;
-    uint32_t pk = (uint32_t)v->s[4], i, frac = v->ph[1], rev = (pk >> 7) & 1u, stepq, rem;
+    uint32_t pk = (uint32_t)v->s[4], src = pk & 7u, i, frac = v->ph[1], rev = (pk >> 7) & 1u, stepq, rem;
     int32_t lp = 4000 + ((clamp((p[P_E7] << 8) + m->cutoff, 0, 127 << 8) * 28767) >> 15), x;
     int loop = p[P_E4] == SLC_LOOP && v->gate;
-    const slc_src_t *s = v->s[6] == 2 || (pk & 7u) == SLC_SINE ? 0 : slc_get(pk & 7u);
+    const slc_src_t *s = v->s[6] == 2 || src == SLC_SINE ? 0 : slc_get(src);
 #if NPART >= NVOICE
     int16_t *rb = rev ? slc_rb(t, v) : 0;              /* forward ADPCM predictor must remain untouched */
 #else
     int16_t *rb = slc_rb(t, v);
 #endif
     slc_dec_t d;
-    if ((pk & 7u) == SLC_SINE && v->s[6] != 2) {        /* no material: the sine at the key's pitch + PTCH */
+    if (src == SLC_SINE && v->s[6] != 2) {        /* no material: the sine at the key's pitch + PTCH */
         smp_sine(out, n, m, p[P_E3] * 16, lp, &v->ph[0], &v->s[7]);
         return;
     }
@@ -594,13 +606,16 @@ static void slice_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const
         return;
     }
 #endif
+    /* slc_get admitted src: 1..3 map to user slots; 0/4 are built-ins.
+     * Unsigned src-1 rejects 0 without ordering unrelated C objects. */
+    const uint8_t *data = src - 1u < SMP_USER_SLOTS ? smp_user_xip(src - 1u) + SMP_USER_DATA : SMP_DATA;
     stepq = (pow2_q16(clamp(m->pitch16 - v->pitch_cur + p[P_E3] * 16, -1536, 576)) >> 8) * (s->rate >> 8);
     d.pos = v->ph[0];
     d.pred = v->s[0];
     d.idx = v->s[1];
     d.seg = (pk >> 3) & 15u;
     if (!v->s[6]) {                                     /* prime the interpolator */
-        if (!(rev ? slc_rev(s, v, rb, 0, &x) : slc_fwd(s, v, &d, 0, &x))) {
+        if (!(rev ? slc_rev(s, data, v, rb, 0, &x) : slc_fwd(s, data, v, &d, 0, &x))) {
             v->active = 0;
             return;
         }
@@ -616,7 +631,7 @@ static void slice_render(track_t *t, voice_t *v, int32_t *out, uint32_t n, const
         while (frac >= 65536u) {
             frac -= 65536u;
             v->s[2] = v->s[3];
-            if (!(rev ? slc_rev(s, v, rb, loop, &x) : slc_fwd(s, v, &d, loop, &x))) {
+            if (!(rev ? slc_rev(s, data, v, rb, loop, &x) : slc_fwd(s, data, v, &d, loop, &x))) {
                 v->s[6] = 2;                            /* the slice ended */
                 v->s[3] = 0;
                 break;

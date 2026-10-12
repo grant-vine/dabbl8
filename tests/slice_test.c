@@ -88,7 +88,7 @@ static uint32_t table_check(const slc_src_t *s)
             bad += s->grid[k++] != slc_dec_st(&d);
         while (a < s->nauto && s->apos[a] == pos)
             bad += s->ast[a++] != slc_dec_st(&d);
-        slc_dec_next(s, &d);
+        slc_dec_next(s, slc_data(s), &d);
     }
     return bad + (SLC_GRID - k) + (s->nauto - a);
 }
@@ -107,7 +107,7 @@ static uint32_t man_check(const slc_src_t *s, const slc_man_t *m)
     for (a = 0, pos = 0; pos < s->len && a < m->n; pos++) {
         while (a < m->n && m->pos[a] == pos)
             bad += m->st[a++] != slc_dec_st(&d);
-        slc_dec_next(s, &d);
+        slc_dec_next(s, slc_data(s), &d);
     }
     return bad + (m->n - a);
 }
@@ -154,15 +154,15 @@ static uint32_t rev_check(uint32_t src, uint32_t div, uint32_t j)
     slc_bounds(s, div, j, &a, &b, &st);
     slc_dec_at(&d, a, st);
     for (n = 0; d.pos < b && n < (1u << 18); n++)
-        fw[n] = slc_dec_next(s, &d);
+        fw[n] = slc_dec_next(s, slc_data(s), &d);
     memset(&v, 0, sizeof v);
     v.ph[0] = b;
     v.ph[2] = a;
     v.s[0] = 0x7FFFFFFF;
     v.s[4] = (int32_t)(src | (st >> 24) << 3 | 1u << 7 | j << 8 | div << 16);
     for (i = 0; i < n; i++)
-        bad += !slc_rev(s, &v, rb, 0, &x) || x != fw[n - 1u - i];
-    bad += slc_rev(s, &v, rb, 0, &x) != 0;               /* and then it ends */
+        bad += !slc_rev(s, slc_data(s), &v, rb, 0, &x) || x != fw[n - 1u - i];
+    bad += slc_rev(s, slc_data(s), &v, rb, 0, &x) != 0;               /* and then it ends */
     return bad;
 }
 
@@ -375,10 +375,6 @@ int main(int argc, char **argv)
     }
     if (n <= 0 || !nh) {
         printf("slice: no user loop (%s.hdr / .bin / .hits: tests/slice_loop.py + fm1_sample_upload.py build)\n", loop);
-        return 1;
-    }
-    if ((uintptr_t)host_slots < (uintptr_t)SMP_DATA || (uintptr_t)host_slots - (uintptr_t)SMP_DATA > 0xF0000000u) {
-        printf("slice: the slot image must lie above SMP_DATA within 4 GiB (32-bit offsets)\n");
         return 1;
     }
     smp_user_scan(0);

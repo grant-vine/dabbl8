@@ -48,16 +48,16 @@ static int exact_reverse(void)
         if (n[p] > 65536) return 0;
         if (n[p] > longest) longest = n[p];
         slc_dec_at(&d, a, st);
-        for (uint32_t i = 0; i < n[p]; i++) fw[p][i] = slc_dec_next(s, &d);
+        for (uint32_t i = 0; i < n[p]; i++) fw[p][i] = slc_dec_next(s, slc_data(s), &d);
     }
     /* Interleave every sample to expose cross-track overwrites at window boundaries. */
     for (uint32_t i = 0; i < longest; i++)
         for (uint32_t p = 0; p < NPART; p++) if (i < n[p]) {
             int32_t x;
-            if (!slc_rev(s, &trk[p].v[0], slc_rb(&trk[p], &trk[p].v[0]), 0, &x) || x != fw[p][n[p] - i - 1]) return 0;
+            if (!slc_rev(s, slc_data(s), &trk[p].v[0], slc_rb(&trk[p], &trk[p].v[0]), 0, &x) || x != fw[p][n[p] - i - 1]) return 0;
         }
     for (uint32_t p = 0; p < NPART; p++) {
-        int32_t x; if (slc_rev(s, &trk[p].v[0], slc_rb(&trk[p], &trk[p].v[0]), 0, &x)) return 0;
+        int32_t x; if (slc_rev(s, slc_data(s), &trk[p].v[0], slc_rb(&trk[p], &trk[p].v[0]), 0, &x)) return 0;
     }
     return 1;
 }
@@ -101,7 +101,7 @@ int main(void)
     check("forward-to-reverse reacquires an invalidated distinct window", slc_rb(&trk[0], transition) && transition->s[0] == 0x7FFFFFFF && ownership());
 
     fresh(1, 0, 1); int16_t snapshot[SLC_RB]; int32_t x;
-    slc_rev(slc_get(0), &trk[0].v[0], slc_rb(&trk[0], &trk[0].v[0]), 0, &x);
+    slc_rev(slc_get(0), slc_data(slc_get(0)), &trk[0].v[0], slc_rb(&trk[0], &trk[0].v[0]), 0, &x);
     memcpy(snapshot, slc_rb(&trk[0], &trk[0].v[0]), sizeof snapshot);
     trk_note_on(&trk[7], SLC_BASE + 7, 100);
     check("another track's retrigger cannot overwrite a cached window", !memcmp(snapshot, slc_rb(&trk[0], &trk[0].v[0]), sizeof snapshot));

@@ -86,9 +86,9 @@ static inline uint32_t gr_rnd(gr_part_t *P) { return noise32(&P->rng); }
 static inline uint32_t gr_scale(uint32_t n, uint32_t f16) { return (n >> 16) * f16 + (((n & 0xFFFFu) * f16) >> 16); }
 
 /* one IMA ADPCM sample of zone z at index pos */
-static inline int32_t gr_dec(const smp_zone_t *z, uint32_t pos, int32_t *pred, int32_t *idx)
+static inline int32_t gr_dec(const uint8_t *data, uint32_t pos, int32_t *pred, int32_t *idx)
 {
-    uint32_t b = SMP_DATA[z->off + (pos >> 1)], code = (pos & 1u) ? (b >> 4) : (b & 15u);
+    uint32_t b = SMP_READ_BYTE(data, pos >> 1), code = (pos & 1u) ? (b >> 4) : (b & 15u);
     int32_t step = IMA_STEP[*idx], vd = step >> 3;
     if (code & 4u)
         vd += step;
@@ -158,13 +158,14 @@ static void gr_build(gr_part_t *P, const track_t *t)
     if (zl == GR_MAXZ)
         return;
     z = gr_zone(P->src - 1u, zl);
+    const uint8_t *data = smp_set_data(P->src - 1u) + z->off;
     k = P->zdone[zl];
     e = P->zbase[zl] + k - 1u;
     pred = P->ipred[e];
     idx = P->iidx[e];
     pos = (k - 1u) << GR_SEG_LOG2;
     for (i = 0; i < GR_SEG; i++)
-        gr_dec(z, pos + i, &pred, &idx);
+        gr_dec(data, pos + i, &pred, &idx);
     P->ipred[e + 1u] = (int16_t)pred;
     P->iidx[e + 1u] = (uint8_t)idx;
     P->zdone[zl] = (uint16_t)(k + 1u);
@@ -174,10 +175,11 @@ static void gr_build(gr_part_t *P, const track_t *t)
 static void gr_seek(const gr_part_t *P, const smp_zone_t *z, uint32_t zl, uint32_t p, int32_t *pred, int32_t *idx)
 {
     uint32_t e = P->zbase[zl] + (p >> GR_SEG_LOG2), q;
+    const uint8_t *data = smp_set_data(P->src - 1u) + z->off;
     *pred = P->ipred[e];
     *idx = P->iidx[e];
     for (q = p & ~(GR_SEG - 1u); q < p; q++)
-        gr_dec(z, q, pred, idx);
+        gr_dec(data, q, pred, idx);
 }
 
 /* reverse: decode [hi - GR_RB + 1, hi] into the grain's window */
@@ -185,9 +187,10 @@ static void gr_fill(const gr_part_t *P, gr_grain_t *g, int16_t *rb, uint32_t zl,
 {
     uint32_t lo = hi >= GR_RB - 1u ? hi - (GR_RB - 1u) : 0u, q;
     int32_t pred, idx;
+    const uint8_t *data = smp_set_data(P->src - 1u) + g->z->off;
     gr_seek(P, g->z, zl, lo, &pred, &idx);
     for (q = lo; q <= hi; q++)
-        rb[q - lo] = (int16_t)gr_dec(g->z, q, &pred, &idx);
+        rb[q - lo] = (int16_t)gr_dec(data, q, &pred, &idx);
     g->rlo = lo;
 }
 
@@ -196,6 +199,7 @@ static void gr_spawn(gr_part_t *P, const track_t *t, uint32_t vi, uint32_t zl, u
 {
     const int16_t *p = t->p;
     const smp_zone_t *z = gr_zone(P->src - 1u, zl);
+    const uint8_t *data = smp_set_data(P->src - 1u) + z->off;
     gr_grain_t *g = 0;
     uint32_t i, n = z->n, len, step, span, c, sp, r1 = gr_rnd(P), r2 = gr_rnd(P), ov, rev;
     int32_t d16, amt, posq, pos;
@@ -254,8 +258,8 @@ static void gr_spawn(gr_part_t *P, const track_t *t, uint32_t vi, uint32_t zl, u
         g->b = rb[g->pos + 1u - g->rlo];
     } else {
         gr_seek(P, z, zl, (uint32_t)pos, &g->pred, &g->idx);
-        g->a = gr_dec(z, (uint32_t)pos, &g->pred, &g->idx);
-        g->b = gr_dec(z, (uint32_t)pos + 1u, &g->pred, &g->idx);
+        g->a = gr_dec(data, (uint32_t)pos, &g->pred, &g->idx);
+        g->b = gr_dec(data, (uint32_t)pos + 1u, &g->pred, &g->idx);
         g->pos = (uint32_t)pos + 2u;
     }
 }
@@ -273,6 +277,7 @@ static int gr_run(gr_part_t *P, gr_grain_t *g, int32_t *acc, uint32_t n)
     uint32_t i, m = n < g->left ? n : g->left, step = g->step, pos = g->pos;
     int32_t a = g->a, b = g->b, frac = g->frac, w0, w1, wq, dq;
     const smp_zone_t *z = g->z;
+    const uint8_t *data = smp_set_data(P->src - 1u) + z->off;
     w0 = mulq15(gr_win(g->wph), g->gain);
     g->wph += g->winc * m;
     g->left -= m;
@@ -289,7 +294,7 @@ static int gr_run(gr_part_t *P, gr_grain_t *g, int32_t *acc, uint32_t n)
             while (frac >= 65536) {
                 frac -= 65536;
                 a = b;
-                b = pos < z->n ? gr_dec(z, pos++, &pred, &idx) : a;
+                b = pos < z->n ? gr_dec(data, pos++, &pred, &idx) : a;
             }
         }
         g->pred = pred;
