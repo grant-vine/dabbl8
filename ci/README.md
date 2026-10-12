@@ -54,3 +54,14 @@ tests. It requires the existing exact HAL-derived
 generation/download. Select this scope explicitly for shared editor/coordinator
 changes after reviewing their affected paths. It does not establish other editor
 features, vendor memory/timing or physical uploads.
+
+Effects resident quiet has a separate `--check fx-quiet` recipe, selected by
+`firmware/src/fx.c` or `tests/native_fx_stationary_quiet_test.c`. It compiles only
+the focused eight-track ROOM/AP2/SPRING invariant fixture and its three pool
+sources, with FM4 off and SLICE on. ASan/UBSan are fatal; only the existing DSP
+signed-overflow/shift exclusions remain. All seven generated headers and the
+actual included fixture sources must already exist, otherwise selection refuses.
+This fixture does not include the sample-upload ranges header. There is no
+header generation, download or full-suite fallback. This scope establishes
+resident-state proof controls; it does not qualify DSP changes generally,
+ISR timing, memory use or release readiness.

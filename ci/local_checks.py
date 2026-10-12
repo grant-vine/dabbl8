@@ -25,6 +25,7 @@ MAP = {
                 'firmware/src/eng_grain.c', 'tests/fuzz_smp.c'},
     'sample-upload': {'firmware/src/native_sample_session.c',
                       'tests/native_sample_session_test.c', 'tests/native_sample_client_test.mjs'},
+    'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'tests/run_tests.sh'},
 }
 
@@ -61,6 +62,22 @@ def recipes(checks, cc, out, base):
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
+            continue
+        if name == 'fx-quiet':
+            # Exact qualified focused command; these defines make its existing
+            # fixture/core defaults explicit without expanding the matrix.
+            binary = str(out / 'fx-quiet-8')
+            flags = ['-O1', '-g', '-w', '-Ibuild/gen', '-Ifirmware/src',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift',
+                     '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1']
+            sources = pool + ['tests/native_fx_stationary_quiet_test.c']
+            steps += [{'name': 'fx-quiet-8-compile',
+                       'argv': cc + flags + ['-o', binary] + sources + ['-lm'],
+                       'requires': sources + ['firmware/src/fx.c',
+                           'tests/d8p1_flash_runtime_test.c', 'tests/ui_test.c',
+                           'tests/hostsim.c'] + ['build/gen/' + p for p in GEN]},
+                      {'name': 'fx-quiet-8', 'argv': [binary]}]
             continue
         if name == 'storage':
             jobs = [('historical', None, 'tests/storage_test.c'),
