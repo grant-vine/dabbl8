@@ -36,11 +36,21 @@ not eight additional brand colours. All existing themes remain selectable.
 
 Local preview:576 actual-renderer frames across12 palettes, two sizes, eight
 selected tracks and three scenes;1344 assertionsPASS/zero simulatedDMA errors.
-Fatal ASan/UBSan with inherited DSP overflow/shift exclusions. Full layout lint,
-actual device contrast/redraw timing and final target qualification remain pending.
+Fatal ASan/UBSan with inherited DSP overflow/shift exclusions. The final native renderer passed56064 frames with0 layout, ink, neutral, alignment
+or lost-declaration errors and1536 bank-label checks. New-install foundation
+passed1053687 assertions including write cuts/reboots and the dark saved default.
+Actual device contrast/redraw timing remain pending.
 Prior palette/UI CI mapping is absent; this focused check was run explicitly.
 No hosted checks, flash, release, website edit or golden/budget changes.
 
 The compact menu labels are `DABBL D` (dark) and `DABBL L` (light).
 Long labels collided with COLOR in the large-font menu; shorten only the labels,
 retaining the approved colours and saved palette IDs.
+
+Final target producer `b8eb7af2d205430d4be7693fc4017c6ce35cffbf`:518084-byte app,
+SHA256 `aa6f9b47044ad990807d9b0fadc44ff0702806acd3c948e6a53d930cf3a737e0`.
+RAM96084/98304 (2220 free), pool335668/344064 (8396 free), unchanged. Known static
+SLICE517/453, ALNK55966/37502 and UAC562/504 still fail; no thresholds rewritten.
+The inherited banked-test final phrase "shipping remains four tracks" is stale;
+its asserted fixture is eight tracks/eight voices and no device claim is made.
+The final follow-up changes documentation only, leaving target inputs identical.
