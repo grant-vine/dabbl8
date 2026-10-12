@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Explicit post-migration main-loop connection; no boot caller grants it. */
 #include "d8arr_prepare.c"
+#include "native_own_pool_scan.c"
 static int pnf_prepare_arrangement(void *c)
 {
     (void)c;
@@ -74,9 +75,13 @@ int project_native_boot_readonly(int allowed)
     project_native_ops ops={NULL,pnr_catalog,NULL,pnr_load,NULL,pnr_arrangement};
     int rc=project_native_bind_readonly(&ops);
     if(rc)return -rc;
+    int preset_error=0;
+#if D8_PRESET_SESSION
+    preset_error=d8up_recover_banks(); /* no raw incoherent FM6 fallback */
+#endif
     if(!allowed||(ui_prefs&PREF_RESTORE_OFF))return -D8POOL_EMPTY;
     rc=pnr_load(NULL,3);
-    if(!rc){ui_message("RESTORED");return 1;}
+    if(!rc){ui_message(preset_error?"PRESET RECOVERY":"RESTORED");return 1;}
     return -rc;
 }
 

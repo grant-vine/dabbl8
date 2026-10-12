@@ -223,6 +223,7 @@ static int up_parse(const uint8_t *a, uint32_t na, up_rec_t *r, uint32_t *slot)
 }
 
 #ifndef UP_HOST
+#include "native_preset_session.h"
 static void up_values(const up_rec_t *r, int16_t *v)   /* mapped and clamped for its engine */
 {
     int16_t def[P_COUNT];
@@ -283,7 +284,13 @@ static int up_put(uint32_t k, const up_rec_t *r)
     else
         memset(up_rec(k), 0, sizeof(up_rec_t));
 #if FELUCCA_FLASH
-    if (flash_ok && st_save(OBJ_UPRESET0 + k / UP_PER_BANK, bk, sizeof *bk)) {
+    if (flash_ok &&
+#if NTRK == 8 && D8_PRESET_SESSION
+        d8up_save(OBJ_UPRESET0 + k / UP_PER_BANK, bk, sizeof *bk,-1)
+#else
+        st_save(OBJ_UPRESET0 + k / UP_PER_BANK, bk, sizeof *bk)
+#endif
+        ) {
         *up_rec(k) = old;
         bk->magic = magic;
         bk->rsize = rsize;
@@ -563,7 +570,14 @@ static void up_ui_named_mask(uint32_t op, uint32_t k, const char *name, unsigned
         ui_say("LOADED ", l);
         return;
     }
+#if NTRK == 8 && D8_PRESET_SESSION
+    int permitted=d8up_ui_begin(op,k,name);
+    if(permitted<=0){ui_message(permitted==-2?"DISPLAY ERROR":permitted<0?"PRESET RECOVERY":"STOP TO SAVE");return;}
+#endif
     rc = op == 1u ? up_put(k, 0) : op == 3u ? up_rename(k, name) : up_store(k, name);
+#if NTRK == 8 && D8_PRESET_SESSION
+    d8up_ui_end();
+#endif
     if (rc == 3)
         ui_message(op == 1u ? "ERASED (RAM)" : op == 3u ? "RENAMED (RAM)" : "SAVED (RAM)");
     else if (rc)

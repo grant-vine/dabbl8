@@ -158,15 +158,12 @@ static int st_load_autosave(void *dst,uint32_t max)
 { return st_load(OBJ_AUTOSAVE,dst,max); }
 
 /* save into copy `to` (0 A, 1 B; -1: the one that is not the current copy, as st_save) */
-static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
+/* Shared commit algorithm; callbacks remain private to reviewed coordinators.
+ * Generic callers enter through st_save_to below and retain its quarantine. */
+static int st_save_commit(uint32_t obj, const void *src, uint32_t len, int to,
+                          int (*erase)(uint32_t),
+                          int (*program)(uint32_t,const void *,uint32_t))
 {
-#if defined(NPART) && NPART >= 8
-    /* Eight-track projects cannot use the historical wire layout. Refuse
-     * these legacy writes even before binding/after cold boot; the native
-     * pool shares all four project pairs plus the autosave pair. */
-    if((obj>=OBJ_PROJECT0&&obj<OBJ_PROJECT0+4u)||obj==OBJ_AUTOSAVE)return -1;
-    if(!d8_instrument_write_allowed())return D8_INSTRUMENT_QUARANTINED;
-#endif
     uint32_t seq, base, off;
     int cur, rc;
     st_hdr_t h;
@@ -179,11 +176,11 @@ static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
     base = st_sector(obj, (uint32_t)to);
     for (off = 0; off < len; off++)
         st_buf[off] = ((const uint8_t *)src)[off];    /* the driver wants RAM sources */
-    if ((rc = st_erase(base)) != 0)
+    if ((rc = erase(base)) != 0)
         return rc;
     for (off = 0; off < len; off += 256u) {
         uint32_t n = len - off > 256u ? 256u : len - off;
-        if ((rc = st_prog(base + ST_PAYLOAD_OFF + off, st_buf + off, n)) != 0)
+        if ((rc = program(base + ST_PAYLOAD_OFF + off, st_buf + off, n)) != 0)
             return rc;
     }
     h.magic = ST_MAGIC;
@@ -194,7 +191,7 @@ static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
     h.crc = st_crc32(st_buf, len);
     h.rsv[0] = h.rsv[1] = 0xFFFFFFFFu;
     h.hcrc = st_crc32(&h, sizeof h - 4u);
-    if ((rc = st_prog(base, &h, sizeof h)) != 0)       /* the commit record, last */
+    if ((rc = program(base, &h, sizeof h)) != 0)       /* the commit record, last */
         return rc;
     {   /* read back: a write-protected or failing part must not report SAVED */
         st_hdr_t chk;
@@ -203,6 +200,18 @@ static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
             return -7;
     }
     return 0;
+}
+
+static int st_save_to(uint32_t obj, const void *src, uint32_t len, int to)
+{
+#if defined(NPART) && NPART >= 8
+    /* Eight-track projects cannot use the historical wire layout. Refuse
+     * these legacy writes even before binding/after cold boot; the native
+     * pool shares all four project pairs plus the autosave pair. */
+    if((obj>=OBJ_PROJECT0&&obj<OBJ_PROJECT0+4u)||obj==OBJ_AUTOSAVE)return -1;
+    if(!d8_instrument_write_allowed())return D8_INSTRUMENT_QUARANTINED;
+#endif
+    return st_save_commit(obj,src,len,to,st_erase,st_prog);
 }
 
 static int st_save(uint32_t obj, const void *src, uint32_t len) { return st_save_to(obj, src, len, -1); }

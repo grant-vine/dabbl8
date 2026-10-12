@@ -1255,6 +1255,12 @@ static void confirm_text(char *a, char *b)
 }
 static void draw_confirm(void)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    unsigned preset_erase=ui.confirm==CF_ERASE_USER;
+    uint32_t display_id=preset_erase?d8up_display_id(1,ui.confirm_trk):0;
+    uint32_t display_faults=D8_UP_LCD_FAULT_COUNT();
+    if(preset_erase)d8up_display_clear();
+#endif
     char a[24], b[24];
     const aafont_t *tf = &AF_M;
     confirm_text(a, b);
@@ -1291,6 +1297,9 @@ static void draw_confirm(void)
         cv_text_on(x + KH_GAP, 80 + HALF_UP(26 - KC_H) - 1, &AF_S, "YES", T_INK, T_THEME);
     }
     cv_blit(DLG_X, DLG_Y);
+#if NTRK == 8 && D8_PRESET_SESSION
+    if(preset_erase){lcd_sync();d8up_display_done(1,ui.confirm_trk,display_id,display_faults);}
+#endif
 }
 
 /* the stored STYLE (ui_style: the menu, a settings import, a restore) into gfx.c's copy: the tokens again, all redrawn */
@@ -1308,11 +1317,23 @@ static void style_apply(void)
 static void ui_draw_page(uint32_t counting);
 static void ui_draw(void)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    if(ui.menu||ui.uboot||cv_cpu_active||migration_owner||
+       (!name_on()&&ui.confirm!=CF_ERASE_USER))d8up_display_clear();
+#endif
 #if NTRK == 8 && D8_MIGRATION_SESSION
     #if D8_FIRST_USE_SESSION
-    if(d8fi_blocked()){d8fi_draw();return;}
+    if(d8fi_blocked()){
+#if D8_PRESET_SESSION
+    d8up_display_clear();
 #endif
-    if(d8ls_blocked()){d8ls_draw();return;}
+    d8fi_draw();return;}
+#endif
+    if(d8ls_blocked()){
+#if D8_PRESET_SESSION
+    d8up_display_clear();
+#endif
+    d8ls_draw();return;}
 #endif
 #if NPART >= NVOICE
     if(cv_draw_deferred)ui.force=1; /* carry a refused one-shot into the next safe frame */
@@ -1326,8 +1347,12 @@ static void ui_draw(void)
         counting = (uint8_t)seq_counting();
         ui.force = 1;
     }
-    if (!scr_frame())                                   /* MENU > SCREEN OFF: dark (or waking), nothing drawn */
+    if (!scr_frame()) {                                 /* no hidden consent receipt */
+#if NTRK == 8 && D8_PRESET_SESSION
+        d8up_display_clear();
+#endif
         return;
+    }
 #if NPART >= NVOICE
     if (cur_page()->graph == GR_SLOTS || cur_page()->graph == GR_SONG)
         (void)graph_project_used(0); /* decode names before the first canvas/DMA */
@@ -1360,6 +1385,9 @@ static void ui_draw_page(uint32_t counting)
         if (ui.force) {
             draw_confirm();
             ui.force = 0;
+#if NTRK == 8 && D8_PRESET_SESSION
+            if(ui.confirm==CF_ERASE_USER&&!d8up_display_valid(1,ui.confirm_trk))ui.force=1;
+#endif
         }
         draw_head();                                    /* recording remains visible over confirmations */
         return;

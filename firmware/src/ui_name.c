@@ -19,6 +19,7 @@
  *   KNOB 1       the cursor; KNOB 2 the character at the cursor (SPACE A..Z 0..9 - . _ / # +; at the end: a new one).
  *   LEDs         every key that types or edits is lit; the key whose letters are being cycled blinks.
  * Spaces at either end are dropped when it is written; an empty name: USER the automatic one, PROJECT none. */
+#include "native_preset_session.h"
 enum { NK_NONE, NK_USER_SAVE, NK_USER_RENAME, NK_PROJ_SAVE, NK_PROJ_RENAME };
 #define NM_LEN 12u
 #define NM_TAP_MS 800u                                 /* multi-tap: the next letter within this */
@@ -46,6 +47,9 @@ static struct {
 static int name_on(void) { return nm.kind != NK_NONE; }
 static void name_close(void)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    d8up_display_clear();
+#endif
     if (nm.kind)
         ui.force = 1;
     nm.kind = NK_NONE;
@@ -75,6 +79,9 @@ static uint32_t nm_black(uint32_t k)                   /* black key k's function
 
 static void name_open(uint32_t kind, uint32_t slot)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    d8up_display_clear();
+#endif
     char b[16];
 #if NPART >= NVOICE
     if(kind==NK_PROJ_RENAME&&project_name(slot,b)<0){ui.force=1;return;}
@@ -290,8 +297,15 @@ static void name_input(uint32_t notes, uint32_t oct)
         if ((s = panel_enc(EN_K1 + k)) != 0)
             nm_knob(k, s);
     enc_drop();                                        /* the other knobs do nothing here */
-    if (oct & 2u)
+    if (oct & 2u) {
+#if NTRK == 8 && D8_PRESET_SESSION
+        d8up.confirm=1; /* exactly this actual OCT+ release, not a caller Boolean */
+#endif
         name_ok();
+#if NTRK == 8 && D8_PRESET_SESSION
+        d8up.confirm=0;
+#endif
+    }
     else if (oct & 1u)
         name_close();                                  /* cancel: nothing written, back to the page */
 }
@@ -427,6 +441,12 @@ static void nm_draw_foot(void)
 }
 static void name_draw(void)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    unsigned operation=nm.kind==NK_USER_SAVE?2u:nm.kind==NK_USER_RENAME?3u:0;
+    uint32_t display_id=operation?d8up_display_id(operation,nm.slot):0;
+    uint32_t display_faults=D8_UP_LCD_FAULT_COUNT();
+    if(operation&&!d8up_display_valid(operation,nm.slot)){d8up_display_clear();ui.force=1;}
+#endif
     uint8_t st[7] = {nm.kind, nm.slot, nm.len, nm.cur, nm.num, nm.key, nm.tap};
     uint32_t sig = fnv(fnv(2166136261u, st, sizeof st), nm.s, sizeof nm.s) + ux.gen * 7919u +
                    (uint32_t)transport_busy() * 104729u;
@@ -440,6 +460,9 @@ static void name_draw(void)
         nm_draw_field();
         nm_draw_panel();
         nm_draw_foot();
+#if NTRK == 8 && D8_PRESET_SESSION
+        if(operation){lcd_sync();d8up_display_done(operation,nm.slot,display_id,display_faults);}
+#endif
     }
     if (ui.msg_t && !--ui.msg_t && ui.msg2[0]) {
         str_cpy(ui.msg, ui.msg2, sizeof ui.msg);

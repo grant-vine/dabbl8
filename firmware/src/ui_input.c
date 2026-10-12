@@ -452,6 +452,9 @@ static int live_rec_sel(void)
 /* the OCT- / OCT+ dialog (ui_draw.c draws it); trk: the track or the slot it is about */
 static void confirm_open(uint32_t kind, uint32_t trk)
 {
+#if NTRK == 8 && D8_PRESET_SESSION
+    d8up_display_clear();
+#endif
     ui.confirm = (uint8_t)kind;
     ui.confirm_trk = (uint8_t)trk;
     ui.act = 0;
@@ -1214,7 +1217,13 @@ static void ui_input(void)
             } else if (kind == CF_OVR_USER) {
                 name_open(NK_USER_SAVE, ui.confirm_trk);
             } else if (kind == CF_ERASE_USER) {
+#if NTRK == 8 && D8_PRESET_SESSION
+                d8up.confirm=2; /* this confirmed ERASE release only */
+#endif
                 up_ui(1u, ui.confirm_trk);
+#if NTRK == 8 && D8_PRESET_SESSION
+                d8up.confirm=0;
+#endif
             } else if (kind == CF_LOAD_PAT) {
                 pat_load_ui(&trk[ui.confirm_trk % NTRK], pat_pick());
                 str_cpy(ui.msg2, "[SAVE] HOLD TO UNDO", sizeof ui.msg2);
