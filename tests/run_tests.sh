@@ -569,6 +569,10 @@ if [ -f build/gen/felucca_tables.h ]; then
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/fm6_test" tests/fm6_test.c -lm
     mkdir -p build/fm6_demo
     run "FM6: algorithms, envelopes, retrigger, DC, clipping, macros, patch formats, voices, cost, demos" "$OUT/fm6_test" build/fm6_demo
+    for tracks in 4 8; do
+        $CC -O2 -w -Ibuild/gen -Ifirmware/src -DNPART="$tracks" -o "$OUT/fm6_lfo_sine_$tracks" tests/fm6_lfo_sine_test.c -lm
+        run "FM6 sine LFO: exhaustive Q24 phase and accumulator wrap tracks=$tracks" "$OUT/fm6_lfo_sine_$tracks"
+    done
     # SLICE is in the standard build (firmware/src/core.h): its test always runs (after #22 by andreahaku)
     if grep -q '^#define SLC_BREAK_BPM ' build/gen/felucca_samples.h; then
         mkdir -p build/slice_demo
@@ -604,6 +608,10 @@ else
     A="$OUT/asan"
     export ASAN_OPTIONS="${ASAN_OPTIONS:-detect_leaks=0}"
     SCC="${CC%% *} $SAN -Ibuild/gen -Ifirmware/src"
+    for tracks in 4 8; do
+        ${CC%% *} -O1 -g -w -Ibuild/gen -Ifirmware/src -DNPART="$tracks" -fsanitize=address,undefined -fno-sanitize-recover=undefined -o "$A/fm6_lfo_sine_$tracks" tests/fm6_lfo_sine_test.c -lm
+        run "ASan/UBSan: strict FM6 sine LFO complete phase sweep tracks=$tracks" "$A/fm6_lfo_sine_$tracks"
+    done
     for tracks in 4 8; do for fm4 in 0 1; do for slice in 0 1; do
         motion_bin="$A/motion_${tracks}_${fm4}_${slice}"
         $SCC -DNPART="$tracks" -DFELUCCA_FM4="$fm4" -DFELUCCA_SLICE="$slice" -o "$motion_bin" tests/motion_test.c -lm

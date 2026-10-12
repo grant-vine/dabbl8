@@ -264,7 +264,7 @@ static int32_t fm6_lfo_sample(fm6_lfo_t *l)   /* 0..1, Q24; once a block */
     case 3:                                       /* square */
         return (int32_t)(((~l->phase) >> 7) & (1u << 24));
     case 4:                                       /* sine */
-        return (1 << 23) + (fm6_sin((int32_t)(l->phase >> 8)) << 8);
+        return (1 << 23) + fm6_sin((int32_t)(l->phase >> 8)) * 256; /* Q15 range: signed product fits. */
     case 5:                                       /* sample and hold */
         if (l->phase < l->delta)
             l->rnd = (uint8_t)((l->rnd * 179 + 17) & 0xff);
