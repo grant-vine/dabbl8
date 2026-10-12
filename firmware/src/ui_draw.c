@@ -1091,6 +1091,9 @@ static void draw_columns(void)
 #define SPL_X0 ((240u - SPL_SQ) / 2u)               /* its top-left on the screen (x and y) */
 #define SPL_PAD 16                                  /* the text's inset: left (its ink), top and bottom (the capitals) */
 #define SPL_PITCH 20                                /* line to line */
+#if DABBL8_IDENTITY
+#include "dabbl8_wordmark.h"
+#endif
 static const char *const SPLASH_LINES[] = {APP_NAME, FELUCCA_VERSION, "H\xFCgelton Instruments", "with community"};
 /* a band of two lines, h tall, at y on the screen: the first line's top at ly; the two lines' capitals declared
  * against al0..al1 (mode: AL_V the band centred there, AL_B the last baseline on al1) */
@@ -1109,8 +1112,16 @@ static void draw_splash(void)
     int32_t lb = h - SPL_PAD - AF_M_CAP_H - AF_M_CAP_Y;         /* the bottom band's last line: its top */
     lcd_fill(0, 0, 240, 240, T_BG);
     lcd_fill(SPL_X0, SPL_X0, SPL_SQ, SPL_SQ, T_RAISE);
+#if DABBL8_IDENTITY
+    /* Static alpha mask in flash: same canvas and theme ramp, no new RAM or delay. */
+    CV_DRAW_BEGIN(SPL_SQ, 72, T_RAISE);
+    cv_alpha(8, 8, 160, 36, D8_WORDMARK_ALPHA, ramp(T_TEXT, T_RAISE));
+    cv_text_on(SPL_PAD, 52, &AF_M, FELUCCA_VERSION, T_TEXT, T_RAISE);
+    cv_blit(SPL_X0, SPL_X0 + 12);
+#else
     splash_band(SPL_X0, (uint32_t)h, SPL_PAD - AF_M_CAP_Y, SPLASH_LINES, AL_V, SPL_PAD,
                 SPL_PAD + SPL_PITCH + AF_M_CAP_H, "splash name + version SPL_PAD from the top");
+#endif
     splash_band(SPL_X0 + SPL_SQ - (uint32_t)h, (uint32_t)h, lb - SPL_PITCH, SPLASH_LINES + 2, AL_B, 0, h - SPL_PAD,
                 "splash maker's baseline SPL_PAD from the bottom");
     lcd_sync();
