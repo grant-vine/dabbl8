@@ -113,3 +113,31 @@ bytes are intentionally rebuilt, not restored byte-for-byte. Live adoption uses
 the existing guarded runtime path; autosave establishes live as its change
 baseline while preserving the independently restored autosave until a real
 musical edit. A successful virtual test is not a complete issue-11 or release gate.
+
+## Local companion delivery
+
+`web/d8companion.html` includes own-project backup/restore when command-75
+capabilities advertise feature 16 and command-81 schema 1 matches exactly.
+The existing eight-track controls remain in-memory edits. During a project
+transaction those controls are disabled and the MIDI session refuses their
+requests. A selected archive is retained across cancellation or disconnection.
+Restore validates the full archive using the actual C codec compiled to WASM,
+waits for physical SAVE press/release, and verifies a fresh logical export after
+commit. No arbitrary flash addresses, firmware installation, or external-firmware
+conversion are exposed in this workflow. Historical converters remain developer
+reference tools outside the main companion.
+
+Build only the codec with the already-installed Emscripten 4.0.17:
+`EM_FROZEN_CACHE=1 EMCC=/absolute/path/to/emcc sh web/build-d8archive.sh`.
+No dependencies are downloaded. Serve the repository root on localhost, rather
+than opening the page as a file; its generated codec is under `build/d8archive/`.
+The helper records source/artifact hashes, and selective local CI refuses stale
+codec inputs rather than regenerating them automatically.
+
+Inspect the plan, then explicitly run the bounded interoperability checks:
+`python3 ci/local_checks.py --paths web/d8projects.js --check own-project-client`
+and the same command with `--run`. This exercises the actual command handler
+against private virtual NOR, framed simulated MIDI and native/WASM codecs.
+Physical transport, first installation, flash interruption, playback timing and
+rollback acceptance remain open. Project archives exclude settings, presets,
+samples and restore firmware; they do not constitute a full instrument backup.

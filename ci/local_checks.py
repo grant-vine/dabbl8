@@ -25,6 +25,10 @@ MAP = {
                 'firmware/src/eng_grain.c', 'tests/fuzz_smp.c'},
     'sample-upload': {'firmware/src/native_sample_session.c',
                       'tests/native_sample_session_test.c', 'tests/native_sample_client_test.mjs'},
+    'own-project-client': {'web/d8projects.js', 'web/d8archive.js', 'web/d8midi.js',
+        'web/d8projects-panel.js', 'web/d8companion.js', 'web/build-d8archive.sh',
+        'tools/d8archive_inputs.py', 'tools/dabbl8_project_archive.c',
+        'tests/native_project_client_bridge.c', 'tests/native_project_client_test.mjs'},
     'own-project-transfer': {'firmware/src/native_project_transfer.c',
         'tests/native_project_transfer_test.c'},
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
@@ -86,6 +90,34 @@ def recipes(checks, cc, out, base):
                     ('native', None, 'tests/native_storage_gate_test.c')]
         elif name == 'legacy-ui':
             jobs = [(str(n), n, 'tests/ui_legacy_v6_bounds_test.c') for n in (4, 8)]
+        elif name == 'own-project-client':
+            adapter = str(out / 'own-project-archive')
+            bridge = str(out / 'own-project-client-bridge')
+            archive_sources = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c',
+                               'tools/dabbl8_project_archive.c']
+            bridge_sources = pool + ['tests/native_project_client_bridge.c']
+            steps += [
+                {'name': name + '-codec-identity',
+                 'argv': [sys.executable, 'tools/d8archive_inputs.py'],
+                 'requires': ['build/d8archive/inputs.json',
+                    'build/d8archive/dabbl8_project_archive.mjs',
+                    'build/d8archive/dabbl8_project_archive.wasm']},
+                {'name': name + '-archive-compile',
+                 'argv': cc + ['-std=c11', '-O1', '-g', '-fsanitize=address,undefined',
+                    '-fno-sanitize-recover=all', '-Ifirmware/src'] + archive_sources + ['-o', adapter],
+                 'requires': archive_sources},
+                {'name': name + '-bridge-compile',
+                 'argv': cc + ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
+                    '-fsanitize=address,undefined', '-fno-sanitize-recover=all', '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                    '-fno-sanitize=signed-integer-overflow,shift', '-Ibuild/gen', '-Ifirmware/src'] +
+                    bridge_sources + ['-lm', '-o', bridge],
+                 'requires': bridge_sources + ['build/gen/' + p for p in GEN] +
+                    ['build/gen/d8_flash_store_ranges_test.h']},
+                {'name': name, 'argv': ['node', 'tests/native_project_client_test.mjs',
+                    bridge, adapter, 'build/d8archive/dabbl8_project_archive.mjs'],
+                 'requires': ['tests/native_project_client_test.mjs']},
+            ]
+            continue
         elif name == 'own-project-transfer':
             jobs = [('8', 8, 'tests/native_project_transfer_test.c')]
         elif name == 'sample-upload':

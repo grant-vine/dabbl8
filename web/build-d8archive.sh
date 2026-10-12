@@ -12,3 +12,4 @@ mkdir -p build/d8archive
   -sEXPORTED_RUNTIME_METHODS=FS,callMain -sSTACK_SIZE=1048576 \
   -o build/d8archive/dabbl8_project_archive.mjs
 printf '%s\n' "$version" > build/d8archive/compiler-version.txt
+python3 tools/d8archive_inputs.py --record

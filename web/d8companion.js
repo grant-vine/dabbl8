@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { mountProjects } from './d8projects-panel.js';
-import { mountProjectConversion } from './d8project-conversion-page.js';
 import { D8MidiSession } from './d8midi.js';
 import { CompanionModel, parameterDescriptor, parameterName, noteName } from './d8companion-model.js';
 import { descriptors } from './d8descriptors.js';
@@ -20,9 +19,8 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   const connection=el('section',{class:'connection','aria-label':'Connection'},el('h2',{},'Connection'),el('div',{class:'row'},field('Receive from',inputSelect),field('Send to',outputSelect),find,join,leave),identity,status);
   const engines=el('section',{'aria-label':'Engine availability'});
   const controls=el('fieldset',{class:'track-controls'}),foot=el('footer',{},el('p',{class:'small'},'Built on Felucca by Hügelton Instruments and its contributors. Dabbl8 is GPL-3.0-only.'),el('p',{class:'small'},el('a',{href:'https://github.com/grant-vine/dabbl8'},'Source and development status'),' · ',el('a',{href:'editor.html'},'Legacy four-track editor'),' · ',el('a',{href:'https://github.com/grant-vine/dabbl8/blob/dabbl8/develop/LICENSING.md'},'Licensing')));
-  const conversionRoot=el('section',{}),projectsRoot=el('section',{});
-  root.replaceChildren(heading,notice,connection,engines,controls,projectsRoot,conversionRoot,foot);
-  const conversion=mountProjectConversion(conversionRoot);
+  const projectsRoot=el('section',{});
+  root.replaceChildren(heading,notice,connection,engines,controls,projectsRoot,foot);
   const projects=mountProjects(projectsRoot,{...projectOptions,getSession:()=>session,onBusy:(value)=>{projectWorking=value;availability();},onRestored:async()=>{if(model&&session?.connected)await model.refresh();}});
   function renderEngines(){
     const observation=session?.engineAvailability,caps=observation?.caps;
@@ -87,5 +85,5 @@ export function mountCompanion(root,{getAccess=()=>{if(!globalThis.isSecureConte
   async function disconnect(){const old=model,oldSession=session;generation++;abort?.abort();model=null;session=null;working=false;identity.textContent='';controls.replaceChildren();renderEngines();setStatus('Disconnected.');availability();await (old?old.close():oldSession?.close());}
   inputSelect.addEventListener('change',availability);outputSelect.addEventListener('change',availability);availability();
   const pagehide=()=>{void disconnect();};doc.defaultView?.addEventListener('pagehide',pagehide);
-  return {disconnect,destroy:()=>{projects.destroy();conversion.destroy();doc.defaultView?.removeEventListener('pagehide',pagehide);return disconnect();}};
+  return {disconnect,destroy:()=>{projects.destroy();doc.defaultView?.removeEventListener('pagehide',pagehide);return disconnect();}};
 }

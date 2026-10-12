@@ -73,3 +73,9 @@ existing generated inputs and HAL range header; it never downloads dependencies,
 opens MIDI ports, builds vendor packages or runs hosted CI. Pure pool tombstone
 checks are a separate dependency proof. No selected check establishes physical
 backup/restore, target budgets or release readiness.
+
+The `own-project-client` check exercises the actual own-project command handler
+with simulated MIDI/virtual NOR and the actual native/WASM archive codec. Build
+the browser codec explicitly using `web/build-d8archive.sh` and the existing
+pinned Emscripten 4.0.17 first. Its source/artifact identity is checked; the runner
+refuses missing/stale inputs and never downloads or builds them automatically.

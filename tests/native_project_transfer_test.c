@@ -28,6 +28,7 @@ static void target_fresh(void){boot_seed();CHECK(autosave_boot(1)==1);int32_t au
 static void target_only_zero(void){target_fresh();d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx));for(unsigned o=1;o<4;o++)memset(nor+d8pool_mapped_address(idx.object[o].block),255,D8POOL_BLOCK);d8p1_autosave_session_end();}
 static void retained_reboot(void){cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;ui_prefs&=~PREF_RESTORE_OFF;int32_t audio[CTL*2];mix_block(audio,CTL);reset();unsigned before=physical_calls;(void)autosave_boot(1);CHECK(project_native_owns_storage()&&physical_calls==before);}
 static void verify_restored(unsigned present){d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx)&&idx.present==present);for(unsigned o=0;o<4;o++)if(present&(1u<<o)){d8pool_index src;CHECK(!d8pool_inventory(&source_store,&src));CHECK(idx.object[o].length==src.object[o].length&&idx.object[o].crc==src.object[o].crc);}size_t n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n)&&n==archived_live_len&&!memcmp(wire,source_live,n));}
+#ifndef D8_PROJECT_TRANSFER_NO_MAIN
 int main(void){
  boot_seed();CHECK(autosave_boot(1)==1);int32_t audio[CTL*2];mix_block(audio,CTL);
  message[0]=1;message[1]=0;CHECK(pt_request(2)==PT_OK);
@@ -73,3 +74,5 @@ int main(void){
  pt_token(8);CHECK(pt_request(7)==PT_OK);
  printf("Native own project transfer: %u checks %u failures\n",checks,failures);return failures!=0;
 }
+
+#endif /* D8_PROJECT_TRANSFER_NO_MAIN */
