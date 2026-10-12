@@ -1,18 +1,25 @@
 # First-device evidence plan
 
 This is preparation for issues #13, #14 and #20, not a completed install or a
-hardware-qualified release. Firmware main at preparation is
-`fbadbca894419c9626306eb773f38ae22baed52d`. Optional timing instrumentation is
-proposed separately in draft PR #113; its full CI and hardware qualification are
-not implied here. The unchanged audited Felucca baseline remains
+hardware-qualified release. The current plan was refreshed on 2026-10-11 against
+the experimental diagnostic candidate in draft PR #138, `53d20f03cea3959b730c0afb9ae2b0baf779301e`, tree
+`6e981b76a50818d22b3623a7b47f8b0709bd6a6b`. Timing instrumentation is implemented,
+including the D8T2 aligned window from merged PR #133; at that preparation, curated-profile
+and diagnostic build integration had separate draft PRs #136 and #138. These
+statuses do not establish installation or hardware qualification. The original
+plan was prepared at `fbadbca894419c9626306eb773f38ae22baed52d`; its references
+to draft PR #113 and D8T1-only collection are historical. The unchanged audited
+Felucca baseline remains
 `276f72a4e6ea8a12499a7a6819aadf3165126755`.
 
 ## Current gates
 
-The owner reports one disconnected FM-1 running V15, no saved projects and no
-spare unit or RP2040 currently available. Physical revision, enumeration and
-custom preset/sample inventory are not established. A locally retained vendor
-restore package is not proof that this unit can actually be restored. Keep that
+The owner initially reported one disconnected FM-1 running V15, no saved projects
+and no spare unit or RP2040. The device has since been connected, with M-UPGRADE
+reporting V15 in the observed screen. That establishes an observed connection and
+reported version, not functional MIDI/audio operation, precise physical revision,
+complete descriptors, custom preset/sample inventory or recovery readiness. A
+locally retained vendor restore package is not proof that this unit can actually be restored. Keep that
 package and all private backups outside Git. Recovery equipment and the applicable
 upstream procedure must be verified before a separate owner-authorised install.
 No automatic boot migration or production native-write activation is qualified.
@@ -48,14 +55,20 @@ which cases are unsupported or skipped; do not interpret missing inputs as passi
 Retain exact project/settings, duration, host applications/routes, audio captures,
 UI/USB logs, reboot/recall outcomes and audible faults for every case.
 
-For diagnostic collection, retain start/stop/report responses and the exact D8T1
-frame with its source/package identity. Reject incomplete/invalid/saturated frames.
+For diagnostic collection, retain start/stop/report responses and the exact D8T2
+frame with its source/package identity and external build manifest. D8T2 does not
+identify the engine profile by itself. Historical D8T1 frames remain decodable but
+do not contain the aligned window. Reject incomplete/invalid/saturated frames.
 Record p95/p99 as histogram bounds and the observed maximum, with nominal-clock,
-quantisation and instrumentation exclusions. The inclusive interval omits recorder,
-assembly wrapper and some entry/exit overhead; it cannot prove whole-interrupt
-latency. Measure overhead/calibration and stack high-water separately before
-claiming timing safety. The proposed diagnostic has only 1,180 RAM bytes free in
-its current eight-track app-only target build; linked size is not a stack bound.
+quantisation and instrumentation exclusions. The inclusive C interval omits recorder,
+assembly wrapper/prologue and some entry/exit overhead; it cannot prove whole-interrupt
+latency. The nominal 24 MHz clock, microsecond quantisation and render interval
+exclusion of nested TIMER5 work require external clock/wrapper/recorder calibration.
+Measure that overhead and stack high-water separately before claiming timing safety.
+The current FULL8 diagnostic package has only 1,100 linked RAM bytes free; linked
+size and fixed stack allocation do not establish dynamic stack bounds. The older
+1,180-byte app-only margin belongs to the historical pre-D8T2 source described in
+[timing-diagnostic.md](timing-diagnostic.md).
 
 The existing `status`/`dbg` replies expose `audio_late`/`late` and USB audio glitch
 counters. Preserve before/after replies with timestamps and boot identity. These
@@ -70,10 +83,59 @@ rate counters. Separate each stable-rate window instead of combining them.
 
 The existing late counter checks whether DMA moved on during a rendered half; zero
 late does not exclude every missed interrupt, transport fault or audible glitch.
-D8T1 currently lacks per-run late/UAC-overrun/elapsed snapshots. An exact aligned
-window requires additional reviewed collection or an independent instrument.
+D8T2 now carries aligned late/UAC/elapsed snapshots with validity and saturation
+checks. These logical boundaries are tested in host fixtures; they do not prove
+physical timer calibration, interrupt deadlines or USB interleavings. D8T1 lacks
+this window and must retain its narrower interpretation.
 Do not use the lifetime maximum as a run-specific maximum. Preserve failures and
 skips, and keep #14 open until its actual physical criteria and prerequisites pass.
+
+## Current FULL8 diagnostic candidate
+
+The existing FULL package path was actually run at the exact candidate above with
+`--dabbl8 0.1.0 --timing-diagnostic --engine-profile full`, pinned pi32v2 tooling,
+a sparse AC79 SDK with all three required package inputs verified, and fresh
+sample/header generation. The app is 484,152 bytes; `.data+.bss` uses 97,204 of
+98,304 bytes, and pool state uses 335,240 of 344,064 bytes. The loader raw image and
+wrapped 6,930-byte `ota.bin` are byte-identical to the audited Felucca baseline.
+Loader source, package construction and flash boundaries are unchanged.
+
+| Candidate artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| FULL8 diagnostic app | 484152 | `ea544b6c95dccce3ade0599c17098fa19847be2d3bf134c4a78fda96ba58b428` |
+| Unchanged loader `ota.bin` | 6930 | `d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b` |
+| `dabbl8-0.1.0-timing-diagnostic.fwsc` | 610086 | `9044a5919ac5c327d8462c8998482388c6082965c1c9cb304ec4091d7429576f` |
+
+Build/package integrity checks passed; unchanged static budgets still fail:
+audio IRQ score 55,772 versus 37,502 and UAC resampler 562 versus 504. These
+heuristic scores are not physical timings. The package identity is `FM-1_8010`,
+version `v0.1.0-timing`; identity alone is insufficient to bind a measurement to
+this exact package. Retain its checksum and external manifest. Core/Breaks package
+construction remains refused; their app-only artifacts are not installation packages.
+
+The compact [build receipt](evidence/2026-10-11-full8-diagnostic-package/report.json)
+binds the exact source, dependency pins, compiler commands, loader comparison and
+limitations. Raw logs, ELF/disassembly, SDK/vendor inputs, package and private backups
+remain outside Git in ignored local evidence. This is a reviewable diagnostic
+candidate, not a shipping release, successful install or authorisation to install.
+
+## Phased qualification and remaining software gates
+
+The roadmap checklists are planning gates. Operational saved slots in #9 need #13,
+#13 needs #12, and #12 lists #9; this is not a reason to weaken acceptance criteria
+or enable writes. Collect bounded volatile/read-only #12/#14 measurements only after
+separate owner installation authorisation and recovery preparation, while leaving
+final issue acceptance open. Original V15 data need not already be migrated to the
+native pool to measure volatile eight-track audio.
+
+Eight-track production application flash writes and the native migration coordinator's write
+backend are both intentionally closed. Read-only verified `RESUME` can release its
+workspace and establish catalog/autosave policy; that policy does not grant physical
+write authority. An actual physical native write backend, per-operation authority,
+restore interface and qualified persistent Mac capture/session transport remain
+separate implementation/qualification work before native migration or persistence.
+The current instrument-session command is simulation-only. Do not infer physical
+SAVE, replacement-cut, reboot/recall or rollback evidence from its host tests.
 
 ## Release evidence
 

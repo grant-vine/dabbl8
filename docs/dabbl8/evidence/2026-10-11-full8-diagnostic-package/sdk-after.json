@@ -1,0 +1,11 @@
+{
+  "commit": "d179b4484759423312073f5fbb232501aa491047",
+  "populated_tracked_entries_verified": 5,
+  "sparse_entries_omitted": 15253,
+  "required_inputs": [
+    "cpu/wl82/tools/cfg/eq_cfg_hw.bin",
+    "cpu/wl82/tools/cfg_tool.bin",
+    "cpu/wl82/tools/uboot.boot"
+  ],
+  "worktree_clean": true
+}

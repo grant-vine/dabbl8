@@ -1,0 +1,9 @@
+{
+  "raw_report_sha256": "28a65b5ffa78b2cca9748b9d27f068c73f4ce458f2ccd479b3feda412a981d53",
+  "raw_manifest_sha256": "a0182e71248e7acb077d11bf3a1e339a370985f521994bc370e4844bc8d24a7f",
+  "raw_manifest_entries": 124,
+  "raw_evidence_ignored_local_directory": ".local-baseline/full8-diagnostic-package-qualification/current53",
+  "authority_audit_report_sha256": "71007c8fbd94438321fbe20456dbad6a9c77c8172649601cbe3de0bb792b016e",
+  "authority_audit_manifest_sha256": "423563942201426362bea2328fe2c41cd6190fffc8b4231291cd80fd1d83431d",
+  "scope": "Compact metadata only. No app, package, loader, ELF, vendor inputs, private backup or SDK payload copied into Git."
+}

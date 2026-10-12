@@ -1,0 +1,32 @@
+{
+  "utc": "2026-10-11T21:05:33.848823+00:00",
+  "toolchain": {
+    "archive_sha256": "f686586bcfb45e0f0bb27fd2b39c7a7f313cb4f0e88a66a14da621ffa8225958",
+    "regular_files": 599,
+    "symlinks": 44,
+    "entries": 694,
+    "extra_entries": 0
+  },
+  "sdk": {
+    "commit": "d179b4484759423312073f5fbb232501aa491047",
+    "populated_tracked_entries_verified": 5,
+    "sparse_entries_omitted": 15253,
+    "required_inputs": [
+      "cpu/wl82/tools/cfg/eq_cfg_hw.bin",
+      "cpu/wl82/tools/cfg_tool.bin",
+      "cpu/wl82/tools/uboot.boot"
+    ],
+    "worktree_clean": true
+  },
+  "sdk_inputs": {
+    "cpu/wl82/tools/uboot.boot": "4e3b4c220dc96641cb5a723f41e68ce41d5261ae9434bb33fbd7f2c59976ded4",
+    "cpu/wl82/tools/cfg_tool.bin": "276579954f076886a6a7694f65dc71c034a63a2c204b76749065c0ac7b010d1b",
+    "cpu/wl82/tools/cfg/eq_cfg_hw.bin": "41167491bffed4651750719c973d2758adeb9021a5670d02d6a53c85ed80ea7d"
+  },
+  "image": "debian@sha256:7c7b2c966bc9ee8cedfeef67e0e279108992c77681fa595db4a9d65c06ccc587",
+  "python": "3.14.8 (main, Sep 30 2026, 17:55:09) [Clang 21.0.0 (clang-2100.3.34.2)]",
+  "dependencies": {
+    "Pillow": "12.3.0",
+    "fonttools": "4.66.1"
+  }
+}

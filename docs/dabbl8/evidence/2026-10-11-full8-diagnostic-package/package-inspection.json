@@ -1,0 +1,27 @@
+{
+  "product": "FM-1_8010",
+  "logical_bytes": 610066,
+  "header_crc_pass": true,
+  "entry_list_crc_pass": true,
+  "members": [
+    {
+      "type": 0,
+      "index": 0,
+      "name": "flash.bin",
+      "offset": 1024,
+      "bytes": 602112,
+      "sha256": "c70f69f01f24122cc9e23abb0af194eb129c06d703770ecbd5b41030efa53b0e"
+    },
+    {
+      "type": 100,
+      "index": 1,
+      "name": "ota.bin",
+      "offset": 603136,
+      "bytes": 6930,
+      "sha256": "d71d1b7c12adede951605e758a3580dacccedc427d49e1fceaf51decccc68a4b"
+    }
+  ],
+  "loader_exact_baseline": true,
+  "flash_extent": "0x93000",
+  "app_slot": "0x8dfbc"
+}
