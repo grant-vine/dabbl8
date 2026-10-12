@@ -25,6 +25,22 @@ static void settings_reboot(void)
 }
 int main(void)
 {
+ /* Both appended brand IDs must retain their meaning in own-format settings.
+  * Exercise the real serializer, importer and private virtual-NOR writer;
+  * this does not claim full-device backup or physical recovery. */
+ const unsigned brand_palettes[]={UI_DABBL_DARK_INDEX,UI_DABBL_LIGHT_INDEX};
+ for(unsigned i=0;i<2;i++) {
+  settings_seed();settings.palette=brand_palettes[i];settings.lowcut=2;
+  favorites.user=4;settings_hold=2;settings_leds=LEDS_INV;
+  persist_t exported=persist_saved;settings_export(&exported);
+  CHECK(exported.palette==palette_to_stored(brand_palettes[i]));
+  persist_t original=exported;settings.palette=UI_GREY_INDEX;
+  CHECK(settings_import(&exported,sizeof exported)==1);
+  CHECK(settings.palette==brand_palettes[i]&&!memcmp(&original,&exported,sizeof exported));
+  settings_save();CHECK(!persist_pending&&physical_calls>0);
+  settings_reboot();CHECK(settings.palette==brand_palettes[i]&&settings.lowcut==2&&favorites.user==4&&settings_hold==2&&settings_leds==LEDS_INV);
+  unsigned before=physical_calls;settings_save();CHECK(!persist_pending&&physical_calls==before);
+ }
  settings_seed();unsigned calls=physical_calls;settings_poll();CHECK(!physical_calls&&!persist_pending); /* normalization alone never saves */
  settings.palette=(UI_GREY_INDEX+1)%NPALETTES;settings.lowcut=2;favorites.filter=1;favorites.user=4;settings_hold=2;settings_leds=LEDS_INV;
  memcpy(baseline,nor,sizeof nor);settings_save();CHECK(!persist_pending&&physical_calls>calls&&!d8up.active);
