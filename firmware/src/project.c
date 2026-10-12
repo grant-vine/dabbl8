@@ -1200,7 +1200,7 @@ static void project_load(uint32_t slot)
 #if FELUCCA_FLASH && FELUCCA_SLICE && D8BUILD_HAS(13)
 #include "slice_store.c"                          /* SLICE's MAN slices, kept in the user slots */
 #endif
-#if FELUCCA_FLASH
+#if FELUCCA_FLASH || defined(D8_SETTINGS_SESSION_TEST)
 static persist_t persist_saved;
 static uint8_t persist_pending;                 /* 1 requested, 2 waiting after a flash error */
 static uint32_t persist_retry_ms;
@@ -1341,12 +1341,12 @@ static void settings_poll(void)
 #if NTRK == 8 && D8_MIGRATION_SESSION
     if(d8mc_blocked())return; /* Before settings_export changes zoom or slice state. */
 #endif
-#if FELUCCA_FLASH
+#if FELUCCA_FLASH || defined(D8_SETTINGS_SESSION_TEST)
     persist_t p;
-#if FELUCCA_SLICE && D8BUILD_HAS(13)
+#if FELUCCA_FLASH && FELUCCA_SLICE && D8BUILD_HAS(13)
     slc_store_poll();                              /* SLICE's slices edited on the SLICES page */
 #endif
-    if (!persist_pending || !flash_ok || transport_busy() ||
+    if (!persist_pending || persist_pending==3u || !flash_ok || transport_busy() ||
         (persist_pending == 2u && (uint32_t)(fm1_ms - persist_retry_ms) < 1000u))
         return;
     p = persist_saved;
@@ -1355,11 +1355,21 @@ static void settings_poll(void)
         persist_pending = 0;
         return;                                    /* unchanged: no erase cycle */
     }
-    if (st_save(OBJ_SETTINGS, &p, sizeof p) == 0) {
+#if NTRK == 8 && D8_PRESET_SESSION
+    int rc=d8settings_commit(&p,sizeof p);
+    if(rc==D8POOL_BUSY)return; /* requested UI state remains queued */
+#else
+    int rc=st_save(OBJ_SETTINGS,&p,sizeof p);
+#endif
+    if (rc == 0) {
         persist_saved = p;
         persist_pending = 0;
     } else {
+#if NTRK == 8 && D8_PRESET_SESSION
+        persist_pending=(rc==D8POOL_UNSUPPORTED||rc==D8POOL_INVALID||rc==D8POOL_AMBIGUOUS)?3u:2u;
+#else
         persist_pending = 2;
+#endif
         persist_retry_ms = fm1_ms;
     }
 #endif
@@ -1367,7 +1377,12 @@ static void settings_poll(void)
 
 static void settings_save(void)
 {
-#if FELUCCA_FLASH
+#if FELUCCA_FLASH || defined(D8_SETTINGS_SESSION_TEST)
+#if NTRK == 8 && D8_PRESET_SESSION
+    /* Explicit UI/editor requests revoke stale ancillary transaction inputs. */
+    if(d8_capture_change.epoch==UINT32_MAX){persist_pending=3;return;}
+    d8_capture_store_changed();
+#endif
     persist_pending = 1;
 #endif
     settings_poll();

@@ -48,7 +48,7 @@ static uint32_t ed_ui_save(void)
 {
     settings_save();
 #if FELUCCA_FLASH
-    if (!flash_ok || persist_pending == 2u) return 3;
+    if (!flash_ok || persist_pending >= 2u) return 3;
     if (persist_pending == 1u) return 4;
     if (palette_from_stored(persist_saved.palette) != settings.palette) return 3;
 #ifdef FELUCCA_MONITOR

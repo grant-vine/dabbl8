@@ -26,7 +26,7 @@ static uint32_t ed_menu_save(void)
 {
     settings_save();
 #if FELUCCA_FLASH
-    if (!flash_ok || persist_pending == 2u) return 3;
+    if (!flash_ok || persist_pending >= 2u) return 3;
     if (persist_pending == 1u) return 4;
     {
         persist_t p = persist_saved;
