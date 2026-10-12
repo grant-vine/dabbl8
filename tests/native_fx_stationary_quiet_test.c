@@ -81,12 +81,30 @@ int main(void)
  FT16(comb,&rev_comb[0],8192);CHECK(!fx_resident_quiet());rev_clear();
 
  fx.sp_hp=1;CHECK(!fx_resident_quiet());fx.sp_hp=0;
+ /* Old, unread history may remain nonuniform under the current delay.
+  * Increasing the computed delay revokes before that history can sound. */
+ room_seed();uint32_t old_dl=delay_samples(),old_at=(fx.dly_w-old_dl-500u)&(DLY_LEN-1u);
+ FT16(delay,&dly_buf[old_at],16384);
+ unsigned settle=old_dl>1356?old_dl:1356;
+ for(unsigned i=0;i<settle;i++)CHECK(!render_sample());
+ CHECK(dly_buf[old_at]==16384&&fx_resident_quiet());
+ uint32_t age=(fx.dly_w-old_at)&(DLY_LEN-1u);int old_time=song.g[G_DTIME],larger=-1;uint32_t larger_dl=0;
+ for(int candidate=GP[G_DTIME].min;candidate<=GP[G_DTIME].max;candidate++){
+  song.g[G_DTIME]=(int16_t)candidate;uint32_t current=delay_samples();
+  if(current>age&&current!=old_dl){larger=candidate;larger_dl=current;break;}
+ }
+ song.g[G_DTIME]=(int16_t)old_time;CHECK(larger>=0);
+ if(larger>=0){
+  song.g[G_DTIME]=(int16_t)larger;CHECK(!fx_resident_quiet()&&fx_uniform_wait.delay_span==old_dl);
+  unsigned audible=0;for(unsigned i=0;i<=larger_dl-age+2;i++)if(render_sample())audible=1;
+  CHECK(audible&&!fx_resident_quiet());
+ }
  /* A DAC-silent delay line with a future audible impulse is never admitted. */
  fresh_fx();song.g[G_DFDBK]=0;song.g[G_DMIX]=127;
  uint32_t at=(fx.dly_w-delay_samples()+100u)&(DLY_LEN-1u);FT16(delay,&dly_buf[at],16384);
  CHECK(!fx_resident_quiet());unsigned sounded=0;
  for(unsigned i=0;i<200;i++){int32_t out=render_sample();if(out)sounded=1;if(i<100)CHECK(!fx_resident_quiet());}
  CHECK(sounded);
- printf("Stationary FX: %u checks, %u failures; exact ROOM/AP2 and SPRING, request1/17/64 (CTL subdivision), parameter/model/external revocation, future impulse refusal\n",checks,failures);
+ printf("Stationary FX: %u checks, %u failures; exact ROOM/AP2 and SPRING, block1/17/CTL + split64 request, parameter/model/external revocation, current/expanded-window impulse refusal\n",checks,failures);
  return failures!=0;
 }
