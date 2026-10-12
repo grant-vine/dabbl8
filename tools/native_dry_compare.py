@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
 """Bounded exact-parent mixer comparison from local Git; no fetch or generation."""
-import argparse, hashlib, io, json, shlex, subprocess, tarfile
+import argparse, hashlib, io, json, re, shlex, subprocess, tarfile
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PARENT = '8105e2aa45f40136c7a0bc64f57b509219e1a865'
@@ -38,7 +38,8 @@ def main():
             (out / (name + '-' + phase + '.stderr')).write_bytes(q.stderr)
             if q.returncode: raise SystemExit(name + ' ' + phase + ' failed: ' + str(q.returncode))
         reports[name] = q.stdout.decode()
-    if not reports['parent'].startswith('dry sends: cases=832 checks=40032 trace=') or reports['parent'] != reports['candidate']:
+    match = re.fullmatch(r'dry sends: cases=832 checks=(\d+) trace=[0-9a-f]{16}\n', reports['parent'])
+    if not match or int(match.group(1)) < 40032 or reports['parent'] != reports['candidate']:
         raise SystemExit('Mixer/state trace differs from the frozen parent')
     receipt = {'parent_commit': PARENT, 'result': 'PASS', 'trace': reports['candidate'].strip(),
                'source_sha256': {f: hashlib.sha256((ROOT / f).read_bytes()).hexdigest() for f in

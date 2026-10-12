@@ -36,6 +36,12 @@ int main(void){int32_t out[CTL*2];
   int16_t saved[3]={t->p[P_CHOR],t->p[P_DLY],t->p[P_REV]};
   /* Zero stored sends become wet through modulation; wet become dry. */
   if(mask==0||mask==7){t->p[P_M1SRC]=MS_EXPR;t->p[P_M1DST]=MD_REV;t->p[P_M1AMT]=mask? -63:63;t->ex_off=0;}
+  if(mask==7){
+   t->p[P_M1SRC+3]=MS_EXPR;t->p[P_M1DST+3]=MD_CHO;t->p[P_M1AMT+3]=-63;
+   t->p[P_M1SRC+6]=MS_EXPR;t->p[P_M1DST+6]=MD_DLY;t->p[P_M1AMT+6]=-63;
+   mod_begin(t);TEST(t->p[P_CHOR]==0&&t->p[P_DLY]==0&&t->p[P_REV]==0);mod_end(t);
+   TEST(t->p[P_CHOR]==saved[0]&&t->p[P_DLY]==saved[1]&&t->p[P_REV]==saved[2]);
+  }
   trk_note_on(t,engine==10?36:60,100);trk_note_on(t,engine==10?42:67,92);
   for(unsigned b=0;b<24;b++){
    if(b==4)t->p[P_SLCR]=2;if(b==8)t->p[P_SLCR]=0;
