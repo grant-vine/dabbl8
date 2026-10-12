@@ -79,3 +79,9 @@ with simulated MIDI/virtual NOR and the actual native/WASM archive codec. Build
 the browser codec explicitly using `web/build-d8archive.sh` and the existing
 pinned Emscripten 4.0.17 first. Its source/artifact identity is checked; the runner
 refuses missing/stale inputs and never downloads or builds them automatically.
+
+The `dry-sends` check compares the real mixer and state trace against immutable
+local parent8105e2a. It archives only local Git source (no fetch), compiles both
+against identical cached headers and fatal sanitizers, and refuses differing or
+empty traces. The optional cost probe records host measurements without changing
+timing budgets or claiming target cycles.

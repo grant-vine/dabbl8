@@ -31,6 +31,8 @@ MAP = {
         'tests/native_project_client_bridge.c', 'tests/native_project_client_test.mjs'},
     'own-project-transfer': {'firmware/src/native_project_transfer.c',
         'tests/native_project_transfer_test.c'},
+    'dry-sends': {'tests/native_dry_sends_test.c',
+        'tools/native_dry_compare.py'},
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'tests/run_tests.sh'},
 }
@@ -68,6 +70,13 @@ def recipes(checks, cc, out, base):
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
+            continue
+        if name == 'dry-sends':
+            steps.append({'name': 'dry-send-parent-equivalence',
+                'argv': [sys.executable, 'tools/native_dry_compare.py', '--cc', ' '.join(cc),
+                         '--out', str(out / 'dry-send-equivalence')],
+                'requires': ['tools/native_dry_compare.py', 'tests/native_dry_sends_test.c'] +
+                    ['build/gen/' + p for p in GEN]})
             continue
         if name == 'fx-quiet':
             # Exact qualified focused command; these defines make its existing
