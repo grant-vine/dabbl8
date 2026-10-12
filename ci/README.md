@@ -85,3 +85,9 @@ local parent8105e2a. It archives only local Git source (no fetch), compiles both
 against identical cached headers and fatal sanitizers, and refuses differing or
 empty traces. The optional cost probe records host measurements without changing
 timing budgets or claiming target cycles.
+
+Diagnostic console capture has a `--check timing-capture` recipe mapped only to
+the host collector and its scripted transport test. It runs the bounded fake
+transport suite, never `--capture`, serial enumeration, MIDI or firmware builds.
+Missing collector/parser/test inputs refuse before execution. Shared report-parser
+edits remain unmapped and require separately reviewed broader parser coverage.

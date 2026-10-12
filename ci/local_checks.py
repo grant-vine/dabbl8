@@ -34,6 +34,7 @@ MAP = {
     'dry-sends': {'tests/native_dry_sends_test.c',
         'tools/native_dry_compare.py'},
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
+    'timing-capture': {'tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'tests/run_tests.sh'},
 }
 
@@ -70,6 +71,12 @@ def recipes(checks, cc, out, base):
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
+            continue
+        if name == 'timing-capture':
+            steps.append({'name': 'timing-capture-scripted-transport',
+                'argv': [sys.executable, 'tests/dabbl8_timing_capture_test.py'],
+                'requires': ['tools/dabbl8_timing_capture.py',
+                    'tools/dabbl8_timing_report.py', 'tests/dabbl8_timing_capture_test.py']})
             continue
         if name == 'dry-sends':
             steps.append({'name': 'dry-send-parent-equivalence',

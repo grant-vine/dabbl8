@@ -12,14 +12,17 @@
     "plan-only CLI against current local installation candidate manifest",
     "Python compile check using writable temporary bytecode cache",
     "sh -n tests/run_tests.sh",
-    "git diff --check"
+    "git diff --check",
+    "Affected local timing-capture and selector recipes: SELECTED_CHECKS_PASS; no device path or full build invoked"
   ],
   "source_sha256": {
     "tools/dabbl8_timing_capture.py": "9191cef6ebb8f5942a5525bcabaab2cc454a834965a9879cba31375380756ec4",
     "tools/dabbl8_timing_report.py": "b2d14cbb1bd3c16908ae6a9635f5d5cbd673d8608f75f84712f2a73f8af4d4c0",
     "tests/dabbl8_timing_capture_test.py": "87bf45503b4563d054b9b25439248ca66d7c2cd7575d098e4c310bcb63835772",
     "docs/dabbl8/diagnostic-capture-workflow.md": "ebb59edabd616019d85852fee0b65c737de0b243e3b8ed7a9f6c2901b91bc017",
-    "docs/dabbl8/diagnostic-workloads.json": "cad3054abc000c755a70c3cc8b23ba2d0c50b67aea392c1a4e8c6cc1f574a344"
+    "docs/dabbl8/diagnostic-workloads.json": "cad3054abc000c755a70c3cc8b23ba2d0c50b67aea392c1a4e8c6cc1f574a344",
+    "ci/local_checks.py": "c5562f6e3b0df34c2a3f8eb0d1723ef8cd6fd7f9fb01142de9e044b1e022a44b",
+    "ci/local_checks_test.py": "7a737c2575e3f47179a41642e8d0407ed910641b424b4b23cbdcad82b14db2ca"
   },
   "initial_check_failure": "py_compile default macOS cache path was outside writable sandbox; repeated successfully with explicit private temporary bytecode cache.",
   "remaining": [
