@@ -23,6 +23,33 @@ class SelectionTest(unittest.TestCase):
         self.assertFalse(unknown)
         self.assertEqual(len(self.plan(['README.md'])['commands']), 1)
 
+    def test_timing_capture_has_only_scripted_transport_recipe(self):
+        for path in ('tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'):
+            p = self.plan([path])
+            self.assertEqual(p['checks'], ['diff', 'timing-capture'])
+            self.assertEqual([step['name'] for step in p['commands']], ['diff', 'timing-capture-scripted-transport'])
+            self.assertEqual(p['commands'][1]['argv'][1:], ['tests/dabbl8_timing_capture_test.py'])
+            self.assertEqual(p['status'], 'REFUSED')  # inputs absent, never substituted
+            self.assertFalse(any('--capture' in step['argv'] or 'run_tests.sh' in step['argv'] for step in p['commands']))
+        # Shared report-parser edits need separate broader coverage; no silent narrow qualification.
+        selected, unknown = checks.select(['tools/dabbl8_timing_report.py'])
+        self.assertEqual(selected, {'diff'})
+        self.assertEqual(unknown, ['tools/dabbl8_timing_report.py'])
+
+    def test_timing_capture_missing_input_refuses_before_execution(self):
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            for name in ('tools/dabbl8_timing_capture.py', 'tools/dabbl8_timing_report.py', 'tests/dabbl8_timing_capture_test.py'):
+                path = repo/name; path.parent.mkdir(parents=True, exist_ok=True); path.touch()
+            p = checks.make_plan(repo, ['tools/dabbl8_timing_capture.py'], (), ['clang'], Path('out'), 'HEAD')
+            self.assertEqual(p['status'], 'PLAN')
+            (repo/'tools/dabbl8_timing_report.py').unlink()
+            with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(checks.main(['--paths', 'tools/dabbl8_timing_capture.py', '--run']), 2)
+                run.assert_not_called()
+                self.assertFalse((repo/'build/local-checks').exists())
+
     def test_known_storage(self):
         p = self.plan(['firmware/src/storage.c'])
         self.assertEqual(p['checks'], ['diff', 'storage'])

@@ -1,5 +1,11 @@
 # First-device evidence plan
 
+Current collection preparation (12 October 2026): see
+[diagnostic capture workflow](diagnostic-capture-workflow.md) and its unexecuted
+workload sheet. The latest bundle has 2,220 bytes normal and 1,084 bytes diagnostic
+linked RAM margin; the build/PR states and margins below describe historical
+preparation. No physical measurements or installation are established by either.
+
 This is preparation for issues #13, #14 and #20, not a completed install or a
 hardware-qualified release. The current plan was refreshed on 2026-10-11 against
 the experimental diagnostic candidate in draft PR #138, `53d20f03cea3959b730c0afb9ae2b0baf779301e`, tree
