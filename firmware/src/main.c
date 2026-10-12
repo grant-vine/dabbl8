@@ -101,6 +101,9 @@ static void felucca_init(void)
 {
 #if NPART >= NVOICE
     project_native_reset();
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    d8ls_reset();
+#endif
 #endif
     uint32_t i;
     chain_defaults(&chain_config);
@@ -270,6 +273,7 @@ static void fm1_main(void)
         ui_input();
 #if NTRK == 8 && D8_MIGRATION_SESSION
         d8mc_poll();
+        d8ls_poll();
 #endif
         settings_poll();                              /* queued settings save: only while stopped */
         autosave_poll();                              /* (1.2) the music, stopped and idle: project.c */

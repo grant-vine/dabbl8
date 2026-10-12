@@ -131,7 +131,8 @@
 #include "native_migration_execute.c" /* bounded internal component; no protocol grant/caller */
 #include "native_source_equivalence.c" /* readonly source/plan equality; no authority/caller */
 #include "native_migration_capture_binding.c" /* private earlier-capture binding */
-#include "native_migration_session.c" /* connected workflow; shipping writes quarantined */
+#include "native_migration_session.c" /* connected initializer remains quarantined */
+#include "native_local_session.c" /* actual local native operation coordinator */
 #endif
 #endif
 #if FELUCCA_CDC

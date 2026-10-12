@@ -192,6 +192,7 @@ ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_proj
 run "offline native project-set archive: exact originals, sparse roles and whole-set readback" python3 tests/native_project_archive_test.py "$OUT/dabbl8_project_archive"
 
 if [ -f build/gen/felucca_tables.h ]; then
+    run "exact target HAL ranges for local native primitive spies" python3 tests/native_flash_ranges_test.py build/gen
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/dabbl8_project_convert" firmware/src/d8p1.c tools/dabbl8_project_convert.c -lm
     run "offline D8P1 bundle: original snapshots, migration reports and verified references" python3 tests/project_conversion_test.py "$OUT/dabbl8_project_convert"
     ${CC%% *} -std=c11 -O2 -Wall -Wextra -Werror -Ifirmware/src -o "$OUT/dabbl8_pool_initialize" firmware/src/d8p1.c firmware/src/d8pool.c tools/dabbl8_pool_initialize.c
@@ -403,6 +404,9 @@ if [ -f build/gen/felucca_tables.h ]; then
         name="native_readonly_boot_${fm4}_${slice}"
         $CC -O2 -w -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_readonly_boot_test.c -lm
         run "native read-only cold boot/legacy fallback FM4=$fm4 SLICE=$slice" "$OUT/$name"
+        name="native_local_save_${fm4}_${slice}"
+        $CC -O2 -w -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -o "$OUT/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_local_save_test.c -lm
+        run "local native SAVE/rename/autosave and consent/cut safety FM4=$fm4 SLICE=$slice" "$OUT/$name"
     done; done
     run "connected collector/session: actual C bridge, independent originals, malformed replies and explicit native resume" python3 tests/native_migration_session_host_test.py "$OUT/native_migration_session_test" "$OUT/dabbl8_project_convert" "$OUT/dabbl8_pool_initialize" "$OUT/dabbl8_project_archive" "$OUT/native_migration_session_closed"
     run "INFO discovery: actual capture suffix, legacy negotiation and built editor import" node web/test_d8info.mjs "$OUT/instrument_capture_test" "$OUT/track_client_bridge4" build/felucca.fwsc
@@ -889,6 +893,9 @@ else
         name="native_readonly_boot_${fm4}_${slice}"
         ${CC%% *} -O1 -g -w -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_readonly_boot_test.c -lm
         run "strict ASan/UBSan: native read-only cold boot/legacy fallback FM4=$fm4 SLICE=$slice" "$A/$name"
+        name="native_local_save_${fm4}_${slice}"
+        ${CC%% *} -O1 -g -w -DFELUCCA_FM4=$fm4 -DFELUCCA_SLICE=$slice -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -o "$A/$name" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_local_save_test.c -lm
+        run "strict ASan/UBSan: local native SAVE/rename/autosave FM4=$fm4 SLICE=$slice" "$A/$name"
     done; done
     run "ASan/UBSan: actual connected collector/session, independent originals and hostile replies" python3 tests/native_migration_session_host_test.py "$A/native_migration_session_test" "$A/dabbl8_project_convert" "$A/dabbl8_pool_initialize" "$A/dabbl8_project_archive" "$A/native_migration_session_closed"
     run "ASan/UBSan: actual capture INFO and bounded discovery negotiation" node web/test_d8info.mjs "$A/instrument_capture_test" "$A/track_client_bridge4" build/felucca.fwsc

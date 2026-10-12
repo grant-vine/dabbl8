@@ -1308,6 +1308,9 @@ static void style_apply(void)
 static void ui_draw_page(uint32_t counting);
 static void ui_draw(void)
 {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8ls_blocked()){d8ls_draw();return;}
+#endif
 #if NPART >= NVOICE
     if(cv_draw_deferred)ui.force=1; /* carry a refused one-shot into the next safe frame */
     cv_draw_deferred=0;

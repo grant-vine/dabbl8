@@ -7,8 +7,9 @@
 /* Pre-migration protection only. There is deliberately no grant, setter,
  * retained permission or protocol authorization. Native recognition/binding
  * cannot prove originals retention, completed migration or RAM adoption.
- * A future separately reviewed trusted coordinator must replace this policy;
- * constant closure is not a completed persistence implementation. */
+ * Local native operation tickets use a separate narrow RAM-driver path.
+ * This general gate stays closed for historical/settings/sample writes and
+ * connected initialization; recognition alone never authorizes any writer. */
 static int d8_instrument_write_allowed(void) { return 0; }
 #endif
 #endif

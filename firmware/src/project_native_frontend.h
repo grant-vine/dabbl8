@@ -3,7 +3,7 @@
 #define DABBL8_PROJECT_NATIVE_FRONTEND_H
 #include "d8p1_pool_runtime.h"
 /* Trusted, synchronous main-loop callbacks; context must outlive the binding.
- * Writable bindings require a completed explicit migration. Boot recognition
+ * Writable bindings require separately checked migration or local native intent. Boot recognition
  * uses the separately named read-only binder; it grants no write authority.
  * Callbacks validate the whole current set and must never reenter the UI. */
 typedef struct {

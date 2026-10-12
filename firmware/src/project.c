@@ -685,7 +685,12 @@ static struct {
     uint8_t mode, ready, readonly; /* 0 historical read-only; 1 bound native; 2 native offline */
 } project_native __attribute__((section(".pool")));
 static int project_native_owns_storage(void) { return project_native.mode!=0; }
-static void project_native_reset(void) { memset(&project_native,0,sizeof project_native); }
+static void project_native_reset(void) {
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    d8ls_reset();
+#endif
+    memset(&project_native,0,sizeof project_native);
+}
 static int project_native_status(void)
 { return !project_native.mode?0:project_native.mode==1&&project_native.ready?1:2; }
 static int pn_quiet(void) { return !cv_cpu_active&&!migration_owner&&!transport_busy()&&!transport_req; }

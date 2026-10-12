@@ -78,8 +78,14 @@ int d8p1_autosave_session_poll(void)
     if(rc!=D8POOL_OK&&rc!=D8POOL_EMPTY){native_as.idle=now;return rc;}
     native_as.record=!rc;
     if(!rc){native_as.sequence=record.sequence;if(stored==sig){native_as.saved=stored;return D8POOL_OK;}}
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    if(d8ls.intent){rc=d8ls_autosave_begin();if(rc){native_as.idle=now;return rc;}}
+#endif
     native_as.last=now;native_as.attempted=1;native_as.pending=1;native_as.err=1;
     rc=d8p1_autosave_flash(1);
+#if NTRK == 8 && D8_MIGRATION_SESSION
+    d8ls_autosave_finish(rc); /* retire even a pre-driver refusal */
+#endif
     /* Even OK is reconciled from the committed record, not the pre-save hash.
      * Late changes may produce a different capture or a different current RAM. */
     int checked=nas_reconcile();

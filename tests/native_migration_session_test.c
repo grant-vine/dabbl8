@@ -88,10 +88,12 @@ static void mc_shipping_resume(void)
  go_page(GR_SLOTS);song.g[G_SLOT]=1;ui.act=4;mc_ship_tap(B_OCTUP);
  CHECK(ui.confirm==CF_OVR_PROJ&&!name_on());mc_ship_tap(B_OCTUP);
  CHECK(name_on()&&nm.kind==NK_PROJ_SAVE);mc_ship_tap(B_OCTUP);
- CHECK(!name_on()&&msg_is("MIGRATION REQUIRED")&&!strcmp(saved_name,proj_name));
+ CHECK(!name_on()&&msg_is("SAVE TO CONFIRM")&&!d8ls.intent&&!strcmp(saved_name,proj_name));
+ mc_ship_tap(B_EDIT);d8ls_poll();CHECK(!d8ls_blocked()&&!d8ls.intent);
  go_page(GR_SLOTS);song.g[G_SLOT]=1;mc_ship_tap(B_EDIT);
  CHECK(name_on()&&nm.kind==NK_PROJ_RENAME);mc_ship_tap(B_OCTUP);
- CHECK(!name_on()&&msg_is("MIGRATION REQUIRED")&&!strcmp(saved_name,proj_name));
+ CHECK(!name_on()&&msg_is("SAVE TO CONFIRM")&&!d8ls.intent&&!strcmp(saved_name,proj_name));
+ mc_ship_tap(B_EDIT);d8ls_poll();CHECK(!d8ls_blocked()&&!d8ls.intent);
  CHECK(!physical_calls&&!writes&&music==st_crc32(trk,sizeof trk)&&!memcmp(nor,baseline,sizeof nor));
  /* Dirty only the explicit test edit; the real automatic policy may report
   * refusal/reconcile the old record, never claim the changed music committed. */
@@ -111,6 +113,9 @@ static unsigned mc_preflight_note,mc_readback_note;
 static uint32_t mc_preflight_delay;
 static void mc_preflight_read_hook(void)
 {
+#ifdef D8_LOCAL_READ_HOOK
+ D8_LOCAL_READ_HOOK();
+#endif
 #ifdef D8_BOOT_READ_HOOK
  D8_BOOT_READ_HOOK();
 #endif
@@ -243,6 +248,27 @@ static int mc_bridge(void)
  }
  return failures?1:0;
 }
+/* Same production RAM call sites; primitive SPI/NOR effects alone are spies.
+ * No permission macro grants local operation admission. */
+static int mc_ram_erase_spy(uint32_t a,uint32_t *t){*t=0;int rc=mc_virtual_erase(a);
+#ifdef D8_LOCAL_PRIMITIVE_HOOK
+ D8_LOCAL_PRIMITIVE_HOOK();
+#endif
+ return rc;}
+static int mc_ram_program_spy(uint32_t a,const uint8_t *p,uint32_t n,uint32_t *t){*t=0;int rc=mc_virtual_program(a,p,n);
+#ifdef D8_LOCAL_PRIMITIVE_HOOK
+ D8_LOCAL_PRIMITIVE_HOOK();
+#endif
+ return rc;}
+#include "d8_flash_store_ranges_test.h" /* generated verbatim from actual HAL declarations */
+#define FL_FAR(fn) fn
+#define fl_erase4k_ram mc_ram_erase_spy
+#define fl_prog_ram mc_ram_program_spy
+#include "../firmware/src/native_local_session.c"
+#undef fl_prog_ram
+#undef fl_erase4k_ram
+#undef FL_FAR
+
 #ifndef D8_MIGRATION_SESSION_NO_MAIN
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--bridge"))return mc_bridge();
