@@ -1,6 +1,6 @@
 # Dabbl8 development plan
 
-An open-source eight-track firmware project for the M-VAVE FM-1, based on Felucca. Eight tracks are planned; this branch does not implement them yet.
+An open-source eight-track firmware project for the M-VAVE FM-1, based on Felucca. An eight-track development prototype exists; a hardware-qualified release remains pending.
 
 - Firmware and releases: [grant-vine/dabbl8](https://github.com/grant-vine/dabbl8).
 - Public information: [dabbl.co.za](https://dabbl.co.za), maintained in grant-vine/dabbl.
@@ -9,4 +9,25 @@ An open-source eight-track firmware project for the M-VAVE FM-1, based on Felucc
 
 The audit baseline is Felucca v1.1.5, commit `276f72a4e6ea8a12499a7a6819aadf3165126755`. Fork main was observed at `ac6bfcbd76ee3de79eb461719e8d123b5512aa3c` with a v1.1.5.1 README. Review that delta deliberately in the first build issue; do not call a new baseline tested simply because it is newer.
 
-Keep upstream credits, LICENSE and LICENSING.md. No Dabbl8 binary has been built or installed as part of this planning work. The inherited README describes upstream Felucca, not achieved Dabbl8 capabilities.
+Keep upstream credits, LICENSE and LICENSING.md. Baseline and development builds have retained local evidence; no Dabbl8 device installation or release qualification is claimed. The inherited README describes upstream Felucca, not achieved Dabbl8 capabilities.
+
+## Current install policy — 12 October 2026
+
+The required first-install behavior is to reset previous firmware projects, autosave, settings,
+user presets and user samples within the approved user-state map. Installation
+guidance must disclose this before flashing. First-use formatting is part of
+initial boot; it is not claimed complete merely because the application was
+flashed. Loader, OTA, calibration and physical boundaries remain unchanged.
+
+Production first-use integration is still under development; this policy does
+not claim the reset path has been completed or tested on a device.
+
+Dabbl8 manages its own project versions and firmware upgrades. Recognized Dabbl8
+data must survive ordinary upgrades and reboot; unsupported or damaged Dabbl8
+formats require an explicit recovery/reset decision, not automatic destruction.
+Migration from vendor, Felucca or other firmware is not a release requirement.
+Existing legacy-conversion work remains available as historical developer tooling.
+
+See AGENTS.md for local-only verification and the authoritative GitHub roadmap for
+current acceptance gates. Do not repeat completed baseline/layout work or resume
+external-data migration work from older planning snapshots.

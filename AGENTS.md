@@ -15,3 +15,18 @@
 - Keep local logs and generated evidence outside tracked source, under `build/`
   or `.local-baseline/`. Never commit vendor firmware, credentials or private backups.
 - Do not rewrite golden audio hashes or budgets to force a pass. Preserve licenses.
+
+## Install and data compatibility policy
+
+- First installation is a clean reset of the previous firmware's user data.
+  Clearly disclose that projects, autosave, settings, user presets and user samples
+  are reset. Sample-slot capacity remains; previous sample contents do not.
+- Do not implement or qualify migration from vendor, Felucca or other firmware
+  as a release prerequisite. Existing converters are historical/developer tools.
+- Preserve recognized Dabbl8 data on normal reboots and firmware upgrades. Support
+  project/version migration only for Dabbl8's own formats when needed. Unknown or
+  damaged Dabbl8 formats must not be silently treated as a fresh installation.
+- Make first-use formatting restartable after power loss within the approved
+  user-state map. Do not alter loader, OTA, calibration or flash boundaries.
+- A clean-install policy is not permission to flash a device. Installation and
+  physical erase/write operations still require a separate owner instruction.
