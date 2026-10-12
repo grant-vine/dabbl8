@@ -355,6 +355,10 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "native SRC: exact frozen parent across every phase and short block" "$OUT/native_uac_history_test"
     $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_uac_history_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_history_test.c -lm
     run "native SRC TONE: exact parent histories and autonomous refusal" "$OUT/native_uac_history_tone_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_uac_packet_summary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_packet_summary_test.c -lm
+    run "native packet summary: frozen parent bytes/state and exact local reduction" "$OUT/native_uac_packet_summary_test"
+    $CC -O2 -w -DFELUCCA_UAC_TONE=1 -Ibuild/gen -Ifirmware/src -o "$OUT/native_uac_packet_summary_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_packet_summary_test.c -lm
+    run "native TONE packet summary: unchanged parent bytes/state and local reduction" "$OUT/native_uac_packet_summary_tone_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
     run "native signature and output-queue integration: natural drain/save/restore" "$OUT/native_autosave_integration_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
@@ -824,6 +828,10 @@ else
     run "ASan/UBSan: exact parent SRC histories, all phases and short blocks" "$A/native_uac_history_test"
     $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_uac_history_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_history_test.c -lm
     run "ASan/UBSan: exact TONE SRC parent and refusal" "$A/native_uac_history_tone_test"
+    $SCC -o "$A/native_uac_packet_summary_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_packet_summary_test.c -lm
+    run "ASan/UBSan: exact packet summary parent/state oracle (inherited DSP exclusions)" "$A/native_uac_packet_summary_test"
+    $SCC -DFELUCCA_UAC_TONE=1 -o "$A/native_uac_packet_summary_tone_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_uac_packet_summary_test.c -lm
+    run "ASan/UBSan: exact TONE packet summary (inherited DSP exclusions)" "$A/native_uac_packet_summary_tone_test"
     $SCC -o "$A/native_autosave_integration_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_autosave_integration_test.c -lm
     run "ASan/UBSan: native signature and natural output-drain integration" "$A/native_autosave_integration_test"
     $SCC -o "$A/native_quiet_autosave_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_quiet_autosave_test.c -lm
