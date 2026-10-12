@@ -1,0 +1,17 @@
+{
+  "scope": "Current own PER4 settings serialization/import and virtual-NOR save/reboot; not a complete instrument backup or hardware qualification",
+  "base_commit": "8f78438f9eac9c92e54db548c82055351d3c387c",
+  "palettes": [
+    "DABBL D",
+    "DABBL L"
+  ],
+  "normal_checks": 37312,
+  "sanitized_checks": 37312,
+  "failures": 0,
+  "firmware_changes": false,
+  "device_access": false,
+  "commands": [
+    "clang -O2 -w -Ibuild/gen -Ifirmware/src firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_settings_session_test.c -lm",
+    "clang -O1 -g -w -Ibuild/gen -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_settings_session_test.c -lm"
+  ]
+}

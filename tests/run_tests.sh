@@ -341,6 +341,8 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "D8P1 actual runtime shared-pool save, recall and autosave policy" "$OUT/d8p1_pool_runtime_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/shared_pool_scan_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/shared_pool_scan_test.c -lm
     run "native shared-pool preflight: bounded scans, copied-body integrity and late mutation/reentry refusals" "$OUT/shared_pool_scan_test"
+    $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_settings_session_test" firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c tests/native_settings_session_test.c -lm
+    run "own settings: brand palette export/import/reboot and interrupted private writes" "$OUT/native_settings_session_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/native_arrangement_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/native_arrangement_test.c -lm
     run "actual native reference arrangement, master bars, clocks and held gates" "$OUT/native_arrangement_test"
     $CC -O2 -w -Ibuild/gen -Ifirmware/src -o "$OUT/arrangement_engine_compatibility_test" firmware/src/d8p1.c firmware/src/d8pool.c tests/arrangement_engine_compatibility_test.c -lm
