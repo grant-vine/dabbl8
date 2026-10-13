@@ -1,6 +1,10 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 #define D8_PROJECT_TRANSFER_SESSION 1
 #define D8_NATIVE_LOCAL_SAVE_NO_MAIN 1
+static void pt_begin_lcd_hook(void);
+static void pt_begin_read_hook(void);
+#define D8_LOCAL_FIRST_USE_LCD_HOOK pt_begin_lcd_hook
+#define D8_LOCAL_COMPLETION_READ_HOOK pt_begin_read_hook
 #include "native_local_save_test.c"
 #define FL_FAR(fn) fn
 #define fl_erase4k_ram mc_ram_erase_spy
@@ -10,7 +14,29 @@
 #undef fl_erase4k_ram
 #undef FL_FAR
 static uint8_t message[600],source_pool[D8POOL_BYTES],source_live[D8P1_LIMIT];
+static uint8_t pt_arena_before[sizeof main_workspace];
+static unsigned pt_lcd_event,pt_read_event;
+static uint32_t pt_competing_lease;
+static void pt_begin_lcd_hook(void)
+{
+ unsigned event=pt_lcd_event;pt_lcd_event=0;
+ if(event==1)d8_capture_store_changed();
+ else if(event==2)usb.resets++;
+ else if(event==3)usb.config^=1;
+ else if(event==4)transport_req=1;
+ else if(event==5)fm1_in.notes=host_notes=1;
+ else if(event==6)d8ls_revoke();
+ else if(event==7)fm1_ms+=LS_DEADLINE_MS;
+ else if(event==8){CHECK(!main_migration_begin(&pt_competing_lease));memset(main_migration_workspace(pt_competing_lease),0x6c,sizeof(d8mp_workspace));memcpy(pt_arena_before,&main_workspace,sizeof pt_arena_before);}
+ else if(event==9)cv_cpu_active=1;
+}
+static void pt_begin_read_hook(void)
+{
+ if(pt_read_event==1){pt_read_event=0;usb.resets++;}
+ else if(pt_read_event==2&&d8ls.phase==LS_EXECUTE&&pt_phase()==PT_EXPORT){pt_read_event=0;post_commit_io=2;}
+}
 static unsigned pt_request(unsigned n){uint8_t f[600]={0x7d,0x46,0x4c,81};memcpy(f+4,message,n);ed_handle(f,n+4);so_r=so_w;CHECK(ed_out[4]==81&&ed_out[5]==1);return ed_out[7];}
+static unsigned export_start(void){memset(message,0,sizeof message);message[0]=1;message[1]=1;return pt_request(2);}
 static void pt_token(unsigned op){memset(message,0,sizeof message);message[0]=1;message[1]=(uint8_t)op;mc_put32(message+2,d8ls.generation);}
 static unsigned pt_pack_test(const uint8_t*p,unsigned n,uint8_t*out){unsigned z=0;while(n){unsigned k=n>7?7:n,m=0;for(unsigned i=0;i<k;i++)m|=(p[i]>>7)<<i;out[z++]=(uint8_t)m;for(unsigned i=0;i<k;i++)out[z++]=p[i]&127;p+=k;n-=k;}return z;}
 static int source_rd(void*c,uint32_t a,void*p,uint32_t n){(void)c;memcpy(p,source_pool+a,n);return 0;}
@@ -28,8 +54,65 @@ static void target_fresh(void){boot_seed();CHECK(autosave_boot(1)==1);int32_t au
 static void target_only_zero(void){target_fresh();d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx));for(unsigned o=1;o<4;o++)memset(nor+d8pool_mapped_address(idx.object[o].block),255,D8POOL_BLOCK);d8p1_autosave_session_end();}
 static void retained_reboot(void){cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;ui_prefs&=~PREF_RESTORE_OFF;int32_t audio[CTL*2];mix_block(audio,CTL);reset();unsigned before=physical_calls;(void)autosave_boot(1);CHECK(project_native_owns_storage()&&physical_calls==before);}
 static void verify_restored(unsigned present){d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx)&&idx.present==present);for(unsigned o=0;o<4;o++)if(present&(1u<<o)){d8pool_index src;CHECK(!d8pool_inventory(&source_store,&src));CHECK(idx.object[o].length==src.object[o].length&&idx.object[o].crc==src.object[o].crc);}size_t n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n)&&n==archived_live_len&&!memcmp(wire,source_live,n));}
+static void pt_begin_arena_cases(void)
+{
+ for(unsigned importing=0;importing<2;importing++){
+  target_fresh();size_t n=0;CHECK(!d8p1_capture_runtime(source_live,sizeof source_live,&n));archived_live_len=(unsigned)n;
+  cv_begin(240,8,0x5a5a);cv_blit(0,0);CHECK(dma.p&&!cv_cpu_active&&!migration_owner);
+  unsigned consumed=dma_consumed,errors=dma_errors;uint16_t pixels[240*8];memcpy(pixels,dma.p,sizeof pixels);
+  unsigned rc=importing?import_start(15):export_start();
+  unsigned exact=!memcmp(host_screen,pixels,sizeof pixels);
+  printf("BEGIN DMA %s rc=%u consumed=%u errors=%u screen_exact=%u physical_calls=%u\n",importing?"import":"export",rc,dma_consumed-consumed,dma_errors-errors,exact,physical_calls);
+  CHECK(rc==PT_OK&&pt_phase()==(importing?PT_RECEIVE:PT_EXPORT)&&pt_workspace());
+  CHECK(dma_consumed==consumed+1&&!dma.p&&dma_errors==errors&&exact&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+  uint32_t owner=migration_owner;pt_token(8);message[2]^=1;CHECK(pt_request(7)==PT_STALE&&migration_owner==owner);
+  pt_token(8);CHECK(pt_request(7)==PT_OK&&!migration_owner&&!d8ls.signature&&!d8ls_blocked()&&!physical_calls);
+ }
+ /* An already-owned arena is refused without touching its immutable bytes. */
+ target_fresh();uint32_t owner=0;CHECK(!main_migration_begin(&owner));memset(main_migration_workspace(owner),0x6c,sizeof(d8mp_workspace));
+ memcpy(pt_arena_before,&main_workspace,sizeof pt_arena_before);unsigned before=reads;
+ CHECK(export_start()==PT_BUSY&&migration_owner==owner&&reads==before&&!memcmp(pt_arena_before,&main_workspace,sizeof pt_arena_before)&&!physical_calls);
+ CHECK(import_start(15)==PT_BUSY&&migration_owner==owner&&reads==before&&!memcmp(pt_arena_before,&main_workspace,sizeof pt_arena_before)&&!physical_calls);
+ CHECK(!main_migration_end(owner));
+ /* Each event lands inside the real LCD fence, after the initial admission. */
+ for(unsigned importing=0;importing<2;importing++)for(unsigned event=1;event<=9;event++){
+  target_fresh();cv_begin(8,8,0x5a5a);cv_blit(0,0);memcpy(pt_arena_before,&main_workspace,sizeof pt_arena_before);
+  before=reads;unsigned errors=dma_errors;pt_competing_lease=0;pt_lcd_event=event;
+  unsigned rc=importing?import_start(15):export_start();
+  unsigned intact=!memcmp(pt_arena_before,&main_workspace,sizeof pt_arena_before);
+  printf("BEGIN fence %s event=%u rc=%u scan_reads=%u errors=%u arena_intact=%u owner=%u physical_calls=%u\n",importing?"import":"export",event,rc,reads-before,dma_errors-errors,intact,migration_owner,physical_calls);
+  CHECK(!pt_lcd_event&&rc==PT_BUSY&&reads==before&&intact&&dma_errors==errors&&!dma.p&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+  CHECK(!d8ls.signature&&!d8ls_blocked()&&d8ls.phase==LS_IDLE&&migration_owner==(event==8?pt_competing_lease:0));
+  if(d8ls.phase!=LS_IDLE){pt_token(8);CHECK(pt_request(7)==PT_OK);}
+  if(pt_competing_lease)CHECK(!main_migration_end(pt_competing_lease));
+  cv_cpu_active=0;transport_req=0;fm1_in.notes=host_notes=0;
+ }
+ /* Every failure after acquisition retires the lease; active stale sessions
+  * and explicit CANCEL do the same through the shipping dispatcher/poll. */
+ for(unsigned importing=0;importing<2;importing++)for(unsigned event=0;event<3;event++){
+  target_fresh();if(event==0)post_commit_io=2;
+  else if(event==1)nor[d8pool_mapped_address(0)+D8POOL_HEADER]^=1;
+  else pt_read_event=1;
+  unsigned rc=importing?import_start(15):export_start();
+  CHECK(rc==(event==2?PT_BUSY:PT_UNSUPPORTED)&&!migration_owner&&!d8ls.signature&&!d8ls_blocked()&&!physical_calls&&!writes);
+  printf("BEGIN failure %s event=%u rc=%u owner=%u physical_calls=%u\n",importing?"import":"export",event,rc,migration_owner,physical_calls);
+ }
+ target_fresh();song.sel=NTRK;CHECK(export_start()==PT_UNSUPPORTED&&!migration_owner&&!d8ls.signature&&!d8ls_blocked()&&!physical_calls);
+ target_fresh();pt_read_event=2;CHECK(export_start()==PT_IO&&!pt_read_event&&!migration_owner&&!d8ls.signature&&!d8ls_blocked()&&!physical_calls);
+ printf("BEGIN export copy failure owner=%u signature=%u physical_calls=%u\n",migration_owner,d8ls.signature,physical_calls);
+ for(unsigned importing=0;importing<2;importing++){
+  target_fresh();CHECK((importing?import_start(15):export_start())==PT_OK);usb.resets++;d8ls_poll();
+  CHECK(d8ls.phase==LS_IDLE&&d8ls.write_phase==PT_CANCELLED&&!migration_owner&&!d8ls.signature&&!physical_calls);
+ }
+ target_fresh();CHECK(export_start()==PT_OK);owner=d8ls.signature;CHECK(!main_migration_end(owner));CHECK(!main_migration_begin(&owner));
+ memset(main_migration_workspace(owner),0x6c,sizeof(d8mp_workspace));memcpy(pt_arena_before,&main_workspace,sizeof pt_arena_before);d8ls_poll();
+ CHECK(d8ls.phase==LS_IDLE&&!d8ls.signature&&migration_owner==owner&&!memcmp(pt_arena_before,&main_workspace,sizeof pt_arena_before)&&!physical_calls);CHECK(!main_migration_end(owner));
+ printf("BEGIN arena regressions: %u checks %u failures\n",checks,failures);
+}
 #ifndef D8_PROJECT_TRANSFER_NO_MAIN
 int main(void){
+ setvbuf(stdout,NULL,_IONBF,0);
+ pt_begin_arena_cases();
  boot_seed();CHECK(autosave_boot(1)==1);int32_t audio[CTL*2];mix_block(audio,CTL);
  message[0]=1;message[1]=0;CHECK(pt_request(2)==PT_OK);
  trk[7].p[P_LEVEL]=91;message[1]=1;unsigned beginrc=pt_request(2);CHECK(beginrc==PT_OK&&pt_phase()==PT_EXPORT&&!physical_calls);if(beginrc)return 1;

@@ -25,12 +25,25 @@ static int pt_quiet(void)
  for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))return 0;
  return !migration_owner||pt_workspace()!=NULL;
 }
-static int pt_lifetime(void)
+static int pt_guard(void)
 {
- return d8ls.operation==4&&d8ls.phase!=LS_IDLE&&!d8ls.revoked&&pt_workspace()&&pt_quiet()&&
+ return !d8ls.revoked&&pt_workspace()&&pt_quiet()&&
    usb.resets==d8ls.usb&&usb.config==d8ls.usb_config&&
    d8_capture_change.epoch==d8ls.epoch+d8ls.own&&
    (uint32_t)(fm1_ms-d8ls.started)<LS_DEADLINE_MS;
+}
+static int pt_lifetime(void)
+{ return d8ls.operation==4&&d8ls.phase!=LS_IDLE&&pt_guard(); }
+/* The transfer already owns staging; generic capture would borrow it again. */
+static int pt_capture(d8mp_workspace*w,uint32_t*length,uint32_t*crc)
+{
+ uint32_t f=irq_save();int rc=pt_guard()?D8POOL_OK:D8POOL_BUSY;
+ if(!rc){project_capture(&w->stage.state.project);
+  if(d8p1_runtime_cache.valid)memcpy(&w->stage.state.arrangement,&d8p1_runtime_cache.arrangement,sizeof w->stage.state.arrangement);
+  else memset(&w->stage.state.arrangement,0,sizeof w->stage.state.arrangement);
+ }irq_restore(f);if(rc||!pt_guard())return D8POOL_BUSY;
+ size_t count=0;if(!d8p1_project_encode(w->stage.wire,sizeof w->stage.wire,&count,&w->stage.state))return D8POOL_INVALID;
+ *length=(uint32_t)count;*crc=d8p1_crc32(w->stage.wire,count);return D8POOL_OK;
 }
 static int pt_read(void*c,uint32_t a,void*p,uint32_t n)
 {
@@ -92,7 +105,7 @@ static int pt_scan(const d8pool*s,d8mp_workspace*w,d8pool_index*index,unsigned s
 }
 static void pt_finish(unsigned status)
 {
- if(d8ls.signature)main_migration_end(d8ls.signature);
+ if(d8ls.signature)main_migration_end(d8ls.signature);d8ls.signature=0;
  d8ls.phase=LS_IDLE;d8ls.shown=0;d8ls.busy=d8ls.writing=0;d8ls.write_phase=(uint8_t)status;
  d8ls.object=status?PT_PARTIAL:PT_DONE;d8ls.intent=d8ls.previous_intent;ui.force=1;
  if(d8ls.attempted&&status){d8ls.intent=0;project_native.mode=2;project_native.ready=0;d8p1_autosave_session_end();}
@@ -105,13 +118,14 @@ static int pt_begin(unsigned importing,const uint8_t*a,uint32_t n)
  if(importing&&(!mc_wire_u32(a+3,&live)||!mc_wire_u32(a+8,&livecrc)||!mc_wire_u32(a+13,&poolcrc)||!live||live>D8P1_LIMIT))return PT_BAD;
  d8ls.previous_intent=d8ls.intent;d8ls.operation=4;d8ls.revoked=0;d8ls.attempted=0;d8ls.busy=1;
  d8ls.epoch=d8_capture_change.epoch;d8ls.own=0;d8ls.started=fm1_ms;d8ls.usb=usb.resets;d8ls.usb_config=usb.config;
- d8mp_workspace*w=&main_workspace.migration;d8pool reader={NULL,pt_read,pt_noerase,pt_noprogram,pt_stopped};
- int rc=pt_scan(&reader,w,&d8ls.index,0,importing?7u:15u,d8ls.crc);
- if(!rc&&!importing){size_t count=0;rc=d8p1_capture_runtime(w->stage.wire,sizeof w->stage.wire,&count);live=(uint32_t)count;livecrc=d8p1_crc32(w->stage.wire,live);}
- uint32_t lease=0;if(!rc)rc=main_migration_begin(&lease);d8ls.signature=lease;
- if(!rc&&(!pt_quiet()||d8_capture_change.epoch!=d8ls.epoch||usb.resets!=d8ls.usb||usb.config!=d8ls.usb_config))rc=D8POOL_BUSY;
- d8ls.signature=lease;d8ls.busy=0;
- if(rc){if(lease)main_migration_end(lease);return rc==D8POOL_BUSY?PT_BUSY:PT_UNSUPPORTED;}
+ uint32_t lease=0;int rc=main_migration_begin(&lease)==D8MP_OK?D8POOL_OK:D8POOL_BUSY;d8ls.signature=lease;
+ d8mp_workspace*w=pt_workspace();d8pool reader={NULL,pt_read,pt_noerase,pt_noprogram,pt_stopped};
+ if(!rc&&!pt_guard())rc=D8POOL_BUSY;
+ if(!rc)rc=pt_scan(&reader,w,&d8ls.index,0,importing?7u:15u,d8ls.crc);
+ if(!rc&&!importing)rc=pt_capture(w,&live,&livecrc);
+ if(!rc&&!pt_guard())rc=D8POOL_BUSY;
+ d8ls.busy=0;
+ if(rc){if(lease)main_migration_end(lease);d8ls.signature=0;return rc==D8POOL_BUSY?PT_BUSY:PT_UNSUPPORTED;}
  d8ls.generation++;d8ls.phase=LS_EXECUTE;d8ls.object=importing?PT_RECEIVE:PT_EXPORT;
  d8ls.length=live;d8ls.payload_crc=livecrc;pt_set(PT_POOLCRC,poolcrc);pt_set(PT_POOLRECV,0);pt_set(PT_LIVERECV,0);
  pt_extra_set(PT_PRESENCE,importing?a[2]:d8ls.index.present);pt_extra_set(PT_COMMITTED,0);pt_extra_set(PT_SCRATCH,5);
