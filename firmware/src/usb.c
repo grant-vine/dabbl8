@@ -407,16 +407,66 @@ static int get_desc(uint32_t wvalue, const uint8_t **d, uint16_t *l)
 }
 
 /* ---------------------------------------------------------- the SIE --- */
-static void sie_wr(uint32_t r, uint32_t v)
+#ifndef FELUCCA_LOADER
+#define FELUCCA_SIE_IRQ_BUDGET 1
+/* Once a controller transaction fails, no more SIE traffic in this IRQ (or
+ * nested audio IRQs). Only main-loop usb_start may begin a fresh attempt.
+ * A write without completion may already have executed: retained software
+ * state does not establish host delivery or permit retry on that controller. */
+static volatile uint8_t sie_failed;
+static uint32_t sie_irq_budget = UINT32_MAX;
+static void sie_irq_begin(void) { sie_irq_budget = 20000; }
+static void sie_irq_end(void) { sie_irq_budget = UINT32_MAX; }
+static void sie_fail(void)
+{
+    if (!sie_failed) usb.timeouts++;
+    sie_failed = 1;
+    usb.up = 0;
+#if NTRK == 8 && FELUCCA_UAC
+    uq.uncertain = 1;
+#endif
+}
+static int sie_wait(void)
 {
     uint32_t n = 20000;
+    while (n--) {
+        if (!sie_irq_budget) break;
+        if (sie_irq_budget != UINT32_MAX) sie_irq_budget--;
+        if (fm1_usb_sie_done()) return 1;
+    }
+    sie_fail();
+    return 0;
+}
+static int sie_publish_ready(void)
+{
+    if (sie_failed) return 0;
+    if (!sie_irq_budget || !fm1_usb_sie_on()) { sie_fail(); return 0; }
+    return 1;
+}
+#endif
+static void sie_wr(uint32_t r, uint32_t v)
+{
+#ifdef FELUCCA_LOADER
+    uint32_t n = 20000;
+#endif
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+    if (!sie_irq_budget) { sie_fail(); return; }
+#endif
     if (!fm1_usb_sie_on()) {
+#ifndef FELUCCA_LOADER
+        sie_fail();
+#endif
 #if NTRK == 8 && FELUCCA_UAC
         uq.uncertain=1;
 #endif
         return;
     }
     fm1_usb_sie_wr_start(r, v);
+#ifndef FELUCCA_LOADER
+    if (!sie_wait()) return;
+    usb.timeouts = 0;
+#else
     while (!fm1_usb_sie_done() && --n)
         ;
     if (n)
@@ -428,18 +478,31 @@ static void sie_wr(uint32_t r, uint32_t v)
         if (++usb.timeouts > 50u)
             usb.up = 0;                                 /* SIE dead (no clock?): stop polling it */
     }
+#endif
 }
 
 static uint32_t sie_rd(uint32_t r)
 {
+#ifdef FELUCCA_LOADER
     uint32_t n = 20000;
+#endif
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return 0;
+    if (!sie_irq_budget) { sie_fail(); return 0; }
+#endif
     if (!fm1_usb_sie_on()) {
+#ifndef FELUCCA_LOADER
+        sie_fail();
+#endif
 #if NTRK == 8 && FELUCCA_UAC
         uq.uncertain=1;
 #endif
         return 0;
     }
     fm1_usb_sie_rd_start(r);
+#ifndef FELUCCA_LOADER
+    if (!sie_wait()) return 0;
+#else
     while (!fm1_usb_sie_done())
         if (!--n) {
 #if NTRK == 8 && FELUCCA_UAC
@@ -449,6 +512,7 @@ static uint32_t sie_rd(uint32_t r)
                 usb.up = 0;
             return 0;
         }
+#endif
     usb.timeouts = 0;
     return fm1_usb_sie_data();
 }
@@ -546,11 +610,16 @@ no_cdc:;
 
 static void e0_chunk(void)
 {
+#ifndef FELUCCA_LOADER
+    sie_wr(S_INDEX, 0);
+    if (!sie_publish_ready()) return;
+#endif
     uint32_t n = usb.e0_left > 64u ? 64u : usb.e0_left, i;
     int last;
     for (i = 0; i < n; i++)
         ep0buf[i] = usb.e0_src[i];
     fm1_usb_ep0_send(ep0buf, n);
+#ifdef FELUCCA_LOADER
     usb.e0_src += n;
     usb.e0_left = (uint16_t)(usb.e0_left - n);
     last = usb.e0_left == 0 && !(n == 64u && usb.e0_zlp);
@@ -558,6 +627,16 @@ static void e0_chunk(void)
         usb.e0_zlp = 0;
     sie_wr(S_INDEX, 0);
     sie_wr(S_CSR0, last ? 0x0A : 0x02);
+#else
+    uint16_t left = (uint16_t)(usb.e0_left - n);
+    last = left == 0 && !(n == 64u && usb.e0_zlp);
+    sie_wr(S_CSR0, last ? 0x0A : 0x02);
+    if (sie_failed) return;
+    usb.e0_src += n;
+    usb.e0_left = left;
+    if (left == 0 && n == 64u)
+        usb.e0_zlp = 0;
+#endif
     if (last)
         usb.e0_tx = 0;
 }
@@ -583,10 +662,16 @@ static void ep0_service(void)
     uint8_t *s = usb.last_setup;
     if (usb.has_pend_addr) {
         sie_wr(S_FADDR, usb.pend_addr);
+#ifndef FELUCCA_LOADER
+        if (sie_failed) return;
+#endif
         usb.has_pend_addr = 0;
     }
     sie_wr(S_INDEX, 0);
     csr = sie_rd(S_CSR0);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
     if (csr & 0x04u) {                                  /* SentStall */
         sie_wr(S_CSR0, 0);
         usb.e0_tx = 0;
@@ -903,6 +988,9 @@ static void ep1_rx(void)                                /* leaves the packet (NA
         return;
     }
     n = sie_rd(S_RXCOUNT1) | (sie_rd(S_RXCOUNT2) << 8);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
     if (n > 64u)
         n = 64u;
     fm1_usb_rx_sync();
@@ -964,6 +1052,12 @@ static void ota_frame_done(void)
 static void ep1_tx(void)
 {
     uint32_t csr, n = 0;
+#ifndef FELUCCA_LOADER
+    uint32_t r = mo_r;
+#if FELUCCA_OTA
+    uint32_t sr = so_r;
+#endif
+#endif
 #if FELUCCA_OTA
     if (mo_w == mo_r && so_w == so_r)
         return;
@@ -977,35 +1071,77 @@ static void ep1_tx(void)
         return;                                         /* previous packet still pending */
     if (csr & 0x80u)
         sie_wr(S_TXCSR1, csr & ~0x80u);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
 #if FELUCCA_OTA
+#ifdef FELUCCA_LOADER
     while (so_r != so_w && n < 64u) {                   /* SysEx first, never split by notes */
         uint32_t pkt = sx_out_q[so_r % SXQ];
+#else
+    while (sr != so_w && n < 64u) {
+        uint32_t pkt = sx_out_q[sr % SXQ];
+#endif
         ep1tx[n] = (uint8_t)pkt;
         ep1tx[n + 1] = (uint8_t)(pkt >> 8);
         ep1tx[n + 2] = (uint8_t)(pkt >> 16);
         ep1tx[n + 3] = (uint8_t)(pkt >> 24);
         n += 4u;
+#ifdef FELUCCA_LOADER
         so_r++;
+#else
+        sr++;
+#endif
     }
+#ifdef FELUCCA_LOADER
     while (!sx_busy && so_r == so_w && mo_r != mo_w && n < 64u) {
 #else
+    while (!sx_busy && sr == so_w && r != mo_w && n < 64u) {
+#endif
+#else
+#ifdef FELUCCA_LOADER
     while (mo_r != mo_w && n < 64u) {
+#else
+    while (r != mo_w && n < 64u) {
+#endif
 #endif
         uint32_t pkt;
         RING_PUBLISH();                                 /* the audio ISR (producer) can preempt us: */
+#ifdef FELUCCA_LOADER
         pkt = midi_out_q[mo_r % MQ];                    /* slot read strictly between the index checks */
+#else
+        pkt = midi_out_q[r % MQ];
+#endif
         ep1tx[n] = (uint8_t)pkt;
         ep1tx[n + 1] = (uint8_t)(pkt >> 8);
         ep1tx[n + 2] = (uint8_t)(pkt >> 16);
         ep1tx[n + 3] = (uint8_t)(pkt >> 24);
         n += 4u;
         RING_PUBLISH();
+#ifdef FELUCCA_LOADER
         mo_r++;
+#else
+        r++;
+#endif
     }
     if (!n)
         return;
+#ifndef FELUCCA_LOADER
+    csr = sie_rd(S_TXCSR1);
+    if (!sie_publish_ready()) return;
+#endif
     fm1_usb_ep_send(1, ep1tx, n);
+#ifdef FELUCCA_LOADER
     sie_wr(S_TXCSR1, sie_rd(S_TXCSR1) | 0x01u);
+#else
+    sie_wr(S_TXCSR1, csr | 0x01u);
+    if (sie_failed) return;
+    RING_PUBLISH();
+    mo_r = r;
+#if FELUCCA_OTA
+    so_r = sr;
+#endif
+#endif
     usb.tx_pkts++;
 }
 
@@ -1020,6 +1156,9 @@ static void ep3_rx(void)                                /* leaves the packet (NA
         return;
     }
     n = sie_rd(S_RXCOUNT1) | (sie_rd(S_RXCOUNT2) << 8);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
     if (n > 64u)
         n = 64u;
     if (CI_N - (ci_w - ci_r) < n)
@@ -1039,6 +1178,9 @@ static void ep3_rx(void)                                /* leaves the packet (NA
 static void ep3_tx(void)                                /* <= 63 bytes per packet: never needs a ZLP */
 {
     uint32_t csr, n = 0;
+#ifndef FELUCCA_LOADER
+    uint32_t r = co_r;
+#endif
     if (co_w == co_r)
         return;
     sie_wr(S_INDEX, 3);
@@ -1047,10 +1189,27 @@ static void ep3_tx(void)                                /* <= 63 bytes per packe
         return;
     if (csr & 0x80u)
         sie_wr(S_TXCSR1, csr & ~0x80u);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
+#ifdef FELUCCA_LOADER
     while (co_r != co_w && n < 63u)
         ep3tx[n++] = cdc_out[co_r++ % CO_N];
+#else
+    while (r != co_w && n < 63u)
+        ep3tx[n++] = cdc_out[r++ % CO_N];
+    csr = sie_rd(S_TXCSR1);
+    if (!sie_publish_ready()) return;
+#endif
     fm1_usb_ep_send(3, ep3tx, n);
+#ifdef FELUCCA_LOADER
     sie_wr(S_TXCSR1, sie_rd(S_TXCSR1) | 0x01u);
+#else
+    sie_wr(S_TXCSR1, csr | 0x01u);
+    if (sie_failed) return;
+    RING_PUBLISH();
+    co_r = r;
+#endif
     cdc.tx_pkts++;
 }
 #endif
@@ -1217,17 +1376,21 @@ static __attribute__((noinline)) void uac_tap(const int32_t *out, uint32_t n)   
 
 /* the next packet into d: 44 / 45 frames (+-1 to hold the ring's fill), from the ring or, until it is
  * primed, silence. An empty ring repeats the last frame. Returns the frame count. */
-#if NTRK == 8
+struct uac_packet_state {
+    uint32_t acc, r, last, frames;
+    uint8_t primed, adj_up, adj_down, underrun;
+};
 /* Local packet reduction only; service publishes the completed packet later.
  * Inline into the same consumer, never a separate scan or persistent cache. */
-static inline __attribute__((always_inline)) uint32_t uac_packet_summary(uint32_t *d, uint32_t *summary)
-#else
-static uint32_t uac_packet(uint32_t *d)
-#endif
+static inline __attribute__((always_inline)) uint32_t uac_packet_prepare(uint32_t *d, uint32_t *summary,
+                                                                       struct uac_packet_state *p)
 {
     uint32_t n = 44u, r, fill, k, i, lo = UA_LO, hi = UA_HI;
+    *p = (struct uac_packet_state){.acc = uac.acc};
 #if NTRK == 8
     uint32_t nonzero = 0;
+#else
+    (void)summary;
 #endif
 #if FELUCCA_UAC_48K
     if (uac.r48) {                                      /* 48 frames a ms, no pattern */
@@ -1237,9 +1400,9 @@ static uint32_t uac_packet(uint32_t *d)
     } else
 #endif
     {
-        uac.acc += UAC_RATE % 1000u;
-        if (uac.acc >= 1000u) {
-            uac.acc -= 1000u;
+        p->acc += UAC_RATE % 1000u;
+        if (p->acc >= 1000u) {
+            p->acc -= 1000u;
             n++;
         }
     }
@@ -1253,10 +1416,10 @@ static uint32_t uac_packet(uint32_t *d)
     }
     if (uac.fill_min > hi) {
         n++;
-        uac.adj_up++;
+        p->adj_up = 1;
     } else if (uac.fill_min < lo) {
         n--;
-        uac.adj_down++;
+        p->adj_down = 1;
     }
     r = ua_r;
     fill = ua_w - r;
@@ -1274,27 +1437,55 @@ static uint32_t uac_packet(uint32_t *d)
 #endif
     if (k < n) {
         uint32_t last = k ? d[k - 1u] : uac.last;
-        uac.underruns++;
+        p->underrun = 1;
         for (; i < n; i++)
             d[i] = last;
 #if NTRK == 8
         if (n) nonzero |= last;
 #endif
     }
-    uac.last = d[n - 1u];
-    RING_PUBLISH();
-    ua_r = r + k;
-    uac.pkts++;
-    uac.frames += n;
+    p->primed = 1;
+    p->last = d[n - 1u];
+    p->r = r + k;
+    p->frames = n;
 #if NTRK == 8
     if (summary) *summary = nonzero;
 #endif
     return n;
 }
 
+static inline void uac_packet_commit(const struct uac_packet_state *p)
+{
+    uac.acc = p->acc;
+    if (!p->primed) return;
+    uac.last = p->last;
+    uac.adj_up += p->adj_up;
+    uac.adj_down += p->adj_down;
+    uac.underruns += p->underrun;
+    RING_PUBLISH();
+    ua_r = p->r;
+    uac.pkts++;
+    uac.frames += p->frames;
+}
+
 #if NTRK == 8
+static inline __attribute__((always_inline)) uint32_t uac_packet_summary(uint32_t *d, uint32_t *summary)
+{
+    struct uac_packet_state p;
+    uint32_t n = uac_packet_prepare(d, summary, &p);
+    uac_packet_commit(&p);
+    return n;
+}
 /* Standalone callers retain the original packet-generation contract. */
 static uint32_t uac_packet(uint32_t *d) { return uac_packet_summary(d, 0); }
+#else
+static uint32_t uac_packet(uint32_t *d)
+{
+    struct uac_packet_state p;
+    uint32_t n = uac_packet_prepare(d, 0, &p);
+    uac_packet_commit(&p);
+    return n;
+}
 #endif
 
 #if NTRK == 8
@@ -1322,6 +1513,9 @@ static void uac_service(void)
         return;
     sie_wr(S_INDEX, 4);
     csr = sie_rd(S_TXCSR1);
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
     if (csr & 0x01u) {                                  /* still queued */
         if (uac.wait < 255u && ++uac.wait == 40u && uac.flowing) {
             uac.flowing = 0;
@@ -1329,6 +1523,22 @@ static void uac_service(void)
         }
         return;
     }
+    struct uac_packet_state p;
+#ifndef FELUCCA_LOADER
+    if (!sie_publish_ready()) return;
+#endif
+#if NTRK == 8
+    uint32_t nonzero;
+    n = uac_packet_prepare(ep4tx, &nonzero, &p);
+#else
+    n = uac_packet_prepare(ep4tx, 0, &p);
+#endif
+    fm1_usb_ep4_send(ep4tx, n * 4u);
+    sie_wr(S_TXCSR1, 0x01);                             /* TxPktRdy (and UnderRun cleared) */
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
+#endif
+    uac_packet_commit(&p);
     if (uac.queued) {
         if (csr & 0x04u)
             uac.missed++;                               /* UnderRun: an IN token found nothing queued */
@@ -1337,14 +1547,8 @@ static void uac_service(void)
     uac.queued = 1;
     uac.wait = 0;
 #if NTRK == 8
-    uint32_t nonzero;
-    n = uac_packet_summary(ep4tx, &nonzero);
     uq.packet=(uint8_t)(nonzero!=0); /* actual packet replacing the completed one */
-#else
-    n = uac_packet(ep4tx);
 #endif
-    fm1_usb_ep4_send(ep4tx, n * 4u);
-    sie_wr(S_TXCSR1, 0x01);                             /* TxPktRdy (and UnderRun cleared) */
 }
 #endif
 
@@ -1383,6 +1587,9 @@ static void usb_poll(void)                              /* TIMER5 ISR, 2 kHz */
 #else
     it = sie_rd(S_INTRTX1);                             /* EP0..7 only: skipping INTR*2 saves */
     ir = sie_rd(S_INTRRX1);                             /* 2 SIE round trips per poll */
+#endif
+#ifndef FELUCCA_LOADER
+    if (sie_failed) return;
 #endif
     if (iu & 0x01u) {                                   /* suspend: the bus went idle */
         usb.suspends++;
@@ -1444,6 +1651,9 @@ static void usb_poll(void)                              /* TIMER5 ISR, 2 kHz */
 
 static void usb_start(void)                             /* boot, or main-loop retry while usb.up == 0 */
 {
+#ifndef FELUCCA_LOADER
+    sie_failed = 0;
+#endif
     usb.timeouts = 0;
     fm1_usb_reset();                                    /* reset whatever the ROM left */
     fm1_delay_ms(25);
@@ -1455,7 +1665,11 @@ static void usb_start(void)                             /* boot, or main-loop re
     sie_wr(S_INTRRX1E, 0);
     sie_wr(S_INTRRX2E, 0);
     fm1_usb_ep_enable(0x1Fu);
+#ifdef FELUCCA_LOADER
     usb.up = usb.timeouts < 3u;                         /* a dead SIE leaves USB off */
+#else
+    usb.up = !sie_failed && fm1_usb_sie_on() && usb.timeouts < 3u;
+#endif
 }
 
 /* Powered on without a cable, the SIE does not answer and usb_start leaves

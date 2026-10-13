@@ -29,6 +29,7 @@ static void oracle(void){
 }
 /* Test cold reset, never a production strategy for permitting a save. */
 static void cold(void){
+ sie_failed=0; /* Simulate the new application BSS latch's cold-boot reset. */
  ui_power_on();memset(&uac,0,sizeof uac);memset(&uq,0,sizeof uq);memset(&usb,0,sizeof usb);
  memset(ua_ring,0,sizeof ua_ring);memset(ep4tx,0,sizeof ep4tx);
 #if FELUCCA_UAC_48K

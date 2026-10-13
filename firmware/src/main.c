@@ -19,6 +19,9 @@ void fm1_timer5_irq(void)
 {
     static uint32_t sub, owed;
     uint32_t t0 = fm1_ticks(), usb_due = sub % 5u == 0u;
+#if FELUCCA_SIE_IRQ_BUDGET
+    sie_irq_begin();
+#endif
     fm1_timer5_ack();
     felucca_dbg.timer_irqs++;
     fm1_input_tick();
@@ -46,6 +49,9 @@ void fm1_timer5_irq(void)
             uac_service();
 #endif
         t5_nested_ticks += fm1_ticks() - t0;
+#if FELUCCA_SIE_IRQ_BUDGET
+        sie_irq_end();
+#endif
         return;
     }
     if (owed & 1u)
@@ -55,6 +61,9 @@ void fm1_timer5_irq(void)
         uart_midi_poll();
 #endif
     owed = 0;
+#if FELUCCA_SIE_IRQ_BUDGET
+    sie_irq_end();
+#endif
 }
 #ifndef FELUCCA_TIMER5_ONLY /* host tests may exercise the actual IRQ alone */
 extern void isr_timer5(void);
@@ -301,6 +310,9 @@ void fm1_cstart(void)
     p3 = fm1_boot.p3_rst;
     src = fm1_boot.rst_src;
     wdt = fm1_boot.wdt_con;
+#if D8_FIRST_USE_SESSION && DABBL8_TIMING_DIAGNOSTIC
+    d8fi_diag_boot(p3,src,wdt);
+#endif
     fm1_wdt_arm(0x0D);
     if (bootguard.magic != BOOTGUARD_MAGIC) {
         bootguard.magic = BOOTGUARD_MAGIC;
