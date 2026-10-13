@@ -27,7 +27,7 @@ static volatile struct { uint32_t comb, ap; uint8_t model; } fx_rev_wait;
 /* Each zero wait certifies the active history/line equal its reference, including
  * old and stored values. Delay also binds its computed length; reverb uses
  * line entry0. Any changed reference resets the complete active sweep. */
-static volatile struct { uint32_t delay,comb,ap,ap_fixed,delay_span; } fx_uniform_wait;
+static volatile struct { uint32_t delay,comb,ap,ap_fixed,delay_span,ap_pair; int32_t room_sum; } fx_uniform_wait;
 #define FTU16(d,u,p,ref,v) do { int32_t uv=(v); int16_t ur=(ref); \
  (u)|=(uint32_t)((*(p)^ur)|((int16_t)uv^ur)); FTR16(d,p,uv); } while(0)
 static inline void fx_sweep_model(uint8_t model)
@@ -285,8 +285,10 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     uint32_t i, k;
     int32_t size = 25000 + song.g[G_RSIZE] * 50, damp = 32767 - song.g[G_RDAMP] * 200;
 #if NTRK == 8
-    uint32_t comb_dirty=0,ap_dirty=0,comb_uniform=0,ap_uniform=0,ap_fixed_dirty=0;
-    int32_t fixed_low=2*(rev_ap[0]-(rev_comb[0]+rev_comb[1116]+rev_comb[2304]+rev_comb[3581]))-1;
+    uint32_t comb_dirty=0,ap_dirty=0,comb_uniform=0,ap_uniform=0,ap_fixed_dirty=0,ap_pair_dirty=0;
+    int32_t sum=rev_comb[0]+rev_comb[1116]+rev_comb[2304]+rev_comb[3581];
+    int32_t fixed_low=2*(rev_ap[0]-sum)-1,ap1_low=2*sum-1,pair_low=2*sum-2;
+    if(fx_uniform_wait.room_sum!=sum){fx_uniform_wait.ap_pair=556;fx_uniform_wait.room_sum=sum;}
     fx_sweep_model(1);
 #endif
     for (i = 0; i < n; i++) {
@@ -316,8 +318,9 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
         /* Two fixed allpass stages, observed without a per-stage branch. */
         {
             uint32_t position=fx.ap_i[0];int32_t o=rev_ap[position];
-            int32_t v=a+(o>>1);
-            FTU16(ap_dirty,ap_uniform,&rev_ap[position],rev_ap[0],clamp(v,-32768,32767));
+            int16_t stored=(int16_t)clamp(a+(o>>1),-32768,32767);
+            ap_pair_dirty|=(uint32_t)(o-ap1_low)|(uint32_t)(stored-ap1_low);
+            FTU16(ap_dirty,ap_uniform,&rev_ap[position],rev_ap[0],stored);
             a=o-a;fx.ap_i[0]=(uint16_t)(position+1u>=556u?0u:position+1u);
         }
         {
@@ -327,6 +330,7 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
              * OR all unsigned differences, then test once at render exit.
              * Any outsider sets a bit above bit0; no cancellation is possible. */
             ap_fixed_dirty|=(uint32_t)(o-fixed_low)|(uint32_t)(stored-fixed_low);
+            ap_pair_dirty|=(uint32_t)(o-pair_low)|(uint32_t)(stored-pair_low);
             FTR16(ap_dirty,&line[position],stored);
             a=o-a;fx.ap_i[1]=(uint16_t)(position+1u>=441u?0u:position+1u);
         }
@@ -348,6 +352,8 @@ static __attribute__((noinline)) void rev_room(const int32_t *rev_in, int32_t *o
     fx_uniform_wait.comb=fx_zero_sweep(fx_uniform_wait.comb,comb_uniform,n,1356u);
     fx_uniform_wait.ap=fx_zero_sweep(fx_uniform_wait.ap,ap_uniform,n,556u);
     fx_uniform_wait.ap_fixed=fx_zero_sweep(fx_uniform_wait.ap_fixed,ap_fixed_dirty>1u,n,441u);
+    /* One full556 sweep covers both AP1 and the shorter441-cell AP2. */
+    fx_uniform_wait.ap_pair=fx_zero_sweep(fx_uniform_wait.ap_pair,ap_pair_dirty>1u,n,556u);
 #endif
 }
 
@@ -417,6 +423,7 @@ static void rev_clear(void)
 #if NTRK == 8
     fx_tail.comb=fx_tail.ap=0;fx_rev_wait.comb=fx_rev_wait.ap=0;fx_rev_wait.model=0;
     fx_uniform_wait.comb=fx_uniform_wait.ap=fx_uniform_wait.ap_fixed=0;
+    fx_uniform_wait.ap_pair=0;fx_uniform_wait.room_sum=0;
 #endif
 }
 
@@ -490,9 +497,9 @@ static void fx_buses(const int32_t *cho_in, const int32_t *dly_in, const int32_t
 
 #if NTRK == 8
 /* ROOM and delay can retain constant fixed-point offsets through floor
- * rounding. Permit only a certified uniform resident state whose exact current
- * zero-input equations leave every cell/scalar unchanged and whose constant
- * wet output is cancelled exactly by the DC blocker. No state/audio is changed.
+ * rounding. Permit certified stationary cells or closed allpass pairs whose
+ * complete zero-input wet output range is cancelled exactly by the DC blocker.
+ * No state/audio is changed.
  * Waits are audio-owned; admission checks O(1) scalars, not a flash-time scan.
  * SPRING permits only its certified zero-buffer/scalar deadband fixedpoint. */
 static int fx_stationary_quiet(void)
@@ -503,7 +510,7 @@ static int fx_stationary_quiet(void)
     if(lp < -32768||lp>32767||mulq15(d-lp,col)||mulq15(lp,fb)!=d)return 0;
     int32_t lo=0,hi=0;
     if(fx.rtype==0&&song.g[G_RTYPE]==0&&fx_rev_wait.model==1){
-        if(fx_uniform_wait.comb||fx_uniform_wait.ap||fx_uniform_wait.ap_fixed)return 0;
+        if(fx_uniform_wait.comb)return 0;
         int32_t a=0;unsigned pos=0;
         int32_t size=25000+song.g[G_RSIZE]*50,damp=song.g[G_RDAMP]*200;
         for(unsigned k=0;k<4;k++){
@@ -511,12 +518,19 @@ static int fx_stationary_quiet(void)
             if(l < -32768||l>32767||l!=c+mulq15(l-c,damp)||mulq15(l,size)!=c)return 0;
             a+=c;pos+=REV_COMB[k];
         }
-        int32_t c=rev_ap[0];
-        if(clamp(a+(c>>1),-32768,32767)!=c)return 0;
-        a=c-a;
-        /* AP2's certified cells belong to [2a-1,2a]. Each is an exact
-         * fixedpoint of a+(cell>>1); its output lies in [a-1,a]. */
-        lo=a-1;hi=a;
+        if(!fx_uniform_wait.ap&&!fx_uniform_wait.ap_fixed){
+            int32_t c=rev_ap[0];
+            if(clamp(a+(c>>1),-32768,32767)!=c)return 0;
+            a=c-a;
+            /* AP2's fixed cells produce [a-1,a]. */
+            lo=a-1;hi=a;
+        }else{
+            if(fx_uniform_wait.ap_pair||fx_uniform_wait.room_sum!=a)return 0;
+            /* AP1's fixed pair [2a-1,2a] produces [a-1,a]. AP2's
+             * closed pair [2a-2,2a-1] has one common half, a-1;
+             * every next cell stays in that pair and output in [a-2,a]. */
+            lo=a-2;hi=a;
+        }
     }else if(fx.rtype==1&&song.g[G_RTYPE]==1&&fx_rev_wait.model==2){
         if(fx_rev_wait.comb||fx_rev_wait.ap)return 0;
         int32_t l=fx.sp_lp,kl=26000-song.g[G_RDAMP]*160,g=19661+song.g[G_RSIZE]*85;
