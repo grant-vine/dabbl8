@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "sanitized_physical_recovery_result",
+  "date_local": "2026-10-13",
+  "timezone": "Africa/Johannesburg",
+  "tested_devices": 1,
+  "environment": {"architecture": "arm64", "macos": "26.7.1", "macos_build": "25G241", "python": "3.14.8", "libusb": "1.0.30", "pyusb": "1.3.1", "crcmod": "1.7"},
+  "entry": {"mode": "existing_dabbl8_console_ram_mailbox_and_reset", "command": "uboot yes", "independent_unresponsive_device_entry_qualified": false},
+  "rom": {"vid": "4c4a", "pid": "8057", "usb_product": "WL80UBOOT1.00", "scsi_vendor": "WL82", "scsi_product": "UBOOT1.00", "scsi_revision": "1.00", "interface_class_subclass_protocol": [8, 6, 80], "observed_bulk_in": "81", "observed_bulk_out": "01"},
+  "access": {"cooperative_device_and_interface_seize": "refused_by_exclusive_mass_storage_owner", "administrator_device_capture": "completed", "explicit_device_surrender": "completed", "native_interface_io_qualified": false, "data_transport": "libusb_pyusb_after_capture_surrender", "kernel_driver_inactive_before_claim": true, "fixed_read_only_inquiry_verified": true, "auto_detach_used": false, "global_driver_unload_used": false, "sip_changed": false},
+  "inputs": {"stock_version": "v15", "stock_bytes": 699956, "stock_sha256": "db1642b2b6fa5c2cccb11ffd13878068bb28601678d3644049f99dc40e7edb8a", "ram_loader_bytes": 24064, "ram_loader_sha256": "d41da6126760c9d66660bcc0cac8d27d221806c5e369a8036921efe68dca5376", "ram_loader_address": "01c02000", "loader_binary_provenance_established": false},
+  "restoration": {"ram_loader_uploaded_read_back_and_executed": true, "expected_chip_key": "980f", "expected_flash_type": 3, "expected_flash_id": "856014", "full_flash_bytes": 1048576, "matching_full_backups": 2, "application_start_inclusive": "4000", "application_end_exclusive": "93000", "changed_application_sectors": 143, "sector_bytes": 4096, "per_sector_readback_verified": true, "full_plan_readback_verified": true, "protected_bootloader_preserved": true, "protected_device_data_preserved": true, "loader_reboot_command_sent": false, "rp2040_used": false},
+  "owner_confirmation": {"physical_power_cycle": true, "original_mvave_interface": true, "sound_working": true, "controls_working": true},
+  "scope": {"general_recovery_tool_shipped": false, "universal_recovery_claim": false, "dabbl8_runtime_qualified": false, "normal_felucca_ota_replaced": false, "private_backups_or_vendor_binary_included": false, "hosted_ci_used": false},
+  "limitations": ["One Mac/OS/device combination", "ROM entry depended on a working console", "Native interface access remained refused", "Unknown initialization/process-death/power-loss cleanup effects are not qualified", "No RP2040 fallback was qualified", "The stock parser's vendor-metadata exceptions were bound to this exact package hash"]
+}

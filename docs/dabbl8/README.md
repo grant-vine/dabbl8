@@ -1,6 +1,6 @@
 # Dabbl8 plan
 
-The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately; draft implementation PRs do not establish a hardware-qualified eight-track release. No device flashing has been performed in this work. All 19 implementation tasks and roadmap issue #2 have been created.
+The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately; draft implementation PRs do not establish a hardware-qualified eight-track release. Controlled diagnostic installations and a successful original-v15 restoration are recorded in the [Mac USB recovery record](mac-usb-stock-recovery.md); they do not qualify Dabbl8's runtime. All 19 implementation tasks and roadmap issue #2 have been created.
 
 ## Current data scope — 12 October 2026
 
