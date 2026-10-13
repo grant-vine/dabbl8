@@ -109,6 +109,7 @@ static void pt_begin_arena_cases(void)
  CHECK(d8ls.phase==LS_IDLE&&!d8ls.signature&&migration_owner==owner&&!memcmp(pt_arena_before,&main_workspace,sizeof pt_arena_before)&&!physical_calls);CHECK(!main_migration_end(owner));
  printf("BEGIN arena regressions: %u checks %u failures\n",checks,failures);
 }
+#include "native_consent_pixels.h"
 #ifndef D8_PROJECT_TRANSFER_NO_MAIN
 int main(void){
  setvbuf(stdout,NULL,_IONBF,0);
@@ -123,6 +124,7 @@ int main(void){
  for(unsigned selector=0;selector<2;selector++){const uint8_t*p=selector?source_live:source_pool;unsigned length=selector?live_length:sizeof source_pool;
   for(unsigned off=0;off<length;off+=256){unsigned count=length-off;if(count>256)count=256;pt_token(4);message[7]=(uint8_t)selector;mc_put32(message+8,off);unsigned n=13+pt_pack_test(p+off,count,message+13);CHECK(pt_request(n)==PT_OK);}}
  pt_token(5);CHECK(pt_request(7)==PT_OK&&pt_phase()==PT_CONSENT&&!physical_calls);
+ consent_pixels("restore",76,AF_S.h,160,AF_S.h);CHECK(!physical_calls);
  d8ls_draw();CHECK(d8ls.shown==d8ls.generation);mc_ship_tap(B_SAVE);CHECK(pt_phase()==PT_RELEASE);d8ls_poll();CHECK(pt_phase()==PT_APPROVED);
  pt_token(7);CHECK(pt_request(7)==PT_OK&&d8ls.phase==LS_IDLE&&!migration_owner);CHECK(native_as.ready&&project_native_status()==1&&!d8_instrument_write_allowed());
  uint32_t adopted_sig=0;CHECK(!d8p1_signature_runtime(&adopted_sig)&&native_as.saved==adopted_sig);d8pool_record preserved_as;CHECK(!d8pool_current(&seed,3,&preserved_as));unsigned before_idle=physical_calls;fm1_ms+=AS_IDLE_MS+AS_POLL_MS;CHECK(!d8p1_autosave_session_poll()&&physical_calls==before_idle);d8pool_record after_idle;CHECK(!d8pool_current(&seed,3,&after_idle)&&!memcmp(&after_idle,&preserved_as,sizeof after_idle));
