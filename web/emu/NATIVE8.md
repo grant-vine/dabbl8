@@ -42,6 +42,52 @@ versus WASM equality. It is separate from the actual panel-recorded song.
 Host/WASM renders do not establish FM-1 deadlines, memory limits, flash recovery
 or release/hardware safety.
 
+## Reference for subsequent fixes
+
+Use commit `04ba2469bed14847de51adb471d74159d2ee3614` as the behavioural
+baseline. Its eight-track WASM is 766,901 bytes with SHA-256
+`f421d0dc336e051f9e9cff970c05c7845e1dfaee96617af5b86524b8ff5d054e`.
+The local evidence is preserved under
+`.local-baseline/emulator-workflows-20261013/`: `source/build/emu-workflows/evidence/`
+holds scripted results and immutable pre-fix audio captures; `evidence/root-qa.md`
+and `evidence/gate-review.md` record actual browser use and independent approval.
+Archived consent captures are in `evidence/team-archive/artifacts/consent-colours/`.
+
+For each fix:
+
+1. Reproduce the affected failure with this reference or reuse its exact
+   source/configuration-bound evidence. Keep reference binaries, NOR snapshots,
+   audio and results intact. Write candidate outputs to a separate directory,
+   for example `sh web/emu/check-eight.sh build/emu-candidate`.
+2. Lock the fix with an affected regression that fails before and passes after.
+   Reuse unchanged coverage; run the broader eight-track workflow runner when
+   shared playback, input or persistence changes. Inspect local check selection
+   first; an unmapped-path refusal requires explicit scoped coverage.
+3. Preserve independent track edits and both banks, the eight shared-voice cap,
+   all three named projects, deliberate save consent, cancellation/refusal,
+   autosave and retained-NOR reboot. Exercise the real browser for visible changes.
+4. For sound-preserving optimisations, compare candidate audio bit-for-bit with
+   the retained reference using the same inputs and compiler flags. Keep
+   manufactured eight-active audio separate from the panel-recorded song. Do not
+   replace golden hashes, clear effects or drop engines to force a pass.
+5. Check affected target cost, RAM and stack separately with cached tools. The
+   target budget is a weighted instruction-growth model, not measured cycles;
+   emulator speed is not an FM-1 deadline measurement. Compare matched target
+   configurations and preserve failures without raising budgets.
+
+At this reference, 42 workflow cases and seven first-use worklet cases passed.
+Four target cost checks still failed: SLICE +14%, audio IRQ +49%, TIMER5 +14%
+and UAC48 +12%. RAM data+BSS was 97,220/98,304 bytes; the pool used
+335,672/344,064 bytes, leaving 8,392 bytes (only 200 beyond its 8,192-byte
+reserve). These are starting observations, not clearance to flash.
+The legacy full state-digest mismatch caused by added guard metadata remains
+recorded; exact PCM equality is separate evidence, not a passing state hash.
+
+Prioritise the audio interrupt cost investigation, then the remaining target
+costs and stack bounds, while retaining this behaviour. Hardware storage/USB,
+deadlines and recovery must still be qualified separately; no device write is
+authorised by emulator success.
+
 The upstream four-track defaults and `emu_test.mjs` assertions remain unchanged:
 
 ```sh
