@@ -166,7 +166,18 @@ static struct { uint32_t stage; } felucca_dbg;
 #include "../firmware/src/ui_menu.c"
 #include "../firmware/src/ui_input.c"
 #include "../firmware/src/ui_layer.c"
+#ifdef D8_FIRST_USE_COMPLETION_TEST
+/* Exercise the actual preset flash loaders with the virtual NOR hooks.
+ * Historical project boot scaffolding below keeps its existing host mode. */
+#undef FELUCCA_FLASH
+#define FELUCCA_FLASH 1
+#include "../firmware/src/storage.c"
+#endif
 #include "../firmware/src/upreset.c"
+#ifdef D8_FIRST_USE_COMPLETION_TEST
+#undef FELUCCA_FLASH
+#define FELUCCA_FLASH 0
+#endif
 #include "../firmware/src/project.c"
 
 static int check(const char *what, int ok)

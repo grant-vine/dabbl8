@@ -13,6 +13,9 @@ static uint8_t local_before[sizeof nor];
 static unsigned local_lcd_event,local_primitive_event,local_lcd_count,consent_syncs,local_auto_late,local_auto_failure;
 static void local_read_hook(void)
 {
+#ifdef D8_LOCAL_COMPLETION_READ_HOOK
+ D8_LOCAL_COMPLETION_READ_HOOK();
+#endif
  if(local_auto_failure&&native_as.pending&&d8ls.phase==LS_EXECUTE&&d8ls.operation==1&&!d8ls.writing){
   unsigned action=local_auto_failure;local_auto_failure=0;
   if(action==1)post_commit_io=2;

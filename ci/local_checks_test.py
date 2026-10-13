@@ -61,8 +61,105 @@ class SelectionTest(unittest.TestCase):
         for path, name in [('tests/ui_test.c', 'legacy-ui'), ('firmware/src/eng_slice.c', 'sampler')]:
             p = self.plan([path])
             self.assertIn(name, p['checks'])
-            self.assertEqual(len(p['commands']), 5 if name == 'legacy-ui' else 9)
+            self.assertEqual(len(p['commands']), 9)
             self.assertEqual(p['status'], 'REFUSED')  # no generated inputs
+
+    def test_flash_driver_and_first_use_select_bounded_host_checks(self):
+        cases = (
+            ('firmware/hal/fm1_flash.h', ['diff', 'first-use', 'flash-driver']),
+            ('tests/flash_driver_timeout_test.c', ['diff', 'flash-driver']),
+            ('tests/native_owner_initialize_test.c', ['diff', 'first-use']),
+            ('firmware/src/native_first_use_session.c', ['diff', 'first-use']),
+            ('firmware/src/native_first_use_diagnostic.h', ['diff', 'first-use']),
+        )
+        for path, selected in cases:
+            p = self.plan([path])
+            self.assertEqual(p['checks'], selected)
+            self.assertEqual(p['unmapped_paths'], [])
+            compile_steps = [step for step in p['commands'] if step['name'].endswith('-compile')]
+            self.assertEqual(len(compile_steps), 2 * (len(selected) - 1))
+            for step in compile_steps:
+                self.assertIn('firmware/hal/fm1_flash.h', step['requires'])
+                self.assertFalse(any('build.py' in arg or 'run_tests.sh' in arg for arg in step['argv']))
+                if step['name'].startswith('first-use-'):
+                    self.assertIn('firmware/src/native_first_use_diagnostic.h', step['requires'])
+                    for header in checks.GEN:
+                        self.assertIn('build/gen/' + header, step['requires'])
+            sanitized = [step for step in compile_steps if '-sanitized-' in step['name']]
+            for step in sanitized:
+                self.assertIn('-fsanitize=address,undefined', step['argv'])
+                self.assertIn('-fno-sanitize-recover=all', step['argv'])
+                exclusions = '-fno-sanitize=signed-integer-overflow,shift'
+                self.assertEqual(exclusions in step['argv'], step['name'].startswith('first-use-'))
+            self.assertEqual(p['status'], 'REFUSED')
+
+    def test_first_use_missing_scaffold_refuses_without_execution(self):
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            steps = checks.recipes({'diff', 'first-use'}, ['clang'], Path('out'), 'HEAD')
+            for name in steps[1]['requires'] + ['firmware/src/native_first_use_diagnostic.h']:
+                file = repo / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.touch()
+            with patch.object(checks.shutil, 'which', return_value='/usr/bin/clang'):
+                plan = checks.make_plan(repo, ['tests/native_owner_initialize_test.c'], (),
+                                        ['clang'], Path('out'), 'HEAD')
+                self.assertEqual(plan['status'], 'PLAN')
+            for missing in ('tests/instrument_capture_test.c', 'firmware/src/native_first_use_diagnostic.h'):
+                (repo / missing).unlink()
+                plan = checks.make_plan(repo, ['tests/native_owner_initialize_test.c'], (),
+                                        ['clang'], Path('out'), 'HEAD')
+                self.assertEqual(plan['status'], 'REFUSED')
+                with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        code = checks.main(['--paths', 'tests/native_owner_initialize_test.c', '--run'])
+                    self.assertEqual(code, 2)
+                    run.assert_not_called()
+                    self.assertFalse((repo / 'build/local-checks').exists())
+                (repo / missing).touch()
+
+    def test_usb_controller_selects_only_actual_standalone_fixture(self) -> None:
+        for path in ('firmware/src/usb.c', 'tests/usb_sie_wait_test.c'):
+            plan = self.plan([path])
+            self.assertEqual(plan['checks'], ['diff', 'usb-controller'])
+            self.assertEqual(plan['unmapped_paths'], [])
+            self.assertEqual([step['name'] for step in plan['commands']],
+                             ['diff', 'usb-controller-optimized-compile', 'usb-controller-optimized',
+                              'usb-controller-sanitized-compile', 'usb-controller-sanitized'])
+            for step in (plan['commands'][1], plan['commands'][3]):
+                self.assertIn('tests/usb_sie_wait_test.c', step['argv'])
+                self.assertIn('-lm', step['argv'])
+                self.assertFalse(any('build/gen/' in name for name in step['requires']))
+                self.assertFalse(any('run_tests.sh' in arg or 'build.py' in arg for arg in step['argv']))
+            sanitized = plan['commands'][3]['argv']
+            self.assertIn('-fsanitize=address,undefined', sanitized)
+            self.assertIn('-fno-sanitize-recover=all', sanitized)
+            self.assertFalse(any(arg.startswith('-fno-sanitize=') for arg in sanitized))
+            self.assertEqual(plan['status'], 'REFUSED')
+        selected, unknown = checks.select(['firmware/src/main.c', 'firmware/src/console.c'])
+        self.assertEqual(selected, {'diff'})
+        self.assertEqual(unknown, ['firmware/src/main.c', 'firmware/src/console.c'])
+
+    def test_usb_controller_missing_input_refuses_without_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            required = checks.recipes({'diff', 'usb-controller'}, ['clang'], Path('out'), 'HEAD')[1]['requires']
+            for name in required:
+                file = repo / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.touch()
+            with patch.object(checks.shutil, 'which', return_value='/usr/bin/clang'):
+                plan = checks.make_plan(repo, ['firmware/src/usb.c'], (), ['clang'], Path('out'), 'HEAD')
+                self.assertEqual(plan['status'], 'PLAN')
+                for missing in required:
+                    (repo / missing).unlink()
+                    with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            code = checks.main(['--paths', 'firmware/src/usb.c', '--run'])
+                        self.assertEqual(code, 2)
+                        run.assert_not_called()
+                        self.assertFalse((repo / 'build/local-checks').exists())
+                    (repo / missing).touch()
 
     def test_fx_quiet_selects_only_focused_recipe(self):
         for path in ('firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'):

@@ -7,7 +7,8 @@
 #include "../firmware/src/d8p1_runtime.c"
 #include "../firmware/src/d8p1_pool_runtime.c"
 #include "../firmware/src/d8pool_mapped.h"
-static uint8_t nor[0x100000],baseline[sizeof nor],wire[D8P1_LIMIT],out[D8P1_LIMIT];
+static _Alignas(4) uint8_t nor[0x100000];
+static uint8_t baseline[sizeof nor],wire[D8P1_LIMIT],out[D8P1_LIMIT];
 static unsigned checks,failures,reads,writes,irq_disabled;
 static int cut=-1,late_irq=-1,post_commit_start,post_commit_io;
 static uint8_t flash_ok;

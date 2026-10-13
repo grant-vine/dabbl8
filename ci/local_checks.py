@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from local_flash_checks import flash_recipes
 
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -35,7 +36,15 @@ MAP = {
         'tools/native_dry_compare.py'},
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
     'timing-capture': {'tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'},
-    'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'tests/run_tests.sh'},
+    'flash-driver': {'firmware/hal/fm1_flash.h', 'tests/flash_driver_timeout_test.c'},
+    'usb-controller': {'firmware/src/usb.c', 'tests/usb_sie_wait_test.c'},
+    'first-use': {'firmware/hal/fm1_flash.h', 'firmware/src/native_first_use.c',
+        'firmware/src/native_first_use.h', 'firmware/src/native_first_use_session.c',
+        'firmware/src/native_first_use_session.h', 'firmware/src/native_first_use_diagnostic.h',
+        'tests/native_owner_initialize_test.c',
+        'tests/native_first_use_session_test.c', 'tests/native_local_save_test.c',
+        'tests/instrument_capture_test.c', 'tests/ui_test.c', 'tests/d8p1_flash_runtime_test.c'},
+    'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'ci/local_flash_checks.py', 'tests/run_tests.sh'},
 }
 
 
@@ -77,6 +86,9 @@ def recipes(checks, cc, out, base):
                 'argv': [sys.executable, 'tests/dabbl8_timing_capture_test.py'],
                 'requires': ['tools/dabbl8_timing_capture.py',
                     'tools/dabbl8_timing_report.py', 'tests/dabbl8_timing_capture_test.py']})
+            continue
+        if name in ('flash-driver', 'first-use', 'usb-controller'):
+            steps += flash_recipes(name, cc, out)
             continue
         if name == 'dry-sends':
             steps.append({'name': 'dry-send-parent-equivalence',

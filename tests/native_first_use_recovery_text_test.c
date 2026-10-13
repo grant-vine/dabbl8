@@ -4,15 +4,8 @@ static void firstuse_text_hook(const char *);
 #define GFX_HOOK_BEGIN() ((void)0)
 #define GFX_HOOK_BLIT(x,y,r0) ((void)0)
 #define GFX_HOOK_PIXELS(n) ((void)0)
-#define D8_FIRST_USE_SESSION 1
-#define D8_NATIVE_LOCAL_SAVE_NO_MAIN 1
-#include "native_local_save_test.c"
-static int fi_text_erase(uint32_t a,uint32_t*t){(void)t;return mc_virtual_erase(a);}
-static int fi_text_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)t;return mc_virtual_program(a,p,n);}
-#define D8_FI_ERASE(a,t) fi_text_erase(a,t)
-#define D8_FI_PROGRAM(a,p,n,t) fi_text_program(a,p,n,t)
-#include "../firmware/src/native_first_use.c"
-#include "../firmware/src/native_first_use_session.c"
+#define D8_FIRST_USE_SESSION_NO_MAIN 1
+#include "native_first_use_session_test.c"
 static unsigned saw_save,saw_recovery;
 static void firstuse_text_hook(const char *s)
 {

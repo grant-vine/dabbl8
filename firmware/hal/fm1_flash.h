@@ -13,17 +13,28 @@
 #include <stdint.h>
 #include "fm1_xip.h"
 
+#ifdef FM1_FLASH_DRIVER_TEST
+#define RAMFN
+#define RAMINL static inline
+#else
 #define RAMFN  __attribute__((section(".ram_text"), noinline, used))
 #define RAMINL static inline __attribute__((always_inline))
+#endif
 
 /* XIP (0x02xxxxxx) -> RAM (0x01C0xxxx) is beyond the 23-bit call range:
  * call RAM code through a pointer the compiler cannot fold back. */
 static inline void *fl_far(void *p) { void *volatile q = p; return q; }
 #define FL_FAR(fn) ((__typeof__(&fn))fl_far((void *)&fn))
 
+#ifndef REG32
 #define REG32(a) (*(volatile uint32_t *)(a))
+#endif
 #define SFC_CON         REG32(0x40200u)            /* bit31 busy; [11:8] read mode */
+#ifdef FM1_FLASH_DRIVER_TEST
+#define SFCENC_CON      FM1_FLASH_TEST_REG8(0x40300u)
+#else
 #define SFCENC_CON      (*(volatile uint8_t *)0x40300u)  /* b0 decrypt, b1 plain window */
+#endif
 #define SFCENC_UNENC_H  REG32(0x40308u)            /* WO, XIP (CPU) address */
 #define SFCENC_UNENC_L  REG32(0x4030Cu)            /* WO, XIP (CPU) address */
 #define SPI0_CON        REG32(0x11C00u)            /* b15 PND, b14 PCLR, b12 DIR=rx */
@@ -58,9 +69,32 @@ static inline void *fl_far(void *p) { void *volatile q = p; return q; }
 
 typedef struct { uint32_t sfc_con, spi_con; } fl_saved_t;
 
+#ifdef FM1_FLASH_DRIVER_TEST
+RAMINL void fl_csync(void) { FM1_FLASH_TEST_CSYNC(); }
+#else
 RAMINL void fl_csync(void) { __asm__ volatile("csync" ::: "memory"); }
+#endif
+#if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+/* Readiness is unknown: keep XIP off and IRQs masked until the already-armed
+ * hardware watchdog resets. No XIP helper, fault handler or watchdog feed. */
+RAMINL __attribute__((noreturn)) void fl_failstop(void)
+{
+#ifdef FM1_FLASH_DRIVER_TEST
+    FM1_FLASH_TEST_CONTAIN();
+#else
+    for (;;) fl_csync();
+#endif
+}
+#define FL_READY_TIMEOUT() fl_failstop()
+#else
+#define FL_READY_TIMEOUT() return -4
+#endif
 RAMINL void fl_cache_idle(void) { while (!(CACHE_CON & 0x4000u)) ; }
+#ifdef FM1_FLASH_DRIVER_TEST
+RAMINL void fl_delay(uint32_t n) { FM1_FLASH_TEST_DELAY(n); }
+#else
 RAMINL void fl_delay(uint32_t n) { volatile uint32_t i = n; while (i--) ; }
+#endif
 
 RAMINL void fl_cs(int high)
 {
@@ -70,10 +104,17 @@ RAMINL void fl_cs(int high)
 }
 RAMINL int fl_spi_wait(void)
 {
+#ifdef FM1_FLASH_DRIVER_TEST
+    uint32_t n = FM1_FLASH_TEST_SPI_POLLS;
+#else
     uint32_t n = 50000000u;
+#endif
     fl_csync();
     while (!(SPI0_CON & 0x8000u))
         if (--n == 0) break;
+#if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+    if (!n) fl_failstop();
+#endif
     SPI0_CON |= 0x4000u;
     return n ? 0 : -1;
 }
@@ -129,7 +170,11 @@ RAMINL void fl_inval(uint32_t off, uint32_t len)
     fl_cache_idle();
     for (; a < e; a += 32u) {
         fl_csync();
+#ifdef FM1_FLASH_DRIVER_TEST
+        FM1_FLASH_TEST_FLUSHINV(a);
+#else
         __asm__ volatile("flushinv [%0]" :: "r"(a) : "memory");
+#endif
         fl_csync();
         fl_cache_idle();
     }
@@ -140,7 +185,7 @@ RAMINL int fl_wait_ready(uint32_t max_us, uint32_t *took_us)
     for (;;) {
         dt = (T4_CNT - t0) / 24u;
         if (!(fl_rdsr(0x05) & 1u)) { *took_us = dt; return 0; }
-        if (dt > max_us) { *took_us = dt; return -4; }
+        if (dt > max_us) { *took_us = dt; FL_READY_TIMEOUT(); }
     }
 }
 
@@ -173,7 +218,13 @@ static RAMFN int fl_erase4k_ram(uint32_t off, uint32_t *took_us)
         return -1;
     if (fl_enter(&s)) return -2;
     fl_wren();
+#if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+    uint8_t status = fl_rdsr(0x05);
+    if (status & 1u) fl_failstop();
+    if (!(status & 2u)) rc = -3;
+#else
     if (!(fl_rdsr(0x05) & 2u)) rc = -3;           /* WEL did not set */
+#endif
     else {
         fl_cs(0); fl_tx(0x20); fl_addr(off); fl_cs(1);
         fl_inval(off, 4096u);
@@ -190,7 +241,13 @@ static RAMFN int fl_prog_ram(uint32_t off, const uint8_t *src, uint32_t n, uint3
         n == 0 || n > 256u || ((off & 0xFFu) + n) > 256u) return -1;    /* one page, no wrap */
     if (fl_enter(&s)) return -2;
     fl_wren();
+#if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+    uint8_t status = fl_rdsr(0x05);
+    if (status & 1u) fl_failstop();
+    if (!(status & 2u)) rc = -3;
+#else
     if (!(fl_rdsr(0x05) & 2u)) rc = -3;
+#endif
     else {
         fl_cs(0); fl_tx(0x02); fl_addr(off);
         for (i = 0; i < n; i++) fl_tx(src[i]);
@@ -223,13 +280,26 @@ static void fl_plain_window_init(void)
     SFCENC_UNENC_L = FL_XIP(0x93000u);            /* 0x0208F000 */
     SFCENC_UNENC_H = 0x07FFFFFFu;
     SFCENC_CON |= 2u;
+#ifdef FM1_FLASH_DRIVER_TEST
+    FM1_FLASH_TEST_IRQ_OFF();
+#else
     __asm__ volatile("cli" ::: "memory");
+#endif
     fl_inval(0x93000u, 0x100000u - 0x93000u);     /* drop any decrypted lines */
+#ifdef FM1_FLASH_DRIVER_TEST
+    fl_csync(); FM1_FLASH_TEST_IRQ_ON();
+#else
     __asm__ volatile("csync\n\tsti" ::: "memory");
+#endif
 }
 
+#ifdef FM1_FLASH_DRIVER_TEST
+static inline uint32_t irq_save(void) { FM1_FLASH_TEST_IRQ_OFF(); return 0; }
+static inline void irq_restore(uint32_t f) { (void)f; fl_csync(); FM1_FLASH_TEST_IRQ_ON(); }
+#else
 static inline uint32_t irq_save(void) { __asm__ volatile("cli" ::: "memory"); return 0; }
 static inline void irq_restore(uint32_t f) { (void)f; __asm__ volatile("csync\n\tsti" ::: "memory"); }
+#endif
 
 static int fl_erase4k(uint32_t off, uint32_t *took_us)
 {

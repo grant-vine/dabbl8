@@ -11,7 +11,9 @@ static void audio_silence(void) {}
 static void fl_inval(uint32_t a,uint32_t n){(void)a;(void)n;}
 static int fl_erase4k(uint32_t a,uint32_t *t){if(a>sizeof nor-4096)return -1;memset(nor+a,255,4096);writes++;*t=0;return 0;}
 static int fl_write(uint32_t a,const void *p,uint32_t n){if(a>sizeof nor||n>sizeof nor-a||cut==0)return -1;memcpy(nor+a,p,n);writes++;return 0;}
+#ifndef D8_FIRST_USE_COMPLETION_TEST
 #include "../firmware/src/storage.c"
+#endif
 #include "../firmware/src/editor.c"
 /* Compile actual hardware storage observation/read-window code under test-only
  * symbol aliases. Physical RAM primitives below remain simulated NOR. */

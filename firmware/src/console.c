@@ -69,6 +69,8 @@ static void con_kx(const char *k, uint32_t v)
     con_puts("\r\n");
 }
 
+#include "native_first_use_diagnostic.h"
+
 static uint32_t con_num(const char **p, int *ok)        /* decimal or 0x hex */
 {
     const char *s = *p;
@@ -217,6 +219,9 @@ static void con_status(void)
     con_kv("bpm", song.g[G_BPM]);
     con_kv("playing", song.playing);
     con_kv("boots", (int32_t)felucca_dbg.boots);
+#if D8_FIRST_USE_SESSION && DABBL8_TIMING_DIAGNOSTIC
+    con_first_use();
+#endif
     con_kv("usb_resets", (int32_t)usb.resets);
     con_kv("usb_sof", (int32_t)usb.sof_seen);
     con_kv("usb_suspends", (int32_t)usb.suspends);

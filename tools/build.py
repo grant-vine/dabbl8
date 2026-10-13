@@ -209,6 +209,13 @@ def app_flags():
         if os.environ.get("FELUCCA_CDC") == "0":
             raise SystemExit("--timing-diagnostic needs FELUCCA_CDC=1")
         flags.append("-DDABBL8_TIMING_DIAGNOSTIC=1")
+    owner_initialize = os.environ.get("D8_OWNER_INITIALIZE", "0")
+    if owner_initialize not in ("0", "1"):
+        raise SystemExit("D8_OWNER_INITIALIZE must be 0 or 1")
+    if owner_initialize == "1":
+        if not TIMING_DIAGNOSTIC or not DABBL8_VERSION:
+            raise SystemExit("Owner-authorised initialization requires a private Dabbl8 timing diagnostic")
+        flags.append("-DD8_OWNER_INITIALIZE=1")
     for flag in ("FELUCCA_FLASH", "FELUCCA_OTA", "FELUCCA_OTA_DRYRUN", "FELUCCA_OTA_RAMONLY", "FELUCCA_CDC",
                  "FELUCCA_UART", "FELUCCA_UAC", "FELUCCA_UAC_TONE", "FELUCCA_UAC_48K", "FELUCCA_ICONS", "FELUCCA_SLICE", "FELUCCA_FM4",
                  "FELUCCA_CDC_DEFAULT"):

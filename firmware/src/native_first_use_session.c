@@ -5,6 +5,12 @@
 #ifndef D8_FIRST_USE_WRITE_ENABLED
 #define D8_FIRST_USE_WRITE_ENABLED 1
 #endif
+#ifndef D8_OWNER_INITIALIZE
+#define D8_OWNER_INITIALIZE 0
+#endif
+#if D8_OWNER_INITIALIZE && !DABBL8_TIMING_DIAGNOSTIC
+#error Owner-authorised initialization is restricted to private diagnostic builds
+#endif
 #ifndef D8_FI_ERASE
 #define D8_FI_ERASE(a,t) FL_FAR(fl_erase4k_ram)(a,t)
 #define D8_FI_PROGRAM(a,p,n,t) FL_FAR(fl_prog_ram)(a,p,n,t)
@@ -38,16 +44,65 @@ static int fi_quiet(void)
   !d8mc_edit.locked&&!d8mc_edit.busy&&!d8mc_edit.writer&&!d8ls_blocked()&&
   df_automatic_quiet()&&mc_inputs_quiet()&&!usb.ota_req&&!usb.uboot_req;
 }
-static int fi_lifetime(void *c)
+static int fi_owner_usb_ready(void)
+{ return usb.up&&usb.config==1&&!usb.suspended; }
+static uint32_t fi_guards(unsigned executing)
 {
- (void)c;return !d8fi.revoked&&d8fi.phase==FI_EXECUTE&&
-  main_migration_workspace(d8fi.generation)&&
-  d8_capture_change.epoch==d8fi.epoch+d8fi.own&&
-  usb.resets==d8fi.usb&&usb.config==d8fi.usb_config&&
-  (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_quiet();
+ return (d8fi.revoked?FI_G_REVOKED:0u)|(executing&&d8fi.phase!=FI_EXECUTE?FI_G_PHASE:0u)|
+  ((executing||d8fi.generation)&&!main_migration_workspace(d8fi.generation)?FI_G_WORKSPACE:0u)|
+  (d8_capture_change.epoch!=d8fi.epoch+d8fi.own?FI_G_EPOCH:0u)|
+  (usb.resets!=d8fi.usb?FI_G_RESET:0u)|(usb.config!=d8fi.usb_config?FI_G_CONFIG:0u)|
+  ((uint32_t)(fm1_ms-d8fi.started)>=120000u?FI_G_DEADLINE:0u)|(!fi_quiet()?FI_G_QUIET:0u)|
+  (usb.up!=d8fi.usb_up||(D8_OWNER_INITIALIZE&&usb.suspended)?FI_G_USB_STATE:0u);
 }
+static int fi_lifetime(void *c)
+{ (void)c;return !fi_guards(1); }
+#if DABBL8_TIMING_DIAGNOSTIC
+static void d8fi_diag_boot(uint32_t reset,uint32_t source,uint32_t wdt)
+{
+ if(d8fi_diag.magic!=FI_DIAG_MAGIC){memset((void *)&d8fi_diag,0,sizeof d8fi_diag);d8fi_diag.magic=FI_DIAG_MAGIC;}
+ d8fi_diag.boot++;d8fi_diag.reset_reason=(uint8_t)reset;
+ d8fi_diag.reset_src=source;d8fi_diag.wdt=(uint8_t)wdt;
+}
+static void fi_diag_current(void)
+{
+ d8fi_diag.current_epoch=d8_capture_change.epoch;d8fi_diag.current_resets=usb.resets;
+ d8fi_diag.current_config=usb.config;d8fi_diag.current_usb_state=usb.up|(usb.suspended<<1);
+ d8fi_diag.elapsed=fm1_ms-d8fi.started;d8fi_diag.guards|=fi_guards(d8fi.phase==FI_EXECUTE);
+}
+static void fi_diag_before(unsigned operation,uint32_t address)
+{
+ d8fi_diag.record_boot=d8fi_diag.boot;d8fi_diag.operation=(uint8_t)operation;d8fi_diag.address=address;
+ d8fi_diag.phase=d8fi.phase;d8fi_diag.format_phase=(uint8_t)d8fi.format.phase;
+ d8fi_diag.sector=(uint8_t)d8fi.format.sector;d8fi_diag.verify_offset=(uint16_t)d8fi.format.verify_offset;
+ d8fi_diag.foundation=d8fi.foundation;d8fi_diag.generation=d8fi.generation;
+ d8fi_diag.epoch=d8fi.epoch;d8fi_diag.own=d8fi.own;d8fi_diag.resets=d8fi.usb;
+ d8fi_diag.config=d8fi.usb_config;d8fi_diag.usb_state=d8fi.usb_up;
+ d8fi_diag.raw_rc=d8fi_diag.result=FI_DIAG_PENDING;d8fi_diag.guards=0;fi_diag_current();
+ d8fi_diag.status=operation==FI_OP_READ||operation==FI_OP_ERASE||operation==FI_OP_PROGRAM?FI_DIAG_INFLIGHT:FI_DIAG_ACTIVE;
+ __asm__ volatile("" ::: "memory");
+}
+static void fi_diag_after(int raw)
+{ d8fi_diag.raw_rc=raw;fi_diag_current();d8fi_diag.status=FI_DIAG_ACTIVE; }
+static void fi_diag_result(int result)
+{
+ d8fi_diag.result=result;fi_diag_current();
+ if(result==D8FU_IO&&!d8fi_diag.raw_rc&&!d8fi_diag.guards&&d8fi_diag.format_phase==2)
+  d8fi_diag.guards|=FI_G_VERIFY;
+}
+#else
+#define fi_diag_before(o,a) ((void)0)
+#define fi_diag_after(r) ((void)0)
+#define fi_diag_result(r) ((void)0)
+#endif
+#ifndef D8_FI_READ
+#define D8_FI_READ(a,p,n) st_read(a,p,n)
+#endif
 static int fi_read(void*c,uint32_t a,void*p,uint32_t n)
-{(void)c;if(!fi_lifetime(NULL))return -1;int rc=st_read(a,p,n);return fi_lifetime(NULL)?rc:-1;}
+{
+ (void)c;fi_diag_before(FI_OP_READ,a);if(!fi_lifetime(NULL))return -1;
+ int rc=D8_FI_READ(a,p,n);fi_diag_after(rc);return fi_lifetime(NULL)?rc:-1;
+}
 static unsigned fi_foundation_object(void)
 {
  static const uint8_t objects[4]={OBJ_UPRESET0,OBJ_UPRESET0+1,OBJ_UPFM6,OBJ_SETTINGS};
@@ -103,10 +158,14 @@ static int fi_ticket(unsigned program,uint32_t a,const void*p,uint32_t n)
 static int fi_driver(unsigned program,uint32_t a,const void*p,uint32_t n)
 {
  uint32_t flags=irq_save(),took=0;int rc=-10;
+ fi_diag_before(program?FI_OP_PROGRAM:FI_OP_ERASE,a);
  if(D8_FIRST_USE_WRITE_ENABLED&&fi_ticket(program,a,p,n)) {
   d8fi.busy=1;d8fi.attempted=1;d8_capture_store_changed();d8fi.own++;
+#if DABBL8_TIMING_DIAGNOSTIC
+  d8fi_diag.own=d8fi.own;fi_diag_current();__asm__ volatile("" ::: "memory");
+#endif
   rc=program?D8_FI_PROGRAM(a,p,n,&took):D8_FI_ERASE(a,&took);
-  if(!fi_lifetime(NULL))rc=-1;
+  fi_diag_after(rc);if(!fi_lifetime(NULL))rc=-1;
   if(!rc&&d8fi.format.phase==3&&d8fi.foundation<4) {
    if(!program)d8fi.commit_phase=1;
    else if(a==st_sector(fi_foundation_object(),0))d8fi.commit_phase=2;
@@ -118,6 +177,9 @@ static int fi_driver(unsigned program,uint32_t a,const void*p,uint32_t n)
   }
   d8fi.busy=0;
  }
+#if DABBL8_TIMING_DIAGNOSTIC
+ else {d8fi_diag.guards|=FI_G_TICKET;fi_diag_current();d8fi_diag.status=FI_DIAG_ACTIVE;}
+#endif
  irq_restore(flags);return rc;
 }
 static int fi_erase(void*c,uint32_t a){(void)c;return fi_driver(0,a,NULL,4096);}
@@ -144,19 +206,24 @@ static void d8fi_draw(void)
  unsigned phase=d8fi.phase;uint32_t epoch=d8_capture_change.epoch,faults=fm1_lcd_timeouts,resets=usb.resets;unsigned config=usb.config;
  d8fi.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  draw_text_box(12,32,216,&AF_M,"DABBL8 FIRST USE",T_THEME,1);
- draw_text_box(12,76,216,&AF_S,"ERASE ALL USER DATA",T_INK,1);
- draw_text_box(12,110,216,&AF_S,"Projects, samples, presets, settings",T_INK,1);
+ draw_text_box(12,76,216,&AF_S,"ERASE ALL USER DATA",T_TEXT,1);
+ draw_text_box(12,110,216,&AF_S,"Projects, samples, presets, settings",T_TEXT,1);
  draw_text_box(12,150,216,&AF_S,phase==FI_UNCERTAIN?"Damaged or unfinished storage":phase==FI_REFUSED||phase==FI_FAILED?"STORAGE ERROR - no automatic reset":"Fresh Dabbl8 storage",T_ACCENT,1);
- draw_text_box(12,190,216,&AF_M,phase==FI_FAILED||phase==FI_REFUSED?"REBOOT FOR RECOVERY":"PRESS AND RELEASE SAVE",T_ACCENT,1);
+ draw_text_box(12,190,216,&AF_M,phase==FI_FAILED||phase==FI_REFUSED?"REBOOT FOR RECOVERY":
+   D8_OWNER_INITIALIZE&&phase==FI_REQUIRED?(fi_owner_usb_ready()?"OWNER-AUTHORIZED RESET":"WAITING FOR USB"):"PRESS AND RELEASE SAVE",T_ACCENT,1);
  lcd_sync();uint32_t flags=irq_save();
  if((phase==FI_REQUIRED||phase==FI_UNCERTAIN)&&d8fi.phase==phase&&
-    epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&!migration_owner&&fi_quiet()) {
-  d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
+    epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&!migration_owner&&fi_quiet()&&
+    (!D8_OWNER_INITIALIZE||phase!=FI_REQUIRED||fi_owner_usb_ready())) {
+  d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.usb_up=usb.up;d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
  }
  irq_restore(flags);
 }
 static void fi_fail(void)
 {
+#if DABBL8_TIMING_DIAGNOSTIC
+ fi_diag_current();d8fi_diag.status=FI_DIAG_FAILED;
+#endif
  if(d8fi.generation)main_migration_end(d8fi.generation);
  d8fi.generation=0;d8fi.phase=FI_FAILED;d8fi.shown=0;project_native.mode=2;project_native.ready=0;
  d8ls_offline();ui.force=1;ui_message("INITIALIZATION STOPPED");
@@ -182,7 +249,7 @@ static int fi_foundation_step(void)
  /* Copy0 and sequence1 only, after every approved sector was verified erased.
   * The native marker remains absent until all four commit/readback checks pass. */
  int rc=st_save_commit(obj,data,n,0,fi_foundation_erase,fi_foundation_program);
- if(rc||!fi_lifetime(NULL)||d8fi.commit_phase!=2)return 0;
+ fi_diag_result(rc);if(rc||!fi_lifetime(NULL)||d8fi.commit_phase!=2)return 0;
  d8fi.foundation++;d8fi.offset=256;d8fi.commit_phase=0;d8fi.length=(uint32_t)d8fi.format.length;
  return 1;
 }
@@ -210,28 +277,52 @@ static int fi_stage_default(void)
  /* Keep the exact display-bound identity; acquiring/staging cannot refresh
   * consent after a callback changed epoch, USB, wire, or arena ownership. */
  if(!main_migration_workspace(d8fi.generation)||d8fi.revoked||
-    d8_capture_change.epoch!=d8fi.epoch||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||
+    d8_capture_change.epoch!=d8fi.epoch||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||usb.up!=d8fi.usb_up||
     fm1_lcd_timeouts!=d8fi.lcd_faults||headers!=d8fi.header_crc||!fi_quiet()||
     staged_crc!=d8p1_crc32(w->wire,n))return 0;
  d8fi.length=(uint32_t)n;d8fi.wire_crc=staged_crc;
  d8fi.own=0;d8fi.foundation=0;d8fi.offset=256;d8fi.commit_phase=0;d8fi.phase=FI_EXECUTE;
  d8pool_physical io={NULL,fi_read,fi_erase,fi_program,fi_lifetime};
- return d8fu_begin(&d8fi.format,&io,w->wire,n,d8fi.classification==D8FU_UNCERTAIN)==D8FU_MORE;
+ int rc=d8fu_begin(&d8fi.format,&io,w->wire,n,d8fi.classification==D8FU_UNCERTAIN);
+ fi_diag_result(rc);return rc==D8FU_MORE;
 }
 static void d8fi_poll(void)
 {
+#if D8_OWNER_INITIALIZE
+ /* Private empty-device install authorised by the owner. Preserve the displayed
+  * snapshot, existing quiet/lifetime tickets and exact user-state map. Never
+  * automatically reset recognized or uncertain Dabbl8 storage. */
+ if(d8fi.phase==FI_REQUIRED&&d8fi.classification==D8FU_FIRST_USE&&
+    d8fi.shown&&!d8fi.revoked&&fi_quiet()&&fi_owner_usb_ready()) {
+  d8fi.phase=FI_RELEASE;d8fi.shown=0;ui.force=1;
+ } else if(d8fi.phase==FI_REQUIRED&&!d8fi.shown&&fi_owner_usb_ready())ui.force=1;
+#endif
  if(d8fi.phase==FI_RELEASE) {
-  if(d8fi.revoked||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||
-     d8_capture_change.epoch!=d8fi.epoch||fi_headers()!=d8fi.header_crc||fm1_lcd_timeouts!=d8fi.lcd_faults){fi_fail();return;}
+  fi_diag_before(FI_OP_STAGE,0);
+  if(d8fi.revoked||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||usb.up!=d8fi.usb_up||
+     d8_capture_change.epoch!=d8fi.epoch||fi_headers()!=d8fi.header_crc||fm1_lcd_timeouts!=d8fi.lcd_faults){fi_diag_result(D8FU_BUSY);fi_fail();return;}
   if(!fi_quiet())return;
-  if(!fi_stage_default()){fi_fail();return;}
+  if(!fi_stage_default()){
+#if DABBL8_TIMING_DIAGNOSTIC
+   d8fi_diag.guards|=FI_G_STAGE;
+   if(d8fi_diag.result==FI_DIAG_PENDING)fi_diag_result(D8FU_BAD);
+#endif
+   fi_fail();return;
+  }
  }
  if(d8fi.phase!=FI_EXECUTE)return;
  if(d8fi.format.phase==3&&d8fi.foundation<4) {
-  if(!fi_foundation_step())fi_fail();
+  fi_diag_before(FI_OP_FOUNDATION,st_sector(fi_foundation_object(),0));
+  if(!fi_foundation_step()){
+#if DABBL8_TIMING_DIAGNOSTIC
+   if(d8fi_diag.result==FI_DIAG_PENDING)fi_diag_result(D8FU_BAD);
+#endif
+   fi_fail();
+  }
   return;
  }
- int rc=d8fu_step(&d8fi.format);
+ fi_diag_before(FI_OP_STEP,d8fu_address(d8fi.format.sector)+d8fi.format.verify_offset);
+ int rc=d8fu_step(&d8fi.format);fi_diag_result(rc);
  if(rc==D8FU_MORE)return;
  if(rc!=D8FU_COMPLETE||d8fi.commit_phase!=3){fi_fail();return;}
  main_migration_end(d8fi.generation);d8fi.generation=0;
@@ -242,7 +333,12 @@ static void d8fi_poll(void)
  up_boot();persist_pending=0;
 #endif
  d8fi.phase=FI_IDLE;d8ls_reset();d8ls.intent=1;project_native.mode=1;project_native.ready=0;
- if(project_native_bind_flash(1)||d8p1_autosave_local_begin()){fi_fail();return;}
+ fi_diag_before(FI_OP_READY,0);
+ int ready=project_native_bind_flash(1);if(!ready)ready=d8p1_autosave_local_begin();
+ fi_diag_result(ready);if(ready){fi_fail();return;}
+#if DABBL8_TIMING_DIAGNOSTIC
+ d8fi_diag.status=FI_DIAG_COMPLETE;d8fi_diag.guards=0;
+#endif
  proj_cur=0;ui.force=1;ui_message("DABBL8 READY");
 }
 #endif
