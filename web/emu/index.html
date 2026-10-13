@@ -6,9 +6,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Felucca</title>
+<title>@APP@</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 rx=%223%22/%3E%3Crect x=%224%22 y=%224%22 width=%228%22 height=%228%22 fill=%22%23fff%22/%3E%3C/svg%3E">
-<meta name="description" content="Felucca, the multi-engine synth firmware for the FM-1, running in your browser: the same code the instrument runs.">
+<meta name="description" content="@APP@, the multi-engine synth firmware for the FM-1, running in your browser: the same code the instrument runs.">
 <style>
 /* DotGothic16 (SIL OFL 1.1, fonts/OFL.txt), cut to printable ASCII, for the knob labels */
 @font-face { font-family: "DotGothic16"; src: url("fonts/DotGothic16-subset.woff") format("woff"); font-display: swap; }
@@ -76,7 +76,7 @@ footer small { font-size: 11px; opacity: .8; }
 <div class="device" id="device">
   <svg id="panel" viewBox="0 0 1000 624" aria-hidden="true"></svg>
   <canvas id="screen" width="240" height="240" role="img" aria-label="The screen"></canvas>
-  <div class="start" id="start"><button id="go" type="button">Switch on</button><p id="status" hidden></p></div>
+  <div class="start" id="start"><button id="go" type="button">Switch on</button><p id="status" role="status" aria-live="polite" hidden></p></div>
 </div>
 
 <p class="keys">
@@ -91,7 +91,7 @@ footer small { font-size: 11px; opacity: .8; }
 <footer>
   <small class="version">@VERSION@@PREVIEW@</small><br>
   Felucca by Leo Kuroshita, Hügelton Instruments · <a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a> · browser build after charlesvestal's <a href="https://github.com/charlesvestal/fm1-x0x">X0X</a> · DotGothic16 font, <a href="fonts/OFL.txt">SIL OFL 1.1</a><br>
-  <nav><a href="../installer/">Install</a><a href="../editor/">Editor</a><a href="https://github.com/hugelton/Felucca">Source</a></nav>
+  <nav>@NAV@</nav>
   <small>M-VAVE and FM-1 are trademarks of their respective owners. Felucca is not affiliated with or endorsed by them.</small>
 </footer>
 </main>
@@ -106,7 +106,8 @@ const PLAY_GREEN = 14;
 const WHITE = [0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26];
 const BLACK = [1, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25];
 const BLACK_AFTER = [0, 1, 2, 4, 5, 7, 8, 9, 11, 12, 14];      // the white key each black one follows
-const STORE = "felucca-emu-flash";
+const STORE = "@STORE@";
+const MIDI_ENABLED = @MIDI@;
 
 // ------------------------------------------------------------------ the panel
 // Two drawings of the same controls: WIDE after the FM-1's own layout, TALL for a phone held upright (the
@@ -151,7 +152,12 @@ const angle = Object.fromEntries(KNOBS.map((n) => [n, 0]));
 angle.MASTER = -135 + 270 * masterValue / 1023;
 const knobs = [], buttons = [], keys = [];
 const btnBy = new Map(), keyBy = new Map();                   // pointer / key code -> label bit or key
-const send = (m) => { if (node) node.port.postMessage(m); };
+let initializing = false, firstUsePhase = 0;
+const send = (m) => {
+  if (initializing && (m.type === "enc" || m.type === "master" || m.type === "midi" ||
+      (m.type === "buttons" || m.type === "keys") && m.mask !== 0)) return;
+  if (node) node.port.postMessage(m);
+};
 
 function build(name) {
   const L = LAYOUTS[name];
@@ -214,7 +220,9 @@ function build(name) {
     d.setAttribute("role", role);
     d.setAttribute("aria-label", c.name);
     d.title = c.name;
-    d.tabIndex = 0;
+    const release = firstUsePhase === 4 && c.bit === B.SAVE && (latched & (1 << B.SAVE));
+    d.tabIndex = initializing && !release ? -1 : 0;
+    d.setAttribute("aria-disabled", initializing && !release);
     d.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
     d.addEventListener("contextmenu", (e) => e.preventDefault());
     device.insertBefore(d, document.getElementById("start"));
@@ -251,6 +259,12 @@ function syncKeys(redraw) {
 function bindButton(b) {
   b.hit.addEventListener("pointerdown", (e) => {
     e.preventDefault();
+    if (initializing) {
+      if (firstUsePhase === 4 && b.bit === B.SAVE && (latched & (1 << B.SAVE))) {
+        latched &= ~(1 << B.SAVE);syncButtons(true);showFirstUse(firstUsePhase);
+      }
+      return;
+    }
     if (e.shiftKey || e.button === 2) { latched ^= 1 << b.bit; syncButtons(true); return; }
     if (latched & (1 << b.bit)) { latched &= ~(1 << b.bit); syncButtons(true); return; }
     b.hit.setPointerCapture(e.pointerId);
@@ -258,6 +272,7 @@ function bindButton(b) {
     syncButtons();
   });
   b.hit.addEventListener("keydown", (e) => {
+    if (initializing && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); return; }
     if ((e.key === "Enter" || e.key === " ") && !e.repeat) { btnBy.set("f" + b.bit, b.bit); syncButtons(); e.preventDefault(); e.stopPropagation(); }
   });
   b.hit.addEventListener("keyup", () => { if (btnBy.delete("f" + b.bit)) syncButtons(); });
@@ -265,6 +280,7 @@ function bindButton(b) {
 function bindKey(k, i) {
   k.hit.addEventListener("pointerdown", (e) => {
     e.preventDefault();
+    if (initializing) return;
     k.hit.setPointerCapture(e.pointerId);
     keyBy.set("p" + e.pointerId, i);
     syncKeys();
@@ -279,7 +295,7 @@ for (const t of ["pointerup", "pointercancel", "lostpointercapture"]) device.add
 
 function drawKnob(k) { if (k.ind) k.ind.setAttribute("transform", `rotate(${angle[k.name]} ${k.x} ${k.y})`); }
 function turn(k, n) {
-  if (!n) return;
+  if (initializing || !n) return;
   if (k.role === "master") {
     masterValue = Math.max(0, Math.min(1023, masterValue + n * 16));
     angle.MASTER = -135 + 270 * masterValue / 1023;
@@ -294,6 +310,7 @@ function bindKnob(k) {
   let drag = null, wheel = 0;
   k.hit.addEventListener("pointerdown", (e) => {
     e.preventDefault();
+    if (initializing) return;
     k.hit.setPointerCapture(e.pointerId);
     drag = { y: e.clientY, acc: 0 };
   });
@@ -337,6 +354,7 @@ Object.assign(KEYMAP, { BracketLeft: { btn: B["OCT-"] }, BracketRight: { btn: B[
 const ARROWS = { ArrowUp: [EN.SELECT, 1], ArrowDown: [EN.SELECT, -1], ArrowRight: [EN.ALGORITHM, 1], ArrowLeft: [EN.ALGORITHM, -1] };
 addEventListener("keydown", (e) => {
   if (!node || e.metaKey || e.ctrlKey || e.altKey || e.target.closest?.(".hit.knob")) return;
+  if (initializing && (ARROWS[e.code] || KEYMAP[e.code])) { e.preventDefault(); return; }
   if (ARROWS[e.code]) { const [r, n] = ARROWS[e.code]; turn(knobs.find((k) => k.role === r), n); e.preventDefault(); return; }
   const m = KEYMAP[e.code];
   if (!m) return;
@@ -444,6 +462,22 @@ async function midiOn() {
 // ------------------------------------------------------------------ switching on
 const status = document.getElementById("status");
 const say = (t) => { status.textContent = t; status.hidden = !t; };
+function showFirstUse(phase) {
+  firstUsePhase = phase;
+  initializing = phase === 4 || phase === 5;
+  const release = phase === 4 && (latched & (1 << B.SAVE));
+  const start = document.getElementById("start");
+  start.hidden = !initializing;
+  start.style.pointerEvents = release ? "none" : "";
+  document.getElementById("go").hidden = initializing;
+  for (const control of device.querySelectorAll(".hit")) {
+    const allowed = release && control === buttons.find((b) => b.bit === B.SAVE).hit;
+    control.setAttribute("aria-disabled", initializing && !allowed);
+    control.tabIndex = initializing && !allowed ? -1 : 0;
+  }
+  say(phase === 4 ? "Release SAVE to begin initialisation." : phase === 5 ?
+    "Initialising Dabbl8 storage… Leave the controls untouched and keep this page open." : "");
+}
 async function switchOn() {
   const go = document.getElementById("go");
   go.disabled = true;
@@ -462,6 +496,7 @@ async function switchOn() {
         if (m.type === "ready") res();
         else if (m.type === "error") rej(new Error(m.message));
         else if (m.type === "frame") {
+          if (m.firstUsePhase !== undefined) showFirstUse(m.firstUsePhase);
           if (m.fb) drawScreen(m.fb);
           if (m.leds) drawLights(lastLeds = m.leds, m.anim);
           if (m.sectors && !saveFlash(m.sectors) && !warned) {
@@ -479,7 +514,7 @@ async function switchOn() {
     syncButtons();
     syncKeys();
     send({ type: "visible", on: !document.hidden });
-    midiOn();
+    if (MIDI_ENABLED) midiOn();
   } catch (err) {
     node = null;
     go.disabled = false;

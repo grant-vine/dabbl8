@@ -67,3 +67,33 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
                            requires=required),
                   LocalStep(name=tag, argv=[binary], requires=[])]
     return steps
+
+
+
+def save_consent_recipes(cc: list[str], out: Path) -> list[LocalStep]:
+    """Check actual emulator disclosure pixels and fresh-process cancellation."""
+    source = 'web/emu/save_consent_test.c'
+    flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-w', '-ffp-contract=off',
+             '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+             '-Ibuild/gen', '-Ifirmware/src']
+    required = [source, 'web/emu/felucca_web.c', 'web/emu/workflow_qa.h',
+                'tests/hostsim.c', 'firmware/src/native_local_session.c',
+                'firmware/src/native_local_session.h', 'firmware/src/native_first_use.c',
+                'firmware/src/native_first_use_session.c', 'firmware/src/ui.c',
+                'firmware/src/gfx.c'] + ['build/gen/' + header for header in FIRST_USE_HEADERS]
+    steps: list[LocalStep] = []
+    for sanitized in (False, True):
+        mode = 'sanitized' if sanitized else 'optimized'
+        tag = 'save-consent-' + mode
+        binary = str(out / tag)
+        mode_flags = ['-O1', '-g', '-fsanitize=address,undefined',
+                      '-fno-sanitize-recover=all',
+                      '-fno-sanitize=signed-integer-overflow,shift'] if sanitized else ['-O2']
+        steps += [LocalStep(name=tag + '-compile',
+                           argv=cc + flags + mode_flags + [source, '-lm', '-o', binary],
+                           requires=required),
+                  LocalStep(name=tag, argv=[binary, str(out)], requires=[])]
+        steps += [LocalStep(name=tag + '-cancel-' + str(event),
+                            argv=[binary, str(out), str(event)], requires=[])
+                  for event in range(5)]
+    return steps

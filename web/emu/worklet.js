@@ -36,6 +36,7 @@ if (typeof registerProcessor === "function") {
       this.ex = null;
       this.sentDraws = -1;
       this.sentWrites = -1;
+      this.sentFirstUse = -1;
       this.sentLeds = "";
       this.lastFrame = 0;
       this.period = 1 / 30;
@@ -90,6 +91,13 @@ if (typeof registerProcessor === "function") {
         msg.load = this.busy / (this.frames / 44.1);
         this.busy = this.frames = 0;
       }
+      if (ex.web_first_use_phase) {
+        const phase = ex.web_first_use_phase();
+        if (phase !== this.sentFirstUse) {
+          this.sentFirstUse = phase;
+          msg.firstUsePhase = phase;
+        }
+      }
       const transfer = [];
       const draws = ex.web_screen_draws();
       if (draws !== this.sentDraws) {
@@ -102,7 +110,7 @@ if (typeof registerProcessor === "function") {
         this.sentWrites = writes;
         msg.sectors = storeSectors(new Uint8Array(mem, ex.web_nor(), ex.web_nor_size()));
       }
-      if (msg.leds || msg.fb || msg.sectors || msg.load !== undefined) this.port.postMessage(msg, transfer);
+      if (msg.leds || msg.fb || msg.sectors || msg.load !== undefined || msg.firstUsePhase !== undefined) this.port.postMessage(msg, transfer);
     }
 
     // A click's down and up can arrive within one render quantum, but the FM-1's contacts never close for less than

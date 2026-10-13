@@ -12,7 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from local_flash_checks import flash_recipes
+from local_flash_checks import flash_recipes, save_consent_recipes
 
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -38,6 +38,7 @@ MAP = {
     'timing-capture': {'tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'},
     'flash-driver': {'firmware/hal/fm1_flash.h', 'tests/flash_driver_timeout_test.c'},
     'usb-controller': {'firmware/src/usb.c', 'tests/usb_sie_wait_test.c'},
+    'save-consent': {'firmware/src/native_local_session.c', 'web/emu/save_consent_test.c'},
     'first-use': {'firmware/hal/fm1_flash.h', 'firmware/src/native_first_use.c',
         'firmware/src/native_first_use.h', 'firmware/src/native_first_use_session.c',
         'firmware/src/native_first_use_session.h', 'firmware/src/native_first_use_diagnostic.h',
@@ -86,6 +87,9 @@ def recipes(checks, cc, out, base):
                 'argv': [sys.executable, 'tests/dabbl8_timing_capture_test.py'],
                 'requires': ['tools/dabbl8_timing_capture.py',
                     'tools/dabbl8_timing_report.py', 'tests/dabbl8_timing_capture_test.py']})
+            continue
+        if name == 'save-consent':
+            steps += save_consent_recipes(cc, out)
             continue
         if name in ('flash-driver', 'first-use', 'usb-controller'):
             steps += flash_recipes(name, cc, out)
@@ -173,7 +177,8 @@ def recipes(checks, cc, out, base):
             flags += ['-Ibuild/gen', '-Ifirmware/src']
             steps += [{'name': tag + '-compile', 'argv': cc + flags + sources + ['-lm', '-o', binary],
                        'requires': sources + ['build/gen/' + p for p in inputs] +
-                       (['build/gen/d8_flash_store_ranges_test.h'] if name in ('sample-upload', 'own-project-transfer') else [])},
+                       (['build/gen/d8_flash_store_ranges_test.h', 'tests/native_consent_pixels.h']
+                        if name in ('sample-upload', 'own-project-transfer') else [])},
                       {'name': tag, 'argv': [binary, *args]}]
     if 'sample-upload' in checks:
         steps.append({'name': 'sample-upload-browser',
