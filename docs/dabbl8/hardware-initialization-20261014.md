@@ -38,6 +38,11 @@ The final RAM-driver record is a successful read with failure 0, not an
 interrupted erase. The owner photo shows the normal ANALOG/ACID synth screen
 at tempo 120 with parameter controls and HOME visible.
 
+The owner subsequently confirms keyboard sound through the built-in speaker
+and parameter response from all four physical knobs. Headphones/external audio
+output were not tested; this observation does not measure timing or qualify
+every engine, effect or simultaneous eight-track playback.
+
 The completion path publishes COMPLETE only after approved sector erase and
 readback, foundation commits, initial native record commit and successful
 native bind/autosave readiness. This is firmware-recorded verification; no
