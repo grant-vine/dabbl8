@@ -3,12 +3,14 @@
 # Copyright (C) 2026 Leo Kuroshita (@kurogedelic), Hügelton Instruments
 """Target-side cost estimate of the hot DSP code, from the pi32v2 objdump listing tools/build.py writes
 (build/felucca.dis). For each engine's render function and the audio ISR: the instructions
-inside loops (every address range closed by a backward branch: the per-sample loops and what they
-contain), and the hardware divides and calls in them. cost = the loop instructions, each weighted 4 per
+inside natural control-flow loops (including rotated loops), and the hardware divides and calls in them.
+Backward jumps to shared exit code are not loops; unresolved flow retains conservative spans. cost = the loop instructions, each weighted 4 per
 level of nesting (an inner loop runs several times per sample) and 1 + 8 for a divide (many cycles). A static count, not a cycle count: it changes only when the compiled code changes,
 so it is exact run to run, and it catches a render loop that grew (more work per sample, a new divide,
 something not inlined any more). Compared with tests/target_budget.txt at +10 %. The host
 CPU check (regress.c) is the primary one; this one sees the target compiler's code.
+Historical budgets are retained. Compare both binaries with the same checker when its model changes;
+a smaller score against an old-model budget is not measured target headroom.
   tests/target_budget.py [DIS [BUDGET]]      BUDGET_UPDATE=1 rewrites BUDGET"""
 import os
 import re
@@ -46,8 +48,9 @@ TARGET = re.compile(r"goto -?\d+ <[^>]*: ([0-9a-f]+) >")
 
 def functions(path):
     """{name: [(addr, text)]}: a function runs to the next label not starting with '.' (the compiler's
-    jump-table labels are inside functions); jump-table data ('< n : 0x.. >') is left out"""
+    jump-table labels are inside functions); jump-table data supplies tbb targets but is not scored"""
     out, cur = {}, None
+    table_base = None
     with open(path) as f:
         for line in f:
             m = LABEL.match(line.strip())
@@ -57,25 +60,126 @@ def functions(path):
                     cur = out.setdefault(name, []) if name in FUNCS else None
                 continue
             m = INSN.match(line)
-            if cur is not None and m and not m.group(3).lstrip().startswith("<"):
-                cur.append((int(m.group(1), 16), m.group(3).strip()))
+            if cur is not None and m:
+                text = m.group(3).strip()
+                if text.startswith("<"):
+                    if cur and cur[-1][1].startswith("tbb "):
+                        if table_base is None:
+                            table_base = int(m.group(1), 16)
+                        value = re.match(r"< (\d+) :", text)
+                        if value:
+                            address, branch = cur[-1]
+                            cur[-1] = (address, branch + " target=" + hex(table_base + 2 * int(value[1])))
+                        else:
+                            address, branch = cur[-1]
+                            cur[-1] = (address, branch + " invalid-table")
+                else:
+                    table_base = None
+                    cur.append((int(m.group(1), 16), text))
     return out
 
 
+def loop_members(insns: list[tuple[int, str]]) -> list[set[int]]:
+    """Natural-loop membership, including rotated loops with forward backedges.
+
+    Preserve old conservative spans for unresolved/computed or irreducible flow. This
+    is an instruction-cost model, not a bound on target execution time.
+    """
+    index = {address: i for i, (address, _) in enumerate(insns)}
+    heads: dict[int, int] = {}
+    edges: list[set[int]] = [set() for _ in insns]
+    unresolved = False
+    for i, (address, text) in enumerate(insns):
+        branch = TARGET.search(text)
+        if branch:
+            target = int(branch.group(1), 16)
+            if insns[0][0] <= target < address:
+                heads[target] = max(heads.get(target, address), address)
+            if target in index:
+                edges[i].add(index[target])
+            elif insns[0][0] <= target <= insns[-1][0]:
+                unresolved = True
+            if not text.startswith("goto") and i + 1 < len(insns):
+                edges[i].add(i + 1)
+        elif text.startswith("tbb "):
+            targets = [int(value, 16) for value in re.findall(r"target=(0x[0-9a-f]+)", text)]
+            if not targets or "invalid-table" in text or any(target not in index for target in targets):
+                unresolved = True
+            else:
+                edges[i].update(index[target] for target in targets)
+        elif "goto" in text or text.startswith("pc =") or text.startswith("tbh "):
+            unresolved = True
+        elif not (text.startswith("{pc") or text == "rets" or text == "reti") and i + 1 < len(insns):
+            edges[i].add(i + 1)
+    if unresolved:
+        return [{address for address, _ in insns if head <= address <= end}
+                for head, end in heads.items()]
+    reachable = {0}
+    pending = [0]
+    while pending:
+        node = pending.pop()
+        for successor in edges[node] - reachable:
+            reachable.add(successor)
+            pending.append(successor)
+    predecessors: list[set[int]] = [set() for _ in insns]
+    for node in reachable:
+        for successor in edges[node]:
+            predecessors[successor].add(node)
+    all_bits = sum(1 << node for node in reachable)
+    dominators = [all_bits for _ in insns]
+    dominators[0] = 1
+    changed = True
+    while changed:
+        changed = False
+        for node in sorted(reachable - {0}):
+            bits = all_bits
+            for predecessor in predecessors[node]:
+                bits &= dominators[predecessor]
+            bits |= 1 << node
+            if bits != dominators[node]:
+                dominators[node] = bits
+                changed = True
+    # Removing all dominance backedges must leave a DAG. An irreducible
+    # cycle has no single dominating header: retain the conservative model.
+    forward = [{successor for successor in edges[node]
+                if not dominators[node] & (1 << successor)} for node in range(len(insns))]
+    incoming = [0 for _ in insns]
+    for node in reachable:
+        for successor in forward[node]:
+            incoming[successor] += 1
+    pending = [node for node in reachable if not incoming[node]]
+    visited = 0
+    while pending:
+        node = pending.pop()
+        visited += 1
+        for successor in forward[node]:
+            incoming[successor] -= 1
+            if not incoming[successor]:
+                pending.append(successor)
+    if visited != len(reachable):
+        return [{address for address, _ in insns if head <= address <= end}
+                for head, end in heads.items()]
+    loops: dict[int, set[int]] = {}
+    for node in reachable:
+        for header in edges[node]:
+            if dominators[node] & (1 << header):
+                members = loops.setdefault(header, {header})
+                pending = [node] if node != header else []
+                while pending:
+                    member = pending.pop()
+                    if member not in members:
+                        members.add(member)
+                        pending.extend(predecessors[member] - members)
+    return [{insns[node][0] for node in members} for members in loops.values()]
+
+
 def cost(insns):
-    """loops: one span per loop head (the farthest backward branch to it); an instruction inside d
-    spans weighs NEST ** (d - 1) (an inner loop runs several times per pass of the outer one)"""
-    lo = insns[0][0]
-    heads = {}
-    for a, t in insns:
-        m = TARGET.search(t)
-        if m and lo <= int(m.group(1), 16) < a:
-            h = int(m.group(1), 16)
-            heads[h] = max(heads.get(h, a), a)
+    """Instructions in natural loops retain the original nesting/divide weights."""
+    loops = loop_members(insns)
     n = divs = calls = 0
     w = 0
     for a, t in insns:
-        d = min(sum(1 for h, e in heads.items() if h <= a <= e), MAXD)
+        d = min(sum(a in members for members in loops), MAXD)
         if not d:
             continue
         k = NEST ** (d - 1)

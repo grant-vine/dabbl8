@@ -140,17 +140,17 @@ static inline int32_t slc_dec_next(const slc_src_t *s, const uint8_t *data, slc_
 {
     const slc_seg_t *g = &s->seg[d->seg];
     uint32_t rel = d->pos - g->at, b, code;
-    int32_t step, vd;
+    int32_t pred = d->pred, idx = d->idx, step, vd;
     if (rel >= g->n && d->seg + 1u < s->nseg) {         /* into the next zone: its data starts from 0 / 0 */
         d->seg++;
         g++;
         rel = d->pos - g->at;
-        d->pred = 0;
-        d->idx = 0;
+        pred = 0;
+        idx = 0;
     }
     b = SMP_READ_BYTE(data, g->off + (rel >> 1));
     code = (rel & 1u) ? (b >> 4) : (b & 15u);
-    step = IMA_STEP[d->idx];
+    step = IMA_STEP[idx];
     vd = step >> 3;
     if (code & 4u)
         vd += step;
@@ -158,10 +158,11 @@ static inline int32_t slc_dec_next(const slc_src_t *s, const uint8_t *data, slc_
         vd += step >> 1;
     if (code & 1u)
         vd += step >> 2;
-    d->pred = clamp(d->pred + ((code & 8u) ? -vd : vd), -32768, 32767);
-    d->idx = clamp(d->idx + IMA_IDX[code & 7u], 0, 88);
+    pred = clamp(pred + ((code & 8u) ? -vd : vd), -32768, 32767);
+    d->pred = pred;
+    d->idx = clamp(idx + IMA_IDX[code & 7u], 0, 88);
     d->pos++;
-    return d->pred;
+    return pred;
 }
 
 static inline uint32_t slc_gpos(const slc_src_t *s, uint32_t k) { return (k * s->len) >> SLC_GRID_LOG2; }

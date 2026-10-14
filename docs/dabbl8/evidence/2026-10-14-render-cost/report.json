@@ -1,0 +1,356 @@
+{
+  "parent": "434696190e2c2df5ee17695ead9a64036773b474",
+  "upstream": "276f72a4e6ea8a12499a7a6819aadf3165126755",
+  "classification": "static checker defect plus measured compiler-code optimization; physical deadline failure not established",
+  "original_model": {
+    "upstream_slice": 436,
+    "upstream_irq": 40609,
+    "before_slice": 517,
+    "before_irq": 55544,
+    "candidate_slice": 508,
+    "candidate_irq": 55544,
+    "original_failures_retained": true
+  },
+  "corrected_model_comparison": {
+    "analog_render": {
+      "upstream": 581,
+      "before": 581,
+      "candidate": 581,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "phase_render": {
+      "upstream": 77,
+      "before": 77,
+      "candidate": 77,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "lofi_render": {
+      "upstream": 123,
+      "before": 123,
+      "candidate": 123,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "sample_render": {
+      "upstream": 128,
+      "before": 133,
+      "candidate": 133,
+      "candidate_vs_upstream_percent": 3.9062
+    },
+    "formant_render": {
+      "upstream": 312,
+      "before": 312,
+      "candidate": 312,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "trio_render": {
+      "upstream": 341,
+      "before": 341,
+      "candidate": 341,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "trio_pass": {
+      "upstream": 175,
+      "before": 175,
+      "candidate": 175,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "wheel_render": {
+      "upstream": 267,
+      "before": 269,
+      "candidate": 269,
+      "candidate_vs_upstream_percent": 0.7491
+    },
+    "wheel_block": {
+      "upstream": 86,
+      "before": 86,
+      "candidate": 86,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "grain_render": {
+      "upstream": 1729,
+      "before": 1719,
+      "candidate": 1719,
+      "candidate_vs_upstream_percent": -0.5784
+    },
+    "grain_block": {
+      "upstream": 139,
+      "before": 132,
+      "candidate": 132,
+      "candidate_vs_upstream_percent": -5.036
+    },
+    "phys_render": {
+      "upstream": 61,
+      "before": 61,
+      "candidate": 61,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "drum_render": {
+      "upstream": 89,
+      "before": 89,
+      "candidate": 89,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "noise_render": {
+      "upstream": 259,
+      "before": 259,
+      "candidate": 259,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "fm6_render": {
+      "upstream": 283,
+      "before": 279,
+      "candidate": 279,
+      "candidate_vs_upstream_percent": -1.4134
+    },
+    "fm6_op_run": {
+      "upstream": 72,
+      "before": 72,
+      "candidate": 72,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "fm6_op_fb": {
+      "upstream": 26,
+      "before": 26,
+      "candidate": 26,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_modal_block": {
+      "upstream": 111,
+      "before": 111,
+      "candidate": 111,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_modal_run": {
+      "upstream": 192,
+      "before": 192,
+      "candidate": 192,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_memb_block": {
+      "upstream": 106,
+      "before": 106,
+      "candidate": 106,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_string_excite": {
+      "upstream": 171,
+      "before": 171,
+      "candidate": 171,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_string_run": {
+      "upstream": 264,
+      "before": 264,
+      "candidate": 264,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "px_symp_run": {
+      "upstream": 252,
+      "before": 252,
+      "candidate": 252,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_metal_run": {
+      "upstream": 26,
+      "before": 26,
+      "candidate": 26,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_kick_run": {
+      "upstream": 151,
+      "before": 151,
+      "candidate": 151,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_snare_run": {
+      "upstream": 154,
+      "before": 154,
+      "candidate": 154,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_clap_run": {
+      "upstream": 74,
+      "before": 74,
+      "candidate": 74,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_hat_run": {
+      "upstream": 61,
+      "before": 61,
+      "candidate": 61,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_tom_run": {
+      "upstream": 75,
+      "before": 75,
+      "candidate": 75,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_rim_run": {
+      "upstream": 61,
+      "before": 61,
+      "candidate": 61,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_bell_run": {
+      "upstream": 52,
+      "before": 52,
+      "candidate": 52,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_cym_run": {
+      "upstream": 67,
+      "before": 67,
+      "candidate": 67,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_out": {
+      "upstream": 35,
+      "before": 35,
+      "candidate": 35,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "dv_metal_mix": {
+      "upstream": 16,
+      "before": 16,
+      "candidate": 16,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "slicer_track": {
+      "upstream": 655,
+      "before": 642,
+      "candidate": 642,
+      "candidate_vs_upstream_percent": -1.9847
+    },
+    "slice_render": {
+      "upstream": 436,
+      "before": 452,
+      "candidate": 437,
+      "candidate_vs_upstream_percent": 0.2294
+    },
+    "slc_rev": {
+      "upstream": 120,
+      "before": 122,
+      "candidate": 122,
+      "candidate_vs_upstream_percent": 1.6667
+    },
+    "fm1_alnk0_irq": {
+      "upstream": 17458,
+      "before": 18596,
+      "candidate": 18596,
+      "candidate_vs_upstream_percent": 6.5185
+    },
+    "fm1_timer5_irq": {
+      "upstream": 849,
+      "before": 853,
+      "candidate": 853,
+      "candidate_vs_upstream_percent": 0.4711
+    },
+    "click_render": {
+      "upstream": 30,
+      "before": 30,
+      "candidate": 30,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "mod_begin": {
+      "upstream": 163,
+      "before": 158,
+      "candidate": 158,
+      "candidate_vs_upstream_percent": -3.0675
+    },
+    "mod_voice": {
+      "upstream": 30,
+      "before": 30,
+      "candidate": 30,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "mod_end": {
+      "upstream": 7,
+      "before": 7,
+      "candidate": 7,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "perf_begin": {
+      "upstream": 28,
+      "before": 28,
+      "candidate": 28,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "perf_mute": {
+      "upstream": 21,
+      "before": 19,
+      "candidate": 19,
+      "candidate_vs_upstream_percent": -9.5238
+    },
+    "perf_pre": {
+      "upstream": 26,
+      "before": 26,
+      "candidate": 26,
+      "candidate_vs_upstream_percent": 0.0
+    },
+    "perf_block": {
+      "upstream": 797,
+      "before": 785,
+      "candidate": 785,
+      "candidate_vs_upstream_percent": -1.5056
+    },
+    "perf_master": {
+      "upstream": 31,
+      "before": 32,
+      "candidate": 32,
+      "candidate_vs_upstream_percent": 3.2258
+    },
+    "rev_room": {
+      "upstream": 218,
+      "before": 239,
+      "candidate": 239,
+      "candidate_vs_upstream_percent": 9.633
+    },
+    "rev_spring": {
+      "upstream": 127,
+      "before": 136,
+      "candidate": 136,
+      "candidate_vs_upstream_percent": 7.0866
+    }
+  },
+  "all_shared_functions_within_10_percent_of_same_model_upstream": true,
+  "budgets_and_goldens_unchanged": true,
+  "checks": {
+    "checker_cases": 11,
+    "red_original_failures": 2,
+    "corrected_tests": "PASS",
+    "audio_isr_parity": "PASS; 4/8, instrumented off/paused/collect, optimized and sanitized; simulated clock/DMA",
+    "sampler_selected": "PASS",
+    "slice_zone_boundary_parity": "PASS; 4/8, 9986 checks each; forward/reverse builtins and three disjoint user slots; PCM and voice-state byte exact",
+    "standalone_slice4": "PASS, optimized sanitizer checks",
+    "standalone_slice8": "FAIL with same three legacy store-write expectations on both immutable434 and candidate; all other check output and nine demo WAVs match; no sanitizer diagnostic"
+  },
+  "target": {
+    "manifest": "/Users/grantv/Code/dabbl8/.local-baseline/erase-trace-flicker-20261014/source/build/app-only/full/run-987wwg1_/app-only-manifest.json",
+    "app": {
+      "bytes": 525208,
+      "sha256": "24b528c9b9e005096db71fb71345e3c3bc133cb476a54c85189f9a2f7cbe5b89"
+    },
+    "memory": [
+      ".ram_text: 3654 insns, no calls",
+      "image 525208 B; RAM .data+.bss 94724 B of 98304; pool 335688 B of 344064"
+    ],
+    "source_unchanged_during_build": true,
+    "checker_after_build": "Final fallback/test/documentation refinements separately rescore unchanged binary; compiled firmware sources unchanged. Original build manifest is not relabelled."
+  },
+  "hardware_access": false,
+  "package_created": false,
+  "limitations": [
+    "Historical budgets use the old model; lower corrected scores are not target timing headroom.",
+    "No measured target elapsed time or audible eight-track stress trial.",
+    "No stack high-water or backup/restore hardware clearance.",
+    "Irreducible or unsupported control flow retains conservative legacy spans."
+  ],
+  "artifacts": {
+    "upstream-corrected.log": "c64e517c6e60e4cf18fb008a75d436473614d245b50460e9670ce723374a7e6b",
+    "before-corrected.log": "19927a0b5d39884f1fe85475d95b44b4f57ab60970576c5533b0acb53900d1a1",
+    "candidate-corrected.log": "89d043a3b1bb3e9b672390aa2ec5fb32d1a4654f141f074a9f872fc0c415678b",
+    "checker-red.log": "0c4c2a1f23a4367d25053774d0fb93bbe29a357a288f64be5364968b497f1809",
+    "checker-green.log": "34a82a30511a2175a5286cff0751874e9220ce5fb08cab87b09cc04e220f6b31"
+  }
+}
