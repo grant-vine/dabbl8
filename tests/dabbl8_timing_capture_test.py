@@ -19,7 +19,7 @@ BANNER = b"\r\nDabbl8 v0.1.0-timing console - 'help'\r\n> "
 STATUS = 'dabbl8 v0.1.0-timing\r\nboots 17\r\nusb_resets 2\r\nuac_hz 44100\r\nuac_alt 1\r\nuac_rate_sets 1\r\nuac_starts 1\r\n'
 
 
-def frame():
+def frame(uac_enabled=True):
     # Independent literal words and CRC; plausible data are not hardware evidence.
     def hist(values):
         bins = [0] * 128
@@ -27,7 +27,7 @@ def frame():
             bins[value >> 10] += 1
         return [len(values), max(values), *bins]
     begin, config, state = [1, 17], [8, 128, 44100, 24, 10, 128], [1, 3, 0, 0]
-    window = [100, 200100, 200000, 0, 17, 0, 0, 0, 0, 0, 0, 0, 1]
+    window = [100, 200100, 200000, 0, 17, 0, 0, 0, 0, 0, 0, 0, int(uac_enabled)]
     render, inclusive = hist([1000, 1200, 1400]), hist([1200, 1400, 1800])
     words = [0x44385432, *begin, *config, *state, *window, 0x52, *render, 0x49, *inclusive]
     end = [*begin, zlib.crc32(struct.pack('<' + 'I' * len(words), *words))]
@@ -58,6 +58,37 @@ class Scripted:
 
 
 class CaptureTests(unittest.TestCase):
+    def test_uac_disabled_profile_captures_without_uac_status_fields(self):
+        minimal = 'dabbl8 ' + VERSION + '\r\nboots 17\r\nusb_resets 2\r\nfl_state 2\r\n'
+        t = Scripted({'status': minimal, 'timing report': frame(False)})
+        with tempfile.TemporaryDirectory() as d:
+            report = capture.collect(capture.Console(t, lambda *a: None), Path(d), VERSION,
+                                     10, sleep=lambda n: None, uac_enabled=False)
+            self.assertFalse(report['window']['uac_enabled'])
+            self.assertEqual(report['host_observation']['before']['uac_enabled'], 0)
+            self.assertFalse(report['hardware_qualified'])
+            self.assertEqual(t.writes, ['status', 'timing start', 'timing stop', 'timing report', 'status'])
+
+    def test_uac_status_absence_never_implicitly_selects_disabled_profile(self):
+        for disabled, reply in [(False, 'dabbl8 ' + VERSION + '\r\nboots 17\r\nusb_resets 2\r\n'),
+                                (True, STATUS),
+                                (True, 'dabbl8 ' + VERSION + '\r\nusb_resets 2\r\n')]:
+            t = Scripted({'status': reply})
+            with tempfile.TemporaryDirectory() as d:
+                with self.assertRaises(ValueError):
+                    capture.collect(capture.Console(t, lambda *a: None), Path(d), VERSION,
+                                    10, sleep=lambda n: None, uac_enabled=not disabled)
+            self.assertEqual(t.writes, ['status'])
+
+    def test_disabled_profile_refuses_enabled_report_and_keeps_raw_frame(self):
+        t = Scripted({'status': 'dabbl8 ' + VERSION + '\r\nboots 17\r\nusb_resets 2\r\n'})
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(ValueError):
+                capture.collect(capture.Console(t, lambda *a: None), Path(d), VERSION,
+                                10, sleep=lambda n: None, uac_enabled=False)
+            self.assertTrue((Path(d) / 'report.frame').exists())
+            self.assertFalse((Path(d) / 'report.json').exists())
+
     def run_script(self, transport):
         with tempfile.TemporaryDirectory() as directory:
             events = []
