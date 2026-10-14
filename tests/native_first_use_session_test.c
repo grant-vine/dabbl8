@@ -204,10 +204,53 @@ static void fi_idle_redraw_tests(void)
  }
  fi_consent_fresh();
 }
+static void fi_long_wait_tests(void)
+{
+ for(unsigned theme=0;theme<2;theme++)for(unsigned uncertain=0;uncertain<2;uncertain++) {
+  fi_consent_fresh();settings.palette=theme?UI_DABBL_LIGHT_INDEX:UI_DABBL_DARK_INDEX;
+  palette_set(settings.palette);d8fi.phase=uncertain?FI_UNCERTAIN:FI_REQUIRED;ui_draw();
+  unsigned fills=fi_panel_fills,syncs=sync_calls,rows=host_blit_rows,consumed=dma_consumed;
+  for(unsigned minute=0;minute<20;minute++){fm1_ms+=60000u;ui_draw();}
+  printf("scenario=SAVE-after-20-minutes theme=%u uncertain=%u shown=%u age=%u fills=%u\n",
+   theme,uncertain,d8fi.shown,fm1_ms-d8fi.started,fi_panel_fills-fills);
+  CHECK(d8fi.shown&&(uint32_t)(fm1_ms-d8fi.started)<120000u);
+  CHECK(fi_panel_fills==fills&&sync_calls==syncs&&host_blit_rows==rows&&dma_consumed==consumed);
+  CHECK(!writes&&!physical_calls);
+  host_pressed=fm1_in.buttons=1u<<panel.btn[B_SAVE];ui_input();
+  CHECK(d8fi.phase==FI_RELEASE&&!physical_calls);
+  uint32_t accepted=d8fi.started;fm1_ms+=1000u;ui_draw();
+  CHECK(d8fi.started==accepted&&!physical_calls);
+  fm1_in.buttons=0;ui_input();d8fi_poll();CHECK(d8fi.phase==FI_EXECUTE&&physical_calls==1);
+ }
+ fi_consent_fresh();fm1_ms=UINT32_MAX-30000u;ui_draw();
+ fm1_ms+=60000u;ui_draw();CHECK(d8fi.shown&&d8fi.started==fm1_ms);
+ fi_consent_fresh();ui_draw();fm1_ms+=1200000u;ui_draw();
+ CHECK(d8fi.shown&&d8fi.started==fm1_ms&&!physical_calls&&!writes);
+ for(unsigned guard=0;guard<8;guard++) {
+  fi_consent_fresh();ui_draw();uint32_t started=d8fi.started,lease=0;fm1_ms+=120000u;
+  switch(guard) {
+   case 0:d8_capture_store_changed();break;
+   case 1:nor[d8pool_mapped_address(0)]^=1;break;
+   case 2:usb.resets++;break;
+   case 3:usb.config=0;break;
+   case 4:usb.up=0;break;
+   case 5:usb.suspended=1;break;
+   case 6:CHECK(!main_migration_begin(&lease));break;
+   case 7:d8fi_revoke();break;
+  }
+  ui_draw();CHECK(!d8fi.shown&&d8fi.started==started&&!physical_calls&&!writes);
+  if(lease)CHECK(!main_migration_end(lease));
+ }
+ fi_consent_fresh();ui_draw();host_pressed=fm1_in.buttons=1u<<panel.btn[B_SAVE];ui_input();
+ CHECK(d8fi.phase==FI_RELEASE);uint32_t accepted=d8fi.started;
+ fm1_ms+=120000u;ui_draw();CHECK(d8fi.started==accepted);
+ fm1_in.buttons=0;ui_input();d8fi_poll();CHECK(d8fi.phase==FI_FAILED&&!physical_calls&&!writes);
+ fi_consent_fresh();
+}
 #ifndef D8_FIRST_USE_SESSION_NO_MAIN
 int main(void)
 {
- fi_idle_redraw_tests();fi_consent_race_tests();
+ fi_idle_redraw_tests();fi_consent_race_tests();fi_long_wait_tests();
  boot_seed();CHECK(!d8fi_boot_classify());CHECK(!writes&&!physical_calls);
  ls_test_initial_autosave(); /* affected existing/absent/corrupt AS baseline checks */
  /* Actual first-use boot classification, draw, press/release and ticket route. */
