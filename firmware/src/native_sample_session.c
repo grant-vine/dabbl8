@@ -79,8 +79,8 @@ static void d8sm_draw(void)
  d8ls.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  draw_text_box(12,30,216,&AF_M,"REPLACE SAMPLE",T_THEME,1);
  char label[]="USER SLOT 1";label[10]=(char)('1'+d8ls.object);
- draw_text_box(12,70,216,&AF_M,label,T_INK,1);
- draw_text_box(12,108,216,&AF_S,"Previous sample is lost at BEGIN",T_INK,1);
+ draw_text_box(12,70,216,&AF_M,label,T_TEXT,1);
+ draw_text_box(12,108,216,&AF_S,"Previous sample is lost at BEGIN",T_TEXT,1);
  draw_text_box(12,145,216,&AF_S,"Interruption can leave slot empty",T_ACCENT,1);
  draw_text_box(12,188,216,&AF_M,"PRESS AND RELEASE SAVE",T_ACCENT,1);lcd_sync();
  uint32_t f=irq_save();if(d8ls.phase==LS_CONSENT&&token==d8ls.generation&&epoch==d8ls.epoch&&

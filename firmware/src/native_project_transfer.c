@@ -139,9 +139,9 @@ static void d8pt_draw(void)
  if(pt_phase()!=PT_CONSENT&&pt_phase()!=PT_RELEASE)return;
  uint32_t token=d8ls.generation,fault=fm1_lcd_timeouts;d8ls.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  if(!own_transfer_text_strip(d8ls.signature,32,"RESTORE OWN PROJECTS",T_THEME,T_BG)||
-    !own_transfer_text_strip(d8ls.signature,76,"Replaces saved slots and autosave",T_INK,T_BG)||
+    !own_transfer_text_strip(d8ls.signature,76,"Replaces saved slots and autosave",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,118,"Interruption can leave partial set",T_ACCENT,T_BG)||
-    !own_transfer_text_strip(d8ls.signature,160,"Keep backup to retry restore",T_INK,T_BG)||
+    !own_transfer_text_strip(d8ls.signature,160,"Keep backup to retry restore",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,202,"PRESS AND RELEASE SAVE",T_ACCENT,T_BG)){d8ls.revoked=1;return;}
  uint32_t f=irq_save();if(pt_phase()==PT_CONSENT&&pt_lifetime()&&token==d8ls.generation&&fault==fm1_lcd_timeouts){d8ls.shown=token;d8ls.sequence=fault;}irq_restore(f);
 }

@@ -208,6 +208,89 @@ class SelectionTest(unittest.TestCase):
                 run.assert_not_called()
                 self.assertFalse((repo / 'build/local-checks').exists())
 
+    def test_save_consent_selects_actual_emulator_scenarios(self) -> None:
+        # Given either disclosure source or its actual emulator regression.
+        for path in ('firmware/src/native_local_session.c', 'web/emu/save_consent_test.c'):
+            # When planning affected checks without executing anything.
+            plan = self.plan([path])
+            # Then only the bounded actual emulator scenarios are selected.
+            self.assertEqual(plan['checks'], ['diff', 'save-consent'])
+            compile_steps = [step for step in plan['commands'] if step['name'].endswith('-compile')]
+            self.assertEqual(len(compile_steps), 2)
+            runs = [step for step in plan['commands'] if step['name'].startswith('save-consent-')
+                    and not step['name'].endswith('-compile')]
+            self.assertEqual(len(runs), 12)
+            for mode in ('optimized', 'sanitized'):
+                binary = 'build/local-checks/PLANNED/save-consent-' + mode
+                expected = [[binary, 'build/local-checks/PLANNED']]
+                expected += [[binary, 'build/local-checks/PLANNED', str(event)] for event in range(5)]
+                self.assertEqual([step['argv'] for step in runs if step['name'].startswith('save-consent-' + mode)], expected)
+            for step in compile_steps:
+                self.assertIn('web/emu/save_consent_test.c', step['argv'])
+                self.assertNotIn('firmware/src/d8p1.c', step['argv'])  # wrapper already includes it
+                self.assertIn('-DNPART=8', step['argv'])
+                self.assertIn('-ffp-contract=off', step['argv'])
+                for header in checks.GEN:
+                    self.assertIn('build/gen/' + header, step['requires'])
+            self.assertIn('-fsanitize=address,undefined', compile_steps[1]['argv'])
+            self.assertIn('-fno-sanitize-recover=all', compile_steps[1]['argv'])
+            self.assertIn('-fno-sanitize=signed-integer-overflow,shift', compile_steps[1]['argv'])
+            self.assertFalse(any('run_tests.sh' in step['argv'] or 'build.py' in step['argv'] for step in plan['commands']))
+            self.assertEqual(plan['status'], 'REFUSED')
+        selected, unknown = checks.select(['firmware/src/fx.c'])
+        self.assertNotIn('save-consent', selected)
+        self.assertFalse(unknown)
+
+    def test_save_consent_missing_inputs_refuse_before_execution(self) -> None:
+        # Given all local inputs required by the actual emulator recipe.
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            steps = checks.recipes({'diff', 'save-consent'}, ['clang'], Path('out'), 'HEAD')
+            required = steps[1]['requires']
+            for name in required:
+                file = repo / name
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.touch()
+            self.assertEqual(checks.make_plan(repo, ['web/emu/save_consent_test.c'], (),
+                                             ['clang'], Path('out'), 'HEAD')['status'], 'PLAN')
+            for missing in required:
+                with self.subTest(missing=missing):
+                    # When any required input is absent from a requested run.
+                    (repo / missing).unlink()
+                    with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            code = checks.main(['--paths', 'web/emu/save_consent_test.c', '--run'])
+                        # Then planning refuses before executing or creating output.
+                        self.assertEqual(code, 2)
+                        run.assert_not_called()
+                        self.assertFalse((repo / 'build/local-checks').exists())
+                    (repo / missing).touch()
+
+    def test_sample_and_transfer_refuse_missing_pixel_fixture(self) -> None:
+        shared = 'tests/native_consent_pixels.h'
+        for check in ('sample-upload', 'own-project-transfer'):
+            # Given all recipe inputs, including the shared real-pixel fixture.
+            with tempfile.TemporaryDirectory() as folder:
+                repo = Path(folder)
+                steps = checks.recipes({'diff', check}, ['clang'], Path('out'), 'HEAD')
+                required = {name for step in steps for name in step.get('requires', [])}
+                for name in required | {shared}:
+                    file = repo / name
+                    file.parent.mkdir(parents=True, exist_ok=True)
+                    file.touch()
+                self.assertEqual(checks.make_plan(repo, [], [check], ['clang'], Path('out'), 'HEAD')['status'], 'PLAN')
+                # When the shared included fixture disappears.
+                (repo / shared).unlink()
+                plan = checks.make_plan(repo, [], [check], ['clang'], Path('out'), 'HEAD')
+                # Then refusal identifies the missing dependency without compiling.
+                self.assertEqual(plan['status'], 'REFUSED')
+                self.assertTrue(any(shared in refusal for refusal in plan['refusals']))
+                with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        self.assertEqual(checks.main(['--paths', shared, '--check', check, '--run']), 2)
+                    run.assert_not_called()
+                    self.assertFalse((repo / 'build/local-checks').exists())
+
     def test_deleted_workflow_selects_local_runner(self):
         selected, unknown = checks.select(['.github/workflows/old.yml'])
         self.assertIn('runner', selected)

@@ -10,6 +10,10 @@
   complete suite for every change. Use existing isolated local dependencies.
 - Reuse evidence when the relevant source and configuration are unchanged. Run
   additional checks for changed inputs, a failure, or an uncovered requirement.
+- Use the approved eight-track emulator at commit
+  `04ba2469bed14847de51adb471d74159d2ee3614` as the behavioural reference for fixes;
+  follow `web/emu/NATIVE8.md`'s baseline section. Preserve reference evidence,
+  write candidate outputs separately, and qualify target timing/hardware independently.
 - Preserve explicit failures and skips. A cost-cancelled hosted job is not proof of
   either a code failure or a pass. Host checks do not establish device safety.
 - Keep local logs and generated evidence outside tracked source, under `build/`

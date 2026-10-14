@@ -12,12 +12,13 @@ static uint8_t sm_data[4097],sm_msg[600],max_data[SMP_USER_SIZE-SMP_USER_DATA];
 static unsigned pack7(const uint8_t*p,unsigned n,uint8_t*out){unsigned z=0;while(n){unsigned k=n>7?7:n,m=0;for(unsigned i=0;i<k;i++)m|=(p[i]>>7)<<i;out[z++]=(uint8_t)m;for(unsigned i=0;i<k;i++)out[z++]=p[i]&127;p+=k;n-=k;}return z;}
 static unsigned sm_request(unsigned op,unsigned count){uint8_t f[600]={0x7d,0x46,0x4c,80};memcpy(f+4,sm_msg,count);ed_handle(f,count+4);so_r=so_w;CHECK(ed_n==20&&ed_out[4]==80&&ed_out[5]==1&&ed_out[6]==op);return ed_out[7];}
 static void sm_token(unsigned op){memset(sm_msg,0,sizeof sm_msg);sm_msg[0]=1;sm_msg[1]=op;mc_put32(sm_msg+2,d8ls.generation);}
+#include "native_consent_pixels.h"
 int main(void){
  boot_seed();CHECK(project_native_status()==0||project_native_status()==1);CHECK(autosave_boot(1)==1);int32_t audio[CTL*2];mix_block(audio,CTL);
  for(unsigned i=0;i<sizeof sm_data;i++)sm_data[i]=(uint8_t)(i*37u);
  smp_user_hdr_t h={0};h.magic=SMP_USER_MAGIC;h.version=1;h.nz=1;h.data_len=sizeof sm_data;h.crc=st_crc32(sm_data,sizeof sm_data);h.zone[0].n=2*sizeof sm_data;h.zone[0].le=h.zone[0].n-1;h.zone[0].rate=65536;h.zone[0].hi=127;
  sm_msg[0]=sm_msg[1]=1;sm_msg[2]=0;unsigned n=pack7((const uint8_t*)&h,sizeof h,sm_msg+3)+3;
- CHECK(sm_request(1,n)==SM_OK&&d8ls.phase==LS_CONSENT&&!physical_calls);unsigned sample_generation=smp_user_gen;d8ls_draw();CHECK(d8ls.shown==d8ls.generation);mc_ship_tap(B_SAVE);CHECK(d8ls.phase==LS_RELEASE);d8ls_poll();CHECK(d8ls.phase==LS_EXECUTE&&!usr_nz[0]&&!slc_usr[0].len&&smp_user_gen==sample_generation+1);
+ CHECK(sm_request(1,n)==SM_OK&&d8ls.phase==LS_CONSENT&&!physical_calls);unsigned sample_generation=smp_user_gen;consent_pixels("sample",70,AF_M.h,108,AF_S.h);CHECK(!physical_calls);d8ls_draw();CHECK(d8ls.shown==d8ls.generation);mc_ship_tap(B_SAVE);CHECK(d8ls.phase==LS_RELEASE);d8ls_poll();CHECK(d8ls.phase==LS_EXECUTE&&!usr_nz[0]&&!slc_usr[0].len&&smp_user_gen==sample_generation+1);
  for(unsigned off=0;off<sizeof sm_data;off+=256){unsigned count=sizeof sm_data-off;if(count>256)count=256;sm_token(3);mc_put32(sm_msg+7,off+512);n=pack7(sm_data+off,count,sm_msg+12)+12;CHECK(sm_request(3,n)==SM_OK);unsigned before=physical_calls;CHECK(sm_request(3,n)==SM_OK&&physical_calls==before);if(!off){uint8_t bad[256];memcpy(bad,sm_data,256);bad[0]^=1;n=pack7(bad,256,sm_msg+12)+12;CHECK(sm_request(3,n)==SM_BAD&&physical_calls==before);}}
  sm_token(4);CHECK(sm_request(4,7)==SM_OK&&d8ls.phase==LS_IDLE&&usr_nz[0]==1&&!migration_owner);CHECK(!memcmp(smp_user_xip(0)+512,sm_data,sizeof sm_data));CHECK(slc_usr[0].len==h.zone[0].n&&smp_user_gen==sample_generation+2);CHECK(!d8_instrument_write_allowed());
  sm_token(5);CHECK(sm_request(5,7)==SM_OK&&d8ls.write_phase==SM_DONE&&smp_user_gen==sample_generation+2);

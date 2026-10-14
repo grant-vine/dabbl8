@@ -213,8 +213,8 @@ static void d8ls_draw(void)
  char title[20];str_cpy(title,d8ls.operation==2?"RENAME SLOT ":"SAVE SLOT ",sizeof title);
  unsigned end=str_len(title);title[end]=(char)('1'+d8ls.object);title[end+1]=0;
  draw_text_box(12,32,216,&AF_M,title,T_THEME,1);
- draw_text_box(12,76,216,&AF_M,d8ls.name,T_INK,1);
- draw_text_box(12,122,216,&AF_S,"Saving and autosave this session",T_INK,1);
+ draw_text_box(12,76,216,&AF_M,d8ls.name,T_TEXT,1);
+ draw_text_box(12,122,216,&AF_S,"Saving and autosave this session",T_TEXT,1);
  draw_text_box(12,168,216,&AF_M,"PRESS AND RELEASE SAVE",T_ACCENT,1);
  draw_text_box(12,204,216,&AF_S,"Other input cancels",T_DIM,1);
  lcd_sync();
