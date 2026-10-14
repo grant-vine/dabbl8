@@ -18,7 +18,7 @@ extern uint32_t _pool_start[], _pool_end[], _rt_start[], _rt_end[], _rt_load[];
 void fm1_timer5_irq(void)
 {
     static uint32_t sub, owed;
-    uint32_t t0 = fm1_ticks(), usb_due = sub % 5u == 0u;
+    uint32_t t0 = fm1_ticks(), usb_due = sub == 0u || sub == 5u;
 #if FELUCCA_SIE_IRQ_BUDGET
     sie_irq_begin();
 #endif
@@ -37,7 +37,7 @@ void fm1_timer5_irq(void)
     if (usb_due)
         owed |= 1u;                             /* 2 kHz: all USB SIE traffic lives here */
 #if FELUCCA_UART
-    if (sub % 5u == 2u)
+    if (sub == 2u || sub == 7u)
         owed |= 2u;                             /* 2 kHz: <= ~7 bytes per call at 31250 baud */
 #endif
     if (++sub == 10u)
