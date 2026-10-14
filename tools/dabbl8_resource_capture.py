@@ -151,6 +151,13 @@ def acknowledge(reply: str, words: tuple[str, ...], generation: int, boots: int)
     return rows[0].rsplit(' ', 2)[0]
 
 
+def report_payload(raw: bytes) -> bytes:
+    prefix = b'resource report\r\n'
+    if raw.startswith(prefix): raw = raw[len(prefix):]
+    if raw.endswith(b'\r\n> '): raw = raw[:-2]
+    return raw
+
+
 def collect(console: Console, output: Path, receipt: Receipt, *,
             sleep: Callable[[float], None] = time.sleep,
             clock: Callable[[], float] = time.monotonic) -> ResourceReport:
@@ -187,9 +194,9 @@ def collect(console: Console, output: Path, receipt: Receipt, *,
             receipt.ownership = Ownership.PAUSED
         receipt.host_elapsed_seconds = clock() - origin
         reply = console.request('resource report')
-        frame = '\r\n'.join(line for line in reply.splitlines() if line.startswith('d8r')) + '\r\n'
-        (output / 'report.frame').write_text(frame, encoding='ascii')
-        report = parse_report(frame, receipt.identity.expected, generation, boots)
+        frame = report_payload(reply.encode('ascii'))
+        (output / 'report.frame').write_bytes(frame)
+        report = parse_report(frame.decode('ascii'), receipt.identity.expected, generation, boots)
         after = observation(console.request('status'), receipt.version, receipt.identity.expected)
         if before.stable != after.stable or after.generation != generation:
             raise ResourceCaptureError('status', 'boot/USB/UAC/generation changed in outer observation')
@@ -210,7 +217,7 @@ def collect(console: Console, output: Path, receipt: Receipt, *,
                 original_journal('cleanup-failed', b'Owned run pause unconfirmed; inspect explicitly. No retry.')
         console.journal = original_journal
         if not (output / 'report.frame').exists():
-            (output / 'report.frame').write_bytes(b'\r\n'.join(line for line in raw.split(b'\r\n') if line.startswith(b'd8r')))
+            (output / 'report.frame').write_bytes(report_payload(bytes(raw)))
 
 
 def main() -> int:

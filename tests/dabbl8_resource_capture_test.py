@@ -65,7 +65,8 @@ class Scripted:
         reply = self.replies[command]
         if isinstance(reply, list): reply = reply[min(self.status_count-1, len(reply)-1)]
         if isinstance(reply, Exception): raise reply
-        self.queue.extend((command+'\r\n'+reply+'\r\n> ').encode())
+        separator = '' if command == 'resource report' and reply.endswith('\r\n') else '\r\n'
+        self.queue.extend((command+'\r\n'+reply+separator+'> ').encode())
     def close(self): self.closed = True
 
 
@@ -113,6 +114,37 @@ class ResourceTests(unittest.TestCase):
                 self.assertEqual(result.pool.peak_live_owned_slots, 8)
                 self.assertEqual(t.writes, list(capture.RESOURCE_COMMANDS)+['status'])
                 self.assertGreater((self.output/'report.response').stat().st_size, 0); self.output = output
+    def test_collect_rejects_original_malformed_row_endings(self):
+        good=frame(); parent=self.output; cases={'lf-only':good.replace('\r\n','\n'),
+            'mixed':good.replace('\r\n','\n',1), 'footer-lf':good[:-2]+'\n',
+            'cr-only':good.replace('\r\n','\r'),
+            'vertical-tab':good.replace('\r\n','\v',1),
+            'extra-blank-row':good.replace('\r\n','\r\n\r\n',1),
+            'unknown-row':good.replace('\r\n','\r\nforeign error row\r\n',1)}
+        for name, malformed in cases.items():
+            with self.subTest(ending=name):
+                self.output=parent/name; self.output.mkdir()
+                t=Scripted({'resource report':malformed},fragment=7)
+                _, receipt=self.run_capture(t,fail=ValueError)
+                self.assertFalse(receipt.accepted)
+                response=(self.output/'report.response').read_bytes()
+                self.assertEqual((self.output/'report.frame').read_bytes(),response[len(b'resource report\r\n'):-2])
+                self.assertIn(malformed.encode('ascii'),response)
+                self.assertEqual(t.writes,list(capture.RESOURCE_COMMANDS))
+                self.assertFalse((self.output/'report.json').exists())
+    def test_missing_footer_crlf_preserves_unclosed_transport_bytes(self):
+        payload=frame()[:-2].encode('ascii')+b'> '
+        t=Scripted(fragment=7); original=t.write
+        def unclosed(data):
+            if data==b'resource report\r':
+                t.writes.append('resource report');t.queue.extend(b'resource report\r\n'+payload)
+            else: original(data)
+        t.write=unclosed
+        _, receipt=self.run_capture(t,fail=OSError)
+        self.assertFalse(receipt.accepted)
+        self.assertEqual((self.output/'report.frame').read_bytes(),payload)
+        self.assertEqual((self.output/'report.response').read_bytes(),b'resource report\r\n'+payload)
+        self.assertEqual(t.writes,list(capture.RESOURCE_COMMANDS))
     def test_idle_initial_census_is_valid_limited_observation(self):
         report, _ = self.run_capture(Scripted({'resource report': frame(idle=True)}))
         self.assertEqual((report.pool.requests, report.pool.censuses), (0, 1))
@@ -123,6 +155,7 @@ class ResourceTests(unittest.TestCase):
         (self.output/'actual-console.frame').write_bytes(proc.stdout)
         report, _ = self.run_capture(Scripted({'resource report': proc.stdout.decode('ascii')}))
         self.assertEqual((report.pool.requests, report.pool.failures), (10, 1))
+        self.assertEqual((self.output/'report.frame').read_bytes(),proc.stdout)
     def test_profiles_and_stack_scopes(self):
         for profile in range(3):
             report = parse_report(frame(profile=profile), Expected(profile, (0x3ffd,0x1409,0x3411)[profile], False), 1, 17)
