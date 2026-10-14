@@ -43,6 +43,10 @@ and parameter response from all four physical knobs. Headphones/external audio
 output were not tested; this observation does not measure timing or qualify
 every engine, effect or simultaneous eight-track playback.
 
+The owner also confirms the ALGORITHM selector reaches the 5–8 bank and
+tracks 5, 6, 7 and 8 each produce keyboard sound. This verifies individual
+selection/playability, not concurrent sequencer playback or MIDI routing.
+
 The completion path publishes COMPLETE only after approved sector erase and
 readback, foundation commits, initial native record commit and successful
 native bind/autosave readiness. This is firmware-recorded verification; no

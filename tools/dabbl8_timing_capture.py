@@ -19,6 +19,12 @@ COMMANDS = ('status', 'timing start', 'timing stop', 'timing report')
 MAX_REPLY = 65536
 
 
+class TimingProfileMismatch(ValueError):
+    def __init__(self, expected_uac: bool) -> None:
+        self.expected_uac = expected_uac
+        super().__init__(f'Timing profile mismatch: expected USB audio enabled={expected_uac}')
+
+
 def package_identity(manifest):
     with manifest.open('rb') as stream:
         raw = stream.read(2_000_001)
@@ -75,12 +81,17 @@ class Console:
         return reply
 
 
-def status(reply, version):
+def status(reply, version, uac_enabled: bool = True):
     lines = reply.splitlines()
     if lines.count('dabbl8 ' + version) != 1:
         raise ValueError('Wrong or missing diagnostic firmware identity')
-    result = {}
-    for key in ('boots', 'usb_resets', 'uac_hz', 'uac_alt', 'uac_rate_sets', 'uac_starts'):
+    result = {'uac_enabled': int(uac_enabled)}
+    if not uac_enabled and any(line.startswith('uac_') for line in lines):
+        raise TimingProfileMismatch(uac_enabled)
+    keys = ('boots', 'usb_resets')
+    if uac_enabled:
+        keys += ('uac_hz', 'uac_alt', 'uac_rate_sets', 'uac_starts')
+    for key in keys:
         rows = [line for line in lines if line.startswith(key + ' ')]
         if len(rows) != 1 or not re.fullmatch(key + r' -?[0-9]+', rows[0]):
             raise ValueError('Missing/ambiguous status field: ' + key)
@@ -91,13 +102,13 @@ def status(reply, version):
     return result
 
 
-def collect(console, output, version, seconds, sleep=time.sleep):
+def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled: bool = True):
     active = False
     try:
         banner = console.receive()
         if banner.splitlines().count("Dabbl8 " + version + " console - 'help'") != 1:
             raise ValueError('Expected fresh diagnostic console banner absent')
-        before = status(console.request('status'), version)
+        before = status(console.request('status'), version, uac_enabled)
         start = console.request('timing start')
         if start.splitlines().count('timing started') != 1:
             raise ValueError('Timing start refused; previous run was not overwritten')
@@ -113,7 +124,9 @@ def collect(console, output, version, seconds, sleep=time.sleep):
         report = parse_report(frame, expected_boots=before['boots'])
         if report['format'] != 'D8T2' or report['tracks'] != 8 or not report['samples']:
             raise ValueError('Expected nonempty eight-track D8T2 run')
-        after = status(console.request('status'), version)
+        if report['window']['uac_enabled'] != uac_enabled:
+            raise TimingProfileMismatch(uac_enabled)
+        after = status(console.request('status'), version, uac_enabled)
         if before != after:
             raise ValueError('Boot/USB configuration changed during outer observation window')
         report['host_observation'] = {'before': before, 'after': after, 'requested_seconds': seconds,
@@ -203,6 +216,8 @@ def main():
     p.add_argument('--version', default='v0.1.0-timing')
     p.add_argument('--seconds', type=float, default=10)
     p.add_argument('--workload', required=True)
+    p.add_argument('--uac-disabled', action='store_true',
+                   help='Explicit UAC-off diagnostic; reject UAC status fields or an enabled report')
     p.add_argument('--port')
     p.add_argument('--output', type=Path)
     p.add_argument('--capture', action='store_true', help='Explicitly open the named CDC port; not install authorization')
@@ -211,7 +226,7 @@ def main():
         p.error('Expected vX.Y.Z-timing version and 1..60 seconds')
     identity = package_identity(args.manifest)
     if not args.capture:
-        print(json.dumps({'mode': 'plan-only; no device access', 'identity': identity, 'commands': COMMANDS, 'workload': args.workload}, indent=2))
+        print(json.dumps({'mode': 'plan-only; no device access', 'identity': identity, 'commands': COMMANDS, 'workload': args.workload, 'uac_enabled': not args.uac_disabled}, indent=2))
         return 0
     if not args.port or args.output is None:
         p.error('--capture requires explicit --port and new --output directory')
@@ -226,7 +241,8 @@ def main():
             log.write(json.dumps({'host_seconds': time.monotonic() - origin, 'direction': direction, 'hex': data.hex(), 'ascii': data.decode('ascii', errors='backslashreplace')}) + '\n'); log.flush()
         try:
             transport = MacCdc(args.port)
-            collect(Console(transport, journal), args.output, args.version, args.seconds)
+            collect(Console(transport, journal), args.output, args.version, args.seconds,
+                    uac_enabled=not args.uac_disabled)
             receipt['accepted'] = True
         except Exception as error:
             receipt['failure'] = str(error)
