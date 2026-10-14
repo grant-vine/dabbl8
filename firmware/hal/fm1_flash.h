@@ -44,6 +44,7 @@ static inline void *fl_far(void *p) { void *volatile q = p; return q; }
 #define PORTD_DIR       REG32(0x500C8u)
 #define CACHE_CON       REG32(0x1EEE008u)          /* b14 = cache idle */
 #define T4_CNT          REG32(0x10804u)            /* TIMER4, 24 MHz free-running */
+#include "fm1_flash_trace.h"
 
 #define FL_XIP(off)     FM1_XIP(off)              /* fm1_xip.h */
 #define FL_DATA_LO      0x00097000u                /* Felucca main store */
@@ -89,7 +90,12 @@ RAMINL __attribute__((noreturn)) void fl_failstop(void)
 #else
 #define FL_READY_TIMEOUT() return -4
 #endif
-RAMINL void fl_cache_idle(void) { while (!(CACHE_CON & 0x4000u)) ; }
+RAMINL void fl_cache_idle(void)
+{
+    FL_TRACE_COUNTER;
+    uint32_t v;
+    while (!((v=CACHE_CON) & 0x4000u)) { FL_TRACE_POLL(trace_polls,v); }
+}
 #ifdef FM1_FLASH_DRIVER_TEST
 RAMINL void fl_delay(uint32_t n) { FM1_FLASH_TEST_DELAY(n); }
 #else
@@ -109,11 +115,15 @@ RAMINL int fl_spi_wait(void)
 #else
     uint32_t n = 50000000u;
 #endif
+    FL_TRACE_COUNTER;
+    uint32_t v;
     fl_csync();
-    while (!(SPI0_CON & 0x8000u))
+    while (!((v=SPI0_CON) & 0x8000u)) {
+        FL_TRACE_SPI_POLL(trace_polls,v);
         if (--n == 0) break;
+    }
 #if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
-    if (!n) fl_failstop();
+    if (!n) { FL_TRACE_FAIL(FL_TRACE_FAIL_SPI); fl_failstop(); }
 #endif
     SPI0_CON |= 0x4000u;
     return n ? 0 : -1;
@@ -121,6 +131,7 @@ RAMINL int fl_spi_wait(void)
 RAMINL void fl_tx(uint8_t b)
 {
     SPI0_CON |= 8u; SPI0_CON &= ~0x1000u;
+    FL_TRACE_SPI(b,0);
     SPI0_BUF = b; fl_spi_wait();
     SPI0_CON &= ~8u;
 }
@@ -128,6 +139,7 @@ RAMINL uint8_t fl_rx(void)
 {
     uint8_t v;
     SPI0_CON |= 8u; SPI0_CON |= 0x1000u;
+    FL_TRACE_SPI(0xFFu,1);
     SPI0_BUF = 0xFFu; fl_spi_wait();
     v = (uint8_t)SPI0_BUF;
     SPI0_CON &= ~8u;
@@ -140,14 +152,19 @@ RAMINL void fl_wren(void) { fl_cs(0); fl_tx(0x06); fl_cs(1); }
 RAMINL int fl_enter(fl_saved_t *s)
 {
     uint32_t mode;
+    FL_TRACE_MARK(FL_TRACE_CACHE_ENTRY);FL_TRACE_WAIT(FL_TRACE_CACHE_ENTRY);
     fl_cache_idle();
     s->sfc_con = SFC_CON;
     s->spi_con = SPI0_CON;
     mode = (s->sfc_con >> 8) & 0xFu;
     if (mode == 6u || mode == 7u)                 /* continuous-read XIP: not handled here */
         return -1;
+    FL_TRACE_MARK(FL_TRACE_SFC_ENTRY);FL_TRACE_WAIT(FL_TRACE_SFC_ENTRY);
+    FL_TRACE_COUNTER;
+    uint32_t v;
     fl_csync();
-    while ((int32_t)SFC_CON < 0) ;                /* SFC idle */
+    while ((int32_t)(v=SFC_CON) < 0) { FL_TRACE_POLL(trace_polls,v); } /* SFC idle */
+    FL_TRACE_MARK(FL_TRACE_SPI_SETUP);
     SFC_CON = 0;                                  /* XIP OFF from here on */
     IOMAP_CON0 &= ~0x20u;                         /* pins -> SPI0 / GPIO */
     SPI0_CON = 0;
@@ -157,16 +174,20 @@ RAMINL int fl_enter(fl_saved_t *s)
 }
 RAMINL void fl_exit(const fl_saved_t *s)
 {
+    FL_TRACE_MARK(FL_TRACE_SFC_EXIT);FL_TRACE_WAIT(FL_TRACE_SFC_EXIT);
+    FL_TRACE_COUNTER;
+    uint32_t v;
     SPI0_CON = s->spi_con;
     IOMAP_CON0 |= 0x20u;
     fl_csync();
-    while ((int32_t)SFC_CON < 0) ;
+    while ((int32_t)(v=SFC_CON) < 0) { FL_TRACE_POLL(trace_polls,v); }
     SFC_CON = s->sfc_con;                         /* XIP back on */
     fl_csync();
 }
 RAMINL void fl_inval(uint32_t off, uint32_t len)
 {
     uint32_t a = FL_XIP(off) & ~31u, e = FL_XIP(off) + len;
+    FL_TRACE_MARK(FL_TRACE_INVALIDATE);FL_TRACE_WAIT(FL_TRACE_CACHE_INVALIDATE);
     fl_cache_idle();
     for (; a < e; a += 32u) {
         fl_csync();
@@ -181,11 +202,17 @@ RAMINL void fl_inval(uint32_t off, uint32_t len)
 }
 RAMINL int fl_wait_ready(uint32_t max_us, uint32_t *took_us)
 {
+    FL_TRACE_MARK(FL_TRACE_WIP);
     uint32_t t0 = T4_CNT, dt;
+    FL_TRACE_COUNTER;
     for (;;) {
         dt = (T4_CNT - t0) / 24u;
-        if (!(fl_rdsr(0x05) & 1u)) { *took_us = dt; return 0; }
-        if (dt > max_us) { *took_us = dt; FL_READY_TIMEOUT(); }
+        FL_TRACE_SAMPLE(trace_polls);
+        uint8_t status=fl_rdsr(0x05);
+        FL_TRACE_STATUS(status,0);FL_TRACE_WIP_PROGRESS(trace_polls,status);
+        if (!(status & 1u)) { *took_us = dt; return 0; }
+        FL_TRACE_POLL(trace_polls,status);
+        if (dt > max_us) { *took_us = dt; FL_TRACE_FAIL(FL_TRACE_FAIL_WIP); FL_READY_TIMEOUT(); }
     }
 }
 
@@ -194,80 +221,98 @@ RAMINL int fl_wait_ready(uint32_t max_us, uint32_t *took_us)
 static RAMFN uint32_t fl_jedec_ram(void)                 /* expect 0x856014 */
 {
     fl_saved_t s; uint32_t id;
-    if (fl_enter(&s)) return 0;
+    FL_TRACE_BEGIN(FL_TRACE_JEDEC,0);
+    if (fl_enter(&s)) { FL_TRACE_END(0);return 0; }
+    FL_TRACE_MARK(FL_TRACE_COMMAND);
     fl_cs(0); fl_tx(0x9F);
     id = (uint32_t)fl_rx() << 16; id |= (uint32_t)fl_rx() << 8; id |= fl_rx();
     fl_cs(1);
     fl_exit(&s);
-    return id;
+    FL_TRACE_END((int32_t)id);return id;
 }
 
 static RAMFN uint32_t fl_status_ram(void)                /* SR1 | SR2 << 8 */
 {
     fl_saved_t s; uint32_t v;
-    if (fl_enter(&s)) return 0xFFFFFFFFu;
+    FL_TRACE_BEGIN(FL_TRACE_STATUS,0);
+    if (fl_enter(&s)) { FL_TRACE_END(-1);return 0xFFFFFFFFu; }
+    FL_TRACE_MARK(FL_TRACE_PRE_STATUS);
     v = fl_rdsr(0x05) | ((uint32_t)fl_rdsr(0x35) << 8);
     fl_exit(&s);
-    return v;
+    FL_TRACE_STATUS(v,1);FL_TRACE_END((int32_t)v);return v;
 }
 
 static RAMFN int fl_erase4k_ram(uint32_t off, uint32_t *took_us)
 {
     fl_saved_t s; int rc;
+    FL_TRACE_BEGIN(FL_TRACE_ERASE,off);
     if (!FL_RANGE_OK(off, 0x1000u) || (off & 0xFFFu))
-        return -1;
-    if (fl_enter(&s)) return -2;
+        { FL_TRACE_END(-1);return -1; }
+    if (fl_enter(&s)) { FL_TRACE_END(-2);return -2; }
+    FL_TRACE_MARK(FL_TRACE_COMMAND);
     fl_wren();
 #if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+    FL_TRACE_MARK(FL_TRACE_PRE_STATUS);
     uint8_t status = fl_rdsr(0x05);
-    if (status & 1u) fl_failstop();
+    FL_TRACE_STATUS(status,1);
+    if (status & 1u) { FL_TRACE_FAIL(FL_TRACE_FAIL_PRE_BUSY);fl_failstop(); }
     if (!(status & 2u)) rc = -3;
 #else
     if (!(fl_rdsr(0x05) & 2u)) rc = -3;           /* WEL did not set */
 #endif
     else {
+        FL_TRACE_MARK(FL_TRACE_COMMAND);
         fl_cs(0); fl_tx(0x20); fl_addr(off); fl_cs(1);
+        FL_TRACE_MARK(FL_TRACE_ERASE_ISSUED);
         fl_inval(off, 4096u);
         rc = fl_wait_ready(500000u, took_us);     /* generic NOR max 400 ms */
     }
     fl_exit(&s);
-    return rc;
+    FL_TRACE_END(rc);return rc;
 }
 
 static RAMFN int fl_prog_ram(uint32_t off, const uint8_t *src, uint32_t n, uint32_t *took_us)
 {
     fl_saved_t s; int rc; uint32_t i;
+    FL_TRACE_BEGIN(FL_TRACE_PROGRAM,off);
     if (!FL_RANGE_OK(off, n) ||
-        n == 0 || n > 256u || ((off & 0xFFu) + n) > 256u) return -1;    /* one page, no wrap */
-    if (fl_enter(&s)) return -2;
+        n == 0 || n > 256u || ((off & 0xFFu) + n) > 256u) { FL_TRACE_END(-1);return -1; } /* one page, no wrap */
+    if (fl_enter(&s)) { FL_TRACE_END(-2);return -2; }
+    FL_TRACE_MARK(FL_TRACE_COMMAND);
     fl_wren();
 #if !defined(FELUCCA_LOADER) || !FELUCCA_LOADER
+    FL_TRACE_MARK(FL_TRACE_PRE_STATUS);
     uint8_t status = fl_rdsr(0x05);
-    if (status & 1u) fl_failstop();
+    FL_TRACE_STATUS(status,1);
+    if (status & 1u) { FL_TRACE_FAIL(FL_TRACE_FAIL_PRE_BUSY);fl_failstop(); }
     if (!(status & 2u)) rc = -3;
 #else
     if (!(fl_rdsr(0x05) & 2u)) rc = -3;
 #endif
     else {
+        FL_TRACE_MARK(FL_TRACE_COMMAND);
         fl_cs(0); fl_tx(0x02); fl_addr(off);
         for (i = 0; i < n; i++) fl_tx(src[i]);
         fl_cs(1);
+        FL_TRACE_MARK(FL_TRACE_PROGRAM_ISSUED);
         fl_inval(off, n);
         rc = fl_wait_ready(10000u, took_us);      /* generic NOR max 3 ms */
     }
     fl_exit(&s);
-    return rc;
+    FL_TRACE_END(rc);return rc;
 }
 
 static RAMFN int fl_read_ram(uint32_t off, uint8_t *dst, uint32_t n)   /* 0x0B fast read */
 {
     fl_saved_t s; uint32_t i;
-    if (fl_enter(&s)) return -2;
+    FL_TRACE_BEGIN(FL_TRACE_READ,off);
+    if (fl_enter(&s)) { FL_TRACE_END(-2);return -2; }
+    FL_TRACE_MARK(FL_TRACE_COMMAND);
     fl_cs(0); fl_tx(0x0B); fl_addr(off); fl_tx(0xFF);
     for (i = 0; i < n; i++) dst[i] = fl_rx();
     fl_cs(1);
     fl_exit(&s);
-    return 0;
+    FL_TRACE_END(0);return 0;
 }
 
 /* ---- XIP side (normal .text) ---- */

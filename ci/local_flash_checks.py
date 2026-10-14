@@ -30,7 +30,8 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
     first_use = check == 'first-use'
     usb_controller = check == 'usb-controller'
     flags = ['-std=c11', '-Wall', '-Wextra']
-    required = sources + ([] if usb_controller else ['firmware/hal/fm1_flash.h'])
+    required = sources + ([] if usb_controller else ['firmware/hal/fm1_flash.h',
+                                                  'firmware/hal/fm1_flash_trace.h'])
     if first_use:
         flags += ['-D_POSIX_C_SOURCE=200809L', '-w', '-DNPART=8',
                   '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
@@ -66,6 +67,22 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
                                (['-lm'] if first_use or usb_controller else []) + ['-o', binary],
                            requires=required),
                   LocalStep(name=tag, argv=[binary], requires=[])]
+        trace_fixtures = {
+            'flash-driver': ['tests/flash_trace_test.c', 'tests/flash_trace_spi_watchdog_test.c'],
+            'first-use': ['tests/flash_trace_reset_test.c'],
+            'usb-controller': [],
+        }[check]
+        for fixture in trace_fixtures:
+            trace_sources = sources[:-1] + [fixture] if first_use else [fixture]
+            trace_tag = Path(fixture).stem + '-' + mode
+            trace_binary = str(out / trace_tag)
+            trace_required = required + [fixture, 'tests/flash_trace_fixture.h',
+                                        'firmware/src/flash_trace_diagnostic.h']
+            steps += [LocalStep(name=trace_tag + '-compile',
+                               argv=cc + flags + mode_flags + trace_sources +
+                                   (['-lm'] if first_use else []) + ['-o', trace_binary],
+                               requires=trace_required),
+                      LocalStep(name=trace_tag, argv=[trace_binary], requires=[])]
     return steps
 
 
