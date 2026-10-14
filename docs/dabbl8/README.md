@@ -14,7 +14,10 @@ current install contract. Disclosed first-use formatting completed on the owner'
 FM-1; interrupted-format recovery, saved-project/reboot retention and own-project
 backup/restore remain unqualified. The policy itself grants no device operation.
 See the [software acceptance map](software-acceptance-status.md) for current
-implementation coverage and the remaining measurement software gap.
+implementation coverage and remaining physical measurement gates. The
+[private resource diagnostic package handoff](resource-diagnostic-package.md)
+records the implemented observation capability and future separately authorized
+hardware phases; it grants no installation or capture permission.
 
 ## Reading order
 

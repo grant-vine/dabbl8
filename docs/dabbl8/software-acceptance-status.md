@@ -7,11 +7,12 @@ is separate source `76ea40ba7a673d93d5b59053457c98bbf6d75191`; its
 [hardware observations](hardware-initialization-20261014.md) do not qualify later
 source or a release. Eight logical tracks continue to share eight sounding voices.
 
-The current software gap identified here is the ability to measure engine-pool
-and stack high-water for #12. Timing collection does not provide those values.
-Current-status and own-format documentation contradictions are corrected in this
-slice. The linked source and fixtures show implementation coverage; they are not
-new passing-test claims or a reason to close physical acceptance gates.
+The initial review identified a missing resource-observation interface for #12.
+The dated follow-up below records its subsequent implementation and private
+[package/hardware handoff](resource-diagnostic-package.md). D8T2 timing alone still
+does not provide those observations. The original source coverage map remains a
+bounded snapshot; implemented controls and host checks do not close physical
+acceptance gates.
 
 ## Requirement map
 
@@ -20,7 +21,7 @@ new passing-test claims or a reason to close physical acceptance gates.
 | [#9 sequencing/MIDI](https://github.com/grant-vine/dabbl8/issues/9) | [Actual eight-track recording/playback and simulated USB/TRS routing fixture](../../tests/eight_track_runtime_test.c), [shared voice admission](../../firmware/src/voice.c) and [three-slot project frontend](../../firmware/src/project.c). | Concurrent physical sequencing/routing and three saved slots/shared autosave. Speaker, four-knob response and individual tracks 5–8 keyboard sound are owner-confirmed. |
 | [#10 mixer/selection](https://github.com/grant-vine/dabbl8/issues/10) | [Banked mixer/layer/render fixture](../../tests/banked_mixer_test.c), [adopted native render fixture](../../tests/native_state_render_test.c) and [panel undo fixture](../../tests/native_ui_undo_test.c). | Physical gestures/readability and prerequisite #9. Existing host render coverage is bounded, not every possible gesture/state. |
 | [#11 editor/own backup](https://github.com/grant-vine/dabbl8/issues/11) | [Companion](../../web/d8companion.html), [command-81 handler](../../firmware/src/native_project_transfer.c), [virtual-NOR transfer fixture](../../tests/native_project_transfer_test.c), [actual client bridge fixture](../../tests/native_project_client_test.mjs) and [own-format compatibility](native-project-archive.md). | Physical connected own-project backup/import/restore. Archives exclude settings, presets and samples; they are not a full instrument backup. Clean-install disclosure and supported version/refusal behavior are documented. |
-| [#12 resource bounds](https://github.com/grant-vine/dabbl8/issues/12) | [Shared heavy-state allocation](../../firmware/src/heavy_state.h), [mixed lifetime fixture](../../tests/heavy_pool_test.c), [timing recorder](../../firmware/src/audio_timing.h) and linked memory evidence. | **Missing diagnostic software:** report engine-pool occupancy high-water and stack high-water. Then measure target workloads and publish supported engine combinations/caps. Linked allocation and host fixtures cannot supply those measurements. |
+| [#12 resource bounds](https://github.com/grant-vine/dabbl8/issues/12) | [Shared allocation/lifetime fixture](../../tests/heavy_pool_test.c), implemented [pool/stack resource controls and capture](resource-diagnostic-capture.md), and [private application/package evidence](resource-diagnostic-package.md). | Target workload measurements and supported engine combinations/caps remain pending. Pool reports observed live-owned occupancy, not general RAM allocation high-water; stack reports a surviving-write lower bound, not complete stack safety. Host checks and fixed reservations cannot satisfy the physical gate. |
 | [#13 own persistence](https://github.com/grant-vine/dabbl8/issues/13) | [Shared commit-last pool](../../firmware/src/d8pool.c), [cut/refusal fixture](../../tests/d8pool_test.c), [first-use foundation/cut fixture](../../tests/native_first_use_foundation_test.c), [local save/rename/autosave fixture](../../tests/native_local_save_test.c), [own settings](../../firmware/src/native_settings_session.c), [presets](../../firmware/src/native_preset_session.c) and [sample replacement](../../firmware/src/native_sample_session.c). | Physical interrupted-format/reboot recovery, supported own-upgrade data retention and stopped save/recall. Initialization completed once; that does not qualify interruption or recall. Live saving is separately gated. |
 | [#14 first target/recovery](https://github.com/grant-vine/dabbl8/issues/14) | [Diagnostic collector](../../tools/dabbl8_timing_capture.py), [scripted transport fixture](../../tests/dabbl8_timing_capture_test.py), [first-use diagnostic](owner-first-use-diagnostic.md) and exact [installed-source receipt](hardware-initialization-20261014.md). | Stress timing, calibrated clock/overhead, stack/pool measurement, routing, save/reboot/own restore and independent recovery. The ten-second idle capture is one limited observation. This UAC-off diagnostic cannot test USB audio rates. |
 | [#15 arrangement](https://github.com/grant-vine/dabbl8/issues/15) | [Reference/overlay/fill behavior](native-arrangement-playback.md), [actual arrangement fixture](../../tests/native_arrangement_test.c), [source/engine compatibility fixture](../../tests/arrangement_engine_compatibility_test.c) and [undo fixture](../../tests/native_ui_undo_test.c). | Target memory/timing after features and prerequisite #14; software behavior checkboxes do not replace those gates. |
@@ -31,35 +32,48 @@ new passing-test claims or a reason to close physical acceptance gates.
 | [#20 release](https://github.com/grant-vine/dabbl8/issues/20) | Local candidate package/source/notices/checksum preparation is recorded in the issue; the [installed-source evidence](hardware-initialization-20261014.md) names exact artifacts and static failures. | Hardware prerequisites, tested compatibility/engine limits, supported own backup/restore/upgrades, a second tester and separate publication authorization. No public release is qualified. |
 | [#21 website](https://github.com/grant-vine/dabbl8/issues/21) | Website-repository review preparation is recorded in the issue; public download/compatibility text depends on #20. | Complete release-specific information after qualification. Website publication remains a separate action, not firmware implementation work. |
 
-## Missing resource measurement capability
+## Resource capability follow-up — 14 October 2026
 
-[heavy_state.h](../../firmware/src/heavy_state.h) retains eight statically allocated
-bodies and current owner keys, with liveness checked on use. It does not retain
-maximum concurrent live body occupancy or expose a resource report. Allocated
-pool bytes are a static bound; live occupancy high-water is a distinct workload
-observation. Stale owner keys alone must not be counted as live allocations.
+The reviewed host/integration source is now
+`045da5c3b998bd3193576c9c1b7dac9f75bb82c2`. The target application is a separate
+build from `532847765115d089b776e48b13a6275a20d1800a`; later host fixes preserve its
+original source hashes. The [private handoff](resource-diagnostic-package.md)
+records exact application/loader identities and the locally validated private
+package receipt; independent package review is a separate gate. No installation or device capture is authorized in this phase.
 
-The [D8T2 recorder](../../firmware/src/audio_timing.h) and
-[console report](../../firmware/src/audio_timing_console.h) contain timing,
-late/UAC publications and auxiliary observations, with no resource peaks.
-[status/dbg](../../firmware/src/console.c) likewise expose no stack or pool
-high-water. [Hardware guards](../../firmware/hal/fm1_guard.h) detect limit/write
-violations; they do not measure peak stack use. The build helper's
-[stack windows](../../tools/build.py) are fixed linked allocations only.
+[Pool diagnostic](../../firmware/src/heavy_pool_diagnostic.h),
+[cold-start stack readout](../../firmware/hal/fm1_stack_watermark.h),
+[main-loop resource console](../../firmware/src/resource_diagnostic_console.h)
+and [strict collector](../../tools/dabbl8_resource_capture.py) implement the
+previously missing bounded observation interface. Both helpers are default-off;
+D8R1 is separate from D8T2 and requires an explicit private resource kit. Pool
+start binds actual boot/generation and excludes owner mutation; paused export
+copies under a short main-only lock, then scans/prints unlocked. The collector
+preserves original frame bytes and rejects invalid, incomplete or foreign rows.
 
-A diagnostic implementation must establish safe startup/measurement boundaries,
-cover both application stacks and interrupt nesting, retain workload/source/boot
-identity, report invalid or unavailable measurements explicitly, and quantify
-its RAM/stack/interrupt cost. Painting or scanning an active stack can corrupt
-live frames; periodic stack-pointer sampling can miss a deeper nested peak.
-No runtime resource instrumentation is implemented by this documentation change.
+The pool retains initial/request-boundary live-owner censuses, per-engine
+independent peaks and allocation failures, with fixed capacity/body/reservation
+reported separately. It is not general pool/FX/LCD RAM high-water. Last-observed
+ownership can be stale after release. Both application stack windows report
+surviving writes since boot, a nonatomic lower bound that can conceal deeper use;
+there is no maximum-SP or complete interrupt-nesting/stack-safety claim. Actual
+workloads, calibrated timing/observer overhead and supported engine caps remain
+pending for #12/#14. The UAC-off candidate cannot qualify USB audio rates.
+
+Recorded local checks pass 24 resource collector/parser, 20 timing transport,
+8 builder and 29 planner tests. Real console fixtures cover Full/Core/Breaks in
+optimized and strict sanitizer modes; default-off console objects remain equal
+to the prior source. The target application links within unchanged allocations,
+but SLICE +14% and audio IRQ +48% still fail static budgets; TIMER5 passes. These
+checks establish software capability and bounded evidence, not physical resource
+qualification, recovery or release acceptance.
 
 ## Verification scope
 
-Only the affected documentation check is selected for this slice. Existing source
-and fixture references were inspected directly; the firmware suite, vendor build,
-package generation, device writes and hosted CI are not repeated. For the exact
-focused invocations already wired for these fixtures, see
+Only affected documentation/link checks are selected for this follow-up. The
+recorded implementation/build checks above are reused; no firmware suite, target
+rebuild, package generation, device access or hosted CI is performed by this
+documentation slice. For the exact focused invocations already wired for these fixtures, see
 [local check recipes](../../ci/README.md) and [host runner](../../tests/run_tests.sh).
 The unchanged SLICE and audio-interrupt static failures remain explicit in the
 installed-source evidence; TIMER5's static pass is not a full deadline clearance.
