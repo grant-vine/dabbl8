@@ -1,0 +1,28 @@
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+# Current FM-1 firmware findings — 14 October 2026
+
+This updates the [12 October comparison](2026-10-12-firmware-comparison.md) with current source observations. No other firmware was downloaded, built, installed or run. Keep the original audited Felucca v1.1.5 baseline; this survey does not upgrade Dabbl8's source or qualify its timing.
+
+## What the newer firmware demonstrates
+
+| Project and inspected source | Track/resource approach | Relevance to Dabbl8 |
+| --- | --- | --- |
+| [Felucca 1.6, 17275376](https://github.com/hugelton/Felucca/tree/1727537624390cc3f9c7dff2456b43b3a8edb005) | Four tracks, eight shared voices, 128-frame audio halves; large engine state shared per track. | Current upstream remains a reference for individual fixes/features. Dabbl8 already uses a global eight-body pool rather than eight maximum-sized per-track arenas. |
+| [SLOOP 2.6, d315ad88](https://github.com/isod89/sloop-fm1/tree/d315ad88c5fbaad232ce9426b06db66395bd87db) | Three synth tracks sharing eight voices plus a separate six-voice drum track; 256-frame halves. | Richer effects and workflow are useful references, but its extra drum pool and larger audio halves do not prove Dabbl8's bounded eight-voice, 128-frame workload. |
+| [JIANT development 0.6.80, ade4e894](https://github.com/juanjiant-bit/JIANT/tree/ade4e8940f746dc4c7d183a3ab6dec06d8c28edb) | Six tracks; PHYS, SAMPLE, GRAIN and SLICE retired; experimental dual core. | Its first-party README supersedes the index's 0.6.79 label. Its allocator still relies on fewer tracks than voices; importing it would reintroduce an assumption Dabbl8 already removed. |
+| [Hortator, 7e341597](https://github.com/DeadActive/hortator/tree/7e3415971c5800b4a3ad0146a7d95615883d7d96) | Eight specialized drum tracks; global eight-unit weighted budget, heavy models cost two; cross-track choke and immediate model retirement. | A concrete precedent for explicit resource caps. A scalar last-output tail smooths cuts without rendering another engine; defer adoption unless physical stealing clicks are observed. |
+| [TRIBE, 2563c8e3](https://github.com/apiel/fm1-tribe/tree/2563c8e3796d01f29fcb812a7e6f90eee1b88da3) | Ten sequencer/mixer lanes; shared 909/808 kits with exclusive voice owners, two 303 instances and three kick instances; shared stateful FX sends. | Track count and expensive engine-instance count are separate. Assignment can fail when the selected instance is occupied; ten lanes do not mean ten unrestricted copies of every engine. |
+| [April OS, f2356c2f](https://github.com/beashoko/april-os/tree/f2356c2f9030d69c7ae1261b86639b1fa6bf79f4) | README advertises eight sample tracks and no synth engines. The inspected public main tree contains a site/README/assets, not firmware implementation. | Samples-only trades away the requested engine inventory. MIT LICENSE and GPL derivative wording disagree; no code adoption is proposed. |
+| [Groove OS](https://www.groove-os.com/manual/firmware) | Proprietary stock-V15 modification; vendor describes eight tracks with shared FM/VA voice pools and shared effects. | A workflow/reference claim rather than inspectable source. Browser synthesis and stock firmware synthesis differ, so its emulator cannot establish Dabbl8's silicon timing. |
+
+The [Firmware Hub](https://thefirmwarehub.com/) and [community firmware index](https://fm1-editor.com/firmware/) are discovery sources, not hardware test results. Their catalogue counts and versions can differ from linked repositories. The current catalogue also includes Baud Girl v101, Skiff, ORBIT, DUELL, FM-106, TRIBE and several specialist/experimental projects. Eight sequences per track (Felucca 8 Patterns) is a different feature from eight tracks. Source availability, reproducibility and licenses must be checked per project.
+
+## Decisions for v0.1
+
+1. Retain eight sequencer tracks, eight shared sounding voices and the existing engine inventory. Global heavy-state sharing, top-octave constants and unused-send fast paths are already implemented; do not repeat them as new work.
+2. Finish resource measurement and the physical playback/save/restore/reboot tests. Static allocation, observed live-owned slot peaks, stack overwritten-word depth and maximum stack-pointer displacement are different quantities. Diagnostic overhead and clock calibration remain required.
+3. Consider a cached heavy-state handle only after profiling demonstrates lookup cost; retain generation/liveness checks through stealing, retrigger and engine switches. Reverse SLICE already obtains its window once per render block, so a per-sample lookup optimization would address a nonexistent loop.
+4. Calibrate any future weighted admission policy using Dabbl8 workloads, not borrowed drum weights. Do not add effects, change memory regions, double audio halves, adopt dual core or merge another firmware wholesale to clear an acceptance gate.
+5. Save compression reduces storage/wire bytes, not sounding engine state. The selected three-project/shared-autosave layout already has a bounded native payload; repacking is not needed for initial v0.1 acceptance.
+
+The source audit recorded 27 source/arithmetic checks, including exact remote Git blobs, all 2,048 pitch-table reconstructions and SDK-mirror blobs matched to the cached official SDK tree. These are source facts, not DSP execution or hardware performance. Detailed reports and receipts remain local under `build/firmware-research-20261014/`; primary links above preserve public provenance. Preserve upstream GPL-3.0-only and dependency notices for any later independently justified import.
