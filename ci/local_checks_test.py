@@ -23,6 +23,100 @@ class SelectionTest(unittest.TestCase):
         self.assertFalse(unknown)
         self.assertEqual(len(self.plan(['README.md'])['commands']), 1)
 
+    def test_resource_paths_select_only_bounded_new_recipes(self):
+        # Given each newly owned resource input, when selecting affected checks.
+        cases = {'tools/build.py': 'resource-build',
+            'tests/resource_diagnostic_build_test.py': 'resource-build',
+            'tools/dabbl8_resource_capture.py': 'resource-capture',
+            'tools/dabbl8_resource_report.py': 'resource-capture',
+            'tests/dabbl8_resource_capture_test.py': 'resource-capture',
+            'firmware/src/resource_diagnostic_console.h': 'resource-console',
+            'tests/resource_diagnostic_console_test.c': 'resource-console',
+            'firmware/src/heavy_pool_diagnostic.h': 'heavy-pool-diagnostic',
+            'firmware/hal/fm1_stack_watermark.h': 'stack-watermark'}
+        for path, check in cases.items():
+            with self.subTest(path=path):
+                selected, unknown = checks.select([path])
+                # Then no unrelated fixture or target/package workflow is selected.
+                self.assertEqual(selected, {'diff', check})
+                self.assertEqual(unknown, [])
+                steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+                self.assertFalse(any('run_tests.sh' in s['argv'] or 'tools/build.py' in s['argv'] or
+                    'docker' in s['argv'] for s in steps))
+
+    def test_resource_capture_reuses_console_and_keeps_strict_sanitizers(self):
+        # Given both new console/capture paths and a host compiler selection.
+        selected, _ = checks.select(['firmware/src/resource_diagnostic_console.h',
+                                    'tools/dabbl8_resource_capture.py'])
+        # When the actual recipe planner assembles commands.
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        # Then six profile/mode compiles occur once and interop uses their binary.
+        compiles = [s for s in steps if s['name'].endswith('-compile')]
+        self.assertEqual(len(compiles), 6)
+        self.assertEqual(len({s['name'] for s in steps}), len(steps))
+        for step in compiles:
+            self.assertIn('-DD8_STACK_WATERMARK_DIAGNOSTIC=1', step['argv'])
+            self.assertIn('-DD8_HEAVY_POOL_DIAGNOSTIC=1', step['argv'])
+            self.assertIn('-DFELUCCA_UAC=0', step['argv'])
+            self.assertFalse(any(arg.startswith('-fno-sanitize=') for arg in step['argv']))
+            if '-sanitized-' in step['name']:
+                self.assertIn('-fsanitize=address,undefined', step['argv'])
+                self.assertIn('-fno-sanitize-recover=all', step['argv'])
+        interop = steps[-1]
+        self.assertEqual(interop['name'], 'resource-capture-scripted-transport')
+        self.assertIn('D8_RESOURCE_CONSOLE_BIN=out/resource-console-0-optimized', interop['argv'])
+        self.assertEqual(interop['argv'][-2:], [checks.sys.executable, 'tests/dabbl8_resource_capture_test.py'])
+
+    def test_resource_missing_inputs_refuse_before_output_or_execution(self):
+        # Given each new explicit recipe with every declared input available.
+        for check in checks.RESOURCE_MAP:
+            with self.subTest(check=check), tempfile.TemporaryDirectory() as folder:
+                repo = Path(folder)
+                steps = checks.recipes({'diff', check}, ['clang'], Path('out'), 'HEAD')
+                required = {name for step in steps for name in step.get('requires', [])}
+                for name in required:
+                    file = repo / name
+                    file.parent.mkdir(parents=True, exist_ok=True)
+                    file.touch()
+                self.assertEqual(checks.make_plan(repo, [], [check], ['clang'], Path('out'), 'HEAD')['status'], 'PLAN')
+                # When any directly declared input is removed before a requested run.
+                for missing in required:
+                    (repo / missing).unlink()
+                    with patch.object(checks, 'ROOT', repo), patch.object(checks.subprocess, 'run') as run:
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            code = checks.main(['--paths', missing, '--check', check, '--run'])
+                        # Then the plan refuses without adapters/output creation.
+                        self.assertEqual(code, 2)
+                        run.assert_not_called()
+                        self.assertFalse((repo / 'build/local-checks').exists())
+                    (repo / missing).touch()
+
+    def test_resource_stack_route_is_host_only_and_evidence_child_is_fresh(self):
+        # Given an explicit stack recipe, when planning its existing runner.
+        steps = checks.recipes({'diff', 'stack-watermark'}, ['clang', '-Werror'], Path('out'), 'HEAD')
+        # Then target mode is forcibly off and the child output is not precreated.
+        argv = steps[-1]['argv']
+        self.assertIn('D8_STACK_TARGET=0', argv)
+        self.assertIn('CC=clang -Werror', argv)
+        self.assertEqual(argv[-1], 'out/stack-watermark')
+        self.assertNotIn('--target-plan', argv)
+
+    def test_resource_python_and_stack_routes_refuse_missing_compiler(self):
+        # Given their complete declared inputs but an unavailable chosen compiler.
+        for check in ('resource-build', 'stack-watermark'):
+            with tempfile.TemporaryDirectory() as folder:
+                repo = Path(folder)
+                for step in checks.recipes({'diff', check}, ['missing-compiler'], Path('out'), 'HEAD'):
+                    for name in step.get('requires', []):
+                        file = repo / name
+                        file.parent.mkdir(parents=True, exist_ok=True)
+                        file.touch()
+                # When planning, then refusal occurs before execution/output.
+                with patch.object(checks.shutil, 'which', return_value=None):
+                    plan = checks.make_plan(repo, [], [check], ['missing-compiler'], Path('out'), 'HEAD')
+                self.assertEqual(plan['status'], 'REFUSED')
+                self.assertIn('Compiler unavailable: missing-compiler', plan['refusals'])
+
     def test_timing_capture_has_only_scripted_transport_recipe(self):
         for path in ('tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'):
             p = self.plan([path])

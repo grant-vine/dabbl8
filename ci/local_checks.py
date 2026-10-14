@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 from local_flash_checks import flash_recipes, save_consent_recipes
+from local_resource_checks import RESOURCE_MAP, resource_recipes
 
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -53,6 +54,8 @@ MAP = {
         'tests/instrument_capture_test.c', 'tests/ui_test.c', 'tests/d8p1_flash_runtime_test.c'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'ci/local_flash_checks.py', 'tests/run_tests.sh'},
 }
+MAP.update(RESOURCE_MAP)
+MAP['runner'].add('ci/local_resource_checks.py')
 
 
 def select(paths):
@@ -84,6 +87,11 @@ def recipes(checks, cc, out, base):
     steps = [{'name': 'diff', 'argv': ['git', 'diff', '--check', base, '--']}]
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
     for name in sorted(checks - {'diff'}):
+        if name in RESOURCE_MAP:
+            if name == 'resource-console' and 'resource-capture' in checks:
+                continue  # The capture recipe already runs the same console fixtures.
+            steps += resource_recipes(name, cc, out)
+            continue
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
@@ -204,7 +212,7 @@ def make_plan(repo, paths, explicit, cc, out, base):
     missing = sorted({p for s in steps for p in s.get('requires', []) if not (repo / p).is_file()})
     if missing:
         refusal.append('Missing local inputs (no automatic generation/download): ' + ', '.join(missing))
-    if any(s['name'].endswith('-compile') for s in steps) and not shutil.which(cc[0]):
+    if (any(s['name'].endswith('-compile') for s in steps) or checks & {'resource-build', 'stack-watermark'}) and not shutil.which(cc[0]):
         refusal.append('Compiler unavailable: ' + cc[0])
     for name in ('GOLDEN_UPDATE', 'BUDGET_UPDATE'):
         if os.environ.get(name):
