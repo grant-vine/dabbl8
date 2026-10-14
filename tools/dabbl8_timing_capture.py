@@ -16,6 +16,13 @@ import time
 from dabbl8_timing_report import parse_report
 
 COMMANDS = ('status', 'timing start', 'timing stop', 'timing report')
+RESOURCE_COMMANDS = ('status', 'resource start', 'resource stop', 'resource report')
+
+
+def command_profile(commands):
+    if type(commands) is not tuple or commands not in (COMMANDS, RESOURCE_COMMANDS):
+        raise ValueError('Unsupported fixed console command profile')
+    return commands
 MAX_REPLY = 65536
 
 
@@ -49,7 +56,8 @@ def package_identity(manifest):
 
 class Console:
     """Bounded request/reply framing; single exact prompt, no automatic retries."""
-    def __init__(self, transport, journal, clock=time.monotonic):
+    def __init__(self, transport, journal, clock=time.monotonic, *, commands=COMMANDS):
+        self.commands = command_profile(commands)
         self.transport, self.journal, self.clock = transport, journal, clock
 
     def receive(self):
@@ -70,8 +78,8 @@ class Console:
         raise TimeoutError('Console response timed out; no retry')
 
     def request(self, command):
-        if command not in COMMANDS:
-            raise ValueError('Command outside timing-only allowlist')
+        if command not in self.commands:
+            raise ValueError('Command outside selected diagnostic allowlist')
         data = command.encode('ascii') + b'\r'
         self.journal('send', data)
         self.transport.write(data)
@@ -146,7 +154,8 @@ def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled:
 
 class MacCdc:
     """Exact physical tty only; native modem/termios path remains hardware-unverified."""
-    def __init__(self, port):
+    def __init__(self, port, *, commands=COMMANDS):
+        self.commands = command_profile(commands)
         if sys.platform != 'darwin' or not re.fullmatch(r'/dev/cu\.usbmodem[A-Za-z0-9_-]+', port):
             raise ValueError('An explicit /dev/cu.usbmodem… port on macOS is required')
         import fcntl
@@ -182,7 +191,7 @@ class MacCdc:
         return data
 
     def write(self, data):
-        if data not in tuple(command.encode('ascii') + b'\r' for command in COMMANDS):
+        if data not in tuple(command.encode('ascii') + b'\r' for command in self.commands):
             raise ValueError('Native transport refuses non-allowlisted bytes')
         if os.write(self.fd, data) != len(data):
             raise OSError('Partial console write; no retry')

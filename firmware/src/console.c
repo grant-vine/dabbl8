@@ -113,6 +113,7 @@ static int con_word(const char **p, const char *w)       /* match a whole word *
 #if DABBL8_TIMING_DIAGNOSTIC
 #include "audio_timing_console.h"
 #endif
+#include "resource_diagnostic_console.h"
 
 static void con_memr(const char *p)
 {
@@ -220,6 +221,9 @@ static void con_status(void)
     con_kv("bpm", song.g[G_BPM]);
     con_kv("playing", song.playing);
     con_kv("boots", (int32_t)felucca_dbg.boots);
+#if D8_RESOURCE_DIAGNOSTIC
+    con_resource_status();
+#endif
 #if D8_FIRST_USE_SESSION && DABBL8_TIMING_DIAGNOSTIC
     con_first_use();
 #endif
@@ -362,10 +366,17 @@ static void con_exec(const char *p)
 #if DABBL8_TIMING_DIAGNOSTIC
         con_puts("timing start|stop|report (diagnostic, no storage writes)\r\n");
 #endif
+#if D8_RESOURCE_DIAGNOSTIC
+        con_puts("resource start|stop|report (paused D8R1 observations)\r\n");
+#endif
     }
 #if DABBL8_TIMING_DIAGNOSTIC
     else if (con_word(&p, "timing"))
         con_timing(p);
+#endif
+#if D8_RESOURCE_DIAGNOSTIC
+    else if (con_word(&p, "resource"))
+        con_resource(p);
 #endif
     else if (con_word(&p, "status"))
         con_status();

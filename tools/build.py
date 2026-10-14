@@ -13,6 +13,8 @@ See BUILDING.md for the toolchain and the SDK.
 The JieLi toolchain is Linux x86-64 only. JIELI_TOOLCHAIN points at it; on
 macOS (or with JIELI_DOCKER=1) each tool runs in a linux/amd64 container.
 """
+from __future__ import annotations
+
 import argparse
 import datetime
 import hashlib
@@ -28,6 +30,7 @@ import sys
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from typing import TypedDict
 
 SRC = Path(__file__).resolve().parents[1]
 FW = SRC / "firmware"
@@ -58,6 +61,7 @@ PRODUCT = "FM-1_900"                # package identity; release builds are FM-1_
 DABBL8_VERSION = None
 APP_ONLY = False
 TIMING_DIAGNOSTIC = False
+RESOURCE_DIAGNOSTIC = False
 VERSION = None                      # FELUCCA_VERSION for release builds (default: firmware/src/felucca.c)
 
 
@@ -209,6 +213,8 @@ def app_flags():
         if os.environ.get("FELUCCA_CDC") == "0":
             raise SystemExit("--timing-diagnostic needs FELUCCA_CDC=1")
         flags.append("-DDABBL8_TIMING_DIAGNOSTIC=1")
+    if RESOURCE_DIAGNOSTIC:
+        flags.extend(["-DD8_HEAVY_POOL_DIAGNOSTIC=1", "-DD8_STACK_WATERMARK_DIAGNOSTIC=1"])
     owner_initialize = os.environ.get("D8_OWNER_INITIALIZE", "0")
     if owner_initialize not in ("0", "1"):
         raise SystemExit("D8_OWNER_INITIALIZE must be 0 or 1")
@@ -233,6 +239,50 @@ def app_flags():
     return flags
 
 
+def app_startup_flags() -> list[str]:
+    """Only application startup receives the optional stack-paint capability."""
+    return ["-DD8_STACK_WATERMARK_DIAGNOSTIC=1"] if RESOURCE_DIAGNOSTIC else []
+
+
+def app_engine_mask() -> int:
+    """Effective compiled engine availability, including full-profile switches."""
+    profile = os.environ.get("DABBL8_ENGINE_PROFILE", "full")
+    return {"core": 0x1409, "breaks": 0x3411}.get(profile,
+        ((1 << (13 if os.environ.get("FELUCCA_SLICE") == "0" else 14)) - 1) &
+        (~2 if os.environ.get("FELUCCA_FM4", "0") == "0" else ~0))
+
+
+class ResourceDiagnosticMetadata(TypedDict):
+    resource_diagnostic: bool
+    resource_report_schema: str | None
+    resource_collection_initially_enabled: bool | None
+    resource_engine_profile: int | None
+    resource_engine_mask: int | None
+    resource_uac_enabled: bool | None
+    resource_scope: str
+    resource_pool_scope: str | None
+    resource_stack_scope: str | None
+    startup_flags: list[str]
+
+
+def resource_diagnostic_metadata() -> ResourceDiagnosticMetadata:
+    """Build capability/provenance only; collection and hardware remain separate."""
+    profile_flags = engine_profile_flags()
+    profile_id = int(profile_flags[0].split("=", 1)[1]) if profile_flags else 0
+    return {
+        "resource_diagnostic": RESOURCE_DIAGNOSTIC,
+        "resource_report_schema": "D8R1" if RESOURCE_DIAGNOSTIC else None,
+        "resource_collection_initially_enabled": False if RESOURCE_DIAGNOSTIC else None,
+        "resource_engine_profile": profile_id if RESOURCE_DIAGNOSTIC else None,
+        "resource_engine_mask": app_engine_mask() if RESOURCE_DIAGNOSTIC else None,
+        "resource_uac_enabled": os.environ.get("FELUCCA_UAC", "1") != "0" if RESOURCE_DIAGNOSTIC else None,
+        "resource_scope": "Paused observations only; no complete stack, workload, timing or hardware qualification" if RESOURCE_DIAGNOSTIC else "Not instrumented",
+        "resource_pool_scope": "Observed live-owned occupancy since explicit resource start" if RESOURCE_DIAGNOSTIC else None,
+        "resource_stack_scope": "Observed surviving written depth since application startup; collisions and unwritten frames can hide use" if RESOURCE_DIAGNOSTIC else None,
+        "startup_flags": app_startup_flags(),
+    }
+
+
 def build_app():
     flags = app_flags()
     # felucca.c goes to LLVM IR without the optimizer, the main-loop functions (UI, stores, editor) are
@@ -241,7 +291,7 @@ def build_app():
     cmain = (("cc", *flags, "-S", "-emit-llvm", "-Xclang", "-disable-llvm-optzns", "-c",
               FW / "src" / "felucca.c", "-o", OUT / "felucca.ll") if size else
              ("cc", *flags, "-c", FW / "src" / "felucca.c", "-o", OUT / "felucca.o"))
-    tc_all(("cc", "-c", FW / "crt0.S", "-o", OUT / "crt0.o"),
+    tc_all(("cc", *app_startup_flags(), "-c", FW / "crt0.S", "-o", OUT / "crt0.o"),
            ("cc", "-c", FW / "hal" / "fm1_vec.S", "-o", OUT / "fm1_vec.o"),
            ("cc", "-c", FW / "hal" / "fm1_isr.S", "-o", OUT / "fm1_isr.o"),
            cmain)
@@ -456,6 +506,7 @@ def build_app_only(requested_version=None):
         "product": PRODUCT, "version": VERSION, "requested_dabbl8_version": requested_version, "tracks": 8, "shared_voices": 8,
         "hardware_qualified": False, "recovery_qualified": False, "release_qualified": False,
         "stack_qualified": False, "timing_diagnostic": TIMING_DIAGNOSTIC,
+        **resource_diagnostic_metadata(),
         "flashing_authorized": False, "timing_collection_initially_enabled": False if TIMING_DIAGNOSTIC else None,
         "timing_report_schema": "D8T2" if TIMING_DIAGNOSTIC else None,
         "timing_scope": "Instrumented aligned-window observations require external timer/reset and elapsed evidence; no physical timing qualification" if TIMING_DIAGNOSTIC else "Not instrumented",
@@ -466,7 +517,7 @@ def build_app_only(requested_version=None):
         "compiler_flags": app_flags(), "compiler_version": compiler,
         "compiler_binary_sha256": hashlib.sha256((tool_root / "pi32v2/bin/clang").read_bytes()).hexdigest(),
         "container": container, "requested_container_image": requested_image, "effective_container_image": DOCKER_IMAGE if container else None, "sdk_used": False,
-        "engine_mask": {"core": 0x1409, "breaks": 0x3411}.get(os.environ.get("DABBL8_ENGINE_PROFILE", "full"), ((1 << (13 if os.environ.get("FELUCCA_SLICE") == "0" else 14)) - 1) & (~2 if os.environ.get("FELUCCA_FM4", "0") == "0" else ~0)),
+        "engine_mask": app_engine_mask(),
         "python": sys.version, "python_packages": python_packages, "size_main_loop": os.environ.get("FELUCCA_SIZE") != "0",
         "qualification": "Link/memory/static checks only; no measured target deadlines, stack, recovery or release qualification",
     }
@@ -521,22 +572,30 @@ def build_app_only(requested_version=None):
 
 
 def main():
-    global PRODUCT, VERSION, DABBL8_VERSION, TIMING_DIAGNOSTIC, APP_ONLY, OUT, GEN, LDR
+    global PRODUCT, VERSION, DABBL8_VERSION, TIMING_DIAGNOSTIC, RESOURCE_DIAGNOSTIC, APP_ONLY, OUT, GEN, LDR
     ap = argparse.ArgumentParser()
     ap.add_argument("--release", metavar="X.Y", help="release build: identity FM-1_9XY, version string vX.Y")
     ap.add_argument("--sdk", type=Path, help="JieLi AC79 SDK checkout (default: $AC79_SDK)")
     ap.add_argument("--dabbl8", metavar="X.Y[.Z][-suffix]", help="experimental eight-track Dabbl8 package; no publication or hardware qualification")
     ap.add_argument("--timing-diagnostic", action="store_true",
                     help="optional paused timing histograms; no hardware qualification")
+    ap.add_argument("--resource-diagnostic", action="store_true",
+                    help="private Dabbl8 timing-build pool/stack observations; no hardware qualification")
     ap.add_argument("--app-only", action="store_true", help="isolated experimental Dabbl8 application and qualification manifest; no loader/package")
     ap.add_argument("--engine-profile", choices=("full", "core", "breaks"), help="curated profile (default: $DABBL8_ENGINE_PROFILE or full)")
     a = ap.parse_args()
+    if a.resource_diagnostic:
+        if not a.dabbl8 or not a.timing_diagnostic or a.release:
+            ap.error("--resource-diagnostic requires --dabbl8 and --timing-diagnostic, without --release")
+        if os.environ.get("FELUCCA_CDC") not in (None, "1"):
+            ap.error("--resource-diagnostic needs FELUCCA_CDC=1")
+    RESOURCE_DIAGNOSTIC = a.resource_diagnostic
     if a.engine_profile:
         if "DABBL8_ENGINE_PROFILE" in os.environ and os.environ["DABBL8_ENGINE_PROFILE"] != a.engine_profile:
             ap.error("--engine-profile conflicts with DABBL8_ENGINE_PROFILE")
         os.environ["DABBL8_ENGINE_PROFILE"] = a.engine_profile
     APP_ONLY = a.app_only
-    if APP_ONLY:
+    if APP_ONLY or RESOURCE_DIAGNOSTIC:
         app_only_validate(ap, a)
     if a.timing_diagnostic and a.release:
         ap.error("timing diagnostics are not release builds")
@@ -590,6 +649,10 @@ def main():
             "ordinary_package_name": normal_name, "package_name": name,
             "product": PRODUCT, "version": VERSION,
             "requested_dabbl8_version": a.dabbl8,
+            "engine_profile": os.environ.get("DABBL8_ENGINE_PROFILE", "full"),
+            "engine_mask": app_engine_mask(),
+            "compiler_flags": app_flags(),
+            **resource_diagnostic_metadata(),
             "output_directory": OUT.relative_to(SRC).as_posix(),
             "scope": "Timing instrumentation changes load; no physical timing, stack or recovery qualification",
         }

@@ -166,10 +166,35 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaises(ValueError): con.request('status')
 
     def test_native_write_guard_rejects_before_os_write(self):
-        native = object.__new__(capture.MacCdc)
+        native = object.__new__(capture.MacCdc); native.commands = capture.COMMANDS
         with mock.patch.object(capture.os, 'write') as write:
             with self.assertRaises(ValueError): native.write(b'uboot yes\r')
             write.assert_not_called()
+
+    def test_fixed_resource_profile_and_timing_default(self):
+        t = Scripted({'resource start': 'resource started 00000001 00000011\r\n'})
+        con = capture.Console(t, lambda *a: None)
+        with self.assertRaises(ValueError): con.request('resource start')
+        con = capture.Console(t, lambda *a: None, commands=capture.RESOURCE_COMMANDS)
+        con.receive(); self.assertIn('resource started', con.request('resource start'))
+        for command in ('timing start', 'uboot yes', 'memr 0', 'flr 0', 'resource reset'):
+            with self.assertRaises(ValueError): con.request(command)
+        self.assertEqual(t.writes, ['resource start'])
+
+    def test_profile_validation_precedes_native_open(self):
+        for commands in (('status', 'uboot yes'), list(capture.COMMANDS), (), ('status',)):
+            with mock.patch.object(capture.os, 'open') as opened:
+                with self.assertRaises(ValueError): capture.MacCdc('/dev/cu.usbmodemfixture', commands=commands)
+                opened.assert_not_called()
+            with self.assertRaises(ValueError): capture.Console(None, None, commands=commands)
+
+    def test_native_profile_exact_bytes(self):
+        native = object.__new__(capture.MacCdc); native.commands = capture.RESOURCE_COMMANDS; native.fd = 123
+        with mock.patch.object(capture.os, 'write', return_value=len(b'resource stop\r')) as write:
+            native.write(b'resource stop\r'); write.assert_called_once()
+            for data in (b'timing stop\r', b'uboot yes\r', b'resource stop\n', b'status\rreset\r'):
+                with self.assertRaises(ValueError): native.write(data)
+            self.assertEqual(write.call_count, 1)
 
     def test_plan_mode_never_opens_port(self):
         with tempfile.TemporaryDirectory() as d:
