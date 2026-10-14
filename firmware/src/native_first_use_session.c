@@ -201,30 +201,37 @@ static void d8fi_input(uint32_t pressed,uint32_t notes)
   d8fi.phase=FI_RELEASE;d8fi.shown=0;ui.force=1;
  }
 }
-static int fi_visible(void)
+static int fi_display_bound(void)
 {
  unsigned save_only=fm1_in.buttons==(1u<<panel.btn[B_SAVE])&&!fm1_in.notes;
  for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))save_only=0;
  return d8fi.shown&&!d8fi.revoked&&!migration_owner&&!usb.suspended&&
   d8_capture_change.epoch==d8fi.epoch&&fm1_lcd_timeouts==d8fi.lcd_faults&&
   usb.resets==d8fi.usb&&usb.config==d8fi.usb_config&&usb.up==d8fi.usb_up&&
-  (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_headers()==d8fi.header_crc&&
+  fi_headers()==d8fi.header_crc&&
   (fi_quiet()||(save_only&&flash_ok&&!cv_cpu_active&&!transport_req&&!transport_busy()&&
    !seq_counting()&&!d8mc_edit.locked&&!d8mc_edit.busy&&!d8mc_edit.writer&&
    !d8ls_blocked()&&!usb.ota_req&&!usb.uboot_req));
 }
+static int fi_visible(void)
+{ return (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_display_bound(); }
 static void d8fi_draw(void)
 {
  if(d8fi.phase==FI_EXECUTE)return; /* arena remains exclusively staged */
  style_apply();unsigned quiet=fi_quiet(),ready=fi_owner_usb_ready();
  uint16_t colors[4]={T_BG,T_THEME,T_TEXT,T_ACCENT};
- /* Visibility and consent have separate lifetimes. An unchanged panel does
-  * no LCD work and never renews its previously displayed proposal. */
+ unsigned unchanged=d8fi.drawn&&!ui.force&&d8fi.drawn_phase==d8fi.phase&&
+  d8fi.drawn_faults==fm1_lcd_timeouts&&d8fi.drawn_quiet==quiet&&
+  (!D8_OWNER_INITIALIZE||d8fi.drawn_usb_ready==ready)&&
+  !memcmp(d8fi.drawn_colors,colors,sizeof colors);
+ if(unchanged&&(d8fi.phase==FI_REQUIRED||d8fi.phase==FI_UNCERTAIN)&&
+    (uint32_t)(fm1_ms-d8fi.started)>=60000u) {
+  uint32_t flags=irq_save();
+  if(fi_quiet()&&fi_display_bound())d8fi.started=fm1_ms;
+  irq_restore(flags);
+ }
  if(d8fi.shown&&!fi_visible())d8fi.shown=0;
- if(d8fi.drawn&&!ui.force&&d8fi.drawn_phase==d8fi.phase&&
-    d8fi.drawn_faults==fm1_lcd_timeouts&&d8fi.drawn_quiet==quiet&&
-    (!D8_OWNER_INITIALIZE||d8fi.drawn_usb_ready==ready)&&
-    !memcmp(d8fi.drawn_colors,colors,sizeof colors))return;
+ if(unchanged)return;
  unsigned phase=d8fi.phase,shown=d8fi.shown;uint32_t epoch=d8_capture_change.epoch,faults=fm1_lcd_timeouts,resets=usb.resets;unsigned config=usb.config,up=usb.up;
  d8fi.shown=0;lcd_fill(0,0,240,240,T_BG);
  draw_text_box(12,32,216,&AF_M,"DABBL8 FIRST USE",T_THEME,1);
