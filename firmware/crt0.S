@@ -5,6 +5,7 @@
  * (0x01C7FE08, inside the vector table we are about to own). The SPL expects
  * `goto +4; rts` as the first instruction. Before anything else the core state
  * the SPL left is saved for the boot probe; then interrupts off, our stacks. */
+#include "hal/fm1_stack_watermark.h"
 	.section .text.crt0,"ax",@progbits
 	.globl _start
 _start:
@@ -23,5 +24,22 @@ _start:
 	[r3 + 0x30] = r1
 	sp = _ustack_top
 	ssp = _sstack_top
+#if D8_STACK_WATERMARK_DIAGNOSTIC
+	.globl d8_stack_watermark_startup_enabled
+	.set d8_stack_watermark_startup_enabled, 1
+	/* Interrupts off, no app frame yet: color only the two stack windows.
+	 * r0 remains the SPL boot argument; no call, push or later repaint. */
+	r1 = _ustack_lo
+	r2 = _ustack_top
+	r3 = FM1_STACK_WATERMARK_PATTERN
+2:	[r1] = r3
+	r1 += 4
+	if (r1 < r2) goto 2b
+	r1 = _sstack_lo
+	r2 = _sstack_top
+3:	[r1] = r3
+	r1 += 4
+	if (r1 < r2) goto 3b
+#endif
 	call fm1_cstart
 	goto .
