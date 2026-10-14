@@ -70,6 +70,7 @@ static void con_kx(const char *k, uint32_t v)
 }
 
 #include "native_first_use_diagnostic.h"
+#include "flash_trace_diagnostic.h"
 
 static uint32_t con_num(const char **p, int *ok)        /* decimal or 0x hex */
 {
@@ -221,6 +222,9 @@ static void con_status(void)
     con_kv("boots", (int32_t)felucca_dbg.boots);
 #if D8_FIRST_USE_SESSION && DABBL8_TIMING_DIAGNOSTIC
     con_first_use();
+#endif
+#if FELUCCA_FLASH && FL_TRACE_ENABLED
+    con_flash_trace();
 #endif
     con_kv("usb_resets", (int32_t)usb.resets);
     con_kv("usb_sof", (int32_t)usb.sof_seen);

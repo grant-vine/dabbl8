@@ -208,6 +208,9 @@ static void fm1_main(void)
     for (;;) {
         uint32_t m = fm1_ms;
         fm1_wdt_feed();
+#if FELUCCA_FLASH && FL_TRACE_ENABLED
+        fl_trace_feed();
+#endif
         usb_retry(fm1_ms);
         if (fm1_ms > 30000u && bootguard.pending) {     /* a crash or hang in the first 30 s counts */
             bootguard.pending = 0;
@@ -313,7 +316,13 @@ void fm1_cstart(void)
 #if D8_FIRST_USE_SESSION && DABBL8_TIMING_DIAGNOSTIC
     d8fi_diag_boot(p3,src,wdt);
 #endif
+#if FELUCCA_FLASH && FL_TRACE_ENABLED
+    fl_trace_boot(p3,src);
+#endif
     fm1_wdt_arm(0x0D);
+#if FELUCCA_FLASH && FL_TRACE_ENABLED
+    fl_trace_watchdog(fm1_p33_read(FM1_P3_WDT_CON));
+#endif
     if (bootguard.magic != BOOTGUARD_MAGIC) {
         bootguard.magic = BOOTGUARD_MAGIC;
         bootguard.failed = 0;

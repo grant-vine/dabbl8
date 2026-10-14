@@ -61,7 +61,7 @@ class SelectionTest(unittest.TestCase):
         for path, name in [('tests/ui_test.c', 'legacy-ui'), ('firmware/src/eng_slice.c', 'sampler')]:
             p = self.plan([path])
             self.assertIn(name, p['checks'])
-            self.assertEqual(len(p['commands']), 9)
+            self.assertEqual(len(p['commands']), 13 if name == 'legacy-ui' else 9)
             self.assertEqual(p['status'], 'REFUSED')  # no generated inputs
 
     def test_flash_driver_and_first_use_select_bounded_host_checks(self):
@@ -71,13 +71,20 @@ class SelectionTest(unittest.TestCase):
             ('tests/native_owner_initialize_test.c', ['diff', 'first-use']),
             ('firmware/src/native_first_use_session.c', ['diff', 'first-use']),
             ('firmware/src/native_first_use_diagnostic.h', ['diff', 'first-use']),
+            ('firmware/hal/fm1_flash_trace.h', ['diff', 'first-use', 'flash-driver']),
+            ('tests/flash_trace_fixture.h', ['diff', 'first-use', 'flash-driver']),
+            ('tests/flash_trace_test.c', ['diff', 'flash-driver']),
+            ('tests/flash_trace_spi_watchdog_test.c', ['diff', 'flash-driver']),
+            ('tests/flash_trace_reset_test.c', ['diff', 'first-use']),
+            ('firmware/src/flash_trace_diagnostic.h', ['diff', 'first-use', 'flash-driver']),
         )
         for path, selected in cases:
             p = self.plan([path])
             self.assertEqual(p['checks'], selected)
             self.assertEqual(p['unmapped_paths'], [])
             compile_steps = [step for step in p['commands'] if step['name'].endswith('-compile')]
-            self.assertEqual(len(compile_steps), 2 * (len(selected) - 1))
+            self.assertEqual(len(compile_steps), 2 * sum({'first-use': 2, 'flash-driver': 3}[name]
+                                                       for name in selected if name != 'diff'))
             for step in compile_steps:
                 self.assertIn('firmware/hal/fm1_flash.h', step['requires'])
                 self.assertFalse(any('build.py' in arg or 'run_tests.sh' in arg for arg in step['argv']))
@@ -90,14 +97,15 @@ class SelectionTest(unittest.TestCase):
                 self.assertIn('-fsanitize=address,undefined', step['argv'])
                 self.assertIn('-fno-sanitize-recover=all', step['argv'])
                 exclusions = '-fno-sanitize=signed-integer-overflow,shift'
-                self.assertEqual(exclusions in step['argv'], step['name'].startswith('first-use-'))
+                self.assertEqual(exclusions in step['argv'],
+                                 step['name'].startswith(('first-use-', 'flash_trace_reset_test-')))
             self.assertEqual(p['status'], 'REFUSED')
 
     def test_first_use_missing_scaffold_refuses_without_execution(self):
         with tempfile.TemporaryDirectory() as folder:
             repo = Path(folder)
             steps = checks.recipes({'diff', 'first-use'}, ['clang'], Path('out'), 'HEAD')
-            for name in steps[1]['requires'] + ['firmware/src/native_first_use_diagnostic.h']:
+            for name in {name for step in steps for name in step.get('requires', [])}:
                 file = repo / name
                 file.parent.mkdir(parents=True, exist_ok=True)
                 file.touch()
@@ -137,8 +145,8 @@ class SelectionTest(unittest.TestCase):
             self.assertFalse(any(arg.startswith('-fno-sanitize=') for arg in sanitized))
             self.assertEqual(plan['status'], 'REFUSED')
         selected, unknown = checks.select(['firmware/src/main.c', 'firmware/src/console.c'])
-        self.assertEqual(selected, {'diff'})
-        self.assertEqual(unknown, ['firmware/src/main.c', 'firmware/src/console.c'])
+        self.assertEqual(selected, {'diff', 'first-use'})
+        self.assertEqual(unknown, [])
 
     def test_usb_controller_missing_input_refuses_without_execution(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
