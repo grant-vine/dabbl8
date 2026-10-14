@@ -8,14 +8,17 @@ There are no firmware protocol, device-capability or flash-map changes.
 
 ## Current own-format compatibility
 
-Reviewed against development source `b633ecc53b593d0f0dc00416afbc649c0d5b1830`
-on 12 October 2026. Firmware release labels and project-format versions are
+Reviewed against development source `6c7046d15f269c4b2fc33128ad9c43fdb043f4e7`
+on 14 October 2026. Firmware release labels and project-format versions are
 separate; no released or physically qualified upgrade is established here.
+The installed diagnostic is the separate source recorded in
+[hardware initialization evidence](hardware-initialization-20261014.md).
 
 | Own format | Supported version | Scope |
 | --- | --- | --- |
 | `D8P1` project | Container version 1 | Eight tracks, 64 steps, 99 parameters/27 globals, parameter/engine schemas 1; known required chunks and supported optional bank/scene chunks; at most 7936 bytes. |
-| `D8SP` shared pool record | Record version 1 | Three saved projects and one shared autosave across five existing blocks; each usable payload must pass the native project checks. |
+| `D8SP` positive shared pool record | Record version 1 | Three saved projects and one shared autosave across five existing blocks; each usable payload must pass the native project checks. |
+| `D8SP` deletion tombstone | Record version 2 | Canonical zero-length/zero-payload-CRC deletion with an erased body and commit-last header; protects the deleted identity's current allocation and generation. |
 | `dabbl8-project-set` archive | JSON version 1 | Offline live project plus saved-project/autosave set; not a full instrument backup or connected restore protocol. |
 
 Current runtime adoption requires known writable D8P1 data, valid checksums,
@@ -23,7 +26,11 @@ all referenced saved projects and engines available in the selected build.
 Changing engine profiles can therefore make a preserved project unplayable;
 missing engines or references refuse rather than silently replacing them.
 No other own container/record/archive version is supported or automatically
-converted. See the [codec](../../firmware/src/d8p1.c) and
+converted. Version 2 is deletion-only; ordinary project payloads and positive
+records remain version 1. Older firmware supporting only D8SP version 1 refuses
+tombstones, so a firmware rollback is not a supported own-data downgrade. See the
+[pool record contract](../../firmware/src/d8pool.h),
+[codec](../../firmware/src/d8p1.c) and
 [runtime adoption](../../firmware/src/d8p1_runtime.c) guards. Unknown required data refuses. Unknown optional chunks can be
 inspected and retained as original bytes, but cannot be adopted or rewritten
 by dropping those chunks.
@@ -69,10 +76,13 @@ seventeen roles including the live D8P1 project and current ancillary state.
 Raw capture is post-boot data, not an installable firmware image or restoration
 proof. The offline project-set archive validates/rebuilds only supplied files
 and a virtual pool. The supplied Mac CoreMIDI capture executable is currently
-disabled because no native backend is qualified. A validated connected own-project
-import/restore workflow is still missing; command-79 simulation/migration tooling
-and command-80 sample replacement do not supply it. Physical connected capture,
-import, restore and recovery remain open in issue #11; this documentation does
+disabled because no native backend is qualified. The companion's command-81
+own-project import/restore workflow is implemented with full-archive validation,
+visible physical SAVE confirmation and a fresh logical export after commit.
+Its host/virtual-NOR evidence does not qualify physical connected transport,
+import, restore or recovery; those remain open in issue #11. Command-79
+simulation/migration tooling and command-80 sample replacement have separate
+scopes. This documentation does
 not close that issue or authorize device commands. See
 [read-only capture preparation](readonly-midi-capture.md) and the
 [current browser negotiation](../../web/editor.html).

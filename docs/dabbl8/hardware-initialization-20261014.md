@@ -56,6 +56,38 @@ still unproved. The retained reset reason belongs to the installation boot,
 not a new initialization reset. `fi_elapsed_ms` is consent age sampled at an
 operation, not a measured erase duration.
 
+## Idle timing observation
+
+After owner confirmation that the device was idle, the current host collector
+at `6c7046d15f269c4b2fc33128ad9c43fdb043f4e7` collected a requested ten-second
+window from the installed `76ea40ba7a673d93d5b59053457c98bbf6d75191` diagnostic.
+No keys, knobs, playback or recording were active; USB audio was disabled.
+The receipt accepts the complete D8T2 frame and records no firmware operation.
+
+- 3,453 samples; nominal elapsed time 10.0159019167 seconds.
+- Render maximum 13,056 ticks (544 microseconds at the nominal 24 ticks/us).
+  Both p95 and p99 are bounded by 12,288–13,056 ticks.
+- Inclusive maximum 14,041 ticks (585.0417 nominal microseconds).
+  Both p95 and p99 are bounded by 13,312–14,041 ticks.
+- Aligned late publications, all three auxiliary ALNK pending observations
+  and taint are zero. UAC underrun/overrun fields are inapplicable to this
+  UAC-disabled window, not measured zero-rate streaming results.
+- Before/after boot counters are 1/1 and USB reset counters 1/1. This establishes
+  stability within this window, not continuity with the earlier boot-counter-5
+  initialization observations or independent reboot-retention verification.
+
+The report uses an uncalibrated nominal clock. Inclusive duration excludes
+recorder, early C prologue and assembly entry/exit work; render subtracts nested
+TIMER5 work. The idle observation does not establish concurrent performance,
+complete interrupt deadlines, stack/pool high-water or USB audio operation.
+Package identity is tied to the retained build/installation receipt, not attested
+cryptographically by the device. Existing static-budget failures remain open.
+
+The exact local receipt, parsed report and raw journal are under
+`build/hardware-trial-v015/idle-timing-20261014/` (`receipt.json`, `report.json`
+and `journal.jsonl`). The [capture workflow](diagnostic-capture-workflow.md)
+retains the logical-window and calibration limits.
+
 ## Local evidence and limits
 
 Delayed SAVE is reproduced on the previous source and passes after idle
@@ -74,10 +106,10 @@ the reviewed v0.1.4 trace build: 11272 bytes, 3654 instructions, no calls, all
 stack high-water or hardware timing clearance. SLICE +14% and audio interrupt
 +49% still fail the unchanged static budgets; TIMER5 passes.
 
-Remaining physical acceptance includes sound and controls, tracks 1–8 and
-USB/TRS routing, three saved slots/shared autosave, own backup/restore,
-stopped saves and reboot recall, interrupted-format recovery, render timing
-and stack/pool high-water. USB audio sample-rate testing is not represented
+Remaining physical acceptance includes concurrent tracks 1–8/sequencer playback
+and USB/TRS routing, headphones/external audio, three saved slots/shared autosave,
+own backup/restore, stopped saves and reboot recall, interrupted-format recovery,
+stressed render timing and stack/pool high-water. USB audio sample-rate testing is not represented
 by this UAC-disabled diagnostic. Independent dead-application recovery and a
 second tester remain separate gates. Successful stock-v15 restoration is
 documented in PR #177; vendor firmware/private backups remain outside Git.
