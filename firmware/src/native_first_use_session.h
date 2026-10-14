@@ -14,6 +14,8 @@ static struct {
  uint32_t epoch,own,usb,started,generation,shown,wire_crc;
  uint32_t length,offset,header_crc,lcd_faults,ancillary_crc;
  uint8_t phase,classification,revoked,busy,usb_config,commit_phase,attempted,foundation,usb_up;
+ uint32_t drawn_faults;uint16_t drawn_colors[4];
+ uint8_t drawn,drawn_phase,drawn_quiet,drawn_usb_ready;
 } d8fi __attribute__((section(".pool")));
 enum { FI_G_REVOKED=1,FI_G_PHASE=2,FI_G_WORKSPACE=4,FI_G_EPOCH=8,
  FI_G_RESET=16,FI_G_CONFIG=32,FI_G_DEADLINE=64,FI_G_QUIET=128,
