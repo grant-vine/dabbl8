@@ -40,6 +40,7 @@ static int heavy_live(uint32_t engine, uint32_t part, uint32_t voice)
             return 1;
     return 0;
 }
+#include "heavy_pool_diagnostic.h"
 static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
 {
     uint32_t key, k;
@@ -51,7 +52,14 @@ static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
     key = ((engine - 7u) * NPART + part) * NVOICE + voice + 1u;
     for (k = 0; k < NVOICE; k++)
         if (heavy_owner[k] == key)
+#if D8_HEAVY_POOL_DIAGNOSTIC
+        {
+            d8hp_observe(D8HP_REUSE);
+            return &heavy_pool[k];
+        }
+#else
             return &heavy_pool[k];                     /* retrigger retains the active engine's body */
+#endif
     for (k = 0; k < NVOICE; k++) {
         uint32_t old = heavy_owner[k], index = old ? old - 1u : 0;
         if (!old || !heavy_live(7u + index / (NPART * NVOICE), (index / NVOICE) % NPART, index % NVOICE)) {
@@ -89,9 +97,15 @@ static heavy_state_t *heavy_get(uint32_t engine, uint32_t part, uint32_t voice)
             }
             else memset(heavy_pool[k].drum, 0, sizeof heavy_pool[k].drum);
 #endif
+#if D8_HEAVY_POOL_DIAGNOSTIC
+            d8hp_observe(D8HP_ALLOCATE);
+#endif
             return &heavy_pool[k];                     /* another engine cannot inherit stale state */
         }
     }
+#if D8_HEAVY_POOL_DIAGNOSTIC
+    d8hp_observe(D8HP_FAIL);
+#endif
     return 0;                                         /* no admitted slot: fail closed */
 }
 #if D8BUILD_POOL_HAS(7)
