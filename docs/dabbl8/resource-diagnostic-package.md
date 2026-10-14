@@ -45,6 +45,14 @@ document commit must not relabel those inputs. Retain the actual package receipt
 corresponding sources and license notices together; SDK SPL/config/EQ components
 retain their Apache-2.0 notices, and application/loader sources retain GPL-3.0-only.
 
+`corresponding-source-5328477.tar.gz` preserves the exact tracked application/build
+source (12,975,600 bytes; SHA-256
+`4d08c0978b30edaf9958022d813fffb7e7b73ab39c811cf9ec78ef3789296f60`).
+`corresponding-source-validation.json` verifies all 263 target-manifest source
+inputs against archive bytes; `SHA256SUMS` includes the archive. Host-tool fixes
+remain separately identified at `045da5c...`. The archive contains tracked source,
+not private work, generated builds, Git metadata or vendor restore firmware.
+
 The candidate has eight logical tracks sharing eight voices, Full profile ID 0,
 effective engine mask `0x3ffd`, CDC enabled by the existing default, USB audio
 disabled, and owner initialization disabled. Both resource helper flags and
