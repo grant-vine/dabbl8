@@ -201,11 +201,32 @@ static void d8fi_input(uint32_t pressed,uint32_t notes)
   d8fi.phase=FI_RELEASE;d8fi.shown=0;ui.force=1;
  }
 }
+static int fi_visible(void)
+{
+ unsigned save_only=fm1_in.buttons==(1u<<panel.btn[B_SAVE])&&!fm1_in.notes;
+ for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))save_only=0;
+ return d8fi.shown&&!d8fi.revoked&&!migration_owner&&!usb.suspended&&
+  d8_capture_change.epoch==d8fi.epoch&&fm1_lcd_timeouts==d8fi.lcd_faults&&
+  usb.resets==d8fi.usb&&usb.config==d8fi.usb_config&&usb.up==d8fi.usb_up&&
+  (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_headers()==d8fi.header_crc&&
+  (fi_quiet()||(save_only&&flash_ok&&!cv_cpu_active&&!transport_req&&!transport_busy()&&
+   !seq_counting()&&!d8mc_edit.locked&&!d8mc_edit.busy&&!d8mc_edit.writer&&
+   !d8ls_blocked()&&!usb.ota_req&&!usb.uboot_req));
+}
 static void d8fi_draw(void)
 {
  if(d8fi.phase==FI_EXECUTE)return; /* arena remains exclusively staged */
+ style_apply();unsigned quiet=fi_quiet(),ready=fi_owner_usb_ready();
+ uint16_t colors[4]={T_BG,T_THEME,T_TEXT,T_ACCENT};
+ /* Visibility and consent have separate lifetimes. An unchanged panel does
+  * no LCD work and never renews its previously displayed proposal. */
+ if(d8fi.shown&&!fi_visible())d8fi.shown=0;
+ if(d8fi.drawn&&!ui.force&&d8fi.drawn_phase==d8fi.phase&&
+    d8fi.drawn_faults==fm1_lcd_timeouts&&d8fi.drawn_quiet==quiet&&
+    (!D8_OWNER_INITIALIZE||d8fi.drawn_usb_ready==ready)&&
+    !memcmp(d8fi.drawn_colors,colors,sizeof colors))return;
  unsigned phase=d8fi.phase,shown=d8fi.shown;uint32_t epoch=d8_capture_change.epoch,faults=fm1_lcd_timeouts,resets=usb.resets;unsigned config=usb.config,up=usb.up;
- d8fi.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
+ d8fi.shown=0;lcd_fill(0,0,240,240,T_BG);
  draw_text_box(12,32,216,&AF_M,"DABBL8 FIRST USE",T_THEME,1);
  draw_text_box(12,76,216,&AF_S,"ERASE ALL USER DATA",T_TEXT,1);
  draw_text_box(12,110,216,&AF_S,"Projects, samples, presets, settings",T_TEXT,1);
@@ -213,21 +234,19 @@ static void d8fi_draw(void)
  draw_text_box(12,190,216,&AF_M,phase==FI_FAILED||phase==FI_REFUSED?"REBOOT FOR RECOVERY":
    D8_OWNER_INITIALIZE&&phase==FI_REQUIRED?(fi_owner_usb_ready()?"OWNER-AUTHORIZED RESET":"WAITING FOR USB"):"PRESS AND RELEASE SAVE",T_ACCENT,1);
  lcd_sync();uint32_t flags=irq_save();
+ d8fi.drawn=phase==d8fi.phase&&epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&
+  resets==usb.resets&&config==usb.config&&up==usb.up;
+ d8fi.drawn_phase=(uint8_t)phase;d8fi.drawn_faults=faults;d8fi.drawn_quiet=(uint8_t)quiet;
+ d8fi.drawn_usb_ready=(uint8_t)ready;memcpy(d8fi.drawn_colors,colors,sizeof colors);ui.force=0;
  if((phase==FI_REQUIRED||phase==FI_UNCERTAIN)&&d8fi.phase==phase&&
     epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&up==usb.up&&!migration_owner&&!usb.suspended&&
     (!D8_OWNER_INITIALIZE||phase!=FI_REQUIRED||fi_owner_usb_ready())) {
   if(fi_quiet()) {
-   d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.usb_up=usb.up;d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
+   d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.usb_up=usb.up;if(!shown)d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
   } else {
    /* SAVE may arrive while this same disclosure is redrawn. Retain only the
     * previous visible proposal; a held press never creates or refreshes one. */
-   unsigned save_only=fm1_in.buttons==(1u<<panel.btn[B_SAVE])&&!fm1_in.notes;
-   for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))save_only=0;
-   d8fi.shown=shown&&save_only&&!d8fi.revoked&&flash_ok&&!cv_cpu_active&&
-    !transport_req&&!transport_busy()&&!seq_counting()&&!d8mc_edit.locked&&!d8mc_edit.busy&&!d8mc_edit.writer&&
-    !d8ls_blocked()&&!usb.ota_req&&!usb.uboot_req&&epoch==d8fi.epoch&&
-    faults==d8fi.lcd_faults&&resets==d8fi.usb&&config==d8fi.usb_config&&usb.up==d8fi.usb_up&&
-    (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_headers()==d8fi.header_crc;
+   d8fi.shown=shown;d8fi.shown=fi_visible();
   }
  }
  irq_restore(flags);
