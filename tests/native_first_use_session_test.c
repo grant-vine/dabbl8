@@ -33,10 +33,109 @@ static int fi_test_program(uint32_t a,const void*p,uint32_t n,uint32_t*t){(void)
 #endif
 static unsigned fi_lcd_event,fi_stage_event;
 static void fi_stage_test_hook(void){if(fi_stage_event==1){fi_stage_event=0;d8_capture_store_changed();}else if(fi_stage_event==2){fi_stage_event=0;main_workspace.migration.stage.wire[200]^=1;}}
-static void fi_lcd_test_hook(void){if(fi_lcd_event==1){fi_lcd_event=0;fm1_lcd_timeouts++;}else if(fi_lcd_event==2){fi_lcd_event=0;usb.resets++;}}
+static void fi_lcd_test_hook(void)
+{
+ unsigned event=fi_lcd_event;fi_lcd_event=0;
+ if(event==1)fm1_lcd_timeouts++;
+ else if(event==2)usb.resets++;
+ else if(event==3)host_pressed=fm1_in.buttons=1u<<panel.btn[B_SAVE];
+}
+static void fi_consent_fresh(void)
+{
+ if(migration_owner)main_migration_end(migration_owner);
+ cold();project_native_reset();native_as.ready=0;d8ls_reset();
+ memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);
+ memset(&d8_capture_change,0,sizeof d8_capture_change);
+ usb.up=1;usb.suspended=0;usb.config=1;usb.ota_req=usb.uboot_req=0;flash_ok=1;
+ memset(nor,0xa5,sizeof nor);reset();physical_calls=0;host_pressed=host_notes=0;
+ fm1_in.buttons=fm1_in.notes=0;fm1_ms=100;fi_lcd_event=0;
+ memset(host_enc,0,sizeof host_enc);memset(host_enc_late,0,sizeof host_enc_late);
+ int32_t audio[CTL*2];mix_block(audio,CTL);
+ CHECK(d8fi_boot_classify()&&d8fi.phase==FI_REQUIRED);
+}
+static void fi_consent_race_tests(void)
+{
+ /* The actual queued edge reaches ui_input after SAVE arrives before or
+  * during a redraw of an already visible destructive disclosure. */
+ for(unsigned during=0;during<2;during++) {
+  fi_consent_fresh();d8fi_draw();CHECK(d8fi.shown);
+  uint32_t save=1u<<panel.btn[B_SAVE],started=d8fi.started;
+  fm1_ms++;if(during)fi_lcd_event=3;else host_pressed=fm1_in.buttons=save;
+  d8fi_draw();
+  printf("scenario=visible-SAVE-%s-redraw buttons=0x%x queued=0x%x shown=%u started=%u old_started=%u\n",
+   during?"during":"before",fm1_in.buttons,host_pressed,d8fi.shown,d8fi.started,started);
+  CHECK(d8fi.shown&&d8fi.started==started&&host_pressed==save);
+  ui_input();CHECK(d8fi.phase==FI_RELEASE&&!physical_calls&&!writes);
+  d8fi_poll();CHECK(d8fi.phase==FI_RELEASE&&!physical_calls&&!writes);
+  fm1_in.buttons=0;ui_input();d8fi_poll();
+  CHECK(d8fi.phase==FI_EXECUTE&&physical_calls==1);
+ }
+ /* Retained visibility is not a write grant. Activity that arrives after
+  * disclosure still blocks the unchanged full quiet gate after SAVE release. */
+ static const char *activity[]={"MIDI","voice","effect","audio-output"};
+ for(unsigned busy=0;busy<4;busy++) {
+  fi_consent_fresh();d8fi_draw();CHECK(d8fi.shown);memcpy(baseline,nor,sizeof nor);
+  if(busy==0)mi_w=mi_r+1;else if(busy==1)trk[7].v[0].active=1;
+  else if(busy==2)sb_env=1;else audio_nonzero[0]=1;
+  host_pressed=fm1_in.buttons=1u<<panel.btn[B_SAVE];d8fi_draw();ui_input();
+  CHECK(d8fi.phase==FI_RELEASE&&!physical_calls);
+  fm1_in.buttons=0;ui_input();CHECK(!fi_quiet());
+  for(unsigned poll=0;poll<3;poll++)d8fi_poll();
+  printf("scenario=SAVE-release-busy-%s phase=%u calls=%u\n",activity[busy],d8fi.phase,physical_calls);
+  CHECK(d8fi.phase==FI_RELEASE&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+  if(busy==0)mi_w=mi_r;else if(busy==1)trk[7].v[0].active=0;
+  else if(busy==2)sb_env=0;else audio_nonzero[0]=0;
+  CHECK(fi_quiet());d8fi_poll();CHECK(d8fi.phase==FI_EXECUTE&&physical_calls==1);
+ }
+ /* A held boot button has never seen a quiet, fully rendered proposal. */
+ fi_consent_fresh();uint32_t save=1u<<panel.btn[B_SAVE];host_pressed=fm1_in.buttons=save;
+ d8fi_draw();ui_input();CHECK(!d8fi.shown&&d8fi.phase==FI_REQUIRED&&!physical_calls);
+ fm1_in.buttons=0;ui_input();d8fi_poll();CHECK(d8fi.phase==FI_REQUIRED&&!physical_calls);
+ d8fi_draw();CHECK(d8fi.shown);ui_input();CHECK(d8fi.phase==FI_REQUIRED&&!physical_calls);
+ /* A queued tap already released before input dispatch remains unconfirmed. */
+ host_pressed=save;ui_input();d8fi_poll();CHECK(d8fi.phase==FI_REQUIRED&&!physical_calls);
+ /* USB suspension after the accepted edge also revokes the proposal before
+  * the release can stage or erase anything in manual first-use mode. */
+ fi_consent_fresh();d8fi_draw();host_pressed=fm1_in.buttons=save;ui_input();
+ CHECK(d8fi.phase==FI_RELEASE);memcpy(baseline,nor,sizeof nor);
+ usb.suspended=1;fm1_in.buttons=0;ui_input();d8fi_poll();
+ printf("scenario=USB-suspend-after-SAVE phase=%u calls=%u\n",d8fi.phase,physical_calls);
+ CHECK(d8fi.phase==FI_FAILED&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+ /* Retaining a prior visible proposal must never refresh a changed guard. */
+ static const char *guards[]={"epoch","headers","LCD","USB-reset","USB-config","USB-up",
+  "USB-suspend","other-button","note","encoder","workspace","transport","OTA","bootloader","revoked","deadline"};
+ for(unsigned guard=0;guard<sizeof guards/sizeof guards[0];guard++) {
+  fi_consent_fresh();d8fi_draw();CHECK(d8fi.shown);memcpy(baseline,nor,sizeof nor);
+  host_pressed=fm1_in.buttons=save;uint32_t lease=0;
+  switch(guard) {
+   case 0:d8_capture_store_changed();break;
+   case 1:nor[d8pool_mapped_address(0)]^=1;memcpy(baseline,nor,sizeof nor);break;
+   case 2:fi_lcd_event=1;break;
+   case 3:fi_lcd_event=2;break;
+   case 4:usb.config=0;break;
+   case 5:usb.up=0;break;
+   case 6:usb.suspended=1;break;
+   case 7:host_pressed|=1u<<panel.btn[B_EDIT];fm1_in.buttons=host_pressed;break;
+   case 8:host_notes=fm1_in.notes=1;break;
+   case 9:host_enc[0]=1;break;
+   case 10:CHECK(!main_migration_begin(&lease));break;
+   case 11:transport_req=1;break;
+   case 12:usb.ota_req=1;break;
+   case 13:usb.uboot_req=1;break;
+   case 14:d8fi_revoke();break;
+   case 15:fm1_ms=d8fi.started+120000u;break;
+  }
+  d8fi_draw();ui_input();
+  printf("scenario=visible-SAVE-revoked-%s shown=%u phase=%u calls=%u\n",guards[guard],d8fi.shown,d8fi.phase,physical_calls);
+  CHECK(!d8fi.shown&&d8fi.phase==FI_REQUIRED&&!physical_calls&&!writes&&!memcmp(nor,baseline,sizeof nor));
+  if(lease)CHECK(!main_migration_end(lease));
+ }
+ fi_consent_fresh();
+}
 #ifndef D8_FIRST_USE_SESSION_NO_MAIN
 int main(void)
 {
+ fi_consent_race_tests();
  boot_seed();CHECK(!d8fi_boot_classify());CHECK(!writes&&!physical_calls);
  ls_test_initial_autosave(); /* affected existing/absent/corrupt AS baseline checks */
  /* Actual first-use boot classification, draw, press/release and ticket route. */

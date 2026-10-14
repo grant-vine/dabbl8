@@ -53,7 +53,7 @@ static uint32_t fi_guards(unsigned executing)
   (d8_capture_change.epoch!=d8fi.epoch+d8fi.own?FI_G_EPOCH:0u)|
   (usb.resets!=d8fi.usb?FI_G_RESET:0u)|(usb.config!=d8fi.usb_config?FI_G_CONFIG:0u)|
   ((uint32_t)(fm1_ms-d8fi.started)>=120000u?FI_G_DEADLINE:0u)|(!fi_quiet()?FI_G_QUIET:0u)|
-  (usb.up!=d8fi.usb_up||(D8_OWNER_INITIALIZE&&usb.suspended)?FI_G_USB_STATE:0u);
+  (usb.up!=d8fi.usb_up||usb.suspended?FI_G_USB_STATE:0u);
 }
 static int fi_lifetime(void *c)
 { (void)c;return !fi_guards(1); }
@@ -196,14 +196,15 @@ static void d8fi_input(uint32_t pressed,uint32_t notes)
  unsigned phase=d8fi.phase;uint32_t headers=fi_headers();
  if(d8fi.phase==phase&&pressed==save&&fm1_in.buttons==save&&d8fi.shown&&
     d8_capture_change.epoch==d8fi.epoch&&usb.resets==d8fi.usb&&usb.config==d8fi.usb_config&&
-    !usb.ota_req&&!usb.uboot_req&&headers==d8fi.header_crc&&fm1_lcd_timeouts==d8fi.lcd_faults) {
+    !d8fi.revoked&&!migration_owner&&!usb.ota_req&&!usb.uboot_req&&usb.up==d8fi.usb_up&&!usb.suspended&&
+    (uint32_t)(fm1_ms-d8fi.started)<120000u&&headers==d8fi.header_crc&&fm1_lcd_timeouts==d8fi.lcd_faults) {
   d8fi.phase=FI_RELEASE;d8fi.shown=0;ui.force=1;
  }
 }
 static void d8fi_draw(void)
 {
  if(d8fi.phase==FI_EXECUTE)return; /* arena remains exclusively staged */
- unsigned phase=d8fi.phase;uint32_t epoch=d8_capture_change.epoch,faults=fm1_lcd_timeouts,resets=usb.resets;unsigned config=usb.config;
+ unsigned phase=d8fi.phase,shown=d8fi.shown;uint32_t epoch=d8_capture_change.epoch,faults=fm1_lcd_timeouts,resets=usb.resets;unsigned config=usb.config,up=usb.up;
  d8fi.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  draw_text_box(12,32,216,&AF_M,"DABBL8 FIRST USE",T_THEME,1);
  draw_text_box(12,76,216,&AF_S,"ERASE ALL USER DATA",T_TEXT,1);
@@ -213,9 +214,21 @@ static void d8fi_draw(void)
    D8_OWNER_INITIALIZE&&phase==FI_REQUIRED?(fi_owner_usb_ready()?"OWNER-AUTHORIZED RESET":"WAITING FOR USB"):"PRESS AND RELEASE SAVE",T_ACCENT,1);
  lcd_sync();uint32_t flags=irq_save();
  if((phase==FI_REQUIRED||phase==FI_UNCERTAIN)&&d8fi.phase==phase&&
-    epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&!migration_owner&&fi_quiet()&&
+    epoch==d8_capture_change.epoch&&faults==fm1_lcd_timeouts&&resets==usb.resets&&config==usb.config&&up==usb.up&&!migration_owner&&!usb.suspended&&
     (!D8_OWNER_INITIALIZE||phase!=FI_REQUIRED||fi_owner_usb_ready())) {
-  d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.usb_up=usb.up;d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
+  if(fi_quiet()) {
+   d8fi.lcd_faults=faults;d8fi.epoch=epoch;d8fi.usb=usb.resets;d8fi.usb_config=usb.config;d8fi.usb_up=usb.up;d8fi.started=fm1_ms;d8fi.revoked=0;d8fi.shown=1;
+  } else {
+   /* SAVE may arrive while this same disclosure is redrawn. Retain only the
+    * previous visible proposal; a held press never creates or refreshes one. */
+   unsigned save_only=fm1_in.buttons==(1u<<panel.btn[B_SAVE])&&!fm1_in.notes;
+   for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))save_only=0;
+   d8fi.shown=shown&&save_only&&!d8fi.revoked&&flash_ok&&!cv_cpu_active&&
+    !transport_req&&!transport_busy()&&!seq_counting()&&!d8mc_edit.locked&&!d8mc_edit.busy&&!d8mc_edit.writer&&
+    !d8ls_blocked()&&!usb.ota_req&&!usb.uboot_req&&epoch==d8fi.epoch&&
+    faults==d8fi.lcd_faults&&resets==d8fi.usb&&config==d8fi.usb_config&&usb.up==d8fi.usb_up&&
+    (uint32_t)(fm1_ms-d8fi.started)<120000u&&fi_headers()==d8fi.header_crc;
+  }
  }
  irq_restore(flags);
 }
@@ -299,7 +312,7 @@ static void d8fi_poll(void)
 #endif
  if(d8fi.phase==FI_RELEASE) {
   fi_diag_before(FI_OP_STAGE,0);
-  if(d8fi.revoked||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||usb.up!=d8fi.usb_up||
+  if(d8fi.revoked||usb.resets!=d8fi.usb||usb.config!=d8fi.usb_config||usb.up!=d8fi.usb_up||usb.suspended||
      d8_capture_change.epoch!=d8fi.epoch||fi_headers()!=d8fi.header_crc||fm1_lcd_timeouts!=d8fi.lcd_faults){fi_diag_result(D8FU_BUSY);fi_fail();return;}
   if(!fi_quiet())return;
   if(!fi_stage_default()){
