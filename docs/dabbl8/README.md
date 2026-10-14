@@ -1,8 +1,8 @@
 # Dabbl8 plan
 
-The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately; draft implementation PRs do not establish a hardware-qualified eight-track release. No device flashing has been performed in this work. All 19 implementation tasks and roadmap issue #2 have been created.
+The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately. The owner's FM-1 installed and initialized the private v0.1.5 diagnostic on 14 October 2026; speaker sound, all four knobs and individual keyboard sound on tracks 5–8 are owner-confirmed. See the [exact hardware observations and remaining gates](hardware-initialization-20261014.md). A hardware-qualified eight-track release remains pending. All 19 implementation tasks and roadmap issue #2 have been created.
 
-## Current data scope — 12 October 2026
+## Current data scope — 14 October 2026
 
 First installation is a disclosed clean reset of the previous firmware's projects,
 autosave, settings, user presets and user samples within the approved user-state
@@ -10,8 +10,11 @@ map. Dabbl8's own projects and supported upgrades must preserve their data. Only
 Dabbl8 format migrations are in scope when needed; external firmware import and
 original-retaining migration are not release prerequisites. Earlier migration
 documents and converter previews below are historical developer work, not the
-current install contract. First-use formatting and physical recovery still need
-verification; no device erase or flashing is authorized by this policy change.
+current install contract. Disclosed first-use formatting completed on the owner's
+FM-1; interrupted-format recovery, saved-project/reboot retention and own-project
+backup/restore remain unqualified. The policy itself grants no device operation.
+See the [software acceptance map](software-acceptance-status.md) for current
+implementation coverage and the remaining measurement software gap.
 
 ## Reading order
 
