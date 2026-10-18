@@ -19,7 +19,8 @@ static unsigned pt_phase(void){return d8ls.object;}
 static d8mp_workspace *pt_workspace(void){return main_migration_workspace(d8ls.signature);}
 static int pt_quiet(void)
 {
- if(!flash_ok||cv_cpu_active||transport_req||transport_busy()||seq_counting()||!df_automatic_quiet()||
+ uint32_t allowed=d8ls.operation==4&&pt_phase()==PT_RELEASE?1u<<panel.btn[B_SAVE]:0;
+ if(!flash_ok||cv_cpu_active||transport_req||transport_busy()||seq_counting()||!df_automatic_quiet_buttons(allowed)||
     ((fm1_in.buttons||D8_MC_PENDING_PRESS())&&!(d8ls.operation==4&&pt_phase()==PT_RELEASE&&fm1_in.buttons==(1u<<panel.btn[B_SAVE])))||fm1_in.notes||usb.ota_req||usb.uboot_req||
     d8mc_edit.locked||d8mc_edit.busy||d8mc_edit.writer)return 0;
  for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))return 0;
@@ -28,6 +29,7 @@ static int pt_quiet(void)
 static int pt_guard(void)
 {
  return !d8ls.revoked&&pt_workspace()&&pt_quiet()&&
+   (d8ls.writing||!d8ls.shown||d8ls.sequence==fm1_lcd_timeouts)&&
    usb.resets==d8ls.usb&&usb.config==d8ls.usb_config&&
    d8_capture_change.epoch==d8ls.epoch+d8ls.own&&
    (uint32_t)(fm1_ms-d8ls.started)<LS_DEADLINE_MS;
@@ -137,13 +139,16 @@ static int pt_begin(unsigned importing,const uint8_t*a,uint32_t n)
 static void d8pt_draw(void)
 {
  if(pt_phase()!=PT_CONSENT&&pt_phase()!=PT_RELEASE)return;
+ if(d8ls.shown==d8ls.generation&&d8ls.sequence!=fm1_lcd_timeouts){d8ls.revoked=1;return;}
+ if(pt_phase()==PT_RELEASE)return;
+ if(d8ls.shown==d8ls.generation&&!ui.force)return;
  uint32_t token=d8ls.generation,fault=fm1_lcd_timeouts;d8ls.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  if(!own_transfer_text_strip(d8ls.signature,32,"RESTORE OWN PROJECTS",T_THEME,T_BG)||
     !own_transfer_text_strip(d8ls.signature,76,"Replaces saved slots and autosave",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,118,"Interruption can leave partial set",T_ACCENT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,160,"Keep backup to retry restore",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,202,"PRESS AND RELEASE SAVE",T_ACCENT,T_BG)){d8ls.revoked=1;return;}
- uint32_t f=irq_save();if(pt_phase()==PT_CONSENT&&pt_lifetime()&&token==d8ls.generation&&fault==fm1_lcd_timeouts){d8ls.shown=token;d8ls.sequence=fault;}irq_restore(f);
+ uint32_t f=irq_save();if(pt_phase()==PT_CONSENT&&pt_lifetime()&&token==d8ls.generation&&fault==fm1_lcd_timeouts){d8ls.shown=token;d8ls.sequence=fault;ui.force=0;}irq_restore(f);
 }
 static void d8pt_input(uint32_t pressed,uint32_t notes)
 {
