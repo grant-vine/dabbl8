@@ -13,6 +13,72 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_fingerprint_covers_dirty_transitive_and_required_ignored_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+            (repo / '.gitignore').write_text('build/\nprivate/\n')
+            header = repo / 'shared header.h'
+            header.write_text('original')
+            checks.subprocess.run(['git', 'add', 'shared header.h'], cwd=repo, check=True)
+            untracked = repo / 'untracked.h'
+            untracked.write_text('transitive')
+            generated = repo / 'build/gen/table.h'
+            generated.parent.mkdir(parents=True)
+            generated.write_text('generated')
+            (repo / 'build/log.txt').write_text('output')
+            private = repo / 'private/synthetic.txt'
+            private.parent.mkdir()
+            private.write_text('ignored fixture')
+            before = dict(checks.input_hashes(repo, ['build/gen/table.h']))
+            self.assertIn('untracked.h', before)
+            self.assertNotIn('build/log.txt', before)
+            self.assertNotIn('private/synthetic.txt', before)
+            header.write_text('dirty without commit')
+            changed = dict(checks.input_hashes(repo, ['build/gen/table.h']))
+            self.assertNotEqual(before['shared header.h'], changed['shared header.h'])
+            generated.write_text('new generated')
+            self.assertNotEqual(changed['build/gen/table.h'],
+                dict(checks.input_hashes(repo, ['build/gen/table.h']))['build/gen/table.h'])
+            header.unlink()
+            generated.unlink()
+            missing = dict(checks.input_hashes(repo, ['build/gen/table.h']))
+            self.assertEqual(missing['shared header.h'], 'MISSING')
+            self.assertEqual(missing['build/gen/table.h'], 'MISSING')
+
+    def test_real_subprocess_receipts_distinguish_source_changes_from_output(self) -> None:
+        for operation, expected_changed in (('output', []), ('edit', ['README.md']),
+                                             ('add', ['new.h']), ('delete', ['README.md'])):
+            with self.subTest(operation=operation), tempfile.TemporaryDirectory() as folder:
+                repo = Path(folder)
+                checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+                checks.subprocess.run(['git', '-c', 'user.name=Fixture', '-c',
+                    'user.email=fixture@example.invalid', 'commit', '--allow-empty',
+                    '-qm', 'Fixture'], cwd=repo, check=True)
+                (repo / 'README.md').write_text('before')
+                scripts = {
+                    'output': "from pathlib import Path; Path('build/output.txt').write_text('log')",
+                    'edit': "from pathlib import Path; Path('README.md').write_text('after')",
+                    'add': "from pathlib import Path; Path('new.h').write_text('added')",
+                    'delete': "from pathlib import Path; Path('README.md').unlink()",
+                }
+                steps = [{'name': 'fixture', 'argv': [checks.sys.executable, '-c', scripts[operation]]}]
+                with patch.object(checks, 'ROOT', repo), patch.object(checks, 'recipes', return_value=steps):
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        code = checks.main(['--paths', 'README.md', '--run'])
+                report = json.loads(next((repo / 'build/local-checks').glob('run-*/results.json')).read_text())
+                self.assertEqual(report['results'][0]['exit'], 0)
+                self.assertEqual(code, int(bool(expected_changed)))
+                self.assertEqual(report['source_inputs_stable'], not expected_changed)
+                self.assertIn('README.md', report['source_inputs'])
+                if not expected_changed:
+                    self.assertEqual(code, 0)
+                    self.assertEqual(report['status'], 'SELECTED_CHECKS_PASS')
+                else:
+                    self.assertEqual(code, 1)
+                    self.assertEqual(report['status'], 'FAILED')
+                    self.assertEqual(report['changed_during_checks'], expected_changed)
+
     def test_midi_renderer_plan_needs_no_private_demo(self) -> None:
         selected, unknown = checks.select(['tests/native_midi_project_fixture.h'])
         steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')

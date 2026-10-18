@@ -98,6 +98,15 @@ def discover(repo, base):
     return sorted({os.fsdecode(p) for p in changed if p})
 
 
+def input_hashes(repo: Path, extra_inputs: list[str]) -> list[tuple[str, str]]:
+    names = subprocess.check_output(['git', 'ls-files', '--cached', '--others',
+        '--exclude-standard', '-z', '--', '.', ':!:build', ':!:.local-baseline'], cwd=repo)
+    paths = {os.fsdecode(name) for name in names.split(b'\0') if name}
+    paths.update(extra_inputs)
+    return [(name, hashlib.sha256((repo / name).read_bytes()).hexdigest()
+             if (repo / name).is_file() else 'MISSING') for name in sorted(paths)]
+
+
 def recipes(checks, cc, out, base):
     steps = [{'name': 'diff', 'argv': ['git', 'diff', '--check', base, '--']}]
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
@@ -352,6 +361,9 @@ def main(argv=None):
     plan['source_head'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     plan['generated_inputs'] = {n: hashlib.sha256((ROOT / 'build/gen' / n).read_bytes()).hexdigest()
                                 for n in GEN if (ROOT / 'build/gen' / n).is_file()}
+    required = sorted({name for step in plan['commands'] for name in step.get('requires', [])}
+                      | {'build/gen/' + name for name in GEN})
+    plan['source_inputs'] = dict(input_hashes(ROOT, required))
     plan['results'] = []
     env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
     for step in plan['commands']:
@@ -362,6 +374,12 @@ def main(argv=None):
         if code:
             break
     plan['status'] = 'FAILED' if code else 'SELECTED_CHECKS_PASS'
+    final_inputs = dict(input_hashes(ROOT, required))
+    plan['source_inputs_stable'] = final_inputs == plan['source_inputs']
+    if not plan['source_inputs_stable']:
+        plan['status'] = 'FAILED'
+        plan['changed_during_checks'] = sorted(name for name in final_inputs.keys() | plan['source_inputs'].keys()
+            if final_inputs.get(name) != plan['source_inputs'].get(name))
     for name in paths:
         if name.endswith('.py') and (ROOT / name).is_file():
             try:

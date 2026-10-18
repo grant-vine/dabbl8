@@ -1,6 +1,18 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+Execution receipts include SHA-256 `source_inputs` for tracked/nonignored
+working-tree files, required ignored inputs and generated headers, including
+uncommitted and transitive source changes. Changes observed between the two
+fingerprints fail the run even when all selected commands exit zero. Output
+under `build/` and `.local-baseline/` is excluded unless explicitly required.
+Compare relevant input hashes and recorded commands/configuration before reusing
+a result; unchanged Git HEAD alone is insufficient. This is an input receipt,
+not coverage of every hashed file, toolchain attestation or detection of an edit
+reverted between fingerprints. Older receipts do not gain source binding from
+this change. Missing fingerprinted inputs are recorded as `MISSING`; recipe
+prerequisite checks still refuse required missing inputs before execution.
+
 `midi-eight` checks all 256 recording masks through the actual editor and runs
 bounded eight-channel notes through the host renderer. `midi-drum` covers all
 eight drum lanes; `midi-workload` covers read-only preflight and uncertain-send
