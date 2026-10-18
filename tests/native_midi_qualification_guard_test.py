@@ -7,6 +7,7 @@ from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import dabbl8_readonly_midi as t
 import builtins
+from tools.dabbl8_native_midi_guard import NativeMidiQualificationError
 original=builtins.__import__;attempts=[]
 def forbid(name,*args,**kwargs):
  if name in ('mido','rtmidi'):
@@ -15,7 +16,7 @@ def forbid(name,*args,**kwargs):
 argv=['adapter','--bridge','--input-port','selected','--output-port','selected']
 for env in ({},{'MIDO_BACKEND':'rtmidi/MACOSX_CORE','DABBL8_ALLOW_UNQUALIFIED_NATIVE':'1','DABBL8_NATIVE_BACKEND':'qualified'}):
  with patch.dict(os.environ,env,clear=True):
-  with patch.object(sys,'argv',argv),patch.object(t.platform,'system',return_value='Darwin'),patch.object(builtins,'__import__',side_effect=forbid),patch.object(t,'StrictCoreMidiBackend',side_effect=AssertionError('native wrapper constructed')),patch.object(t,'ReadOnlyMidi',side_effect=AssertionError('native link constructed')):
+  with patch.object(sys,'argv',argv),patch.object(t.platform,'system',return_value='Darwin'),patch.object(builtins,'__import__',side_effect=forbid),patch.object(t,'require_native_qualification',side_effect=NativeMidiQualificationError('injected refusal')),patch.object(t,'StrictCoreMidiBackend',side_effect=AssertionError('native wrapper constructed')),patch.object(t,'ReadOnlyMidi',side_effect=AssertionError('native link constructed')):
    output=io.StringIO()
    with contextlib.redirect_stderr(output):
     try:t.main()

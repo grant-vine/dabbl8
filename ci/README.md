@@ -1,6 +1,12 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+Native MIDI guard and read-only snapshot changes select `midi-native`. It runs
+one virtual-NOR fixture and offline guard, inventory, release and deadline tests.
+It opens no physical or software MIDI ports and downloads nothing. Native
+software-loopback qualification is a separate explicit operation; do not attach
+it to hosted CI or run it automatically from the selector.
+
 GitHub stores source; local checks are the default. Inspect a plan first:
 
 ```sh
