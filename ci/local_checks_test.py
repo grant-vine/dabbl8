@@ -13,6 +13,20 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_voice_allocation_recipe_is_local_and_bounded(self) -> None:
+        selected, unknown = checks.select(['firmware/src/voice.c', 'tests/demo_voice_allocation_test.c'])
+        self.assertEqual(selected, {'diff', 'voice-allocation'})
+        self.assertFalse(unknown)
+        plan = self.plan(['firmware/src/voice.c'])
+        self.assertEqual(plan['status'], 'REFUSED')
+        self.assertEqual(len(plan['commands']), 9)
+        encoded = json.dumps(plan['commands'])
+        self.assertEqual(encoded.count('-compile"'), 4)
+        self.assertIn('tests/demo_voice_allocation_test.c', encoded)
+        self.assertEqual(encoded.count('"-DNPART=4"'), 1)
+        self.assertEqual(encoded.count('"-DNPART=8"'), 3)
+        self.assertEqual(encoded.count('"-fsanitize=address,undefined"'), 4)
+
     def test_native_midi_is_offline_and_includes_direct_guard_and_snapshot(self) -> None:
         selected, unknown = checks.select(['tools/dabbl8_native_midi_guard.py',
                                           'tools/dabbl8_readonly_snapshot.py'])

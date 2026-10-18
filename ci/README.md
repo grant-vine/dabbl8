@@ -1,6 +1,12 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`--check voice-allocation` runs the generated eight-track demo, allocator budget
+cases and four/eight-track overload controls locally under the existing sanitizer
+recipe. It checks released-tail reclamation without changing allocation policy.
+It opens no MIDI ports, downloads nothing and builds no firmware package. See
+`docs/dabbl8/voice-allocation.md` for counter semantics and measurement limits.
+
 Native MIDI guard and read-only snapshot changes select `midi-native`. It runs
 one virtual-NOR fixture and offline guard, inventory, release and deadline tests.
 It opens no physical or software MIDI ports and downloads nothing. Native

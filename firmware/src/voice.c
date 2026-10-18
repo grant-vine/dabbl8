@@ -168,6 +168,9 @@ static uint32_t voice_victim(const track_t *self, int soft, track_t **pp)
 static uint32_t voice_kills;                            /* voices given up (budget, overload): console, hostsim */
 static void voice_kill(voice_t *v)                      /* fade out over the next block (env_tick stage 4) */
 {
+#ifdef D8_VOICE_KILL_OBSERVER
+    D8_VOICE_KILL_OBSERVER(v);
+#endif
     v->gate = 0;
     v->stage = 4;
     voice_kills++;
