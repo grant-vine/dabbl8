@@ -80,6 +80,11 @@ static void emit_frame(void) {
 }
 int main(int argc,char **argv) {
     cdc.dtr=1;fresh();
+    /* A retained high line does not greet again; the main loop must see low. */
+    con.dtr_seen=1;clear_output();cdc_task();drain();assert(!captured_n);
+    cdc.dtr=0;cdc_task();drain();assert(!captured_n);
+    cdc.dtr=1;cdc_task();drain();assert(strstr(captured,"console - 'help'"));
+    clear_output();cdc_task();drain();assert(!captured_n&&!usb.uboot_req);
     command("resource start junk\r");assert(!d8hp.enabled&&!d8hp.report.generation);
     command("resourcestart\r");assert(!d8hp.enabled);
     felucca_dbg.in_audio=1;command("resource start\r");assert(!d8hp.enabled);felucca_dbg.in_audio=0;
