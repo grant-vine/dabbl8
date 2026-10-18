@@ -1448,10 +1448,10 @@ static uint32_t autosave_sig(void)
 }
 
 /* nothing going on that an erase (the audio stopped ~40 ms) would be heard in, or would race */
-static int autosave_quiet(void)
+static int autosave_quiet_buttons(uint32_t allowed)
 {
     uint32_t k, i;
-    if (transport_busy() || fm1_in.notes || fm1_in.buttons)
+    if (transport_busy() || fm1_in.notes || (fm1_in.buttons & ~allowed))
         return 0;
     for (k = 0; k < NTRK; k++)
         for (i = 0; i < NVOICE; i++)
@@ -1459,6 +1459,8 @@ static int autosave_quiet(void)
                 return 0;
     return 1;
 }
+
+static int autosave_quiet(void) { return autosave_quiet_buttons(0); }
 
 static void autosave_hold(void) {
 #if NPART >= NVOICE && (FELUCCA_FLASH || defined(D8_NATIVE_AUTOSAVE_ROUTE_TEST))

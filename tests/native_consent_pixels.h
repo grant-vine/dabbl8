@@ -12,7 +12,7 @@ static void consent_pixels(const char *screen,unsigned y1,unsigned h1,unsigned y
  static const char *themes[]={"dark","light"};
  unsigned previous=settings.palette;
  for(unsigned i=0;i<2;i++) {
-  settings.palette=palettes[i];palette_set(settings.palette);d8ls_draw();
+  settings.palette=palettes[i];palette_set(settings.palette);ui.force=1;d8ls_draw();
   CHECK(d8ls.shown==d8ls.generation&&d8ls.shown);
   unsigned first=consent_visible(y1,h1),second=consent_visible(y2,h2);
   printf("PIXELS %s %s first=%u second=%u bg=%04x ink=%04x text=%04x\n",screen,themes[i],first,second,T_BG,T_INK,T_TEXT);
@@ -27,5 +27,5 @@ static void consent_pixels(const char *screen,unsigned y1,unsigned h1,unsigned y
    }
   }
  }
- settings.palette=previous;palette_set(previous);d8ls_draw();
+ settings.palette=previous;palette_set(previous);ui.force=1;d8ls_draw();
 }

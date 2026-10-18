@@ -29,6 +29,7 @@ static void pt_begin_lcd_hook(void)
  else if(event==7)fm1_ms+=LS_DEADLINE_MS;
  else if(event==8){CHECK(!main_migration_begin(&pt_competing_lease));memset(main_migration_workspace(pt_competing_lease),0x6c,sizeof(d8mp_workspace));memcpy(pt_arena_before,&main_workspace,sizeof pt_arena_before);}
  else if(event==9)cv_cpu_active=1;
+ else if(event==10){fm1_in.buttons=host_pressed=1u<<panel.btn[B_SAVE];ui_input();}
 }
 static void pt_begin_read_hook(void)
 {
@@ -110,6 +111,44 @@ static void pt_begin_arena_cases(void)
  printf("BEGIN arena regressions: %u checks %u failures\n",checks,failures);
 }
 #include "native_consent_pixels.h"
+static void pt_stable_consent_cases(void)
+{
+ target_fresh();CHECK(import_start(15)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_OK);
+ ui_draw();CHECK(d8ls.shown==d8ls.generation);
+ unsigned frames=dma_consumed,calls=physical_calls;
+ uint16_t pixels[240*240];memcpy(pixels,host_screen,sizeof pixels);
+ for(unsigned i=0;i<100;i++){ui_draw();fm1_ms++;d8ls_poll();}
+ CHECK(dma_consumed==frames&&!memcmp(pixels,host_screen,sizeof pixels));
+ CHECK(d8ls.shown==d8ls.generation&&!d8ls.revoked&&physical_calls==calls);
+ fm1_ms=d8ls.started+LS_DEADLINE_MS-2000u;d8ls_poll();
+ pt_lcd_event=10;ui_draw();
+ CHECK(pt_lcd_event==10&&d8ls.shown==d8ls.generation&&!d8ls.revoked);
+ pt_lcd_event=0;fm1_in.buttons=host_pressed=1u<<panel.btn[B_SAVE];ui_input();
+ CHECK(pt_phase()==PT_RELEASE&&!d8ls.revoked);
+ CHECK(!df_automatic_quiet()&&pt_quiet());
+ fm1_in.buttons|=1u<<panel.btn[B_HOME];CHECK(!pt_quiet());
+ fm1_in.buttons=1u<<panel.btn[B_SAVE];fm1_in.notes=1;CHECK(!pt_quiet());fm1_in.notes=0;
+ transport_req=1;CHECK(!pt_quiet());transport_req=0;
+ for(unsigned i=0;i<30;i++){ui_draw();fm1_ms+=10;d8ls_poll();}
+ CHECK(pt_phase()==PT_RELEASE&&!d8ls.revoked&&dma_consumed==frames&&physical_calls==calls);
+ host_pressed=0;fm1_in.buttons=0;ui_input();d8ls_poll();
+ CHECK(pt_phase()==PT_APPROVED&&physical_calls==calls);
+ pt_token(8);CHECK(pt_request(7)==PT_OK&&!migration_owner);
+
+ target_fresh();CHECK(import_start(15)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_OK);
+ ui_draw();calls=physical_calls;fm1_ms=d8ls.started+LS_DEADLINE_MS;d8ls_poll();
+ CHECK(d8ls.phase==LS_IDLE&&d8ls.write_phase==PT_CANCELLED&&physical_calls==calls&&!migration_owner);
+
+ target_fresh();CHECK(import_start(15)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_OK);
+ ui_draw();calls=physical_calls;fm1_lcd_timeouts++;ui_draw();
+ mc_ship_tap(B_SAVE);d8ls_poll();
+ CHECK(d8ls.phase==LS_IDLE&&physical_calls==calls&&!migration_owner);
+ target_fresh();CHECK(import_start(15)==PT_OK);import_receive();pt_token(5);CHECK(pt_request(7)==PT_OK);
+ calls=physical_calls;pt_lcd_event=10;ui_draw();d8ls_poll();
+ CHECK(!pt_lcd_event&&d8ls.phase==LS_IDLE&&physical_calls==calls&&!migration_owner);
+ fm1_in.buttons=host_pressed=0;
+ printf("Stable restore consent regressions: %u checks %u failures\n",checks,failures);
+}
 #ifndef D8_PROJECT_TRANSFER_NO_MAIN
 int main(void){
  setvbuf(stdout,NULL,_IONBF,0);
@@ -119,6 +158,7 @@ int main(void){
  trk[7].p[P_LEVEL]=91;message[1]=1;unsigned beginrc=pt_request(2);CHECK(beginrc==PT_OK&&pt_phase()==PT_EXPORT&&!physical_calls);if(beginrc)return 1;
  memcpy(source_pool,pt_workspace()->plan,sizeof source_pool);unsigned live_length=d8ls.length;archived_live_len=live_length;memcpy(source_live,pt_workspace()->stage.wire,live_length);
  pt_token(8);CHECK(pt_request(7)==PT_OK&&!migration_owner);
+ pt_stable_consent_cases();
  memset(message,0,sizeof message);message[0]=1;message[1]=2;message[2]=15;mc_put32(message+3,live_length);mc_put32(message+8,d8p1_crc32(source_live,live_length));mc_put32(message+13,d8p1_crc32(source_pool,sizeof source_pool));
  CHECK(pt_request(18)==PT_OK&&pt_phase()==PT_RECEIVE);
  for(unsigned selector=0;selector<2;selector++){const uint8_t*p=selector?source_live:source_pool;unsigned length=selector?live_length:sizeof source_pool;
