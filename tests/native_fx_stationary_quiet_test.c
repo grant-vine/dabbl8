@@ -36,8 +36,113 @@ static void render_chunk(unsigned n)
   n-=count;
  }
 }
+static void dry_mix_seed(void)
+{
+ fresh_fx();memset(sl,0,sizeof sl);memset(&pf,0,sizeof pf);pf.src=pf.next=PF_N;
+ for(unsigned k=0;k<NTRK;k++){
+  track_t *t=&trk[k];
+  t->p[P_DIST]=t->p[P_SLCR]=t->p[P_CHOR]=t->p[P_DLY]=t->p[P_REV]=0;
+  for(unsigned m=0;m<NMSLOT;m++)t->p[P_M1SRC+3u*m]=0;
+ }
+}
+static uint64_t audio_digest(uint64_t hash,const int32_t *out,unsigned count)
+{
+ for(unsigned i=0;i<count;i++){
+  uint32_t value=(uint32_t)out[i];
+  for(unsigned b=0;b<4;b++){hash^=(value>>(8u*b))&255u;hash*=1099511628211ULL;}
+ }
+ return hash;
+}
+static void bypassed_dist_tail_retires(void)
+{
+ dry_mix_seed();track_t *t=&trk[0];int32_t out[CTL*2];
+ for(unsigned k=0;k<NTRK;k++)trk[k].tail=16;
+ t->dist_hp=36;t->dist_lp1=-45;t->dist_lp2=-46;
+ CHECK(!fx_resident_quiet());
+ uint64_t trace=1469598103934665603ULL;
+ for(unsigned block=0;block<20;block++){
+  mix_block(out,CTL);trace=audio_digest(trace,out,CTL*2);
+  for(unsigned i=0;i<CTL*2;i++)CHECK(out[i]==0);
+  for(unsigned k=0;k<NTRK;k++){
+   CHECK(trk[k].tail==(block<16?15u-block:0u));
+   for(unsigned v=0;v<NVOICE;v++)CHECK(!trk[k].v[v].active);
+   CHECK(!slicer_busy(&trk[k]));
+  }
+  CHECK(t->dist_hp==36&&t->dist_lp1==-45&&t->dist_lp2==-46);
+  CHECK(fx_resident_quiet()==(block>=15));
+ }
+ printf("Bypassed DIST: blocks=20 tail=%u hp=%d lp1=%d lp2=%d quiet=%d pcm=%016llx\n",
+        t->tail,t->dist_hp,t->dist_lp1,t->dist_lp2,fx_resident_quiet(),(unsigned long long)trace);
+ /* Retiring bypassed state must not admit a still-referenced DIST tail. */
+ t->tail=16;t->p[P_DIST]=1;CHECK(!fx_resident_quiet());
+ dry_mix_seed();t=&trk[0];t->p[P_DIST]=1;t->p[P_LEVEL]=127;
+ t->tail=16;t->dist_hp=36;t->dist_lp1=-45;t->dist_lp2=-46;
+ trace=1469598103934665603ULL;unsigned audible=0;
+ for(unsigned block=0;block<20;block++){
+  memset(mix_l,0,sizeof mix_l);memset(mix_r,0,sizeof mix_r);
+  mix_part(t,CTL);trace=audio_digest(trace,mix_l,CTL);
+  CHECK(t->tail==(block<16?15u-block:0u));
+  for(unsigned i=0;i<CTL;i++)if(mix_l[i])audible=1;
+ }
+ CHECK(audible&&t->dist_lp1!=-45);
+ printf("Enabled DIST tail: blocks=20 tail=%u hp=%d lp1=%d lp2=%d audible=%u pcm=%016llx\n",
+        t->tail,t->dist_hp,t->dist_lp1,t->dist_lp2,audible,(unsigned long long)trace);
+ /* Active voice rendering still refreshes the tail and retains its audio. */
+ for(unsigned drive=0;drive<=35;drive+=35){
+  dry_mix_seed();t=&trk[0];host_preset(t,0,5);
+  t->p[P_DIST]=(int16_t)drive;t->p[P_CHOR]=t->p[P_DLY]=t->p[P_REV]=0;
+  trk_note_on(t,60,100);trace=1469598103934665603ULL;audible=0;
+  for(unsigned block=0;block<24;block++){
+   mix_block(out,CTL);trace=audio_digest(trace,out,CTL*2);CHECK(t->tail==16);
+   for(unsigned i=0;i<CTL*2;i++)if(out[i])audible=1;
+  }
+  CHECK(audible&&voices_busy());
+  printf("Active DIST: drive=%u tail=%u audible=%u pcm=%016llx\n",drive,t->tail,audible,(unsigned long long)trace);
+  trk_note_off(t,60);
+ }
+}
+static void bypassed_dist_reenable_controls(void)
+{
+ for(unsigned idle=0;idle<2;idle++){
+  dry_mix_seed();track_t *t=&trk[0];host_preset(t,0,5);int32_t out[CTL*2];
+  t->p[P_DIST]=t->p[P_CHOR]=t->p[P_DLY]=t->p[P_REV]=0;t->p[P_REL]=0;t->p[P_LEVEL]=127;
+  t->tail=16;t->dist_hp=36;t->dist_lp1=-45;t->dist_lp2=-46;
+  for(unsigned block=0;block<20;block++)mix_block(out,CTL);
+  CHECK(t->tail==0&&t->dist_hp==36&&t->dist_lp1==-45&&t->dist_lp2==-46);
+  t->p[P_DIST]=1;
+  if(idle){
+   unsigned audible=0;
+   for(unsigned block=0;block<4;block++){
+    mix_block(out,CTL);CHECK(t->tail==0&&fx_resident_quiet());
+    for(unsigned i=0;i<CTL*2;i++){if(out[i])audible=1;CHECK(out[i]==0);}
+   }
+   CHECK(t->dist_hp==36&&t->dist_lp1==-45&&t->dist_lp2==-46);
+   printf("Idle DIST re-enable: blocks=4 tail=%u hp=%d lp1=%d lp2=%d audible=%u\n",
+          t->tail,t->dist_hp,t->dist_lp1,t->dist_lp2,audible);
+  }
+  trk_note_on(t,60,100);uint64_t trace=1469598103934665603ULL;unsigned audible=0;
+  for(unsigned block=0;block<24;block++){
+   mix_block(out,CTL);trace=audio_digest(trace,out,CTL*2);
+   CHECK(t->tail==16&&voices_busy()&&!autosave_quiet()&&!df_automatic_quiet());
+   for(unsigned i=0;i<CTL*2;i++)if(out[i])audible=1;
+  }
+  CHECK(audible);
+  printf("Re-enabled DIST note: idle=%u blocks=24 tail=%u audible=%u pcm=%016llx\n",
+         idle,t->tail,audible,(unsigned long long)trace);
+  trk_note_off(t,60);unsigned blocks=0;
+  while(voices_busy()&&blocks++<4096){mix_block(out,CTL);if(voices_busy())CHECK(!autosave_quiet()&&!df_automatic_quiet());}
+  CHECK(!voices_busy());unsigned guarded=0;
+  for(unsigned block=0;block<17;block++){
+   mix_block(out,CTL);
+   if(t->tail&&(t->dist_hp||t->dist_lp1||t->dist_lp2)){CHECK(!fx_resident_quiet()&&!df_automatic_quiet());guarded=1;}
+  }
+  CHECK(guarded&&t->tail==0);
+ }
+}
 int main(void)
 {
+ bypassed_dist_tail_retires();
+ bypassed_dist_reenable_controls();
  room_seed();unsigned span=delay_samples();if(span<1356)span=1356;
  CHECK(!fx_resident_quiet());
  for(unsigned i=0;i<span;i++){CHECK(render_sample()==0);if(i+1<span)CHECK(!fx_resident_quiet());}

@@ -586,7 +586,12 @@ static void mix_part(track_t *t, uint32_t n)
     if (track_render(t, b, n))
 #endif
         t->tail = 16;                                   /* blocks of DIST state to run out after the last voice */
+#if NTRK == 8
+    /* Bypassing DIST must still retire its idle lifetime; keep DSP memory intact. */
+    else if ((!t->tail || !--t->tail || !t->p[P_DIST]) && !slicer_busy(t)) {
+#else
     else if ((!t->tail || !t->p[P_DIST] || !--t->tail) && !slicer_busy(t)) {
+#endif
         slicer_track(t, 0, n);                          /* (the SLICER's step clock runs on) */
         if (mod.on)
             mod_end(t);
