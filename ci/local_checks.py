@@ -19,6 +19,8 @@ ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
+    'voice-allocation': {'firmware/src/voice.c', 'tests/demo_voice_allocation_test.c',
+        'tests/voice_budget_test.c', 'tests/native_overload_test.c'},
     'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
         'tools/dabbl8_readonly_snapshot.py', 'tests/readonly_snapshot_test.py',
         'tests/native_midi_guard_test.py', 'tests/native_midi_qualification_guard_test.py',
@@ -186,6 +188,11 @@ def recipes(checks, cc, out, base):
             continue
         elif name == 'own-project-transfer':
             jobs = [('8', 8, 'tests/native_project_transfer_test.c')]
+        elif name == 'voice-allocation':
+            jobs = [('demo', 8, 'tests/demo_voice_allocation_test.c'),
+                    ('budget', 8, 'tests/voice_budget_test.c'),
+                    ('overload4', 4, 'tests/native_overload_test.c'),
+                    ('overload8', 8, 'tests/native_overload_test.c')]
         elif name == 'sample-upload':
             jobs = [('8', 8, 'tests/native_sample_session_test.c')]
         elif name in ('sampler', 'sample-upload'):
@@ -198,14 +205,14 @@ def recipes(checks, cc, out, base):
             binary = str(out / tag)
             flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
                      '-fsanitize=address,undefined', '-fno-sanitize-recover=all']
-            sources = pool + [fixture] if name in ('readonly-boot', 'sample-upload', 'own-project-transfer') else [fixture]
+            sources = pool + [fixture] if name in ('readonly-boot', 'sample-upload', 'own-project-transfer', 'voice-allocation') else [fixture]
             inputs = [] if name == 'storage' else list(GEN)
             args = [str(out / (tag + '.trace'))] if fixture.endswith('slice_render_source_range_test.c') else []
             if tracks:
                 flags += [f'-DNPART={tracks}']
             if name != 'storage':
                 flags += ['-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1']
-            if name in ('sampler', 'sample-upload', 'own-project-transfer'):
+            if name in ('sampler', 'sample-upload', 'own-project-transfer', 'voice-allocation'):
                 # Same bounded range/render recipes: only inherited DSP arithmetic exclusions.
                 flags += ['-fno-sanitize=signed-integer-overflow,shift']
             flags += ['-Ibuild/gen', '-Ifirmware/src']

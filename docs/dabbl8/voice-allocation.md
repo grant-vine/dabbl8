@@ -1,6 +1,6 @@
 # D8-006: eight shared sounding voices
 
-The eight-track allocator has one shared budget of eight active engine voices. Per-track voice arrays remain allocation destinations; their size does not grant eight voices to each track. The target remains four tracks until the runtime and memory gates pass. `tests/voice_budget_test.c` compiles the real core with `NPART=8`, including eight real tracks and engine state arrays, rather than simulating a track count in a four-track policy function.
+The eight-track allocator has one shared budget of eight active engine voices. Per-track voice arrays remain allocation destinations; their size does not grant eight voices to each track. This software bound does not establish hardware or release qualification. `tests/voice_budget_test.c` compiles the real core with `NPART=8`, including eight real tracks and engine state arrays, rather than simulating a track count in a four-track policy function.
 
 ## Upstream invariant and no-room paths
 
@@ -27,6 +27,30 @@ A pedal-held note still has its gate on; it competes as held, not released. DRUM
 Extra UNISON voices use only categories 1/2 on other tracks and may be refused. They cannot displace chord tones or protected leads to complete a unison stack. A new primary lead can displace extra unison voices. There is no voice reservation by track number, instrument label or external MIDI channel.
 
 ## Sound and cost limits
+
+### Interpreting `voices_given_up`
+
+This lifetime count records calls to `voice_kill`, not missed notes or CPU deadline
+failures. It includes shared-budget replacement, overload shedding and explicit
+MIDI track silencing. `voices_shed` separately records overload shedding. DRUM
+is one-shot POLY even when its stored voice-mode parameter says MONO: different
+lanes and released tails can occupy several shared voices.
+
+The generated host demo runs 38 bars at 120 BPM and asserts two reclaimed,
+already-released drum tails per bar, 76 in total. No held drum or synth note
+yields, all eight tracks participate, and active engine voices stay within eight.
+Muting drums produces zero reclamations with seven voices; replacing DRUM with
+a mono synth produces zero with eight. These are deterministic local controls,
+not individual hardware event traces or proof of inaudible replacement.
+
+`python3 ci/local_checks.py --check voice-allocation --run` selects this fixture,
+allocator stress cases and four/eight-track overload controls using existing
+local inputs and sanitizer exclusions. It never contacts hardware or builds
+firmware. The fixture also accepts a private D8P1 file; exact two-per-bar/76-count
+assertions apply only to the generated workload, while private inputs retain
+causal/budget/release checks. Keep private inputs outside Git. The conditional
+observer is absent when undefined in production preprocessing; no allocator
+policy, voice count, golden hash or production build flag changes.
 
 For `NPART >= NVOICE`, stolen voices do not run their engine for an overlapping fade block. This bounds both active state and actual engine render calls to eight. Immediate retirement may produce an audible waveform discontinuity; listening/click-quality checks and target ISR deadlines remain release gates. This PR does not claim seamless stealing or target performance. A future smoothing design must fit the same eight-voice budget and memory limits rather than relabel a ninth rendering voice as a tail.
 
