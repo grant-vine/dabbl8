@@ -19,6 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
+    'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
+        'tools/dabbl8_readonly_snapshot.py', 'tests/readonly_snapshot_test.py',
+        'tests/native_midi_guard_test.py', 'tests/native_midi_qualification_guard_test.py',
+        'tests/raw_coremidi_inventory_test.py'},
     'storage': {'firmware/src/storage.c', 'tests/storage_test.c', 'tests/native_storage_gate_test.c'},
     'legacy-ui': {'tests/ui_test.c', 'tests/ui_legacy_v6_bounds_test.c'},
     'readonly-boot': {'firmware/src/project.c', 'firmware/src/project_native_flash.c',
@@ -95,6 +99,22 @@ def recipes(checks, cc, out, base):
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
+            continue
+        if name == 'midi-native':
+            fixture = str(out / 'snapshot-capture-fixture')
+            native_inputs = sorted(str(path.relative_to(ROOT))
+                for folder in ('firmware/src', 'tests') for path in (ROOT / folder).iterdir()
+                if path.suffix in ('.c', '.h'))
+            steps.append({'name': 'snapshot-fixture-compile',
+                'argv': cc + ['-O2', '-w', '-Ibuild/gen', '-Ifirmware/src',
+                    'firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c',
+                    'tests/instrument_capture_test.c', '-lm', '-o', fixture],
+                'requires': native_inputs + ['build/gen/' + name for name in GEN]})
+            for script in ('native_midi_guard_test', 'native_midi_qualification_guard_test',
+                           'raw_coremidi_inventory_test', 'readonly_snapshot_test'):
+                extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test') else []
+                steps.append({'name': script, 'argv': [sys.executable, 'tests/' + script + '.py'] + extra,
+                    'requires': sorted(MAP['midi-native']) + ['tools/dabbl8_instrument_capture.py']})
             continue
         if name == 'timing-capture':
             steps.append({'name': 'timing-capture-scripted-transport',

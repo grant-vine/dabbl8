@@ -13,6 +13,18 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_native_midi_is_offline_and_includes_direct_guard_and_snapshot(self) -> None:
+        selected, unknown = checks.select(['tools/dabbl8_native_midi_guard.py',
+                                          'tools/dabbl8_readonly_snapshot.py'])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(selected, {'diff', 'midi-native'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps], ['diff', 'snapshot-fixture-compile',
+            'native_midi_guard_test', 'native_midi_qualification_guard_test',
+            'raw_coremidi_inventory_test', 'readonly_snapshot_test'])
+        self.assertFalse(any(arg in ('--capture', '--virtual-only', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
     def plan(self, paths, explicit=()):
         return checks.make_plan(Path('/missing-local-inputs'), paths, explicit,
                                 ['clang'], Path('build/local-checks/PLANNED'), 'HEAD')

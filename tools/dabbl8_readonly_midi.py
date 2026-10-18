@@ -12,7 +12,12 @@ import platform
 import sys
 import threading
 import time
-from dabbl8_instrument_capture import HEADER, r32
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from tools.dabbl8_instrument_capture import HEADER, r32
+from tools.dabbl8_native_midi_guard import (
+    NativeMidiQualificationError, require_native_qualification, verify_loaded_native,
+)
 
 
 def request_operation(frame):
@@ -56,6 +61,7 @@ class StrictCoreMidiBackend:
         self._binding()
 
     def _binding(self):
+        require_native_qualification()
         if threading.get_ident() != self.owner:
             raise ValueError('CoreMIDI inventory must use the owning thread')
         if self.backend.name != 'mido.backends.rtmidi' or self.backend.api != 'MACOSX_CORE':
@@ -66,6 +72,7 @@ class StrictCoreMidiBackend:
         # Load native code only when inventory is requested; never call the
         # coalescing backend get_*_names/get_devices as a fallback.
         native = self.backend.module.rtmidi
+        verify_loaded_native()
         api = native.API_MACOSX_CORE
         compiled = native.get_compiled_api()
         if type(api) is not int or api <= 0 or type(compiled) is not list or len(compiled) > 32 or any(type(x) is not int for x in compiled) or api not in compiled:
@@ -162,13 +169,16 @@ class ReadOnlyMidi:
                 token = r32(frame[8:13])
                 if frame[13] > 4:
                     raise ValueError('Unsupported capture phase')
-                if self.operation >= 2 and token != r32(self.request[7:12]):
+                pending = self.request
+                if pending is None:
+                    raise ValueError('Reply has no pending request')
+                if self.operation >= 2 and token != r32(pending[7:12]):
                     raise ValueError('Capture token does not match request')
                 if frame[7] == 0:
                     lengths = (21, 15, 21, 46, None, 15, 15)
                     expected = lengths[self.operation]
                     if self.operation == 4:
-                        count = self.request[18] | (self.request[19] << 7)
+                        count = pending[18] | (pending[19] << 7)
                         expected = 23 + count + (count + 6) // 7
                     if len(frame) != expected:
                         raise ValueError('Wrong capture reply payload length')
@@ -179,7 +189,7 @@ class ReadOnlyMidi:
                 self.error = str(error)
             self.condition.notify_all()
 
-    def exchange(self, frame):
+    def exchange(self, frame: bytes) -> bytes:
         if threading.get_ident() != self.owner:
             raise ValueError('MIDI operations must use the owning thread')
         try:
@@ -187,13 +197,14 @@ class ReadOnlyMidi:
             with self.condition:
                 if self.closed or self.error or self.operation is not None:
                     raise ValueError(self.error or 'Link closed or request already pending')
-                if self.input.closed or self.output.closed:
+                incoming, outgoing = self.input, self.output
+                if incoming is None or outgoing is None or incoming.closed or outgoing.closed:
                     raise ValueError('Selected MIDI port closed')
                 if self.backend.get_input_names().count(self.input_name) != 1 or self.backend.get_output_names().count(self.output_name) != 1:
                     raise ValueError('Selected MIDI endpoint disappeared or became ambiguous')
                 self.operation = op; self.request = frame
             # Send outside the callback lock; fake and native callbacks may be immediate.
-            self.output.send(self.message('sysex', data=frame[1:-1]))
+            outgoing.send(self.message('sysex', data=frame[1:-1]))
             deadline = time.monotonic() + self.timeout
             with self.condition:
                 while self.reply is None and not self.error:
@@ -204,6 +215,8 @@ class ReadOnlyMidi:
                 if self.error:
                     raise ValueError(self.error)
                 reply = self.reply
+                if reply is None:
+                    raise ValueError('Pending request has no completed reply')
                 self.reply = None; self.operation = None; self.request = None
                 return reply
         except Exception:
@@ -244,9 +257,6 @@ def bridge(link, incoming=sys.stdin, outgoing=sys.stdout):
         outgoing.write(reply.hex(' ') + '\n'); outgoing.flush()
 
 
-QUALIFIED_NATIVE_BACKENDS = ()  # No native source/extension pair is qualified.
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--bridge', action='store_true', required=True)
@@ -256,11 +266,10 @@ def main():
     args = parser.parse_args()
     if platform.system() != 'Darwin':
         parser.error('This adapter selects the macOS CoreMIDI backend only')
-    # No native dependency is currently qualified. The pinned 1.5.8 CoreMIDI
-    # cleanup reads an uninitialised port field; do not import/construct native
-    # objects until a reviewed source+extension qualification is committed.
-    if not QUALIFIED_NATIVE_BACKENDS:
-        parser.error('Native CoreMIDI capture is unqualified and disabled; see docs/dabbl8/native-midi-lifecycle.md')
+    try:
+        require_native_qualification()
+    except NativeMidiQualificationError as error:
+        parser.error(str(error))
     # Lazy optional dependency; --help and all offline tests need no MIDI backend.
     try:
         import mido
