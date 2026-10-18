@@ -19,6 +19,12 @@ ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
+    'midi-workload': {'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'},
+    'midi-eight': {'tests/native_track_recording_query_test.c',
+        'tests/native_midi_eight_track_workload_test.c', 'tests/native_midi_project_fixture.h',
+        'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py',
+        'tools/dabbl8_eight_track_workload.py', 'tests/dabbl8_eight_track_workload_test.py'},
+    'midi-drum': {'tests/native_midi_drum_workload_test.c', 'tests/native_midi_project_fixture.h'},
     'engine-fx': {'tests/engine_fx_matrix_test.c'},
     'performance-buses': {'tests/eight_track_performance_test.c'},
     'performance-fx': {'tests/perform_test.c'},
@@ -120,6 +126,34 @@ def recipes(checks, cc, out, base):
                 extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test') else []
                 steps.append({'name': script, 'argv': [sys.executable, 'tests/' + script + '.py'] + extra,
                     'requires': sorted(MAP['midi-native']) + ['tools/dabbl8_instrument_capture.py']})
+            continue
+        if name == 'midi-workload':
+            steps.append({'name': 'midi-workload-offline',
+                'argv': [sys.executable, 'tests/dabbl8_midi_workload_test.py'],
+                'requires': sorted(MAP[name])})
+            continue
+        if name in ('midi-eight', 'midi-drum'):
+            flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
+                     '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift',
+                     '-Ibuild/gen', '-Ifirmware/src']
+            jobs = ([('recording-query', 'tests/native_track_recording_query_test.c'),
+                     ('eight-channel-render', 'tests/native_midi_eight_track_workload_test.c')]
+                    if name == 'midi-eight' else
+                    [('drum-channel-render', 'tests/native_midi_drum_workload_test.c')])
+            for tag, fixture in jobs:
+                binary = str(out / tag)
+                steps += [{'name': tag + '-compile',
+                    'argv': cc + flags + pool + [fixture, '-lm', '-o', binary],
+                    'requires': pool + [fixture, 'tests/hostsim.c', 'tests/ui_test.c',
+                        'tests/editor_test.c', 'tests/native_midi_project_fixture.h'] +
+                        ['build/gen/' + p for p in GEN]},
+                    {'name': tag, 'argv': [binary]}]
+            if name == 'midi-eight':
+                steps.append({'name': 'eight-channel-schedule',
+                    'argv': [sys.executable, 'tests/dabbl8_eight_track_workload_test.py'],
+                    'requires': sorted(MAP[name] | MAP['midi-workload'])})
             continue
         if name == 'performance-fx':
             binary = str(out / name)

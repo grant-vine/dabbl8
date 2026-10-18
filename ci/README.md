@@ -1,6 +1,17 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`midi-eight` checks all 256 recording masks through the actual editor and runs
+bounded eight-channel notes through the host renderer. `midi-drum` covers all
+eight drum lanes; `midi-workload` covers read-only preflight and uncertain-send
+cleanup with fake ports and a deterministic clock. These recipes open no MIDI
+ports and need no private demo or device snapshot: C fixtures capture their
+normal startup project in memory. Both renderer fixtures retain optional D8P1
+file input and contract output for explicit local investigations. A shared
+fixture change selects both renderers; shared scheduling changes select both
+Python schedules. These checks do not qualify physical timing or saved-data
+durability. Generated headers must already be available locally.
+
 The `engine-fx` recipe runs 84 actual host-renderer scenarios: 13 enabled engines
 plus a mixed eight-track layout, each dry or with chorus, delay, ROOM, SPRING or
 combined effects. It checks audio/sends/wet output, shared ownership and release;

@@ -13,6 +13,42 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_midi_renderer_plan_needs_no_private_demo(self) -> None:
+        selected, unknown = checks.select(['tests/native_midi_project_fixture.h'])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(selected, {'diff', 'midi-eight', 'midi-drum'})
+        self.assertEqual(unknown, [])
+        for name in ('eight-channel-render', 'drum-channel-render'):
+            step = next(step for step in steps if step['name'] == name)
+            self.assertEqual(step['argv'], ['out/' + name])
+        required = {path for step in steps for path in step.get('requires', [])}
+        self.assertIn('tests/native_midi_project_fixture.h', required)
+        self.assertFalse(any(path.endswith('.d8p') for path in required))
+        with tempfile.TemporaryDirectory() as directory:
+            repo = Path(directory)
+            for path in required:
+                target = repo / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.touch()
+            plan = checks.make_plan(repo, ['tests/native_midi_project_fixture.h'], [],
+                                    ['clang'], Path('out'), 'HEAD')
+            self.assertEqual(plan['status'], 'PLAN')
+            (repo / 'tests/native_midi_project_fixture.h').unlink()
+            refused = checks.make_plan(repo, ['tests/native_midi_project_fixture.h'], [],
+                                       ['clang'], Path('out'), 'HEAD')
+            self.assertEqual(refused['status'], 'REFUSED')
+            self.assertIn('tests/native_midi_project_fixture.h', str(refused['refusals']))
+
+    def test_shared_midi_core_runs_both_offline_schedules(self) -> None:
+        selected, unknown = checks.select(['tools/dabbl8_midi_workload.py'])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(selected, {'diff', 'midi-workload', 'midi-eight'})
+        self.assertEqual(unknown, [])
+        names = {step['name'] for step in steps}
+        self.assertTrue({'midi-workload-offline', 'eight-channel-schedule'} <= names)
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
     def test_engine_fx_selects_only_source_bound_host_matrix(self) -> None:
         # Given the matrix fixture and the existing local compiler route.
         fixture = 'tests/engine_fx_matrix_test.c'
