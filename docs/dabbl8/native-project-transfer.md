@@ -61,6 +61,13 @@ pool followed by live, sequential exact pages and a final partial page. Only an
 identical immediately previous chunk may be retried; retry performs no flash
 write. The companion does not automatically retry requests.
 
+The companion waits up to 30 seconds for the synchronous whole-set COMMIT
+acknowledgement; ordinary requests retain the 1.5-second default. COMMIT may
+already have written and verified the set when its reply is lost or delayed.
+A timeout closes the session and reports an uncertain outcome, never retries
+the commit, and requires read-only verification before another restore. This
+host deadline is not a measured hardware worst-case guarantee.
+
 Every reply starts with:
 `[1, op, status, u32 token, phase, selector, u32 offset, u32 total, u32 CRC]`.
 
