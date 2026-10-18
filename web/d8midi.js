@@ -81,6 +81,10 @@ export class D8MidiSession {
     if (!(ownProject ? cmd === 81 : [1, 75, 77].includes(cmd)) || !Array.isArray(args) || args.length > 594 || !args.every(byte))
       return Promise.reject(Error('Unsupported MIDI request.'));
     if (this.#pending) return Promise.reject(Error('Another MIDI request is pending.'));
+    // Whole-set COMMIT writes/verifies NOR synchronously before acknowledging.
+    // Keep one bounded wait; a missing reply never permits retrying the write.
+    const committing = ownProject && args[0] === 1 && args[1] === 7;
+    const timeout = committing ? 30000 : this.#timeout;
     return new Promise((resolve, reject) => {
       const pending = { cmd, resolve, reject, optionalEngine, timer: null };
       this.#pending = pending;
@@ -90,8 +94,10 @@ export class D8MidiSession {
           // cannot acknowledge a subsequent track transaction.
           this.#discardEngineReply = true;
           this.#finish(null, Error('Engine availability reply timed out.'));
-        } else this.close('MIDI reply timed out; reconnect before editing.');
-      }, this.#timeout);
+        } else this.close(committing
+          ? 'MIDI command 81/7 reply timed out; restore outcome is uncertain. Retain the backup and verify the device before retrying.'
+          : `MIDI command ${cmd}${ownProject ? '/' + args[1] : ''} reply timed out; reconnect before editing.`);
+      }, timeout);
       // No retries: a missing acknowledgment cannot prove a mutation was not applied.
       try { this.#output.send([240, 125, 70, 76, cmd, ...args, 247]); }
       catch (error) { this.close(`MIDI send failed: ${error.message}`); }
