@@ -1,6 +1,15 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+The `engine-fx` recipe runs 84 actual host-renderer scenarios: 13 enabled engines
+plus a mixed eight-track layout, each dry or with chorus, delay, ROOM, SPRING or
+combined effects. It checks audio/sends/wet output, shared ownership and release;
+it does not qualify device deadlines, all presets or every effect combination.
+`performance-buses` and `performance-fx` are separate bounded local recipes for
+the existing banked mixer and performance-effect fixtures. Use their selected
+checks to avoid repeating the engine matrix; host cost assertions are not
+physical FM-1 measurements. Existing cached inputs and sanitizer scopes apply.
+
 `--check voice-allocation` runs the generated eight-track demo, allocator budget
 cases and four/eight-track overload controls locally under the existing sanitizer
 recipe. It checks released-tail reclamation without changing allocation policy.
