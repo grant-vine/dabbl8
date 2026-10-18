@@ -13,6 +13,58 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_engine_fx_selects_only_source_bound_host_matrix(self) -> None:
+        # Given the matrix fixture and the existing local compiler route.
+        fixture = 'tests/engine_fx_matrix_test.c'
+        selected, unknown = checks.select([fixture])
+        # When planning its bounded recipe, without executing the renderer.
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        # Then only the diff, sanitized host compile and matrix run are selected.
+        self.assertEqual(selected, {'diff', 'engine-fx'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps],
+                         ['diff', 'engine-fx-compile', 'engine-fx-matrix'])
+        compile_step = steps[1]
+        for flag in ('-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift'):
+            self.assertIn(flag, compile_step['argv'])
+        self.assertIn(fixture, compile_step['requires'])
+        self.assertIn('tests/hostsim.c', compile_step['requires'])
+        self.assertEqual(steps[2]['argv'], ['out/engine-fx-matrix'])
+        self.assertEqual(self.plan([fixture])['status'], 'REFUSED')
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
+    def test_performance_buses_does_not_repeat_engine_matrix(self) -> None:
+        # Given the existing banked performance fixture, when selecting checks.
+        fixture = 'tests/eight_track_performance_test.c'
+        selected, unknown = checks.select([fixture])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        # Then only its actual mixer/panel fixture is compiled and run locally.
+        self.assertEqual(selected, {'diff', 'performance-buses'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps],
+                         ['diff', 'performance-buses-compile', 'performance-buses'])
+        self.assertIn(fixture, steps[1]['argv'])
+        self.assertIn('-fsanitize=address,undefined', steps[1]['argv'])
+        self.assertEqual(steps[2]['argv'], ['out/performance-buses'])
+        self.assertNotIn('engine-fx', str(steps))
+
+    def test_performance_fx_retains_optimized_cost_and_no_demo_output(self) -> None:
+        # Given the upstream performance fixture, when planning its native run.
+        selected, unknown = checks.select(['tests/perform_test.c'])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        # Then cost assertions use the existing optimized recipe without demos.
+        self.assertEqual(selected, {'diff', 'performance-fx'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps],
+                         ['diff', 'performance-fx-compile', 'performance-fx'])
+        for flag in ('-O2', '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1'):
+            self.assertIn(flag, steps[1]['argv'])
+        self.assertFalse(any(arg.startswith('-fsanitize=') for arg in steps[1]['argv']))
+        self.assertEqual(steps[2]['argv'], ['out/performance-fx'])
+
     def test_voice_allocation_recipe_is_local_and_bounded(self) -> None:
         selected, unknown = checks.select(['firmware/src/voice.c', 'tests/demo_voice_allocation_test.c'])
         self.assertEqual(selected, {'diff', 'voice-allocation'})

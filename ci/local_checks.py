@@ -19,6 +19,9 @@ ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
+    'engine-fx': {'tests/engine_fx_matrix_test.c'},
+    'performance-buses': {'tests/eight_track_performance_test.c'},
+    'performance-fx': {'tests/perform_test.c'},
     'voice-allocation': {'firmware/src/voice.c', 'tests/demo_voice_allocation_test.c',
         'tests/voice_budget_test.c', 'tests/native_overload_test.c'},
     'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
@@ -117,6 +120,33 @@ def recipes(checks, cc, out, base):
                 extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test') else []
                 steps.append({'name': script, 'argv': [sys.executable, 'tests/' + script + '.py'] + extra,
                     'requires': sorted(MAP['midi-native']) + ['tools/dabbl8_instrument_capture.py']})
+            continue
+        if name == 'performance-fx':
+            binary = str(out / name)
+            fixture = 'tests/perform_test.c'
+            steps += [{'name': name + '-compile',
+                       'argv': cc + ['-O2', '-w', '-DNPART=8', '-DFELUCCA_FM4=0',
+                           '-DFELUCCA_SLICE=1', '-Ibuild/gen', '-Ifirmware/src',
+                           fixture, '-lm', '-o', binary],
+                       'requires': [fixture, 'tests/hostsim.c'] +
+                           ['build/gen/' + p for p in GEN]},
+                      {'name': name, 'argv': [binary]}]
+            continue
+        if name in ('engine-fx', 'performance-buses'):
+            tag = 'engine-fx-matrix' if name == 'engine-fx' else 'performance-buses'
+            binary = str(out / tag)
+            fixture = ('tests/engine_fx_matrix_test.c' if name == 'engine-fx'
+                       else 'tests/eight_track_performance_test.c')
+            flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
+                     '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift',
+                     '-Ibuild/gen', '-Ifirmware/src']
+            steps += [{'name': name + '-compile',
+                       'argv': cc + flags + [fixture, '-lm', '-o', binary],
+                       'requires': [fixture, 'tests/hostsim.c'] +
+                           ['build/gen/' + p for p in GEN]},
+                      {'name': tag, 'argv': [binary]}]
             continue
         if name == 'timing-capture':
             steps.append({'name': 'timing-capture-scripted-transport',
