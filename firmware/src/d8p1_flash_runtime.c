@@ -7,9 +7,9 @@ static int df_read(void *context,uint32_t off,void *out,uint32_t n)
 { (void)context;return flash_ok?st_read(off,out,n):-1; }
 /* Known replay, resident DSP and logical output-buffer histories. Peripheral
  * FIFOs/codec and hardware timing remain caller gates, not an inaudibility claim. */
-static int df_automatic_quiet(void)
+static int df_automatic_quiet_buttons(uint32_t allowed)
 {
-    if(!autosave_quiet()||!fx_resident_quiet()||!audio_output_quiet()||
+    if(!autosave_quiet_buttons(allowed)||!fx_resident_quiet()||!audio_output_quiet()||
 #if FELUCCA_UAC
        !uac_output_quiet()||
 #endif
@@ -20,6 +20,7 @@ static int df_automatic_quiet(void)
            (trk[t].p[P_AMODE]&&trk[t].nheld))return 0;
     return 1;
 }
+static int df_automatic_quiet(void) { return df_automatic_quiet_buttons(0); }
 static int df_stopped(void *context);
 static int df_erase(void *context,uint32_t off)
 {
