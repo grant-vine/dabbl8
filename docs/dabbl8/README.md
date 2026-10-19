@@ -5,15 +5,16 @@ start with the [RC review guide](rc-review-guide.md) and
 [current status](release-candidate-status.md). Older bundle references below are
 historical and are not requests to repeat tests or flash.
 
-The private v0.1.8 qualification bundle and its exact source/checksum record are
-now frozen locally; see [RC readiness](release-candidate-status.md) and the
-[safe hardware test plan](rc-hardware-test-plan.md). This is local preparation,
-not a public release or authorization to flash/change saved data.
+The consolidated private v0.2.3 diagnostic package, exact source/checksum record
+and combined test kit are frozen locally. The last verified installed firmware
+is v0.2.2. See [RC readiness](release-candidate-status.md), the [current handoff](local-work-handoff.md)
+and [safe hardware test plan](rc-hardware-test-plan.md). No new device session,
+public release or flash/data-change authorization follows from this preparation.
 
 [Engine resource limits](engine-resource-limits.md) separates source-defined
-voice/pool caps from measured physical combinations. The existing workspace's
-heavier seven-body workload now passes locally; full-pool hardware qualification
-remains open.
+voice/pool caps from measured physical combinations. Retained v022 observations
+reach eight heavy slots; current-source combined renderer and collector checks
+pass locally. Full timing/stack and maximum target combinations remain open.
 
 The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately. The owner's FM-1 passed bounded v0.1.8 eight-track playback, own-project restore/readback and saved-project reboot checks on 15 October 2026. See [current RC readiness and exact evidence](release-candidate-status.md). A hardware-qualified eight-track release remains pending. All 19 implementation tasks and roadmap issue #2 have been created.
 
@@ -26,9 +27,10 @@ Dabbl8 format migrations are in scope when needed; external firmware import and
 original-retaining migration are not release prerequisites. Earlier migration
 documents and converter previews below are historical developer work, not the
 current install contract. Disclosed first-use formatting completed on the owner's
-FM-1. Own-project restore and saved-project reboot checks have since passed in
-the recorded v0.1.8 scope; all populated slots, nonempty autosave, other own data,
-upgrades and interrupted-format recovery remain open. The policy itself grants
+FM-1. Later retained v020/v022 evidence includes own-project restore, all populated
+project slots/shared autosave, stopped save/recall, cold retention and own-upgrade
+readback. Other own data and interrupted-format recovery remain open where not
+qualified. The policy itself grants
 no device operation. See [RC readiness](release-candidate-status.md) for current
 coverage and remaining physical measurement gates, and the dated
 [software acceptance map](software-acceptance-status.md) for historical coverage. The

@@ -73,6 +73,15 @@ OTA/loader and native-pool upgrade tests pass. The newly repinned read-only
 completion reader passes 17 fake-console cases; batch fault/message tests and
 default no-access refusal pass. No hardware timing claim follows from these tests.
 
+A later test-only follow-through extends the actual loader's virtual upgrade
+fixture to nonempty synthetic settings/preset/FM6/sample allocations and all
+flash bytes outside the app/known update-record sectors. Both optimized and
+fatal ASan/UBSan runs pass; eight deliberate ancillary corruption controls per
+mode are detected by both comparison layers. The normal host suite now includes
+the fixture. This is raw-byte preservation evidence, not valid ancillary-format
+reopening or physical power-cut recovery. Firmware, loader and both frozen
+packages are unchanged; see private `build/rc-roadmap-audit-20261019/` receipts.
+
 ## Remaining gates
 
 The new `arrangement-stress` local scope covers the previously missing combined

@@ -1,6 +1,19 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+The normal host suite now includes `ldr_native_pool_preservation_test.c` against
+its already built old/new packages, in optimized and strict ASan/UBSan modes.
+For an exact local package review without running the broad suite, compile that
+fixture with `d8p1.c`, `d8pool.c`, `d8pool_mapped.c` and `-Ifirmware/src`, then pass
+`OLD.fwsc NEW.fwsc`. It creates only in-memory NOR and uses no vendor backup or
+device API. Nonempty synthetic settings/preset/FM6/sample ranges include valid
+update-record-shaped controls, and all bytes outside app/known-record sectors
+must stay exact. These bytes do not represent valid ancillary format reopening.
+Run each `--corrupt-after 0` through `--corrupt-after 7` control too: a passing
+control reports exactly two expected comparison refusals, not a device failure.
+Reuse the frozen candidate, avoid downloads/rebuilds and retain an explicit local
+plan, command logs and source/package hashes for these manual package consumers.
+
 `--check arrangement-status` verifies diagnostic-only D8A1 snapshots from actual
 native arrangement transitions, feature on/off and optimized/fatal sanitizers.
 It checks read-only state, IRQ guard restoration, printing after unlock and a
