@@ -13,6 +13,23 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_arrangement_capture_is_fake_io_only(self) -> None:
+        selected, unknown = checks.select(['tools/dabbl8_arrangement_capture.py'])
+        self.assertEqual((selected, unknown), ({'diff', 'arrangement-capture'}, []))
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual([s['name'] for s in steps], ['diff', 'arrangement-capture-offline'])
+        self.assertFalse(any('--capture' in s['argv'] for s in steps))
+
+    def test_arrangement_readback_uses_native_codec_without_dsp(self) -> None:
+        selected, unknown = checks.select(['tools/dabbl8_arrangement_readback.py'])
+        self.assertEqual((selected, unknown), ({'diff', 'arrangement-readback'}, []))
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(len(steps), 3)
+        self.assertIn('tools/dabbl8_project_archive.c', steps[1]['argv'])
+        self.assertIn('-fsanitize=address,undefined', steps[1]['argv'])
+        self.assertNotIn('-fno-sanitize=signed-integer-overflow,shift', steps[1]['argv'])
+        self.assertFalse(any('hostsim.c' in s['argv'] or '--capture' in s['argv'] for s in steps))
+
     def test_arrangement_status_is_diagnostic_and_offline(self) -> None:
         selected, unknown = checks.select(['firmware/src/arrangement_diagnostic_console.h'])
         self.assertEqual(selected, {'diff', 'arrangement-status'})

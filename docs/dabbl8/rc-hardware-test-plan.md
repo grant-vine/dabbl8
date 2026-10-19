@@ -1,17 +1,16 @@
 # One combined v023 hardware batch — prepared, unarmed
 
-**Source addendum:** `95ac93f` adds a read-only D8C1 clock sample after the
-original v023 freeze. Its application-only build passes local checks, but is not
-an installer. Keep the existing package/kit immutable. Before executing this
-batch, consolidate a newly reviewed package, source/archive/reader pins and kit.
-The old package cannot supply D8C1; its clock capture is refused before port open.
+The consolidated private diagnostic includes the locally checked D8C1 clock and
+D8A1 arrangement status from firmware source `c34263f`, with host collector and
+readback source `aeef693`. The earlier frozen v023 remains immutable; it lacks
+both frames and must not be substituted. This plan is not flash authorization.
 
 Combined host [arrangement/FX/MIDI/UI coverage](arrangement-stress-qualification.md)
 and the synthetic C proposal now pass. The actual SEQ-hold/SONG/PLAY path prepares
 its source before playback; the note-only helper does not do that. A private
 combined archive preserves A/B, keeps the existing MIDI workspace in
 live/shared autosave and uses C for the16-scene arrangement. Before arming this
-batch, validate capture/automatic-Stop/readback orchestration and repin the kit.
+batch, verify the consolidated package/kit checksums and retained local review.
 Do not broaden the guarded MIDI allowlist or substitute ordinary MIDI Start
 for source preparation.
 
@@ -26,13 +25,13 @@ Changed firmware still requires its own targeted hardware acceptance.
 
 ## Local prerequisites
 
-- Frozen private candidate `build/rc-v023-20261019/`, product FM-1_8023,
-  package SHA-256 `c3ebf3933ee5b6088f990cefda17e56ca468e5dc4f619326dba09349898fac83`.
+- Frozen private candidate `build/rc-v023-d8a1-20261019/`, product FM-1_8023,
+  package SHA-256 `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb`.
   Verify SHA256SUMS, source/archive/loader pins and the external local review
   before execution. Version strings are not independent binary attestation.
-- Execution kit `build/rc-hardware-v023-20261019/` is plan-only with
-  `hardware_ready:false`. All 275 effective source/kit inputs are pinned, including
-  the new UI header. Use a new session copy; never carry readiness or authorization
+- Execution kit `build/rc-hardware-v023-d8a1-20261019/` is plan-only with
+  `hardware_ready:false`. All 282 effective source/kit inputs are pinned, including
+  the clock/arrangement helpers. Use a new session copy; never carry readiness or authorization
   forward or modify the frozen package. The existing helper and note schedule
   remain unchanged apart from identity/input pins.
 - Existing MIDI workspace retained in live/shared autosave has SHA-256
@@ -82,20 +81,26 @@ it expires after two minutes. Never silently retry an expired request.
    trace address is 0x01C1D250, validated against the exact ELF, not the old v022
    address. Independent clock/observer/ABI measurements must be recorded separately
    with uncertainty; absent evidence stays unqualified, regardless of clean counters.
-   In the consolidated clock-capable candidate, group the three read-only D8C1
+   Group the three read-only D8C1
    samples into this same owner visit. Require fresh healthy status/epoch, exact
    package/source capability, complete request/reply brackets, consistent rate
    intervals and successful close. No owner button press is needed for clock
    sampling. Stop on refusal; never use nominal 24MHz as a measured result. The
    sampler does not close omitted ISR/arrival-latency or stack ABI gates.
-   Then use the separately validated arrangement capture phase: owner loads C,
+   Then use the locally validated arrangement capture phase: owner loads C,
    holds SEQ to open SONG and presses PLAY once. Capture preparation and all16
    scenes through its automatic Stop, with no extra notes or settings edits.
    This changes live context and may change shared autosave; only the protected
    A/B/C and ancillary sections retain their prior equality expectation. Confirm
-   C-context bytes and clean Stop before proceeding. Do not run a stopped-only
-   backup operation while the arrangement plays. This phase remains unarmed
-   until its bounded observer/orchestration contract is locally checked.
+   C-context bytes and clean Stop before proceeding. Reuse the post-MIDI full
+   snapshot as the arrangement's before-state. Only after the collector has
+   acknowledged natural Stop and both diagnostic pauses, and closed cleanly,
+   request one final full snapshot through the existing firmware quiet guard.
+   Derive logical readback offline with the pinned native archive codec; do not
+   request an extra logical export merely to compare A/B/C. The final autosave
+   may retain the MIDI proposal or match C; record which, without inferring a
+   new autosave write. All protected roles remain exact. A host tail wait is not
+   proof of silence. Never snapshot while playback runs or after uncertain cleanup.
 6. **SAVE #2: originals.** Restore the fresh original archive once through the
    companion, obtain physical confirmation and require its exact logical readback.
    Record stage7/rc0/guards0/revoke0, unchanged health and closed ports. Do not add
@@ -119,6 +124,11 @@ cleanup failure. No automatic retry, reset, reconnect, reflash or restore. Retai
 the primary error and any cleanup error. If temporary data remains installed,
 report it and obtain direction before attempting restoration. A clean batch ends
 with exact originals restored; a stopped batch may not.
+
+The arrangement collector has no remote STOP command. If owner action times out
+or observation fails during playback, it pauses only diagnostics whose starts
+were acknowledged and closes once. It cannot claim music stopped or safely
+restore data. Report that condition and obtain direction before further access.
 
 This batch covers the changed candidate's update/reopen and bounded workload.
 It does not automatically qualify every preset/effect combination, UAC, all
