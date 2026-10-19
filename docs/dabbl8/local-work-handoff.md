@@ -1,4 +1,30 @@
-# Development integration — selective Felucca 1.6.1 backports
+# Current handoff — local RC qualification and v023 preparation
+
+Read [RC status](release-candidate-status.md),
+[local follow-through](rc-local-qualification-20261019.md), and private
+`build/rc-local-qualification-20261019/handoff.json` first. Firmware source remains
+`e251aa4`; no firmware was changed in this follow-through. The private v023 package
+is assembled from the exact checked app/loader. Its source/manifest freeze and
+local review live in `build/rc-v023-20261019/` and the qualification addendum.
+
+Last verified device is v022, originals restored, all ports closed. No new device
+access occurred. Current direction is **do not flash yet**. The single future
+[hardware plan](rc-hardware-test-plan.md) and kit are unarmed; check availability
+before any physical request. Reuse passing evidence. Full clock/observer timing,
+SP/SSP/implicit frame/nesting proof and independent unresponsive recovery remain
+open; the prepared instrumented workload does not close those gates by itself.
+
+The current 1,041-function source model accounts for main callback families and
+bounded cycles (startup/main 7,512 bytes; audio 2,196; TIMER5 200), while retaining
+its ABI limits. The 6,300 v022 timing samples and historical stock recovery inputs
+are reused. New package negatives/native-pool preservation, fixed-layout reader,
+batch refusal/fault grammar and exact current-source heavy schedule pass locally.
+Do not repeat the 84 engine/effects cases, 42 emulator workflows or v022 persistence
+and stock recovery trials without changed effective inputs.
+
+---
+
+# Prior development integration — selective Felucca 1.6.1 backports
 
 Current development branch is `dabbl8/felucca-161-bugfixes` in
 `/Users/grantv/Code/dabbl8/.local-baseline/felucca-161-integration`.
@@ -19,7 +45,7 @@ verified; final read-only COMMIT stage7/rc0/guards0/revoke0. All ports closed.
 No further physical action or device retry is armed. Reuse completed evidence.
 
 Warm60-second health, exact five-role upgrade readback, confirmed cold restart/
-autosave reopening and exact cold readback pass. Two18-second heavy MIDI windows
+autosave reopening and exact cold readback pass. Two 18-second heavy MIDI windows
 pass,6,300 timing blocks/no late/taint/aux, eight owned slots/no allocation failure,
 all17 data roles unchanged. First cold guard refusal remains preserved; separately
 authorized retry established a healthy cold epoch. Fresh original backup remains
@@ -41,7 +67,7 @@ connect, stage a restore or send a SAVE prompt while the owner is away.
 Current boundary: LOCAL ONLY. No FM-1 access, flash, notes or saved-data changes.
 Device remains v021 with original projects verified restored and ports closed.
 
-Frozen private candidate: `build/rc-v022-20261019-r2/`, productFM-1_8022, packageSHA
+Frozen private candidate: `build/rc-v022-20261019-r2/`, productFM-1_8022, package SHA-256
 `b3e137b9d4e918d32f6933e0bc92139e96e6d347df1570a3cacce8834cc238ff`.
 Exact checked app and unchanged reviewed v021 loader reused; no new compile,
 SDK/toolchain download or broad test rerun.62frozen files/3,889source files,
@@ -167,7 +193,7 @@ separate owner authorization. No additional button press is needed now.
   preservation. Source/test and local package review APPROVE (package-approval.json).
   That v021 diagnostic is now installed; originals are restored and no device
   action is pending. Current startup changes are a separate uninstalled successor.
-  Do not repeat the84 matrix or existing v020 persistence batch.
+  Do not repeat the 84 matrix or existing v020 persistence batch.
   Read [rc-remaining-qualification.md](rc-remaining-qualification.md) for remaining
   upgrade, timing/stack and independent reproduction gates.
 - Read `build/snapshot-timeout-local-20261018/handoff.json` and its check receipts.
@@ -175,7 +201,7 @@ separate owner authorization. No additional button press is needed now.
   separates cleanup errors, and reports host closure independently from acquisition.
   It adds no retry and changes no firmware. The physical missing-reply cause is
   unresolved; no speculative timeout/firmware changes are justified.
-- Reuse the84 engine/effects cases and source-bound transfer/client evidence.
+- Reuse the 84 engine/effects cases and source-bound transfer/client evidence.
   Do not rerun full suites, upstream baseline, completed restore, or package build
   without changed inputs or an uncovered gate.
 - Local source/package review and scope records are complete for this artifact.
