@@ -519,6 +519,14 @@ if [ -f build/gen/felucca_tables.h ]; then
     run "persistence: deferred settings, retry and failed-save rollback" "$OUT/persistence_test"
     $CC -w -Ibuild/gen -Ifirmware/src -o "$OUT/backup_test" tests/backup_test.c -lm
     run "full backup: CRC before writes, stale runtime, USB reset / timeout, malformed objects, older projects" "$OUT/backup_test"
+    $CC -w -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 -Ibuild/gen -Ifirmware/src \
+        tests/native_ancillary_upgrade_test.c tests/ldr_ancillary_bridge.c \
+        firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c \
+        -lm -o "$OUT/native_ancillary_upgrade_test"
+    run "update: valid current settings/presets/FM6/samples reopen" "$OUT/native_ancillary_upgrade_test" "$OUT/old.fwsc" build/felucca.fwsc
+    for region in 0 1 2 3 4 5 6; do
+        run "current record reopening: invalidation control $region" "$OUT/native_ancillary_upgrade_test" "$OUT/old.fwsc" build/felucca.fwsc --invalidate "$region"
+    done
     # BEGIN complete project/backup historical/native matrix (normal)
     for fm4 in 0 1; do
         for slice in 0 1; do
@@ -701,6 +709,19 @@ else
     for t in editor_test project_test backup_test; do
         $SCC -o "$A/$t" tests/$t.c -lm
         run "ASan/UBSan: $t" "$A/$t"
+    done
+    # Loader and native codec/pool keep strict sanitizers. Only the app fixture
+    # inherits the existing DSP arithmetic exclusions from SCC.
+    for unit in tests/ldr_ancillary_bridge.c firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c; do
+        object="$A/ancillary_$(basename "$unit" .c).o"
+        ${CC%% *} -std=c11 -O1 -g -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all -c "$unit" -o "$object"
+    done
+    $SCC -DNPART=8 -DFELUCCA_FM4=0 -DFELUCCA_SLICE=1 tests/native_ancillary_upgrade_test.c \
+        "$A/ancillary_ldr_ancillary_bridge.o" "$A/ancillary_d8p1.o" \
+        "$A/ancillary_d8pool.o" "$A/ancillary_d8pool_mapped.o" -lm -o "$A/native_ancillary_upgrade_test"
+    run "ASan/UBSan: valid current ancillary formats reopen after update" "$A/native_ancillary_upgrade_test" "$OUT/old.fwsc" build/felucca.fwsc
+    for region in 0 1 2 3 4 5 6; do
+        run "ASan/UBSan: current record invalidation control $region" "$A/native_ancillary_upgrade_test" "$OUT/old.fwsc" build/felucca.fwsc --invalidate "$region"
     done
     for fm4 in 0 1; do
         for slice in 0 1; do

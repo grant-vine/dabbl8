@@ -3,8 +3,10 @@
 /* The editor's full backup (editor_backup.c: LIST / GET / PUT) against simulated NOR flash:
  * CRC before any write, stale runtime copies, USB resets and timeouts, malformed objects, older
  * project formats, settings values and user preset banks kept byte for byte. */
+#ifndef SMP_USER_XIP
 static unsigned char host_samples[3][0x14000];
 #define SMP_USER_XIP(k) host_samples[k]
+#endif
 #define main hostsim_main
 #include "hostsim.c"
 #undef main
@@ -592,6 +594,7 @@ static int native_backup_eight(void) {
     printf("backup internal native test %s\n",bad?"FAILED":"passed");return bad!=0;
 }
 #endif
+#ifndef D8_BACKUP_TEST_NO_MAIN
 int main(void) {
 #if NPART == 8
     return native_backup_eight();
@@ -599,3 +602,4 @@ int main(void) {
     return legacy_backup_four();
 #endif
 }
+#endif

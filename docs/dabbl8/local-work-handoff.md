@@ -44,6 +44,14 @@ app/update-record sectors. It does not prove valid ancillary format reopening or
 physical interrupted-write recovery. Its addendum is private
 `build/rc-roadmap-audit-20261019/`; no candidate or loader bytes changed.
 
+A subsequent [current-format reopening fixture](ancillary-upgrade-qualification.md)
+closes that specific local reader gap: two positive modes and 14 deliberate
+invalidation controls pass for current settings, 32 FM6 presets/patches and three
+simple sample slots, with actual loader/readers and poisoned caches. Commands
+and 100 source/header pins are in `build/rc-ancillary-reopen-20261019/`. Ancillary
+writer atomicity, physical cold boot and power-loss qualification remain open;
+do not repeat this fixture or rebuild the unchanged diagnostic to reconfirm it.
+
 ## Next actions and gates
 
 Only prepare a new owner session after fresh availability, authorization and
