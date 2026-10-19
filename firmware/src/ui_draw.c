@@ -358,30 +358,44 @@ static void lcd_rule(uint32_t x, uint32_t y, uint32_t w, uint32_t h)
     lcd_fill(x, y, w, h, T_RULE);
     GFX_HOOK_RULE(x, y, w, h);
 }
-static void draw_rules(uint32_t y, uint32_t h)
+/* The gaps are filled around the rules, never over them (#181: a rule filled BG, then drawn again, flashed on every
+ * redraw). Rows y0 .. y1 - 1 across the screen; LINE: the rule on its middle row */
+static void gap_rows(uint32_t y0, uint32_t y1)
+{
+    uint32_t r = (y0 + y1) / 2u;
+    if (!ux.style) {
+        lcd_fill(0, y0, 240, y1 - y0, T_BG);
+        return;
+    }
+    lcd_fill(0, y0, 240, r - y0, T_BG);
+    lcd_fill(0, r, RULE_X0, 1, T_BG);
+    lcd_rule(RULE_X0, r, RULE_W, 1);
+    lcd_fill(RULE_X0 + RULE_W, r, 240u - RULE_X0 - RULE_W, 1, T_BG);
+    lcd_fill(0, r + 1u, 240, y1 - r - 1u, T_BG);
+}
+/* the BG beside the four columns (the cards; MIXER's strips) over rows y .. y + h - 1; LINE: the dividers */
+static void draw_gaps(uint32_t y, uint32_t h)
 {
     uint32_t i;
-    if (y == Y_LABEL) {                                 /* (LARGE: the geometry of the page, ui.c card_h) */
-        lcd_rule(RULE_X0, (H_HEAD + Y_LABEL) / 2, RULE_W, 1);
-        lcd_rule(RULE_X0, (Y_LABEL + card_h() + graph_y()) / 2, RULE_W, 1);
-        lcd_rule(RULE_X0, (graph_y() + graph_h() + Y_FOOT) / 2, RULE_W, 1);
+    lcd_fill(0, y, (uint32_t)CARD_X(0), h, T_BG);
+    for (i = 0; i < 4u; i++) {                          /* right of each column */
+        uint32_t x = (uint32_t)(CARD_X(i) + CARD_W), w = i < 3u ? (uint32_t)CARD_X(i + 1u) - x : 240u - x;
+        if (ux.style && i < 3u) {
+            lcd_rule(x, y, 1, h);
+            lcd_fill(x + 1u, y, w - 1u, h, T_BG);
+        } else {
+            lcd_fill(x, y, w, h, T_BG);
+        }
     }
-    for (i = 0; i < 3u; i++)
-        lcd_rule((uint32_t)(CARD_X(i) + CARD_W), y, 1, h);
 }
 /* full redraw: the strips (header, cards, panel, footer) cover the rest; only the BG between them is filled */
 static void draw_frame(void)
 {
-    uint32_t i, ch = card_h(), gy = graph_y(), gh = graph_h();   /* (MENU > LARGE: tall cards, a strip) */
-    lcd_fill(0, H_HEAD, 240, Y_LABEL - H_HEAD, T_BG);
-    lcd_fill(0, Y_LABEL + ch, 240, gy - Y_LABEL - ch, T_BG);
-    lcd_fill(0, gy + gh, 240, Y_FOOT - gy - gh, T_BG);
-    lcd_fill(0, Y_LABEL, (uint32_t)CARD_X(0), ch, T_BG);
-    for (i = 0; i < 4u; i++)                            /* right of each card */
-        lcd_fill((uint32_t)(CARD_X(i) + CARD_W), Y_LABEL, i < 3u ? (uint32_t)(CARD_X(i + 1u) - CARD_X(i) - CARD_W) :
-                 240u - (uint32_t)(CARD_X(i) + CARD_W), ch, T_BG);
-    if (ux.style)                                       /* LINE: the dividers in the gaps */
-        draw_rules(Y_LABEL, ch);
+    uint32_t ch = card_h(), gy = graph_y(), gh = graph_h();   /* (MENU > LARGE: tall cards, a strip) */
+    gap_rows(H_HEAD, Y_LABEL);
+    gap_rows(Y_LABEL + ch, gy);
+    gap_rows(gy + gh, Y_FOOT);
+    draw_gaps(Y_LABEL, ch);
 }
 
 /* MOTION on the cards (#63: values that move on their own): the selected track's motion-driven parameters
@@ -395,6 +409,7 @@ static void card_mot_of(const int16_t *vp)
     card_mot_next = (uint8_t)(id < P_COUNT && ((card_mot_mask[id / 32u] >> (id % 32u)) & 1u));
 }
 
+#include "ui_value_size.h"
 /* MENU > LARGE, a tall card (ui.c LK_TALL; 57 x LG_CARD_H): which knob it is (a "K1" pill in M, the keycap's colours,
  * the accent while it turns, DIM when the knob does nothing here) and the icon at the right of it; the label in M
  * centred (S when M is too wide); the value centred in L, its figures twice the height of M (M, then S, when L is too
@@ -418,7 +433,7 @@ static uint8_t card_native_name;
 #define card_value_text cv_text_fit
 #endif
 static void draw_column_tall(uint32_t c, const char *label, const char *val, const char *unit, uint16_t vc, int32_t ratio,
-                             uint32_t icon, int hot, int mot, int32_t kid)
+                             uint32_t icon, int hot, int mot, int32_t kid, const card_span_t *sp)
 {
     uint16_t lc = hot ? T_ACCENT : mot ? T_THEME : T_MID;
     const aafont_t *lf = &AF_M, *vf = &AF_L;
@@ -464,11 +479,10 @@ static void draw_column_tall(uint32_t c, const char *label, const char *val, con
         cv_keycap(HALF_UP(COL_W - kc_w((uint32_t)kid)), LG_VB + HALF_UP(AF_L_CAP_H - KC_H), (uint32_t)kid,
                   vc == T_ACCENT || vc == T_DIM ? vc : T_KEY, T_INK, T_SURF);
     } else if (val[0]) {
-        int why = !large_face_has(val) ? 1 : ink_w(vf, val) > COL_W - 6 ? 2 : 0;
-        if (why)
-            vf = &AF_M;
-        if (vf == &AF_M && ink_w(vf, val) > COL_W - 6)
-            vf = &AF_S, why = 3;
+        uint32_t f = tall_face(val), fs = sp->fn ? span_face(c, sp, label) : 0u;
+        if (fs > f) f = fs;
+        vf = f == 0u ? &AF_L : f == 1u ? &AF_M : &AF_S;
+        int why = f == 2u ? 3 : f == 1u ? (!large_face_has(val) ? 1 : 2) : 0;
         LARGE_HOOK(val, why);
         vy = vf == &AF_L ? LG_VB - AF_L_CAP_Y : vf == &AF_M ? LG_VB + HALF_UP(AF_L_CAP_H - AF_M_CAP_H) - AF_M_CAP_Y
                                                           : LG_VB + HALF_UP(AF_L_CAP_H - AF_S_CAP_H) - AF_S_CAP_Y;
@@ -504,6 +518,8 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
 {
     char key[48];
     int hot = c == ui.hot_col && ui.hot_t, named = fmt_named, mot = card_mot_next && label[0], strip, snap;
+    card_span_t sp = card_span;
+    card_span.fn = 0;
     uint32_t kind = large_kind();                       /* MENU > LARGE: tall (draw_column_tall), or the label in M */
     uint8_t sig;
     uint16_t lc = hot ? T_ACCENT : T_MID;
@@ -562,7 +578,7 @@ static void draw_column(uint32_t c, const char *label, const char *val, const ch
             ui.roll[c].from[0] = 0;
         str_cpy(ui.col[c], key, sizeof ui.col[c]);
         if (kind == LK_TALL) {
-            draw_column_tall(c, label, val, unit, vc, ratio, icon, hot, mot, kid);
+            draw_column_tall(c, label, val, unit, vc, ratio, icon, hot, mot, kid, &sp);
             return;
         }
         CV_DRAW_BEGIN(COL_W, COL_H, T_BG);
@@ -800,6 +816,7 @@ static void draw_columns(void)
             int16_t *vp;
             const param_desc_t *d = home_param(c, &vp);
             param_format(d, *vp, val, &unit);
+            card_span_of(d);
             card_mot_of(vp);
             draw_column(c, d->label, val, unit, VAL(c), RATIO(d, enum_rank(d, *vp)), param_icon(d, *vp));
         }
@@ -885,6 +902,7 @@ static void draw_columns(void)
         draw_column(2, "PARAM", nm, "", VAL(2u), -1, ICON_AUTO);
         d = track_desc(t, id);
         param_format(d, v, val, &unit);
+        card_span_of(d);
         draw_column(3, r == n ? "VALUE" : (motion.event[idx[r]].param & MOTION_LOCK) ? "LOCK" : "AUTO", val, unit,
                     r < n ? VAL(3u) : T_DIM, RATIO(d, enum_rank(d, v)), param_icon(d, v));
         return;
@@ -908,12 +926,15 @@ static void draw_columns(void)
         const track_t *t = TSEL;
         uint32_t lvl = trk_level(song.sel);
         param_format(&TP[P_LEVEL], (int32_t)lvl, val, &unit);   /* (0: OFF) */
+        card_span_of(&TP[P_LEVEL]);
         card_mot_of(&TSEL->p[P_LEVEL]);
         draw_column(0, "LEVEL", val, unit, lvl && !t->p[P_MUTE] ? VAL(0u) : T_DIM, (int32_t)lvl * 1000 / 127, ICON_AUTO);
         param_format(&TP[P_PAN], t->p[P_PAN], val, &unit);
+        card_span_of(&TP[P_PAN]);
         card_mot_of(&TSEL->p[P_PAN]);
         draw_column(1, "PAN", val, unit, VAL(1u), RATIO(&TP[P_PAN], t->p[P_PAN]), param_icon(&TP[P_PAN], t->p[P_PAN]));
         param_format(&TP[P_REV], t->p[P_REV], val, &unit);
+        card_span_of(&TP[P_REV]);
         card_mot_of(&TSEL->p[P_REV]);
         draw_column(2, "REV", val, unit, VAL(2u), RATIO(&TP[P_REV], t->p[P_REV]), ICON_AUTO);
         draw_column(3, "MUTE", t->p[P_MUTE] ? "ON" : "OFF", "", t->p[P_MUTE] ? T_ACCENT : VAL(3u), -1, ICON_AUTO);
@@ -977,9 +998,12 @@ static void draw_columns(void)
         int32_t s = t->p[id], d = t->p[id + 1u], a = t->p[id + 2u];
         fmt_int(val, (int32_t)mod_ui_slot + 1);
         draw_column(0, "SLOT", val, "/4", VAL(0u), (int32_t)mod_ui_slot * 1000 / 3, mod_src_icon(MS_OFF));   /* (the mod icon) */
+        card_span_by(span_names, N_MSRC, 0, MS_N - 1, 0);
         draw_column(1, "SRC", N_MSRC[clamp(s, 0, MS_N - 1)], "", s ? VAL(1u) : T_DIM, -1, mod_src_icon(s));
+        card_span_by(span_mod_dst, t, 0, MD_N - 1, 0);
         draw_column(2, "DST", mod_dst_name(t, d), "", d ? VAL(2u) : T_DIM, -1, mod_dst_icon(t, d));
         param_format(&TP[id + 2u], a, val, &unit);
+        card_span_of(&TP[id + 2u]);
         draw_column(3, "AMT", val, unit, a ? VAL(3u) : T_DIM, RATIO(&TP[id + 2u], a), mod_src_icon(MS_OFF));
         return;
     }
@@ -1002,6 +1026,7 @@ static void draw_columns(void)
             if (!on)
                 v = motion_base_value(TSEL, id);      /* not locked: the sound's own, DIM */
             param_format(d, v, val, &unit);
+            card_span_of(d);
             draw_column(c, d->label, val, unit, on ? VAL(c) : T_DIM, RATIO(d, enum_rank(d, v)), param_icon(d, v));
         }
         return;
@@ -1077,6 +1102,7 @@ static void draw_columns(void)
             unit = "%";
         } else {
             param_format(d, *vp, val, &unit);
+            card_span_of(d);
         }
         card_mot_of(vp);                                /* (a global: never) */
         draw_column(c, d->label, val, unit, VAL(c), d->fmt == F_ENUM && d->max < 2 ? -1 : RATIO(d, enum_rank(d, *vp)),
