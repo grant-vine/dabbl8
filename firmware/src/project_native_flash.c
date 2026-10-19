@@ -66,27 +66,57 @@ static int pnr_arrangement(void *c)
     if(!rc)rc=d8arr_prepare_pool(&m.pool);
     d8pool_mapped_close(&m);return rc;
 }
+/* Retained only for this boot: classification/adoption return and admission
+ * inputs distinguish an intentional policy refusal from storage or activity.
+ * Guards are entry/completion snapshots; they grant no authority or retry. */
+static struct {
+    int32_t result;
+    uint32_t guards, policy, ms;
+} pnr_boot
+#if defined(FM1_IRQ_TARGET)
+    __attribute__((section(".bss.dabbl8_boot")))
+#endif
+    ;
+static uint32_t pnr_boot_guards(void)
+{
+    uint32_t g=(!flash_ok?1u:0u)|(cv_cpu_active?8u:0u)|
+        (migration_owner?16u:0u)|(transport_busy()?32u:0u)|
+        (transport_req?64u:0u)|(mi_r!=mi_w?128u:0u)|
+        (midi_in_overflow?256u:0u)|(usb.ota_req?512u:0u)|
+        (usb.uboot_req?1024u:0u)|(fm1_in.notes?2048u:0u)|
+        (fm1_in.buttons?4096u:0u);
+    for(unsigned t=0;t<NTRK;t++)for(unsigned v=0;v<NVOICE;v++)
+        if(trk[t].v[v].active)g|=8192u;
+    return g;
+}
+static int pnr_boot_done(int result)
+{
+    pnr_boot.result=result;pnr_boot.guards|=pnr_boot_guards();
+    pnr_boot.ms=fm1_ms;return result;
+}
 int project_native_boot_readonly(int allowed)
 {
-    if(!flash_ok)return 0;
+    pnr_boot.guards=pnr_boot_guards();
+    pnr_boot.policy=(allowed?1u:0u)|((ui_prefs&PREF_RESTORE_OFF)?2u:0u);
+    if(!flash_ok)return pnr_boot_done(0);
     /* Classification precedes quiet/workspace checks. Unknown, partial and
      * foreign allocations latch offline ownership, never historical fallback.
      * Fully erased or verified historical records alone retain that route. */
     unsigned historical=1;
     for(unsigned b=0;b<5;b++)if(!st_boot_legacy_pair(b))historical=0;
-    if(historical)return 0;
+    if(historical)return pnr_boot_done(0);
     project_native.mode=2;project_native.ready=0;project_native.readonly=1;
     project_native_ops ops={NULL,pnr_catalog,NULL,pnr_load,NULL,pnr_arrangement};
     int rc=project_native_bind_readonly(&ops);
-    if(rc)return -rc;
+    if(rc)return pnr_boot_done(-rc);
     int preset_error=0;
 #if D8_PRESET_SESSION
     preset_error=d8up_recover_banks(); /* no raw incoherent FM6 fallback */
 #endif
-    if(!allowed||(ui_prefs&PREF_RESTORE_OFF))return -D8POOL_EMPTY;
+    if(!allowed||(ui_prefs&PREF_RESTORE_OFF))return pnr_boot_done(-D8POOL_EMPTY);
     rc=pnr_load(NULL,3);
-    if(!rc){ui_message(preset_error?"PRESET RECOVERY":"RESTORED");return 1;}
-    return -rc;
+    if(!rc){ui_message(preset_error?"PRESET RECOVERY":"RESTORED");return pnr_boot_done(1);}
+    return pnr_boot_done(-rc);
 }
 
 #endif /* native read-only boot route */

@@ -4,8 +4,9 @@
  * The application owns the buffer: two halves
  * of half_words int32 (L, R, 24-bit left-justified), zeroed before init.
  *
- *   fm1_audio_init(buf, half_words, isr, prio)  codec and ALNK0 bring-up;
+ *   fm1_audio_init(buf, half_words, isr, prio)  codec and ALNK0 setup, DMA off;
  *                         isr = asm wrapper (fm1_isr.S) for FM1_IRQ_ALNK0
+ *   fm1_audio_start()     after global IRQs are enabled: begin DMA
  *   in the ISR:   p = fm1_audio_pending();  fm1_audio_ack_aux(p);
  *                 if (p & FM1_AUDIO_HALF) { fill fm1_audio_free_half();
  *                                           fm1_audio_ack_half(); }
@@ -69,7 +70,6 @@ FM1_INLINE void fm1_audio_init(int32_t *buf, uint32_t half_words, void (*isr)(vo
     FM1_ALNK_CON1 &= ~(1u << 15);
     FM1_ALNK_CON2 = 0x0Fu;
     fm1_irq_attach(FM1_IRQ_ALNK0, isr, prio);
-    FM1_ALNK_CON0 |= 0x800u;
     fm1_delay_ms(5);
     fm1__pc_out(6, 1);
 }
@@ -86,4 +86,5 @@ FM1_INLINE void fm1_audio_ack_aux(uint8_t p)   /* the other three pendings */
 }
 FM1_INLINE uint32_t fm1_audio_free_half(void) { return ((FM1_ALNK_CON0 >> 15) & 1u) ^ 1u; }   /* 0 / 1 */
 FM1_INLINE void fm1_audio_ack_half(void) { FM1_ALNK_CON2 |= 0x08u; }
+FM1_INLINE void fm1_audio_start(void) { FM1_ALNK_CON0 |= 0x800u; }
 FM1_INLINE void fm1_audio_stop(void) { FM1_ALNK_CON0 &= ~0x800u; }

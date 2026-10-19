@@ -38,6 +38,9 @@ static void hash_word(uint32_t value)
 int main(void)
 {
  unsigned pending=0,nested_total=0,expected_ms=0,elapsed=0,previous=0;
+#if FELUCCA_UART
+ boot_midi_ready=1; /* Existing running-state oracle starts after boot adoption. */
+#endif
  uint32_t time=0,nested_ticks=0;
  for(unsigned i=0;i<20000;i++){
   /* Rotate every phase through nested/non-nested runs, including deferred USB
@@ -79,6 +82,23 @@ int main(void)
   check(felucca_dbg.nested==nested_total);check(t5_nested_ticks==nested_ticks);
   hash_word(fm1_ms);hash_word(t5_nested_ticks);hash_word(felucca_dbg.nested);
  }
+#if FELUCCA_UART
+ /* Actual handler must defer external UART input until boot adoption ends. */
+ unsigned before_uart=0,after_uart=0;
+ felucca_dbg.in_audio=0;
+ boot_midi_ready=0;
+ for(unsigned i=0;i<10;i++){
+  clock_now+=2400u;event_count=0;fm1_timer5_irq();
+  for(unsigned j=0;j<event_count;j++)before_uart+=events[j]==6;
+ }
+ boot_midi_ready=1;
+ for(unsigned i=0;i<10;i++){
+  clock_now+=2400u;event_count=0;fm1_timer5_irq();
+  for(unsigned j=0;j<event_count;j++)after_uart+=events[j]==6;
+ }
+ check(before_uart==0);check(after_uart==2);
+ printf("TIMER5 boot MIDI gate: before=%u after=%u (expected 0,2)\n",before_uart,after_uart);
+#endif
  printf("TIMER5 cadence UART=%u UAC=%u SIE=%u: %u checks %u failures trace=%016llx\n",
   FELUCCA_UART,FELUCCA_UAC,FELUCCA_SIE_IRQ_BUDGET,checks,failures,(unsigned long long)trace);
  return failures?1:0;

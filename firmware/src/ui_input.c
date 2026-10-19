@@ -727,7 +727,7 @@ static void edit_param_mask(uint32_t slot, int32_t steps, unsigned mask)
         } else if (slot == 3u && favorites.filter != (uint32_t)(steps > 0)) {
             favorites.filter = steps > 0;
             ui.force = 1;
-            settings_save();
+            settings_later();
         }
         return;
     }
@@ -1103,6 +1103,7 @@ static void ui_input(void)
     rp_apply();                                         /* (MENU > CLICK, CLICK LEVEL, COUNT-IN: click.c, seq.c) */
     if (!ui.menu)
         usb_serial_apply();                             /* (MENU > USB SERIAL: when the menu has closed) */
+    settings_later_poll();
     if (scr_input(pressed, notes))                      /* MENU > SCREEN OFF: dark, or the wake gesture: swallowed */
         return;                                         /* (before the buttons' timers: no tap or hold after it) */
     home = btn_hold(&ui.home_t0, B_HOME, now, 1);

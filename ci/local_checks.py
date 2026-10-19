@@ -14,12 +14,18 @@ import sys
 import tempfile
 from local_flash_checks import flash_recipes, save_consent_recipes
 from local_resource_checks import RESOURCE_MAP, resource_recipes
+from local_clock_checks import CLOCK_MAP, clock_recipes
 
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
-    'midi-workload': {'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'},
+    'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
+        'tools/dabbl8_readonly_snapshot.py', 'tests/readonly_snapshot_test.py',
+        'tools/dabbl8_instrument_capture.py', 'tests/instrument_capture_collector_test.py',
+        'tests/readonly_midi_adapter_test.py',
+        'tests/native_midi_guard_test.py', 'tests/native_midi_qualification_guard_test.py',
+        'tests/raw_coremidi_inventory_test.py'},
     'midi-eight': {'tests/native_track_recording_query_test.c',
         'tests/native_midi_eight_track_workload_test.c', 'tests/native_midi_project_fixture.h',
         'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py',
@@ -28,12 +34,9 @@ MAP = {
     'engine-fx': {'tests/engine_fx_matrix_test.c'},
     'performance-buses': {'tests/eight_track_performance_test.c'},
     'performance-fx': {'tests/perform_test.c'},
+    'midi-workload': {'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'},
     'voice-allocation': {'firmware/src/voice.c', 'tests/demo_voice_allocation_test.c',
         'tests/voice_budget_test.c', 'tests/native_overload_test.c'},
-    'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
-        'tools/dabbl8_readonly_snapshot.py', 'tests/readonly_snapshot_test.py',
-        'tests/native_midi_guard_test.py', 'tests/native_midi_qualification_guard_test.py',
-        'tests/raw_coremidi_inventory_test.py'},
     'storage': {'firmware/src/storage.c', 'tests/storage_test.c', 'tests/native_storage_gate_test.c'},
     'legacy-ui': {'tests/ui_test.c', 'tests/ui_legacy_v6_bounds_test.c'},
     'readonly-boot': {'firmware/src/project.c', 'firmware/src/project_native_flash.c',
@@ -69,8 +72,15 @@ MAP = {
         'tests/instrument_capture_test.c', 'tests/ui_test.c', 'tests/d8p1_flash_runtime_test.c'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'ci/local_flash_checks.py', 'tests/run_tests.sh'},
 }
+MAP['startup-order'] = {
+    'firmware/hal/fm1_audio.h', 'firmware/src/audio.c', 'firmware/src/main.c',
+    'tests/audio_startup_order_test.py', 'tests/native_boot_startup_order_test.py',
+    'tests/timer5_cadence_test.c',
+}
 MAP.update(RESOURCE_MAP)
 MAP['runner'].add('ci/local_resource_checks.py')
+MAP.update(CLOCK_MAP)
+MAP['runner'].add('ci/local_clock_checks.py')
 
 
 def select(paths):
@@ -111,10 +121,43 @@ def recipes(checks, cc, out, base):
     steps = [{'name': 'diff', 'argv': ['git', 'diff', '--check', base, '--']}]
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
     for name in sorted(checks - {'diff'}):
+        if name in CLOCK_MAP:
+            steps += clock_recipes(cc, out)
+            continue
         if name in RESOURCE_MAP:
             if name == 'resource-console' and 'resource-capture' in checks:
                 continue  # The capture recipe already runs the same console fixtures.
             steps += resource_recipes(name, cc, out)
+            continue
+        if name == 'startup-order':
+            steps += [
+                {'name': 'startup-audio-order',
+                 'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/audio_startup_order_test.py', '--out', str(out / 'startup-audio')],
+                 'requires': ['tests/audio_startup_order_test.py', 'firmware/hal/fm1_audio.h',
+                              'firmware/src/audio.c', 'firmware/src/main.c', 'firmware/src/usb.c']},
+                {'name': 'startup-native-reopen',
+                 'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/native_boot_startup_order_test.py',
+                          'firmware/src/main.c', str(out / 'startup-native')],
+                 'requires': ['tests/native_boot_startup_order_test.py', 'tests/native_readonly_boot_test.c',
+                              'firmware/src/main.c', 'firmware/src/project_native_flash.c',
+                              *pool, *['build/gen/' + path for path in GEN]]},
+            ]
+            for uart in (0, 1):
+                for uac in (0, 1):
+                    for sie in (0, 1):
+                        label = f'startup-timer-uart{uart}-uac{uac}-sie{sie}'
+                        binary = str(out / label)
+                        steps += [
+                            {'name': label + '-compile',
+                             'argv': cc + ['-std=c11', '-Wall', '-Wextra', '-Werror',
+                                 '-Wno-unused-function', '-O1', '-g',
+                                 '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                                 f'-DFELUCCA_UART={uart}', f'-DFELUCCA_UAC={uac}',
+                                 f'-DFELUCCA_SIE_IRQ_BUDGET={sie}',
+                                 'tests/timer5_cadence_test.c', '-o', binary],
+                             'requires': ['tests/timer5_cadence_test.c', 'firmware/src/main.c']},
+                            {'name': label, 'argv': [binary]},
+                        ]
             continue
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
@@ -131,15 +174,17 @@ def recipes(checks, cc, out, base):
                     'tests/instrument_capture_test.c', '-lm', '-o', fixture],
                 'requires': native_inputs + ['build/gen/' + name for name in GEN]})
             for script in ('native_midi_guard_test', 'native_midi_qualification_guard_test',
-                           'raw_coremidi_inventory_test', 'readonly_snapshot_test'):
-                extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test') else []
+                           'raw_coremidi_inventory_test', 'readonly_snapshot_test',
+                           'readonly_midi_adapter_test', 'instrument_capture_collector_test'):
+                extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test',
+                    'readonly_midi_adapter_test', 'instrument_capture_collector_test') else []
                 steps.append({'name': script, 'argv': [sys.executable, 'tests/' + script + '.py'] + extra,
                     'requires': sorted(MAP['midi-native']) + ['tools/dabbl8_instrument_capture.py']})
             continue
         if name == 'midi-workload':
             steps.append({'name': 'midi-workload-offline',
                 'argv': [sys.executable, 'tests/dabbl8_midi_workload_test.py'],
-                'requires': sorted(MAP[name])})
+                'requires': ['tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py']})
             continue
         if name in ('midi-eight', 'midi-drum'):
             flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',

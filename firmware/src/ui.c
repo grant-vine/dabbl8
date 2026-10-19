@@ -97,7 +97,7 @@ static void rp_put(uint32_t f, uint32_t v)
  * 0 in older ones = FLAT; 2, the retired PIXEL (1.0.1), reads as LINE; anything else unknown as FLAT (settings_persist.c). gfx.c draws from its copy, ux.style
  * (ui_draw.c style_apply) */
 #define ui_style (favorites.factory[15][29])
-static void draw_rules(uint32_t y, uint32_t h);       /* (ui_draw.c) */
+static void draw_gaps(uint32_t y, uint32_t h);       /* (ui_draw.c) */
 
 static uint8_t sync_reload;                  /* engine / preset / project / user preset loaded: editor RELOAD push */
 
@@ -1272,12 +1272,34 @@ static int preset_favorite(void)
     return favorite_has(k < UP_SLOTS ? NENGINES : TSEL->eng_req,
                                         k < UP_SLOTS ? k : TSEL->preset);
 }
+/* #197: a settings change made by a knob (PRESETS > LIST, the FAV mark on PRESETS and in the EDIT layer) is written
+ * later, as MENU's are when it closes: a write erases a flash sector with the interrupts off (~40 ms), which stops the
+ * LED scan (every LED but one column's goes dark: a flash of the whole panel) and the audio. Written once the view it
+ * was made in is left (another page, HOME, a layer opened or let go, the MENU) or after SET_LATER_MS without panel
+ * input (ui.c scrn.idle; the autosave's wait), never on every detent; settings_poll still waits for the transport */
+#define SET_LATER_MS 10000u
+static struct { uint8_t on, page, home, layer; } set_later __attribute__((section(".pool")));   /* (.bss as before) */
+static void settings_later(void)
+{
+    set_later.on = 1;
+    set_later.page = ui.page;
+    set_later.home = ui.home;
+    set_later.layer = ui.layer;
+}
+static void settings_later_poll(void)                  /* ui_input, every pass */
+{
+    if (set_later.on && (set_later.page != ui.page || set_later.home != ui.home || set_later.layer != ui.layer ||
+                         ui.menu || fm1_ms - scrn.idle >= SET_LATER_MS)) {
+        set_later.on = 0;
+        settings_save();
+    }
+}
 static void preset_mark(int on)
 {
     uint32_t k = user_of(TSEL);
     if (favorite_set(k < UP_SLOTS ? NENGINES : TSEL->eng_req, k < UP_SLOTS ? k : TSEL->preset, on)) {
         ui.force = 1;
-        settings_save();
+        settings_later();
     }
 }
 

@@ -18,7 +18,7 @@ int main(int argc,char **argv){if(argc!=2)return 2;
   if(sc==1)go_page(GR_TRK);if(sc==2)go_page(GR_ROLL);
   ui.force=1;ui_draw();lcd_sync();CHECK(!dma.p&&!dma_errors&&!cv_cpu_active);
   if(p==UI_GREY_INDEX||p==UI_BW_INDEX)for(unsigned t=0;t<8;t++)CHECK(track_ink(t)==T_THEME);
-  if(!large&&sel==4&&(p==10||p==11))if(ppm(argv[1],p,sc))return 3;
+  if(sel==4&&(p==10||p==11))if(ppm(argv[1],p,sc+large*3u))return 3;
  }
  printf("colour UI: 576 frames, checks=%u failures=%u dma_errors=%u\n",checks,failures,dma_errors);return failures?1:0;
 }

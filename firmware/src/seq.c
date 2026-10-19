@@ -1110,6 +1110,10 @@ static void events_block(uint32_t n)
 {
 #if NTRK == 8 && D8_MIGRATION_SESSION
     if(d8mc_blocked()){
+#if D8_PROJECT_TRANSFER_SESSION
+        d8pt_observe_revoke((transport_req?1u:0u)|(mi_r!=mi_w?2u:0u)|
+                           (midi_in_overflow?4u:0u)|(fm1_in.notes?8u:0u));
+#endif
         if(transport_req||mi_r!=mi_w||midi_in_overflow||fm1_in.notes)d8mc_revoke();
         return; /* Preserve queued input and all music; no unsolicited STOP. */
     }

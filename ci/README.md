@@ -1,49 +1,60 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
-Execution receipts include SHA-256 `source_inputs` for tracked/nonignored
-working-tree files, required ignored inputs and generated headers, including
-uncommitted and transitive source changes. Changes observed between the two
-fingerprints fail the run even when all selected commands exit zero. Output
-under `build/` and `.local-baseline/` is excluded unless explicitly required.
-Compare relevant input hashes and recorded commands/configuration before reusing
-a result; unchanged Git HEAD alone is insufficient. This is an input receipt,
-not coverage of every hashed file, toolchain attestation or detection of an edit
-reverted between fingerprints. Older receipts do not gain source binding from
-this change. Missing fingerprinted inputs are recorded as `MISSING`; recipe
-prerequisite checks still refuse required missing inputs before execution.
+`--check clock-capture` checks the diagnostic-only `timing clock` command and
+headless clock-comparison helper. It runs the actual console slice in optimized
+and fatal ASan/UBSan modes, with the feature enabled/disabled, then pure host
+tests for exact framing/CRC, asymmetric USB delays, counter wrap, boot/config
+refusal, no-access planning and failure cleanup. It never opens a port or calls
+the capture CLI with `--capture`. The old frozen v023 package predates D8C1:
+planning reports that explicitly and actual capture refuses before opening it.
+These tests do not measure a physical clock or qualify ISR/stack deadlines.
 
-`midi-eight` checks all 256 recording masks through the actual editor and runs
-bounded eight-channel notes through the host renderer. `midi-drum` covers all
-eight drum lanes; `midi-workload` covers read-only preflight and uncertain-send
-cleanup with fake ports and a deterministic clock. These recipes open no MIDI
-ports and need no private demo or device snapshot: C fixtures capture their
-normal startup project in memory. Both renderer fixtures retain optional D8P1
-file input and contract output for explicit local investigations. A shared
-fixture change selects both renderers; shared scheduling changes select both
-Python schedules. These checks do not qualify physical timing or saved-data
-durability. Generated headers must already be available locally.
+`--check midi-eight` runs the actual command-27 recording-state query (all 256
+recording masks), actual eight-channel USB MIDI renderer on an in-memory factory
+fixture, and guarded schedule/refusal tests. The renderer proves peak eight
+voices/two heavy slots and unchanged project bytes after matched note cleanup;
+it does not qualify all eight heavy slots or physical timing. Pure workload
+checks separately refuse armed recording before notes and during playback.
+The private native adapter remains a distinct, default-plan-only tool; no device
+port is opened by this local recipe. The restored `midi-drum` scope exercises
+the actual drum-channel renderer with the same self-contained fixture. Neither
+requires a private demo file. Do not substitute these factory-state checks for
+the separately retained exact physical-workspace workload evidence.
 
-The `engine-fx` recipe runs 84 actual host-renderer scenarios: 13 enabled engines
-plus a mixed eight-track layout, each dry or with chorus, delay, ROOM, SPRING or
-combined effects. It checks audio/sends/wet output, shared ownership and release;
-it does not qualify device deadlines, all presets or every effect combination.
-`performance-buses` and `performance-fx` are separate bounded local recipes for
-the existing banked mixer and performance-effect fixtures. Use their selected
-checks to avoid repeating the engine matrix; host cost assertions are not
-physical FM-1 measurements. Existing cached inputs and sanitizer scopes apply.
+`--check engine-fx` compiles and runs the actual host renderer for 84 scenarios:
+13 enabled engines and one mixed eight-track layout, each with dry, chorus,
+delay, ROOM, SPRING and combined distortion/chorus/delay/ROOM. The fixture uses
+the first factory preset, short releases and four overlapping note bursts.
+Reverse SLICE uses the built-in BREAK. It checks sound, requested sends and wet
+output, eight shared voices, live pool ownership and note cleanup. Heavy layouts
+reach all eight pool slots. It does not qualify every preset, performance FX,
+effect-tail silence, target timing, stack headroom or audio quality. There is no
+device or storage adapter. Inspect the plan before adding `--run`; retain the
+source-bound result rather than rerunning an unchanged matrix.
 
-`--check voice-allocation` runs the generated eight-track demo, allocator budget
-cases and four/eight-track overload controls locally under the existing sanitizer
-recipe. It checks released-tail reclamation without changing allocation policy.
-It opens no MIDI ports, downloads nothing and builds no firmware package. See
-`docs/dabbl8/voice-allocation.md` for counter semantics and measurement limits.
+`--check performance-buses` runs the existing eight-track banked solo/mute
+panel and dry/stereo/send isolation fixture with the same sanitizer settings.
+It covers cold first activation, all solo masks and release. This is separate
+from `engine-fx`, so checking performance controls does not repeat the matrix.
+It does not run the upstream instruction-cost benchmark or qualify device timing.
 
-Native MIDI guard and read-only snapshot changes select `midi-native`. It runs
-one virtual-NOR fixture and offline guard, inventory, release and deadline tests.
-It opens no physical or software MIDI ports and downloads nothing. Native
-software-loopback qualification is a separate explicit operation; do not attach
-it to hosted CI or run it automatically from the selector.
+`--check performance-fx` runs the existing performance-effects fixture in its
+optimized eight-track configuration, including its unchanged instruction-cost
+assertions. It covers repeat/reverse, tape stop, freeze, filters, crush, throw,
+harmonizer and native key/buffer boundaries. No demo files or device access are
+requested. This recipe intentionally follows the existing unsanitized cost run;
+sanitizer overhead is not comparable to its cost limits. If the host instruction
+counter is unavailable, retain the fixture's explicit skip. Host counts and its
+inherited device-cost estimates do not qualify FM-1 timing.
+
+`--check midi-workload` runs only the pure offline MIDI schedule/protocol tests:
+identity/routing/track refusal before notes, bounded note-on/off scheduling,
+partial-send cleanup and health/cleanup failure controls. It imports no native
+MIDI library and never opens a serial or MIDI port. Actual-device capture remains
+a separately authorized operation; this check does not establish hardware timing.
+
+Voice-allocation investigation uses `python3 ci/local_checks.py --check voice-allocation --run`: the actual project loader, sequencer and DSP run the eight-track demo and two allocation controls, followed by allocator stress and four/eight-track overload fixtures. It uses ASan/UBSan with the existing DSP arithmetic exclusions. No MIDI, device, download or package-build operations are included. Detailed counter interpretation is in `docs/dabbl8/voice-allocation.md`.
 
 GitHub stores source; local checks are the default. Inspect a plan first:
 
@@ -90,6 +101,17 @@ are refused. Broad qualification remains an explicit, separate upstream
 `sh tests/run_tests.sh` invocation with its existing prerequisites; there is no
 full-suite fallback or `--full` flag in this small runner.
 
+New execution receipts include SHA-256 `source_inputs` for tracked/nonignored
+working-tree files, required ignored inputs and generated headers, including
+uncommitted and transitive source changes. Source changes observed between the
+two fingerprints fail the run even if commands exit zero. Generated output under
+`build/` and `.local-baseline/` is excluded unless explicitly required. Compare
+relevant input hashes and the recorded commands/configuration before reusing a
+result; unchanged Git HEAD alone is insufficient. This is an input receipt, not
+coverage of every hashed file, toolchain attestation or detection of a transient
+edit that is reverted between fingerprints. Older receipts are not retroactively
+source-bound by this change.
+
 Native sample replacement has a separate `--check sample-upload` recipe: the
 actual eight-track virtual-NOR handler with bounded ASan/UBSan (only inherited
 DSP signed-overflow/shift exclusions), plus actual browser helper fake-reply
@@ -135,3 +157,21 @@ the host collector and its scripted transport test. It runs the bounded fake
 transport suite, never `--capture`, serial enumeration, MIDI or firmware builds.
 Missing collector/parser/test inputs refuse before execution. Shared report-parser
 edits remain unmapped and require separately reviewed broader parser coverage.
+
+## Native MIDI guard and snapshot checks
+
+Changes to the native guard, read-only MIDI bridge or snapshot runner select
+`midi-native`. This builds one virtual-NOR fixture and runs injected guard,
+inventory and 17-role snapshot/release/deadline tests. It never imports native
+MIDI or opens a device. Actual Mac software-loopback qualification is a separate,
+explicit local operation; neither the affected selector nor hosted CI runs it.
+
+Startup ordering has a focused `--check startup-order` recipe. It executes the
+actual HAL/main startup against simulated MMIO/clock, native read-only autosave
+adoption against the actual C storage fixture, and all eight UART/UAC/SIE TIMER5
+configurations under ASan/UBSan. It requires cached generated inputs and uses the
+selected local compiler. The tests cover DMA start after IRQ enable, external
+MIDI admission after autosave adoption, and unchanged steady-state timer cadence.
+They do not attribute a retained hardware late counter, establish physical DMA
+behavior or qualify target deadlines. Reuse unchanged engine/effects evidence;
+this recipe does not rerun that matrix or access a device.

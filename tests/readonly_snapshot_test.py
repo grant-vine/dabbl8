@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
+from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from tools.dabbl8_instrument_capture import Bridge
@@ -83,3 +84,73 @@ with TemporaryDirectory() as temp:
     assert not target.exists()
 
 print('PASS snapshot: 17 actual C roles, zero NOR writes, bad release and deadline refused; no MIDI')
+
+# Simulate the observed missing second-scan reply through the real collector.
+# A cleanup error must not hide which request first failed or publish a snapshot.
+with TemporaryDirectory() as temp, Bridge(fixture) as actual:
+    sent = []
+    def lose_verification_reply(frame: bytes) -> bytes:
+        sent.append(frame[6])
+        if len(sent) == 3692:
+            raise TimeoutError('Capture reply timed out; reconnect required')
+        if frame[6] == 6:
+            raise OSError('closed link cannot acknowledge release')
+        return actual.exchange(frame)
+    try:
+        capture(lose_verification_reply, Path(temp) / 'lost-reply')
+    except SnapshotRefused as error:
+        assert 'Capture reply timed out; reconnect required' in str(error), str(error)
+        assert 'request 3692' in str(error) and 'operation 2' in str(error), str(error)
+    else:
+        raise AssertionError('missing verification reply accepted')
+    assert len(sent) == 3693 and sent[-1] == 6
+    assert not (Path(temp) / 'lost-reply/verified').exists()
+    report = json.loads((Path(temp) / 'lost-reply/report.json').read_text())
+    assert report['reason'] == 'Capture reply timed out; reconnect required'
+    assert report['failed_request']['sequence'] == 3692
+    assert report['failed_request']['operation'] == 2
+    assert report['failed_request']['scan_role'] == 11
+    assert report['failed_request']['scan_offset'] == 45312
+    assert report['failed_request']['scan_pass'] == 'verification'
+    assert report['failed_request']['finished_seconds'] >= report['failed_request']['started_seconds']
+    assert not report['release_acknowledged']
+    assert report['release_error'] == 'closed link cannot acknowledge release'
+    stats = json.loads(actual.line('#stats'))
+    assert stats['writes'] == 0 and stats['unchanged']
+
+
+# Failed acquisition and successful host cleanup are independent outcomes.
+class ClosedFakeLink:
+    def __init__(self) -> None:
+        self.closed = False
+        self.cleanup_succeeded = False
+        self.cleanup_error = None
+
+    def close(self) -> None:
+        self.closed = True
+        self.cleanup_succeeded = True
+
+    def exchange(self, frame: bytes) -> bytes:
+        raise AssertionError('mock capture must not send any request')
+
+with TemporaryDirectory() as temp:
+    target = Path(temp) / 'failed-capture'
+    fake = ClosedFakeLink()
+    with patch.object(sys, 'argv', ['snapshot', '--capture', str(target)]), \
+         patch.object(snapshot, 'require_native_qualification', return_value=None), \
+         patch.dict(sys.modules, {'mido': SimpleNamespace(Backend=lambda name: None, Message=None)}), \
+         patch.object(snapshot, 'StrictCoreMidiBackend', return_value=None), \
+         patch.object(snapshot, 'ReadOnlyMidi', return_value=fake), \
+         patch.object(snapshot, 'capture', side_effect=SnapshotRefused('specific timeout')):
+        try:
+            snapshot.main()
+        except SnapshotRefused as error:
+            assert 'specific timeout' in str(error)
+        else:
+            raise AssertionError('failed snapshot CLI accepted')
+    receipt = json.loads((target / 'receipt.json').read_text())
+    assert not receipt['accepted'] and receipt['native_ports_closed_successfully']
+    assert 'specific timeout' in receipt['failure']
+    assert receipt['notes_sent'] == 0 and not receipt['saved_data_writes']
+
+print('PASS timeout provenance: real-C second-scan missing reply, no accepted snapshot, separate cleanup evidence; no device access')

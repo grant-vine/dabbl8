@@ -35,6 +35,13 @@ static void pt_begin_read_hook(void)
 {
  if(pt_read_event==1){pt_read_event=0;usb.resets++;}
  else if(pt_read_event==2&&d8ls.phase==LS_EXECUTE&&pt_phase()==PT_EXPORT){pt_read_event=0;post_commit_io=2;}
+ else if(pt_read_event>=3&&!migration_owner&&d8ls.writing&&d8ls.operation==4&&pt_phase()==PT_APPROVED){
+  if(pt_read_event==6&&d8pt_diag.stage!=PTD_AUTOSAVE)return;
+  unsigned event=pt_read_event;pt_read_event=0;
+  if(event==3||event==6)post_commit_io=2;
+  else if(event==4)fm1_ms=d8ls.started+LS_DEADLINE_MS+1;
+  else {transport_req=1;events_block(CTL);transport_req=0;}
+ }
 }
 static unsigned pt_request(unsigned n){uint8_t f[600]={0x7d,0x46,0x4c,81};memcpy(f+4,message,n);ed_handle(f,n+4);so_r=so_w;CHECK(ed_out[4]==81&&ed_out[5]==1);return ed_out[7];}
 static unsigned export_start(void){memset(message,0,sizeof message);message[0]=1;message[1]=1;return pt_request(2);}
@@ -55,6 +62,34 @@ static void target_fresh(void){boot_seed();CHECK(autosave_boot(1)==1);int32_t au
 static void target_only_zero(void){target_fresh();d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx));for(unsigned o=1;o<4;o++)memset(nor+d8pool_mapped_address(idx.object[o].block),255,D8POOL_BLOCK);d8p1_autosave_session_end();}
 static void retained_reboot(void){cold();project_native_reset();native_as.ready=0;d8ls_reset();memset(&d8mc,0,sizeof d8mc);memset(&d8mc_edit,0,sizeof d8mc_edit);memset(&d8_capture_change,0,sizeof d8_capture_change);flash_ok=1;usb.config=0;usb.ota_req=usb.uboot_req=0;ui_prefs&=~PREF_RESTORE_OFF;int32_t audio[CTL*2];mix_block(audio,CTL);reset();unsigned before=physical_calls;(void)autosave_boot(1);CHECK(project_native_owns_storage()&&physical_calls==before);}
 static void verify_restored(unsigned present){d8pool_index idx;CHECK(!d8pool_inventory(&seed,&idx)&&idx.present==present);for(unsigned o=0;o<4;o++)if(present&(1u<<o)){d8pool_index src;CHECK(!d8pool_inventory(&source_store,&src));CHECK(idx.object[o].length==src.object[o].length&&idx.object[o].crc==src.object[o].crc);}size_t n=0;CHECK(!d8p1_capture_runtime(wire,sizeof wire,&n)&&n==archived_live_len&&!memcmp(wire,source_live,n));}
+static void pt_completion_cases(void)
+{
+ for(unsigned event=0;event<5;event++){
+  target_fresh();CHECK(import_start(15)==PT_OK);import_receive();approve_restore();
+  CHECK(!d8pt_diag.stage&&!d8pt_diag.raw_rc&&!d8pt_diag.guards&&!d8pt_diag.revoke);
+  pt_read_event=event?event+2:0;pt_token(7);unsigned rc=pt_request(7);
+  CHECK(!pt_read_event&&rc==(event?PT_IO:PT_OK));post_commit_io=0;
+  verify_restored(15);
+  CHECK(!migration_owner&&!d8ls.writing&&!d8ls.busy&&d8ls.phase==LS_IDLE);
+  if(event){
+   CHECK(project_native_status()==2&&!native_as.ready&&!d8ls.intent);
+   CHECK(d8pt_diag.stage==(event==4?PTD_AUTOSAVE:PTD_BIND)&&d8pt_diag.raw_rc);
+   if(event==2)CHECK(d8pt_diag.guards&2048u);
+   if(event==3)CHECK((d8pt_diag.guards&1u)&&(d8pt_diag.revoke&1u));
+   __typeof__(d8pt_diag) retained=d8pt_diag;
+   CHECK(export_start()==PT_OK);pt_token(8);CHECK(pt_request(7)==PT_OK);
+   CHECK(!memcmp(&retained,&d8pt_diag,sizeof retained));
+  }
+  else{
+   CHECK(d8pt_diag.stage==PTD_DONE&&!d8pt_diag.raw_rc&&!d8pt_diag.guards&&!d8pt_diag.revoke);
+   CHECK(project_native_status()==1&&native_as.ready);pt_token(8);CHECK(pt_request(7)==PT_OK);
+   unsigned before=physical_calls;CHECK(export_start()==PT_OK&&physical_calls==before);
+   CHECK(!memcmp(pt_workspace()->stage.wire,source_live,archived_live_len));
+   pt_token(8);CHECK(pt_request(7)==PT_OK);
+  }
+  printf("Completion event=%u status=%u stage=%u raw_rc=%u guards=%x revoke=%x exact_persisted_and_live=1\n",event,rc,d8pt_diag.stage,d8pt_diag.raw_rc,d8pt_diag.guards,d8pt_diag.revoke);
+ }
+}
 static void pt_begin_arena_cases(void)
 {
  for(unsigned importing=0;importing<2;importing++){
@@ -158,6 +193,7 @@ int main(void){
  trk[7].p[P_LEVEL]=91;message[1]=1;unsigned beginrc=pt_request(2);CHECK(beginrc==PT_OK&&pt_phase()==PT_EXPORT&&!physical_calls);if(beginrc)return 1;
  memcpy(source_pool,pt_workspace()->plan,sizeof source_pool);unsigned live_length=d8ls.length;archived_live_len=live_length;memcpy(source_live,pt_workspace()->stage.wire,live_length);
  pt_token(8);CHECK(pt_request(7)==PT_OK&&!migration_owner);
+ pt_completion_cases();
  pt_stable_consent_cases();
  memset(message,0,sizeof message);message[0]=1;message[1]=2;message[2]=15;mc_put32(message+3,live_length);mc_put32(message+8,d8p1_crc32(source_live,live_length));mc_put32(message+13,d8p1_crc32(source_pool,sizeof source_pool));
  CHECK(pt_request(18)==PT_OK&&pt_phase()==PT_RECEIVE);

@@ -90,7 +90,7 @@ b=Backend();b.action=lambda f:b.emit(reply(f)[:13]+b'\x05'+reply(f)[14:]);l=link
 b=Backend();l=transport.ReadOnlyMidi(b,message,'selected','selected',settle=0,record=lambda frame:(_ for _ in ()).throw(OSError('journal failed')));refuses(lambda:l.exchange(request()),'receive journal failure poisons')
 b=Backend();b.action=lambda f:(b.emit(reply(f)),b.emit(reply(f)));l=link(b);refuses(lambda:l.exchange(request()),'duplicate queued response');check(l.closed,'overflow closes')
 b=Backend();l=link(b);b.emit(reply(request()));refuses(lambda:l.exchange(request()),'idle unsolicited reply');check(not b.sent,'unsolicited cannot acknowledge later request')
-b=Backend();b.action=None;l=link(b);refuses(lambda:l.exchange(request()),'timeout');b.emit(reply(request()));refuses(lambda:l.exchange(request()),'late reply cannot retry');check(len(b.sent)==1,'no timeout retry')
+b=Backend();b.action=None;l=link(b);refuses(lambda:l.exchange(request()),'timeout');check(l.cleanup_succeeded,'timeout still confirms closed ports');b.emit(reply(request()));refuses(lambda:l.exchange(request()),'late reply cannot retry');check(len(b.sent)==1,'no timeout retry')
 b=Backend();l=link(b);b.ports[0].closed=True;refuses(lambda:l.exchange(request()),'closed endpoint');check(not b.sent,'closed endpoint no send')
 b=Backend();l=link(b);b.names=[];refuses(lambda:l.exchange(request()),'disconnected endpoint');check(not b.sent and l.closed,'disconnected endpoint no send or reopen')
 b=Backend();b.action=lambda f:setattr(b.ports[0],'closed',True);l=link(b);refuses(lambda:l.exchange(request()),'disconnect while waiting times out');check(l.closed and len(b.sent)==1,'waiting disconnect fail closed no retry')
@@ -143,4 +143,12 @@ if len(sys.argv) in (2,3):
                 (dest/'nor-stats.json').write_text(json.dumps(stats,indent=2))
 else:
     print('SKIP actual C bridge: pass an explicitly compiled capture fixture')
+
+b=Backend();b.close_error=True;l=link(b);refuses(l.close,'cleanup failure');check(not l.cleanup_succeeded,'close failure cannot attest successful cleanup');l.close();check(not l.cleanup_succeeded,'idempotent close cannot erase cleanup failure')
+b=Backend();b.action=None;b.close_error=True;l=link(b)
+try:l.exchange(request())
+except ValueError as error:
+ check('Capture reply timed out' in str(error) and 'cleanup also failed' in str(error),'cleanup cannot hide timeout')
+else:raise AssertionError('timeout and cleanup failure accepted')
+check(l.closed and not l.cleanup_succeeded and l.cleanup_error,'failed cleanup retained separately')
 print('readonly MIDI adapter:',checks,'checks, PASS; native MIDI never opened')

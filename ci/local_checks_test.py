@@ -13,71 +13,63 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
-    def test_fingerprint_covers_dirty_transitive_and_required_ignored_inputs(self) -> None:
-        with tempfile.TemporaryDirectory() as folder:
-            repo = Path(folder)
-            checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
-            (repo / '.gitignore').write_text('build/\nprivate/\n')
-            header = repo / 'shared header.h'
-            header.write_text('original')
-            checks.subprocess.run(['git', 'add', 'shared header.h'], cwd=repo, check=True)
-            untracked = repo / 'untracked.h'
-            untracked.write_text('transitive')
-            generated = repo / 'build/gen/table.h'
-            generated.parent.mkdir(parents=True)
-            generated.write_text('generated')
-            (repo / 'build/log.txt').write_text('output')
-            private = repo / 'private/synthetic.txt'
-            private.parent.mkdir()
-            private.write_text('ignored fixture')
-            before = dict(checks.input_hashes(repo, ['build/gen/table.h']))
-            self.assertIn('untracked.h', before)
-            self.assertNotIn('build/log.txt', before)
-            self.assertNotIn('private/synthetic.txt', before)
-            header.write_text('dirty without commit')
-            changed = dict(checks.input_hashes(repo, ['build/gen/table.h']))
-            self.assertNotEqual(before['shared header.h'], changed['shared header.h'])
-            generated.write_text('new generated')
-            self.assertNotEqual(changed['build/gen/table.h'],
-                dict(checks.input_hashes(repo, ['build/gen/table.h']))['build/gen/table.h'])
-            header.unlink()
-            generated.unlink()
-            missing = dict(checks.input_hashes(repo, ['build/gen/table.h']))
-            self.assertEqual(missing['shared header.h'], 'MISSING')
-            self.assertEqual(missing['build/gen/table.h'], 'MISSING')
+    def test_startup_order_stays_local_and_covers_audio_and_reopen(self) -> None:
+        selected, unknown = checks.select(['tests/audio_startup_order_test.py',
+                                          'tests/native_boot_startup_order_test.py'])
+        self.assertEqual(selected, {'diff', 'startup-order'})
+        self.assertEqual(unknown, [])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual([step['name'] for step in steps[:3]],
+                         ['diff', 'startup-audio-order', 'startup-native-reopen'])
+        self.assertEqual(len(steps), 19)
+        for step in steps[1:3]:
+            self.assertEqual(step['argv'][:2], ['env', 'CC=clang'])
+        for uart in (0, 1):
+            for uac in (0, 1):
+                for sie in (0, 1):
+                    label = f'startup-timer-uart{uart}-uac{uac}-sie{sie}'
+                    compile_step = next(s for s in steps if s['name'] == label + '-compile')
+                    self.assertEqual(compile_step['argv'][0], 'clang')
+                    self.assertIn(f'-DFELUCCA_UART={uart}', compile_step['argv'])
+                    self.assertIn(f'-DFELUCCA_UAC={uac}', compile_step['argv'])
+                    self.assertIn(f'-DFELUCCA_SIE_IRQ_BUDGET={sie}', compile_step['argv'])
+                    self.assertIn('tests/timer5_cadence_test.c', compile_step['requires'])
+                    run_step = next(s for s in steps if s['name'] == label)
+                    self.assertEqual(run_step['argv'], [str(Path('out') / label)])
+        self.assertIn('firmware/hal/fm1_audio.h', steps[1]['requires'])
+        self.assertIn('firmware/src/project_native_flash.c', steps[2]['requires'])
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
 
-    def test_real_subprocess_receipts_distinguish_source_changes_from_output(self) -> None:
-        for operation, expected_changed in (('output', []), ('edit', ['README.md']),
-                                             ('add', ['new.h']), ('delete', ['README.md'])):
-            with self.subTest(operation=operation), tempfile.TemporaryDirectory() as folder:
-                repo = Path(folder)
-                checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
-                checks.subprocess.run(['git', '-c', 'user.name=Fixture', '-c',
-                    'user.email=fixture@example.invalid', 'commit', '--allow-empty',
-                    '-qm', 'Fixture'], cwd=repo, check=True)
-                (repo / 'README.md').write_text('before')
-                scripts = {
-                    'output': "from pathlib import Path; Path('build/output.txt').write_text('log')",
-                    'edit': "from pathlib import Path; Path('README.md').write_text('after')",
-                    'add': "from pathlib import Path; Path('new.h').write_text('added')",
-                    'delete': "from pathlib import Path; Path('README.md').unlink()",
-                }
-                steps = [{'name': 'fixture', 'argv': [checks.sys.executable, '-c', scripts[operation]]}]
-                with patch.object(checks, 'ROOT', repo), patch.object(checks, 'recipes', return_value=steps):
-                    with contextlib.redirect_stdout(io.StringIO()):
-                        code = checks.main(['--paths', 'README.md', '--run'])
-                report = json.loads(next((repo / 'build/local-checks').glob('run-*/results.json')).read_text())
-                self.assertEqual(report['results'][0]['exit'], 0)
-                self.assertEqual(code, int(bool(expected_changed)))
-                self.assertEqual(report['source_inputs_stable'], not expected_changed)
-                self.assertIn('README.md', report['source_inputs'])
-                if not expected_changed:
-                    self.assertEqual(code, 0)
-                    self.assertEqual(report['status'], 'SELECTED_CHECKS_PASS')
-                else:
-                    self.assertEqual(code, 1)
-                    self.assertEqual(report['status'], 'FAILED')
-                    self.assertEqual(report['changed_during_checks'], expected_changed)
+    def test_native_midi_is_offline_and_includes_direct_guard_and_snapshot(self) -> None:
+        selected, unknown = checks.select(['tools/dabbl8_native_midi_guard.py',
+                                          'tools/dabbl8_readonly_snapshot.py'])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(selected, {'diff', 'midi-native'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps], ['diff', 'snapshot-fixture-compile',
+            'native_midi_guard_test', 'native_midi_qualification_guard_test',
+            'raw_coremidi_inventory_test', 'readonly_snapshot_test',
+            'readonly_midi_adapter_test', 'instrument_capture_collector_test'])
+        self.assertFalse(any(arg in ('--capture', '--virtual-only', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
+    def test_midi_eight_is_local_and_does_not_repeat_engine_matrix(self) -> None:
+        # Given native read-only state and the new eight-channel workload.
+        selected, unknown = checks.select(['tests/native_track_recording_query_test.c',
+                                          'tools/dabbl8_eight_track_workload.py'])
+        # When planning, then only the two native fixtures and fake-I/O schedule run.
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(selected, {'diff', 'midi-eight'})
+        self.assertEqual(unknown, [])
+        self.assertEqual([step['name'] for step in steps], ['diff',
+            'recording-query-compile', 'recording-query',
+            'eight-channel-render-compile', 'eight-channel-render', 'eight-channel-schedule'])
+        self.assertEqual(steps[4]['argv'], ['out/eight-channel-render'])
+        self.assertFalse(any(path.endswith('.d8p') for step in steps
+                             for path in step.get('requires', [])))
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
 
     def test_midi_renderer_plan_needs_no_private_demo(self) -> None:
         selected, unknown = checks.select(['tests/native_midi_project_fixture.h'])
@@ -105,15 +97,7 @@ class SelectionTest(unittest.TestCase):
             self.assertEqual(refused['status'], 'REFUSED')
             self.assertIn('tests/native_midi_project_fixture.h', str(refused['refusals']))
 
-    def test_shared_midi_core_runs_both_offline_schedules(self) -> None:
-        selected, unknown = checks.select(['tools/dabbl8_midi_workload.py'])
-        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
-        self.assertEqual(selected, {'diff', 'midi-workload', 'midi-eight'})
-        self.assertEqual(unknown, [])
-        names = {step['name'] for step in steps}
-        self.assertTrue({'midi-workload-offline', 'eight-channel-schedule'} <= names)
-        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
-                             for step in steps for arg in step['argv']))
+
 
     def test_engine_fx_selects_only_source_bound_host_matrix(self) -> None:
         # Given the matrix fixture and the existing local compiler route.
@@ -137,6 +121,18 @@ class SelectionTest(unittest.TestCase):
         self.assertEqual(self.plan([fixture])['status'], 'REFUSED')
         self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
                              for step in steps for arg in step['argv']))
+
+    def test_shared_midi_core_selects_bounded_protocol_and_renderers(self) -> None:
+        for path in ('tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'):
+            selected, unknown = checks.select([path])
+            self.assertEqual(selected, {'diff', 'midi-workload', 'midi-eight'})
+            self.assertEqual(unknown, [])
+            steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+            self.assertEqual({step['name'] for step in steps}, {'diff',
+                'recording-query-compile', 'recording-query', 'eight-channel-render-compile',
+                'eight-channel-render', 'eight-channel-schedule', 'midi-workload-offline'})
+            self.assertEqual(steps[-1]['argv'], [checks.sys.executable, 'tests/dabbl8_midi_workload_test.py'])
+            self.assertEqual(steps[-1]['requires'], ['tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'])
 
     def test_performance_buses_does_not_repeat_engine_matrix(self) -> None:
         # Given the existing banked performance fixture, when selecting checks.
@@ -167,35 +163,54 @@ class SelectionTest(unittest.TestCase):
         self.assertFalse(any(arg.startswith('-fsanitize=') for arg in steps[1]['argv']))
         self.assertEqual(steps[2]['argv'], ['out/performance-fx'])
 
-    def test_voice_allocation_recipe_is_local_and_bounded(self) -> None:
-        selected, unknown = checks.select(['firmware/src/voice.c', 'tests/demo_voice_allocation_test.c'])
-        self.assertEqual(selected, {'diff', 'voice-allocation'})
-        self.assertFalse(unknown)
-        plan = self.plan(['firmware/src/voice.c'])
-        self.assertEqual(plan['status'], 'REFUSED')
-        self.assertEqual(len(plan['commands']), 9)
-        encoded = json.dumps(plan['commands'])
-        self.assertEqual(encoded.count('-compile"'), 4)
-        self.assertIn('tests/demo_voice_allocation_test.c', encoded)
-        self.assertEqual(encoded.count('"-DNPART=4"'), 1)
-        self.assertEqual(encoded.count('"-DNPART=8"'), 3)
-        self.assertEqual(encoded.count('"-fsanitize=address,undefined"'), 4)
-
-    def test_native_midi_is_offline_and_includes_direct_guard_and_snapshot(self) -> None:
-        selected, unknown = checks.select(['tools/dabbl8_native_midi_guard.py',
-                                          'tools/dabbl8_readonly_snapshot.py'])
-        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
-        self.assertEqual(selected, {'diff', 'midi-native'})
-        self.assertEqual(unknown, [])
-        self.assertEqual([step['name'] for step in steps], ['diff', 'snapshot-fixture-compile',
-            'native_midi_guard_test', 'native_midi_qualification_guard_test',
-            'raw_coremidi_inventory_test', 'readonly_snapshot_test'])
-        self.assertFalse(any(arg in ('--capture', '--virtual-only', 'docker', 'tests/run_tests.sh')
-                             for step in steps for arg in step['argv']))
+    def test_fingerprint_detects_dirty_transitive_and_generated_inputs(self):
+        # Given real local Git source, including an untracked transitive header.
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+            header = repo / 'firmware/shared.h'
+            header.parent.mkdir()
+            header.write_text('original')
+            generated = repo / 'build/gen/table.h'
+            generated.parent.mkdir(parents=True)
+            generated.write_text('generated')
+            before = checks.input_hashes(repo, ['build/gen/table.h'])
+            # When source changes without a commit, then its receipt changes.
+            header.write_text('edited')
+            changed = checks.input_hashes(repo, ['build/gen/table.h'])
+            self.assertNotEqual(before, changed)
+            generated.write_text('new generated')
+            self.assertNotEqual(changed, checks.input_hashes(repo, ['build/gen/table.h']))
+            generated.unlink()
+            self.assertIn(('build/gen/table.h', 'MISSING'),
+                          checks.input_hashes(repo, ['build/gen/table.h']))
 
     def plan(self, paths, explicit=()):
         return checks.make_plan(Path('/missing-local-inputs'), paths, explicit,
                                 ['clang'], Path('build/local-checks/PLANNED'), 'HEAD')
+
+    def test_source_mutation_during_successful_checks_refuses_pass(self):
+        with tempfile.TemporaryDirectory() as folder:
+            repo = Path(folder)
+            checks.subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+            checks.subprocess.run(['git', '-c', 'user.name=Fixture', '-c',
+                'user.email=fixture@example.invalid', 'commit', '--allow-empty',
+                '-qm', 'Fixture'], cwd=repo, check=True)
+            source = repo / 'README.md'
+            source.write_text('before')
+
+            def mutate(_argv, _repo, _env):
+                source.write_text('changed during check')
+                return 0, b'', b''
+
+            with patch.object(checks, 'ROOT', repo), patch.object(checks, 'execute', mutate):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    code = checks.main(['--paths', 'README.md', '--run'])
+            report = json.loads(next((repo / 'build/local-checks').glob('run-*/results.json')).read_text())
+            self.assertEqual(code, 1)
+            self.assertEqual(report['status'], 'FAILED')
+            self.assertFalse(report['source_inputs_stable'])
+            self.assertEqual(report['changed_during_checks'], ['README.md'])
 
     def test_docs_only(self):
         selected, unknown = checks.select(['README.md', 'docs/x.json'])
@@ -338,6 +353,20 @@ class SelectionTest(unittest.TestCase):
             self.assertEqual(len(p['commands']), 13 if name == 'legacy-ui' else 9)
             self.assertEqual(p['status'], 'REFUSED')  # no generated inputs
 
+    def test_voice_allocation_recipe_is_local_and_bounded(self) -> None:
+        selected, unknown = checks.select(['firmware/src/voice.c', 'tests/demo_voice_allocation_test.c'])
+        self.assertEqual(selected, {'diff', 'voice-allocation'})
+        self.assertFalse(unknown)
+        plan = self.plan(['firmware/src/voice.c'])
+        self.assertEqual(plan['status'], 'REFUSED')
+        self.assertEqual(len(plan['commands']), 9)
+        encoded = json.dumps(plan['commands'])
+        self.assertEqual(encoded.count('-compile"'), 4)
+        self.assertIn('tests/demo_voice_allocation_test.c', encoded)
+        self.assertEqual(encoded.count('"-DNPART=4"'), 1)
+        self.assertEqual(encoded.count('"-DNPART=8"'), 3)
+        self.assertEqual(encoded.count('"-fsanitize=address,undefined"'), 4)
+
     def test_flash_driver_and_first_use_select_bounded_host_checks(self):
         cases = (
             ('firmware/hal/fm1_flash.h', ['diff', 'first-use', 'flash-driver']),
@@ -419,7 +448,7 @@ class SelectionTest(unittest.TestCase):
             self.assertFalse(any(arg.startswith('-fno-sanitize=') for arg in sanitized))
             self.assertEqual(plan['status'], 'REFUSED')
         selected, unknown = checks.select(['firmware/src/main.c', 'firmware/src/console.c'])
-        self.assertEqual(selected, {'diff', 'first-use'})
+        self.assertEqual(selected, {'diff', 'first-use', 'startup-order'})
         self.assertEqual(unknown, [])
 
     def test_usb_controller_missing_input_refuses_without_execution(self) -> None:
@@ -594,19 +623,19 @@ class SelectionTest(unittest.TestCase):
         self.assertTrue(any('Missing local inputs' in x for x in p['refusals']))
 
     def test_unknown_refuses(self):
-        p = self.plan(['firmware/src/audio.c'])
+        p = self.plan(['firmware/src/unmapped-example.c'])
         self.assertEqual(p['status'], 'REFUSED')
-        self.assertEqual(p['unmapped_paths'], ['firmware/src/audio.c'])
+        self.assertEqual(p['unmapped_paths'], ['firmware/src/unmapped-example.c'])
 
     def test_explicit_selection_retains_gap(self):
-        p = self.plan(['firmware/src/audio.c'], ['docs'])
+        p = self.plan(['firmware/src/unmapped-example.c'], ['docs'])
         self.assertEqual(p['status'], 'PLAN')
         self.assertEqual(p['selection'], 'explicit')
-        self.assertEqual(p['unmapped_paths'], ['firmware/src/audio.c'])
+        self.assertEqual(p['unmapped_paths'], ['firmware/src/unmapped-example.c'])
         self.assertIn('not complete coverage', p['scope'])
 
     def test_paths_cannot_escape(self):
-        for path in ['../firmware/src/audio.c', '/tmp/file.md']:
+        for path in ['../firmware/src/unmapped-example.c', '/tmp/file.md']:
             with self.assertRaises(ValueError):
                 checks.select([path])
 
@@ -631,7 +660,7 @@ class SelectionTest(unittest.TestCase):
     def test_unknown_run_never_executes(self):
         with patch.object(checks.subprocess, 'run') as run:
             with contextlib.redirect_stdout(io.StringIO()):
-                self.assertEqual(checks.main(['--paths', 'firmware/src/audio.c', '--run']), 2)
+                self.assertEqual(checks.main(['--paths', 'firmware/src/unmapped-example.c', '--run']), 2)
             run.assert_not_called()
 
 

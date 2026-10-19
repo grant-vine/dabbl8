@@ -40,6 +40,7 @@ def console_recipes(cc: list[str], out: Path) -> list[LocalStep]:
     required = [source, 'firmware/src/console.c', 'firmware/src/resource_diagnostic_console.h',
         'firmware/src/heavy_pool_diagnostic.h', 'firmware/src/heavy_state.h',
         'firmware/src/audio_timing.h', 'firmware/src/audio_timing_console.h',
+        'firmware/src/audio_clock_console.h',
         'firmware/src/native_first_use_diagnostic.h', 'firmware/src/flash_trace_diagnostic.h',
         'firmware/hal/fm1_stack_watermark.h', 'tests/hostsim.c'] + CORE_INPUTS + GENERATED
     flags = ['-std=c11', '-w', '-DNPART=8', '-DFELUCCA_FLASH=0', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',

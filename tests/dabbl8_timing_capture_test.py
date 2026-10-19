@@ -141,10 +141,35 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.run_script(t)
         self.assertEqual(t.writes, ['status'])
 
-    def test_stop_ack_failure_attempts_only_owned_stop(self):
+    def test_stop_ack_failure_never_retries(self):
         t = Scripted({'timing stop': 'timing not running\r\n'})
         with self.assertRaises(ValueError): self.run_script(t)
-        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop', 'timing stop'])
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+
+    def test_lost_stop_reply_never_retries(self):
+        class LostStop(Scripted):
+            def write(self, data):
+                super().write(data)
+                if data == b'timing stop\r':
+                    raise OSError('injected lost stop reply')
+        t = LostStop()
+        with self.assertRaises(OSError):
+            self.run_script(t)
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+
+    def test_workload_failure_keeps_primary_and_records_unconfirmed_cleanup(self):
+        t = Scripted({'timing stop': 'timing not running\r\n'})
+        journal = []
+        primary = RuntimeError('injected workload failure')
+        def fail_workload(seconds):
+            raise primary
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(RuntimeError) as error:
+                capture.collect(capture.Console(t, lambda kind, data: journal.append((kind, data))),
+                    Path(directory), VERSION, 10, sleep=fail_workload)
+        self.assertIs(error.exception, primary)
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+        self.assertEqual(sum(kind == 'cleanup-failed' for kind, data in journal), 1)
 
     def test_transport_bounds_and_disconnect(self):
         for raw in (b'a' * 65537, b'\xff\r\n> ', BANNER + BANNER, b''):

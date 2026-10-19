@@ -9,7 +9,7 @@ import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {mock} from 'node:test';
 import {D8MidiSession} from '../web/d8midi.js';
-import {D8Projects,projectReply,pack7,unpack7,u32,crc32} from '../web/d8projects.js';
+import {D8Projects,ProjectSessionError,projectReply,pack7,unpack7,u32,crc32} from '../web/d8projects.js';
 import {nativeArchiveCodec,createOwnArchive,parseOwnArchive,validateOwnArchive,strictArchiveJSON} from '../web/d8archive.js';
 let checks=0;const check=(v)=>{assert.ok(v);checks++;};
 const [bridgePath,adapterPath,wasmPath]=process.argv.slice(2);assert.ok(bridgePath&&adapterPath&&wasmPath);
@@ -99,6 +99,34 @@ try{
   assert.deepEqual(bridge.calls.slice(beforeCommit).map(([cmd,args])=>[cmd,args[1]]),[[81,7]]);checks++;
   releaseReply();await Promise.resolve();check(!session.connected);
  }finally{releaseReply();holdCommitReply=null;mock.timers.reset();}
+ // A real C COMMIT can succeed before a distinct EXPORT-copy failure.
+ const readbackBridge=new Bridge();
+ try{
+  let locked=0,faulted=0;
+  const client=await D8Projects.connect(async request=>(await readbackBridge.request(request)).args,()=>{locked++;return()=>locked--;},()=>faulted++);
+  await client.stage(empty);await readbackBridge.line('APPROVE');await client.status();await readbackBridge.line('EXPORT_COPY_FAIL');
+  const start=readbackBridge.calls.length;
+  await assert.rejects(client.commit(),e=>e instanceof ProjectSessionError&&e.status===4&&e.op===1&&e.commitAcknowledged===true&&/81\/1/.test(e.message));checks++;
+  check(!locked&&faulted===1);
+  check(readbackBridge.calls.slice(start).filter(([,a])=>a[1]===7).length===1);
+  const writes=readbackBridge.physical;await readbackBridge.line('CLEAR_READ_FAULT');
+  const actual=await client.exportSet();check(actual.present===0&&readbackBridge.physical===writes);
+  assert.deepEqual(actual.live,empty.live);assert.deepEqual(actual.objects,empty.objects);checks+=2;
+ }finally{await readbackBridge.close();}
+ // Cleanup transport failure must not replace the real native COMMIT error.
+ const cleanupBridge=new Bridge();
+ try{
+  let failClose=false,locked=0,faulted=0;
+  const client=await D8Projects.connect(async request=>{
+   if(failClose&&request[1][1]===8)throw Error('cleanup transport probe');
+   return (await cleanupBridge.request(request)).args;
+  },()=>{locked++;return()=>locked--;},()=>faulted++);
+  await client.stage(parsed);await cleanupBridge.line('APPROVE');await client.status();await cleanupBridge.line('CUT 2');failClose=true;
+  const start=cleanupBridge.calls.length;
+  await assert.rejects(client.commit(),e=>e instanceof ProjectSessionError&&e.status===4&&e.op===7&&e.commitAcknowledged===false&&e.cleanupError?.message==='cleanup transport probe');checks++;
+  check(!locked&&faulted===1);
+  check(cleanupBridge.calls.slice(start).filter(([,a])=>a[1]===7).length===1);
+ }finally{await cleanupBridge.close();}
  // Missing advertised capability safely leaves the existing track workflow available.
  const missing=new D8Projects(async()=>{throw Error('Disconnected');});check(!missing.available);
  console.log(`Own-project browser/C/WASM interoperability: ${checks} checks PASS; simulated storage and MIDI ports only`);

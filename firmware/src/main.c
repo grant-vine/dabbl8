@@ -6,6 +6,16 @@ extern uint32_t _data_start[], _data_end[], _data_load[], _bss_start[], _bss_end
 extern uint32_t _pool_start[], _pool_end[], _rt_start[], _rt_end[], _rt_load[];
 
 
+#if FELUCCA_UART
+/* Do not enqueue external MIDI while read-only startup adoption is in flight. */
+/* Keep startup-only state outside the target compiler's merged DSP globals. */
+static volatile uint8_t boot_midi_ready
+#if defined(FM1_IRQ_TARGET)
+    __attribute__((section(".bss.dabbl8_boot")))
+#endif
+    ;
+#endif
+
 /* TIMER5 outranks ALNK0, so the scan keeps its 100 us pace while a half buffer renders: before,
  * the ticks stopped for the whole render (0.7 ms idle, several ms loaded), the column lit when it
  * began stayed lit that long (a ~16 Hz flicker over all LEDs, beating with the scan) and the
@@ -57,7 +67,7 @@ void fm1_timer5_irq(void)
     if (owed & 1u)
         usb_poll();
 #if FELUCCA_UART
-    if (owed & 2u)
+    if ((owed & 2u) && boot_midi_ready)
         uart_midi_poll();
 #endif
     owed = 0;
@@ -183,7 +193,6 @@ static void fm1_main(void)
     master_boot();
     kb_boot_hold = 1;                         /* #137: no notes from the keys before the UI (seq.c keyboard_block) */
     audio_init();
-    usb_start();
 #if FELUCCA_UART
     uart_midi_init();
 #endif
@@ -191,12 +200,17 @@ static void fm1_main(void)
     timer5_start();
     fm1_guard_lock_top();
     fm1_irq_enable_all();
+    audio_start();                              /* no DMA phase can age with its IRQ masked */
     fm1_delay_ms(30);
     if ((fm1_in.buttons & 3u) == 3u) {
         panel_setup();                        /* OCT- + OCT+ held at power-on */
         settings_save();
     }
-    autosave_boot(boot_clean);                /* (1.2) the last session's music, under the splash */
+    autosave_boot(boot_clean);                /* adopt before external MIDI can compete */
+#if FELUCCA_UART
+    boot_midi_ready = 1;
+#endif
+    usb_start();
     for (ms = 0; ms < 400u; ms += 10u) {      /* the splash; the pot followed (MIDI IN plays under it) */
         fm1_delay_ms(10);
         master_poll();

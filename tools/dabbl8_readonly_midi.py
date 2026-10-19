@@ -136,6 +136,8 @@ class ReadOnlyMidi:
         self.condition = threading.Condition()
         self.operation = None; self.request = None; self.reply = None; self.error = None
         self.closed = False; self.input = None; self.output = None
+        self.cleanup_succeeded = False
+        self.cleanup_error = None
         self.owner = threading.get_ident()
         # No default port, substring matching, virtual port or broadcast fallback.
         if backend.get_input_names().count(input_name) != 1 or backend.get_output_names().count(output_name) != 1:
@@ -219,8 +221,11 @@ class ReadOnlyMidi:
                     raise ValueError('Pending request has no completed reply')
                 self.reply = None; self.operation = None; self.request = None
                 return reply
-        except Exception:
-            self.close()
+        except Exception as error:
+            try:
+                self.close()
+            except ValueError as cleanup:
+                raise ValueError(f'{error}; cleanup also failed: {cleanup}') from error
             raise
 
     def close(self):
@@ -239,7 +244,9 @@ class ReadOnlyMidi:
                 except Exception as error:
                     failures.append(str(error))
         if failures:
-            raise ValueError('MIDI port cleanup failed: ' + '; '.join(failures))
+            self.cleanup_error = 'MIDI port cleanup failed: ' + '; '.join(failures)
+            raise ValueError(self.cleanup_error)
+        self.cleanup_succeeded = True
 
 
 def bridge(link, incoming=sys.stdin, outgoing=sys.stdout):

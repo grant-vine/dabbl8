@@ -29,8 +29,19 @@ static struct {
  uint8_t intent,previous_intent,phase,revoked,busy,object,operation,block,write_phase,writing,attempted,previous_slot,usb_config;
 } d8ls __attribute__((section(".pool")));
 enum { LS_IDLE,LS_CONSENT,LS_RELEASE,LS_EXECUTE };
+#if D8_PROJECT_TRANSFER_SESSION
+/* Retained observations only: never read by an admission or write gate. */
+enum { PTD_NONE,PTD_BASELINE,PTD_STORE,PTD_VERIFY,PTD_ADOPT,PTD_BIND,PTD_AUTOSAVE,PTD_DONE };
+static struct { uint32_t stage,raw_rc,guards; volatile uint32_t revoke; } d8pt_diag;
+static void d8pt_observe_revoke(uint32_t reason)
+{ if(d8ls.operation==4&&d8ls.phase!=LS_IDLE)d8pt_diag.revoke|=reason; }
+#endif
 static int d8ls_blocked(void) { return d8ls.phase!=LS_IDLE||d8ls.busy; }
-static void d8ls_revoke(void) { if(d8ls_blocked()){d8ls.revoked=1;d8ls.shown=0;} }
+static void d8ls_revoke(void) { if(d8ls_blocked()){
+#if D8_PROJECT_TRANSFER_SESSION
+ d8pt_observe_revoke(0x80000000u);
+#endif
+ d8ls.revoked=1;d8ls.shown=0;} }
 static int ls_scan(d8pool_index *,uint32_t [5]);
 static void d8ls_reset(void);
 static void d8ls_offline(void);

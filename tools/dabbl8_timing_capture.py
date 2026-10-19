@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-only
 """Explicit Mac CDC timing collection. No flashing, MIDI or storage commands."""
+from __future__ import annotations
+
 import argparse
 import array
 import hashlib
@@ -13,14 +15,16 @@ import select
 import stat
 import sys
 import time
+from typing import TypedDict
 from dabbl8_timing_report import parse_report
 
 COMMANDS = ('status', 'timing start', 'timing stop', 'timing report')
 RESOURCE_COMMANDS = ('status', 'resource start', 'resource stop', 'resource report')
+CLOCK_COMMANDS = ('status', 'timing clock')
 
 
 def command_profile(commands):
-    if type(commands) is not tuple or commands not in (COMMANDS, RESOURCE_COMMANDS):
+    if type(commands) is not tuple or commands not in (COMMANDS, RESOURCE_COMMANDS, CLOCK_COMMANDS):
         raise ValueError('Unsupported fixed console command profile')
     return commands
 MAX_REPLY = 65536
@@ -32,7 +36,16 @@ class TimingProfileMismatch(ValueError):
         super().__init__(f'Timing profile mismatch: expected USB audio enabled={expected_uac}')
 
 
-def package_identity(manifest):
+class PackageIdentity(TypedDict):
+    source_commit: str
+    manifest_sha256: str
+    diagnostic_package: str
+    package_sha256: str
+    device_binary_identity_attested: bool
+    clock_source_sha256: str | None
+
+
+def package_identity(manifest: Path) -> PackageIdentity:
     with manifest.open('rb') as stream:
         raw = stream.read(2_000_001)
     if len(raw) > 2_000_000:
@@ -49,9 +62,13 @@ def package_identity(manifest):
     digest = hashlib.sha256(package.read_bytes()).hexdigest()
     if digest != d['sha256'] or package.stat().st_size != d['bytes']:
         raise ValueError('Diagnostic package checksum/size mismatch')
+    clock_source = m.get('source_inputs', {}).get('firmware/src/audio_clock_console.h')
+    if clock_source is not None and (type(clock_source) is not str or not re.fullmatch(r'[0-9a-f]{64}', clock_source)):
+        raise ValueError('Invalid clock source checksum')
     return {'source_commit': source, 'manifest_sha256': hashlib.sha256(raw).hexdigest(),
             'diagnostic_package': name, 'package_sha256': digest,
-            'device_binary_identity_attested': False}
+            'device_binary_identity_attested': False,
+            'clock_source_sha256': clock_source if m.get('timing_diagnostic') is True else None}
 
 
 class Console:
@@ -89,7 +106,7 @@ class Console:
         return reply
 
 
-def status(reply, version, uac_enabled: bool = True):
+def status(reply: str, version: str, uac_enabled: bool = True) -> dict[str, int]:
     lines = reply.splitlines()
     if lines.count('dabbl8 ' + version) != 1:
         raise ValueError('Wrong or missing diagnostic firmware identity')
@@ -112,6 +129,7 @@ def status(reply, version, uac_enabled: bool = True):
 
 def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled: bool = True):
     active = False
+    stop_attempted = False
     try:
         banner = console.receive()
         if banner.splitlines().count("Dabbl8 " + version + " console - 'help'") != 1:
@@ -122,6 +140,7 @@ def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled:
             raise ValueError('Timing start refused; previous run was not overwritten')
         active = True
         sleep(seconds)
+        stop_attempted = True  # A missing acknowledgement must not trigger a retry.
         stopped = console.request('timing stop')
         if stopped.splitlines().count('timing stopped') != 1:
             raise ValueError('Timing stop not acknowledged')
@@ -143,13 +162,16 @@ def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled:
         (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
         return report
     finally:
-        if active:
-            # Only a collector-owned run is stopped; never reset an existing run.
-            # Failure is retained in the journal, and no further command is tried.
+        if active and not stop_attempted:
+            # One cleanup attempt for a run this collector started; never retry.
             try:
-                console.request('timing stop')
-            except Exception:
+                stopped = console.request('timing stop')
+                if stopped.splitlines().count('timing stopped') != 1:
+                    raise ValueError('Timing cleanup stop not acknowledged')
+            except (OSError, RuntimeError, ValueError):
                 console.journal('cleanup-failed', b'Collection may still be active; device requires explicit inspection.')
+        elif active:
+            console.journal('cleanup-failed', b'Timing stop unconfirmed; no retry. Device requires explicit inspection.')
 
 
 class MacCdc:
