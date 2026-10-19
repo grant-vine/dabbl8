@@ -12,6 +12,12 @@ interrupts. The corrected order adopts before starting DMA, and preserves the
 lifetime counter while publishing coherent entry/current-boot diagnostics.
 See [the source-backed findings and tests](boot-timing-qualification.md).
 
+The host collectors have also been corrected locally to distinguish inherited
+history from current-boot failures, retain that history across observations and
+read the actual frozen manifest format.67 host tests, seven clock groups and the
+affected resource-console fixture pass. This separate host overlay changes no
+firmware bytes, grants no device authority and clears no physical release gate.
+
 Private corrected package: `build/rc-v025-20261019/`,610106 bytes,
 SHA-256 `7a16ea2c4ec9c3e944b84e37a7f27ebefe3501139c6e6b54f17f88680a81fea5`.
 Full profile, eight tracks/eight shared voices, engine mask0x3ffd, USB audio off;

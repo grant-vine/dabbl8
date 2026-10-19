@@ -38,6 +38,12 @@ class TimingProfileMismatch(ValueError):
         super().__init__(f'Timing profile mismatch: expected USB audio enabled={expected_uac}')
 
 
+class AudioTimingMismatch(ValueError):
+    def __init__(self, criterion: str) -> None:
+        self.criterion: str = criterion
+        super().__init__(criterion)
+
+
 class BootAudioCounters(NamedTuple):
     lifetime: int
     entry: int
@@ -77,10 +83,24 @@ def package_identity(manifest: Path) -> PackageIdentity:
         raise ValueError('Manifest too large')
     m = json.loads(raw)
     source = m['source_commit']
-    d = m['candidates']['diagnostic']
-    name = d['package']
-    if not re.fullmatch(r'[0-9a-f]{40}', source) or not re.fullmatch(r'dabbl8-[0-9.]+-timing-diagnostic\.fwsc', name):
+    private = m.get('kind') == 'private_local_diagnostic_package'
+    try:
+        if private:
+            if type(m.get('schema')) is not int or m['schema'] != 1 or 'candidates' in m:
+                raise AudioTimingMismatch('Unsupported or ambiguous private package schema')
+            name = m['package_name']
+            d = m['artifacts'][name]
+        else:
+            d = m['candidates']['diagnostic']
+            name = d['package']
+    except (KeyError, TypeError) as error:
+        raise AudioTimingMismatch('Malformed package identity metadata') from error
+    if (type(source) is not str or type(name) is not str or
+            not re.fullmatch(r'[0-9a-f]{40}', source) or
+            not re.fullmatch(r'dabbl8-[0-9.]+-timing-diagnostic\.fwsc', name)):
         raise ValueError('Unsupported candidate identity')
+    if private and m.get('version') != 'v' + name[7:-len('-timing-diagnostic.fwsc')] + '-timing':
+        raise AudioTimingMismatch('Private manifest version disagrees with package name')
     package = manifest.parent / name
     if package.is_symlink() or package.stat().st_size > 2_000_000:
         raise ValueError('Invalid package file')
@@ -149,6 +169,16 @@ def status(reply: str, version: str, uac_enabled: bool = True) -> dict[str, int]
         if not -(1 << 31) <= value < (1 << 31):
             raise ValueError('Status field outside signed 32-bit range')
         result[key] = value & 0xffffffff
+    expected_version = re.fullmatch(r'v([0-9]+)\.([0-9]+)\.([0-9]+)-timing', version)
+    if expected_version is None:
+        raise AudioTimingMismatch('Unsupported expected diagnostic version')
+    # v0.2.5 introduced a required coherent boot tuple. Never infer support from
+    # optional reply fields or fall back to lifetime zero on a malformed tuple.
+    if tuple(int(part) for part in expected_version.groups()) >= (0, 2, 5):
+        counters = boot_audio_status(reply)
+        if counters.current_boot:
+            raise AudioTimingMismatch('Current-boot audio_late_boot is nonzero')
+        result.update(zip(('audio_late', 'audio_late_entry', 'audio_late_boot'), counters))
     return result
 
 

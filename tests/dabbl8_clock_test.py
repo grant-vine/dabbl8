@@ -99,19 +99,20 @@ def test_wire_parser() -> None:
 
 class ScriptedConsole:
     """Mutable command journal; all responses and time are injected."""
-    def __init__(self, packets: tuple[ClockPacket, ...]) -> None:
+    def __init__(self, packets: tuple[ClockPacket, ...], *, version: str = VERSION) -> None:
         self.packets = iter(packets)
+        self.version = version
         self.commands: list[str] = []
         self.statuses = 0
 
     def receive(self) -> str:
-        return f"\r\nDabbl8 {VERSION} console - 'help'\r\n> "
+        return f"\r\nDabbl8 {self.version} console - 'help'\r\n> "
 
     def request(self, command: str) -> str:
         self.commands.append(command)
         if command == 'status':
             self.statuses += 1
-            return f'dabbl8 {VERSION}\r\nboots 17\r\nusb_resets 2\r\naudio_late 0\r\nflash 1\r\nfl_failure 0\r\n'
+            return f'dabbl8 {self.version}\r\nboots 17\r\nusb_resets 2\r\naudio_late 0\r\nflash 1\r\nfl_failure 0\r\n'
         assert command == 'timing clock'
         return reply(next(self.packets))
 
@@ -196,9 +197,45 @@ def test_health_failure_refuses_acceptance() -> None:
         assert len(console.commands) == (1 if when == 1 else 5)
 
 
+def test_boot_audio_history_and_failures() -> None:
+    # Given the new producer protocol, retained events precede this healthy boot.
+    version = 'v0.2.5-timing'
+    history = 'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 0'
+    cases = ((history, history, 0),
+             (history.replace('audio_late_boot 0', 'audio_late_boot 1'), history, 1),
+             (history.replace('audio_late 2', 'audio_late 3').replace('audio_late_boot 0', 'audio_late_boot 1'), history, 1),
+             ('audio_late 0', history, 1),
+             (history + '\r\naudio_late_boot 0', history, 1),
+             (history, history.replace('audio_late 2', 'audio_late 3').replace('audio_late_boot 0', 'audio_late_boot 1'), 5),
+             (history, history.replace(' 2', ' 3'), 5))
+    for first, last, refusal_commands in cases:
+        points = observations(24_000_000)
+        console = ScriptedConsole(tuple(p.packet for p in points), version=version)
+        original = console.request
+
+        def counter_status(command: str) -> str:
+            text = original(command)
+            if command == 'status':
+                return text.replace('audio_late 0', first if console.statuses == 1 else last)
+            return text
+
+        times = iter(n for p in points for n in (p.sent_ns, p.received_ns))
+        # When the actual collector runs against only injected wire responses.
+        with patch.object(console, 'request', counter_status):
+            operation = lambda: collect_clock(console, ClockRequest(version),
+                ClockSource(lambda: next(times), lambda _: None))
+            if refusal_commands:
+                rejects(operation)
+            else:
+                result = operation()
+                assert result.bounds.lower_hz <= 24_000_000 <= result.bounds.upper_hz
+        # Then a failed admission sends nothing further, and no retries occur.
+        assert len(console.commands) == (refusal_commands or 5)
+
+
 if __name__ == '__main__':
     for check in (test_rate_bounds, test_invalid_observations, test_wire_parser,
                   test_collection_and_failure_stop, test_cli_access_and_cleanup,
-                  test_health_failure_refuses_acceptance):
+                  test_health_failure_refuses_acceptance, test_boot_audio_history_and_failures):
         check()
         print(check.__name__, 'PASS')

@@ -57,11 +57,12 @@ class FakeClock:
 
 
 class Scripted:
-    def __init__(self, changes=None, failure=None, close_failure=False, fragment=4096):
+    def __init__(self, changes=None, failure=None, close_failure=False, fragment=4096, version=VERSION):
         self.clock = FakeClock()
+        self.version = version
         self.changes = changes or {}
         self.failure, self.close_failure, self.fragment = failure, close_failure, fragment
-        self.queue = bytearray(f"\r\nDabbl8 {VERSION} console - 'help'\r\n> ".encode())
+        self.queue = bytearray(f"\r\nDabbl8 {version} console - 'help'\r\n> ".encode())
         self.writes, self.closed, self.resource, self.generation = [], 0, 0, 0
         self.ready_at = None
 
@@ -82,7 +83,7 @@ class Scripted:
         words = astuple(state)
         crc = zlib.crc32(struct.pack('<20I', 0x44384131, *words))
         frame = 'd8a1 ' + ' '.join(f'{v:08X}' for v in (*words,crc)) + '\r\n'
-        return (f'dabbl8 {VERSION}\r\nboots 17\r\nusb_resets 2\r\n'
+        return (f'dabbl8 {self.version}\r\nboots 17\r\nusb_resets 2\r\n'
             'audio_late 0\r\nvoices_shed 0\r\nflash 1\r\nfl_failure 0\r\nbpm 120\r\n'
             'resource_schema 1\r\nresource_helpers 3\r\nresource_tracks 8\r\n'
             'resource_profile 0\r\nresource_uac 0\r\nresource_engine_mask 0x00003FFD\r\n'
@@ -123,11 +124,30 @@ class Scripted:
 
 class CaptureTests(unittest.TestCase):
     def run_capture(self, transport):
-        receipt = capture.Receipt(VERSION)
+        receipt = capture.Receipt(transport.version)
         result = capture.run_transport(lambda: transport, receipt,
             clock=capture.Clock(transport.clock.now, transport.clock.wait), ready=transport.ready)
         self.assertEqual(transport.closed, 1)
         return result, receipt
+
+    def test_new_protocol_history_admission_and_owned_failure_cleanup(self):
+        # Given a coherent retained history and a new-protocol expected identity.
+        history = 'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 0'
+        for changed in (None, history.replace(' 2', ' 3'),
+                        history.replace('audio_late 2', 'audio_late 3').replace('audio_late_boot 0', 'audio_late_boot 1')):
+            transport = Scripted(version='v0.2.5-timing')
+            transport.changes['status'] = lambda text: text.replace('audio_late 0',
+                changed if changed is not None and transport.ready_at is not None else history)
+            # When running the actual framed collector without any device.
+            result, receipt = self.run_capture(transport)
+            # Then history alone passes, while a changed history/event stops once.
+            self.assertEqual(receipt.accepted, changed is None)
+            self.assertEqual(result is not None, changed is None)
+            self.assertEqual(transport.writes.count('resource stop'), 1)
+            self.assertEqual(transport.writes.count('timing stop'), 1)
+            if changed is not None:
+                self.assertFalse(any(command.endswith('report') for command in transport.writes))
+
 
     def test_whole_natural_run_both_observers_closed_before_readback(self):
         for fragment in (1, 7, 4096):

@@ -12,6 +12,15 @@ and `build/rc-package-v025-20261019/handoff.json` first. Preserve the dirty
 The current worktree is `.local-baseline/felucca-161-integration` in the firmware
 repository; no website/hosted CI/release/deployment work belongs to this task.
 
+Local host follow-up: `build/rc-host-audio-epoch-20261019/handoff.json` records
+the reviewed collector overlay. General timing/resource/clock/arrangement status
+now requires the strict boot tuple for expected v0.2.5+, and package readers accept
+the frozen private manifest format.67 host tests, seven clock groups and the
+affected real resource-console fixture pass. Firmware, private package and unarmed
+kit are unchanged; the overlay is separate from their frozen source snapshot.
+Do not rerun those checks or apply it inside a sealed package. No device work is
+authorized, and the remaining physical gates below have not changed.
+
 ## Corrected private candidate
 
 `build/rc-v025-20261019/dabbl8-0.2.5-timing-diagnostic.fwsc`, FM-1_8025,

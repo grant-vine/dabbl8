@@ -1,18 +1,25 @@
-## Current preparation — v022 supersedes the older proposed session below
+# Historical RC qualification preparation — 19 October 2026
 
-The installed device is v0.2.1-timing with originals restored. The corrected
-private v0.2.2-timing package is frozen at `build/rc-v022-20261019-r2/`, with final
-local review evidence in `build/rc-package-v022r2-20261019/`. No device access or
-flash is currently authorized. Follow [the current combined batch](rc-hardware-test-plan.md),
-not the older v020→v021 sequence retained below. Startup-order fixes and package
-checks are local passes; physical attribution, exact-candidate timing/stack and
-independent recovery remain open. The existing84scenario evidence is reused.
+Read the [current handoff](local-work-handoff.md) and [RC status](release-candidate-status.md)
+for installed/prepared identities, data state, permissions and the next action.
+The incidents, methods and proposed sequences below record earlier v020–v022
+work. They are not pending instructions, evidence of the current device's data
+state or authorization to access it. The current [hardware plan](rc-hardware-test-plan.md)
+remains unarmed; do not repeat an old restore/upgrade sequence from this record.
 
-# Remaining RC qualification — local preparation, 19 October 2026
+## Historical v022 preparation
 
-No device action or flash is authorized by this document. The owner's original
-projects are restored and all ports are closed. Preserve the sealed v020 review
-kit; this is a later evidence addendum, not a new firmware package approval.
+At that stage the device was v0.2.1-timing with originals restored, and the
+private v0.2.2-timing package was frozen at `build/rc-v022-20261019-r2/`, with
+local review evidence in `build/rc-package-v022r2-20261019/`. Preserve those
+sealed inputs and their scope. Later device events supersede that observation;
+it does not prove that originals are restored on the currently installed image.
+
+## Earlier v020/v021 qualification record
+
+The v020 original-restoration and closed-port observations below apply only to
+their recorded session. No device action or flash is authorized by this document.
+Preserve the sealed v020 review kit and subsequent correction evidence.
 
 ## Upgrade preservation blocker found locally
 
