@@ -21,6 +21,13 @@ does not locate events within a boot; new coherent per-boot fields retain histor
 and reject every new-boot event. Reuse the fixed RAM/loader and prior comparisons
 by their recorded hash bindings. The v024 freeze/failed session remain immutable.
 
+The separate host follow-up is reviewed in [draft PR #207](https://github.com/grant-vine/dabbl8/pull/207),
+with67 host tests and seven clock groups under `build/rc-host-audio-epoch-20261019/`.
+It adds strict new-boot epoch checks and actual private-manifest compatibility to
+the general collectors. Four host inputs deliberately differ from the frozen
+275-file source receipt; all181 pinned firmware inputs and the package/kit remain
+unchanged. Do not replace sealed host files or rebuild the firmware for this overlay.
+
 These builds use eight tracks/eight shared sounding voices, full engine mask0x3ffd,
 FM4 unavailable, USB audio off. Source-defined caps do not establish every
 engine/preset/effect combination's target performance. Felucca and dependency
@@ -62,6 +69,11 @@ credits remain; inherited synthesis/effects are not new Dabbl8 development.
    deliberately corrupted ancillary tail is rejected by both comparison layers.
    This strengthens local byte-preservation evidence, not ancillary-format
    reopening or physical durability. No new candidate build is required.
+7. Reuse [the later current-format ancillary upgrade check](ancillary-upgrade-qualification.md).
+   It runs actual settings, preset, FM6-object and sample readers after a virtual
+   upgrade, covering reopening beyond step6's raw byte comparison. Neither check
+   establishes physical interruption durability or expands project-only backups
+   to include ancillary data. Preserve their distinct scopes.
 
 ## Installation, compatibility and remaining gates
 
