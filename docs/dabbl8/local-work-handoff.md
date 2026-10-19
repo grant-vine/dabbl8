@@ -1,5 +1,34 @@
 # Current handoff — guarded clock preparation, no hardware access
 
+Publication/evidence follow-through: [draft firmware PR #200](https://github.com/grant-vine/dabbl8/pull/200)
+is stacked on #199. Its review tree exactly equals source `149f2a0`; the original
+checkout/commits remain intact. GitHub Actions was confirmed disabled before and
+after publication. No PR was merged and no binary/release asset was uploaded.
+The app could not attach the PR because this chat reached its100-attachment cap;
+the GitHub PR exists and is linked directly. Do not create a duplicate.
+
+The snapshot had lost PR196's self-contained MIDI fixtures/recipes. Commit
+`149f2a0` restores that existing work without changing firmware. Actual drum and
+eight-channel renderers each pass128 notes/eight peak voices/no holds/unchanged
+project; recording/schedule controls pass. The first combined run's stale selector
+failures are retained; corrected40-selector/runner checks pass separately with
+422 renderer/header/browser inputs unchanged. Reuse the C results, not their
+failed combined status as a blanket pass. See private
+`build/rc-midi-repair-20261019/qualification-results.json`.
+
+GitHub #9/#11/#12/#13/#14/#20 now reflect seven supported completed substeps and
+remaining gates, with source-specific [hardware evidence](hardware-qualification-20261019.md).
+All remain open. The current RC review guide no longer directs an old v020/v021
+installation. Private reconciliation/publication receipts are in
+`build/rc-requirements-20261019/`.
+
+Next useful local coverage: audit the actual sequencer/arrangement and concurrent
+UI/MIDI/effects workload against the existing guarded helpers, then prepare only
+missing headless scenarios. Do not substitute another stopped MIDI-only window
+for internal-sequencer/arrangement qualification. Continue the full IRQ/observer
+and stack ABI method work before the consolidated package freeze; no FM-1 access,
+saved-data change or flash is armed.
+
 Latest firmware source `95ac93f` on `dabbl8/felucca-161-bugfixes`. Read current
 [RC status](release-candidate-status.md), [clock method](clock-measurement.md),
 [independent recovery preparation](independent-recovery-preparation.md) and private
