@@ -6,9 +6,13 @@ static void pt_begin_read_hook(void);
 #define D8_LOCAL_FIRST_USE_LCD_HOOK pt_begin_lcd_hook
 #define D8_LOCAL_COMPLETION_READ_HOOK pt_begin_read_hook
 #include "native_local_save_test.c"
+#ifndef D8_PROJECT_TEST_ERASE
+#define D8_PROJECT_TEST_ERASE mc_ram_erase_spy
+#define D8_PROJECT_TEST_PROGRAM mc_ram_program_spy
+#endif
 #define FL_FAR(fn) fn
-#define fl_erase4k_ram mc_ram_erase_spy
-#define fl_prog_ram mc_ram_program_spy
+#define fl_erase4k_ram D8_PROJECT_TEST_ERASE
+#define fl_prog_ram D8_PROJECT_TEST_PROGRAM
 #include "../firmware/src/native_project_transfer.c"
 #undef fl_prog_ram
 #undef fl_erase4k_ram
@@ -35,6 +39,7 @@ static void pt_begin_read_hook(void)
 {
  if(pt_read_event==1){pt_read_event=0;usb.resets++;}
  else if(pt_read_event==2&&d8ls.phase==LS_EXECUTE&&pt_phase()==PT_EXPORT){pt_read_event=0;post_commit_io=2;}
+ else if(pt_read_event==7&&d8ls.phase==LS_EXECUTE&&pt_phase()==PT_EXPORT){pt_read_event=0;d8ls_revoke();}
  else if(pt_read_event>=3&&!migration_owner&&d8ls.writing&&d8ls.operation==4&&pt_phase()==PT_APPROVED){
   if(pt_read_event==6&&d8pt_diag.stage!=PTD_AUTOSAVE)return;
   unsigned event=pt_read_event;pt_read_event=0;

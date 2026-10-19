@@ -241,6 +241,15 @@ static void con_status(void)
 #if FELUCCA_FLASH && FL_TRACE_ENABLED
     con_flash_trace();
 #endif
+#if NTRK == 8 && D8_MIGRATION_SESSION && D8_PROJECT_TRANSFER_SESSION && DABBL8_TIMING_DIAGNOSTIC
+    con_kv("pt_boot",d8pt_diag.boot);con_kv("pt_record_boot",d8pt_diag.record_boot);
+    con_kv("pt_stage",d8pt_diag.stage);con_kv("pt_raw_rc",(int32_t)d8pt_diag.raw_rc);
+    con_kx("pt_guards",d8pt_diag.guards);con_kx("pt_revoke",d8pt_diag.revoke);
+    con_kx("pt_address",d8pt_diag.address);con_kv("pt_operation",d8pt_diag.operation);
+    con_kv("pt_completed",d8pt_diag.completed);con_kv("pt_feeds",d8pt_diag.feeds);
+    con_kv("pt_p33_failures",d8pt_diag.p33_failures);
+    con_kx("pt_reset_reason",d8pt_diag.reset_reason);con_kx("pt_reset_src",d8pt_diag.reset_src);
+#endif
     con_kv("usb_resets", (int32_t)usb.resets);
     con_kv("usb_sof", (int32_t)usb.sof_seen);
     con_kv("usb_suspends", (int32_t)usb.suspends);
