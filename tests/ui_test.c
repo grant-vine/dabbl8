@@ -72,7 +72,11 @@ static int32_t fm1_enc_take(uint32_t e)
 static void (*host_wdt_hook)(void);                /* (a test's: time passing in a blocking loop, as panel_setup's) */
 static uint32_t fm1_p33_timeouts;                 /* same failure counter as the target P33 HAL */
 static void fm1_wdt_feed(void) { if (host_wdt_hook) host_wdt_hook(); }
-static void fm1_irq_off(void) {}
+static void fm1_irq_off(void) {
+#ifdef UI_IRQ_OFF_HOOK
+    UI_IRQ_OFF_HOOK();
+#endif
+}
 static void fm1_irq_on(void) {
 #ifdef UI_IRQ_ON_HOOK
     UI_IRQ_ON_HOOK();

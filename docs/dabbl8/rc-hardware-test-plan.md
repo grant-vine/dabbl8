@@ -1,138 +1,87 @@
-# One combined v023 hardware batch — prepared, unarmed
+# One v0.2.5 startup/restore batch — prepared, unarmed
 
-The consolidated private diagnostic includes the locally checked D8C1 clock and
-D8A1 arrangement status from firmware source `c34263f`, with host collector and
-readback source `aeef693`. The earlier frozen v023 remains immutable; it lacks
-both frames and must not be substituted. This plan is not flash authorization.
+The owner is unavailable. No device discovery, port access, flash, reset or
+restore is authorized. This is a future plan, not a queued operation. Await fresh
+owner availability and direction; do not poll the FM-1 or ask for button actions.
 
-Combined host [arrangement/FX/MIDI/UI coverage](arrangement-stress-qualification.md)
-and the synthetic C proposal now pass. The actual SEQ-hold/SONG/PLAY path prepares
-its source before playback; the note-only helper does not do that. A private
-combined archive preserves A/B, keeps the existing MIDI workspace in
-live/shared autosave and uses C for the16-scene arrangement. Before arming this
-batch, verify the consolidated package/kit checksums and retained local review.
-Do not broaden the guarded MIDI allowlist or substitute ordinary MIDI Start
-for source preparation.
+## Frozen inputs and preserved state
 
-Current instruction: **local work only; do not flash yet**. No discovery, port,
-MIDI, restore prompt, installer or device retry is armed. Last verified firmware
-is v0.2.2-timing with originals restored. Check owner availability before requesting
-physical action; then obtain authorization for the complete concrete batch.
+- Candidate: `build/rc-v025-20261019/dabbl8-0.2.5-timing-diagnostic.fwsc`,
+  FM-1_8025/v0.2.5-timing,610106B, SHA-256
+  `7a16ea2c4ec9c3e944b84e37a7f27ebefe3501139c6e6b54f17f88680a81fea5`.
+- Exact checked app528908B; unchanged reviewed loader6950B, SHA-256
+  `d6a2726256681ce39ccc61a4089df885ed32b387d6d26393056b4c69c6d9229a`.
+  Use the unchanged `tools/fm1_install.py` Felucca device-requested flow and
+  qualified existing Python/CoreMIDI runtime, one exact unique named port, no force.
+- Paired `build/rc-hardware-v025-20261019/` verifies inputs only and refuses
+  execution flags. Check both seals and create a fresh authorized session record;
+  never flip flags in either frozen bundle or resume an old failed session.
+- Last observed v024: main boot2/USB1, stopped, lifetime audio_late2 at14935ms,
+  flash1/fl_failure0, startup restore1. Normal UI does not verify saved contents.
+- Canonical originals: private
+  `build/hardware-v023-20261019-111007/preflight-original.d8bak`, SHA-256
+  `f30eac2f7c7f1a8010874d9dfcded715005e5bf026717ad271e3fcaa5c872d4a`.
+  A/B present, C/shared autosave absent. Do not use a current partial export as
+  replacement. If new owner content exists, stop and revise preservation first.
 
-This replaces the completed v022 plan. Do not repeat its demo, local SAVE/recall,
-stock restoration, broad engine survey or earlier warm/cold trials for reassurance.
-Changed firmware still requires its own targeted hardware acceptance.
+## One future owner visit
 
-## Local prerequisites
+Expected physical actions: one normal power-cycle, then one SAVE confirmation.
+No temporary project set, notes/workloads, settings/preset edits, extra full
+snapshot or repeated broad survey belongs to this focused correction batch.
 
-- Frozen private candidate `build/rc-v023-d8a1-20261019/`, product FM-1_8023,
-  package SHA-256 `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb`.
-  Verify SHA256SUMS, source/archive/loader pins and the external local review
-  before execution. Version strings are not independent binary attestation.
-- Execution kit `build/rc-hardware-v023-d8a1-20261019/` is plan-only with
-  `hardware_ready:false`. All 282 effective source/kit inputs are pinned, including
-  the clock/arrangement helpers. Use a new session copy; never carry readiness or authorization
-  forward or modify the frozen package. The existing helper and note schedule
-  remain unchanged apart from identity/input pins.
-- Existing MIDI workspace retained in live/shared autosave has SHA-256
-  `678dba08d7f40c4a5e8c8223d703511466ef0aeb4e4d80987e406ef2b8f375c3`.
-  Current-source actual rendering proves its eight-voice/eight-slot schedule and
-  bounded cleanup. Take one fresh original logical backup at authorized preflight;
-  never substitute an older archive if the owner has made edits.
-- Resolve the measurement method before treating this as the final RC session:
-  independent clock/audio cadence and omitted ISR work, and SP/SSP/exception/nesting
-  evidence. The existing D8T2/D8R1 helpers supply useful instrumented comparisons,
-  not a complete timing/stack certificate. No arbitrary GPIO wiring or new board
-  pin mapping is approved by this plan.
+1. **Read-only preflight after fresh authorization.** Owner connects, MASTER low,
+   stopped/unarmed and controls untouched. Verify unique expected endpoints,
+   stopped v024, flash detected, paused diagnostics, no new flash/boot/USB error.
+   The known lifetime late count2 must not increase during the bounded preflight.
+   Do not demand zero lifetime here, clear it, or accept a higher count as known.
+   Close all observers/companion ports. Recheck originals and recovery-input hashes.
+2. **Install once.** Use the exact package through unchanged Felucca updater.
+   Expected two-stage updater transitions belong to that operation. Any unexpected
+   timeout/mismatch/disconnect/cleanup failure stops; no force or retry.
+3. **New-boot health before SAVE.** Require normal steady UI, stopped playback,
+   flash1/fl_failure0, paused diagnostics, full8/UAC-off profile and stable boot/USB
+   over60 seconds. Parse the exact `audio_late`, `audio_late_entry`,
+   `audio_late_boot` tuple through the bundled strict `boot_audio_status` helper.
+   Entry is captured before any IRQ/audio starts; current_boot must be0 and
+   lifetime-minus-entry must match it modulo2^32. Lifetime/entry must not change
+   between observations. Nonzero inherited history is recorded, never reset or
+   used to excuse a new event. New events, missing/inconsistent fields or instability
+   stop. The packaged `read-completion.py` performs one fixed RAM/status capture
+   with that same tuple gate and new ELF/symbol pins. First-use/reset/storage-error
+   UI stops without SAVE; do not format or bypass it.
+4. **Cold boot before final restoration.** Close all connections; ask owner to
+   unplug USB, switch fully off (screen dark), wait5 seconds, on, then reconnect
+   only after normal UI. Require healthy stopped v025 and coherent zero current-boot
+   late diagnostics again. COMMIT retention is warm-reset observation, not a
+   power-loss journal. Existing content is still unverified; no restoration claim.
+5. **Restore canonical originals once.** Connect unchanged private localhost
+   companion, select the verified canonical archive, stage one restore. Only when
+   prompt is ready and owner present, request SAVE alone for about1 second then
+   release once. Prompt limit2 minutes; absence/expiry is cancellation, not retry
+   authority. Require acknowledged COMMIT, normal UI and logical readback archive.
+   Take one packaged pinned read-only completion capture: stage7/raw_rc0, guards0,
+   revoke0, p33_failures0, record_boot==pt_boot, completed==feeds. Count is set-dependent;
+   never hardcode116. Preserve any pending/error diagnostic without a new access.
+6. **Compare and finish.** Bundled `compare-projects.py` validates original and
+   readback through the unchanged native codec and requires all five logical roles
+   and presence/absence to match; raw archive/pool hashes need not. Save receipts
+   and close connections. No final reboot: canonical originals have no shared
+   autosave, so unsaved live content has no cold-reopen promise. Do not add a full
+   command78 snapshot to compare the same data a second time.
 
-## One owner session
+## Stop condition and limits
 
-Two SAVE confirmations and one confirmed normal power-cycle, with automated work
-between them, plus one C-load/SEQ-hold/PLAY action for arrangement playback.
-Announce SAVE only after the prompt is ready and the owner is present;
-it expires after two minutes. Never silently retry an expired request.
+First unexpected device, health, storage, communication, deadline or cleanup
+failure ends device work. Preserve primary failure/cleanup and partial evidence.
+No automatic reconnect, restore, reset, reflash, recovery write or follow-up
+capture. Further device activity requires owner direction. Restoration/readback
+failure leaves device data unverified even if UI is normal; original archive stays
+safe. Do not recycle historical late counts as evidence that a new event is safe.
 
-1. **Preflight and original backup.** After fresh authorization/readiness, check
-   unique expected endpoints, v022/profile, stopped/unarmed transport/recording,
-   flash health, routing and counters. Back up the current logical projects once.
-   Compare the temporary archive against that fresh backup: preserve the owner's
-   A/B and other data. If they differ from the prepared originals, stop and update
-   the temporary set offline. Keep the stock recovery artifacts available locally;
-   no recovery write or deliberate fault injection is part of preflight.
-2. **SAVE #1: temporary project set.** Stage through the existing companion,
-   obtain one physical confirmation, require COMMIT completion and exact logical
-   readback before advancing. A timeout is uncertain, not success.
-3. **Upgrade once through Felucca's flow.** Close observers/ports, install only
-   the exact reviewed package after separate flash authorization, then close the
-   installer. Check steady boot/USB/flash health for 60 seconds, no new late event,
-   successful read-only autosave reopening and exact A/B/C/autosave/current bytes.
-   No factory reset or first-use bypass. New loader behavior only rejects a
-   wrong-sized board image; existing native-pool cleanup exclusion is preserved.
-4. **One cold restart.** After all ports close, unplug USB, switch fully off,
-   confirm dark screen, wait five seconds, switch on, reconnect after normal UI.
-   Require a fresh healthy epoch, automatic reopen and exact saved/current bytes.
-   Do not compare retained counters across epochs or clear counters to pass.
-5. **Targeted automated measurements.** With MASTER low and no recording or
-   settings/preset edits, use the unchanged schedule: six FM6 voices on channel2,
-   DRUM channel4, WHEEL channel1. Two 18-second timing/resource passes, one 17-role
-   full snapshot before and one after, exact routing/live-project guards, matching
-   note-off cleanup and confirmed no holds. Capture stack observations and counters
-   in the same session. Use the new fixed completion reader only for v023; its
-   trace address is 0x01C1D250, validated against the exact ELF, not the old v022
-   address. Independent clock/observer/ABI measurements must be recorded separately
-   with uncertainty; absent evidence stays unqualified, regardless of clean counters.
-   Group the three read-only D8C1
-   samples into this same owner visit. Require fresh healthy status/epoch, exact
-   package/source capability, complete request/reply brackets, consistent rate
-   intervals and successful close. No owner button press is needed for clock
-   sampling. Stop on refusal; never use nominal 24MHz as a measured result. The
-   sampler does not close omitted ISR/arrival-latency or stack ABI gates.
-   Then use the locally validated arrangement capture phase: owner loads C,
-   holds SEQ to open SONG and presses PLAY once. Capture preparation and all16
-   scenes through its automatic Stop, with no extra notes or settings edits.
-   This changes live context and may change shared autosave; only the protected
-   A/B/C and ancillary sections retain their prior equality expectation. Confirm
-   C-context bytes and clean Stop before proceeding. Reuse the post-MIDI full
-   snapshot as the arrangement's before-state. Only after the collector has
-   acknowledged natural Stop and both diagnostic pauses, and closed cleanly,
-   request one final full snapshot through the existing firmware quiet guard.
-   Derive logical readback offline with the pinned native archive codec; do not
-   request an extra logical export merely to compare A/B/C. The final autosave
-   may retain the MIDI proposal or match C; record which, without inferring a
-   new autosave write. All protected roles remain exact. A host tail wait is not
-   proof of silence. Never snapshot while playback runs or after uncertain cleanup.
-6. **SAVE #2: originals.** Restore the fresh original archive once through the
-   companion, obtain physical confirmation and require its exact logical readback.
-   Record stage7/rc0/guards0/revoke0, unchanged health and closed ports. Do not add
-   another full snapshot or reboot after verified restoration.
-
-## Independent recovery and failure handling
-
-The demonstrated stock-v15 Mac restore depended on a working console to enter
-ROM mode. Reuse that evidence; do not erase a working unit merely to repeat it.
-Broader unresponsive-application recovery requires a separately reviewed physical
-entry method. RP2040 ownership is not proof of compatible board pin mapping,
-wiring, readback or restore. Qualify those with the exact board and primary
-transporter instructions; do not assume XIAO labels apply to the Waveshare board.
-Group any separately authorized hands-on preparation into this owner visit where
-practical, but keep recovery writes and deliberate power interruption outside
-the normal qualification batch. A read-only identification/backup alone does not
-prove restore from an unresponsive application.
-
-Stop on the first device/communication/storage/deadline/taint/allocation or uncertain
-cleanup failure. No automatic retry, reset, reconnect, reflash or restore. Retain
-the primary error and any cleanup error. If temporary data remains installed,
-report it and obtain direction before attempting restoration. A clean batch ends
-with exact originals restored; a stopped batch may not.
-
-The arrangement collector has no remote STOP command. If owner action times out
-or observation fails during playback, it pauses only diagnostics whose starts
-were acknowledged and closes once. It cannot claim music stopped or safely
-restore data. Report that condition and obtain direction before further access.
-
-This batch covers the changed candidate's update/reopen and bounded workload.
-It does not automatically qualify every preset/effect combination, UAC, all
-ancillary saved data, interruption recovery, full stack or calibrated deadlines.
-Do not call it RC-complete while a stated release gate remains open.
-
-Historical reference: [completed v022 plan](history/rc-hardware-test-plan-v022-completed-20261019.md).
+A pass would verify this candidate's normal boot and corrected original restore
+on this FM-1. It cannot close complete timing/ISR/clock or stack ABI/nesting bounds,
+interrupted-write durability, independent failed-application recovery, external
+loader provenance, all concurrent workloads or second-tester/release approval.
+The historical stock restore required a working console. No ROM entry, RAM loader
+upload or RP2040 recovery is part of this batch.

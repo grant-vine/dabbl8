@@ -9,10 +9,17 @@ source of truth. Earlier v020/v021 review instructions are
 
 | Input | Identity | Review boundary |
 | --- | --- | --- |
-| Last verified device | v0.2.2-timing/FM-1_8022, package SHA `b3e137b9d4e918d32f6933e0bc92139e96e6d347df1570a3cacce8834cc238ff` | Originals restored, ports closed; retained physical evidence, not a new observation |
-| Current frozen private package | v0.2.3-timing/FM-1_8023, firmware source `c34263f`, package SHA `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb` | `build/rc-v023-d8a1-20261019/`; includes D8C1/D8A1; not installed or RC-qualified |
-| Current host preparation | Collector/readback `aeef693`; source archive `abb811f` | Frozen source/kit checks and main-session review under `build/rc-consolidated-v023-20261019/`; kit unarmed |
+| Last observed device | v0.2.4-timing/FM-1_8024, main boot2/USB1, lifetime audio_late2 | Stopped at first post-install health check; original restoration/data unverified. Owner unavailable; no device access authorized. |
+| Current private package | v0.2.5-timing/FM-1_8025, package SHA `7a16ea2c4ec9c3e944b84e37a7f27ebefe3501139c6e6b54f17f88680a81fea5` | `build/rc-v025-20261019/`; startup order/boot counter correction, unchanged loader; not installed or RC-qualified |
+| Current host preparation | Source HEAD `341da9a` plus source-hashed working changes; repinned56-byte retained reader | Package/kit checks and local review under `build/rc-package-v025-20261019/`; hardware batch unarmed |
+| Installed earlier package | v0.2.3-timing, firmware source `c34263f`, package SHA `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb` | Immutable `build/rc-v023-d8a1-20261019/`; preserve its failed-session evidence |
 | Historical earlier v023 freeze | Firmware source `e251aa4`, package SHA `c3ebf3933ee5b6088f990cefda17e56ca468e5dc4f619326dba09349898fac83` | Preserved unchanged; lacks D8C1/D8A1; do not substitute it |
+
+The v025 source/actual-code regressions and evidence limits are in
+[boot timing qualification](boot-timing-qualification.md). The old lifetime counter
+does not locate events within a boot; new coherent per-boot fields retain history
+and reject every new-boot event. Reuse the fixed RAM/loader and prior comparisons
+by their recorded hash bindings. The v024 freeze/failed session remain immutable.
 
 These builds use eight tracks/eight shared sounding voices, full engine mask0x3ffd,
 FM4 unavailable, USB audio off. Source-defined caps do not establish every
@@ -31,7 +38,11 @@ credits remain; inherited synthesis/effects are not new Dabbl8 development.
    consolidated package changes have focused receipts under
    `build/rc-arrangement-observer-20261019/`, `build/rc-arrangement-capture-20261019/`
    and `build/rc-consolidated-v023-20261019/`; the earlier independent source
-   review does not cover those later changes.
+   review does not cover those later changes. The v024 correction separately
+   reuses COMMIT/sanitizer and linked-RAM review under
+   `build/rc-erase-watchdog-20261019/`. Exact new-package consumers and56-byte
+   reader receipts are in `build/rc-package-v024-20261019/`; do not repeat the
+   broad matrix.
 3. Read [retained physical results](hardware-qualification-20261019.md). Own
    project transfer, stopped save/recall, all-populated-slot cold retention and
    upgrade readback have passing evidence. Do not request them again to explain

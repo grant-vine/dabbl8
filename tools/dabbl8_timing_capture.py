@@ -15,7 +15,7 @@ import select
 import stat
 import sys
 import time
-from typing import TypedDict
+from typing import NamedTuple, TypedDict
 from dabbl8_timing_report import parse_report
 
 COMMANDS = ('status', 'timing start', 'timing stop', 'timing report')
@@ -36,6 +36,29 @@ class TimingProfileMismatch(ValueError):
     def __init__(self, expected_uac: bool) -> None:
         self.expected_uac = expected_uac
         super().__init__(f'Timing profile mismatch: expected USB audio enabled={expected_uac}')
+
+
+class BootAudioCounters(NamedTuple):
+    lifetime: int
+    entry: int
+    current_boot: int
+
+
+def boot_audio_status(reply: str) -> BootAudioCounters:
+    """Read the coherent lifetime/boot tuple; never clear or forgive an event."""
+    values: list[int] = []
+    for key in ('audio_late', 'audio_late_entry', 'audio_late_boot'):
+        rows = [line for line in reply.splitlines() if line.startswith(key + ' ')]
+        if len(rows) != 1 or not re.fullmatch(key + r' -?[0-9]+', rows[0]):
+            raise ValueError('Missing/ambiguous boot audio counter: ' + key)
+        value = int(rows[0].split()[1])
+        if not -(1 << 31) <= value < (1 << 31):
+            raise ValueError('Boot audio counter outside signed 32-bit range: ' + key)
+        values.append(value & 0xffffffff)
+    result = BootAudioCounters(*values)
+    if (result.lifetime - result.entry) & 0xffffffff != result.current_boot:
+        raise ValueError('Inconsistent lifetime/boot audio counters')
+    return result
 
 
 class PackageIdentity(TypedDict):

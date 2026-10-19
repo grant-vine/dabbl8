@@ -203,6 +203,9 @@ static void con_uac(void)                              /* USB audio input: strea
 static void con_status(void)
 {
     const engine_t *e = ENGINES[TSEL->eng_req % NENGINES];
+#if DABBL8_TIMING_DIAGNOSTIC
+    uint32_t late = *(const volatile uint32_t *)&felucca_dbg.late;
+#endif
     con_puts(APP_CONSOLE_PREFIX);
     con_puts(FELUCCA_VERSION);
     con_puts("\r\n");
@@ -212,7 +215,13 @@ static void con_status(void)
     con_kv("uptime_ms", (int32_t)fm1_ms);
     con_kv("cpu_pct", (int32_t)(song.cpu_q8 * 100u / 256u));
     con_kv("audio_max_us", (int32_t)felucca_dbg.max_us);
+#if DABBL8_TIMING_DIAGNOSTIC
+    con_kv("audio_late", (int32_t)late);
+    con_kv("audio_late_entry", (int32_t)audio_late_entry);
+    con_kv("audio_late_boot", (int32_t)(late - audio_late_entry));
+#else
     con_kv("audio_late", (int32_t)felucca_dbg.late);
+#endif
     con_kv("voices_shed", (int32_t)shed_count);
     con_kv("voices_given_up", (int32_t)voice_kills);
     con_kv("track", (int32_t)song.sel + 1);
