@@ -83,10 +83,10 @@ class SelectionTest(unittest.TestCase):
         self.assertEqual(selected, {'diff', 'startup-order'})
         self.assertEqual(unknown, [])
         steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
-        self.assertEqual([step['name'] for step in steps[:3]],
-                         ['diff', 'startup-audio-order', 'startup-native-reopen'])
-        self.assertEqual(len(steps), 19)
-        for step in steps[1:3]:
+        self.assertEqual([step['name'] for step in steps[:4]],
+                         ['diff', 'startup-audio-counters', 'startup-audio-order', 'startup-native-reopen'])
+        self.assertEqual(len(steps), 20)
+        for step in steps[1:4]:
             self.assertEqual(step['argv'][:2], ['env', 'CC=clang'])
         for uart in (0, 1):
             for uac in (0, 1):
@@ -100,8 +100,9 @@ class SelectionTest(unittest.TestCase):
                     self.assertIn('tests/timer5_cadence_test.c', compile_step['requires'])
                     run_step = next(s for s in steps if s['name'] == label)
                     self.assertEqual(run_step['argv'], [str(Path('out') / label)])
-        self.assertIn('firmware/hal/fm1_audio.h', steps[1]['requires'])
-        self.assertIn('firmware/src/project_native_flash.c', steps[2]['requires'])
+        self.assertIn('tools/dabbl8_timing_capture.py', steps[1]['requires'])
+        self.assertIn('firmware/hal/fm1_audio.h', steps[2]['requires'])
+        self.assertIn('firmware/src/project_native_flash.c', steps[3]['requires'])
         self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
                              for step in steps for arg in step['argv']))
 

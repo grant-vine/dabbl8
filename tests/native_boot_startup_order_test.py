@@ -22,12 +22,12 @@ def main(argv: list[str]) -> int:
     source, out = Path(argv[0]).resolve(), Path(argv[1]).resolve()
     text = re.sub(r'/\*.*?\*/|//[^\n]*', '', source.read_text(), flags=re.S)
     body = text.split('static void fm1_main(void)', 1)[1].split('\n}\n', 1)[0]
-    calls = re.findall(r'^\s*(usb_start\(\)|autosave_boot\(boot_clean\))\s*;', body, re.M)
-    if len(calls) != 2 or len(set(calls)) != 2:
-        raise SystemExit('Expected exactly one USB start and one boot restore in fm1_main')
+    calls = re.findall(r'^\s*(audio_start\(\)|usb_start\(\)|autosave_boot\(boot_clean\))\s*;', body, re.M)
+    if len(calls) != 3 or len(set(calls)) != 3:
+        raise SystemExit('Expected one audio start, USB start and boot restore in fm1_main')
     out.mkdir(parents=True, exist_ok=True)
     header = out / 'shipping-boot-order.h'
-    replacements = {'usb_start()': 'boot_open_external_midi()',
+    replacements = {'audio_start()': 'boot_start_audio()', 'usb_start()': 'boot_open_external_midi()',
                     'autosave_boot(boot_clean)': '(void)autosave_boot(1)'}
     header.write_text(''.join(replacements[call] + ';\n' for call in calls))
     command = next(step['argv'] for step in recipes({'readonly-boot'},

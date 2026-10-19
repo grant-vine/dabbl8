@@ -192,6 +192,9 @@ static void fm1_main(void)
     felucca_init();
     master_boot();
     kb_boot_hold = 1;                         /* #137: no notes from the keys before the UI (seq.c keyboard_block) */
+#if DABBL8_TIMING_DIAGNOSTIC
+    audio_late_entry = *(const volatile uint32_t *)&felucca_dbg.late;
+#endif
     audio_init();
 #if FELUCCA_UART
     uart_midi_init();
@@ -200,13 +203,13 @@ static void fm1_main(void)
     timer5_start();
     fm1_guard_lock_top();
     fm1_irq_enable_all();
-    audio_start();                              /* no DMA phase can age with its IRQ masked */
     fm1_delay_ms(30);
     if ((fm1_in.buttons & 3u) == 3u) {
         panel_setup();                        /* OCT- + OCT+ held at power-on */
         settings_save();
     }
     autosave_boot(boot_clean);                /* adopt before external MIDI can compete */
+    audio_start();                           /* atomic boot adoption has no running DMA deadline */
 #if FELUCCA_UART
     boot_midi_ready = 1;
 #endif

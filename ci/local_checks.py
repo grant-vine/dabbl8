@@ -78,6 +78,7 @@ MAP['startup-order'] = {
     'firmware/hal/fm1_audio.h', 'firmware/src/audio.c', 'firmware/src/main.c',
     'tests/audio_startup_order_test.py', 'tests/native_boot_startup_order_test.py',
     'tests/timer5_cadence_test.c',
+    'tests/audio_boot_counter_test.py',
 }
 MAP.update(RESOURCE_MAP)
 MAP['runner'].add('ci/local_resource_checks.py')
@@ -138,6 +139,10 @@ def recipes(checks, cc, out, base):
             continue
         if name == 'startup-order':
             steps += [
+                {'name': 'startup-audio-counters',
+                 'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/audio_boot_counter_test.py', str(out / 'startup-counters')],
+                 'requires': ['tests/audio_boot_counter_test.py', 'firmware/src/main.c',
+                              'firmware/src/console.c', 'tools/dabbl8_timing_capture.py']},
                 {'name': 'startup-audio-order',
                  'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/audio_startup_order_test.py', '--out', str(out / 'startup-audio')],
                  'requires': ['tests/audio_startup_order_test.py', 'firmware/hal/fm1_audio.h',

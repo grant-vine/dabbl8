@@ -7,6 +7,12 @@ static uint8_t flash_ok; /* actual legacy boot branch needs the later NOR fixtur
 #define D8_MIGRATION_SESSION_NO_MAIN 1
 static void boot_read_hook(void);
 static void boot_lcd_hook(void);
+#ifdef D8_NATIVE_BOOT_STARTUP_ORDER
+static unsigned boot_audio_running,boot_adopting,boot_adoption_masks,boot_dma_masks;
+static void boot_irq_off(void)
+{ if(boot_adopting){boot_adoption_masks++;boot_dma_masks+=boot_audio_running;} }
+#define UI_IRQ_OFF_HOOK boot_irq_off
+#endif
 #define UI_LCD_SYNC_HOOK boot_lcd_hook
 #define D8_BOOT_READ_HOOK boot_read_hook
 #include "native_migration_session_test.c"
@@ -25,6 +31,7 @@ static void boot_read_hook(void)
 }
 #ifdef D8_NATIVE_BOOT_STARTUP_ORDER
 static void boot_open_external_midi(void) { mi_w=mi_r+1; }
+static void boot_start_audio(void) { boot_audio_running=1; }
 #endif
 static project_t expected_boot;
 static __typeof__(d8p1_runtime_cache) expected_cache;
@@ -59,12 +66,16 @@ int main(int argc,char **argv)
 {
 #ifdef D8_NATIVE_BOOT_STARTUP_ORDER
  boot_seed();
+ boot_adopting=1;
  /* Generated directly from the shipping main.c call order; USB opening in the
   * host harness injects one retained input, never an OS/device port. */
  #include D8_NATIVE_BOOT_STARTUP_ORDER
+ boot_adopting=0;
  project_t startup_got;project_capture(&startup_got);
  CHECK(pnr_boot.result==1&&!memcmp(&startup_got,&expected_boot,sizeof startup_got));
  CHECK(!writes&&!physical_calls&&!memcmp(nor,baseline,sizeof nor));
+ CHECK(boot_audio_running&&boot_adoption_masks&&!boot_dma_masks);
+ printf("Shipping startup adoption: IRQ-masks=%u DMA-running-at-mask=%u\n",boot_adoption_masks,boot_dma_masks);
  printf("Shipping startup producer order: restore-result=%d guards=0x%x adopted=%u writes=%u\n",pnr_boot.result,pnr_boot.guards,(unsigned)!memcmp(&startup_got,&expected_boot,sizeof startup_got),writes);
  mi_r=mi_w;
 #endif

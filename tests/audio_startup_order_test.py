@@ -58,6 +58,7 @@ def main() -> int:
 #define FELUCCA_UART 1
 #define FELUCCA_UAC 0
 #define FELUCCA_SIE_IRQ_BUDGET 0
+#define DABBL8_TIMING_DIAGNOSTIC 1
 #define FM1_TICKS_PER_US 24u
 #define HALF_FRAMES 128u
 #define HALF_WORDS (HALF_FRAMES * 2u)
@@ -82,9 +83,10 @@ static uint32_t adr3, clk2, iomap5, gpio[4];
 static uint64_t now, dma_start, next_half, blackout_ticks;
 static unsigned running, irqs, attached, late, rendered, phase;
 static volatile uint8_t boot_midi_ready;
-static unsigned adopted, restore_checks, early_uart, ready_uart;
+static unsigned adopted, restore_checks, early_uart, ready_uart, adoption_audio;
 static uint32_t fm1_ms, t5_nested_ticks;
-static struct { unsigned timer_irqs, nested, in_audio; } felucca_dbg;
+static struct { unsigned timer_irqs, nested, in_audio, late; } felucca_dbg;
+static uint32_t audio_late_entry;
 static struct { unsigned buttons; } fm1_in;
 static unsigned boot_clean = 1;
 void fm1_timer5_irq(void);
@@ -145,8 +147,14 @@ static struct { unsigned timeouts, up; } usb;
 static uint8_t ep0buf[64];
 static void autosave_boot(unsigned clean) {
     scan_ten_ticks();
-    restore_checks += clean && !usb.up && !boot_midi_ready && !early_uart;
+    restore_checks += clean && irqs && !usb.up && !boot_midi_ready && !early_uart;
+    /* Actual native publication masks IRQs across the whole project. Model a
+     * nonzero critical section here; the native fixture exercises its body. */
+    sync_dma(); adoption_audio += running;
+    irqs = 0;
+    advance(2u * PERIOD + phase);
     adopted = 1;
+    fm1_irq_enable_all();
 }
 
 #define S_POWER 0
@@ -168,17 +176,19 @@ int main(void) {
         con0 = con1 = con2 = con3 = 0; memset(gpio, 0, sizeof gpio);
         now = dma_start = next_half = blackout_ticks = 0;
         running = irqs = attached = rendered = 0;
-        boot_midi_ready = adopted = restore_checks = early_uart = ready_uart = 0;
+        boot_midi_ready = adopted = restore_checks = early_uart = ready_uart = adoption_audio = 0;
         usb.up = 0;
         /* Existing lifetime diagnostic history must not be cleared/ignored. */
-        late = 7; phase = (PERIOD * i) / 32;
+        late = felucca_dbg.late = 7; audio_late_entry = 0;
+        phase = (PERIOD * i) / 32;
         shipping_boot();
+        advance(2u * PERIOD);
         scan_ten_ticks();
         unsigned added = late - 7;
-        printf("phase=%u blackout_ticks=%llu additional_late=%u rendered=%u attached=%u restore_checks=%u early_uart=%u ready_uart=%u\n",
-               i, (unsigned long long)blackout_ticks, added, rendered, attached, restore_checks, early_uart, ready_uart);
+        printf("phase=%u blackout_ticks=%llu additional_late=%u rendered=%u attached=%u restore_checks=%u adoption_audio=%u early_uart=%u ready_uart=%u\n",
+               i, (unsigned long long)blackout_ticks, added, rendered, attached, restore_checks, adoption_audio, early_uart, ready_uart);
         late_total += added;
-        if (blackout_ticks || late != 7 || !rendered || attached != 1 || restore_checks != 1 || early_uart || !ready_uart) fails++;
+        if (blackout_ticks || late != 7 || audio_late_entry != 7 || !rendered || attached != 1 || restore_checks != 1 || adoption_audio || early_uart || !ready_uart) fails++;
     }
     printf("startup DMA/IRQ: phases=32 failed=%u additional_late=%u; simulated hardware only\n", fails, late_total);
     return fails ? 1 : 0;
