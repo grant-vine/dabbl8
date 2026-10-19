@@ -1,5 +1,14 @@
 # Current handoff — combined arrangement checks, no hardware access
 
+The offline C proposal is also ready. Its actual native recall and SEQ-hold /
+SONG / PLAY path pass in optimized and fatal sanitizer modes; both export the
+same7,385-byte project. All16 scenes stop automatically, with eight voices/eight
+heavy slots and exact state/quiet cleanup. A private combined archive retains
+the existing MIDI live/autosave fixture, puts the arrangement in C and preserves
+the verified original A/B. Codec/pool rebuild and readback pass. It remains
+unarmed and needs a fresh original comparison before staging. Read private
+`build/rc-arrangement-proposal-20261019/handoff.json` next. No device was accessed.
+
 The missing combined host workload now passes four scenarios in both optimized
 and fatal ASan/UBSan modes: actual audio ISR/native arrangement, live USB/TRS
 parser input, effects and asynchronous LCD drawing. Natural16-scene progression,
@@ -35,11 +44,12 @@ installation. Private reconciliation/publication receipts are in
 `build/rc-requirements-20261019/`.
 
 Next: finish the full IRQ/observer and stack ABI method work before the
-consolidated clock-capable package freeze. Prepare a bounded arrangement hardware
-setup offline; native sources need main-loop preparation, which the current
-notes-only helper does not provide. Keep that helper's allowlist unchanged.
-Group any necessary PLAY/clock action into the existing owner visit instead of
-another restore/testing loop. No FM-1 access, saved-data change or flash is armed.
+consolidated clock-capable package freeze. The C proposal/control path is locally
+checked; its bounded capture and automatic-Stop/readback orchestration still
+needs qualification before repinning the kit. Keep the notes-only helper's
+allowlist unchanged. Group C load/SEQ-hold/PLAY into the existing owner visit
+instead of another restore/testing loop. No FM-1 access, saved-data change or
+flash is armed.
 
 Latest firmware source `95ac93f` on `dabbl8/felucca-161-bugfixes`. Read current
 [RC status](release-candidate-status.md), [clock method](clock-measurement.md),

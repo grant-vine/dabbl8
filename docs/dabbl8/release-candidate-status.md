@@ -72,6 +72,12 @@ omitted-action controls are correctly rejected. This is simulated host evidence;
 it does not close the target concurrent-playback, timing, stack or physical
 routing gates. See [the combined scenario evidence](arrangement-stress-qualification.md).
 
+The synthetic C proposal additionally passes actual native recall and the
+SEQ-hold/SONG/PLAY preparation path, all16 natural scenes and automatic Stop in
+both host modes. Its private combined archive preserves A/B and retains the old
+MIDI workspace in live/shared autosave. Bounded observation/Stop/readback and
+the newly pinned package/kit still need local completion before any owner batch.
+
 | Gate | Local result | Required before a full RC claim |
 | --- | --- | --- |
 | Timing | Historical inclusive maximum 57,151 ticks; source-documented half 69,632 ticks. Read-only D8C1 and conservative host-bracket math are locally tested. | Collect exact-candidate clock/cadence evidence with reference uncertainty; account for entry/recorder/exit and arrival latency; measure supported concurrent workloads. A narrow host-relative interval is not SI calibration or full ISR qualification. |
