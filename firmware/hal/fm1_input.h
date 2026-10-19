@@ -199,6 +199,11 @@ static volatile struct {
     uint32_t dim_n, dim_sum;     /* the dim pulses and their widths (TIMER4 ticks) */
 } fm1_in_stat;
 
+/* Same row-zero operation, expanded inside RAM-only flash code: no XIP call. */
+#define FM1_LED_ROWS_OFF() do { \
+    FM1_PR(FM1_PA, FM1_OUT) &= ~((1u << 9) | (1u << 10)); \
+    FM1_PR(FM1_PH, FM1_OUT) &= ~((1u << 6) | (1u << 9)); \
+} while (0)
 static void fm1__led_lines(uint32_t rowmask)       /* row bit 1 PA9, 2 PA10, 3 PH6, 4 PH9 */
 {
     FM1_LED_TRACE(rowmask);

@@ -7,6 +7,8 @@
 static volatile uint32_t sfc, spi, buf, iomap, port_out, port_dir, cache, timer;
 static volatile uint32_t enc_lo, enc_hi;
 static volatile uint8_t enc;
+static unsigned blanked;
+#define FL_ERASE_PREPARE() (blanked++)
 static unsigned irq_on, checks, failures, transfers, fail_transfer, cs_high;
 static unsigned wel, refuse_wel, busy, busy_forever, busy_reads, issued;
 static unsigned command, bytes, payload, contained, tick_reads, tick_count;
@@ -88,7 +90,7 @@ static void reset(void)
     sfc=0x201; spi=0x33; buf=0; iomap=0x20; port_out=1; port_dir=0;
     cache=0x4000; timer=0; enc=0; enc_lo=enc_hi=0;
     irq_on=1; cs_high=1; transfers=fail_transfer=wel=refuse_wel=busy=busy_forever=0;
-    issued=command=bytes=payload=contained=tick_reads=tick_count=0;
+    issued=command=bytes=payload=contained=tick_reads=tick_count=blanked=0;
     busy_reads=1; tick_step=2400; received=0;
 }
 
@@ -136,7 +138,7 @@ int main(void)
 {
     for (enum operation op=ERASE;op<=PROGRAM;op++) {
         const char *kind=op==ERASE?"erase":"program";
-        reset(); expect_return(kind,op,0); CHECK(kind,issued==1);
+        reset(); expect_return(kind,op,0); CHECK(kind,issued==1); CHECK("LED rows blanked for every valid erase",blanked==(op==ERASE));
         reset(); refuse_wel=1; expect_return("WEL refusal",op,-3); CHECK(kind,issued==0);
         reset(); busy=busy_forever=1; expect_containment("busy before command",op); CHECK(kind,issued==0);
         reset(); busy_forever=1; tick_step=24000024u;

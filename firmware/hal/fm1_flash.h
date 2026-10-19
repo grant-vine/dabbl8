@@ -242,12 +242,16 @@ static RAMFN uint32_t fl_status_ram(void)                /* SR1 | SR2 << 8 */
     FL_TRACE_STATUS(v,1);FL_TRACE_END((int32_t)v);return v;
 }
 
+#ifndef FL_ERASE_PREPARE
+#define FL_ERASE_PREPARE() ((void)0)
+#endif
 static RAMFN int fl_erase4k_ram(uint32_t off, uint32_t *took_us)
 {
     fl_saved_t s; int rc;
     FL_TRACE_BEGIN(FL_TRACE_ERASE,off);
     if (!FL_RANGE_OK(off, 0x1000u) || (off & 0xFFFu))
         { FL_TRACE_END(-1);return -1; }
+    FL_ERASE_PREPARE();                 /* before XIP is suspended; caller already holds IRQs off */
     if (fl_enter(&s)) { FL_TRACE_END(-2);return -2; }
     FL_TRACE_MARK(FL_TRACE_COMMAND);
     fl_wren();
