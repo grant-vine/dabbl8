@@ -5,6 +5,7 @@
 # ///
 """Actual host ISR/arrangement/FX/UI combinations; no device adapter."""
 from pathlib import Path
+import sys
 from typing import Final
 
 from local_flash_checks import LocalStep
@@ -12,6 +13,9 @@ from local_flash_checks import LocalStep
 ARRANGEMENT_MAP: Final = {
     'arrangement-stress': {'tests/native_arrangement_stress_test.c'},
     'arrangement-proposal': {'tests/native_arrangement_proposal_test.c'},
+    'arrangement-status': {'firmware/src/arrangement_diagnostic_console.h',
+                           'tools/dabbl8_arrangement_state.py', 'tests/arrangement_console_test.c',
+                           'tests/arrangement_state_test.py'},
 }
 SCENARIOS: Final = ('internal-dry', 'internal-room', 'usb-spring', 'trs-loss-wrap')
 GENERATED: Final = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -22,6 +26,8 @@ def arrangement_recipes(check: str, cc: list[str], out: Path) -> list[LocalStep]
     """Plan isolated processes for natural scene changes, fill and clock loss."""
     if check not in ARRANGEMENT_MAP:
         raise ValueError('Unknown arrangement scope: ' + check)
+    if check == 'arrangement-status':
+        return status_recipes(cc, out)
     proposal = check == 'arrangement-proposal'
     fixture = ('tests/native_arrangement_proposal_test.c' if proposal else
                'tests/native_arrangement_stress_test.c')
@@ -55,4 +61,32 @@ def arrangement_recipes(check: str, cc: list[str], out: Path) -> list[LocalStep]
         for scenario in SCENARIOS:
             steps.append(LocalStep(name='arrangement-' + mode + '-' + scenario,
                                    argv=[binary, scenario], requires=[]))
+    return steps
+
+
+def status_recipes(cc: list[str], out: Path) -> list[LocalStep]:
+    """Compile actual status slice on/off; decode it with the real host parser."""
+    sources = ['tests/arrangement_console_test.c', 'firmware/src/d8p1.c', 'firmware/src/d8pool.c']
+    required = sources + ['tests/native_arrangement_test.c', 'tests/d8p1_pool_runtime_test.c',
+        'tests/ui_test.c', 'tests/hostsim.c', 'tests/fixtures/d8p1/minimal.d8p',
+        'firmware/src/arrangement_diagnostic_console.h', 'firmware/src/song_chain.c',
+        'firmware/src/d8arr_prepare.c', 'tests/arrangement_state_test.py',
+        'tools/dabbl8_arrangement_state.py', *['build/gen/' + name for name in GENERATED]]
+    flags = ['-std=c11', '-w', '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+             '-Ibuild/gen', '-Ifirmware/src']
+    steps: list[LocalStep] = []
+    for mode in ('optimized', 'sanitized'):
+        binaries: list[str] = []
+        for enabled in (1, 0):
+            tag = f'arrangement-status-{mode}-{enabled}'
+            binary = str(out / tag)
+            binaries.append(binary)
+            mode_flags = ['-O2'] if mode == 'optimized' else ['-O1', '-g',
+                '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                '-fno-sanitize=signed-integer-overflow,shift']
+            steps.append(LocalStep(name=tag + '-compile',
+                argv=cc + flags + mode_flags + [f'-DDABBL8_TIMING_DIAGNOSTIC={enabled}'] +
+                     sources + ['-lm', '-o', binary], requires=required))
+        steps.append(LocalStep(name='arrangement-state-' + mode,
+            argv=[sys.executable, 'tests/arrangement_state_test.py', *binaries], requires=required))
     return steps
