@@ -1,315 +1,72 @@
-# Current handoff — combined arrangement checks, no hardware access
+# Current handoff — consolidated diagnostic ready for review
 
-Diagnostic-only coherent D8A1 `status` rows and a pure bounded observer are now
-locally verified. Actual native C states/formatter on/off, optimized/fatal
-sanitizers, strict host decoding/refusals and target link/MMIO/static budgets
-pass. Latest non-installable component: `build/app-only/full/run-9n195ske/`,
-527,572 bytes; RAM/pool and conditional stack maxima unchanged. Read
-[the contract](arrangement-observation.md) and private
-`build/rc-arrangement-observer-20261019/handoff.json` next. No device was accessed.
-Native combined timing/resource orchestration and C-context readback still need
-completion before one new package/reader/kit freeze. The old frozen v023 cannot
-supply either D8C1 or D8A1. Do not flash or re-run unchanged render scenarios.
+Read [RC status](release-candidate-status.md), the [review guide](rc-review-guide.md)
+and private `build/rc-consolidated-v023-20261019/handoff.json` first. They identify
+one prepared, unarmed owner batch. Current instruction: **do not flash or access
+the FM-1**. No device discovery, port, notes, write, restore or restart is pending.
 
-The offline C proposal is also ready. Its actual native recall and SEQ-hold /
-SONG / PLAY path pass in optimized and fatal sanitizer modes; both export the
-same7,385-byte project. All16 scenes stop automatically, with eight voices/eight
-heavy slots and exact state/quiet cleanup. A private combined archive retains
-the existing MIDI live/autosave fixture, puts the arrangement in C and preserves
-the verified original A/B. Codec/pool rebuild and readback pass. It remains
-unarmed and needs a fresh original comparison before staging. Read private
-`build/rc-arrangement-proposal-20261019/handoff.json` next. No device was accessed.
+## Exact current inputs
 
-The missing combined host workload now passes four scenarios in both optimized
-and fatal ASan/UBSan modes: actual audio ISR/native arrangement, live USB/TRS
-parser input, effects and asynchronous LCD drawing. Natural16-scene progression,
-fill/return and row selection, clock loss across rollover, eight voices/eight
-heavy slots, quiet cleanup and exact project/source preservation pass. Three
-omitted-action controls are rejected. The new local runner has41 passing selector
-cases; strict analysis of its new recipe passes. No production firmware changed.
-See [coverage and hardware limits](arrangement-stress-qualification.md) and private
-`build/rc-arrangement-stress-20261019/` receipts, review and handoff. Retain the
-earlier fixture/recipe errors and selected-track comparison failure; these were
-test setup issues, not demonstrated production defects.
+- Worktree: `/Users/grantv/Code/dabbl8/.local-baseline/felucca-161-integration`,
+  branch `dabbl8/felucca-161-bugfixes`. Preserve the original dirty v022 checkout.
+- Latest firmware source: `c34263f07c67a8b5bece85abbe041e661b655e38`.
+  Collector/readback source: `aeef693b9cafe0ca859ab3243b50fd5225d368f4`.
+- Frozen private package: `build/rc-v023-d8a1-20261019/`, v0.2.3-timing/FM-1_8023,
+  SHA-256 `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb`.
+  It includes D8C1 and D8A1; the earlier v023 freeze does not. Keep both immutable.
+- Unarmed kit: `build/rc-hardware-v023-d8a1-20261019/`,282 source/input pins,
+  `hardware_ready:false`. Private original and temporary archives stay outside it.
+- Last verified device: v0.2.2-timing, originals exactly restored, COMMIT
+  stage7/rc0/guards0/revoke0 and ports closed. This is not a current observation.
+- Review stack: [#200](https://github.com/grant-vine/dabbl8/pull/200),
+  [#201](https://github.com/grant-vine/dabbl8/pull/201),
+  [#202](https://github.com/grant-vine/dabbl8/pull/202). Do not create duplicates,
+  merge them or enable hosted CI. The app's attachment cap does not remove a PR.
 
-Publication/evidence follow-through: [draft firmware PR #200](https://github.com/grant-vine/dabbl8/pull/200)
-is stacked on #199. Its published review tree originally equals source `fe5ff3f`; the original
-checkout/commits remain intact. GitHub Actions was confirmed disabled before and
-after publication. No PR was merged and no binary/release asset was uploaded.
-The app could not attach the PR because this chat reached its100-attachment cap;
-the GitHub PR exists and is linked directly. Do not create a duplicate.
+## Reuse completed evidence
 
-The snapshot had lost PR196's self-contained MIDI fixtures/recipes. Commit
-`149f2a0` restores that existing work without changing firmware. Actual drum and
-eight-channel renderers each pass128 notes/eight peak voices/no holds/unchanged
-project; recording/schedule controls pass. The first combined run's stale selector
-failures are retained; corrected40-selector/runner checks pass separately with
-422 renderer/header/browser inputs unchanged. Reuse the C results, not their
-failed combined status as a blanket pass. See private
-`build/rc-midi-repair-20261019/qualification-results.json`.
+Reuse84 engine/effects scenarios,42 emulator workflows, source-bound actual
+renderer/arrangement tests and prior physical persistence/stock-restore evidence.
+All181 firmware inputs and effective compile/generator inputs match the checked
+527,572-byte target application. RAM94812/98304 and pool335696/344064 are unchanged.
+No new build is needed for test/documentation changes alone.
 
-GitHub #9/#11/#12/#13/#14/#20 now reflect seven supported completed substeps and
-remaining gates, with source-specific [hardware evidence](hardware-qualification-20261019.md).
-All remain open. The current RC review guide no longer directs an old v020/v021
-installation. Private reconciliation/publication receipts are in
-`build/rc-requirements-20261019/`.
+The collector and C-context readback, package decode/corruption checks, virtual
+OTA/loader/native-pool preservation,17 fixed-reader cases, batch fault/message
+controls and no-access defaults pass. The package/source/kit checksum inventories
+are sealed. Do not restart collector implementation, package assembly or these
+passing cases merely because an older handoff says they are unfinished.
 
-Next: finish the full IRQ/observer and stack ABI method work before the
-consolidated clock-capable package freeze. The C proposal/control path is locally
-checked; its bounded capture and automatic-Stop/readback orchestration still
-needs qualification before repinning the kit. Keep the notes-only helper's
-allowlist unchanged. Group C load/SEQ-hold/PLAY into the existing owner visit
-instead of another restore/testing loop. No FM-1 access, saved-data change or
-flash is armed.
+The later raw-ancillary preservation extension passes optimized/fatal sanitizer
+runs plus eight deliberate corruption controls per mode. It covers nonempty
+synthetic settings/preset/FM6/sample allocations and all bytes outside approved
+app/update-record sectors. It does not prove valid ancillary format reopening or
+physical interrupted-write recovery. Its addendum is private
+`build/rc-roadmap-audit-20261019/`; no candidate or loader bytes changed.
 
-Latest firmware source `95ac93f` on `dabbl8/felucca-161-bugfixes`. Read current
-[RC status](release-candidate-status.md), [clock method](clock-measurement.md),
-[independent recovery preparation](independent-recovery-preparation.md) and private
-`build/rc-clock-20261019/handoff.json` first. Local command/collector, resource
-interop, selector, target budget and conditional linked-stack checks pass.
-Last verified installed firmware remains v022 with originals restored; no FM-1
-discovery, ports, notes, saved-data changes, upload, reset or flash this round.
+## Next actions and gates
 
-The original frozen v023 package remains immutable and predates D8C1. The new
-clock-capable target component is application-only, not an installer. Do not
-flash the old package to collect D8C1. A future consolidated freeze must repin
-the package, completion reader and unarmed kit after resolving measurement
-scope. Full ISR/arrival timing, stack ABI and independent physical recovery
-remain gates. The product listing identifies RP2040-Matrix, but physical board
-confirmation/port/wiring and recovery are not verified. Do not run transporter
-`info`/`dump` as passive discovery: they can enter ROM and upload a RAM loader.
+Only prepare a new owner session after fresh availability, authorization and
+readiness. Follow the [single combined batch](rc-hardware-test-plan.md): original
+backup, temporary setup/SAVE, exact reviewed upgrade, one cold restart, clock
+samples, guarded MIDI passes, C-load/SEQ-hold/PLAY, natural Stop/readback, then
+original restore/SAVE. Stop on any device or uncertain-cleanup failure. Never
+silently retry an expired prompt, restore, reset or reflash.
 
-Reuse the 84 engine/effects scenarios and earlier physical persistence/stock
-recovery evidence. Check owner availability before requesting any physical action.
-No new hardware session is armed. Current instruction remains **do not flash**.
+Full timing still needs reference uncertainty, omitted ISR/arrival work and
+supported concurrent target workloads. Stack still needs SP/SSP mode, implicit
+frames and nesting evidence; the linked model and watermarks are conditional.
+Independent recovery still needs actual RP2040-Matrix confirmation/port/wiring,
+application-independent entry and verified recovery. Transporter info/dump are
+not passive: they can enter ROM and upload a RAM loader. No recovery action is
+armed. A working-console stock restore does not close failed-application recovery.
 
----
+Live issue audit: #3–#8 and #18 are closed;12 implementation issues remain open.
+Respect their prerequisites and unverified acceptance. #16 weighted expansion
+and #17 donor work remain later experiments, not additional v0.1 features to
+invent while the core qualification gates are open. A second tester and separate
+release authorization are also required by #20; #21 needs verified release text.
 
-# Earlier handoff — local RC qualification and v023 preparation
-
-Read [RC status](release-candidate-status.md),
-[local follow-through](rc-local-qualification-20261019.md), and private
-`build/rc-local-qualification-20261019/handoff.json` first. Firmware source remains
-`e251aa4`; no firmware was changed in this follow-through. The private v023 package
-is assembled from the exact checked app/loader. Its source/manifest freeze and
-local review live in `build/rc-v023-20261019/` and the qualification addendum.
-
-Last verified device is v022, originals restored, all ports closed. No new device
-access occurred. Current direction is **do not flash yet**. The single future
-[hardware plan](rc-hardware-test-plan.md) and kit are unarmed; check availability
-before any physical request. Reuse passing evidence. Full clock/observer timing,
-SP/SSP/implicit frame/nesting proof and independent unresponsive recovery remain
-open; the prepared instrumented workload does not close those gates by itself.
-
-The current 1,041-function source model accounts for main callback families and
-bounded cycles (startup/main 7,512 bytes; audio 2,196; TIMER5 200), while retaining
-its ABI limits. The 6,300 v022 timing samples and historical stock recovery inputs
-are reused. New package negatives/native-pool preservation, fixed-layout reader,
-batch refusal/fault grammar and exact current-source heavy schedule pass locally.
-Do not repeat the 84 engine/effects cases, 42 emulator workflows or v022 persistence
-and stock recovery trials without changed effective inputs.
-
----
-
-# Prior development integration — selective Felucca 1.6.1 backports
-
-Current development branch is `dabbl8/felucca-161-bugfixes` in
-`/Users/grantv/Code/dabbl8/.local-baseline/felucca-161-integration`.
-Read [the integration record](felucca-161-backports.md) and private
-`build/upstream-161/` evidence. Baseline commit34c3b21 preserves the complete
-current v022 source changes; new commits contain only the selective backports.
-No physical device actions are authorized for this update round. Installed
-v022 and its successful hardware evidence below remain unchanged and do not
-qualify the modified source. The original checkout and backups are intact.
-
----
-
-# Current handoff — v022 combined hardware batch complete, 19 October 2026
-
-Installed v0.2.2-timing/FM-1_8022 using Felucca's unchanged flow and the pinned
-reviewed package. Original project set is restored and exact companion readback
-verified; final read-only COMMIT stage7/rc0/guards0/revoke0. All ports closed.
-No further physical action or device retry is armed. Reuse completed evidence.
-
-Warm60-second health, exact five-role upgrade readback, confirmed cold restart/
-autosave reopening and exact cold readback pass. Two 18-second heavy MIDI windows
-pass,6,300 timing blocks/no late/taint/aux, eight owned slots/no allocation failure,
-all17 data roles unchanged. First cold guard refusal remains preserved; separately
-authorized retry established a healthy cold epoch. Fresh original backup remains
-private. Read `build/hardware-v022-20261019/handoff.json`, `completed-results.json`
-and `docs/dabbl8/release-candidate-status.md` first. Calibrated timing/observer,
-full stack bounds and independent recovery still block public RC qualification.
-Next: local analysis of those specific gaps; no repetition of passing tests.
-
----
-
-## Historical handoff (superseded by current record above)
-
-Owner availability: AWAY (latest instruction). Finish local work only. Check
-availability and wait for a reply before any physical request; do not flash,
-connect, stage a restore or send a SAVE prompt while the owner is away.
-
-# Latest handoff — corrected v022 package frozen, 19 October 2026
-
-Current boundary: LOCAL ONLY. No FM-1 access, flash, notes or saved-data changes.
-Device remains v021 with original projects verified restored and ports closed.
-
-Frozen private candidate: `build/rc-v022-20261019-r2/`, productFM-1_8022, package SHA-256
-`b3e137b9d4e918d32f6933e0bc92139e96e6d347df1570a3cacce8834cc238ff`.
-Exact checked app and unchanged reviewed v021 loader reused; no new compile,
-SDK/toolchain download or broad test rerun.62frozen files/3,889source files,
-package corruption/decode checks, all checksums and17reader cases pass.
-Final independent package review is APPROVE/no blockers; its addendum is outside the freeze in
-`build/rc-package-v022r2-20261019/`; read its approval before any future device work.
-
-The single future batch is `docs/dabbl8/rc-hardware-test-plan.md`, also copied as
-frozenHARDWARE-BATCH.md. Execution kit `build/rc-hardware-v022r2-20261019` defaults
-to plan-only/readinessfalse; offline10fault/6,144grammar checks pass. It keeps
-existing routing/recording/project and17-role before/after snapshot guards.
-TwoSAVE confirmations and onecoldpowercycle cover temporarysetup, own-upgrade,
-automaticreopen, heavy timing/resource checks and exactoriginalrestoration.
-Stopfirstfailure; do not automatically retry or restore after a stopped batch.
-No actual test, prompt, installer or session is armed. Calibratedtiming/fullstack/
-independentrecovery gates remain open. Reuse all unchanged passing evidence.
-
----
-
-# Local work handoff — current resume point
-
-**STOPPED physical batch:** v0.2.1-timing installed successfully; first status
-reported audio_late1. The batch initially stopped; separately authorized read-only follow-up and
-original restoration are now complete. No cold reboot was performed.
-Authorized follow-up: all three saved projects/autosave exact, but live state
-does not match saved autosave. Late remains1; boot/USB/flash health unchanged.
-After separately authorized SAVE, originals are **restored and companion
-readback verified**, with temporary C/autosave removed. See
-`build/upgrade-v021-20261019/original-restore-result.json`. Read
-`build/upgrade-v021-20261019/handoff.json` and late-counter-local-analysis.json
-first. All ports closed; no automatic retry or flash. Prior v020 completion below
-is historical and must not be mistaken for the current device state.
-
-Read [release-candidate-status.md](release-candidate-status.md) for current facts
-and remaining gates. Historical entries have been moved out of this handoff so
-old installation/restore instructions cannot be mistaken for pending work.
-
-## Current local work — startup correction, no device access
-
-Latest owner direction is to fix late audio and automatic reopening locally,
-add regressions, reuse passing evidence and continue toward RC. Do not access
-or flash the FM-1. Installed firmware remains **v0.2.1-timing**, with original
-projects restored and host ports closed.
-
-Read `build/rc-startup-fix-20261019/audio/receipt.json` and `boot/receipt.json`.
-The actual HAL/main phase fixture reproduces DMA starting before global IRQs;
-split configuration/start removes that blackout in all 32 modeled phases for
-four/eight tracks. USB attachment and UART MIDI acceptance now follow read-only
-autosave adoption. A queued-packet fixture fails with the old shipping call
-order and passes the corrected order without weakening input/storage guards.
-The exact archived 6,599-byte upgraded autosave restores and recaptures identically;
-13,347 boot checks pass with zero NOR writes. New result/policy/admission/time
-fields make future refusal diagnosable. Physical attribution remains unproven;
-these host results do not qualify FM-1 timing, stack or reopening.
-
-**Target-cost blocker resolved locally:** final app-only link is 526,528 B,
-RAM 94,760 B (3,544 B free), pool 335,688 B (8,376 B free). Target checks pass;
-`rev_room` cost is 239 under the unchanged budget/tolerance. The initial cost-244
-failure remains in `target-app/`. Controlled variants isolated new boot state
-changing target global merging/register allocation. A target-only BSS subsection
-for those globals retains all diagnostics and restores the prior hot-code score
-without changing DSP source, budgets or golden hashes. See
-`build/rc-startup-fix-20261019/budget/receipt.json` and
-`target-app-final/result.json`. Final affected host checks pass at
-`build/local-checks/run-v1hl5sr3/results.json`. Independent local startup code
-review is **APPROVE**, with no local blockers; see
-`.omo/evidence/rc-startup-fix-code-review.md`. Package freezing remains separate,
-and old package approval cannot qualify this changed firmware. Exact-candidate
-physical timing/stack/reopening remain open.
-
-The 84 matrix scenarios are reused, not rerun: current effective preprocessed
-input equals the retained passing input byte-for-byte. See
-`build/rc-startup-fix-20261019/matrix-reuse-final.json`; the proof was refreshed
-after the final target-only attributes. Existing audio/output-queue,
-TIMER5 cadence/gating and emulator translation-unit checks have separate affected
-receipts. No new installable package, public RC pass or device operation is implied.
-
-## Prior v020 authorization and device state
-
-Latest owner direction authorized the combined persistence batch and original
-restoration, without flashing. **The batch is complete; no device action is pending.**
-Read `build/persistence-v020-20261018/handoff.json` and completed-results.json.
-Physical local SAVE C, recall A→C, and cold reboot with all three slots/nonempty
-shared autosave passed. Final independent logical readback matches all five roles
-of original99bd: original A/B/current restored, C/autosave absent. COMMIT trace
-stage7/rc0/guards0/revoke0, boot1/USB1 stable after cold boot. All ports closed.
-The prior extra command78 snapshot remains failed; its physical cause is unknown.
-Do not repeat successful restores or add raw snapshots for reassurance.
-
-## Prior v020 local review outcome
-
-Final independent local package review **APPROVE**, no local blockers. Read
-`build/final-package-review-20261018/handoff.json` first. The private reviewed kit
-is `build/rc-review-kit-20261018/` and retains the exact installed diagnostic plus
-a separate host addendum. Its root checksums bind the final review/scope files.
-No firmware build, flash, hardware access or repeat of passing workloads occurred.
-The84 matrix cases remain valid by equal effective preprocessed inputs.
-
-The all-populated persistence batch is closed. Own-upgrade durability, calibrated
-target performance/stack bounds and independent clean install/recovery remain
-external gates. Prepare only uncovered checks locally; a future flash needs
-separate owner authorization. No additional button press is needed now.
-
-## Resume work without a device
-
-- Source-only entry/nesting follow-through: `build/rc-owner-ready-20261019/stack-entry-followthrough.json`.
-  TIMER5/audio nesting is explicit; retain hardware-frame/main callback gaps.
-  Use the existing combined upgrade plan; no repeat stock restore or matrix.
-  Device access/flash still needs separate approval and current readiness.
-
-
-- Latest qualification work: `build/rc-qualification-20261019/qualification-summary.json`
-  and [qualification-evidence-20261019.md](qualification-evidence-20261019.md).
-  Historical stock restore reconstructed/readback verified; exact missing loader
-  input recovered privately, cache-only runtime repaired,9 guarded tests pass.
-  No device access/loader execution. Static IRQ frame coverage and retained timing
-  audit are bounded results; full timing/stack and fresh physical recovery are not
-  qualified. Do not repeat the historical restore or84 matrix for reassurance.
-
-- Prior loader-cleanup work: `build/rc-upgrade-fix-20261019/handoff.json` and
-  `build/rc-v021-20261019/`. Narrow owner-authorized cleanup exclusion is applied;
-  exact pre-fix/fixed virtual-NOR regression and Felucca negative controls prove
-  preservation. Source/test and local package review APPROVE (package-approval.json).
-  That v021 diagnostic is now installed; originals are restored and no device
-  action is pending. Current startup changes are a separate uninstalled successor.
-  Do not repeat the 84 matrix or existing v020 persistence batch.
-  Read [rc-remaining-qualification.md](rc-remaining-qualification.md) for remaining
-  upgrade, timing/stack and independent reproduction gates.
-- Read `build/snapshot-timeout-local-20261018/handoff.json` and its check receipts.
-  The local correction preserves the timeout/request/scan coordinates and timings,
-  separates cleanup errors, and reports host closure independently from acquisition.
-  It adds no retry and changes no firmware. The physical missing-reply cause is
-  unresolved; no speculative timeout/firmware changes are justified.
-- Reuse the 84 engine/effects cases and source-bound transfer/client evidence.
-  Do not rerun full suites, upstream baseline, completed restore, or package build
-  without changed inputs or an uncovered gate.
-- Local source/package review and scope records are complete for this artifact.
-  Keep the frozen v020 bundle immutable; later host fixes are a separate addendum.
-  Target durability/performance/independent reproduction remain external gates.
-- Before requesting hardware, identify the exact uncovered requirement and prepare
-  one bounded batch with rollback/cleanup. Obtain current owner readiness; this
-  handoff grants no hardware authorization.
-
-## Evidence and private data
-
-- Prior v020 restore success: `build/restore-v020-20261018/companion-result.json` and
-  `postcommit-diagnostic/completion.json`.
-- Failed optional snapshot: `build/restore-v020-20261018/final-snapshot/`; never
-  promote its unverified files to an accepted snapshot.
-- Original backup: `build/persistence-v019-20261018/original-set/verified/project-set.d8bak`,
-  SHA-25699bd36dcae4ad784c4fbded37d7fd2789c4892410bb88ae0e80f69aaedbec399.
-- Installed exact frozen package/source: `build/rc-v021-20261019/`
-  (v020 under `build/rc-v020-20261018/` is historical).
-- Local-only checks and history remain under `build/`; no hosted CI or public release.
-  Never commit private backups, vendor firmware or credentials; preserve GPL and notices.
-
-[Archived earlier handoffs](history/local-work-handoff-through-20261018.md) are
-historical evidence only, never a queue of actions to repeat.
+Earlier append-only entries are preserved in the
+[historical handoff](history/local-work-handoff-through-d8a1-preparation-20261019.md).
+They are evidence locators, not current instructions to repeat completed work.

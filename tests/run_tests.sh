@@ -173,6 +173,13 @@ python3 tools/fm1pkg_make.py "$OUT/old_app.bin" build/loader/ota.bin "$OUT/old.f
 $CC -o "$OUT/ldr_test" tests/ldr_test.c
 run "update loader: other app -> this build" "$OUT/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
 
+$CC -Ifirmware/src -o "$OUT/ldr_native_pool_preservation_test" tests/ldr_native_pool_preservation_test.c \
+    firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c
+run "update loader: native projects and all ancillary ranges" "$OUT/ldr_native_pool_preservation_test" "$OUT/old.fwsc" build/felucca.fwsc
+for region in 0 1 2 3 4 5 6 7; do
+    run "update preservation: corruption control $region" "$OUT/ldr_native_pool_preservation_test" "$OUT/old.fwsc" build/felucca.fwsc --corrupt-after "$region"
+done
+
 # D8P1 is a standalone proposed-file codec, not a firmware storage adoption path.
 run "D8P1 independent synthetic reference files" python3 tests/d8p1_fixtures_test.py
 run "Dabbl8 card configurations: all subsets and bounded CLI" python3 tests/d8card_test.py
@@ -682,6 +689,13 @@ else
     run "ASan/UBSan: D8P1 motion bytes and actual upstream eligibility" "$A/d8p1_motion_policy_test" tests/fixtures/d8p1/maximum.d8p
     $SCC -o "$A/ldr_test" tests/ldr_test.c
     run "ASan/UBSan: update loader (other app -> this build)" "$A/ldr_test" "$OUT/old.fwsc" build/felucca.fwsc
+    ${CC%% *} -std=c11 -O1 -g -Ifirmware/src -fsanitize=address,undefined -fno-sanitize-recover=all \
+        -o "$A/ldr_native_pool_preservation_test" tests/ldr_native_pool_preservation_test.c \
+        firmware/src/d8p1.c firmware/src/d8pool.c firmware/src/d8pool_mapped.c
+    run "ASan/UBSan: native projects and all ancillary ranges" "$A/ldr_native_pool_preservation_test" "$OUT/old.fwsc" build/felucca.fwsc
+    for region in 0 1 2 3 4 5 6 7; do
+        run "ASan/UBSan: preservation corruption control $region" "$A/ldr_native_pool_preservation_test" "$OUT/old.fwsc" build/felucca.fwsc --corrupt-after "$region"
+    done
     $SCC -DOWN_PKG=1 -o "$A/ota_test" tests/ota_test.c
     run "ASan/UBSan: M-UPGRADE entry (own loader)" "$A/ota_test" build/felucca.fwsc
     for t in editor_test project_test backup_test; do
