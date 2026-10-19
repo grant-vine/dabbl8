@@ -58,8 +58,9 @@ stack contributions remain startup/main7,516, audio2,196 and TIMER5 200 bytes.
 Hardware SP/SSP/implicit-frame/nesting limits remain unqualified.
 
 The bounded timing/resource collector and post-Stop C-context comparison now
-pass local checks. Consolidate and review the new package and kit before any
-device session. The old frozen v023 contains neither this frame nor D8C1; do not
+pass local checks. Use the consolidated `build/rc-v023-d8a1-20261019/` package and
+its reviewed, unarmed kit before any device session. The old frozen v023 contains
+neither this frame nor D8C1; do not
 substitute it. Require fresh package/profile/epoch and original backup/readiness checks;
 normal status text or CRC is not binary attestation. The owner still prepares
 sources through the verified C-load/SEQ-hold/SONG/PLAY path. Never stage a
