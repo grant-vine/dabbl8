@@ -23,8 +23,20 @@ static void settings_reboot(void)
  persist_t p;CHECK(st_load(OBJ_SETTINGS,&p,sizeof p)==sizeof p);settings.palette=0;panel.magic=0;
  CHECK(settings_import(&p,sizeof p)==1);persist_saved=p;settings_init();panel_init();
 }
+/* #197: real UI detents coalesce before the existing quiet-gated settings writer. */
+static void deferred_favourites(void)
+{
+ settings_seed();settings_save();go_page(GR_BROWSE);
+ unsigned calls=physical_calls;
+ turn(EN_K4,1);CHECK(favorites.filter==1&&physical_calls==calls);
+ fm1_ms+=10001;ui_input();CHECK(physical_calls>calls&&!persist_pending);
+ calls=physical_calls;song.playing=1;turn(EN_K3,1);go_page(GR_FX);ui_input();
+ CHECK(physical_calls==calls&&persist_pending);song.playing=0;settings_poll();
+ CHECK(physical_calls>calls&&!persist_pending);
+}
 int main(void)
 {
+ deferred_favourites();
  /* Both appended brand IDs must retain their meaning in own-format settings.
   * Exercise the real serializer, importer and private virtual-NOR writer;
   * this does not claim full-device backup or physical recovery. */

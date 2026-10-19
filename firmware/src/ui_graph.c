@@ -1424,9 +1424,7 @@ static void draw_tracks(void)
 {
     uint32_t c, sk = strip_kind() == SK_TRK;
     if (ui.force) {
-        lcd_fill(0, graph_y(), 240, graph_h(), T_BG);
-        if (ux.style)                                /* LINE: the strips divided as the cards above */
-            draw_rules(graph_y(), graph_h());
+        draw_gaps(graph_y(), graph_h());
         for (c = 0; c < NTRK; c++)
             ts.meter[c] = 0;
     }
@@ -1498,7 +1496,7 @@ static void draw_tracks(void)
             knob(15 - KNOB_SMALL_R, KS_Y, KNOB_SMALL_R, KNOB_SMALL_COV, KNOB_SMALL_ANG, pan, -64, 63, pc);
             knob(42 - KNOB_SMALL_R, KS_Y, KNOB_SMALL_R, KNOB_SMALL_COV, KNOB_SMALL_ANG, rv, 0, 127, rc);
             v[0] = '+';                              /* the cards' numbers, without the % */
-            fmt_int(pan > 0 ? v + 1 : v, pan * 100 / 64);
+            fmt_int(pan > 0 ? v + 1 : v, pan * 100 / (pan > 0 ? 63 : 64));
             GFX_HOOK_ALIGN(15 - KNOB_SMALL_R, 0, 15 + KNOB_SMALL_R, 0, AL_H, "mixer value under its knob");
             cv_text_in(15 - KNOB_SMALL_R, KS_Y + 17, 2 * KNOB_SMALL_R, &AF_S, v, pc, T_SURF);
             fmt_int(v, (rv * 100 + 63) / 127);

@@ -136,6 +136,8 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
     token = None
     handoff_consumed = False
     requests = 0
+    origin = time.monotonic()
+    scan_context = {}
     transcript_path = destination / 'received-frames.jsonl'
     with transcript_path.open('x') as transcript:
         def ask(op, suffix=b'', phase=None, begin=False):
@@ -145,36 +147,47 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
                 raise ValueError('Capture exceeds bounded request count')
             args = bytes((1, op)) + (b'' if op < 2 else u32(token)) + suffix
             request = HEADER + args + b'\xf7'
-            record = {'sequence': requests, 'request_hex': request.hex()}
+            record = {'sequence': requests, 'operation': op, 'request_hex': request.hex(),
+                      'started_seconds': time.monotonic() - origin, **scan_context}
             try:
                 reply = exchange(request)
             except Exception as error:
                 record['error'] = str(error)
+                record['finished_seconds'] = time.monotonic() - origin
+                if 'failed_request' not in report:
+                    report['failed_request'] = dict(record)
                 transcript.write(json.dumps(record) + '\n'); transcript.flush()
                 raise
-            if type(reply) is not bytes:
-                record['error'] = 'Adapter must return exact bytes'
+            try:
+                if type(reply) is not bytes:
+                    record['error'] = 'Adapter must return exact bytes'
+                    transcript.write(json.dumps(record) + '\n'); transcript.flush()
+                    raise ValueError(record['error'])
+                record['finished_seconds'] = time.monotonic() - origin
+                record['response_hex'] = reply.hex()
                 transcript.write(json.dumps(record) + '\n'); transcript.flush()
-                raise ValueError(record['error'])
-            record['response_hex'] = reply.hex()
-            transcript.write(json.dumps(record) + '\n'); transcript.flush()
-            if len(reply) < 15 or len(reply) > 600 or not reply.startswith(HEADER) or reply[-1] != 0xf7 or any(x > 127 for x in reply[5:-1]):
-                raise ValueError('Malformed, truncated or non-seven-bit capture frame')
-            data = reply[5:-1]
-            if data[:3] != bytes((1, op, 0)):
-                raise ValueError('Wrong capture version/operation or refused status')
-            received_token = r32(data[3:8])
-            if begin:
-                if received_token != (token + 1) & 0xffffffff:
-                    raise ValueError('Stale or replayed capture BEGIN token')
-                token = received_token
-            elif token is not None and received_token != token:
-                raise ValueError('Stale or replayed capture token')
-            if phase is not None and data[8] != phase:
-                raise ValueError('Unexpected capture phase')
-            return data[8], data[9:], received_token
+                if len(reply) < 15 or len(reply) > 600 or not reply.startswith(HEADER) or reply[-1] != 0xf7 or any(x > 127 for x in reply[5:-1]):
+                    raise ValueError('Malformed, truncated or non-seven-bit capture frame')
+                data = reply[5:-1]
+                if data[:3] != bytes((1, op, 0)):
+                    raise ValueError('Wrong capture version/operation or refused status')
+                received_token = r32(data[3:8])
+                if begin:
+                    if received_token != (token + 1) & 0xffffffff:
+                        raise ValueError('Stale or replayed capture BEGIN token')
+                    token = received_token
+                elif token is not None and received_token != token:
+                    raise ValueError('Stale or replayed capture token')
+                if phase is not None and data[8] != phase:
+                    raise ValueError('Unexpected capture phase')
+                return data[8], data[9:], received_token
+            except (ValueError, TypeError) as error:
+                if 'failed_request' not in report:
+                    report['failed_request'] = {**record, 'error': str(error)}
+                raise
 
         def scan(initial):
+            nonlocal scan_context
             for role, mapping in enumerate(RAW_MAP):
                 length = mapping[1] + mapping[3]
                 for off in range(0, length, 256):
@@ -182,10 +195,14 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
                     last = end == length
                     done = role == 11 and last
                     expected_phase = (2 if initial else 4) if done else (1 if initial else 3)
+                    scan_context = {'scan_role': role, 'scan_offset': off,
+                                    'scan_pass': 'initial' if initial else 'verification'}
                     _, payload, _ = ask(2, phase=expected_phase)
                     expected_role, expected_offset = (role + 1, 0) if last else (role, end)
                     if len(payload) != 6 or payload[0] != expected_role or r32(payload[1:]) != expected_offset:
                         raise ValueError('Nonprogressing, reordered or truncated scan reply')
+
+            scan_context = {}
 
         def descriptor(role, phase):
             _, payload, _ = ask(3, bytes((role,)), phase=phase)
@@ -278,9 +295,12 @@ def collect(exchange, destination, mode='full', provenance='unverified supplied 
         finally:
             if token is not None and not handoff_consumed:
                 try:
-                    ask(6)
-                except Exception:
-                    pass  # Preserve the original refusal; abort cannot grant completion.
+                    scan_context = {}
+                    phase, _, _ = ask(6)
+                    report['release_acknowledged'] = phase == 4
+                except Exception as error:
+                    report['release_acknowledged'] = False
+                    report['release_error'] = str(error)  # Preserve primary failure separately.
     for path in sorted(destination.glob('original-*.bin')):
         data = path.read_bytes()
         report['originals'][path.name] = {'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()}

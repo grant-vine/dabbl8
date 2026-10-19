@@ -31,7 +31,11 @@ preamble=r'''
 #include "audio_timing.h"
 static struct { uint32_t boots; } felucca_dbg={17};
 static struct { uint8_t dtr; } cdc={1};
-static struct { uint8_t uboot_req; } usb;
+static struct { uint8_t uboot_req; uint32_t resets; } usb;
+static uint32_t clock_reads, fixture_ticks=0xFFFFFFF0u, clock_change, config_reads;
+static uint32_t fm1_ticks(void) { clock_reads++; if(clock_change==2) usb.resets++; return fixture_ticks; }
+static uint32_t fm1_time_config(void) { return clock_change==1 && ++config_reads==2 ? 8u : 9u; }
+static uint32_t fm1_time_period(void) { return UINT32_MAX; }
 static uint8_t cdc_in[CI_N],cdc_out[CO_N];
 static uint32_t ci_r,ci_w,co_r,co_w,fm1_ms;
 static char captured[65536];
@@ -66,9 +70,23 @@ int main(void) {
     command("timing report\r\n");
 #if DABBL8_TIMING_DIAGNOSTIC
     assert(strstr(captured,"requires a stopped run"));
+    command("timing clock junk\r");assert(!clock_reads);
+    command("timing clock\r");assert(clock_reads==1);
+    assert(strstr(captured,"d8c1 FFFFFFF0 00000011 00000000 00000009 FFFFFFFF 00000001 "));
+    const char *clock_frame=strstr(captured,"d8c1 ");
+    fwrite(clock_frame,1,(size_t)(strstr(clock_frame,"\r\n")+2-clock_frame),stderr);
+    assert(!audio_timing.enabled && !audio_timing.generation && !usb.uboot_req);
+    uint32_t previous=captured_n;
+    clock_change=1;command("timing clock\r");
+    assert(strstr(captured+previous,"timing clock changed") && !strstr(captured+previous,"d8c1 "));
+    previous=captured_n;clock_change=2;command("timing clock\r");
+    assert(strstr(captured+previous,"timing clock changed") && !strstr(captured+previous,"d8c1 "));
+    clock_change=0;usb.resets=0;
     command("timing start junk\r");assert(!audio_timing.enabled);
     command("timingstart\r");assert(!audio_timing.enabled);
     command("timing start\r");assert(audio_timing.enabled && audio_timing.generation==1);
+    unsigned char running[sizeof audio_timing];memcpy(running,(const void*)&audio_timing,sizeof running);
+    command("timing clock\r");assert(!memcmp(running,(const void*)&audio_timing,sizeof running));
     command("timing start\r");assert(audio_timing.generation==1);
     command("timing report\r");assert(!strstr(captured,"d8t2 begin"));
     struct d8_timing_snapshot first={UINT32_MAX-100,17,UINT32_MAX-7,UINT32_MAX-8,UINT32_MAX-9,0};
@@ -85,6 +103,8 @@ int main(void) {
     memcpy(state,(const void*)&audio_timing,sizeof state);
     command("timing report\r");
     assert(!memcmp(state,(const void*)&audio_timing,sizeof state));
+    command("timing clock\r");
+    assert(!memcmp(state,(const void*)&audio_timing,sizeof state) && clock_reads==5);
     assert(strstr(captured,"d8t2 end") && drains && !con.stalled && !usb.uboot_req);
     const char *begin=strstr(captured,"d8t2 begin");
     const char *end=strstr(begin,"d8t2 end");end=strstr(end,"\r\n")+2;
@@ -98,6 +118,7 @@ int main(void) {
     assert(strstr(captured,"d8t2 begin") && !strstr(captured,"d8t2 end"));
 #else
     assert(!audio_timing.enabled && !audio_timing.generation);
+    command("timing clock\r");assert(!clock_reads && !strstr(captured,"d8c1 "));
     command("timing start\r");assert(!audio_timing.enabled);
     command("help\r");assert(!strstr(captured,"timing start|"));
     assert(!strstr(captured,"d8t2 begin") && !usb.uboot_req);
@@ -107,7 +128,7 @@ int main(void) {
 }
 '''
 f=out/'console-fixture.c';f.write_text(preamble+prefix+stubs+suffix+test)
-r={'scope':'Actual candidate console prefix parser/hex/print and con_exec/cdc_task, new timing formatter; unrelated diagnostic bodies stubbed. Simulated ring and watchdog/host drain, no physical transport or target cost proof.','console_source_sha256':hashlib.sha256(console.encode()).hexdigest(),'fixture_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'checks':[]}
+r={'scope':'Actual candidate console prefix parser/hex/print and con_exec/cdc_task, new timing formatter; unrelated diagnostic bodies stubbed. Simulated ring and watchdog/host drain, no physical transport or target cost proof.','console_source_sha256':hashlib.sha256(console.encode()).hexdigest(),'clock_source_sha256':hashlib.sha256((s/'firmware/src/audio_clock_console.h').read_bytes()).hexdigest(),'fixture_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'checks':[]}
 modes=[('normal',['-O2'])]
 if os.environ.get('SANITIZE','1')!='0':modes.append(('strict-san',['-O1','-g','-fsanitize=address,undefined','-fno-sanitize-recover=undefined']))
 for mode,flags in modes:
@@ -117,6 +138,13 @@ for mode,flags in modes:
   proc=subprocess.run([str(binary)],cwd=s,env=dict(os.environ,ASAN_OPTIONS='detect_leaks=0:halt_on_error=1',UBSAN_OPTIONS='halt_on_error=1'),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   (out/(nm+'.frame')).write_bytes(proc.stdout);(out/(nm+'-run.log')).write_bytes(proc.stderr)
   assert proc.returncode==0,(nm,proc.stderr.decode())
+  if enabled:
+   import sys
+   sys.path.insert(0,str(s/'tools'))
+   from dabbl8_clock_bounds import parse_clock
+   clock_line=next(line for line in proc.stderr.decode().splitlines() if line.startswith('d8c1 '))
+   packet=parse_clock('timing clock\r\n'+clock_line+'\r\n> ')
+   assert (packet.ticks,packet.boots,packet.usb_resets,packet.uac)==(0xfffffff0,17,0,1)
   r['checks'].append({'name':nm,'build':cmd,'exit':proc.returncode,'frame_sha256':hashlib.sha256(proc.stdout).hexdigest()})
   print(nm,'PASS',len(proc.stdout),'frame bytes',flush=True)
 if len(modes)>1:assert (out/'normal-flag1.frame').read_bytes()==(out/'strict-san-flag1.frame').read_bytes()

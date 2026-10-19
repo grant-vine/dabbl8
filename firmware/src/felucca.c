@@ -108,6 +108,7 @@
 
 /* --------------------------------------------- storage, update, editor --- */
 #if FELUCCA_FLASH
+#define FL_ERASE_PREPARE() FM1_LED_ROWS_OFF() /* upstream #236, native and legacy app erases */
 #include "fm1_flash.h"
 #include "storage_hw.c"
 #include "storage.c"

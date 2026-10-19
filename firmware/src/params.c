@@ -256,7 +256,7 @@ static void param_format(const param_desc_t *d, int32_t v, char *val, const char
         fmt_int(val, v * 100 / 64);
         if (v > 0) {
             char t[8];
-            fmt_int(t, v * 100 / 64);
+            fmt_int(t, v * 100 / 63);
             val[0] = '+';
             str_cpy(val + 1, t, 6);
         }

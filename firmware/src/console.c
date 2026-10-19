@@ -221,6 +221,12 @@ static void con_status(void)
     con_kv("bpm", song.g[G_BPM]);
     con_kv("playing", song.playing);
     con_kv("boots", (int32_t)felucca_dbg.boots);
+#if NTRK == 8 && FELUCCA_FLASH
+    con_kv("startup_restore_result", pnr_boot.result);
+    con_kx("startup_restore_guards", pnr_boot.guards);
+    con_kv("startup_restore_policy", (int32_t)pnr_boot.policy);
+    con_kv("startup_restore_ms", (int32_t)pnr_boot.ms);
+#endif
 #if D8_RESOURCE_DIAGNOSTIC
     con_resource_status();
 #endif
@@ -364,7 +370,7 @@ static void con_exec(const char *p)
     if (con_word(&p, "help") || con_word(&p, "?")) {
         con_puts("status  dbg  inp  crash  params  memr ADDR [LEN]  flr OFF [LEN]  uboot yes\r\n");
 #if DABBL8_TIMING_DIAGNOSTIC
-        con_puts("timing start|stop|report (diagnostic, no storage writes)\r\n");
+        con_puts("timing start|stop|report|clock (diagnostic, no storage writes)\r\n");
 #endif
 #if D8_RESOURCE_DIAGNOSTIC
         con_puts("resource start|stop|report (paused D8R1 observations)\r\n");

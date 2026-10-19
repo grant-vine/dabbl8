@@ -23,9 +23,14 @@ class SnapshotRefused(RuntimeError):
 def capture(exchange: Callable[[bytes], bytes], destination: Path) -> None:
     deadline = monotonic() + 120
     released = False
+    requests = 0
+    pending_operation = 0
 
     def bounded(frame: bytes) -> bytes:
-        nonlocal released
+        nonlocal released, requests, pending_operation
+        requests += 1
+        if frame[6] != 6:
+            pending_operation = frame[6]
         if frame[6] != 6 and monotonic() >= deadline:
             raise SnapshotRefused('120-second capture deadline exceeded')
         reply = exchange(frame)
@@ -36,6 +41,14 @@ def capture(exchange: Callable[[bytes], bytes], destination: Path) -> None:
     report = collect(bounded, destination, mode='full',
                      provenance='Guarded native read-only snapshot; physical target qualification separate')
     if not report['accepted'] or not report['current_state_complete'] or not released:
+        reason = report.get('reason') or report.get('release_error')
+        if reason:
+            failure = report.get('failed_request', {})
+            raise SnapshotRefused(
+                f"{reason} (request {failure.get('sequence', requests)}, "
+                f"operation {failure.get('operation', pending_operation)}, "
+                f"scan role {failure.get('scan_role', 'n/a')}, "
+                f"offset {failure.get('scan_offset', 'n/a')})")
         raise SnapshotRefused('capture verification or release acknowledgement failed')
     manifest = json.loads((destination / 'verified/manifest.json').read_text())
     if [item['role'] for item in manifest['objects']] != list(range(17)):
@@ -56,16 +69,24 @@ def main() -> None:
     output = Path(sys.argv[2])
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
     accepted = False
+    link = None
+    primary_error = None
     try:
         with (output / 'midi-replies.jsonl').open('x') as journal:
             with closing(ReadOnlyMidi(backend, mido.Message, 'Dabbl8', 'Dabbl8',
                          record=lambda frame: journal.write(json.dumps({'hex': frame.hex()}) + '\n'))) as link:
-                capture(link.exchange, output / 'snapshot')
+                try:
+                    capture(link.exchange, output / 'snapshot')
+                except (SnapshotRefused, OSError, ValueError) as failure:
+                    primary_error = str(failure)
+                    raise
         accepted = True
     finally:
         error = sys.exc_info()[1]
-        receipt = {'accepted': accepted, 'native_ports_closed_successfully': accepted,
-                   'failure': str(error) if error is not None else None,
+        receipt = {'accepted': accepted, 'native_ports_closed_successfully': bool(link is not None and link.closed and
+                       link.cleanup_succeeded),
+                   'failure': primary_error or (str(error) if error is not None else None),
+                   'cleanup_error': link.cleanup_error if link is not None else None,
                    'notes_sent': 0, 'saved_data_writes': False, 'firmware_flashed': False}
         with (output / 'receipt.json').open('x') as stream:
             json.dump(receipt, stream, indent=2)

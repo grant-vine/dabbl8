@@ -23,6 +23,7 @@
  *   ota_commit(parm)           write RAM record + reset (never returns on hardware)
  */
 #define OTA_AREA 0x000E0000u                     /* staged loader, 5 x 4 KiB */
+#define OTA_FL_LEN 0x93000u                      /* FM-1 flash.bin ends at the existing PRCT boundary */
 #define OTA_AREA_LEN 0x5000u
 #define OTA_RES (OTA_AREA + OTA_AREA_LEN - 0x100u)  /* 0xE4F00 = 4K boundary - 256: SPL scan */
 #define OTA_LDR_HCRC 0xEBAAu                     /* official update loader (usb_hid_ota.bin) */
@@ -255,6 +256,8 @@ static int ota_ufw(uint8_t *hdr, uint32_t *fl_off, uint32_t *fl_len, uint32_t *o
     return 0;
 }
 
+/* Only failures after staging began need staging-area cleanup. */
+#define OTA_STAGED_RC(rc) ((rc) <= -8 && (rc) >= -13)
 static int ota_stage(void)                       /* steps 1..6; 0 = host said success */
 {
     static uint8_t hdr[0x400], b[512], mine[512];
@@ -266,6 +269,8 @@ static int ota_stage(void)                       /* steps 1..6; 0 = host said su
         return rc;
     if (!fl_off || !ota_off)
         return -3;
+    if (fl_len != OTA_FL_LEN)
+        return -15;                              /* another board: no erase or write */
     /* 2. which loader: the official one (known CRCs; it rewrites the whole flash.bin
      *    including the head) or Felucca's own (app area only, checks the chip key) */
     if (ota_read(ota_off, b, 512))
@@ -345,7 +350,8 @@ static int ota_session(void)
     ota_deadline = ota_now_ms() + 120000u;          /* step 1 normally takes ~5 s; a stalled host gives up after 2 min */
     rc = ota_stage();
     if (rc) {
-        ota_unstage();
+        if (OTA_STAGED_RC(rc))
+            ota_unstage();
         ota_show(9, rc);
         return rc;
     }

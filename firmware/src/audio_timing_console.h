@@ -81,21 +81,25 @@ static void con_timing_report(void)
     con_hex(crc ^ UINT32_MAX, 8);
     con_puts("\r\n");
 }
+#include "audio_clock_console.h"
 static void con_timing(const char *p)
 {
     uint32_t command = 0;
     if (con_word(&p, "start")) command = 1;
     else if (con_word(&p, "stop")) command = 2;
     else if (con_word(&p, "report")) command = 3;
+    else if (con_word(&p, "clock")) command = 4;
     while (*p == ' ') p++;
     if (!command || *p) {
-        con_puts("usage: timing start|stop|report\r\n");
+        con_puts("usage: timing start|stop|report|clock\r\n");
         return;
     }
     if (command == 1)
         con_puts(audio_timing_start() ? "timing started\r\n" : "timing start refused\r\n");
     else if (command == 2)
         con_puts(audio_timing_stop() ? "timing stopped\r\n" : "timing not running\r\n");
-    else
+    else if (command == 3)
         con_timing_report();
+    else
+        con_timing_clock();
 }

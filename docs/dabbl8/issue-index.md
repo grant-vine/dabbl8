@@ -1,6 +1,6 @@
 # Implementation backlog
 
-All 19 implementation tasks are loaded into GitHub Issues. [Roadmap #2](https://github.com/grant-vine/dabbl8/issues/2) groups the phases. Start with [baseline build #3](https://github.com/grant-vine/dabbl8/issues/3).
+All 19 implementation tasks are loaded into GitHub Issues. [Roadmap #2](https://github.com/grant-vine/dabbl8/issues/2) groups the phases. The table preserves their original dependency order, not the next-action list. For current work, read [RC status](release-candidate-status.md) and the [handoff](local-work-handoff.md); do not restart completed baseline/layout work.
 
 GitHub Issues are authoritative for progress. Dependency links are planning gates, not automatically enforced native blocking relationships. Phase identifiers M0–M5 are not configured GitHub milestone objects.
 

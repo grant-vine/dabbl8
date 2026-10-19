@@ -13,6 +13,8 @@ int main(void) {
    retained_reboot();printf("{\"failures\":%u}\n",failures);fflush(stdout);continue;
   }
   if(!strncmp(line,"CUT ",4)) {cut=atoi(line+4);partial_failure=cut<0?0:17;puts("{\"ok\":true}");fflush(stdout);continue;}
+  if(!strcmp(line,"EXPORT_COPY_FAIL\n")) {pt_read_event=2;puts("{\"ok\":true}");fflush(stdout);continue;}
+  if(!strcmp(line,"CLEAR_READ_FAULT\n")) {pt_read_event=0;post_commit_io=0;puts("{\"ok\":true}");fflush(stdout);continue;}
   uint8_t bytes[600]={0x7d,0x46,0x4c};unsigned count=3;char *p=line,*end;
   while(*p){long n=strtol(p,&end,10);if(end==p)break;if(n<0||n>127||count>=sizeof bytes)return 2;bytes[count++]=(uint8_t)n;p=end;}
   if(count<4)return 2;ed_n=0;ed_handle(bytes,count);so_r=so_w;

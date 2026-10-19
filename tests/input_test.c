@@ -453,6 +453,16 @@ static void anim_test(void)
 
 int main(void)
 {
+    int rows_match=1;
+    for(unsigned seed=0;seed<64;seed++) {
+        uint32_t a=rnd(~0u),h=rnd(~0u);
+        FM1_PR(FM1_PA,FM1_OUT)=a;FM1_PR(FM1_PH,FM1_OUT)=h;fm1__led_lines(0);
+        uint32_t want_a=FM1_PR(FM1_PA,FM1_OUT),want_h=FM1_PR(FM1_PH,FM1_OUT);
+        FM1_PR(FM1_PA,FM1_OUT)=a;FM1_PR(FM1_PH,FM1_OUT)=h;FM1_LED_ROWS_OFF();
+        rows_match &= FM1_PR(FM1_PA,FM1_OUT)==want_a && FM1_PR(FM1_PH,FM1_OUT)==want_h;
+    }
+    check("RAM-only erase blanking matches LED row-zero mapping, preserving other GPIO bits",rows_match);
+
     uint32_t id, k, lat_max = 0, lat_sum = 0, lat_n = 0, worst_rel = 0, bad = 0;
     printf("debounce: press %u frames, release %u frames, frame %u us\n",
            (unsigned)FM1_DEB_PRESS, (unsigned)FM1_DEB_RELEASE, (unsigned)(FM1_NCOL * TICK_US));
