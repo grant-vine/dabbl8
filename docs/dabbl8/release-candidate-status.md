@@ -62,6 +62,16 @@ default no-access refusal pass. No hardware timing claim follows from these test
 
 ## Remaining gates
 
+The new `arrangement-stress` local scope covers the previously missing combined
+workload: actual audio ISR, native arrangement, effects, live USB/TRS parser input
+and asynchronous LCD drawing. Four scenarios pass in optimized and fatal
+ASan/UBSan modes, including all16 natural scenes, fill/return and queued row,
+external clock loss across timer rollover, eight voices/eight heavy slots,
+matched note cleanup to silence and unchanged project/source bytes. Three
+omitted-action controls are correctly rejected. This is simulated host evidence;
+it does not close the target concurrent-playback, timing, stack or physical
+routing gates. See [the combined scenario evidence](arrangement-stress-qualification.md).
+
 | Gate | Local result | Required before a full RC claim |
 | --- | --- | --- |
 | Timing | Historical inclusive maximum 57,151 ticks; source-documented half 69,632 ticks. Read-only D8C1 and conservative host-bracket math are locally tested. | Collect exact-candidate clock/cadence evidence with reference uncertainty; account for entry/recorder/exit and arrival latency; measure supported concurrent workloads. A narrow host-relative interval is not SI calibration or full ISR qualification. |

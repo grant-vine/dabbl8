@@ -1,7 +1,19 @@
-# Current handoff — guarded clock preparation, no hardware access
+# Current handoff — combined arrangement checks, no hardware access
+
+The missing combined host workload now passes four scenarios in both optimized
+and fatal ASan/UBSan modes: actual audio ISR/native arrangement, live USB/TRS
+parser input, effects and asynchronous LCD drawing. Natural16-scene progression,
+fill/return and row selection, clock loss across rollover, eight voices/eight
+heavy slots, quiet cleanup and exact project/source preservation pass. Three
+omitted-action controls are rejected. The new local runner has41 passing selector
+cases; strict analysis of its new recipe passes. No production firmware changed.
+See [coverage and hardware limits](arrangement-stress-qualification.md) and private
+`build/rc-arrangement-stress-20261019/` receipts, review and handoff. Retain the
+earlier fixture/recipe errors and selected-track comparison failure; these were
+test setup issues, not demonstrated production defects.
 
 Publication/evidence follow-through: [draft firmware PR #200](https://github.com/grant-vine/dabbl8/pull/200)
-is stacked on #199. Its review tree exactly equals source `149f2a0`; the original
+is stacked on #199. Its published review tree originally equals source `fe5ff3f`; the original
 checkout/commits remain intact. GitHub Actions was confirmed disabled before and
 after publication. No PR was merged and no binary/release asset was uploaded.
 The app could not attach the PR because this chat reached its100-attachment cap;
@@ -22,12 +34,12 @@ All remain open. The current RC review guide no longer directs an old v020/v021
 installation. Private reconciliation/publication receipts are in
 `build/rc-requirements-20261019/`.
 
-Next useful local coverage: audit the actual sequencer/arrangement and concurrent
-UI/MIDI/effects workload against the existing guarded helpers, then prepare only
-missing headless scenarios. Do not substitute another stopped MIDI-only window
-for internal-sequencer/arrangement qualification. Continue the full IRQ/observer
-and stack ABI method work before the consolidated package freeze; no FM-1 access,
-saved-data change or flash is armed.
+Next: finish the full IRQ/observer and stack ABI method work before the
+consolidated clock-capable package freeze. Prepare a bounded arrangement hardware
+setup offline; native sources need main-loop preparation, which the current
+notes-only helper does not provide. Keep that helper's allowlist unchanged.
+Group any necessary PLAY/clock action into the existing owner visit instead of
+another restore/testing loop. No FM-1 access, saved-data change or flash is armed.
 
 Latest firmware source `95ac93f` on `dabbl8/felucca-161-bugfixes`. Read current
 [RC status](release-candidate-status.md), [clock method](clock-measurement.md),
