@@ -71,6 +71,23 @@ class Scripted:
 
 
 class ResourceTests(unittest.TestCase):
+    def test_new_protocol_observation_retains_history_and_refuses_new_events(self):
+        # Given resource capabilities and a v025 counter tuple.
+        version = 'v0.2.5-timing'
+        history = 'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 0\r\n'
+        reply = status().replace(VERSION, version) + history
+        # When parsing observations of unchanged versus replaced history.
+        first = capture.observation(reply, version, EXPECTED)
+        same = capture.observation(reply, version, EXPECTED)
+        changed = capture.observation(reply.replace('audio_late 2', 'audio_late 3')
+            .replace('audio_late_entry 2', 'audio_late_entry 3'), version, EXPECTED)
+        # Then stable identity includes the retained baseline, not only boot/USB.
+        self.assertEqual(first.stable, same.stable)
+        self.assertNotEqual(first.stable, changed.stable)
+        with self.assertRaises(ValueError):
+            capture.observation(reply.replace('audio_late 2', 'audio_late 3')
+                .replace('audio_late_boot 0', 'audio_late_boot 1'), version, EXPECTED)
+
     def setUp(self):
         parent = os.environ.get('D8_RESOURCE_CAPTURE_EVIDENCE_OUT')
         if parent:

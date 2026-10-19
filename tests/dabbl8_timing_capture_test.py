@@ -58,6 +58,66 @@ class Scripted:
 
 
 class CaptureTests(unittest.TestCase):
+    def test_current_private_package_manifest_is_supported_without_legacy_candidates(self):
+        # Given the schema actually emitted by the frozen diagnostic packager.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            name = 'dabbl8-0.2.5-timing-diagnostic.fwsc'
+            (root / name).write_bytes(b'fixture')
+            manifest = {'schema': 1, 'kind': 'private_local_diagnostic_package',
+                'version': 'v0.2.5-timing', 'source_commit': 'a' * 40,
+                'package_name': name, 'artifacts': {name: {
+                    'bytes': 7, 'sha256': hashlib.sha256(b'fixture').hexdigest()}}}
+            path = root / 'manifest.json'
+            path.write_text(json.dumps(manifest))
+            # When the real identity boundary validates bytes and metadata.
+            identity = capture.package_identity(path)
+            # Then a package observation remains explicitly unattested hardware.
+            self.assertEqual(identity['diagnostic_package'], name)
+            self.assertFalse(identity['device_binary_identity_attested'])
+            for changes in ({'schema': 2}, {'version': 'v0.2.4-timing'},
+                            {'candidates': {}}, {'artifacts': {}},
+                            {'package_name': '../private'}):
+                path.write_text(json.dumps({**manifest, **changes}))
+                with self.subTest(changes=changes), self.assertRaises(ValueError):
+                    capture.package_identity(path)
+
+    def test_new_version_requires_zero_coherent_current_boot_and_keeps_history(self):
+        # Given retained history on the first protocol version and later versions.
+        for version in ('v0.2.5-timing', 'v0.2.10-timing', 'v0.3.0-timing', 'v1.0.0-timing'):
+            reply = ('dabbl8 ' + version + '\r\nboots 17\r\nusb_resets 2\r\n'
+                     'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 0\r\n')
+            # When the common status boundary admits the expected identity.
+            result = capture.status(reply, version, False)
+            # Then the epoch includes history instead of silently discarding it.
+            self.assertEqual(tuple(result[k] for k in ('audio_late', 'audio_late_entry', 'audio_late_boot')), (2, 2, 0))
+
+    def test_new_version_never_falls_back_to_legacy_counter(self):
+        version = 'v0.2.5-timing'
+        base = 'dabbl8 ' + version + '\r\nboots 17\r\nusb_resets 2\r\n'
+        for counters in ('audio_late 0\r\n',
+                'audio_late 3\r\naudio_late_entry 2\r\naudio_late_boot 1\r\n',
+                'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 1\r\n',
+                'audio_late 0\r\naudio_late_entry -1\r\naudio_late_boot 1\r\n',
+                'audio_late 0\r\naudio_late_entry 0\r\naudio_late_boot 0\r\naudio_late_boot 0\r\n'):
+            with self.subTest(counters=counters), self.assertRaises(ValueError):
+                capture.status(base + counters, version, False)
+
+    def test_new_collection_refuses_changed_history_without_new_boot_event(self):
+        version = 'v0.2.5-timing'
+        first = ('dabbl8 ' + version + '\r\nboots 17\r\nusb_resets 2\r\n'
+                 'audio_late 2\r\naudio_late_entry 2\r\naudio_late_boot 0\r\n')
+        changed = first.replace('audio_late 2', 'audio_late 3').replace('audio_late_entry 2', 'audio_late_entry 3')
+        transport = Scripted({'status': [first, changed],
+                              'timing report': frame(False)})
+        transport.queue = bytearray(f"\r\nDabbl8 {version} console - 'help'\r\n> ".encode())
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(ValueError):
+                capture.collect(capture.Console(transport, lambda *_: None), Path(directory),
+                                version, 10, sleep=lambda _: None, uac_enabled=False)
+            self.assertFalse((Path(directory) / 'report.json').exists())
+        self.assertEqual(transport.writes, [*capture.COMMANDS, 'status'])
+
     def test_uac_disabled_profile_captures_without_uac_status_fields(self):
         minimal = 'dabbl8 ' + VERSION + '\r\nboots 17\r\nusb_resets 2\r\nfl_state 2\r\n'
         t = Scripted({'status': minimal, 'timing report': frame(False)})

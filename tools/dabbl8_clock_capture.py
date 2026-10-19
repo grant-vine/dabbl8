@@ -45,10 +45,11 @@ class ClockSource:
 HOST_CLOCK: Final = ClockSource()
 
 
-def require_health(reply: str) -> None:
+def require_health(reply: str, *, boot_scoped: bool = False) -> None:
     """Do not accept a rate comparison on a failed flash/audio diagnostic epoch."""
     lines = reply.splitlines()
-    for field in ('audio_late 0', 'flash 1', 'fl_failure 0'):
+    late = 'audio_late_boot 0' if boot_scoped else 'audio_late 0'
+    for field in (late, 'flash 1', 'fl_failure 0'):
         if lines.count(field) != 1 or sum(line.startswith(field.split()[0] + ' ') for line in lines) != 1:
             raise ClockRefused('Clock status health guard failed: ' + field.split()[0])
 
@@ -60,8 +61,8 @@ def collect_clock(console: ClockConsole, request: ClockRequest,
     if banner != f"\r\nDabbl8 {request.version} console - 'help'\r\n> ":
         raise ClockRefused('Expected one fresh console greeting')
     reply = console.request('status')
-    require_health(reply)
     before = status(reply, request.version, request.uac_enabled)
+    require_health(reply, boot_scoped='audio_late_boot' in before)
     observations: list[ClockObservation] = []
     for index in range(3):
         if index:
@@ -78,8 +79,8 @@ def collect_clock(console: ClockConsole, request: ClockRequest,
         if len(observations) >= 2:
             _ = clock_bounds(tuple(observations))  # Refuse before another request.
     reply = console.request('status')
-    require_health(reply)
     after = status(reply, request.version, request.uac_enabled)
+    require_health(reply, boot_scoped='audio_late_boot' in after)
     if before != after:
         raise ClockRefused('Boot/USB profile changed during comparison')
     points = tuple(observations)

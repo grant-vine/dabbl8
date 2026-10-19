@@ -77,3 +77,31 @@ Run affected checks once; keep historical failures separate from current gates.
 Test the actual integration boundary before another owner visit. Do not add a
 new snapshot/restore simply to re-prove the same music. Hardware is for the
 remaining physical questions, not rediscovering source-order or host-parser bugs.
+
+## Host collector follow-up
+
+The general timing, resource, clock and arrangement collectors now enforce the
+same boot protocol. For an explicitly expected v0.2.5 or later identity, the
+coherent three-field tuple is mandatory and every current-boot event fails.
+Lifetime/entry are retained in the observation epoch, so changing both cannot
+hide a reset or counter change. Older collectors keep their prior semantics;
+the v0.1.8-only MIDI workload is still version-pinned and must not be reused on
+v0.2.5. There is no fallback from a missing new tuple to a legacy zero counter.
+
+The shared package reader also accepts the actual schema-1 private diagnostic
+manifest (`package_name` plus its named `artifacts` entry), as well as historical
+`candidates` manifests. Mixed formats, mismatched version, bad names and missing
+artifacts refuse. Both actual v025 clock/resource CLI plans pass without opening
+ports. This is a host-tools follow-up: it neither changes nor rebuilds the frozen
+firmware/kit and does not authorize device access.
+
+The host follow-up evidence is `build/rc-host-audio-epoch-20261019/`:67 host tests
+and seven clock test groups pass, including strict new-protocol history/refusal
+and owned-cleanup cases. The actual whole resource-console fixture passes full
+profile optimized/fatal sanitizer runs with its missing diagnostic baseline
+fixture restored. Preserve the initial counter/manifest/fixture failures and the
+corrected receipts. The84 engine/effects cases and42 emulator workflows were not
+repeated. All181 pinned firmware paths and the unchanged package/loader remain
+identical. Four host collector files intentionally differ from the conservative
+275-file build-input receipt; do not claim that entire source receipt unchanged
+or replace the frozen corresponding-source archive with the working directory.

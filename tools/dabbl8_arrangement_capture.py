@@ -57,6 +57,7 @@ class Receipt:
     resource_generation: int = 0
     boots: int = 0
     usb_resets: int = 0
+    audio_history: tuple[int, ...] = ()
     rows_seen: int = 0
     observation_complete: bool = False
     accepted: bool = False
@@ -122,7 +123,9 @@ def checked_status(console: ConsolePort, receipt: Receipt, *, initial: bool = Fa
     """Require healthy epoch/profile; transport state comes from coherent D8A1."""
     reply = console.request('status')
     epoch = status(reply, receipt.version, False)
-    expected = {'audio_late': 0, 'voices_shed': 0, 'flash': 1, 'fl_failure': 0,
+    late_key = 'audio_late_boot' if 'audio_late_boot' in epoch else 'audio_late'
+    history = tuple(epoch[k] for k in ('audio_late', 'audio_late_entry', 'audio_late_boot')) if 'audio_late_boot' in epoch else ()
+    expected = {late_key: 0, 'voices_shed': 0, 'flash': 1, 'fl_failure': 0,
                 'resource_schema': 1, 'resource_helpers': 3, 'resource_tracks': 8,
                 'resource_profile': 0, 'resource_uac': 0, 'bpm': 120,
                 'resource_running': int(receipt.resource == Lease.OWNED)}
@@ -140,9 +143,10 @@ def checked_status(console: ConsolePort, receipt: Receipt, *, initial: bool = Fa
             raise ValueError('Resource generation exhausted; no diagnostic start')
         receipt.boots, receipt.usb_resets = state.boots, state.usb_resets
         receipt.resource_generation = generation + 1
+        receipt.audio_history = history
     elif ((state.boots, state.usb_resets) != (receipt.boots, receipt.usb_resets)
-          or generation != receipt.resource_generation):
-        raise ValueError('Epoch or resource generation changed')
+          or generation != receipt.resource_generation or history != receipt.audio_history):
+        raise ValueError('Epoch, audio history or resource generation changed')
     return state
 
 

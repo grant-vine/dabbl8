@@ -8,6 +8,9 @@
 #define FELUCCA_VERSION "v0.1.0-timing"
 #define FELUCCA_UART 0
 static uint32_t shed_count;
+#if DABBL8_TIMING_DIAGNOSTIC
+static uint32_t audio_late_entry;
+#endif
 #define HALF_FRAMES 128u
 #define FM1_TICKS_PER_US 24u
 #define FM1_GAP_BINS 8u
@@ -103,6 +106,13 @@ int main(int argc,char **argv) {
     if(argc==2&&!strcmp(argv[1],"--frame"))return 0;
     command("resource stop\r");assert(strstr(captured,"resource paused"));
     command("status\r");assert(strstr(captured,"resource_helpers 3")&&strstr(captured,"resource_running 0"));
+#if DABBL8_TIMING_DIAGNOSTIC
+    /* The real dispatcher preserves inherited history while reporting this boot. */
+    audio_late_entry=felucca_dbg.late=2;
+    command("status\r");
+    assert(strstr(captured,"audio_late 2\r\n")&&strstr(captured,"audio_late_entry 2\r\n")&&
+           strstr(captured,"audio_late_boot 0\r\n"));
+#endif
     change_boot=1;command("resource report\r");assert(strstr(captured,"d8r1 begin")&&!strstr(captured,"d8r1 end"));
     command("resource report\r");assert(!strstr(captured,"d8r1 begin"));
     fresh();command("resource start\r");d8hp.report.requests=UINT32_MAX;live(0);

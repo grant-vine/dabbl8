@@ -98,10 +98,12 @@ class Observation:
     uac_enabled: bool
     uac_config: tuple[int, ...]
     generation: int
+    audio_history: tuple[int, ...] = ()
 
     @property
     def stable(self) -> tuple[int, ...]:
-        return (self.boots, self.usb_resets, int(self.uac_enabled), *self.uac_config)
+        return (self.boots, self.usb_resets, int(self.uac_enabled), *self.uac_config,
+                *self.audio_history)
 
 
 def observation(reply: str, version: str, expected: Expected) -> Observation:
@@ -115,8 +117,9 @@ def observation(reply: str, version: str, expected: Expected) -> Observation:
         fields[key] = int(rows[0].split()[1], 0 if key in ('engine_mask', 'generation') else 10)
     if tuple(fields[k] for k in ('schema', 'helpers', 'tracks', 'profile', 'engine_mask', 'uac', 'running')) != (1, 3, 8, expected.profile, expected.mask, int(expected.uac), 0):
         raise ResourceCaptureError('status', 'capability/profile mismatch or existing active run')
+    history = tuple(baseline[k] for k in ('audio_late', 'audio_late_entry', 'audio_late_boot')) if 'audio_late_boot' in baseline else ()
     return Observation(baseline['boots'], baseline['usb_resets'], expected.uac,
-        tuple(baseline[k] for k in ('uac_hz', 'uac_alt', 'uac_rate_sets', 'uac_starts')) if expected.uac else (), fields['generation'])
+        tuple(baseline[k] for k in ('uac_hz', 'uac_alt', 'uac_rate_sets', 'uac_starts')) if expected.uac else (), fields['generation'], history)
 
 
 class Ownership(str, Enum):
