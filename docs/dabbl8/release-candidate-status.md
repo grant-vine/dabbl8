@@ -82,6 +82,15 @@ the fixture. This is raw-byte preservation evidence, not valid ancillary-format
 reopening or physical power-cut recovery. Firmware, loader and both frozen
 packages are unchanged; see private `build/rc-roadmap-audit-20261019/` receipts.
 
+Current ancillary-format reopening now also passes a separate host fixture:
+nondefault PER4 settings, both banks of 32 current FM6 presets/patches and all
+three simple user-sample slots reopen through actual application readers after
+the real loader's virtual upgrade. Both optimized/fatal-sanitizer positive runs
+and 14 targeted invalidation controls pass, with poisoned caches and no reader
+writes. See [the exact scope and limits](ancillary-upgrade-qualification.md).
+These synthetic format checks do not establish ancillary writer atomicity,
+physical cold boot or interrupted upgrade durability. The frozen image is unchanged.
+
 ## Remaining gates
 
 The new `arrangement-stress` local scope covers the previously missing combined
