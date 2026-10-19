@@ -1,6 +1,17 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`--check arrangement-status` verifies diagnostic-only D8A1 snapshots from actual
+native arrangement transitions, feature on/off and optimized/fatal sanitizers.
+It checks read-only state, IRQ guard restoration, printing after unlock and a
+stalled frame that cannot close its CRC. The strict host parser and bounded
+observation model reject malformed frames, missed/reordered rows, boot/USB or
+generation changes, recording/fill controls, long polling gaps and missing Stop.
+The observation model admits only the pinned natural16-row proposal, requires
+all rows and one generation-bound final Stop, and cannot reuse a completed run.
+It has no transport or automatic playback/restore operation. Native collection
+and final snapshot comparison remain a separately checked unarmed batch stage.
+
 `--check arrangement-proposal` builds a synthetic project for a future hardware
 batch. Every bank references C only, so A/B can be preserved. The actual native
 runtime recalls C, the simulated physical SEQ hold opens SONG, and PLAY performs
