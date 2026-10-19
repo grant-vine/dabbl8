@@ -57,10 +57,58 @@ The linked clock-and-arrangement application at
 stack contributions remain startup/main7,516, audio2,196 and TIMER5 200 bytes.
 Hardware SP/SSP/implicit-frame/nesting limits remain unqualified.
 
-Before a device session, finish the bounded timing/resource collector and
-post-Stop C-context comparison, then freeze/repin the single new package and
-kit. The old frozen v023 contains neither this frame nor D8C1; do not substitute
-it. Require fresh package/profile/epoch and original backup/readiness checks;
+The bounded timing/resource collector and post-Stop C-context comparison now
+pass local checks. Use the consolidated `build/rc-v023-d8a1-20261019/` package and
+its reviewed, unarmed kit before any device session. The old frozen v023 contains
+neither this frame nor D8C1; do not
+substitute it. Require fresh package/profile/epoch and original backup/readiness checks;
 normal status text or CRC is not binary attestation. The owner still prepares
 sources through the verified C-load/SEQ-hold/SONG/PLAY path. Never stage a
 stopped-only snapshot while playback runs or widen the notes-only MIDI guard.
+
+## Collector and readback contract
+
+`tools/dabbl8_arrangement_capture.py` defaults to a plan that opens no port. It
+checks the existing package/profile validator, exact D8A1 source-header hash and
+the locally rendered 7,385-byte C proposal before native acquisition. Explicit
+capture also requires current owner readiness, an explicit USB console path and
+a new private output directory. Manifest metadata identifies intended source;
+status/version/CRC do not attest the installed binary independently.
+
+Its seven fixed commands are status, timing start/stop/report and resource
+start/stop/report. No playback, memory, storage, reset, MIDI or flashing command
+is admitted. It acknowledges each observer start, observes every row, waits for
+the natural Stop and the proposal's bounded12-second tail, then pauses only
+acknowledged owned observers once. Lost/malformed start or stop acknowledgements
+remain uncertain; they never trigger retries. Primary, cleanup and close errors
+remain separate in the receipt. Any error refuses advancement to readback.
+Cancelling the host does not stop music remotely; if playback was active, report
+that state and obtain owner direction rather than silently retrying or restoring.
+
+Both reports must pass their existing strict decoders. The resource window must
+show all eight heavy slots and the pinned six-FM6/DRUM/WHEEL peak shape without
+allocation failure. D8T2 must cover at least11,000 halves with no late/taint/aux
+observations. That lower bound checks coverage of this known arrangement;
+neither it nor host polling proves a physical deadline or calibrated clock.
+The collector's tail wait does not establish silence: the existing firmware
+quiet guard still admits or refuses the later stopped-only full snapshot.
+
+`tools/dabbl8_arrangement_readback.py` is an offline library. It verifies two
+already accepted, released17-role snapshots and uses the actual native archive
+codec to recover logical A/B/C/shared autosave from their five mapped pool
+blocks. Physical block relocation is permitted by the codec; raw block number
+is not a project identity. No extra device archive export is needed.
+
+The initial live/autosave must match the MIDI proposal; C must match the rendered
+arrangement. Final live must match C; final autosave may retain the MIDI proposal
+or match C, and the result records which occurred. A/B/C and all11 ancillary
+raw/current settings/preset/sample roles must remain byte-identical. Uncertain
+release, corrupt metadata/bytes, unknown live/autosave or changed protected data
+refuse. The helper does not restore originals or request a device retry.
+
+Local evidence is retained in `build/rc-arrangement-capture-20261019/`:14 actual
+console-framing/failure/CLI cases,10 actual native-codec readback cases (fatal
+ASan/UBSan),23 existing console cases and45 selector cases. Early fixture failures
+are preserved separately. New tools pass strict typing and focused lint; two
+pre-existing selector-file lint findings are outside that claim. Existing
+render/target/physical evidence is reused, not repeated. No device was accessed.

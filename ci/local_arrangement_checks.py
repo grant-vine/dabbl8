@@ -16,6 +16,8 @@ ARRANGEMENT_MAP: Final = {
     'arrangement-status': {'firmware/src/arrangement_diagnostic_console.h',
                            'tools/dabbl8_arrangement_state.py', 'tests/arrangement_console_test.c',
                            'tests/arrangement_state_test.py'},
+    'arrangement-capture': {'tools/dabbl8_arrangement_capture.py', 'tests/arrangement_capture_test.py'},
+    'arrangement-readback': {'tools/dabbl8_arrangement_readback.py', 'tests/arrangement_readback_test.py'},
 }
 SCENARIOS: Final = ('internal-dry', 'internal-room', 'usb-spring', 'trs-loss-wrap')
 GENERATED: Final = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -28,6 +30,25 @@ def arrangement_recipes(check: str, cc: list[str], out: Path) -> list[LocalStep]
         raise ValueError('Unknown arrangement scope: ' + check)
     if check == 'arrangement-status':
         return status_recipes(cc, out)
+    if check == 'arrangement-capture':
+        return [LocalStep(name='arrangement-capture-offline',
+            argv=[sys.executable, 'tests/arrangement_capture_test.py'], requires=[
+                'tests/arrangement_capture_test.py', 'tools/dabbl8_arrangement_capture.py',
+                'tools/dabbl8_arrangement_state.py', 'tools/dabbl8_timing_capture.py',
+                'tools/dabbl8_resource_capture.py', 'tools/dabbl8_timing_report.py',
+                'tools/dabbl8_resource_report.py'])]
+    if check == 'arrangement-readback':
+        binary = str(out / 'arrangement-native-archive')
+        sources = ['tools/dabbl8_project_archive.c', 'firmware/src/d8p1.c', 'firmware/src/d8pool.c']
+        required = [*sources, 'firmware/src/d8p1.h', 'firmware/src/d8pool.h',
+            'tools/dabbl8_arrangement_readback.py', 'tests/arrangement_readback_test.py',
+            'tools/dabbl8_project_archive.py', 'tools/dabbl8_instrument_capture.py',
+            'tests/fixtures/d8p1/minimal.d8p']
+        return [LocalStep(name='arrangement-readback-codec-compile', argv=cc+[
+            '-std=c11', '-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+            '-Ifirmware/src', *sources, '-o', binary], requires=required),
+            LocalStep(name='arrangement-readback-offline',
+                argv=[sys.executable, 'tests/arrangement_readback_test.py', binary], requires=required)]
     proposal = check == 'arrangement-proposal'
     fixture = ('tests/native_arrangement_proposal_test.c' if proposal else
                'tests/native_arrangement_stress_test.c')
