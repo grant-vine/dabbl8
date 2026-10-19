@@ -116,7 +116,7 @@ FL_TRACE_INL void fl_trace_end(int32_t result)
 }
 #define FL_TRACE_SAMPLE(n) (fl_trace_sampling=(((n)&4095u)==0))
 #define FL_TRACE_WIP_PROGRESS(n,v) do { if(fl_trace_active&&fl_trace_sampling){fl_trace.stage=FL_TRACE_WIP;fl_trace_wait_progress(n,v);} } while(0)
-#define FL_TRACE_SPI_POLL(n,v) do { if(((++(n))&4095u)==0)fl_trace_spi_progress(n,v); } while(0)
+#define FL_TRACE_SPI_POLL(n,v) do { ++(n); if((n)==1u||((n)&4095u)==0)fl_trace_spi_progress(n,v); } while(0)
 #define FL_TRACE_BEGIN(o,a) fl_trace_begin(o,a)
 #define FL_TRACE_MARK(s) fl_trace_mark(s)
 #define FL_TRACE_WAIT(s) fl_trace_wait_begin(s)

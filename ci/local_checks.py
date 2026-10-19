@@ -51,7 +51,8 @@ MAP = {
         'tools/d8archive_inputs.py', 'tools/dabbl8_project_archive.c',
         'tests/native_project_client_bridge.c', 'tests/native_project_client_test.mjs'},
     'own-project-transfer': {'firmware/src/native_project_transfer.c',
-        'tests/native_project_transfer_test.c'},
+        'firmware/src/native_local_session.h', 'tests/native_project_transfer_test.c',
+        'tests/native_commit_watchdog_test.c'},
     'dry-sends': {'tests/native_dry_sends_test.c',
         'tools/native_dry_compare.py'},
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
@@ -311,7 +312,8 @@ def recipes(checks, cc, out, base):
             ]
             continue
         elif name == 'own-project-transfer':
-            jobs = [('8', 8, 'tests/native_project_transfer_test.c')]
+            jobs = [('8', 8, 'tests/native_project_transfer_test.c'),
+                    ('watchdog', 8, 'tests/native_commit_watchdog_test.c')]
         elif name == 'voice-allocation':
             jobs = [('demo', 8, 'tests/demo_voice_allocation_test.c'),
                     ('budget', 8, 'tests/voice_budget_test.c'),

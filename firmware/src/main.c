@@ -333,6 +333,9 @@ void fm1_cstart(void)
 #if FELUCCA_FLASH && FL_TRACE_ENABLED
     fl_trace_boot(p3,src);
 #endif
+#if NTRK == 8 && D8_MIGRATION_SESSION && D8_PROJECT_TRANSFER_SESSION && DABBL8_TIMING_DIAGNOSTIC
+    d8pt_diag_boot(p3,src);
+#endif
     fm1_wdt_arm(0x0D);
 #if FELUCCA_FLASH && FL_TRACE_ENABLED
     fl_trace_watchdog(fm1_p33_read(FM1_P3_WDT_CON));

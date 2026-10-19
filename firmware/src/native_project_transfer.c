@@ -131,6 +131,7 @@ static int pt_begin(unsigned importing,const uint8_t*a,uint32_t n)
  if(importing&&(n!=18||a[2]>15))return PT_BAD;
  uint32_t live=0,livecrc=0,poolcrc=0;
  if(importing&&(!mc_wire_u32(a+3,&live)||!mc_wire_u32(a+8,&livecrc)||!mc_wire_u32(a+13,&poolcrc)||!live||live>D8P1_LIMIT))return PT_BAD;
+ d8pt_observing=0; /* BEGIN scans/exports cannot amend the preceding incident */
  d8ls.previous_intent=d8ls.intent;d8ls.operation=4;d8ls.revoked=0;d8ls.attempted=0;d8ls.busy=1;
  d8ls.epoch=d8_capture_change.epoch;d8ls.own=0;d8ls.started=fm1_ms;d8ls.usb=usb.resets;d8ls.usb_config=usb.config;
  uint32_t lease=0;int rc=main_migration_begin(&lease)==D8MP_OK?D8POOL_OK:D8POOL_BUSY;d8ls.signature=lease;
@@ -147,7 +148,7 @@ static int pt_begin(unsigned importing,const uint8_t*a,uint32_t n)
  if(!importing){if(pt_read(NULL,0,w->plan,D8POOL_BYTES)||!pt_lifetime()){pt_finish(PT_IO);return PT_IO;}
   pt_set(PT_POOLCRC,d8p1_crc32(w->plan,D8POOL_BYTES));
  }
- if(importing)memset(&d8pt_diag,0,sizeof d8pt_diag);
+ d8pt_diag_begin(importing);
  d8p1_autosave_session_end();return PT_OK;
 }
 static void d8pt_draw(void)
@@ -233,10 +234,34 @@ static int pt_driver(unsigned program,uint32_t a,const void*p,uint32_t n)
   }else if(program&&d8ls.write_phase==2){uint32_t expected=d8ls.length-(d8ls.offset-256);if(expected>256)expected=256;
    allowed=expected&&n==expected&&a==base+d8ls.offset&&p==wire+d8ls.offset-256;
   }
-  if(allowed){d8ls.busy=1;d8ls.attempted=1;d8_capture_store_changed();d8ls.own++;
+  /* A synchronous multi-object restore does not return to the main-loop
+   * watchdog feed. Service only an admitted primitive, with XIP available
+   * and IRQs masked for P33. Never feed a stalled RAM/flash wait. */
+  if(allowed){
+#if DABBL8_TIMING_DIAGNOSTIC
+   d8pt_diag.address=a;d8pt_diag.operation=program?2u:1u;
+#endif
+   uint32_t timeouts=fm1_p33_timeouts;fm1_wdt_feed();
+   if(fm1_p33_timeouts!=timeouts){
+#if DABBL8_TIMING_DIAGNOSTIC
+    d8pt_diag.p33_failures++;
+#endif
+    irq_restore(f);return -11;
+   }
+#if DABBL8_TIMING_DIAGNOSTIC
+   d8pt_diag.feeds++;
+#endif
+#if FL_TRACE_ENABLED
+   fl_trace_feed();
+#endif
+   d8ls.busy=1;d8ls.attempted=1;d8_capture_store_changed();d8ls.own++;
    rc=program?FL_FAR(fl_prog_ram)(a,p,n,&took):FL_FAR(fl_erase4k_ram)(a,&took);
    if(!pt_lifetime())rc=-1;
-   if(!rc){if(!program)d8ls.write_phase++;else if(a==base)d8ls.write_phase=3;else d8ls.offset+=n;}
+   if(!rc){
+#if DABBL8_TIMING_DIAGNOSTIC
+    d8pt_diag.completed++;
+#endif
+    if(!program)d8ls.write_phase++;else if(a==base)d8ls.write_phase=3;else d8ls.offset+=n;}
    d8ls.busy=0;
   }
  }irq_restore(f);return rc;
@@ -267,7 +292,7 @@ static int pt_commit(void)
  d8pool source_reader={w,pt_plan_read,pt_noerase,pt_noprogram,pt_stopped},dest={NULL,pt_read,pt_erase,pt_program,pt_stopped};
  d8pool_index source,check;int rc=d8pool_inventory(&source_reader,&source);
  if(rc||source.present!=pt_extra(PT_PRESENCE))return PT_BAD;
- d8pt_diag.stage=PTD_BASELINE;
+ d8pt_diag.raw_rc=(uint32_t)-32768;d8pt_diag.stage=PTD_BASELINE;
  d8ls.writing=1; /* reject ALL handler reentry through scan, commit and adoption */
  uint32_t fresh_crc[5];rc=pt_scan(&dest,w,&check,0,7,fresh_crc);
  if(rc||memcmp(fresh_crc,d8ls.crc,sizeof fresh_crc)||!d8pr_same_index(&check,&d8ls.index)||!pt_lifetime()){pt_failure_observe(rc?rc:D8POOL_BUSY);d8ls.writing=0;return PT_STALE;}
@@ -304,7 +329,7 @@ static int pt_commit(void)
  if(!rc){d8pt_diag.stage=PTD_BIND;rc=project_native_bind_flash(1);}
  if(!rc){d8pt_diag.stage=PTD_AUTOSAVE;rc=nas_begin(d8ls.intent,0,0);} /* retain independently restored AS */
  if(rc){pt_failure_observe(rc);pt_finish(PT_IO);return PT_IO;}
- d8pt_diag.stage=PTD_DONE;
+ d8pt_diag.raw_rc=0;d8pt_diag.stage=PTD_DONE;
  d8ls.writing=0;d8ls.phase=LS_IDLE;d8ls.object=PT_DONE;d8ls.shown=0;d8ls.write_phase=PT_OK;ui.force=1;return PT_OK;
 }
 static void pt_pack(const uint8_t*p,uint32_t n)

@@ -13,7 +13,7 @@ static unsigned ft_busy,ft_forever,ft_busy_reads,ft_issued,ft_command,ft_bytes,f
 static unsigned ft_contained,ft_ticks,ft_mmio,ft_watchdog_limit,ft_watchdog;
 static unsigned ft_cache_reads,ft_cache_delay,ft_cache_stuck,ft_inval_stuck,ft_flushes;
 static unsigned ft_sfc_reads,ft_sfc_delay,ft_sfc_stuck,ft_exit_stuck,ft_exiting;
-static unsigned ft_status_reads,ft_tick_step;
+static unsigned ft_status_reads,ft_tick_step,ft_keep_wel;
 static jmp_buf ft_stop;
 static uint32_t ft_seen;
 static void ft_observe(void);
@@ -49,7 +49,7 @@ static void ft_delay(uint32_t n)
  if(high&&!ft_high) {
   if(ft_command==0x06&&!ft_busy&&!ft_refuse_wel)ft_wel=1;
   if((ft_command==0x20&&ft_bytes==3)||(ft_command==0x02&&ft_bytes==3&&ft_payload)) {
-   ft_issued++;ft_busy=1;ft_wel=0;
+   ft_issued++;ft_busy=1;if(!ft_keep_wel)ft_wel=0;
   }
  }
  ft_high=high;
@@ -108,7 +108,7 @@ static void ft_reset(void)
  ft_issued=ft_command=ft_bytes=ft_payload=ft_contained=ft_ticks=ft_mmio=ft_watchdog=0;
  ft_cache_reads=ft_cache_delay=ft_cache_stuck=ft_inval_stuck=ft_flushes=0;
  ft_sfc_reads=ft_sfc_delay=ft_sfc_stuck=ft_exit_stuck=ft_exiting=ft_status_reads=0;
- ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;
+ ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;ft_keep_wel=0;
 }
 static int ft_erase(uint32_t address)
 {uint32_t took=0;return fl_erase4k(address,&took);}

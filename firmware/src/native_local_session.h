@@ -30,11 +30,45 @@ static struct {
 } d8ls __attribute__((section(".pool")));
 enum { LS_IDLE,LS_CONSENT,LS_RELEASE,LS_EXECUTE };
 #if D8_PROJECT_TRANSFER_SESSION
-/* Retained observations only: never read by an admission or write gate. */
+/* Observations only: never read by an admission or write gate. */
 enum { PTD_NONE,PTD_BASELINE,PTD_STORE,PTD_VERIFY,PTD_ADOPT,PTD_BIND,PTD_AUTOSAVE,PTD_DONE };
-static struct { uint32_t stage,raw_rc,guards; volatile uint32_t revoke; } d8pt_diag;
+static volatile struct {
+ uint32_t stage,raw_rc,guards,revoke;
+#if DABBL8_TIMING_DIAGNOSTIC
+ uint32_t magic,boot,record_boot,reset_reason,reset_src;
+ uint32_t address,operation,completed,feeds,p33_failures;
+#endif
+} d8pt_diag
+#if DABBL8_TIMING_DIAGNOSTIC && !defined(D8_PROJECT_DIAGNOSTIC_TEST)
+ __attribute__((section(".noinit")))
+#endif
+;
+static volatile uint8_t d8pt_observing; /* IRQ-visible BSS: reboot never resumes an import */
+#if DABBL8_TIMING_DIAGNOSTIC
+#define D8PT_DIAG_RETAINED 1
+#define D8PT_DIAG_MAGIC 0x50544431u
+static void d8pt_diag_boot(uint32_t reason,uint32_t source)
+{
+ if(d8pt_diag.magic!=D8PT_DIAG_MAGIC||d8pt_diag.boot==UINT32_MAX){
+  volatile uint8_t*p=(volatile uint8_t*)&d8pt_diag;
+  for(uint32_t i=0;i<sizeof d8pt_diag;i++)p[i]=0;
+  d8pt_diag.magic=D8PT_DIAG_MAGIC;
+ }
+ d8pt_diag.boot++;d8pt_diag.reset_reason=reason;d8pt_diag.reset_src=source;
+}
+#endif
+static void d8pt_diag_begin(unsigned importing)
+{
+ d8pt_observing=(uint8_t)importing;
+ if(!importing)return; /* exports must preserve the preceding incident */
+ d8pt_diag.stage=d8pt_diag.raw_rc=d8pt_diag.guards=d8pt_diag.revoke=0;
+#if DABBL8_TIMING_DIAGNOSTIC
+ d8pt_diag.address=d8pt_diag.operation=d8pt_diag.completed=d8pt_diag.feeds=d8pt_diag.p33_failures=0;
+ d8pt_diag.record_boot=d8pt_diag.boot;
+#endif
+}
 static void d8pt_observe_revoke(uint32_t reason)
-{ if(d8ls.operation==4&&d8ls.phase!=LS_IDLE)d8pt_diag.revoke|=reason; }
+{ if(d8pt_observing&&d8ls.operation==4&&d8ls.phase!=LS_IDLE)d8pt_diag.revoke|=reason; }
 #endif
 static int d8ls_blocked(void) { return d8ls.phase!=LS_IDLE||d8ls.busy; }
 static void d8ls_revoke(void) { if(d8ls_blocked()){
