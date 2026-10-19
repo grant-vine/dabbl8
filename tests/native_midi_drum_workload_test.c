@@ -4,6 +4,7 @@
 #include "ui_test.c"
 #include "../firmware/src/d8p1_runtime.c"
 #include <assert.h>
+#include "native_midi_project_fixture.h"
 
 static uint8_t wire[D8P1_LIMIT], before[D8P1_LIMIT], after[D8P1_LIMIT];
 static unsigned peak, heavy_peak, blocks;
@@ -31,10 +32,8 @@ static void note(unsigned channel,unsigned key,unsigned velocity)
 }
 int main(int argc,char **argv)
 {
- assert(argc==2||argc==3);ui_power_on();render(1);
- FILE *file=fopen(argv[1],"rb");assert(file);
- size_t size=fread(wire,1,sizeof wire,file);
- assert(!ferror(file)&&fgetc(file)==EOF);assert(!fclose(file));
+ assert(argc>=1&&argc<=3);ui_power_on();render(1);
+ size_t size=native_midi_project_fixture(wire,sizeof wire,argc>=2?argv[1]:NULL);
  assert(!d8p1_load_runtime(wire,size,7));render(1);
  assert(!song.playing&&!song.rec&&!song.g[G_ROUTE]);
  assert(trk[3].engine==ENGI_DRUM&&trk_vmode(&trk[3])==V_POLY);

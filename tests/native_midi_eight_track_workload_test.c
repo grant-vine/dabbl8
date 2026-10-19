@@ -4,6 +4,7 @@
 #include "ui_test.c"
 #include "../firmware/src/d8p1_runtime.c"
 #include <assert.h>
+#include "native_midi_project_fixture.h"
 static uint8_t wire[D8P1_LIMIT],before[D8P1_LIMIT],after[D8P1_LIMIT];
 static const unsigned keys[8]={60,64,67,36,72,76,79,84};
 static unsigned peak,pool_peak,blocks;
@@ -27,9 +28,8 @@ static void note(unsigned channel,unsigned key,unsigned velocity)
 }
 int main(int argc,char **argv)
 {
-    assert(argc==3);ui_power_on();render(1);
-    FILE *file=fopen(argv[1],"rb");assert(file);
-    size_t size=fread(wire,1,sizeof wire,file);assert(!ferror(file)&&fgetc(file)==EOF);assert(!fclose(file));
+    assert(argc==1||argc==3);ui_power_on();render(1);
+    size_t size=native_midi_project_fixture(wire,sizeof wire,argc==3?argv[1]:NULL);
     assert(!d8p1_load_runtime(wire,size,7));render(1);
     assert(!song.playing&&!song.rec&&!song.g[G_ROUTE]);
     const unsigned engines[8]={0,12,3,10,0,0,0,0};
@@ -49,6 +49,7 @@ int main(int argc,char **argv)
     for(unsigned channel=0;channel<16;channel++)for(unsigned key=0;key<128;key++)assert(!midi_sel_on[channel][key]);
     assert(!d8p1_capture_runtime(after,sizeof after,&n_after));
     assert(n_before==n_after&&!memcmp(before,after,n_before));
+    if(argc==3){
     FILE *contract=fopen(argv[2],"w");assert(contract);
     assert(fputs("{\"track_dumps\":[",contract)>=0);
     for(unsigned p=0;p<8;p++){
@@ -59,6 +60,7 @@ int main(int argc,char **argv)
         assert(fputs("]",contract)>=0);
     }
     assert(fputs("]}\n",contract)>=0);assert(!fclose(contract));
+    }
     printf("PASS native USB channels1-8 notes=128 peak_voices=%u heavy_slots=%u blocks=%u no_holds=1 project_unchanged=1 recording=0\n",peak,pool_peak,blocks);
     return 0;
 }

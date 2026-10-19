@@ -11,13 +11,16 @@ planning reports that explicitly and actual capture refuses before opening it.
 These tests do not measure a physical clock or qualify ISR/stack deadlines.
 
 `--check midi-eight` runs the actual command-27 recording-state query (all 256
-recording masks), actual eight-channel USB MIDI renderer on the retained EIGHT
-DEMO fixture, and guarded schedule/refusal tests. The renderer proves peak eight
+recording masks), actual eight-channel USB MIDI renderer on an in-memory factory
+fixture, and guarded schedule/refusal tests. The renderer proves peak eight
 voices/two heavy slots and unchanged project bytes after matched note cleanup;
 it does not qualify all eight heavy slots or physical timing. Pure workload
 checks separately refuse armed recording before notes and during playback.
 The private native adapter remains a distinct, default-plan-only tool; no device
-port is opened by this local recipe. Reuse `run-gutjktqg` for unchanged inputs.
+port is opened by this local recipe. The restored `midi-drum` scope exercises
+the actual drum-channel renderer with the same self-contained fixture. Neither
+requires a private demo file. Do not substitute these factory-state checks for
+the separately retained exact physical-workspace workload evidence.
 
 `--check engine-fx` compiles and runs the actual host renderer for 84 scenarios:
 13 enabled engines and one mixed eight-track layout, each with dry, chorus,
