@@ -1,6 +1,12 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # v0.1 software acceptance status — 14 October 2026
 
+**Historical snapshot.** See [RC readiness - 15 October](release-candidate-status.md)
+for the current source/package identities, completed v0.1.8 restore, playback and
+reboot evidence, and remaining gates. In particular, the static failures and
+unperformed own-project restore/reboot checks described below are historical;
+they must not be applied to the later package without comparing its evidence.
+
 This bounded review maps live issues #9–#21 to development source
 `6c7046d15f269c4b2fc33128ad9c43fdb043f4e7`. The installed private v0.1.5 diagnostic
 is separate source `76ea40ba7a673d93d5b59053457c98bbf6d75191`; its

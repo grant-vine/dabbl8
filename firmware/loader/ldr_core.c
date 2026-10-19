@@ -170,8 +170,11 @@ static int ldr_session(void)
     ldr_record_clear();
     for (s = LDR_REC_HI; s > LDR_REC_LO; s -= 0x1000u) {   /* flash records: 4K boundary - 256 */
         uint8_t r[80];
-        if (s - 0x1000u >= LDR_DATA_LO && s - 0x1000u < LDR_DATA_HI)
-            continue;                                    /* Felucca's store: user data that may look like one */
+        /* Preserve both Felucca's store and Dabbl8's extra native pool block.
+         * Valid project bytes can match an update-record signature and CRC. */
+        if ((s - 0x1000u >= LDR_DATA_LO && s - 0x1000u < LDR_DATA_HI) ||
+            (s - 0x1000u >= 0xE5000u && s - 0x1000u < 0xE7000u))
+            continue;
         if (ldr_fread(s - 0x100u, r, 80))
             break;
         if (ota_rd16(r + 6) == 0x5441u && ota_rd16(r) && ota_rd16(r) == ota_crc16(r + 2, 78, 0))

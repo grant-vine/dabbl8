@@ -1,6 +1,21 @@
 # Dabbl8 plan
 
-The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately. The owner's FM-1 installed and initialized the private v0.1.5 diagnostic on 14 October 2026; speaker sound, all four knobs and individual keyboard sound on tracks 5–8 are owner-confirmed. See the [exact hardware observations and remaining gates](hardware-initialization-20261014.md). A hardware-qualified eight-track release remains pending. All 19 implementation tasks and roadmap issue #2 have been created.
+For the current evaluated binary, exact package/source review and remaining gates,
+start with the [RC review guide](rc-review-guide.md) and
+[current status](release-candidate-status.md). Older bundle references below are
+historical and are not requests to repeat tests or flash.
+
+The private v0.1.8 qualification bundle and its exact source/checksum record are
+now frozen locally; see [RC readiness](release-candidate-status.md) and the
+[safe hardware test plan](rc-hardware-test-plan.md). This is local preparation,
+not a public release or authorization to flash/change saved data.
+
+[Engine resource limits](engine-resource-limits.md) separates source-defined
+voice/pool caps from measured physical combinations. The existing workspace's
+heavier seven-body workload now passes locally; full-pool hardware qualification
+remains open.
+
+The numbered documents retain the original source-research and planning snapshot. GitHub Issues are authoritative for progress. The unchanged upstream baseline and subsequent host/target build evidence are recorded separately. The owner's FM-1 passed bounded v0.1.8 eight-track playback, own-project restore/readback and saved-project reboot checks on 15 October 2026. See [current RC readiness and exact evidence](release-candidate-status.md). A hardware-qualified eight-track release remains pending. All 19 implementation tasks and roadmap issue #2 have been created.
 
 ## Current data scope — 14 October 2026
 
@@ -11,10 +26,12 @@ Dabbl8 format migrations are in scope when needed; external firmware import and
 original-retaining migration are not release prerequisites. Earlier migration
 documents and converter previews below are historical developer work, not the
 current install contract. Disclosed first-use formatting completed on the owner's
-FM-1; interrupted-format recovery, saved-project/reboot retention and own-project
-backup/restore remain unqualified. The policy itself grants no device operation.
-See the [software acceptance map](software-acceptance-status.md) for current
-implementation coverage and remaining physical measurement gates. The
+FM-1. Own-project restore and saved-project reboot checks have since passed in
+the recorded v0.1.8 scope; all populated slots, nonempty autosave, other own data,
+upgrades and interrupted-format recovery remain open. The policy itself grants
+no device operation. See [RC readiness](release-candidate-status.md) for current
+coverage and remaining physical measurement gates, and the dated
+[software acceptance map](software-acceptance-status.md) for historical coverage. The
 [private resource diagnostic package handoff](resource-diagnostic-package.md)
 records the implemented observation capability and future separately authorized
 hardware phases; it grants no installation or capture permission.

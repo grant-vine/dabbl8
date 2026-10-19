@@ -254,3 +254,6 @@ static void audio_init(void)                   /* codec and ALNK0 bring-up (fm1_
 #endif
     fm1_audio_init(abuf, HALF_WORDS, isr_alnk0, 3);
 }
+
+/* DMA starts only after all interrupt sources are ready and globally enabled. */
+static void audio_start(void) { fm1_audio_start(); }

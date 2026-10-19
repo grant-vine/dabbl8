@@ -119,6 +119,10 @@ with tempfile.TemporaryDirectory() as directory:
         with capture.Bridge(bridge_path) as bridge:
             result = capture.collect(mutate(bridge.exchange, predicate, alteration), td / label, 'raw-store')
         check(not result['accepted'] and not (td / label / 'verified').exists(), label + ' refuses complete publication')
+        if label in ('truncated-cap', 'wrong-command', 'wrong-version', 'high-bit',
+                     'replayed-begin', 'bad-u32-top', 'wrong-begin-phase', 'wrong-scan-token'):
+            check('failed_request' in result and result['failed_request']['error'] == result['reason'],
+                  label + ' preserves protocol failure request metadata')
         check((td / label / 'received-frames.jsonl').stat().st_size > 0 and (td / label / 'report.json').exists(), label + ' exact response evidence retained')
         for item in result['originals'].values():
             check(item['bytes'] <= 81920, label + ' partial original remains bounded')

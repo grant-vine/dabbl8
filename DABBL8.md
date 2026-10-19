@@ -9,7 +9,7 @@ An open-source eight-track firmware project for the M-VAVE FM-1, based on Felucc
 
 The audit baseline is Felucca v1.1.5, commit `276f72a4e6ea8a12499a7a6819aadf3165126755`. Fork main was observed at `ac6bfcbd76ee3de79eb461719e8d123b5512aa3c` with a v1.1.5.1 README. Review that delta deliberately in the first build issue; do not call a new baseline tested simply because it is newer.
 
-Keep upstream credits, LICENSE and LICENSING.md. Baseline and development builds have retained local evidence. The owner's FM-1 installed and initialized the private v0.1.5 diagnostic on 14 October 2026, with speaker sound, all four knobs and individual keyboard sound on tracks 5–8 confirmed. See [source-specific hardware evidence](docs/dabbl8/hardware-initialization-20261014.md); release qualification remains pending. The inherited README describes upstream Felucca, not achieved Dabbl8 capabilities.
+Keep upstream credits, LICENSE and LICENSING.md. Baseline and development builds have retained local evidence. Following initialization on v0.1.5, the owner's FM-1 passed bounded v0.1.8 demo playback, own-project restore/readback and saved-project reboot retention checks on 15 October 2026. See [current RC readiness and exact evidence](docs/dabbl8/release-candidate-status.md); release qualification remains pending. The inherited README describes upstream Felucca, not achieved Dabbl8 capabilities.
 
 ## Current install policy — 14 October 2026
 
@@ -20,9 +20,10 @@ initial boot; it is not claimed complete merely because the application was
 flashed. Loader, OTA, calibration and physical boundaries remain unchanged.
 
 The disclosed first-use reset completed on the owner's FM-1 with approved-sector
-readback and native readiness recorded by the firmware. Interrupted-format
-recovery, saved-project/reboot retention and own-project backup/restore remain
-unqualified. See the [software acceptance map](docs/dabbl8/software-acceptance-status.md)
+readback and native readiness recorded by the firmware. The v0.1.8 own-project
+restore and saved-project reboot checks passed in the recorded scope; nonempty
+autosave, all populated slots, other user data, supported own upgrades and
+interrupted-format recovery still need qualification. See [RC readiness](docs/dabbl8/release-candidate-status.md)
 for the remaining implementation and measurement gates.
 
 Dabbl8 manages its own project versions and firmware upgrades. Recognized Dabbl8

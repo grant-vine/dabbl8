@@ -54,6 +54,13 @@ per unsigned 32-bit word, and terminate with CRLF:
 | `d8r1 supervisor` | same six stack fields |
 | `d8r1 end` | generation, current boot, CRC32 |
 
+The last live-slot count and `last` vector describe the last allocation-request
+census, not a guaranteed stop-time voice count. Start takes an initial census;
+`heavy_get` observations update it; stop pauses without taking another census,
+and snapshot copies the paused report. A last count of one can remain after
+that voice retires. Neither a nonzero last count nor a zero last count proves
+end-of-test audio/held-note state. Keep note-release evidence separate.
+
 Profiles are 0 Full, 1 Core and 2 Breaks. Helper bits must be 3, pool schema 1,
 stack status 1. CRC32 covers little-endian words: magic `0x44385231`, all row
 words before `end`, with IDs `0x4C`, `0x50`, `0x55`, `0x53` before the two vectors

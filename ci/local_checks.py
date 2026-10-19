@@ -19,6 +19,21 @@ ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
        'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 MAP = {
+    'midi-native': {'tools/dabbl8_native_midi_guard.py', 'tools/dabbl8_readonly_midi.py',
+        'tools/dabbl8_readonly_snapshot.py', 'tests/readonly_snapshot_test.py',
+        'tools/dabbl8_instrument_capture.py', 'tests/instrument_capture_collector_test.py',
+        'tests/readonly_midi_adapter_test.py',
+        'tests/native_midi_guard_test.py', 'tests/native_midi_qualification_guard_test.py',
+        'tests/raw_coremidi_inventory_test.py'},
+    'midi-eight': {'tests/native_track_recording_query_test.c',
+        'tests/native_midi_eight_track_workload_test.c',
+        'tools/dabbl8_eight_track_workload.py', 'tests/dabbl8_eight_track_workload_test.py'},
+    'engine-fx': {'tests/engine_fx_matrix_test.c'},
+    'performance-buses': {'tests/eight_track_performance_test.c'},
+    'performance-fx': {'tests/perform_test.c'},
+    'midi-workload': {'tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py'},
+    'voice-allocation': {'firmware/src/voice.c', 'tests/demo_voice_allocation_test.c',
+        'tests/voice_budget_test.c', 'tests/native_overload_test.c'},
     'storage': {'firmware/src/storage.c', 'tests/storage_test.c', 'tests/native_storage_gate_test.c'},
     'legacy-ui': {'tests/ui_test.c', 'tests/ui_legacy_v6_bounds_test.c'},
     'readonly-boot': {'firmware/src/project.c', 'firmware/src/project_native_flash.c',
@@ -54,6 +69,11 @@ MAP = {
         'tests/instrument_capture_test.c', 'tests/ui_test.c', 'tests/d8p1_flash_runtime_test.c'},
     'runner': {'ci/local_checks.py', 'ci/local_checks_test.py', 'ci/local_flash_checks.py', 'tests/run_tests.sh'},
 }
+MAP['startup-order'] = {
+    'firmware/hal/fm1_audio.h', 'firmware/src/audio.c', 'firmware/src/main.c',
+    'tests/audio_startup_order_test.py', 'tests/native_boot_startup_order_test.py',
+    'tests/timer5_cadence_test.c',
+}
 MAP.update(RESOURCE_MAP)
 MAP['runner'].add('ci/local_resource_checks.py')
 
@@ -83,6 +103,15 @@ def discover(repo, base):
     return sorted({os.fsdecode(p) for p in changed if p})
 
 
+def input_hashes(repo: Path, extra_inputs: list[str]) -> list[tuple[str, str]]:
+    names = subprocess.check_output(['git', 'ls-files', '--cached', '--others',
+        '--exclude-standard', '-z', '--', '.', ':!:build', ':!:.local-baseline'], cwd=repo)
+    paths = {os.fsdecode(name) for name in names.split(b'\0') if name}
+    paths.update(extra_inputs)
+    return [(name, hashlib.sha256((repo / name).read_bytes()).hexdigest()
+             if (repo / name).is_file() else 'MISSING') for name in sorted(paths)]
+
+
 def recipes(checks, cc, out, base):
     steps = [{'name': 'diff', 'argv': ['git', 'diff', '--check', base, '--']}]
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
@@ -92,9 +121,111 @@ def recipes(checks, cc, out, base):
                 continue  # The capture recipe already runs the same console fixtures.
             steps += resource_recipes(name, cc, out)
             continue
+        if name == 'startup-order':
+            steps += [
+                {'name': 'startup-audio-order',
+                 'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/audio_startup_order_test.py', '--out', str(out / 'startup-audio')],
+                 'requires': ['tests/audio_startup_order_test.py', 'firmware/hal/fm1_audio.h',
+                              'firmware/src/audio.c', 'firmware/src/main.c', 'firmware/src/usb.c']},
+                {'name': 'startup-native-reopen',
+                 'argv': ['env', 'CC=' + shlex.join(cc), sys.executable, 'tests/native_boot_startup_order_test.py',
+                          'firmware/src/main.c', str(out / 'startup-native')],
+                 'requires': ['tests/native_boot_startup_order_test.py', 'tests/native_readonly_boot_test.c',
+                              'firmware/src/main.c', 'firmware/src/project_native_flash.c',
+                              *pool, *['build/gen/' + path for path in GEN]]},
+            ]
+            for uart in (0, 1):
+                for uac in (0, 1):
+                    for sie in (0, 1):
+                        label = f'startup-timer-uart{uart}-uac{uac}-sie{sie}'
+                        binary = str(out / label)
+                        steps += [
+                            {'name': label + '-compile',
+                             'argv': cc + ['-std=c11', '-Wall', '-Wextra', '-Werror',
+                                 '-Wno-unused-function', '-O1', '-g',
+                                 '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                                 f'-DFELUCCA_UART={uart}', f'-DFELUCCA_UAC={uac}',
+                                 f'-DFELUCCA_SIE_IRQ_BUDGET={sie}',
+                                 'tests/timer5_cadence_test.c', '-o', binary],
+                             'requires': ['tests/timer5_cadence_test.c', 'firmware/src/main.c']},
+                            {'name': label, 'argv': [binary]},
+                        ]
+            continue
         if name == 'runner':
             steps += [{'name': 'shell', 'argv': ['sh', '-n', 'tests/run_tests.sh']},
                       {'name': 'selector', 'argv': [sys.executable, 'ci/local_checks_test.py']}]
+            continue
+        if name == 'midi-native':
+            fixture = str(out / 'snapshot-capture-fixture')
+            native_inputs = sorted(str(path.relative_to(ROOT))
+                for folder in ('firmware/src', 'tests') for path in (ROOT / folder).iterdir()
+                if path.suffix in ('.c', '.h'))
+            steps.append({'name': 'snapshot-fixture-compile',
+                'argv': cc + ['-O2', '-w', '-Ibuild/gen', '-Ifirmware/src',
+                    'firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c',
+                    'tests/instrument_capture_test.c', '-lm', '-o', fixture],
+                'requires': native_inputs + ['build/gen/' + name for name in GEN]})
+            for script in ('native_midi_guard_test', 'native_midi_qualification_guard_test',
+                           'raw_coremidi_inventory_test', 'readonly_snapshot_test',
+                           'readonly_midi_adapter_test', 'instrument_capture_collector_test'):
+                extra = [fixture] if script in ('raw_coremidi_inventory_test', 'readonly_snapshot_test',
+                    'readonly_midi_adapter_test', 'instrument_capture_collector_test') else []
+                steps.append({'name': script, 'argv': [sys.executable, 'tests/' + script + '.py'] + extra,
+                    'requires': sorted(MAP['midi-native']) + ['tools/dabbl8_instrument_capture.py']})
+            continue
+        if name == 'midi-workload':
+            steps.append({'name': 'midi-workload-offline',
+                'argv': [sys.executable, 'tests/dabbl8_midi_workload_test.py'],
+                'requires': ['tools/dabbl8_midi_workload.py', 'tests/dabbl8_midi_workload_test.py']})
+            continue
+        if name == 'midi-eight':
+            flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
+                     '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift',
+                     '-Ibuild/gen', '-Ifirmware/src']
+            demo = 'build/hardware-trial-v017/demo-set-verified/eight-demo.d8p'
+            jobs = [('recording-query', 'tests/native_track_recording_query_test.c', []),
+                    ('eight-channel-render', 'tests/native_midi_eight_track_workload_test.c',
+                     [demo, str(out / 'eight-track-contract.json')])]
+            for tag, fixture, args in jobs:
+                binary = str(out / tag)
+                steps += [{'name': tag + '-compile',
+                    'argv': cc + flags + pool + [fixture, '-lm', '-o', binary],
+                    'requires': pool + [fixture, 'tests/hostsim.c', 'tests/ui_test.c',
+                        'tests/editor_test.c', demo] + ['build/gen/' + p for p in GEN]},
+                    {'name': tag, 'argv': [binary, *args]}]
+            steps.append({'name': 'eight-channel-schedule',
+                'argv': [sys.executable, 'tests/dabbl8_eight_track_workload_test.py'],
+                'requires': ['tools/dabbl8_midi_workload.py', 'tools/dabbl8_eight_track_workload.py',
+                    'tests/dabbl8_midi_workload_test.py', 'tests/dabbl8_eight_track_workload_test.py']})
+            continue
+        if name == 'performance-fx':
+            binary = str(out / name)
+            fixture = 'tests/perform_test.c'
+            steps += [{'name': name + '-compile',
+                       'argv': cc + ['-O2', '-w', '-DNPART=8', '-DFELUCCA_FM4=0',
+                           '-DFELUCCA_SLICE=1', '-Ibuild/gen', '-Ifirmware/src',
+                           fixture, '-lm', '-o', binary],
+                       'requires': [fixture, 'tests/hostsim.c'] +
+                           ['build/gen/' + p for p in GEN]},
+                      {'name': name, 'argv': [binary]}]
+            continue
+        if name in ('engine-fx', 'performance-buses'):
+            tag = 'engine-fx-matrix' if name == 'engine-fx' else 'performance-buses'
+            binary = str(out / tag)
+            fixture = ('tests/engine_fx_matrix_test.c' if name == 'engine-fx'
+                       else 'tests/eight_track_performance_test.c')
+            flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
+                     '-DNPART=8', '-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1',
+                     '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
+                     '-fno-sanitize=signed-integer-overflow,shift',
+                     '-Ibuild/gen', '-Ifirmware/src']
+            steps += [{'name': name + '-compile',
+                       'argv': cc + flags + [fixture, '-lm', '-o', binary],
+                       'requires': [fixture, 'tests/hostsim.c'] +
+                           ['build/gen/' + p for p in GEN]},
+                      {'name': tag, 'argv': [binary]}]
             continue
         if name == 'timing-capture':
             steps.append({'name': 'timing-capture-scripted-transport',
@@ -166,6 +297,11 @@ def recipes(checks, cc, out, base):
             continue
         elif name == 'own-project-transfer':
             jobs = [('8', 8, 'tests/native_project_transfer_test.c')]
+        elif name == 'voice-allocation':
+            jobs = [('demo', 8, 'tests/demo_voice_allocation_test.c'),
+                    ('budget', 8, 'tests/voice_budget_test.c'),
+                    ('overload4', 4, 'tests/native_overload_test.c'),
+                    ('overload8', 8, 'tests/native_overload_test.c')]
         elif name == 'sample-upload':
             jobs = [('8', 8, 'tests/native_sample_session_test.c')]
         elif name in ('sampler', 'sample-upload'):
@@ -178,14 +314,14 @@ def recipes(checks, cc, out, base):
             binary = str(out / tag)
             flags = ['-std=c11', '-D_POSIX_C_SOURCE=200809L', '-O1', '-g', '-w',
                      '-fsanitize=address,undefined', '-fno-sanitize-recover=all']
-            sources = pool + [fixture] if name in ('readonly-boot', 'sample-upload', 'own-project-transfer') else [fixture]
+            sources = pool + [fixture] if name in ('readonly-boot', 'sample-upload', 'own-project-transfer', 'voice-allocation') else [fixture]
             inputs = [] if name == 'storage' else list(GEN)
             args = [str(out / (tag + '.trace'))] if fixture.endswith('slice_render_source_range_test.c') else []
             if tracks:
                 flags += [f'-DNPART={tracks}']
             if name != 'storage':
                 flags += ['-DFELUCCA_FM4=0', '-DFELUCCA_SLICE=1']
-            if name in ('sampler', 'sample-upload', 'own-project-transfer'):
+            if name in ('sampler', 'sample-upload', 'own-project-transfer', 'voice-allocation'):
                 # Same bounded range/render recipes: only inherited DSP arithmetic exclusions.
                 flags += ['-fno-sanitize=signed-integer-overflow,shift']
             flags += ['-Ibuild/gen', '-Ifirmware/src']
@@ -261,6 +397,9 @@ def main(argv=None):
     plan['source_head'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     plan['generated_inputs'] = {n: hashlib.sha256((ROOT / 'build/gen' / n).read_bytes()).hexdigest()
                                 for n in GEN if (ROOT / 'build/gen' / n).is_file()}
+    required = sorted({name for step in plan['commands'] for name in step.get('requires', [])}
+                      | {'build/gen/' + name for name in GEN})
+    plan['source_inputs'] = dict(input_hashes(ROOT, required))
     plan['results'] = []
     env = {**os.environ, 'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
     for step in plan['commands']:
@@ -271,6 +410,12 @@ def main(argv=None):
         if code:
             break
     plan['status'] = 'FAILED' if code else 'SELECTED_CHECKS_PASS'
+    final_inputs = dict(input_hashes(ROOT, required))
+    plan['source_inputs_stable'] = final_inputs == plan['source_inputs']
+    if not plan['source_inputs_stable']:
+        plan['status'] = 'FAILED'
+        plan['changed_during_checks'] = sorted(name for name in final_inputs.keys() | plan['source_inputs'].keys()
+            if final_inputs.get(name) != plan['source_inputs'].get(name))
     for name in paths:
         if name.endswith('.py') and (ROOT / name).is_file():
             try:

@@ -221,6 +221,12 @@ static void con_status(void)
     con_kv("bpm", song.g[G_BPM]);
     con_kv("playing", song.playing);
     con_kv("boots", (int32_t)felucca_dbg.boots);
+#if NTRK == 8 && FELUCCA_FLASH
+    con_kv("startup_restore_result", pnr_boot.result);
+    con_kx("startup_restore_guards", pnr_boot.guards);
+    con_kv("startup_restore_policy", (int32_t)pnr_boot.policy);
+    con_kv("startup_restore_ms", (int32_t)pnr_boot.ms);
+#endif
 #if D8_RESOURCE_DIAGNOSTIC
     con_resource_status();
 #endif

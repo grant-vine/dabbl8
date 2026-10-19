@@ -19,15 +19,30 @@ static unsigned pt_phase(void){return d8ls.object;}
 static d8mp_workspace *pt_workspace(void){return main_migration_workspace(d8ls.signature);}
 static int pt_quiet(void)
 {
- if(!flash_ok||cv_cpu_active||transport_req||transport_busy()||seq_counting()||!df_automatic_quiet()||
+ uint32_t allowed=d8ls.operation==4&&pt_phase()==PT_RELEASE?1u<<panel.btn[B_SAVE]:0;
+ if(!flash_ok||cv_cpu_active||transport_req||transport_busy()||seq_counting()||!df_automatic_quiet_buttons(allowed)||
     ((fm1_in.buttons||D8_MC_PENDING_PRESS())&&!(d8ls.operation==4&&pt_phase()==PT_RELEASE&&fm1_in.buttons==(1u<<panel.btn[B_SAVE])))||fm1_in.notes||usb.ota_req||usb.uboot_req||
     d8mc_edit.locked||d8mc_edit.busy||d8mc_edit.writer)return 0;
  for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))return 0;
  return !migration_owner||pt_workspace()!=NULL;
 }
+static void pt_failure_observe(int rc)
+{
+ d8pt_diag.raw_rc=(uint32_t)rc;
+ d8pt_diag.guards=(d8ls.revoked?1u:0u)|(!flash_ok?2u:0u)|(cv_cpu_active?4u:0u)|
+  ((transport_req||transport_busy()||seq_counting())?8u:0u)|(!df_automatic_quiet()?16u:0u)|
+  ((fm1_in.buttons||fm1_in.notes||D8_MC_PENDING_PRESS())?32u:0u)|
+  ((d8mc_edit.locked||d8mc_edit.busy||d8mc_edit.writer)?64u:0u)|
+  ((usb.resets!=d8ls.usb||usb.config!=d8ls.usb_config||usb.ota_req||usb.uboot_req)?256u:0u)|
+  (d8_capture_change.epoch!=d8ls.epoch+d8ls.own?512u:0u)|
+  (fm1_lcd_timeouts!=d8ls.shown?1024u:0u)|
+  ((uint32_t)(fm1_ms-d8ls.started)>=LS_DEADLINE_MS?2048u:0u);
+ for(unsigned i=0;i<7;i++)if(D8_MC_ENCODER_VALUE(i))d8pt_diag.guards|=128u;
+}
 static int pt_guard(void)
 {
  return !d8ls.revoked&&pt_workspace()&&pt_quiet()&&
+   (d8ls.writing||!d8ls.shown||d8ls.sequence==fm1_lcd_timeouts)&&
    usb.resets==d8ls.usb&&usb.config==d8ls.usb_config&&
    d8_capture_change.epoch==d8ls.epoch+d8ls.own&&
    (uint32_t)(fm1_ms-d8ls.started)<LS_DEADLINE_MS;
@@ -132,18 +147,22 @@ static int pt_begin(unsigned importing,const uint8_t*a,uint32_t n)
  if(!importing){if(pt_read(NULL,0,w->plan,D8POOL_BYTES)||!pt_lifetime()){pt_finish(PT_IO);return PT_IO;}
   pt_set(PT_POOLCRC,d8p1_crc32(w->plan,D8POOL_BYTES));
  }
+ if(importing)memset(&d8pt_diag,0,sizeof d8pt_diag);
  d8p1_autosave_session_end();return PT_OK;
 }
 static void d8pt_draw(void)
 {
  if(pt_phase()!=PT_CONSENT&&pt_phase()!=PT_RELEASE)return;
+ if(d8ls.shown==d8ls.generation&&d8ls.sequence!=fm1_lcd_timeouts){d8ls.revoked=1;return;}
+ if(pt_phase()==PT_RELEASE)return;
+ if(d8ls.shown==d8ls.generation&&!ui.force)return;
  uint32_t token=d8ls.generation,fault=fm1_lcd_timeouts;d8ls.shown=0;style_apply();lcd_fill(0,0,240,240,T_BG);
  if(!own_transfer_text_strip(d8ls.signature,32,"RESTORE OWN PROJECTS",T_THEME,T_BG)||
     !own_transfer_text_strip(d8ls.signature,76,"Replaces saved slots and autosave",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,118,"Interruption can leave partial set",T_ACCENT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,160,"Keep backup to retry restore",T_TEXT,T_BG)||
     !own_transfer_text_strip(d8ls.signature,202,"PRESS AND RELEASE SAVE",T_ACCENT,T_BG)){d8ls.revoked=1;return;}
- uint32_t f=irq_save();if(pt_phase()==PT_CONSENT&&pt_lifetime()&&token==d8ls.generation&&fault==fm1_lcd_timeouts){d8ls.shown=token;d8ls.sequence=fault;}irq_restore(f);
+ uint32_t f=irq_save();if(pt_phase()==PT_CONSENT&&pt_lifetime()&&token==d8ls.generation&&fault==fm1_lcd_timeouts){d8ls.shown=token;d8ls.sequence=fault;ui.force=0;}irq_restore(f);
 }
 static void d8pt_input(uint32_t pressed,uint32_t notes)
 {
@@ -248,10 +267,12 @@ static int pt_commit(void)
  d8pool source_reader={w,pt_plan_read,pt_noerase,pt_noprogram,pt_stopped},dest={NULL,pt_read,pt_erase,pt_program,pt_stopped};
  d8pool_index source,check;int rc=d8pool_inventory(&source_reader,&source);
  if(rc||source.present!=pt_extra(PT_PRESENCE))return PT_BAD;
+ d8pt_diag.stage=PTD_BASELINE;
  d8ls.writing=1; /* reject ALL handler reentry through scan, commit and adoption */
  uint32_t fresh_crc[5];rc=pt_scan(&dest,w,&check,0,7,fresh_crc);
- if(rc||memcmp(fresh_crc,d8ls.crc,sizeof fresh_crc)||!d8pr_same_index(&check,&d8ls.index)||!pt_lifetime()){d8ls.writing=0;return PT_STALE;}
+ if(rc||memcmp(fresh_crc,d8ls.crc,sizeof fresh_crc)||!d8pr_same_index(&check,&d8ls.index)||!pt_lifetime()){pt_failure_observe(rc?rc:D8POOL_BUSY);d8ls.writing=0;return PT_STALE;}
  d8ls.shown=d8ls.sequence; /* immutable visible-display fault receipt */
+ d8pt_diag.stage=PTD_STORE;
  for(unsigned object=0;object<4;object++){
   if(d8pool_inventory(&dest,&check)){rc=D8POOL_INVALID;break;}
   if(!(source.present&(1u<<object))&&!(check.present&(1u<<object)))continue;
@@ -267,21 +288,23 @@ static int pt_commit(void)
   d8ls.previous_name[12]|=(char)(1u<<object);
  }
  d8ls.length=live_len;d8ls.payload_crc=live_crc;
- if(!rc){rc=pt_scan(&dest,w,&check,0,15,NULL);if(!rc&&check.present!=source.present)rc=D8POOL_INVALID;}
+ if(!rc){d8pt_diag.stage=PTD_VERIFY;rc=pt_scan(&dest,w,&check,0,15,NULL);if(!rc&&check.present!=source.present)rc=D8POOL_INVALID;}
  if(!rc)for(unsigned o=0;o<4;o++)if(source.present&(1u<<o)){
   const d8pool_record*r=&source.object[o],*got=&check.object[o];
   if(got->length!=r->length||got->crc!=r->crc||pt_read(NULL,got->block*D8POOL_BLOCK+D8POOL_HEADER,w->stage.wire,got->length)||
      memcmp(w->stage.wire,w->plan+r->block*D8POOL_BLOCK+D8POOL_HEADER,r->length)){rc=D8POOL_INVALID;break;}
  }
  if(!rc&&(d8p1_crc32(w->plan,D8POOL_BYTES)!=pt_extra(PT_COMMITTED)||!pt_lifetime()))rc=D8POOL_BUSY;
- if(rc){pt_finish(PT_IO);return PT_IO;}
+ if(rc){pt_failure_observe(rc);pt_finish(PT_IO);return PT_IO;}
  memcpy(w->stage.wire,pt_live(),live_len);main_migration_end(d8ls.signature);d8ls.signature=0;
  /* No intervening drawing may borrow wire before actual live adoption. */
+ d8pt_diag.stage=PTD_ADOPT;
  rc=d8p1_load_runtime_mask_guarded(w->stage.wire,live_len,source.present&7u,D8ENGINE_EFFECTIVE_MASK,pt_adopt_admit);
  d8ls.intent=1;
- if(!rc)rc=project_native_bind_flash(1);
- if(!rc)rc=nas_begin(d8ls.intent,0,0); /* retain independently restored AS */
- if(rc){pt_finish(PT_IO);return PT_IO;}
+ if(!rc){d8pt_diag.stage=PTD_BIND;rc=project_native_bind_flash(1);}
+ if(!rc){d8pt_diag.stage=PTD_AUTOSAVE;rc=nas_begin(d8ls.intent,0,0);} /* retain independently restored AS */
+ if(rc){pt_failure_observe(rc);pt_finish(PT_IO);return PT_IO;}
+ d8pt_diag.stage=PTD_DONE;
  d8ls.writing=0;d8ls.phase=LS_IDLE;d8ls.object=PT_DONE;d8ls.shown=0;d8ls.write_phase=PT_OK;ui.force=1;return PT_OK;
 }
 static void pt_pack(const uint8_t*p,uint32_t n)

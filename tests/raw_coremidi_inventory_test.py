@@ -7,6 +7,11 @@ from types import SimpleNamespace
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
 import dabbl8_readonly_midi as t
 import dabbl8_instrument_capture as capture
+from unittest.mock import patch
+qualification = patch.object(t, 'require_native_qualification', return_value=None)
+loaded = patch.object(t, 'verify_loaded_native', return_value=None)
+qualification.start()
+loaded.start()
 checks=0
 
 def check(ok,label):

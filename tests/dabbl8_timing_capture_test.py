@@ -141,10 +141,35 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.run_script(t)
         self.assertEqual(t.writes, ['status'])
 
-    def test_stop_ack_failure_attempts_only_owned_stop(self):
+    def test_stop_ack_failure_never_retries(self):
         t = Scripted({'timing stop': 'timing not running\r\n'})
         with self.assertRaises(ValueError): self.run_script(t)
-        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop', 'timing stop'])
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+
+    def test_lost_stop_reply_never_retries(self):
+        class LostStop(Scripted):
+            def write(self, data):
+                super().write(data)
+                if data == b'timing stop\r':
+                    raise OSError('injected lost stop reply')
+        t = LostStop()
+        with self.assertRaises(OSError):
+            self.run_script(t)
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+
+    def test_workload_failure_keeps_primary_and_records_unconfirmed_cleanup(self):
+        t = Scripted({'timing stop': 'timing not running\r\n'})
+        journal = []
+        primary = RuntimeError('injected workload failure')
+        def fail_workload(seconds):
+            raise primary
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(RuntimeError) as error:
+                capture.collect(capture.Console(t, lambda kind, data: journal.append((kind, data))),
+                    Path(directory), VERSION, 10, sleep=fail_workload)
+        self.assertIs(error.exception, primary)
+        self.assertEqual(t.writes, ['status', 'timing start', 'timing stop'])
+        self.assertEqual(sum(kind == 'cleanup-failed' for kind, data in journal), 1)
 
     def test_transport_bounds_and_disconnect(self):
         for raw in (b'a' * 65537, b'\xff\r\n> ', BANNER + BANNER, b''):
@@ -195,6 +220,66 @@ class CaptureTests(unittest.TestCase):
             for data in (b'timing stop\r', b'uboot yes\r', b'resource stop\n', b'status\rreset\r'):
                 with self.assertRaises(ValueError): native.write(data)
             self.assertEqual(write.call_count, 1)
+
+    def test_native_reopen_gets_fresh_greeting_and_restores_original_state(self):
+        import fcntl
+        import termios
+        # Model the firmware main loop observing DTR, not a banner on every open.
+        for original in (False, True):
+            for failure in (None, 'low', 'settle', 'high', 'flush'):
+                with self.subTest(original=original, failure=failure):
+                    state = {'dtr': original, 'seen': original, 'greetings': 0, 'pending': 1}
+                    old = [1, 2, 3, 4, 5, 6, [0] * 32]
+                    def control(fd, operation, flags=None, mutate=False):
+                        if operation == termios.TIOCMGET:
+                            flags[0] = termios.TIOCM_DTR if state['dtr'] else 0
+                        if operation in (termios.TIOCMBIC, termios.TIOCMBIS):
+                            high = operation == termios.TIOCMBIS
+                            if failure == ('high' if high else 'low') and not state.get('failed'):
+                                state['failed'] = True
+                                raise OSError('injected DTR transition failure')
+                            state['dtr'] = high
+                            if high and not state['seen']:
+                                state['greetings'] += 1
+                                state['pending'] += 1
+                            if high:
+                                state['seen'] = True
+                        return 0
+                    def settle(seconds):
+                        if failure == 'settle':
+                            raise OSError('injected settling failure')
+                        self.assertGreaterEqual(seconds, .1)
+                        state['seen'] = state['dtr']
+                    def flush(fd, queue):
+                        self.assertEqual(queue, termios.TCIFLUSH)
+                        self.assertTrue(state['dtr'], 'Old startup input must drain while firmware can transmit')
+                        if failure == 'flush':
+                            raise OSError('injected input flush failure')
+                        state['pending'] = state['greetings'] = 0
+                    with mock.patch.object(capture.sys, 'platform', 'darwin'), \
+                         mock.patch.object(capture.os, 'open', return_value=123), \
+                         mock.patch.object(capture.os, 'fstat'), \
+                         mock.patch.object(capture.stat, 'S_ISCHR', return_value=True), \
+                         mock.patch.object(capture.os, 'close') as closed, \
+                         mock.patch.object(capture.os, 'write') as written, \
+                         mock.patch.object(fcntl, 'ioctl', side_effect=control), \
+                         mock.patch.object(termios, 'tcgetattr', side_effect=lambda fd: [*old[:6], old[6][:]]), \
+                         mock.patch.object(termios, 'tcsetattr') as settings, \
+                         mock.patch.object(termios, 'tcflush', side_effect=flush), \
+                         mock.patch.object(capture.time, 'sleep', side_effect=settle):
+                        if failure:
+                            with self.assertRaises(OSError):
+                                capture.MacCdc('/dev/cu.usbmodemfixture')
+                        else:
+                            port = capture.MacCdc('/dev/cu.usbmodemfixture')
+                            self.assertEqual(state['greetings'], 1, 'Already-high DTR must still yield a fresh greeting')
+                            self.assertEqual(state['pending'], 1, 'Discard the automatic/old greeting before requesting a fresh one')
+                            port.close()
+                            port.close()
+                        self.assertEqual(state['dtr'], original)
+                        self.assertEqual(settings.call_args.args[2], old)
+                        closed.assert_called_once_with(123)
+                        written.assert_not_called()
 
     def test_plan_mode_never_opens_port(self):
         with tempfile.TemporaryDirectory() as d:

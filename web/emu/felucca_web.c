@@ -57,6 +57,7 @@ static uint32_t fm1_audio_free_half(void) { return web_half; }
 static void fm1_audio_ack_half(void) {}
 static void fm1_audio_init(int32_t *buf, uint32_t words, void (*isr)(void), uint32_t prio)
 { (void)buf; (void)words; (void)isr; (void)prio; }
+static void fm1_audio_start(void) {}
 static void fm1_audio_stop(void) {}
 void isr_alnk0(void) {}
 #include "../../firmware/src/audio.c"

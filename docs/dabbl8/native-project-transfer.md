@@ -34,6 +34,43 @@ restore-only recovery path accepts recognized interrupted noncurrent candidates
 and unresolved references in a partial own set; arbitrary committed corruption
 is not a supported recovery promise.
 
+## Local COMMIT fault investigation (18 October 2026)
+
+The installed v0.1.9 returned status4 on command81/7. A subsequently authorized
+RAM-only capture passed with stable boot2/USB1 and a successfully closed console.
+The retained session marked all four roles committed, epoch302 + own64 matched
+current epoch366, the lease was released, and the original requested engine
+layout had reached RAM. The session was revoked and native catalog/autosave
+access was offline. This narrows the failure to post-adoption handover; it does
+not identify the revoking event or independently verify the complete restored
+set. No restore retry or firmware flash was made during this investigation.
+
+The local source now retains `d8pt_diag`, four 32-bit observation words (16 bytes
+in BSS when own-project transfer is compiled). It grants no authority and does
+not alter COMMIT status, timeout, quiet, readback or revocation policy. It records
+stage (0 none, 1 baseline, 2 store, 3 verify, 4 live adoption, 5 binding/catalog,
+6 autosave startup, 7 completed), raw signed return code represented as u32,
+failed guard bits, and sticky revocation observations. Raw return-code meaning
+is stage-specific (D8RT for adoption, D8POOL for binding/autosave).
+
+Guard bits: 0 revoked, 1 flash unavailable, 2 canvas active, 3 transport/count-in,
+4 automatic quiet refused, 5 physical/pending input, 6 migration editor busy,
+7 encoder residue, 8 USB state/requests, 9 store epoch, 10 LCD fault count,
+11 authorization deadline. Revocation bits 0..3 observe transport request,
+queued MIDI, MIDI overflow and held notes respectively at the actual audio
+block admission; bit31 marks the shared revocation entry point. These bits are
+observations, not proof of the first event; direct UI/display revocation can
+have no bit31 marker. They survive terminal cleanup and read-only export; a
+successfully opened new import resets them. Read RAM only using that candidate's
+linked symbols, never the installed v0.1.9 addresses for a changed binary.
+
+Local real-handler tests distinguish binding IO, binding deadline, transport
+revocation and autosave-start IO even when persisted/live bytes match, and keep
+all failures uncertain/offline. This fixes missing failure provenance, **not the
+unreproduced hardware COMMIT fault**. The source is not installed, packaged or
+target memory/timing qualified. The 16-byte diagnostic cost must be included in
+the next candidate's memory check. No further flash or restore is authorized.
+
 ## Protocol
 
 INFO schema-1 feature bit 4 (`16`) advertises this module only when enabled.
@@ -60,6 +97,23 @@ absent logical roles return length and CRC zero. Receive order is the complete
 pool followed by live, sequential exact pages and a final partial page. Only an
 identical immediately previous chunk may be retried; retry performs no flash
 write. The companion does not automatically retry requests.
+
+The companion waits up to 30 seconds for the synchronous whole-set COMMIT
+acknowledgement; ordinary requests retain the 1.5-second default. COMMIT may
+already have written and verified the set when its reply is lost or delayed.
+A timeout closes the session and reports an uncertain outcome, never retries
+the commit, and requires read-only verification before another restore. This
+host deadline is not a measured hardware worst-case guarantee.
+
+Native refusals retain the failed command, phase, selector and offset in the
+companion error. A restore failure separately records whether COMMIT was
+acknowledged; successful COMMIT alone is not verified restoration. The companion
+still requires a fresh full-set export and exact logical readback before reporting
+success. If closing the session also fails, the original failure remains primary
+and the secondary exception is available as `cleanupError`. Neither failure is
+retried automatically. A terminal IO result may follow exact stored and live
+bytes if the final native binding/autosave handover fails; byte equality alone
+must not turn that result into success.
 
 Every reply starts with:
 `[1, op, status, u32 token, phase, selector, u32 offset, u32 total, u32 CRC]`.

@@ -112,6 +112,7 @@ def status(reply, version, uac_enabled: bool = True):
 
 def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled: bool = True):
     active = False
+    stop_attempted = False
     try:
         banner = console.receive()
         if banner.splitlines().count("Dabbl8 " + version + " console - 'help'") != 1:
@@ -122,6 +123,7 @@ def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled:
             raise ValueError('Timing start refused; previous run was not overwritten')
         active = True
         sleep(seconds)
+        stop_attempted = True  # A missing acknowledgement must not trigger a retry.
         stopped = console.request('timing stop')
         if stopped.splitlines().count('timing stopped') != 1:
             raise ValueError('Timing stop not acknowledged')
@@ -143,13 +145,16 @@ def collect(console, output, version, seconds, sleep=time.sleep, *, uac_enabled:
         (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
         return report
     finally:
-        if active:
-            # Only a collector-owned run is stopped; never reset an existing run.
-            # Failure is retained in the journal, and no further command is tried.
+        if active and not stop_attempted:
+            # One cleanup attempt for a run this collector started; never retry.
             try:
-                console.request('timing stop')
-            except Exception:
+                stopped = console.request('timing stop')
+                if stopped.splitlines().count('timing stopped') != 1:
+                    raise ValueError('Timing cleanup stop not acknowledged')
+            except (OSError, RuntimeError, ValueError):
                 console.journal('cleanup-failed', b'Collection may still be active; device requires explicit inspection.')
+        elif active:
+            console.journal('cleanup-failed', b'Timing stop unconfirmed; no retry. Device requires explicit inspection.')
 
 
 class MacCdc:
@@ -176,7 +181,18 @@ class MacCdc:
             attrs[4] = attrs[5] = termios.B115200  # firmware ignores baud rate
             attrs[6][termios.VMIN] = attrs[6][termios.VTIME] = 0
             termios.tcsetattr(self.fd, termios.TCSANOW, attrs)
-            # Opening may assert DTR on some drivers; fresh banner must still be verified.
+            # A reopen may inherit asserted DTR. The firmware greets only on a
+            # main-loop-observed rising edge; establish one without resetting USB.
+            # The bounded settling interval is not proof the firmware is healthy:
+            # callers still require the exact fresh greeting and status afterward.
+            # macOS may assert DTR during open and queue an automatic greeting.
+            # Drain that unrequested startup input while the device can transmit,
+            # before requesting our greeting. No command has been sent yet.
+            fcntl.ioctl(self.fd, termios.TIOCMBIS, array.array('i', [termios.TIOCM_DTR]))
+            time.sleep(0.1)
+            termios.tcflush(self.fd, termios.TCIFLUSH)
+            fcntl.ioctl(self.fd, termios.TIOCMBIC, array.array('i', [termios.TIOCM_DTR]))
+            time.sleep(0.1)
             fcntl.ioctl(self.fd, termios.TIOCMBIS, array.array('i', [termios.TIOCM_DTR]))
         except Exception:
             self.close()

@@ -7,8 +7,9 @@ import {readFileSync,writeFileSync,mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {mock} from 'node:test';
 import {D8MidiSession} from '../web/d8midi.js';
-import {D8Projects,projectReply,pack7,unpack7,u32,crc32} from '../web/d8projects.js';
+import {D8Projects,ProjectSessionError,projectReply,pack7,unpack7,u32,crc32} from '../web/d8projects.js';
 import {nativeArchiveCodec,createOwnArchive,parseOwnArchive,validateOwnArchive,strictArchiveJSON} from '../web/d8archive.js';
 let checks=0;const check=(v)=>{assert.ok(v);checks++;};
 const [bridgePath,adapterPath,wasmPath]=process.argv.slice(2);assert.ok(bridgePath&&adapterPath&&wasmPath);
@@ -25,10 +26,14 @@ class Port extends EventTarget{
  receive(data){const e=new Event('midimessage');e.data=new Uint8Array(data);this.dispatchEvent(e);}
 }
 const bridge=new Bridge(),input=new Port('input'),output=new Port('output');
-output.send=bytes=>{void bridge.request([bytes[4],bytes.slice(5,-1)]).then(r=>input.receive([240,125,70,76,r.cmd,...r.args,247]));};
+let holdCommitReply=null;
+output.send=bytes=>{void bridge.request([bytes[4],bytes.slice(5,-1)]).then(async r=>{
+ if(bytes[4]===81&&bytes[6]===7&&holdCommitReply)await holdCommitReply();
+ input.receive([240,125,70,76,r.cmd,...r.args,247]);
+});};
 let session;const td=mkdtempSync(join(tmpdir(),'d8-client-'));
 try{
- session=await D8MidiSession.connect(input,output,{ownProjects:true,timeout:5000});check(session.projects.available&&session.tracks.editable);
+ session=await D8MidiSession.connect(input,output,{ownProjects:true});check(session.projects.available&&session.tracks.editable);
  const initial=await session.projects.exportSet();check(initial.present===15&&initial.objects.length===4&&initial.live.length>0&&!session.projectBusy&&bridge.physical===0);
  check(!initial.live.every((v,i)=>v===initial.objects[3][i]));
  const archive=await createOwnArchive(initial,codec),retained=archive.slice();if(process.argv[5])writeFileSync(process.argv[5],archive);const parsed=await validateOwnArchive(archive,codec);check(parsed.present===15);assert.deepEqual(parsed.pool,initial.pool);checks++;
@@ -42,7 +47,17 @@ try{
  await assert.rejects(session.projects.commit());check(bridge.physical===0);check((await session.projects.status()).phase===3);
  await session.projects.cancel();check(!session.projectBusy);assert.deepEqual(archive,retained);checks++;
  await session.projects.stage(parsed);check((await bridge.line('APPROVE')).phase===5);check((await session.projects.status()).phase===5);
- const restored=await session.projects.commit();check(restored.present===15&&!session.projectBusy);assert.deepEqual(restored.live,initial.live);checks++;
+ // Whole-set NOR commit can finish after the normal interactive reply deadline.
+ let releaseReply,replyReady;
+ const held=new Promise(resolve=>{releaseReply=resolve;}),ready=new Promise(resolve=>{replyReady=resolve;});
+ holdCommitReply=()=>{replyReady();return held;};
+ mock.timers.enable({apis:['setTimeout']});
+ try{
+  const committing=session.projects.commit();void committing.catch(()=>{});
+  await ready;mock.timers.tick(2000);
+  assert.equal(session.connected,true,'A completed whole-set commit must survive a reply delayed beyond 1500ms');checks++;
+  releaseReply();const restored=await committing;check(restored.present===15&&!session.projectBusy);assert.deepEqual(restored.live,initial.live);checks++;
+ }finally{releaseReply();holdCommitReply=null;mock.timers.reset();}
  // Empty roles are restored exactly, including another restore after a real fixture reboot.
  const emptyPath=join(td,'empty.bin');execFileSync(adapterPath,['build',emptyPath,'0','-','-','-','-']);
  const empty={present:0,pool:new Uint8Array(readFileSync(emptyPath)),live:initial.live,objects:Array.from({length:4},()=>new Uint8Array())};
@@ -70,6 +85,48 @@ try{
   await assert.rejects(malformed.stage(initial));check(faulted===1&&locked===0&&writes===(badCRC?0:1));
  }
  await assert.rejects(session.projects.stage(null));checks++;
+ // A genuinely missing commit acknowledgement stays bounded and is never retried.
+ await session.projects.stage(parsed);await bridge.line('APPROVE');await session.projects.status();
+ const lost=new Promise(resolve=>{releaseReply=resolve;}),lostReady=new Promise(resolve=>{replyReady=resolve;});
+ holdCommitReply=()=>{replyReady();return lost;};
+ const beforeCommit=bridge.calls.length;
+ mock.timers.enable({apis:['setTimeout']});
+ try{
+  const committing=session.projects.commit();void committing.catch(()=>{});await lostReady;
+  mock.timers.tick(29999);check(session.connected);
+  mock.timers.tick(1);await assert.rejects(committing,/command 81\/7.*timed out.*uncertain/);checks++;
+  await session.close();check(!session.connected&&input.connection==='closed'&&output.connection==='closed');
+  assert.deepEqual(bridge.calls.slice(beforeCommit).map(([cmd,args])=>[cmd,args[1]]),[[81,7]]);checks++;
+  releaseReply();await Promise.resolve();check(!session.connected);
+ }finally{releaseReply();holdCommitReply=null;mock.timers.reset();}
+ // A real C COMMIT can succeed before a distinct EXPORT-copy failure.
+ const readbackBridge=new Bridge();
+ try{
+  let locked=0,faulted=0;
+  const client=await D8Projects.connect(async request=>(await readbackBridge.request(request)).args,()=>{locked++;return()=>locked--;},()=>faulted++);
+  await client.stage(empty);await readbackBridge.line('APPROVE');await client.status();await readbackBridge.line('EXPORT_COPY_FAIL');
+  const start=readbackBridge.calls.length;
+  await assert.rejects(client.commit(),e=>e instanceof ProjectSessionError&&e.status===4&&e.op===1&&e.commitAcknowledged===true&&/81\/1/.test(e.message));checks++;
+  check(!locked&&faulted===1);
+  check(readbackBridge.calls.slice(start).filter(([,a])=>a[1]===7).length===1);
+  const writes=readbackBridge.physical;await readbackBridge.line('CLEAR_READ_FAULT');
+  const actual=await client.exportSet();check(actual.present===0&&readbackBridge.physical===writes);
+  assert.deepEqual(actual.live,empty.live);assert.deepEqual(actual.objects,empty.objects);checks+=2;
+ }finally{await readbackBridge.close();}
+ // Cleanup transport failure must not replace the real native COMMIT error.
+ const cleanupBridge=new Bridge();
+ try{
+  let failClose=false,locked=0,faulted=0;
+  const client=await D8Projects.connect(async request=>{
+   if(failClose&&request[1][1]===8)throw Error('cleanup transport probe');
+   return (await cleanupBridge.request(request)).args;
+  },()=>{locked++;return()=>locked--;},()=>faulted++);
+  await client.stage(parsed);await cleanupBridge.line('APPROVE');await client.status();await cleanupBridge.line('CUT 2');failClose=true;
+  const start=cleanupBridge.calls.length;
+  await assert.rejects(client.commit(),e=>e instanceof ProjectSessionError&&e.status===4&&e.op===7&&e.commitAcknowledged===false&&e.cleanupError?.message==='cleanup transport probe');checks++;
+  check(!locked&&faulted===1);
+  check(cleanupBridge.calls.slice(start).filter(([,a])=>a[1]===7).length===1);
+ }finally{await cleanupBridge.close();}
  // Missing advertised capability safely leaves the existing track workflow available.
  const missing=new D8Projects(async()=>{throw Error('Disconnected');});check(!missing.available);
  console.log(`Own-project browser/C/WASM interoperability: ${checks} checks PASS; simulated storage and MIDI ports only`);

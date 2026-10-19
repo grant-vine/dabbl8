@@ -10,6 +10,7 @@
 #define FM1_TICKS_PER_US 1u
 static uint32_t host_clock, host_us, host_half_reads, host_dma_advanced, host_acks, host_nest;
 static uint8_t host_pending;
+static uint32_t host_audio_starts;
 static volatile uint32_t t5_nested_ticks;              /* audio.c's: TIMER5 nested in the render (main.c) */
 static uint32_t fm1_ticks(void) {
 #ifdef AUDIO_CLOCK_TEST_HOOK
@@ -23,6 +24,7 @@ static uint32_t fm1_audio_free_half(void) { return host_dma_advanced && host_hal
 static void fm1_audio_ack_half(void) { host_acks++; }
 static void fm1_audio_init(int32_t *b, uint32_t n, void (*isr)(void), uint32_t p)
 { (void)b; (void)n; (void)isr; (void)p; }
+static void fm1_audio_start(void) { host_audio_starts++; }
 void isr_alnk0(void) {}
 #define FELUCCA_UAC 1                                  /* audio.c taps USB audio: here into host_tap */
 static int32_t host_tap[2 * 64];
@@ -55,6 +57,7 @@ static void fresh(void)
     shed_req = 0; shed_count = 0; shed_over = 0;
     host_clock = host_us = host_half_reads = host_dma_advanced = host_acks = host_nest = 0;
     host_pending = FM1_AUDIO_HALF;
+    host_audio_starts = 0;
     transport_req = panic_req = 0;
 }
 static voice_t *held(track_t *t, uint32_t note)
@@ -115,6 +118,20 @@ static void overload(void)
     lead->env = 10000; extra->env = 10;
     shed_voice();
     check("released voices shed the quieter tail first", extra->stage == 4u && lead->stage != 4u);
+}
+static void startup(void)
+{
+    fresh();
+    felucca_dbg.late = 7;
+    memset(abuf, 0x5a, sizeof abuf);
+    audio_init();
+    uint32_t nonzero = 0;
+    for (uint32_t i = 0; i < 2u * HALF_WORDS; i++) nonzero |= (uint32_t)abuf[i];
+    check("startup prepares silent DMA halves without starting playback or resetting late history",
+          !nonzero && !host_audio_starts && felucca_dbg.late == 7u);
+    audio_start();
+    check("explicit startup delegates DMA start once without clearing late history",
+          host_audio_starts == 1u && felucca_dbg.late == 7u);
 }
 static void dma(void)
 {
@@ -281,7 +298,7 @@ int main(void)
     setvbuf(stdout, NULL, _IONBF, 0);
     usb_level();
     boot_keys();
-    overload(); dma();
+    overload(); startup(); dma();
     printf(bad ? "audio: %d FAILED\n" : "audio: all passed\n", bad);
     return bad != 0;
 }
