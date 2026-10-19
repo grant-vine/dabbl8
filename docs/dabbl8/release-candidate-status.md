@@ -1,15 +1,15 @@
 # Dabbl8 RC status — 19 October 2026
 
-**Clock-measurement preparation has advanced; public RC qualification is not complete.**
+**Combined diagnostic collection passes locally; public RC qualification is not complete.**
 No FM-1 discovery, port access, notes, restore, reset or flash occurred in this
 follow-through. No hosted CI, dependency download, release or deployment occurred.
 
 ## Current sources and last verified device
 
-- Development: `dabbl8/felucca-161-bugfixes`, latest firmware source `95ac93f`, in
+- Development: `dabbl8/felucca-161-bugfixes`, latest firmware source `c34263f`, in
   `.local-baseline/felucca-161-integration`. The original dirty v022 checkout is
-  preserved. The new source adds a diagnostic-only read-only clock sample and
-  guarded host comparison; no audio interrupt, storage or loader flow changes.
+  preserved. The new source adds diagnostic-only read-only clock/arrangement
+  samples and guarded host comparison; no audio interrupt, storage or loader flow changes.
 - Last verified device: **v0.2.2-timing**, originals restored with exact companion
   readback; COMMIT stage7/rc0/guards0/revoke0 and all ports closed. This is retained
   evidence, not a new observation of the current connection.
@@ -83,10 +83,14 @@ both host modes. Its private combined archive preserves A/B and retains the old
 MIDI workspace in live/shared autosave. Bounded observation/Stop/readback and
 the newly pinned package/kit still need local completion before any owner batch.
 
-The D8A1 producer/decoder and pure bounded row observer now pass locally, including
-actual C transitions and host refusal controls. Native timing/resource orchestration
-and final C-context snapshot comparison are still unarmed work; they do not become
-device authorization or complete timing/stack evidence merely from these checks.
+The D8A1 producer/decoder and bounded row observer pass locally, including actual
+C transitions and host refusal controls. Native timing/resource orchestration now
+passes14 framing/ownership/cleanup/CLI cases; offline C-context readback passes10
+cases through the actual native codec under fatal sanitizers. Exact A/B/C and
+ancillary protection allows only the known live/shared-autosave transitions.
+Existing console23 and selector45 cases pass. No hardware was accessed. A single
+consolidated package/readers/kit freeze is next; these results are not device
+authorization or complete timing/stack evidence. See the [collector contract](arrangement-observation.md).
 
 | Gate | Local result | Required before a full RC claim |
 | --- | --- | --- |

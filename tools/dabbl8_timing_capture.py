@@ -21,10 +21,12 @@ from dabbl8_timing_report import parse_report
 COMMANDS = ('status', 'timing start', 'timing stop', 'timing report')
 RESOURCE_COMMANDS = ('status', 'resource start', 'resource stop', 'resource report')
 CLOCK_COMMANDS = ('status', 'timing clock')
+ARRANGEMENT_COMMANDS = ('status', 'timing start', 'timing stop', 'timing report',
+                        'resource start', 'resource stop', 'resource report')
 
 
 def command_profile(commands):
-    if type(commands) is not tuple or commands not in (COMMANDS, RESOURCE_COMMANDS, CLOCK_COMMANDS):
+    if type(commands) is not tuple or commands not in (COMMANDS, RESOURCE_COMMANDS, CLOCK_COMMANDS, ARRANGEMENT_COMMANDS):
         raise ValueError('Unsupported fixed console command profile')
     return commands
 MAX_REPLY = 65536
