@@ -15,6 +15,7 @@ import tempfile
 from local_flash_checks import flash_recipes, save_consent_recipes
 from local_resource_checks import RESOURCE_MAP, resource_recipes
 from local_clock_checks import CLOCK_MAP, clock_recipes
+from local_arrangement_checks import ARRANGEMENT_MAP, arrangement_recipes
 
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
@@ -81,6 +82,8 @@ MAP.update(RESOURCE_MAP)
 MAP['runner'].add('ci/local_resource_checks.py')
 MAP.update(CLOCK_MAP)
 MAP['runner'].add('ci/local_clock_checks.py')
+MAP.update(ARRANGEMENT_MAP)
+MAP['runner'].add('ci/local_arrangement_checks.py')
 
 
 def select(paths):
@@ -121,6 +124,9 @@ def recipes(checks, cc, out, base):
     steps = [{'name': 'diff', 'argv': ['git', 'diff', '--check', base, '--']}]
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
     for name in sorted(checks - {'diff'}):
+        if name in ARRANGEMENT_MAP:
+            steps += arrangement_recipes(cc, out)
+            continue
         if name in CLOCK_MAP:
             steps += clock_recipes(cc, out)
             continue

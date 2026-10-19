@@ -6,6 +6,14 @@ an installer. Keep the existing package/kit immutable. Before executing this
 batch, consolidate a newly reviewed package, source/archive/reader pins and kit.
 The old package cannot supply D8C1; its clock capture is refused before port open.
 
+Combined host [arrangement/FX/MIDI/UI coverage](arrangement-stress-qualification.md)
+now passes. This does not qualify it on hardware. The current note-only schedule
+does not start a prepared native arrangement. Before arming a future batch,
+prepare/validate the required temporary arrangement and source references
+offline, identify the existing main-loop preparation/PLAY path, and group its
+necessary owner action with this visit. Do not silently broaden the guarded MIDI
+allowlist or substitute ordinary MIDI Start for source preparation.
+
 Current instruction: **local work only; do not flash yet**. No discovery, port,
 MIDI, restore prompt, installer or device retry is armed. Last verified firmware
 is v0.2.2-timing with originals restored. Check owner availability before requesting

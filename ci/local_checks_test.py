@@ -13,6 +13,26 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_arrangement_stress_uses_only_actual_host_slices(self) -> None:
+        selected, unknown = checks.select(['tests/native_arrangement_stress_test.c'])
+        self.assertEqual(selected, {'diff', 'arrangement-stress'})
+        self.assertEqual(unknown, [])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(len(steps), 11)
+        scenarios = ('internal-dry', 'internal-room', 'usb-spring', 'trs-loss-wrap')
+        for index, mode in enumerate(('optimized', 'sanitized')):
+            compile_step = steps[1 + index * 5]
+            self.assertEqual(compile_step['name'], 'arrangement-' + mode + '-compile')
+            self.assertIn('tests/fixtures/d8p1/minimal.d8p', compile_step['requires'])
+            self.assertIn('tests/native_queue_audio_fixture.h', compile_step['requires'])
+            self.assertIn('-DNPART=8', compile_step['argv'])
+            self.assertIn('-DDABBL8_TIMING_DIAGNOSTIC=1', compile_step['argv'])
+            self.assertEqual('-fsanitize=address,undefined' in compile_step['argv'], mode == 'sanitized')
+            for offset, scenario in enumerate(scenarios, 2 + index * 5):
+                self.assertEqual(steps[offset]['argv'], ['out/arrangement-' + mode, scenario])
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
     def test_startup_order_stays_local_and_covers_audio_and_reopen(self) -> None:
         selected, unknown = checks.select(['tests/audio_startup_order_test.py',
                                           'tests/native_boot_startup_order_test.py'])

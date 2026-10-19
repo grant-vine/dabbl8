@@ -1,6 +1,20 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`--check arrangement-stress` runs four combinations through the actual host
+audio ISR, native arrangement, USB/TRS MIDI parsers, effects and asynchronous LCD
+fixture, in optimized and fatal ASan/UBSan modes. Internal dry and USB-clocked
+SPRING runs traverse all16 scenes naturally; internal ROOM exercises a queued
+fill/return and row change; TRS clock loss stops across a millisecond rollover.
+Each reaches eight voices/eight heavy slots, delivers live notes to track8,
+finishes bounded note/effect cleanup to DAC silence, and preserves all source
+NOR bytes and editable project bytes after returning the deliberately changed
+track selection. It requires only the tracked minimal project, not a private
+backup. The existing DSP signed-overflow/shift exclusions remain. Clocks, input
+arrival, DMA and storage are simulated: this is no target timing, interrupt
+preemption, full stack bound, physical MIDI or visual-quality certificate.
+Do not rerun the84 engine/effects matrix for this scope.
+
 `--check clock-capture` checks the diagnostic-only `timing clock` command and
 headless clock-comparison helper. It runs the actual console slice in optimized
 and fatal ASan/UBSan modes, with the feature enabled/disabled, then pure host
