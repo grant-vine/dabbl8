@@ -1,6 +1,17 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`--check arrangement-proposal` builds a synthetic project for a future hardware
+batch. Every bank references C only, so A/B can be preserved. The actual native
+runtime recalls C, the simulated physical SEQ hold opens SONG, and PLAY performs
+main-loop preparation before the ISR starts. All16 scenes render and stop
+automatically with eight voices/eight heavy slots, live bytes unchanged and
+bounded quiet cleanup. Optimized and fatal sanitizer builds export identical
+7,385-byte projects only after passing; existing output files refuse replacement.
+This separate scope does not rerun `arrangement-stress` or open a device. The
+private combined archive keeps the existing MIDI workspace in live/autosave and
+the new arrangement in C. It is a proposal, not readiness or restore authority.
+
 `--check arrangement-stress` runs four combinations through the actual host
 audio ISR, native arrangement, USB/TRS MIDI parsers, effects and asynchronous LCD
 fixture, in optimized and fatal ASan/UBSan modes. Internal dry and USB-clocked

@@ -7,12 +7,13 @@ batch, consolidate a newly reviewed package, source/archive/reader pins and kit.
 The old package cannot supply D8C1; its clock capture is refused before port open.
 
 Combined host [arrangement/FX/MIDI/UI coverage](arrangement-stress-qualification.md)
-now passes. This does not qualify it on hardware. The current note-only schedule
-does not start a prepared native arrangement. Before arming a future batch,
-prepare/validate the required temporary arrangement and source references
-offline, identify the existing main-loop preparation/PLAY path, and group its
-necessary owner action with this visit. Do not silently broaden the guarded MIDI
-allowlist or substitute ordinary MIDI Start for source preparation.
+and the synthetic C proposal now pass. The actual SEQ-hold/SONG/PLAY path prepares
+its source before playback; the note-only helper does not do that. A private
+combined archive preserves A/B, keeps the existing MIDI workspace in
+live/shared autosave and uses C for the16-scene arrangement. Before arming this
+batch, validate capture/automatic-Stop/readback orchestration and repin the kit.
+Do not broaden the guarded MIDI allowlist or substitute ordinary MIDI Start
+for source preparation.
 
 Current instruction: **local work only; do not flash yet**. No discovery, port,
 MIDI, restore prompt, installer or device retry is armed. Last verified firmware
@@ -34,7 +35,7 @@ Changed firmware still requires its own targeted hardware acceptance.
   the new UI header. Use a new session copy; never carry readiness or authorization
   forward or modify the frozen package. The existing helper and note schedule
   remain unchanged apart from identity/input pins.
-- Existing temporary A/B/C/shared-autosave set has workspace SHA-256
+- Existing MIDI workspace retained in live/shared autosave has SHA-256
   `678dba08d7f40c4a5e8c8223d703511466ef0aeb4e4d80987e406ef2b8f375c3`.
   Current-source actual rendering proves its eight-voice/eight-slot schedule and
   bounded cleanup. Take one fresh original logical backup at authorized preflight;
@@ -48,7 +49,8 @@ Changed firmware still requires its own targeted hardware acceptance.
 ## One owner session
 
 Two SAVE confirmations and one confirmed normal power-cycle, with automated work
-between them. Announce SAVE only after the prompt is ready and the owner is present;
+between them, plus one C-load/SEQ-hold/PLAY action for arrangement playback.
+Announce SAVE only after the prompt is ready and the owner is present;
 it expires after two minutes. Never silently retry an expired request.
 
 1. **Preflight and original backup.** After fresh authorization/readiness, check
@@ -86,6 +88,14 @@ it expires after two minutes. Never silently retry an expired request.
    intervals and successful close. No owner button press is needed for clock
    sampling. Stop on refusal; never use nominal 24MHz as a measured result. The
    sampler does not close omitted ISR/arrival-latency or stack ABI gates.
+   Then use the separately validated arrangement capture phase: owner loads C,
+   holds SEQ to open SONG and presses PLAY once. Capture preparation and all16
+   scenes through its automatic Stop, with no extra notes or settings edits.
+   This changes live context and may change shared autosave; only the protected
+   A/B/C and ancillary sections retain their prior equality expectation. Confirm
+   C-context bytes and clean Stop before proceeding. Do not run a stopped-only
+   backup operation while the arrangement plays. This phase remains unarmed
+   until its bounded observer/orchestration contract is locally checked.
 6. **SAVE #2: originals.** Restore the fresh original archive once through the
    companion, obtain physical confirmation and require its exact logical readback.
    Record stage7/rc0/guards0/revoke0, unchanged health and closed ports. Do not add

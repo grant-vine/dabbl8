@@ -125,7 +125,7 @@ def recipes(checks, cc, out, base):
     pool = ['firmware/src/d8p1.c', 'firmware/src/d8pool.c', 'firmware/src/d8pool_mapped.c']
     for name in sorted(checks - {'diff'}):
         if name in ARRANGEMENT_MAP:
-            steps += arrangement_recipes(cc, out)
+            steps += arrangement_recipes(name, cc, out)
             continue
         if name in CLOCK_MAP:
             steps += clock_recipes(cc, out)

@@ -11,15 +11,20 @@ from local_flash_checks import LocalStep
 
 ARRANGEMENT_MAP: Final = {
     'arrangement-stress': {'tests/native_arrangement_stress_test.c'},
+    'arrangement-proposal': {'tests/native_arrangement_proposal_test.c'},
 }
 SCENARIOS: Final = ('internal-dry', 'internal-room', 'usb-spring', 'trs-loss-wrap')
 GENERATED: Final = ('felucca_tables.h', 'felucca_samples.h', 'felucca_fm6.h',
                     'ui_fonts.h', 'ui_icons.h', 'ui_keycaps.h', 'ui_palettes.h')
 
 
-def arrangement_recipes(cc: list[str], out: Path) -> list[LocalStep]:
+def arrangement_recipes(check: str, cc: list[str], out: Path) -> list[LocalStep]:
     """Plan isolated processes for natural scene changes, fill and clock loss."""
-    fixture = 'tests/native_arrangement_stress_test.c'
+    if check not in ARRANGEMENT_MAP:
+        raise ValueError('Unknown arrangement scope: ' + check)
+    proposal = check == 'arrangement-proposal'
+    fixture = ('tests/native_arrangement_proposal_test.c' if proposal else
+               'tests/native_arrangement_stress_test.c')
     sources = [fixture, 'firmware/src/d8p1.c', 'firmware/src/d8pool.c']
     required = sources + [
         'tests/native_arrangement_test.c', 'tests/d8p1_pool_runtime_test.c',
@@ -35,14 +40,18 @@ def arrangement_recipes(cc: list[str], out: Path) -> list[LocalStep]:
              '-Ibuild/gen', '-Ifirmware/src']
     steps: list[LocalStep] = []
     for mode in ('optimized', 'sanitized'):
-        binary = str(out / ('arrangement-' + mode))
+        tag = ('arrangement-proposal-' if proposal else 'arrangement-') + mode
+        binary = str(out / tag)
         mode_flags = ['-O2'] if mode == 'optimized' else [
             '-O1', '-g', '-fsanitize=address,undefined', '-fno-sanitize-recover=all',
             '-fno-sanitize=signed-integer-overflow,shift',
         ]
-        steps.append(LocalStep(name='arrangement-' + mode + '-compile',
+        steps.append(LocalStep(name=tag + '-compile',
             argv=cc + flags + mode_flags + sources + ['-lm', '-o', binary],
             requires=required))
+        if proposal:
+            steps.append(LocalStep(name=tag, argv=[binary, str(out / (tag + '.d8p'))], requires=[]))
+            continue
         for scenario in SCENARIOS:
             steps.append(LocalStep(name='arrangement-' + mode + '-' + scenario,
                                    argv=[binary, scenario], requires=[]))

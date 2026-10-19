@@ -13,6 +13,21 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_arrangement_proposal_is_offline_and_separate_from_stress(self) -> None:
+        selected, unknown = checks.select(['tests/native_arrangement_proposal_test.c'])
+        self.assertEqual(selected, {'diff', 'arrangement-proposal'})
+        self.assertEqual(unknown, [])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(len(steps), 5)
+        for index, mode in enumerate(('optimized', 'sanitized')):
+            tag = 'arrangement-proposal-' + mode
+            compile_step = steps[1 + index * 2]
+            self.assertIn('tests/native_arrangement_proposal_test.c', compile_step['argv'])
+            self.assertNotIn('tests/native_arrangement_stress_test.c', compile_step['argv'])
+            self.assertEqual(steps[2 + index * 2]['argv'], ['out/' + tag, 'out/' + tag + '.d8p'])
+        self.assertFalse(any(arg in ('--capture', '--flash', 'docker', 'tests/run_tests.sh')
+                             for step in steps for arg in step['argv']))
+
     def test_arrangement_stress_uses_only_actual_host_slices(self) -> None:
         selected, unknown = checks.select(['tests/native_arrangement_stress_test.c'])
         self.assertEqual(selected, {'diff', 'arrangement-stress'})

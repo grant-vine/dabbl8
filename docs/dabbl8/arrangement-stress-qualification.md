@@ -47,6 +47,22 @@ physical routing nor a complete stack bound or visual-quality review.
 
 ## Consequences for the next hardware batch
 
+`arrangement-proposal` now prepares the missing synthetic C source, with all
+four banks referencing C exclusively and16 scenes. It passes actual native C
+recall, the physical-input SEQ-hold/SONG/PLAY path, natural automatic completion,
+eight voices/eight heavy slots, exact project/storage preservation and bounded
+silence in optimized and fatal sanitizer modes. Both export the same7,385 bytes,
+SHA-256 `25ce16e8ae7b6fab1d5b4020df95e41fd0b1df6525c735adb698ed6ce54dbe61`.
+There is no new production command or automatic remote source preparation.
+
+The private combined archive preserves A/B from the previously verified original
+set, retains the existing heavy MIDI fixture in live/shared autosave, and puts
+this arrangement in C. Native codec/virtual-pool rebuild/readback validation
+passes. It is not a fresh backup or an armed restore. Keep private A/B and the
+archive out of Git, and compare a fresh original capture before any future use.
+Reuse receipts under `build/rc-arrangement-proposal-20261019/`; do not repeat the
+earlier eight combined stress runs for this new scope.
+
 Retain this host evidence and the completed v022 persistence/upgrade results.
 Do not add another stopped MIDI-only run as proof of arrangement playback.
 The native arrangement requires main-loop source preparation before Start;
@@ -54,9 +70,13 @@ merely sending MIDI Start after an ordinary restore does not prepare it.
 The current guarded hardware helper admits matched notes, not a new remote
 arrangement-control protocol. Keep its allowlist unchanged.
 
-Prepare any needed arrangement project and control sequence offline and group
-the necessary owner PLAY/clock-source action with the existing SAVE/restart
-visit. A new temporary archive, routes and cleanup must be validated before
-staging. Exact-candidate timing, clock/cadence uncertainty, omitted ISR work,
+The proposal's owner action is to load C, hold SEQ to open SONG, and press PLAY
+once; it stops itself. Group this with the existing SAVE/restart visit. Validate
+the exact capture/Stop/readback orchestration before arming it. C recall changes
+the current workspace and may update shared autosave: compare those to the new
+C context, while A/B/C and ancillary data remain protected. After the final
+original restore, require exact original logical readback.
+
+Exact-candidate timing, clock/cadence uncertainty, omitted ISR work,
 SP/SSP/interrupt nesting and independent recovery remain open. No device access,
 saved-data write, restore staging or installation occurred for this test.
