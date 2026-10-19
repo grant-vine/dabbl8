@@ -1,3 +1,16 @@
+# Development integration — selective Felucca 1.6.1 backports
+
+Current development branch is `dabbl8/felucca-161-bugfixes` in
+`/Users/grantv/Code/dabbl8/.local-baseline/felucca-161-integration`.
+Read [the integration record](felucca-161-backports.md) and private
+`build/upstream-161/` evidence. Baseline commit34c3b21 preserves the complete
+current v022 source changes; new commits contain only the selective backports.
+No physical device actions are authorized for this update round. Installed
+v022 and its successful hardware evidence below remain unchanged and do not
+qualify the modified source. The original checkout and backups are intact.
+
+---
+
 # Current handoff — v022 combined hardware batch complete, 19 October 2026
 
 Installed v0.2.2-timing/FM-1_8022 using Felucca's unchanged flow and the pinned
