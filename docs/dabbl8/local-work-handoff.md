@@ -1,5 +1,16 @@
 # Current handoff — combined arrangement checks, no hardware access
 
+Diagnostic-only coherent D8A1 `status` rows and a pure bounded observer are now
+locally verified. Actual native C states/formatter on/off, optimized/fatal
+sanitizers, strict host decoding/refusals and target link/MMIO/static budgets
+pass. Latest non-installable component: `build/app-only/full/run-9n195ske/`,
+527,572 bytes; RAM/pool and conditional stack maxima unchanged. Read
+[the contract](arrangement-observation.md) and private
+`build/rc-arrangement-observer-20261019/handoff.json` next. No device was accessed.
+Native combined timing/resource orchestration and C-context readback still need
+completion before one new package/reader/kit freeze. The old frozen v023 cannot
+supply either D8C1 or D8A1. Do not flash or re-run unchanged render scenarios.
+
 The offline C proposal is also ready. Its actual native recall and SEQ-hold /
 SONG / PLAY path pass in optimized and fatal sanitizer modes; both export the
 same7,385-byte project. All16 scenes stop automatically, with eight voices/eight

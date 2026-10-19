@@ -13,6 +13,18 @@ import local_checks as checks
 
 
 class SelectionTest(unittest.TestCase):
+    def test_arrangement_status_is_diagnostic_and_offline(self) -> None:
+        selected, unknown = checks.select(['firmware/src/arrangement_diagnostic_console.h'])
+        self.assertEqual(selected, {'diff', 'arrangement-status'})
+        self.assertEqual(unknown, [])
+        steps = checks.recipes(selected, ['clang'], Path('out'), 'HEAD')
+        self.assertEqual(len(steps), 7)
+        for step in steps[1:]:
+            self.assertNotIn('tests/native_arrangement_stress_test.c', step['argv'])
+            self.assertFalse(any(arg in ('--capture', '--flash', 'docker') for arg in step['argv']))
+        self.assertIn('-DDABBL8_TIMING_DIAGNOSTIC=0', steps[2]['argv'])
+        self.assertIn('-fsanitize=address,undefined', steps[4]['argv'])
+
     def test_arrangement_proposal_is_offline_and_separate_from_stress(self) -> None:
         selected, unknown = checks.select(['tests/native_arrangement_proposal_test.c'])
         self.assertEqual(selected, {'diff', 'arrangement-proposal'})

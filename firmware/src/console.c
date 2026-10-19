@@ -198,12 +198,17 @@ static void con_uac(void)                              /* USB audio input: strea
 }
 #endif
 
+#include "arrangement_diagnostic_console.h"
+
 static void con_status(void)
 {
     const engine_t *e = ENGINES[TSEL->eng_req % NENGINES];
     con_puts(APP_CONSOLE_PREFIX);
     con_puts(FELUCCA_VERSION);
     con_puts("\r\n");
+#if DABBL8_TIMING_DIAGNOSTIC && NTRK == 8
+    con_arrangement_status();
+#endif
     con_kv("uptime_ms", (int32_t)fm1_ms);
     con_kv("cpu_pct", (int32_t)(song.cpu_q8 * 100u / 256u));
     con_kv("audio_max_us", (int32_t)felucca_dbg.max_us);

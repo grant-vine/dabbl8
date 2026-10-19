@@ -24,6 +24,11 @@ follow-through. No hosted CI, dependency download, release or deployment occurre
   The frozen package above is unchanged and predates D8C1; the new collector
   refuses capture against it before opening a port. Consolidate/review a new
   package and repin readers/kit before any future installation.
+- Latest clock-and-arrangement component: `build/app-only/full/run-9n195ske/`,
+  527,572 bytes. Diagnostic-only D8A1 coherent row status and strict observation
+  model pass focused checks and unchanged target budgets. RAM/pool and conditional
+  stack maxima are unchanged. This is app-only; see
+  [the observation contract](arrangement-observation.md). No new installer is frozen.
 - Eight tracks/eight shared sounding voices; all current engines, mask0x3ffd;
   USB audio off. RAM 94,812/98,304 leaves 3,492 bytes. Pool 335,696/344,064 leaves
   8,368 bytes, only 176 above its reserve. No budget or golden hash was changed.
@@ -77,6 +82,11 @@ SEQ-hold/SONG/PLAY preparation path, all16 natural scenes and automatic Stop in
 both host modes. Its private combined archive preserves A/B and retains the old
 MIDI workspace in live/shared autosave. Bounded observation/Stop/readback and
 the newly pinned package/kit still need local completion before any owner batch.
+
+The D8A1 producer/decoder and pure bounded row observer now pass locally, including
+actual C transitions and host refusal controls. Native timing/resource orchestration
+and final C-context snapshot comparison are still unarmed work; they do not become
+device authorization or complete timing/stack evidence merely from these checks.
 
 | Gate | Local result | Required before a full RC claim |
 | --- | --- | --- |
