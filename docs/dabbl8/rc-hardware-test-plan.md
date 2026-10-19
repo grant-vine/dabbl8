@@ -1,5 +1,11 @@
 # One combined v023 hardware batch — prepared, unarmed
 
+**Source addendum:** `95ac93f` adds a read-only D8C1 clock sample after the
+original v023 freeze. Its application-only build passes local checks, but is not
+an installer. Keep the existing package/kit immutable. Before executing this
+batch, consolidate a newly reviewed package, source/archive/reader pins and kit.
+The old package cannot supply D8C1; its clock capture is refused before port open.
+
 Current instruction: **local work only; do not flash yet**. No discovery, port,
 MIDI, restore prompt, installer or device retry is armed. Last verified firmware
 is v0.2.2-timing with originals restored. Check owner availability before requesting
@@ -66,6 +72,12 @@ it expires after two minutes. Never silently retry an expired request.
    trace address is 0x01C1D250, validated against the exact ELF, not the old v022
    address. Independent clock/observer/ABI measurements must be recorded separately
    with uncertainty; absent evidence stays unqualified, regardless of clean counters.
+   In the consolidated clock-capable candidate, group the three read-only D8C1
+   samples into this same owner visit. Require fresh healthy status/epoch, exact
+   package/source capability, complete request/reply brackets, consistent rate
+   intervals and successful close. No owner button press is needed for clock
+   sampling. Stop on refusal; never use nominal 24MHz as a measured result. The
+   sampler does not close omitted ISR/arrival-latency or stack ABI gates.
 6. **SAVE #2: originals.** Restore the fresh original archive once through the
    companion, obtain physical confirmation and require its exact logical readback.
    Record stage7/rc0/guards0/revoke0, unchanged health and closed ports. Do not add

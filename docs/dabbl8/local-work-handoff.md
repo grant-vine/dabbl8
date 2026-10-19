@@ -1,4 +1,29 @@
-# Current handoff — local RC qualification and v023 preparation
+# Current handoff — guarded clock preparation, no hardware access
+
+Latest firmware source `95ac93f` on `dabbl8/felucca-161-bugfixes`. Read current
+[RC status](release-candidate-status.md), [clock method](clock-measurement.md),
+[independent recovery preparation](independent-recovery-preparation.md) and private
+`build/rc-clock-20261019/handoff.json` first. Local command/collector, resource
+interop, selector, target budget and conditional linked-stack checks pass.
+Last verified installed firmware remains v022 with originals restored; no FM-1
+discovery, ports, notes, saved-data changes, upload, reset or flash this round.
+
+The original frozen v023 package remains immutable and predates D8C1. The new
+clock-capable target component is application-only, not an installer. Do not
+flash the old package to collect D8C1. A future consolidated freeze must repin
+the package, completion reader and unarmed kit after resolving measurement
+scope. Full ISR/arrival timing, stack ABI and independent physical recovery
+remain gates. The product listing identifies RP2040-Matrix, but physical board
+confirmation/port/wiring and recovery are not verified. Do not run transporter
+`info`/`dump` as passive discovery: they can enter ROM and upload a RAM loader.
+
+Reuse the 84 engine/effects scenarios and earlier physical persistence/stock
+recovery evidence. Check owner availability before requesting any physical action.
+No new hardware session is armed. Current instruction remains **do not flash**.
+
+---
+
+# Earlier handoff — local RC qualification and v023 preparation
 
 Read [RC status](release-candidate-status.md),
 [local follow-through](rc-local-qualification-20261019.md), and private
