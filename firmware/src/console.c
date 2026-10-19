@@ -370,7 +370,7 @@ static void con_exec(const char *p)
     if (con_word(&p, "help") || con_word(&p, "?")) {
         con_puts("status  dbg  inp  crash  params  memr ADDR [LEN]  flr OFF [LEN]  uboot yes\r\n");
 #if DABBL8_TIMING_DIAGNOSTIC
-        con_puts("timing start|stop|report (diagnostic, no storage writes)\r\n");
+        con_puts("timing start|stop|report|clock (diagnostic, no storage writes)\r\n");
 #endif
 #if D8_RESOURCE_DIAGNOSTIC
         con_puts("resource start|stop|report (paused D8R1 observations)\r\n");

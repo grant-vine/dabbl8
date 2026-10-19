@@ -32,6 +32,8 @@ static uint32_t fm1__dim_k, locked, locks, scans, drain_enabled=1, change_boot;
 static char captured[65536]; static unsigned captured_n;
 static uint32_t user_words[6080], super_words[1984];
 static uint32_t fm1_ticks(void) { return fm1_ms * 24u; }
+static uint32_t fm1_time_config(void) { return 9u; }
+static uint32_t fm1_time_period(void) { return UINT32_MAX; }
 static uint32_t fm1__lock(void) { assert(!locked); locked=1; locks++; return 0; }
 static void fm1__unlock(uint32_t key) { (void)key; assert(locked); locked=0; }
 static int fm1_mem_readable(uint32_t a,uint32_t n) { (void)a;(void)n;return 0; }

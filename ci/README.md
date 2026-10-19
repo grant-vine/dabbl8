@@ -1,6 +1,15 @@
 <!-- SPDX-License-Identifier: GPL-3.0-only -->
 # Local affected checks
 
+`--check clock-capture` checks the diagnostic-only `timing clock` command and
+headless clock-comparison helper. It runs the actual console slice in optimized
+and fatal ASan/UBSan modes, with the feature enabled/disabled, then pure host
+tests for exact framing/CRC, asymmetric USB delays, counter wrap, boot/config
+refusal, no-access planning and failure cleanup. It never opens a port or calls
+the capture CLI with `--capture`. The old frozen v023 package predates D8C1:
+planning reports that explicitly and actual capture refuses before opening it.
+These tests do not measure a physical clock or qualify ISR/stack deadlines.
+
 `--check midi-eight` runs the actual command-27 recording-state query (all 256
 recording masks), actual eight-channel USB MIDI renderer on the retained EIGHT
 DEMO fixture, and guarded schedule/refusal tests. The renderer proves peak eight
