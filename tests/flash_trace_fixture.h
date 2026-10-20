@@ -7,6 +7,7 @@
 #include <string.h>
 static volatile uint32_t ft_sfc,ft_spi,ft_buf,ft_iomap,ft_out,ft_dir,ft_cache,ft_timer;
 static volatile uint32_t ft_enc_lo,ft_enc_hi;
+static volatile uint32_t ft_timer_config,ft_timer_period;
 static volatile uint8_t ft_enc;
 static unsigned ft_irq,ft_high,ft_transfers,ft_fail_transfer,ft_wel,ft_refuse_wel;
 static unsigned ft_busy,ft_forever,ft_busy_reads,ft_issued,ft_command,ft_bytes,ft_payload;
@@ -38,7 +39,9 @@ static volatile uint32_t *ft_register(uint32_t address)
   ft_cache_reads++;
   if(!ft_cache_stuck&&ft_cache_delay&&!--ft_cache_delay)ft_cache=0x4000;
   return &ft_cache;
+ case 0x10800:return &ft_timer_config;
  case 0x10804:ft_ticks++;ft_timer+=ft_tick_step;return &ft_timer;
+ case 0x10808:return &ft_timer_period;
  default:fprintf(stderr,"Unexpected trace fixture MMIO %x\n",address);longjmp(ft_stop,3);
  }
 }
@@ -103,6 +106,7 @@ static void ft_observe(void)
 static void ft_reset(void)
 {
  ft_sfc=0x201;ft_spi=0x33;ft_buf=0;ft_iomap=0x20;ft_out=1;ft_dir=0;ft_cache=0x4000;ft_timer=0;
+ ft_timer_config=9;ft_timer_period=UINT32_MAX;
  ft_enc=0;ft_enc_hi=ft_enc_lo=0;ft_irq=ft_high=1;
  ft_transfers=ft_fail_transfer=ft_wel=ft_refuse_wel=ft_busy=ft_forever=0;
  ft_issued=ft_command=ft_bytes=ft_payload=ft_contained=ft_ticks=ft_mmio=ft_watchdog=0;

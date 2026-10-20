@@ -4,7 +4,8 @@
  * neither a power-loss journal nor authorization to resume a write. */
 #if DABBL8_TIMING_DIAGNOSTIC && (!defined(FELUCCA_LOADER) || !FELUCCA_LOADER)
 #define FL_TRACE_ENABLED 1
-#define FL_TRACE_MAGIC 0x46545231u
+#define FL_TRACE_MAGIC 0x46545232u
+#define FL_TRACE_FORMAT 2
 #define FL_TRACE_PENDING (-32768)
 enum { FL_TRACE_EMPTY, FL_TRACE_INFLIGHT, FL_TRACE_RETURNED };
 enum { FL_TRACE_JEDEC, FL_TRACE_STATUS, FL_TRACE_READ, FL_TRACE_ERASE, FL_TRACE_PROGRAM };
@@ -19,6 +20,7 @@ static volatile struct {
  int32_t result;
  uint8_t state,operation,stage,phase,failure,pre_status,last_status,status_valid;
  uint8_t spi_byte,reset_reason,current_wdt,wdt;
+ uint32_t timer_config,timer_period;
 } fl_trace
 #ifndef FM1_FLASH_DRIVER_TEST
  __attribute__((section(".noinit")))
@@ -51,6 +53,7 @@ FL_TRACE_INL void fl_trace_begin(uint32_t operation,uint32_t address)
                   operation!=FL_TRACE_ERASE&&operation!=FL_TRACE_PROGRAM);
  if(!fl_trace_active)return;
  fl_trace_sampling=1;
+ fl_trace.timer_config=REG32(0x10800u);fl_trace.timer_period=REG32(0x10808u);
  fl_trace.record_boot=fl_trace.boot;fl_trace.operation=(uint8_t)operation;fl_trace.address=address;
  fl_trace.entry_tick=fl_trace.progress_tick=FL_TRACE_TICKS();
  fl_trace.feed_tick=fl_trace.current_feed;fl_trace.wdt=fl_trace.current_wdt;
