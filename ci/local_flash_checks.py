@@ -45,7 +45,8 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
                 'tests/native_queue_audio_fixture.h', 'tests/native_queue_usb_hal.h',
                 'firmware/src/native_first_use.c', 'firmware/src/native_first_use_session.c',
                 'firmware/src/native_first_use_diagnostic.h',
-                'firmware/src/storage.c', 'firmware/src/upreset.c', 'firmware/src/up_fm6.c']
+                'firmware/src/storage.c', 'firmware/src/upreset.c', 'firmware/src/up_fm6.c',
+                'build/gen/d8_flash_store_ranges_test.h']
         required += ['build/gen/' + header for header in FIRST_USE_HEADERS]
     else:
         flags += ['-Wno-unused-function', '-Wno-int-to-pointer-cast']

@@ -451,11 +451,15 @@ class SelectionTest(unittest.TestCase):
                 file = repo / name
                 file.parent.mkdir(parents=True, exist_ok=True)
                 file.touch()
+            ranges = repo / 'build/gen/d8_flash_store_ranges_test.h'
+            ranges.parent.mkdir(parents=True, exist_ok=True)
+            ranges.touch()
             with patch.object(checks.shutil, 'which', return_value='/usr/bin/clang'):
                 plan = checks.make_plan(repo, ['tests/native_owner_initialize_test.c'], (),
                                         ['clang'], Path('out'), 'HEAD')
                 self.assertEqual(plan['status'], 'PLAN')
-            for missing in ('tests/instrument_capture_test.c', 'firmware/src/native_first_use_diagnostic.h'):
+            for missing in ('tests/instrument_capture_test.c', 'firmware/src/native_first_use_diagnostic.h',
+                            'build/gen/d8_flash_store_ranges_test.h'):
                 (repo / missing).unlink()
                 plan = checks.make_plan(repo, ['tests/native_owner_initialize_test.c'], (),
                                         ['clang'], Path('out'), 'HEAD')

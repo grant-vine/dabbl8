@@ -14,7 +14,9 @@ static unsigned ft_busy,ft_forever,ft_busy_reads,ft_issued,ft_command,ft_bytes,f
 static unsigned ft_contained,ft_ticks,ft_mmio,ft_watchdog_limit,ft_watchdog;
 static unsigned ft_cache_reads,ft_cache_delay,ft_cache_stuck,ft_inval_stuck,ft_flushes;
 static unsigned ft_sfc_reads,ft_sfc_delay,ft_sfc_stuck,ft_exit_stuck,ft_exiting;
-static unsigned ft_status_reads,ft_tick_step,ft_stop_after_status;
+static unsigned ft_status_reads,ft_tick_step,ft_keep_wel;
+static unsigned ft_delay_transfer,ft_pending_reads,ft_delayed_completed,ft_stop_after_status;
+static unsigned ft_stale_pending;
 static jmp_buf ft_stop;
 static uint32_t ft_seen;
 static void ft_observe(void);
@@ -23,6 +25,8 @@ static void ft_observe(void);
 #endif
 static volatile uint32_t *ft_register(uint32_t address)
 {
+ /* PCLR is write-one-to-clear, not a persistent software control bit. */
+ if(ft_spi&0x4000u)ft_spi&=~0xc000u;
  ft_observe();ft_mmio++;
  if(ft_watchdog_limit&&ft_mmio>=ft_watchdog_limit){ft_watchdog=1;longjmp(ft_stop,2);}
  switch(address) {
@@ -33,7 +37,9 @@ static volatile uint32_t *ft_register(uint32_t address)
   return &ft_sfc;
  case 0x40308:return &ft_enc_hi;
  case 0x4030c:return &ft_enc_lo;
- case 0x11c00:return &ft_spi;
+ case 0x11c00:
+  if(ft_pending_reads&&!--ft_pending_reads){ft_spi|=0x8000u;ft_delayed_completed++;}
+  return &ft_spi;
  case 0x11c08:return &ft_buf;
  case 0x5101c:return &ft_iomap;
  case 0x500c0:return &ft_out;
@@ -56,7 +62,7 @@ static void ft_delay(uint32_t n)
  if(high&&!ft_high) {
   if(ft_command==0x06&&!ft_busy&&!ft_refuse_wel)ft_wel=1;
   if((ft_command==0x20&&ft_bytes==3)||(ft_command==0x02&&ft_bytes==3&&ft_payload)) {
-   ft_issued++;ft_busy=1;ft_wel=0;
+   ft_issued++;ft_busy=1;if(!ft_keep_wel)ft_wel=0;
   }
  }
  ft_high=high;
@@ -66,7 +72,7 @@ static void ft_csync(void)
  if((ft_iomap&0x20)&&!ft_sfc&&ft_exit_stuck&&!ft_exiting){ft_sfc=0x80000000u;ft_exiting=1;}
  if((ft_iomap&0x20)&&(ft_sfc&0x80000000u)&&ft_transfers&&!ft_sfc_stuck&&!ft_exit_stuck)ft_sfc&=~0x80000000u;
  if(ft_high||!(ft_spi&8u))return;
- ft_transfers++;ft_spi&=~0x8000u;
+ ft_transfers++;if(ft_spi&0x8000u)ft_stale_pending++;
  if(ft_transfers==ft_fail_transfer)return;
  if(ft_spi&0x1000u) {
   if(ft_command==0x05) {
@@ -77,7 +83,7 @@ static void ft_csync(void)
  } else if(!ft_command)ft_command=ft_buf;
  else if(ft_bytes<3)ft_bytes++;
  else ft_payload++;
- ft_spi|=0x8000u;
+ if(ft_transfers==ft_delay_transfer)ft_pending_reads=2;else ft_spi|=0x8000u;
 }
 static void ft_flush(uint32_t address)
 {
@@ -116,7 +122,8 @@ static void ft_reset(void)
  ft_issued=ft_command=ft_bytes=ft_payload=ft_contained=ft_ticks=ft_mmio=ft_watchdog=0;
  ft_cache_reads=ft_cache_delay=ft_cache_stuck=ft_inval_stuck=ft_flushes=0;
  ft_sfc_reads=ft_sfc_delay=ft_sfc_stuck=ft_exit_stuck=ft_exiting=ft_status_reads=0;
- ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;ft_stop_after_status=0;
+ ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;ft_keep_wel=0;
+ ft_delay_transfer=ft_pending_reads=ft_delayed_completed=ft_stop_after_status=ft_stale_pending=0;
 }
 static int ft_erase(uint32_t address)
 {uint32_t took=0;return fl_erase4k(address,&took);}

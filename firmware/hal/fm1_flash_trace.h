@@ -97,6 +97,13 @@ FL_TRACE_INL void fl_trace_spi_progress(uint32_t polls,uint32_t mmio)
 FL_TRACE_INL void fl_trace_status(uint32_t status,uint32_t pre)
 {
  if(!fl_trace_active)return;
+ /* A transient wait on an unsampled iteration may already have completed.
+  * SR1 receipt retires it even when the status byte has not changed. */
+ if(!pre&&fl_trace.phase==FL_TRACE_WIP&&
+    (fl_trace.stage==FL_TRACE_SPI_TX||fl_trace.stage==FL_TRACE_SPI_RX)) {
+  fl_trace.stage=FL_TRACE_WIP;fl_trace.mmio=status;fl_trace.polls=0;
+  fl_trace.wait_tick=fl_trace.wait_progress=0;
+ }
  if(!fl_trace.status_valid||fl_trace.last_status!=(uint8_t)status) {
   fl_trace.last_status=(uint8_t)status;fl_trace.status_valid=1;
  }
@@ -119,7 +126,7 @@ FL_TRACE_INL void fl_trace_end(int32_t result)
 }
 #define FL_TRACE_SAMPLE(n) (fl_trace_sampling=(((n)&4095u)==0))
 #define FL_TRACE_WIP_PROGRESS(n,v) do { if(fl_trace_active&&fl_trace_sampling){fl_trace.stage=FL_TRACE_WIP;fl_trace_wait_progress(n,v);} } while(0)
-#define FL_TRACE_SPI_POLL(n,v) do { if(((++(n))&4095u)==0)fl_trace_spi_progress(n,v); } while(0)
+#define FL_TRACE_SPI_POLL(n,v) do { ++(n); if((n)==1u||((n)&4095u)==0)fl_trace_spi_progress(n,v); } while(0)
 #define FL_TRACE_BEGIN(o,a) fl_trace_begin(o,a)
 #define FL_TRACE_MARK(s) fl_trace_mark(s)
 #define FL_TRACE_WAIT(s) fl_trace_wait_begin(s)

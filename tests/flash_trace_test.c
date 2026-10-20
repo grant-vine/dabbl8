@@ -41,6 +41,7 @@ int main(void)
  CHECK("entry clock config",strstr(ft_report,"fl_timer_config 0x00000009\n")!=NULL);
  CHECK("entry clock period",strstr(ft_report,"fl_timer_period 0xffffffff\n")!=NULL);
  CHECK("normal command/status count",ft_issued==1&&ft_status_reads==3&&ft_transfers==11&&ft_flushes==128);
+ CHECK("SPI pending acknowledged before next transfer",!ft_stale_pending);
  CHECK("success raw ticks",fl_trace.progress_tick>fl_trace.entry_tick&&fl_trace.feed_tick>0&&fl_trace.last_status==0&&fl_trace.pre_status==2);
  CHECK("issued/invalidation stages observed",(ft_seen&(1u<<FL_TRACE_ERASE_ISSUED))&&(ft_seen&(1u<<FL_TRACE_CACHE_INVALIDATE)));
  fresh();ft_refuse_wel=1;returned("write-enable-refusal",-3);CHECK("refusal issues no erase",!ft_issued&&fl_trace.pre_status==0&&!fl_trace.failure);
