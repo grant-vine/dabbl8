@@ -37,6 +37,9 @@ int main(void)
 {
  _Static_assert(sizeof fl_trace<=80,"retained flash incident budget");
  fresh();returned("erase-success",0);
+ CHECK("versioned incident format",strstr(ft_report,"fl_format 2\n")!=NULL);
+ CHECK("entry clock config",strstr(ft_report,"fl_timer_config 0x00000009\n")!=NULL);
+ CHECK("entry clock period",strstr(ft_report,"fl_timer_period 0xffffffff\n")!=NULL);
  CHECK("normal command/status count",ft_issued==1&&ft_status_reads==3&&ft_transfers==11&&ft_flushes==128);
  CHECK("success raw ticks",fl_trace.progress_tick>fl_trace.entry_tick&&fl_trace.feed_tick>0&&fl_trace.last_status==0&&fl_trace.pre_status==2);
  CHECK("issued/invalidation stages observed",(ft_seen&(1u<<FL_TRACE_ERASE_ISSUED))&&(ft_seen&(1u<<FL_TRACE_CACHE_INVALIDATE)));
@@ -78,6 +81,7 @@ int main(void)
  fl_trace_boot(4,0x55);fl_trace_active=0;ft_reset();ft_irq=0;(void)fl_jedec_ram();
  CHECK("completed call permits boot probe",fl_trace.state==FL_TRACE_RETURNED&&fl_trace.record_boot!=record_boot&&fl_trace.operation==FL_TRACE_JEDEC);
  fresh();ft_busy=ft_forever=1;
+ ft_timer_config=0x49;ft_timer_period=1031;
  stalled("incident-before-reset",FL_TRACE_SPI_RX,FL_TRACE_PRE_STATUS,FL_TRACE_FAIL_PRE_BUSY,1);
  uint8_t incident[sizeof fl_trace];memcpy(incident,(const void *)&fl_trace,sizeof incident);
  record_boot=fl_trace.record_boot;fl_trace_boot(4,0x456);fl_trace_active=0;ft_reset();
@@ -87,8 +91,15 @@ int main(void)
   fl_trace.state==FL_TRACE_INFLIGHT&&fl_trace.address==0x99000&&fl_trace.failure==FL_TRACE_FAIL_PRE_BUSY&&data==0xa5&&!fl_trace_active);
  CHECK("incident fields byte-preserved",!memcmp((const uint8_t *)&fl_trace+20,incident+20,offsetof(__typeof__(fl_trace),reset_reason)-20));
  ft_print("retained-after-JEDEC-status-read");
+ CHECK("retained incident config differs from reboot config",ft_timer_config==9&&strstr(ft_report,"fl_timer_config 0x00000049\n")!=NULL);
+ CHECK("retained incident period differs from reboot period",ft_timer_period==UINT32_MAX&&strstr(ft_report,"fl_timer_period 0x00000407\n")!=NULL);
  ft_irq=1;returned("fresh-write-replaces-incident",0);
  CHECK("replacement boot identity",fl_trace.record_boot==fl_trace.boot&&fl_trace.failure==FL_TRACE_FAIL_NONE);
+ CHECK("new write replaces clock context",strstr(ft_report,"fl_timer_config 0x00000009\n")!=NULL&&strstr(ft_report,"fl_timer_period 0xffffffff\n")!=NULL);
+ memset((void *)&fl_trace,0xa5,sizeof fl_trace);fl_trace.magic=0x46545231u;
+ fl_trace_boot(4,0x456);ft_print("old-format-rejected");
+ CHECK("old record reinitialized",fl_trace.boot==1&&fl_trace.state==FL_TRACE_EMPTY&&fl_trace.address==0);
+ CHECK("old clock payload rejected",strstr(ft_report,"fl_timer_config 0x00000000\n")!=NULL&&strstr(ft_report,"fl_timer_period 0x00000000\n")!=NULL);
  printf("Retained flash trace: %u checks, %u failures; bytes=%zu\n",ft_checks,ft_failures,sizeof fl_trace);
  return ft_failures!=0;
 }

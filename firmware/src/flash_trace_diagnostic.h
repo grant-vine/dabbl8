@@ -4,6 +4,8 @@
 /* Called by the existing read-only status command, after XIP is available. */
 static void con_flash_trace(void)
 {
+ con_kv("fl_format",FL_TRACE_FORMAT);
+ con_kx("fl_timer_config",fl_trace.timer_config);con_kx("fl_timer_period",fl_trace.timer_period);
  con_kv("fl_boot",fl_trace.boot);con_kv("fl_record_boot",fl_trace.record_boot);
  con_kv("fl_state",fl_trace.state);con_kv("fl_operation",fl_trace.operation);
  con_kv("fl_stage",fl_trace.stage);con_kv("fl_phase",fl_trace.phase);
