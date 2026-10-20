@@ -7,11 +7,20 @@ source of truth. Earlier v020/v021 review instructions are
 
 ## Distinguish current and historical inputs
 
+Current review covers the private v028 diagnostic and the separate source PRs
+listed in [RC status](release-candidate-status.md). The
+[COMMIT boundary investigation](commit-watchdog-boundary-review.md) retains
+the v027 inherited-clock reproduction; v028 adds operation-entry clock context
+and an exact-image fixed-span reader. Installed v025's warm/cold observations
+passed, followed by watchdog failure during original restoration. Data readback
+is unverified. Neither local correction is a proved physical watchdog repair.
+No device action is authorized.
+
 | Input | Identity | Review boundary |
 | --- | --- | --- |
-| Last observed device | v0.2.4-timing/FM-1_8024, main boot2/USB1, lifetime audio_late2 | Stopped at first post-install health check; original restoration/data unverified. Owner unavailable; no device access authorized. |
-| Current private package | v0.2.5-timing/FM-1_8025, package SHA `7a16ea2c4ec9c3e944b84e37a7f27ebefe3501139c6e6b54f17f88680a81fea5` | `build/rc-v025-20261019/`; startup order/boot counter correction, unchanged loader; not installed or RC-qualified |
-| Current host preparation | Source HEAD `341da9a` plus source-hashed working changes; repinned56-byte retained reader | Package/kit checks and local review under `build/rc-package-v025-20261019/`; hardware batch unarmed |
+| Last observed device | v0.2.5-timing/FM-1_8025; warm/cold boot windows passed, then COMMIT watchdog reset at PROGRAM0x9D800 | Retained capture completed; exact original-project readback remains unverified. No device access authorized. |
+| Current private package | v0.2.8-timing/FM-1_8028, package SHA `7e1df414687601d96650697c7b9aaaab042a0099ccbe88c27ccebe42be5cd549` | `build/rc-v028-20261020/`; 76 B format-2 trace, 692 B NOINIT margin, unchanged loader. Not installed or RC-qualified. |
+| Current host preparation | Source HEAD `341da9a` plus exact hashed working inputs; reviewed format-2 fixed-span reader | 30 offline package steps, 38 fake-console cases and seal under `build/rc-package-v028-20261020/`; no hardware batch armed. |
 | Installed earlier package | v0.2.3-timing, firmware source `c34263f`, package SHA `c2872ecc0aca96e4f92a8530d0e2682287fd48e40ab0749ecd22ff508720f8cb` | Immutable `build/rc-v023-d8a1-20261019/`; preserve its failed-session evidence |
 | Historical earlier v023 freeze | Firmware source `e251aa4`, package SHA `c3ebf3933ee5b6088f990cefda17e56ca468e5dc4f619326dba09349898fac83` | Preserved unchanged; lacks D8C1/D8A1; do not substitute it |
 
@@ -21,7 +30,7 @@ does not locate events within a boot; new coherent per-boot fields retain histor
 and reject every new-boot event. Reuse the fixed RAM/loader and prior comparisons
 by their recorded hash bindings. The v024 freeze/failed session remain immutable.
 
-The separate host follow-up is reviewed in [draft PR #207](https://github.com/grant-vine/dabbl8/pull/207),
+The separate v025 host follow-up is reviewed in [draft PR #207](https://github.com/grant-vine/dabbl8/pull/207),
 with67 host tests and seven clock groups under `build/rc-host-audio-epoch-20261019/`.
 It adds strict new-boot epoch checks and actual private-manifest compatibility to
 the general collectors. Four host inputs deliberately differ from the frozen
@@ -59,9 +68,10 @@ credits remain; inherited synthesis/effects are not new Dabbl8 development.
    evidence and [independent recovery preparation](independent-recovery-preparation.md).
    Clock samples are not full ISR/stack qualification. The RP2040-Matrix is not
    a tested drop-in XIAO replacement. Transporter info/dump can upload a RAM loader.
-5. Review the [single unarmed hardware batch](rc-hardware-test-plan.md). The
-   consolidated package, source/archive/reader pins and kit are now frozen;
-   keep both v023 freezes intact. No private backup/vendor firmware belongs
+5. Respect the [current hardware hold](rc-hardware-test-plan.md). Its v025 batch
+   is historical and must not be repeated; no replacement batch is armed.
+   Preserve every sealed package and its matching reader/source evidence.
+   No private backup/vendor firmware belongs
    in the public source, corresponding-source archive or release assets.
 6. Reuse the extended virtual-upgrade check under
    `build/rc-roadmap-audit-20261019/`: nonempty synthetic ancillary allocations

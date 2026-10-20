@@ -2,8 +2,8 @@
 # Retained flash-driver trace
 
 Private `DABBL8_TIMING_DIAGNOSTIC=1` application builds add `fl_*` fields to the
-existing read-only CDC `status` response. The record occupies 68 bytes in
-`.noinit`. Disabled and loader builds omit it. No new SPI commands, watchdog
+existing read-only CDC `status` response. Format 2 occupies 76 bytes in
+`.noinit`; older builds use the 68-byte format 1. Disabled and loader builds omit it. No new SPI commands, watchdog
 feeds, erase regions, timeout policy or recovery authorization are introduced.
 
 `fi_*` remains the outer consent/formatter record. Its `fi_elapsed_ms` is consent
@@ -11,6 +11,26 @@ age sampled before I/O. Use the new raw driver ticks to investigate a stall;
 that outer value is not an erase duration.
 
 ## Incident lifetime
+
+Format 2 (`fl_format=2`, magic `0x46545232`) adds `fl_timer_config` and
+`fl_timer_period`: raw TIMER4 CON/PRD sampled once after the preserved-incident
+guard at operation entry, before publishing INFLIGHT. Startup and boot read
+probes never substitute the new clock configuration for the incident values.
+A newly admitted write replaces them. Older-layout retained bytes are rejected;
+this is diagnostic-record invalidation, not a change to projects or saved data.
+
+At entry, `(fl_timer_config & 0xFF)==9` with `fl_timer_period==0xFFFFFFFF`
+excludes the known inherited divider/short-period mismatch for that snapshot.
+It does not establish clock frequency, continued counter progress, absence of
+later corruption, CPU-fault state or the watchdog reset cause.
+
+The private v028 diagnostic integration package has trace 76 B at
+`0x01C7FA00`; the following formatter record moves to `0x01C7FA4C`, and
+NOINIT ends at `0x01C7FA9C`, leaving 692 B before the protected region.
+Never reuse fixed-address reader pins from an older build. Exact-image reader
+pins and an installation package are not prepared by this source change.
+Source-specific build/QA/review evidence is under
+`build/rc-timer-context-20261020/`; no device access occurred.
 
 `fl_boot` identifies the current boot. `fl_record_boot` identifies the operation
 whose fields follow. `fl_state=1` means the RAM driver entered and has not
@@ -74,6 +94,14 @@ actual transfer type/byte/entry count on its first unsuccessful poll, then every
 4096 polls. Immediately successful unsampled transfers add no publication. A reset
 before that first publication, or a blocked MMIO access or barrier, can still
 leave the preceding stage: this is not an atomic final-instruction trace.
+
+v026 retires a published TX/RX wait after completed WIP SR1, even if unchanged:
+stage10, received status in MMIO and zero active SPI polls/wait timestamps.
+The last clock sample remains unchanged; retirement adds no MMIO read.
+Before this correction, a completed transient wait could leave stage11/12 and
+its old SPI_CON observation retained across unsampled, unchanged statuses.
+The v025 stage11/polls1 capture therefore does not prove a final stuck transfer.
+See [the reproduction and limits](spi-status-watchdog-investigation.md).
 
 TIMER4 wraps modulo 2^32. Within a single boot, elapsed microseconds can be
 estimated as `(uint32_t)(later-earlier)/24`. Identical sampled values with many

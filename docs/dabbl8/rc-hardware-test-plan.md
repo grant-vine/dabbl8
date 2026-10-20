@@ -1,4 +1,14 @@
-# One v0.2.5 startup/restore batch — prepared, unarmed
+# Hardware hold — physical COMMIT watchdog cause unresolved
+
+The v025 batch below is historical, not the next operation. Current work is in
+[the boundary review](commit-watchdog-boundary-review.md). v027 fixes a local
+timer contract defect but is not a proved physical COMMIT repair. No new batch
+is armed. Do not discover/access/restore/reset/flash the FM-1 or automatically
+repeat this sequence. Preserve installed v025, incident receipts and canonical
+originals; original restoration/readback remains unverified. A future device
+test needs a concrete causal question and fresh owner direction.
+
+## Historical v025 batch
 
 The owner is unavailable. No device discovery, port access, flash, reset or
 restore is authorized. This is a future plan, not a queued operation. Await fresh
