@@ -413,6 +413,8 @@ class SelectionTest(unittest.TestCase):
             ('tests/flash_trace_fixture.h', ['diff', 'first-use', 'flash-driver']),
             ('tests/flash_trace_test.c', ['diff', 'flash-driver']),
             ('tests/flash_trace_spi_watchdog_test.c', ['diff', 'flash-driver']),
+            ('firmware/hal/fm1_time.h', ['diff', 'flash-driver']),
+            ('tests/time_handover_test.c', ['diff', 'flash-driver']),
             ('tests/flash_trace_reset_test.c', ['diff', 'first-use']),
             ('firmware/src/flash_trace_diagnostic.h', ['diff', 'first-use', 'flash-driver']),
         )
@@ -421,10 +423,12 @@ class SelectionTest(unittest.TestCase):
             self.assertEqual(p['checks'], selected)
             self.assertEqual(p['unmapped_paths'], [])
             compile_steps = [step for step in p['commands'] if step['name'].endswith('-compile')]
-            self.assertEqual(len(compile_steps), 2 * sum({'first-use': 2, 'flash-driver': 3}[name]
+            self.assertEqual(len(compile_steps), 2 * sum({'first-use': 2, 'flash-driver': 4}[name]
                                                        for name in selected if name != 'diff'))
             for step in compile_steps:
                 self.assertIn('firmware/hal/fm1_flash.h', step['requires'])
+                if 'tests/time_handover_test.c' in step['argv']:
+                    self.assertIn('firmware/hal/fm1_time.h', step['requires'])
                 self.assertFalse(any('build.py' in arg or 'run_tests.sh' in arg for arg in step['argv']))
                 if step['name'].startswith('first-use-'):
                     self.assertIn('firmware/src/native_first_use_diagnostic.h', step['requires'])

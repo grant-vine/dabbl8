@@ -68,7 +68,8 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
                            requires=required),
                   LocalStep(name=tag, argv=[binary], requires=[])]
         trace_fixtures = {
-            'flash-driver': ['tests/flash_trace_test.c', 'tests/flash_trace_spi_watchdog_test.c'],
+            'flash-driver': ['tests/flash_trace_test.c', 'tests/flash_trace_spi_watchdog_test.c',
+                             'tests/time_handover_test.c'],
             'first-use': ['tests/flash_trace_reset_test.c'],
             'usb-controller': [],
         }[check]
@@ -78,6 +79,8 @@ def flash_recipes(check: Literal['flash-driver', 'first-use', 'usb-controller'],
             trace_binary = str(out / trace_tag)
             trace_required = required + [fixture, 'tests/flash_trace_fixture.h',
                                         'firmware/src/flash_trace_diagnostic.h']
+            if fixture == 'tests/time_handover_test.c':
+                trace_required += ['firmware/hal/fm1_time.h']
             steps += [LocalStep(name=trace_tag + '-compile',
                                argv=cc + flags + mode_flags + trace_sources +
                                    (['-lm'] if first_use else []) + ['-o', trace_binary],

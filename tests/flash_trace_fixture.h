@@ -14,10 +14,13 @@ static unsigned ft_busy,ft_forever,ft_busy_reads,ft_issued,ft_command,ft_bytes,f
 static unsigned ft_contained,ft_ticks,ft_mmio,ft_watchdog_limit,ft_watchdog;
 static unsigned ft_cache_reads,ft_cache_delay,ft_cache_stuck,ft_inval_stuck,ft_flushes;
 static unsigned ft_sfc_reads,ft_sfc_delay,ft_sfc_stuck,ft_exit_stuck,ft_exiting;
-static unsigned ft_status_reads,ft_tick_step;
+static unsigned ft_status_reads,ft_tick_step,ft_stop_after_status;
 static jmp_buf ft_stop;
 static uint32_t ft_seen;
 static void ft_observe(void);
+#ifndef FM1_FLASH_TEST_TIMER_ADVANCE
+#define FM1_FLASH_TEST_TIMER_ADVANCE() (ft_timer+=ft_tick_step)
+#endif
 static volatile uint32_t *ft_register(uint32_t address)
 {
  ft_observe();ft_mmio++;
@@ -40,7 +43,7 @@ static volatile uint32_t *ft_register(uint32_t address)
   if(!ft_cache_stuck&&ft_cache_delay&&!--ft_cache_delay)ft_cache=0x4000;
   return &ft_cache;
  case 0x10800:return &ft_timer_config;
- case 0x10804:ft_ticks++;ft_timer+=ft_tick_step;return &ft_timer;
+ case 0x10804:ft_ticks++;FM1_FLASH_TEST_TIMER_ADVANCE();return &ft_timer;
  case 0x10808:return &ft_timer_period;
  default:fprintf(stderr,"Unexpected trace fixture MMIO %x\n",address);longjmp(ft_stop,3);
  }
@@ -48,6 +51,7 @@ static volatile uint32_t *ft_register(uint32_t address)
 static void ft_delay(uint32_t n)
 {
  (void)n;unsigned high=ft_out&1u;
+ if(!high&&ft_high&&ft_stop_after_status&&ft_status_reads==ft_stop_after_status){ft_watchdog=1;longjmp(ft_stop,2);}
  if(!high&&ft_high)ft_command=ft_bytes=ft_payload=0;
  if(high&&!ft_high) {
   if(ft_command==0x06&&!ft_busy&&!ft_refuse_wel)ft_wel=1;
@@ -112,7 +116,7 @@ static void ft_reset(void)
  ft_issued=ft_command=ft_bytes=ft_payload=ft_contained=ft_ticks=ft_mmio=ft_watchdog=0;
  ft_cache_reads=ft_cache_delay=ft_cache_stuck=ft_inval_stuck=ft_flushes=0;
  ft_sfc_reads=ft_sfc_delay=ft_sfc_stuck=ft_exit_stuck=ft_exiting=ft_status_reads=0;
- ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;
+ ft_busy_reads=1;ft_tick_step=24;ft_watchdog_limit=0;ft_seen=0;ft_stop_after_status=0;
 }
 static int ft_erase(uint32_t address)
 {uint32_t took=0;return fl_erase4k(address,&took);}
