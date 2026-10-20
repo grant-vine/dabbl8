@@ -12,16 +12,23 @@
 #pragma once
 #include <stdint.h>
 
-#define FM1_T4_CON (*(volatile uint32_t *)0x10800u)
-#define FM1_T4_CNT (*(volatile uint32_t *)0x10804u)
-#define FM1_T4_PRD (*(volatile uint32_t *)0x10808u)
+#ifndef FM1_TIME_REG32
+#define FM1_TIME_REG32(a) (*(volatile uint32_t *)(a))
+#endif
+#define FM1_T4_CON FM1_TIME_REG32(0x10800u)
+#define FM1_T4_CNT FM1_TIME_REG32(0x10804u)
+#define FM1_T4_PRD FM1_TIME_REG32(0x10808u)
 #define FM1_TICKS_PER_US 24u
 
-/* Start TIMER4 unless it already runs, so time stays continuous across
- * RAM-run jumps. */
+/* Preserve continuity only for an inherited clock matching our time base.
+ * The sealed updater retains its historical handover policy. */
 static inline void fm1_time_init(void)
 {
+#if defined(FELUCCA_LOADER) && FELUCCA_LOADER
     if ((FM1_T4_CON & 0xFu) == ((2u << 2) | 1u))
+#else
+    if ((FM1_T4_CON & 0xFFu) == ((2u << 2) | 1u) && FM1_T4_PRD == UINT32_MAX)
+#endif
         return;
     FM1_T4_CON = 0;
     FM1_T4_PRD = 0xFFFFFFFFu;

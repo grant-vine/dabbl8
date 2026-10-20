@@ -57,6 +57,7 @@ MAP = {
     'fx-quiet': {'firmware/src/fx.c', 'tests/native_fx_stationary_quiet_test.c'},
     'timing-capture': {'tools/dabbl8_timing_capture.py', 'tests/dabbl8_timing_capture_test.py'},
     'flash-driver': {'firmware/hal/fm1_flash.h', 'firmware/hal/fm1_flash_trace.h',
+        'firmware/hal/fm1_time.h', 'tests/time_handover_test.c',
         'firmware/src/flash_trace_diagnostic.h', 'tests/flash_driver_timeout_test.c',
         'tests/flash_trace_fixture.h', 'tests/flash_trace_test.c',
         'tests/flash_trace_spi_watchdog_test.c'},
