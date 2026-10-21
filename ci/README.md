@@ -129,6 +129,15 @@ exclusions, with bounds/object/pointer checks active. They require the actual
 these are absent, selection refuses rather than substituting weaker fuzzing. FM4 is off and
 SLICE is on for these selected checks; this is not the full configuration matrix.
 
+The timer correction in [source PR #210](https://github.com/grant-vine/dabbl8/pull/210)
+adds `tests/time_handover_test.c` to `flash-driver`:512 inherited
+TIMER4 configurations plus the actual RAM WIP wait with period wrap, in optimized
+and fatal ASan/UBSan modes. It checks the application clock contract and valid
+clock continuity. Its synthetic counter/peripheral does not establish the
+physical cause of a watchdog reset; the sealed updater is not rebuilt.
+That correction is present in the private integration tree; this documentation
+branch does not incorporate the separate source PR.
+
 For an unmapped area, select a reviewed scope explicitly, for example:
 
 ```sh
