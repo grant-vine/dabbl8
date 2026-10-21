@@ -1,5 +1,17 @@
 # Hardware hold — physical COMMIT watchdog cause unresolved
 
+**Owner decision, 21 October 2026:** defer the deliberate catastrophic-failure
+recovery drill, including unbootable-application/RP2040 testing, for the initial
+release candidate. It remains unverified and is not an initial RC prerequisite.
+Earlier statements requiring that drill are superseded. Retain stock firmware,
+existing working-console rollback evidence and upstream recovery guidance.
+
+The actual COMMIT watchdog restart during ordinary project restoration remains
+an unresolved defect. Normal boot, save/restore and upgrade integrity, timing/
+stack qualification and publication approval remain required. This decision
+grants no device access, restore or flash authority; do not request RP2040
+availability as a prerequisite for the next ordinary firmware test.
+
 The v025 batch below is historical, not the next operation. Current work is in
 [the boundary review](commit-watchdog-boundary-review.md). v027 fixes a local
 timer contract defect but is not a proved physical COMMIT repair. No new batch

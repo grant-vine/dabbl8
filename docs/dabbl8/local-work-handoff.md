@@ -1,5 +1,17 @@
 # Current handoff — v028 diagnostic prepared; physical COMMIT cause open
 
+**Owner decision, 21 October 2026:** defer the deliberate catastrophic-failure
+recovery drill, including unbootable-application/RP2040 testing, for the initial
+release candidate. It remains unverified and is not an initial RC prerequisite.
+Earlier statements requiring that drill are superseded. Retain stock firmware,
+existing working-console rollback evidence and upstream recovery guidance.
+
+The actual COMMIT watchdog restart during ordinary project restoration remains
+an unresolved defect. Normal boot, save/restore and upgrade integrity, timing/
+stack qualification and publication approval remain required. This decision
+grants no device access, restore or flash authority; do not request RP2040
+availability as a prerequisite for the next ordinary firmware test.
+
 Source publication is reconciled against draft PRs [#205](https://github.com/grant-vine/dabbl8/pull/205),
 [#206](https://github.com/grant-vine/dabbl8/pull/206),
 [#207](https://github.com/grant-vine/dabbl8/pull/207),

@@ -1,5 +1,17 @@
 # Dabbl8 RC status — 20 October 2026
 
+**Owner decision, 21 October 2026:** defer the deliberate catastrophic-failure
+recovery drill, including unbootable-application/RP2040 testing, for the initial
+release candidate. It remains unverified and is not an initial RC prerequisite.
+Earlier statements requiring that drill are superseded. Retain stock firmware,
+existing working-console rollback evidence and upstream recovery guidance.
+
+The actual COMMIT watchdog restart during ordinary project restoration remains
+an unresolved defect. Normal boot, save/restore and upgrade integrity, timing/
+stack qualification and publication approval remain required. This decision
+grants no device access, restore or flash authority; do not request RP2040
+availability as a prerequisite for the next ordinary firmware test.
+
 Private v028 diagnostic package prepared: `build/rc-v028-20261020/`, 610,106 B, SHA-256 `7e1df414687601d96650697c7b9aaaab042a0099ccbe88c27ccebe42be5cd549`. It adds retained TIMER4 CON/PRD entry context (76 B trace; 692 B NOINIT headroom) and a reviewed fixed-span reader. All 30 offline package steps, 38 fake-console cases and the exact target RAM audit pass. This improves observability; it does not prove a physical watchdog repair or RC readiness. Prior broad passing evidence is reused. See [trace format 2](retained-flash-trace.md), `build/rc-timer-context-20261020/` and `build/rc-package-v028-20261020/handoff.json`. No device access, flash or restore retry is authorized; no hardware batch is armed.
 
 Source publication is tracked in [PR #205](https://github.com/grant-vine/dabbl8/pull/205)
@@ -82,7 +94,7 @@ Felucca install flow are unchanged. Host results do not qualify hardware safety.
 | Own restore/COMMIT | Prior watchdog and retained diagnostics fixes pass local regressions. Physical v025 restore lost MIDI after SAVE. One read-only retained capture confirms watchdog reset during program/WIP polling at0x9D800. | Investigate the RAM SPI/status-wait path locally using this capture. Acknowledged COMMIT and exact five-role readback are absent. Device saved state is unverified; no automatic retry. |
 | Engine/effects/workflows |84 engine/effects and42 emulator cases reused; actual ISR/DSP parity and affected startup checks pass. | Supported concurrent target workloads and arrangement qualification; no narrow demo claim. |
 | Timing/stack | Prior clock/window/watermark observations reused; static memory remains within unchanged budgets. | Reference uncertainty, entry/exit/arrival/ISR bounds, SP/SSP ABI and interrupt nesting. |
-| Independent recovery | Historical stock restore via working console remains verified. RP2040-Matrix preparation exists. | Actual board/wiring and application-independent recovery; external loader provenance remains open. |
+| Deferred catastrophic recovery drill | Historical working-console stock restore remains verified; independent board/wiring recovery remains unverified. | Owner deferred this drill for the initial RC on21 October2026; it is not a release blocker or a passed test. |
 | Release | Private package, notices, source, seals and local receipts prepared. | Second tester and separate release/publication authorization. |
 
 The frozen [hardware plan](rc-hardware-test-plan.md) and package handoff retain
